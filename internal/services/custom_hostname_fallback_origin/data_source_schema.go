@@ -5,6 +5,7 @@ package custom_hostname_fallback_origin
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -24,16 +25,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"created_at": schema.StringAttribute{
 				Description: "This is the time the fallback origin was created.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"origin": schema.StringAttribute{
 				Description: "Your origin hostname that requests to your custom hostnames will be sent to.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the fallback origin's activation.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"initializing",
@@ -47,12 +48,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"updated_at": schema.StringAttribute{
 				Description: "This is the time the fallback origin was updated.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"errors": schema.ListAttribute{
 				Description: "These are errors that were encountered while trying to activate a fallback origin.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 		},

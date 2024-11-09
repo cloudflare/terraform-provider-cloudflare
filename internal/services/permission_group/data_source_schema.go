@@ -5,6 +5,7 @@ package permission_group
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -26,15 +27,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"id": schema.StringAttribute{
 				Description: "Identifier of the group.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Name of the group.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"meta": schema.SingleNestedAttribute{
 				Description: "Attributes associated to the permission group.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[PermissionGroupMetaDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"key": schema.StringAttribute{
 						Computed: true,

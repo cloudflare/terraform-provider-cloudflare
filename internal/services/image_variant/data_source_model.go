@@ -17,9 +17,9 @@ type ImageVariantResultDataSourceEnvelope struct {
 }
 
 type ImageVariantDataSourceModel struct {
-	AccountID types.String                        `tfsdk:"account_id" path:"account_id,required"`
-	VariantID types.String                        `tfsdk:"variant_id" path:"variant_id,required"`
-	Variant   *ImageVariantVariantDataSourceModel `tfsdk:"variant" json:"variant,optional"`
+	AccountID types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
+	VariantID types.String                                                 `tfsdk:"variant_id" path:"variant_id,required"`
+	Variant   customfield.NestedObject[ImageVariantVariantDataSourceModel] `tfsdk:"variant" json:"variant,computed"`
 }
 
 func (m *ImageVariantDataSourceModel) toReadParams(_ context.Context) (params images.V1VariantGetParams, diags diag.Diagnostics) {

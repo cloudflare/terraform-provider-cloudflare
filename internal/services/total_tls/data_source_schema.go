@@ -23,7 +23,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"certificate_authority": schema.StringAttribute{
 				Description: "The Certificate Authority that Total TLS certificates will be issued through.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"google",
@@ -34,11 +34,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "If enabled, Total TLS will order a hostname specific TLS certificate for any proxied A, AAAA, or CNAME record in your zone.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"validity_period": schema.Int64Attribute{
 				Description: "The validity period in days for the certificates ordered via Total TLS.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.Int64{
 					int64validator.OneOf(90),
 				},

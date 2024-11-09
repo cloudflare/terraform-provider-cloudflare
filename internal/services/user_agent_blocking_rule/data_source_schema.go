@@ -5,6 +5,7 @@ package user_agent_blocking_rule
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -28,15 +29,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the rule.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "The unique identifier of the User Agent Blocking rule.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"mode": schema.StringAttribute{
 				Description: "The action to apply to a matched request.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"block",
@@ -48,11 +49,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"paused": schema.BoolAttribute{
 				Description: "When true, indicates that the rule is currently paused.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"configuration": schema.SingleNestedAttribute{
 				Description: "The configuration object for the current rule.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[UserAgentBlockingRuleConfigurationDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"target": schema.StringAttribute{
 						Description: "The configuration target for this rule. You must set the target to `ua` for User Agent Blocking rules.",

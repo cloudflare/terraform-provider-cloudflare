@@ -5,6 +5,7 @@ package zero_trust_local_domain_fallback
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -26,15 +27,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "A description of the fallback domain, displayed in the client UI.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"suffix": schema.StringAttribute{
 				Description: "The domain suffix to match when resolving locally.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"dns_server": schema.ListAttribute{
 				Description: "A list of IP addresses to handle domain resolution.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"filter": schema.SingleNestedAttribute{

@@ -30,10 +30,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 			},
-			"secret": schema.StringAttribute{
-				Description: "Secret key for this widget.",
-				Optional:    true,
-			},
 			"bot_fight_mode": schema.BoolAttribute{
 				Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).\n",
 				Computed:    true,
@@ -89,6 +85,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("world"),
 				},
+			},
+			"secret": schema.StringAttribute{
+				Description: "Secret key for this widget.",
+				Computed:    true,
 			},
 			"domains": schema.ListAttribute{
 				Computed:    true,

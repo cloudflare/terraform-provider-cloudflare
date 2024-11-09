@@ -17,13 +17,13 @@ type ResourceGroupResultListDataSourceEnvelope struct {
 }
 
 type ResourceGroupDataSourceModel struct {
-	AccountID       types.String                           `tfsdk:"account_id" path:"account_id,optional"`
-	ResourceGroupID types.String                           `tfsdk:"resource_group_id" path:"resource_group_id,optional"`
-	ID              types.String                           `tfsdk:"id" json:"id,optional"`
-	Name            types.String                           `tfsdk:"name" json:"name,optional"`
-	Meta            *ResourceGroupMetaDataSourceModel      `tfsdk:"meta" json:"meta,optional"`
-	Scope           *[]*ResourceGroupScopeDataSourceModel  `tfsdk:"scope" json:"scope,optional"`
-	Filter          *ResourceGroupFindOneByDataSourceModel `tfsdk:"filter"`
+	AccountID       types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
+	ResourceGroupID types.String                                                    `tfsdk:"resource_group_id" path:"resource_group_id,optional"`
+	ID              types.String                                                    `tfsdk:"id" json:"id,computed"`
+	Name            types.String                                                    `tfsdk:"name" json:"name,computed"`
+	Meta            customfield.NestedObject[ResourceGroupMetaDataSourceModel]      `tfsdk:"meta" json:"meta,computed"`
+	Scope           customfield.NestedObjectList[ResourceGroupScopeDataSourceModel] `tfsdk:"scope" json:"scope,computed"`
+	Filter          *ResourceGroupFindOneByDataSourceModel                          `tfsdk:"filter"`
 }
 
 func (m *ResourceGroupDataSourceModel) toReadParams(_ context.Context) (params iam.ResourceGroupGetParams, diags diag.Diagnostics) {

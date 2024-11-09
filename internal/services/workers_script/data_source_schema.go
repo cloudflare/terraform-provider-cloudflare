@@ -5,6 +5,7 @@ package workers_script
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -27,45 +28,46 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the script was created.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"etag": schema.StringAttribute{
 				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"has_assets": schema.BoolAttribute{
 				Description: "Whether a Worker contains assets.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"has_modules": schema.BoolAttribute{
 				Description: "Whether a Worker contains modules.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "The id of the script in the Workers system. Usually the script name.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"logpush": schema.BoolAttribute{
 				Description: "Whether Logpush is turned on for the Worker.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the script was last modified.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"placement_mode": schema.StringAttribute{
 				Description: "Specifies the placement mode for the Worker (e.g. 'smart').",
-				Optional:    true,
+				Computed:    true,
 			},
 			"usage_model": schema.StringAttribute{
 				Description: "Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').",
-				Optional:    true,
+				Computed:    true,
 			},
 			"tail_consumers": schema.ListNestedAttribute{
 				Description: "List of Workers that will consume logs from the attached Worker.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[WorkersScriptTailConsumersDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"service": schema.StringAttribute{

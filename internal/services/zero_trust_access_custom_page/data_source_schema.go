@@ -27,10 +27,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "UUID",
 				Optional:    true,
 			},
-			"custom_html": schema.StringAttribute{
-				Description: "Custom page HTML.",
-				Optional:    true,
-			},
 			"app_count": schema.Int64Attribute{
 				Description: "Number of apps the custom page is assigned to.",
 				Computed:    true,
@@ -38,6 +34,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"custom_html": schema.StringAttribute{
+				Description: "Custom page HTML.",
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Custom page name.",

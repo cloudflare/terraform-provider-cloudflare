@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/magic_network_monitoring"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,11 +17,11 @@ type MagicNetworkMonitoringConfigurationResultDataSourceEnvelope struct {
 }
 
 type MagicNetworkMonitoringConfigurationDataSourceModel struct {
-	AccountID       types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
-	Name            types.String                                                      `tfsdk:"name" json:"name,optional"`
-	RouterIPs       *[]types.String                                                   `tfsdk:"router_ips" json:"router_ips,optional"`
-	WARPDevices     *[]*MagicNetworkMonitoringConfigurationWARPDevicesDataSourceModel `tfsdk:"warp_devices" json:"warp_devices,optional"`
-	DefaultSampling types.Float64                                                     `tfsdk:"default_sampling" json:"default_sampling,computed_optional"`
+	AccountID       types.String                                                                                `tfsdk:"account_id" path:"account_id,required"`
+	DefaultSampling types.Float64                                                                               `tfsdk:"default_sampling" json:"default_sampling,computed"`
+	Name            types.String                                                                                `tfsdk:"name" json:"name,computed"`
+	RouterIPs       customfield.List[types.String]                                                              `tfsdk:"router_ips" json:"router_ips,computed"`
+	WARPDevices     customfield.NestedObjectList[MagicNetworkMonitoringConfigurationWARPDevicesDataSourceModel] `tfsdk:"warp_devices" json:"warp_devices,computed"`
 }
 
 func (m *MagicNetworkMonitoringConfigurationDataSourceModel) toReadParams(_ context.Context) (params magic_network_monitoring.ConfigGetParams, diags diag.Diagnostics) {

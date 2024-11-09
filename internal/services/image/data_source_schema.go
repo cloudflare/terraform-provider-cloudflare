@@ -32,28 +32,34 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"filename": schema.StringAttribute{
 				Description: "Image file name.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "Image unique identifier.",
-				Optional:    true,
+				Computed:    true,
+			},
+			"require_signed_urls": schema.BoolAttribute{
+				Description: "Indicates whether the image can be a accessed only using it's UID. If set to true, a signed token needs to be generated with a signing key to view the image.",
+				Computed:    true,
 			},
 			"success": schema.BoolAttribute{
 				Description: "Whether the API call was successful",
-				Optional:    true,
+				Computed:    true,
 			},
 			"uploaded": schema.StringAttribute{
 				Description: "When the media item was uploaded.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"variants": schema.ListAttribute{
 				Description: "Object specifying available variants for an image.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"errors": schema.ListNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[ImageErrorsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
@@ -69,7 +75,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"messages": schema.ListNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[ImageMessagesDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
@@ -85,7 +92,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"result": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[ImageResultDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"images": schema.ListNestedAttribute{
 						Computed:   true,
@@ -127,13 +135,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"meta": schema.StringAttribute{
 				Description: "User modifiable key-value store. Can be used for keeping references to another system of record for managing images. Metadata must not exceed 1024 bytes.",
-				Optional:    true,
-				CustomType:  jsontypes.NormalizedType{},
-			},
-			"require_signed_urls": schema.BoolAttribute{
-				Description: "Indicates whether the image can be a accessed only using it's UID. If set to true, a signed token needs to be generated with a signing key to view the image.",
 				Computed:    true,
-				Optional:    true,
+				CustomType:  jsontypes.NormalizedType{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

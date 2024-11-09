@@ -20,7 +20,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"uuid": schema.StringAttribute{
 				Description: "The DCV Delegation unique identifier.",
-				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}

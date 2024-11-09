@@ -22,16 +22,17 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"created_at": schema.StringAttribute{
-				Optional:   true,
+				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"updated_at": schema.StringAttribute{
-				Optional:   true,
+				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "account settings.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"activity_log": schema.SingleNestedAttribute{
 						Description: "Activity log settings.",

@@ -22,23 +22,23 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"endpoint": schema.StringAttribute{
 				Description: "The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"host": schema.StringAttribute{
 				Description: "RFC3986-compliant host.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "UUID",
-				Optional:    true,
+				Computed:    true,
 			},
 			"last_updated": schema.StringAttribute{
-				Optional:   true,
+				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"method": schema.StringAttribute{
 				Description: "The HTTP method used to access the endpoint.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"GET",
@@ -55,7 +55,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"state": schema.StringAttribute{
 				Description: "State of operation in API Discovery\n  * `review` - Operation is not saved into API Shield Endpoint Management\n  * `saved` - Operation is saved into API Shield Endpoint Management\n  * `ignored` - Operation is marked as ignored\n",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"review",
@@ -66,16 +66,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"origin": schema.ListAttribute{
 				Description: "API discovery engine(s) that discovered this operation",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.List{
 					listvalidator.ValueStringsAre(
 						stringvalidator.OneOfCaseInsensitive("ML", "SessionIdentifier"),
 					),
 				},
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"features": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[APIShieldOperationFeaturesDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"traffic_stats": schema.SingleNestedAttribute{
 						Computed:   true,

@@ -29,13 +29,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "UUID",
 				Optional:    true,
 			},
-			"content": schema.StringAttribute{
-				Description: "Request content",
-				Optional:    true,
-			},
 			"completed": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"content": schema.StringAttribute{
+				Description: "Request content",
+				Computed:    true,
 			},
 			"created": schema.StringAttribute{
 				Computed:   true,

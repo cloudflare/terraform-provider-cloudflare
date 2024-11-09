@@ -20,11 +20,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"scope": schema.StringAttribute{
 				Description: "The scope of the URL normalization.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of URL normalization performed by Cloudflare.",
-				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}

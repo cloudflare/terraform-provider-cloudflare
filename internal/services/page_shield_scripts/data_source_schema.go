@@ -31,63 +31,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Optional:    true,
 			},
-			"versions": schema.ListNestedAttribute{
-				Optional: true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"cryptomining_score": schema.Int64Attribute{
-							Description: "The cryptomining score of the JavaScript content.",
-							Computed:    true,
-							Validators: []validator.Int64{
-								int64validator.Between(1, 99),
-							},
-						},
-						"dataflow_score": schema.Int64Attribute{
-							Description: "The dataflow score of the JavaScript content.",
-							Computed:    true,
-							Validators: []validator.Int64{
-								int64validator.Between(1, 99),
-							},
-						},
-						"fetched_at": schema.StringAttribute{
-							Description: "The timestamp of when the script was last fetched.",
-							Computed:    true,
-						},
-						"hash": schema.StringAttribute{
-							Description: "The computed hash of the analyzed script.",
-							Computed:    true,
-						},
-						"js_integrity_score": schema.Int64Attribute{
-							Description: "The integrity score of the JavaScript content.",
-							Computed:    true,
-							Validators: []validator.Int64{
-								int64validator.Between(1, 99),
-							},
-						},
-						"magecart_score": schema.Int64Attribute{
-							Description: "The magecart score of the JavaScript content.",
-							Computed:    true,
-							Validators: []validator.Int64{
-								int64validator.Between(1, 99),
-							},
-						},
-						"malware_score": schema.Int64Attribute{
-							Description: "The malware score of the JavaScript content.",
-							Computed:    true,
-							Validators: []validator.Int64{
-								int64validator.Between(1, 99),
-							},
-						},
-						"obfuscation_score": schema.Int64Attribute{
-							Description: "The obfuscation score of the JavaScript content.",
-							Computed:    true,
-							Validators: []validator.Int64{
-								int64validator.Between(1, 99),
-							},
-						},
-					},
-				},
-			},
 			"added_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
@@ -186,6 +129,64 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
+			},
+			"versions": schema.ListNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[PageShieldScriptsVersionsDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"cryptomining_score": schema.Int64Attribute{
+							Description: "The cryptomining score of the JavaScript content.",
+							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 99),
+							},
+						},
+						"dataflow_score": schema.Int64Attribute{
+							Description: "The dataflow score of the JavaScript content.",
+							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 99),
+							},
+						},
+						"fetched_at": schema.StringAttribute{
+							Description: "The timestamp of when the script was last fetched.",
+							Computed:    true,
+						},
+						"hash": schema.StringAttribute{
+							Description: "The computed hash of the analyzed script.",
+							Computed:    true,
+						},
+						"js_integrity_score": schema.Int64Attribute{
+							Description: "The integrity score of the JavaScript content.",
+							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 99),
+							},
+						},
+						"magecart_score": schema.Int64Attribute{
+							Description: "The magecart score of the JavaScript content.",
+							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 99),
+							},
+						},
+						"malware_score": schema.Int64Attribute{
+							Description: "The malware score of the JavaScript content.",
+							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 99),
+							},
+						},
+						"obfuscation_score": schema.Int64Attribute{
+							Description: "The obfuscation score of the JavaScript content.",
+							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 99),
+							},
+						},
+					},
+				},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
