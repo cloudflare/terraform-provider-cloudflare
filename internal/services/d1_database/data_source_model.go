@@ -24,10 +24,10 @@ type D1DatabaseResultListDataSourceEnvelope struct {
 type D1DatabaseDataSourceModel struct {
 	AccountID  types.String                        `tfsdk:"account_id" path:"account_id,optional"`
 	DatabaseID types.String                        `tfsdk:"database_id" path:"database_id,optional"`
-	FileSize   types.Float64                       `tfsdk:"file_size" json:"file_size,optional"`
-	NumTables  types.Float64                       `tfsdk:"num_tables" json:"num_tables,optional"`
 	CreatedAt  timetypes.RFC3339                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	FileSize   types.Float64                       `tfsdk:"file_size" json:"file_size,computed"`
 	Name       types.String                        `tfsdk:"name" json:"name,computed"`
+	NumTables  types.Float64                       `tfsdk:"num_tables" json:"num_tables,computed"`
 	UUID       types.String                        `tfsdk:"uuid" json:"uuid,computed"`
 	Version    types.String                        `tfsdk:"version" json:"version,computed"`
 	Filter     *D1DatabaseFindOneByDataSourceModel `tfsdk:"filter"`

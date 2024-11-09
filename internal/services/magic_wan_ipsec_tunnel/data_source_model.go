@@ -18,9 +18,9 @@ type MagicWANIPSECTunnelResultDataSourceEnvelope struct {
 }
 
 type MagicWANIPSECTunnelDataSourceModel struct {
-	AccountID     types.String                                   `tfsdk:"account_id" path:"account_id,required"`
-	IPSECTunnelID types.String                                   `tfsdk:"ipsec_tunnel_id" path:"ipsec_tunnel_id,required"`
-	IPSECTunnel   *MagicWANIPSECTunnelIPSECTunnelDataSourceModel `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel,optional"`
+	AccountID     types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
+	IPSECTunnelID types.String                                                            `tfsdk:"ipsec_tunnel_id" path:"ipsec_tunnel_id,required"`
+	IPSECTunnel   customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelDataSourceModel] `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel,computed"`
 }
 
 func (m *MagicWANIPSECTunnelDataSourceModel) toReadParams(_ context.Context) (params magic_transit.IPSECTunnelGetParams, diags diag.Diagnostics) {

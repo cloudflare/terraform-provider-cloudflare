@@ -27,7 +27,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"ipsec_tunnel": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"cloudflare_endpoint": schema.StringAttribute{
 						Description: "The IP address assigned to the Cloudflare side of the IPsec tunnel.",

@@ -22,14 +22,14 @@ type SpectrumApplicationResultListDataSourceEnvelope struct {
 }
 
 type SpectrumApplicationDataSourceModel struct {
-	AppID      types.String                                   `tfsdk:"app_id" path:"app_id,optional"`
-	ZoneID     types.String                                   `tfsdk:"zone_id" path:"zone_id,optional"`
-	Success    types.Bool                                     `tfsdk:"success" json:"success,optional"`
-	Errors     *[]*SpectrumApplicationErrorsDataSourceModel   `tfsdk:"errors" json:"errors,optional"`
-	Messages   *[]*SpectrumApplicationMessagesDataSourceModel `tfsdk:"messages" json:"messages,optional"`
-	Result     *[]*SpectrumApplicationResultDataSourceModel   `tfsdk:"result" json:"result,optional"`
-	ResultInfo *SpectrumApplicationResultInfoDataSourceModel  `tfsdk:"result_info" json:"result_info,optional"`
-	Filter     *SpectrumApplicationFindOneByDataSourceModel   `tfsdk:"filter"`
+	AppID      types.String                                                             `tfsdk:"app_id" path:"app_id,optional"`
+	ZoneID     types.String                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
+	Success    types.Bool                                                               `tfsdk:"success" json:"success,computed"`
+	Errors     customfield.NestedObjectList[SpectrumApplicationErrorsDataSourceModel]   `tfsdk:"errors" json:"errors,computed"`
+	Messages   customfield.NestedObjectList[SpectrumApplicationMessagesDataSourceModel] `tfsdk:"messages" json:"messages,computed"`
+	Result     customfield.NestedObjectList[SpectrumApplicationResultDataSourceModel]   `tfsdk:"result" json:"result,computed"`
+	ResultInfo customfield.NestedObject[SpectrumApplicationResultInfoDataSourceModel]   `tfsdk:"result_info" json:"result_info,computed"`
+	Filter     *SpectrumApplicationFindOneByDataSourceModel                             `tfsdk:"filter"`
 }
 
 func (m *SpectrumApplicationDataSourceModel) toReadParams(_ context.Context) (params spectrum.AppGetParams, diags diag.Diagnostics) {

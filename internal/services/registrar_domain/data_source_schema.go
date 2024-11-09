@@ -5,6 +5,7 @@ package registrar_domain
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -29,50 +30,51 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"available": schema.BoolAttribute{
 				Description: "Shows if a domain is available for transferring into Cloudflare Registrar.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"can_register": schema.BoolAttribute{
 				Description: "Indicates if the domain can be registered as a new domain.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "Shows time of creation.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"current_registrar": schema.StringAttribute{
 				Description: "Shows name of current registrar.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"expires_at": schema.StringAttribute{
 				Description: "Shows when domain name registration expires.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"id": schema.StringAttribute{
 				Description: "Domain identifier.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"locked": schema.BoolAttribute{
 				Description: "Shows whether a registrar lock is in place for a domain.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"registry_statuses": schema.StringAttribute{
 				Description: "A comma-separated list of registry status codes. A full list of status codes can be found at [EPP Status Codes](https://www.icann.org/resources/pages/epp-status-codes-2014-06-16-en).",
-				Optional:    true,
+				Computed:    true,
 			},
 			"supported_tld": schema.BoolAttribute{
 				Description: "Whether a particular TLD is currently supported by Cloudflare Registrar. Refer to [TLD Policies](https://www.cloudflare.com/tld-policies/) for a list of supported TLDs.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"updated_at": schema.StringAttribute{
 				Description: "Last updated.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"registrant_contact": schema.SingleNestedAttribute{
 				Description: "Shows contact information for domain registrant.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[RegistrarDomainRegistrantContactDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"address": schema.StringAttribute{
 						Description: "Address.",
@@ -130,7 +132,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"transfer_in": schema.SingleNestedAttribute{
 				Description: "Statuses for domain transfers into Cloudflare Registrar.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[RegistrarDomainTransferInDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"accept_foa": schema.StringAttribute{
 						Description: "Form of authorization has been accepted by the registrant.",

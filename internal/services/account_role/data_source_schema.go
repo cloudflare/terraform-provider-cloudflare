@@ -5,6 +5,7 @@ package account_role
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -27,19 +28,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "Description of role's permissions.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "Role identifier tag.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Role Name.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"permissions": schema.ListAttribute{
 				Description: "Access permissions for this User.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"filter": schema.SingleNestedAttribute{

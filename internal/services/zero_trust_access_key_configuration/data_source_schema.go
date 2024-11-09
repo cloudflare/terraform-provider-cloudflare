@@ -23,18 +23,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"days_until_next_rotation": schema.Float64Attribute{
 				Description: "The number of days until the next key rotation.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"key_rotation_interval_days": schema.Float64Attribute{
 				Description: "The number of days between key rotations.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(21, 365),
 				},
 			},
 			"last_key_rotation_at": schema.StringAttribute{
 				Description: "The timestamp of the previous key rotation.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 		},

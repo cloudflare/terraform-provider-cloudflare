@@ -17,13 +17,13 @@ type EmailRoutingCatchAllResultDataSourceEnvelope struct {
 }
 
 type EmailRoutingCatchAllDataSourceModel struct {
-	ZoneID   types.String                                    `tfsdk:"zone_id" path:"zone_id,required"`
-	ID       types.String                                    `tfsdk:"id" json:"id,optional"`
-	Name     types.String                                    `tfsdk:"name" json:"name,optional"`
-	Tag      types.String                                    `tfsdk:"tag" json:"tag,optional"`
-	Actions  *[]*EmailRoutingCatchAllActionsDataSourceModel  `tfsdk:"actions" json:"actions,optional"`
-	Matchers *[]*EmailRoutingCatchAllMatchersDataSourceModel `tfsdk:"matchers" json:"matchers,optional"`
-	Enabled  types.Bool                                      `tfsdk:"enabled" json:"enabled,computed_optional"`
+	ZoneID   types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
+	Enabled  types.Bool                                                                `tfsdk:"enabled" json:"enabled,computed"`
+	ID       types.String                                                              `tfsdk:"id" json:"id,computed"`
+	Name     types.String                                                              `tfsdk:"name" json:"name,computed"`
+	Tag      types.String                                                              `tfsdk:"tag" json:"tag,computed"`
+	Actions  customfield.NestedObjectList[EmailRoutingCatchAllActionsDataSourceModel]  `tfsdk:"actions" json:"actions,computed"`
+	Matchers customfield.NestedObjectList[EmailRoutingCatchAllMatchersDataSourceModel] `tfsdk:"matchers" json:"matchers,computed"`
 }
 
 func (m *EmailRoutingCatchAllDataSourceModel) toReadParams(_ context.Context) (params email_routing.RuleCatchAllGetParams, diags diag.Diagnostics) {

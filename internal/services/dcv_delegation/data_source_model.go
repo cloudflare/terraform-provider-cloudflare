@@ -17,7 +17,7 @@ type DCVDelegationResultDataSourceEnvelope struct {
 
 type DCVDelegationDataSourceModel struct {
 	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
-	UUID   types.String `tfsdk:"uuid" json:"uuid,optional"`
+	UUID   types.String `tfsdk:"uuid" json:"uuid,computed"`
 }
 
 func (m *DCVDelegationDataSourceModel) toReadParams(_ context.Context) (params dcv_delegation.DCVDelegationGetParams, diags diag.Diagnostics) {

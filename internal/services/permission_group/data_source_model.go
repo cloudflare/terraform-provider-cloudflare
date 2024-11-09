@@ -17,12 +17,12 @@ type PermissionGroupResultListDataSourceEnvelope struct {
 }
 
 type PermissionGroupDataSourceModel struct {
-	AccountID         types.String                             `tfsdk:"account_id" path:"account_id,optional"`
-	PermissionGroupID types.String                             `tfsdk:"permission_group_id" path:"permission_group_id,optional"`
-	ID                types.String                             `tfsdk:"id" json:"id,optional"`
-	Name              types.String                             `tfsdk:"name" json:"name,optional"`
-	Meta              *PermissionGroupMetaDataSourceModel      `tfsdk:"meta" json:"meta,optional"`
-	Filter            *PermissionGroupFindOneByDataSourceModel `tfsdk:"filter"`
+	AccountID         types.String                                                 `tfsdk:"account_id" path:"account_id,optional"`
+	PermissionGroupID types.String                                                 `tfsdk:"permission_group_id" path:"permission_group_id,optional"`
+	ID                types.String                                                 `tfsdk:"id" json:"id,computed"`
+	Name              types.String                                                 `tfsdk:"name" json:"name,computed"`
+	Meta              customfield.NestedObject[PermissionGroupMetaDataSourceModel] `tfsdk:"meta" json:"meta,computed"`
+	Filter            *PermissionGroupFindOneByDataSourceModel                     `tfsdk:"filter"`
 }
 
 func (m *PermissionGroupDataSourceModel) toReadParams(_ context.Context) (params iam.PermissionGroupGetParams, diags diag.Diagnostics) {

@@ -14,7 +14,7 @@ import (
 type WorkersScriptSubdomainDataSourceModel struct {
 	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
 	ScriptName types.String `tfsdk:"script_name" path:"script_name,required"`
-	Enabled    types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
+	Enabled    types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 func (m *WorkersScriptSubdomainDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptSubdomainGetParams, diags diag.Diagnostics) {

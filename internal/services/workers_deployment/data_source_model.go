@@ -17,9 +17,9 @@ type WorkersDeploymentResultDataSourceEnvelope struct {
 }
 
 type WorkersDeploymentDataSourceModel struct {
-	AccountID   types.String                                    `tfsdk:"account_id" path:"account_id,required"`
-	ScriptName  types.String                                    `tfsdk:"script_name" path:"script_name,required"`
-	Deployments *[]*WorkersDeploymentDeploymentsDataSourceModel `tfsdk:"deployments" json:"deployments,optional"`
+	AccountID   types.String                                                              `tfsdk:"account_id" path:"account_id,required"`
+	ScriptName  types.String                                                              `tfsdk:"script_name" path:"script_name,required"`
+	Deployments customfield.NestedObjectList[WorkersDeploymentDeploymentsDataSourceModel] `tfsdk:"deployments" json:"deployments,computed"`
 }
 
 func (m *WorkersDeploymentDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptDeploymentGetParams, diags diag.Diagnostics) {

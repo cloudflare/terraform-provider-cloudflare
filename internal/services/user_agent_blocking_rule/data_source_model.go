@@ -21,14 +21,14 @@ type UserAgentBlockingRuleResultListDataSourceEnvelope struct {
 }
 
 type UserAgentBlockingRuleDataSourceModel struct {
-	UARuleID      types.String                                       `tfsdk:"ua_rule_id" path:"ua_rule_id,optional"`
-	ZoneID        types.String                                       `tfsdk:"zone_id" path:"zone_id,optional"`
-	Description   types.String                                       `tfsdk:"description" json:"description,optional"`
-	ID            types.String                                       `tfsdk:"id" json:"id,optional"`
-	Mode          types.String                                       `tfsdk:"mode" json:"mode,optional"`
-	Paused        types.Bool                                         `tfsdk:"paused" json:"paused,optional"`
-	Configuration *UserAgentBlockingRuleConfigurationDataSourceModel `tfsdk:"configuration" json:"configuration,optional"`
-	Filter        *UserAgentBlockingRuleFindOneByDataSourceModel     `tfsdk:"filter"`
+	UARuleID      types.String                                                                `tfsdk:"ua_rule_id" path:"ua_rule_id,optional"`
+	ZoneID        types.String                                                                `tfsdk:"zone_id" path:"zone_id,optional"`
+	Description   types.String                                                                `tfsdk:"description" json:"description,computed"`
+	ID            types.String                                                                `tfsdk:"id" json:"id,computed"`
+	Mode          types.String                                                                `tfsdk:"mode" json:"mode,computed"`
+	Paused        types.Bool                                                                  `tfsdk:"paused" json:"paused,computed"`
+	Configuration customfield.NestedObject[UserAgentBlockingRuleConfigurationDataSourceModel] `tfsdk:"configuration" json:"configuration,computed"`
+	Filter        *UserAgentBlockingRuleFindOneByDataSourceModel                              `tfsdk:"filter"`
 }
 
 func (m *UserAgentBlockingRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.UARuleGetParams, diags diag.Diagnostics) {

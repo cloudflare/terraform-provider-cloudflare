@@ -5,6 +5,7 @@ package secondary_dns_outgoing
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -20,30 +21,31 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"checked_time": schema.StringAttribute{
 				Description: "The time for a specific event.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"created_time": schema.StringAttribute{
 				Description: "The time for a specific event.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"last_transferred_time": schema.StringAttribute{
 				Description: "The time for a specific event.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Zone name.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"soa_serial": schema.Float64Attribute{
 				Description: "The serial number of the SOA for the given zone.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"peers": schema.ListAttribute{
 				Description: "A list of peer tags.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 		},

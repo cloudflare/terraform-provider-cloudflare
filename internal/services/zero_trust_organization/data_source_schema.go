@@ -5,6 +5,7 @@ package zero_trust_organization
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -27,46 +28,51 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"allow_authenticate_via_warp": schema.BoolAttribute{
 				Description: "When set to true, users can authenticate via WARP for any application in your organization. Application settings will take precedence over this value.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"auth_domain": schema.StringAttribute{
 				Description: "The unique subdomain assigned to your Zero Trust organization.",
-				Optional:    true,
+				Computed:    true,
+			},
+			"auto_redirect_to_identity": schema.BoolAttribute{
+				Description: "When set to `true`, users skip the identity provider selection step during login.",
+				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
-				Optional:   true,
+				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"is_ui_read_only": schema.BoolAttribute{
 				Description: "Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of your Zero Trust organization.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"session_duration": schema.StringAttribute{
 				Description: "The amount of time that tokens issued for applications will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"ui_read_only_toggle_reason": schema.StringAttribute{
 				Description: "A description of the reason why the UI read only field is being toggled.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"updated_at": schema.StringAttribute{
-				Optional:   true,
+				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"user_seat_expiration_inactive_time": schema.StringAttribute{
 				Description: "The amount of time a user seat is inactive before it expires. When the user seat exceeds the set time of inactivity, the user is removed as an active seat and no longer counts against your Teams seat count.  Minimum value for this setting is 1 month (730h). Must be in the format `300ms` or `2h45m`. Valid time units are: `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"warp_auth_session_duration": schema.StringAttribute{
 				Description: "The amount of time that tokens issued for applications will be valid. Must be in the format `30m` or `2h45m`. Valid time units are: m, h.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"custom_pages": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[ZeroTrustOrganizationCustomPagesDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"forbidden": schema.StringAttribute{
 						Description: "The uid of the custom page to use when a user is denied access after failing a non-identity rule.",
@@ -79,7 +85,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"login_design": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[ZeroTrustOrganizationLoginDesignDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"background_color": schema.StringAttribute{
 						Description: "The background color on your login page.",
@@ -102,11 +109,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 				},
-			},
-			"auto_redirect_to_identity": schema.BoolAttribute{
-				Description: "When set to `true`, users skip the identity provider selection step during login.",
-				Computed:    true,
-				Optional:    true,
 			},
 		},
 	}

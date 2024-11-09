@@ -23,20 +23,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"editable": schema.BoolAttribute{
 				Description: "Whether the setting is editable",
-				Optional:    true,
+				Computed:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "The identifier of the caching setting",
-				Optional:    true,
+				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "The time when the setting was last modified",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"value": schema.StringAttribute{
 				Description: "The status of the feature being on / off",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),
 				},

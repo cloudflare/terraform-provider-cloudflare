@@ -19,9 +19,9 @@ type StreamCaptionLanguageDataSourceModel struct {
 	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
 	Identifier types.String `tfsdk:"identifier" path:"identifier,required"`
 	Language   types.String `tfsdk:"language" path:"language,computed"`
-	Generated  types.Bool   `tfsdk:"generated" json:"generated,optional"`
-	Label      types.String `tfsdk:"label" json:"label,optional"`
-	Status     types.String `tfsdk:"status" json:"status,optional"`
+	Generated  types.Bool   `tfsdk:"generated" json:"generated,computed"`
+	Label      types.String `tfsdk:"label" json:"label,computed"`
+	Status     types.String `tfsdk:"status" json:"status,computed"`
 }
 
 func (m *StreamCaptionLanguageDataSourceModel) toReadParams(_ context.Context) (params stream.CaptionLanguageGetParams, diags diag.Diagnostics) {

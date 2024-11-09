@@ -5,6 +5,7 @@ package r2_custom_domain
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -30,15 +31,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"domain": schema.StringAttribute{
 				Description: "Domain name of the custom domain to be added",
-				Optional:    true,
+				Computed:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether this bucket is publicly accessible at the specified custom domain",
-				Optional:    true,
+				Computed:    true,
 			},
 			"min_tls": schema.StringAttribute{
 				Description: "Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"1.0",
@@ -50,14 +51,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Zone ID of the custom domain resides in",
-				Optional:    true,
+				Computed:    true,
 			},
 			"zone_name": schema.StringAttribute{
 				Description: "Zone that the custom domain resides in",
-				Optional:    true,
+				Computed:    true,
 			},
 			"status": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[R2CustomDomainStatusDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ownership": schema.StringAttribute{
 						Description: "Ownership status of the domain",

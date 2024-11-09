@@ -28,16 +28,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
-				Optional:   true,
+				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"source": schema.StringAttribute{
+				Description: "Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel's configuration on the Zero Trust dashboard.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("local", "cloudflare"),
+				},
 			},
 			"version": schema.Int64Attribute{
 				Description: "The version of the Tunnel Configuration.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The tunnel configuration and ingress rules.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ingress": schema.ListNestedAttribute{
 						Description: "List of public hostname definitions. At least one ingress rule needs to be defined for the tunnel.",
@@ -228,14 +236,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-				},
-			},
-			"source": schema.StringAttribute{
-				Description: "Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel's configuration on the Zero Trust dashboard.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("local", "cloudflare"),
 				},
 			},
 		},

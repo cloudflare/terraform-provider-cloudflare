@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/cache"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,10 +18,10 @@ type RegionalTieredCacheResultDataSourceEnvelope struct {
 }
 
 type RegionalTieredCacheDataSourceModel struct {
-	ZoneID     types.String                             `tfsdk:"zone_id" path:"zone_id,required"`
-	ID         types.String                             `tfsdk:"id" json:"id,optional"`
-	ModifiedOn timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,optional" format:"date-time"`
-	Value      *RegionalTieredCacheValueDataSourceModel `tfsdk:"value" json:"value,optional"`
+	ZoneID     types.String                                                      `tfsdk:"zone_id" path:"zone_id,required"`
+	ID         types.String                                                      `tfsdk:"id" json:"id,computed"`
+	ModifiedOn timetypes.RFC3339                                                 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Value      customfield.NestedObject[RegionalTieredCacheValueDataSourceModel] `tfsdk:"value" json:"value,computed"`
 }
 
 func (m *RegionalTieredCacheDataSourceModel) toReadParams(_ context.Context) (params cache.RegionalTieredCacheGetParams, diags diag.Diagnostics) {

@@ -22,21 +22,21 @@ type RegistrarDomainResultListDataSourceEnvelope struct {
 }
 
 type RegistrarDomainDataSourceModel struct {
-	AccountID         types.String                                     `tfsdk:"account_id" path:"account_id,optional"`
-	DomainName        types.String                                     `tfsdk:"domain_name" path:"domain_name,optional"`
-	Available         types.Bool                                       `tfsdk:"available" json:"available,optional"`
-	CanRegister       types.Bool                                       `tfsdk:"can_register" json:"can_register,optional"`
-	CreatedAt         timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at,optional" format:"date-time"`
-	CurrentRegistrar  types.String                                     `tfsdk:"current_registrar" json:"current_registrar,optional"`
-	ExpiresAt         timetypes.RFC3339                                `tfsdk:"expires_at" json:"expires_at,optional" format:"date-time"`
-	ID                types.String                                     `tfsdk:"id" json:"id,optional"`
-	Locked            types.Bool                                       `tfsdk:"locked" json:"locked,optional"`
-	RegistryStatuses  types.String                                     `tfsdk:"registry_statuses" json:"registry_statuses,optional"`
-	SupportedTld      types.Bool                                       `tfsdk:"supported_tld" json:"supported_tld,optional"`
-	UpdatedAt         timetypes.RFC3339                                `tfsdk:"updated_at" json:"updated_at,optional" format:"date-time"`
-	RegistrantContact *RegistrarDomainRegistrantContactDataSourceModel `tfsdk:"registrant_contact" json:"registrant_contact,optional"`
-	TransferIn        *RegistrarDomainTransferInDataSourceModel        `tfsdk:"transfer_in" json:"transfer_in,optional"`
-	Filter            *RegistrarDomainFindOneByDataSourceModel         `tfsdk:"filter"`
+	AccountID         types.String                                                              `tfsdk:"account_id" path:"account_id,optional"`
+	DomainName        types.String                                                              `tfsdk:"domain_name" path:"domain_name,optional"`
+	Available         types.Bool                                                                `tfsdk:"available" json:"available,computed"`
+	CanRegister       types.Bool                                                                `tfsdk:"can_register" json:"can_register,computed"`
+	CreatedAt         timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	CurrentRegistrar  types.String                                                              `tfsdk:"current_registrar" json:"current_registrar,computed"`
+	ExpiresAt         timetypes.RFC3339                                                         `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
+	ID                types.String                                                              `tfsdk:"id" json:"id,computed"`
+	Locked            types.Bool                                                                `tfsdk:"locked" json:"locked,computed"`
+	RegistryStatuses  types.String                                                              `tfsdk:"registry_statuses" json:"registry_statuses,computed"`
+	SupportedTld      types.Bool                                                                `tfsdk:"supported_tld" json:"supported_tld,computed"`
+	UpdatedAt         timetypes.RFC3339                                                         `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	RegistrantContact customfield.NestedObject[RegistrarDomainRegistrantContactDataSourceModel] `tfsdk:"registrant_contact" json:"registrant_contact,computed"`
+	TransferIn        customfield.NestedObject[RegistrarDomainTransferInDataSourceModel]        `tfsdk:"transfer_in" json:"transfer_in,computed"`
+	Filter            *RegistrarDomainFindOneByDataSourceModel                                  `tfsdk:"filter"`
 }
 
 func (m *RegistrarDomainDataSourceModel) toReadParams(_ context.Context) (params registrar.DomainGetParams, diags diag.Diagnostics) {

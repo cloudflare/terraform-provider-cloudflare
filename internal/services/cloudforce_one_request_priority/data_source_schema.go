@@ -26,40 +26,40 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"completed": schema.StringAttribute{
-				Optional:   true,
+				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"content": schema.StringAttribute{
 				Description: "Request content",
-				Optional:    true,
+				Computed:    true,
 			},
 			"created": schema.StringAttribute{
-				Optional:   true,
+				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"id": schema.StringAttribute{
 				Description: "UUID",
-				Optional:    true,
+				Computed:    true,
 			},
 			"message_tokens": schema.Int64Attribute{
 				Description: "Tokens for the request messages",
-				Optional:    true,
+				Computed:    true,
 			},
 			"priority": schema.StringAttribute{
-				Optional:   true,
+				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"readable_id": schema.StringAttribute{
 				Description: "Readable Request ID",
-				Optional:    true,
+				Computed:    true,
 			},
 			"request": schema.StringAttribute{
 				Description: "Requested information from request",
-				Optional:    true,
+				Computed:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "Request Status",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"open",
@@ -73,11 +73,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"summary": schema.StringAttribute{
 				Description: "Brief description of the request",
-				Optional:    true,
+				Computed:    true,
 			},
 			"tlp": schema.StringAttribute{
 				Description: "The CISA defined Traffic Light Protocol (TLP)",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"clear",
@@ -90,10 +90,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"tokens": schema.Int64Attribute{
 				Description: "Tokens for the request",
-				Optional:    true,
+				Computed:    true,
 			},
 			"updated": schema.StringAttribute{
-				Optional:   true,
+				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 		},

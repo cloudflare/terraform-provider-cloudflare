@@ -22,21 +22,26 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Required:    true,
 			},
+			"enabled": schema.BoolAttribute{
+				Description: "Routing rule status.",
+				Computed:    true,
+			},
 			"id": schema.StringAttribute{
 				Description: "Routing rule identifier.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Routing rule name.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"tag": schema.StringAttribute{
 				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
-				Optional:    true,
+				Computed:    true,
 			},
 			"actions": schema.ListNestedAttribute{
 				Description: "List actions for the catch-all routing rule.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[EmailRoutingCatchAllActionsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
@@ -60,7 +65,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"matchers": schema.ListNestedAttribute{
 				Description: "List of matchers for the catch-all routing rule.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[EmailRoutingCatchAllMatchersDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
@@ -72,11 +78,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"enabled": schema.BoolAttribute{
-				Description: "Routing rule status.",
-				Computed:    true,
-				Optional:    true,
 			},
 		},
 	}

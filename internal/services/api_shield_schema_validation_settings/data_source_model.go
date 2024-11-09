@@ -13,8 +13,8 @@ import (
 
 type APIShieldSchemaValidationSettingsDataSourceModel struct {
 	ZoneID                             types.String `tfsdk:"zone_id" path:"zone_id,required"`
-	ValidationDefaultMitigationAction  types.String `tfsdk:"validation_default_mitigation_action" json:"validation_default_mitigation_action,optional"`
-	ValidationOverrideMitigationAction types.String `tfsdk:"validation_override_mitigation_action" json:"validation_override_mitigation_action,optional"`
+	ValidationDefaultMitigationAction  types.String `tfsdk:"validation_default_mitigation_action" json:"validation_default_mitigation_action,computed"`
+	ValidationOverrideMitigationAction types.String `tfsdk:"validation_override_mitigation_action" json:"validation_override_mitigation_action,computed"`
 }
 
 func (m *APIShieldSchemaValidationSettingsDataSourceModel) toReadParams(_ context.Context) (params api_gateway.SettingSchemaValidationGetParams, diags diag.Diagnostics) {

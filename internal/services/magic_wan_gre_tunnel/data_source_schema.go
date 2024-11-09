@@ -27,7 +27,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"gre_tunnel": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelGRETunnelDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"cloudflare_gre_endpoint": schema.StringAttribute{
 						Description: "The IP address assigned to the Cloudflare side of the GRE tunnel.",

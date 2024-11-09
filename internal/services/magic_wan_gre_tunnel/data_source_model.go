@@ -18,9 +18,9 @@ type MagicWANGRETunnelResultDataSourceEnvelope struct {
 }
 
 type MagicWANGRETunnelDataSourceModel struct {
-	AccountID   types.String                               `tfsdk:"account_id" path:"account_id,required"`
-	GRETunnelID types.String                               `tfsdk:"gre_tunnel_id" path:"gre_tunnel_id,required"`
-	GRETunnel   *MagicWANGRETunnelGRETunnelDataSourceModel `tfsdk:"gre_tunnel" json:"gre_tunnel,optional"`
+	AccountID   types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
+	GRETunnelID types.String                                                        `tfsdk:"gre_tunnel_id" path:"gre_tunnel_id,required"`
+	GRETunnel   customfield.NestedObject[MagicWANGRETunnelGRETunnelDataSourceModel] `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
 }
 
 func (m *MagicWANGRETunnelDataSourceModel) toReadParams(_ context.Context) (params magic_transit.GRETunnelGetParams, diags diag.Diagnostics) {
