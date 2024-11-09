@@ -5,6 +5,7 @@ package address_map
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -26,49 +27,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"address_map_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
-			},
-			"ips": schema.ListNestedAttribute{
-				Description: "The set of IPs on the Address Map.",
-				Optional:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"created_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
-						},
-						"ip": schema.StringAttribute{
-							Description: "An IPv4 or IPv6 address.",
-							Computed:    true,
-						},
-					},
-				},
-			},
-			"memberships": schema.ListNestedAttribute{
-				Description: "Zones and Accounts which will be assigned IPs on this Address Map. A zone membership will take priority over an account membership.",
-				Optional:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"can_delete": schema.BoolAttribute{
-							Description: "Controls whether the membership can be deleted via the API or not.",
-							Computed:    true,
-						},
-						"created_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
-						},
-						"identifier": schema.StringAttribute{
-							Description: "The identifier for the membership (eg. a zone or account tag).",
-							Computed:    true,
-						},
-						"kind": schema.StringAttribute{
-							Description: "The type of the membership.",
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("zone", "account"),
-							},
-						},
-					},
-				},
 			},
 			"can_delete": schema.BoolAttribute{
 				Description: "If set to false, then the Address Map cannot be deleted via API. This is true for Cloudflare-managed maps.",
@@ -101,6 +59,51 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"modified_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"ips": schema.ListNestedAttribute{
+				Description: "The set of IPs on the Address Map.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[AddressMapIPsDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"created_at": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
+						},
+						"ip": schema.StringAttribute{
+							Description: "An IPv4 or IPv6 address.",
+							Computed:    true,
+						},
+					},
+				},
+			},
+			"memberships": schema.ListNestedAttribute{
+				Description: "Zones and Accounts which will be assigned IPs on this Address Map. A zone membership will take priority over an account membership.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[AddressMapMembershipsDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"can_delete": schema.BoolAttribute{
+							Description: "Controls whether the membership can be deleted via the API or not.",
+							Computed:    true,
+						},
+						"created_at": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
+						},
+						"identifier": schema.StringAttribute{
+							Description: "The identifier for the membership (eg. a zone or account tag).",
+							Computed:    true,
+						},
+						"kind": schema.StringAttribute{
+							Description: "The type of the membership.",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("zone", "account"),
+							},
+						},
+					},
+				},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

@@ -30,56 +30,99 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 			},
+			"created_on": schema.StringAttribute{
+				Description: "When the project was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
 			"environment": schema.StringAttribute{
 				Description: "Type of deploy.",
-				Optional:    true,
+				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "Id of the project.",
+				Computed:    true,
 			},
 			"is_skipped": schema.BoolAttribute{
 				Description: "If the deployment has been skipped.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the deployment was last modified.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
 				Description: "Name of the project.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"production_branch": schema.StringAttribute{
 				Description: "Production branch of the project. Used to identify production deployments.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"project_id": schema.StringAttribute{
 				Description: "Id of the project.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"short_id": schema.StringAttribute{
 				Description: "Short Id (8 character) of the deployment.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"subdomain": schema.StringAttribute{
 				Description: "The Cloudflare subdomain associated with the project.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"url": schema.StringAttribute{
 				Description: "The live URL to view this deployment.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"aliases": schema.ListAttribute{
 				Description: "A list of alias URLs pointing to this deployment.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"domains": schema.ListAttribute{
 				Description: "A list of associated custom domains for the project.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
+			},
+			"build_config": schema.SingleNestedAttribute{
+				Description: "Configs for the project build process.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[PagesProjectBuildConfigDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"build_caching": schema.BoolAttribute{
+						Description: "Enable build caching for the project.",
+						Computed:    true,
+					},
+					"build_command": schema.StringAttribute{
+						Description: "Command used to build project.",
+						Computed:    true,
+					},
+					"destination_dir": schema.StringAttribute{
+						Description: "Output directory of the build.",
+						Computed:    true,
+					},
+					"root_dir": schema.StringAttribute{
+						Description: "Directory to run the command.",
+						Computed:    true,
+					},
+					"web_analytics_tag": schema.StringAttribute{
+						Description: "The classifying tag for analytics.",
+						Computed:    true,
+					},
+					"web_analytics_token": schema.StringAttribute{
+						Description: "The auth token for analytics.",
+						Computed:    true,
+					},
+				},
 			},
 			"canonical_deployment": schema.SingleNestedAttribute{
 				Description: "Most recent deployment to the repo.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Id of the deployment.",
@@ -322,7 +365,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"deployment_configs": schema.SingleNestedAttribute{
 				Description: "Configs for deployments in a project.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentConfigsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"preview": schema.SingleNestedAttribute{
 						Description: "Configs for preview deploys.",
@@ -742,7 +786,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"deployment_trigger": schema.SingleNestedAttribute{
 				Description: "Info about what caused the deployment.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentTriggerDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"metadata": schema.SingleNestedAttribute{
 						Description: "Additional info about the trigger.",
@@ -771,7 +816,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"env_vars": schema.MapNestedAttribute{
 				Description: "A dict of env variables to build this deploy.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectMapType[PagesProjectEnvVarsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"value": schema.StringAttribute{
@@ -787,7 +833,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"latest_deployment": schema.SingleNestedAttribute{
 				Description: "Most recent deployment to the repo.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[PagesProjectLatestDeploymentDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Id of the deployment.",
@@ -1030,7 +1077,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"latest_stage": schema.SingleNestedAttribute{
 				Description: "The status of the deployment.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[PagesProjectLatestStageDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ended_on": schema.StringAttribute{
 						Description: "When the stage ended.",
@@ -1048,72 +1096,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"status": schema.StringAttribute{
 						Description: "State of the current stage.",
-						Computed:    true,
-					},
-				},
-			},
-			"stages": schema.ListNestedAttribute{
-				Description: "List of past stages.",
-				Optional:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"ended_on": schema.StringAttribute{
-							Description: "When the stage ended.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
-						"name": schema.StringAttribute{
-							Description: "The current build stage.",
-							Computed:    true,
-						},
-						"started_on": schema.StringAttribute{
-							Description: "When the stage started.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
-						"status": schema.StringAttribute{
-							Description: "State of the current stage.",
-							Computed:    true,
-						},
-					},
-				},
-			},
-			"created_on": schema.StringAttribute{
-				Description: "When the project was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Id of the project.",
-				Computed:    true,
-			},
-			"build_config": schema.SingleNestedAttribute{
-				Description: "Configs for the project build process.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[PagesProjectBuildConfigDataSourceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"build_caching": schema.BoolAttribute{
-						Description: "Enable build caching for the project.",
-						Computed:    true,
-					},
-					"build_command": schema.StringAttribute{
-						Description: "Command used to build project.",
-						Computed:    true,
-					},
-					"destination_dir": schema.StringAttribute{
-						Description: "Output directory of the build.",
-						Computed:    true,
-					},
-					"root_dir": schema.StringAttribute{
-						Description: "Directory to run the command.",
-						Computed:    true,
-					},
-					"web_analytics_tag": schema.StringAttribute{
-						Description: "The classifying tag for analytics.",
-						Computed:    true,
-					},
-					"web_analytics_token": schema.StringAttribute{
-						Description: "The auth token for analytics.",
 						Computed:    true,
 					},
 				},
@@ -1178,6 +1160,33 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"type": schema.StringAttribute{
 						Computed: true,
+					},
+				},
+			},
+			"stages": schema.ListNestedAttribute{
+				Description: "List of past stages.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[PagesProjectStagesDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"ended_on": schema.StringAttribute{
+							Description: "When the stage ended.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"name": schema.StringAttribute{
+							Description: "The current build stage.",
+							Computed:    true,
+						},
+						"started_on": schema.StringAttribute{
+							Description: "When the stage started.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"status": schema.StringAttribute{
+							Description: "State of the current stage.",
+							Computed:    true,
+						},
 					},
 				},
 			},

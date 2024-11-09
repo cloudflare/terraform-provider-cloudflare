@@ -23,9 +23,9 @@ type ZeroTrustLocalDomainFallbackResultListDataSourceEnvelope struct {
 type ZeroTrustLocalDomainFallbackDataSourceModel struct {
 	AccountID   types.String                                          `tfsdk:"account_id" path:"account_id,optional"`
 	PolicyID    types.String                                          `tfsdk:"policy_id" path:"policy_id,optional"`
-	Description types.String                                          `tfsdk:"description" json:"description,optional"`
-	Suffix      types.String                                          `tfsdk:"suffix" json:"suffix,optional"`
-	DNSServer   *[]types.String                                       `tfsdk:"dns_server" json:"dns_server,optional"`
+	Description types.String                                          `tfsdk:"description" json:"description,computed"`
+	Suffix      types.String                                          `tfsdk:"suffix" json:"suffix,computed"`
+	DNSServer   customfield.List[types.String]                        `tfsdk:"dns_server" json:"dns_server,computed"`
 	Filter      *ZeroTrustLocalDomainFallbackFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

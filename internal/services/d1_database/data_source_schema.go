@@ -24,19 +24,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"database_id": schema.StringAttribute{
 				Optional: true,
 			},
-			"file_size": schema.Float64Attribute{
-				Description: "The D1 database's size, in bytes.",
-				Optional:    true,
-			},
-			"num_tables": schema.Float64Attribute{
-				Optional: true,
-			},
 			"created_at": schema.StringAttribute{
 				Description: "Specifies the timestamp the resource was created as an ISO8601 string.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"file_size": schema.Float64Attribute{
+				Description: "The D1 database's size, in bytes.",
+				Computed:    true,
+			},
 			"name": schema.StringAttribute{
+				Computed: true,
+			},
+			"num_tables": schema.Float64Attribute{
 				Computed: true,
 			},
 			"uuid": schema.StringAttribute{

@@ -30,15 +30,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"generated": schema.BoolAttribute{
 				Description: "Whether the caption was generated via AI.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"label": schema.StringAttribute{
 				Description: "The language label displayed in the native language to users.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "The status of a generated caption.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"ready",

@@ -18,15 +18,15 @@ type APIShieldOperationResultListDataSourceEnvelope struct {
 }
 
 type APIShieldOperationDataSourceModel struct {
-	Endpoint    types.String                                `tfsdk:"endpoint" json:"endpoint,optional"`
-	Host        types.String                                `tfsdk:"host" json:"host,optional"`
-	ID          types.String                                `tfsdk:"id" json:"id,optional"`
-	LastUpdated timetypes.RFC3339                           `tfsdk:"last_updated" json:"last_updated,optional" format:"date-time"`
-	Method      types.String                                `tfsdk:"method" json:"method,optional"`
-	State       types.String                                `tfsdk:"state" json:"state,optional"`
-	Origin      *[]types.String                             `tfsdk:"origin" json:"origin,optional"`
-	Features    *APIShieldOperationFeaturesDataSourceModel  `tfsdk:"features" json:"features,optional"`
-	Filter      *APIShieldOperationFindOneByDataSourceModel `tfsdk:"filter"`
+	Endpoint    types.String                                                        `tfsdk:"endpoint" json:"endpoint,computed"`
+	Host        types.String                                                        `tfsdk:"host" json:"host,computed"`
+	ID          types.String                                                        `tfsdk:"id" json:"id,computed"`
+	LastUpdated timetypes.RFC3339                                                   `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	Method      types.String                                                        `tfsdk:"method" json:"method,computed"`
+	State       types.String                                                        `tfsdk:"state" json:"state,computed"`
+	Origin      customfield.List[types.String]                                      `tfsdk:"origin" json:"origin,computed"`
+	Features    customfield.NestedObject[APIShieldOperationFeaturesDataSourceModel] `tfsdk:"features" json:"features,computed"`
+	Filter      *APIShieldOperationFindOneByDataSourceModel                         `tfsdk:"filter"`
 }
 
 func (m *APIShieldOperationDataSourceModel) toListParams(_ context.Context) (params api_gateway.DiscoveryOperationListParams, diags diag.Diagnostics) {

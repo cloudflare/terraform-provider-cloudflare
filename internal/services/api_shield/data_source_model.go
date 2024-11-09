@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/api_gateway"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,9 +17,9 @@ type APIShieldResultDataSourceEnvelope struct {
 }
 
 type APIShieldDataSourceModel struct {
-	ZoneID                types.String                                      `tfsdk:"zone_id" path:"zone_id,required"`
-	Properties            *[]types.String                                   `tfsdk:"properties" query:"properties,optional"`
-	AuthIDCharacteristics *[]*APIShieldAuthIDCharacteristicsDataSourceModel `tfsdk:"auth_id_characteristics" json:"auth_id_characteristics,optional"`
+	ZoneID                types.String                                                                `tfsdk:"zone_id" path:"zone_id,required"`
+	Properties            *[]types.String                                                             `tfsdk:"properties" query:"properties,optional"`
+	AuthIDCharacteristics customfield.NestedObjectList[APIShieldAuthIDCharacteristicsDataSourceModel] `tfsdk:"auth_id_characteristics" json:"auth_id_characteristics,computed"`
 }
 
 func (m *APIShieldDataSourceModel) toReadParams(_ context.Context) (params api_gateway.ConfigurationGetParams, diags diag.Diagnostics) {

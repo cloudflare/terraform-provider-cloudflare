@@ -26,7 +26,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"mitigation_action": schema.StringAttribute{
 				Description: "When set, this applies a mitigation action to this operation\n\n  - `log` log request when request does not conform to schema for this operation\n  - `block` deny access to the site when request does not conform to schema for this operation\n  - `none` will skip mitigation for this operation\n  - `null` indicates that no operation level mitigation is in place, see Zone Level Schema Validation Settings for mitigation action that will be applied\n",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"log",

@@ -23,10 +23,10 @@ type AccountRoleResultListDataSourceEnvelope struct {
 type AccountRoleDataSourceModel struct {
 	AccountID   types.String                         `tfsdk:"account_id" path:"account_id,optional"`
 	RoleID      types.String                         `tfsdk:"role_id" path:"role_id,optional"`
-	Description types.String                         `tfsdk:"description" json:"description,optional"`
-	ID          types.String                         `tfsdk:"id" json:"id,optional"`
-	Name        types.String                         `tfsdk:"name" json:"name,optional"`
-	Permissions *[]types.String                      `tfsdk:"permissions" json:"permissions,optional"`
+	Description types.String                         `tfsdk:"description" json:"description,computed"`
+	ID          types.String                         `tfsdk:"id" json:"id,computed"`
+	Name        types.String                         `tfsdk:"name" json:"name,computed"`
+	Permissions customfield.List[types.String]       `tfsdk:"permissions" json:"permissions,computed"`
 	Filter      *AccountRoleFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

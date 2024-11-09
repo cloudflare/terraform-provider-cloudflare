@@ -18,10 +18,10 @@ type TieredCacheResultDataSourceEnvelope struct {
 
 type TieredCacheDataSourceModel struct {
 	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
-	Editable   types.Bool        `tfsdk:"editable" json:"editable,optional"`
-	ID         types.String      `tfsdk:"id" json:"id,optional"`
-	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,optional" format:"date-time"`
-	Value      types.String      `tfsdk:"value" json:"value,optional"`
+	Editable   types.Bool        `tfsdk:"editable" json:"editable,computed"`
+	ID         types.String      `tfsdk:"id" json:"id,computed"`
+	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Value      types.String      `tfsdk:"value" json:"value,computed"`
 }
 
 func (m *TieredCacheDataSourceModel) toReadParams(_ context.Context) (params cache.SmartTieredCacheGetParams, diags diag.Diagnostics) {

@@ -5,6 +5,7 @@ package managed_transforms
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -19,7 +20,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"managed_request_headers": schema.ListNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[ManagedTransformsManagedRequestHeadersDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -34,7 +36,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"managed_response_headers": schema.ListNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[ManagedTransformsManagedResponseHeadersDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

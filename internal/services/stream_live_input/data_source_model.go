@@ -19,21 +19,21 @@ type StreamLiveInputResultDataSourceEnvelope struct {
 }
 
 type StreamLiveInputDataSourceModel struct {
-	AccountID                types.String                                  `tfsdk:"account_id" path:"account_id,required"`
-	LiveInputIdentifier      types.String                                  `tfsdk:"live_input_identifier" path:"live_input_identifier,required"`
-	Created                  timetypes.RFC3339                             `tfsdk:"created" json:"created,optional" format:"date-time"`
-	DeleteRecordingAfterDays types.Float64                                 `tfsdk:"delete_recording_after_days" json:"deleteRecordingAfterDays,optional"`
-	Modified                 timetypes.RFC3339                             `tfsdk:"modified" json:"modified,optional" format:"date-time"`
-	Status                   types.String                                  `tfsdk:"status" json:"status,optional"`
-	UID                      types.String                                  `tfsdk:"uid" json:"uid,optional"`
-	Recording                *StreamLiveInputRecordingDataSourceModel      `tfsdk:"recording" json:"recording,optional"`
-	Rtmps                    *StreamLiveInputRtmpsDataSourceModel          `tfsdk:"rtmps" json:"rtmps,optional"`
-	RtmpsPlayback            *StreamLiveInputRtmpsPlaybackDataSourceModel  `tfsdk:"rtmps_playback" json:"rtmpsPlayback,optional"`
-	Srt                      *StreamLiveInputSrtDataSourceModel            `tfsdk:"srt" json:"srt,optional"`
-	SrtPlayback              *StreamLiveInputSrtPlaybackDataSourceModel    `tfsdk:"srt_playback" json:"srtPlayback,optional"`
-	WebRtc                   *StreamLiveInputWebRtcDataSourceModel         `tfsdk:"web_rtc" json:"webRTC,optional"`
-	WebRtcPlayback           *StreamLiveInputWebRtcPlaybackDataSourceModel `tfsdk:"web_rtc_playback" json:"webRTCPlayback,optional"`
-	Meta                     jsontypes.Normalized                          `tfsdk:"meta" json:"meta,optional"`
+	AccountID                types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
+	LiveInputIdentifier      types.String                                                           `tfsdk:"live_input_identifier" path:"live_input_identifier,required"`
+	Created                  timetypes.RFC3339                                                      `tfsdk:"created" json:"created,computed" format:"date-time"`
+	DeleteRecordingAfterDays types.Float64                                                          `tfsdk:"delete_recording_after_days" json:"deleteRecordingAfterDays,computed"`
+	Modified                 timetypes.RFC3339                                                      `tfsdk:"modified" json:"modified,computed" format:"date-time"`
+	Status                   types.String                                                           `tfsdk:"status" json:"status,computed"`
+	UID                      types.String                                                           `tfsdk:"uid" json:"uid,computed"`
+	Recording                customfield.NestedObject[StreamLiveInputRecordingDataSourceModel]      `tfsdk:"recording" json:"recording,computed"`
+	Rtmps                    customfield.NestedObject[StreamLiveInputRtmpsDataSourceModel]          `tfsdk:"rtmps" json:"rtmps,computed"`
+	RtmpsPlayback            customfield.NestedObject[StreamLiveInputRtmpsPlaybackDataSourceModel]  `tfsdk:"rtmps_playback" json:"rtmpsPlayback,computed"`
+	Srt                      customfield.NestedObject[StreamLiveInputSrtDataSourceModel]            `tfsdk:"srt" json:"srt,computed"`
+	SrtPlayback              customfield.NestedObject[StreamLiveInputSrtPlaybackDataSourceModel]    `tfsdk:"srt_playback" json:"srtPlayback,computed"`
+	WebRtc                   customfield.NestedObject[StreamLiveInputWebRtcDataSourceModel]         `tfsdk:"web_rtc" json:"webRTC,computed"`
+	WebRtcPlayback           customfield.NestedObject[StreamLiveInputWebRtcPlaybackDataSourceModel] `tfsdk:"web_rtc_playback" json:"webRTCPlayback,computed"`
+	Meta                     jsontypes.Normalized                                                   `tfsdk:"meta" json:"meta,computed"`
 }
 
 func (m *StreamLiveInputDataSourceModel) toReadParams(_ context.Context) (params stream.LiveInputGetParams, diags diag.Diagnostics) {

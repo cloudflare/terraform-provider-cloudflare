@@ -27,11 +27,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"cert_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Computed:    true,
 			},
 			"cert_status": schema.StringAttribute{
 				Description: "Status of the certificate or the association.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"initializing",
@@ -46,47 +46,47 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"cert_updated_at": schema.StringAttribute{
 				Description: "The time when the certificate was updated.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"cert_uploaded_on": schema.StringAttribute{
 				Description: "The time when the certificate was uploaded.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"certificate": schema.StringAttribute{
 				Description: "The hostname certificate.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "The time when the certificate was created.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Indicates whether hostname-level authenticated origin pulls is enabled. A null value voids the association.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "The date when the certificate expires.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"serial_number": schema.StringAttribute{
 				Description: "The serial number on the uploaded certificate.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"signature": schema.StringAttribute{
 				Description: "The type of hash used for the certificate.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the certificate or the association.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"initializing",
@@ -101,7 +101,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"updated_at": schema.StringAttribute{
 				Description: "The time when the certificate was updated.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 		},

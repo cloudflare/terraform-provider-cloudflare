@@ -34,10 +34,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"success": schema.BoolAttribute{
 				Description: "Whether the API call was successful",
-				Optional:    true,
+				Computed:    true,
 			},
 			"errors": schema.ListNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[SpectrumApplicationErrorsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
@@ -53,7 +54,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"messages": schema.ListNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[SpectrumApplicationMessagesDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
@@ -69,7 +71,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"result": schema.ListNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[SpectrumApplicationResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -229,7 +232,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"result_info": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[SpectrumApplicationResultInfoDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"count": schema.Float64Attribute{
 						Description: "Total number of results for the requested service",

@@ -18,9 +18,9 @@ type ZoneCacheReserveResultDataSourceEnvelope struct {
 
 type ZoneCacheReserveDataSourceModel struct {
 	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id,required"`
-	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,optional" format:"date-time"`
-	ZoneSettingID types.String      `tfsdk:"zone_setting_id" json:"id,optional"`
-	Value         types.String      `tfsdk:"value" json:"value,computed_optional"`
+	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Value         types.String      `tfsdk:"value" json:"value,computed"`
+	ZoneSettingID types.String      `tfsdk:"zone_setting_id" json:"id,computed"`
 }
 
 func (m *ZoneCacheReserveDataSourceModel) toReadParams(_ context.Context) (params cache.CacheReserveGetParams, diags diag.Diagnostics) {

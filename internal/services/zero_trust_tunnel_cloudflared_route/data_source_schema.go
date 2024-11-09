@@ -27,27 +27,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "UUID of the route.",
 				Optional:    true,
 			},
-			"tun_type": schema.StringAttribute{
-				Description: "The type of tunnel.",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"cfd_tunnel",
-						"warp_connector",
-						"ip_sec",
-						"gre",
-						"cni",
-					),
-				},
-			},
-			"tunnel_name": schema.StringAttribute{
-				Description: "A user-friendly name for a tunnel.",
-				Optional:    true,
-			},
-			"virtual_network_name": schema.StringAttribute{
-				Description: "A user-friendly name for the virtual network.",
-				Optional:    true,
-			},
 			"comment": schema.StringAttribute{
 				Description: "Optional remark describing the route.",
 				Computed:    true,
@@ -70,12 +49,33 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The private IPv4 or IPv6 range connected by the route, in CIDR notation.",
 				Computed:    true,
 			},
+			"tun_type": schema.StringAttribute{
+				Description: "The type of tunnel.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"cfd_tunnel",
+						"warp_connector",
+						"ip_sec",
+						"gre",
+						"cni",
+					),
+				},
+			},
 			"tunnel_id": schema.StringAttribute{
 				Description: "UUID of the tunnel.",
 				Computed:    true,
 			},
+			"tunnel_name": schema.StringAttribute{
+				Description: "A user-friendly name for a tunnel.",
+				Computed:    true,
+			},
 			"virtual_network_id": schema.StringAttribute{
 				Description: "UUID of the virtual network.",
+				Computed:    true,
+			},
+			"virtual_network_name": schema.StringAttribute{
+				Description: "A user-friendly name for the virtual network.",
 				Computed:    true,
 			},
 			"filter": schema.SingleNestedAttribute{

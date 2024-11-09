@@ -55,7 +55,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"frequency": schema.StringAttribute{
 				Description: "The frequency of the test.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("DAILY", "WEEKLY"),
 				},

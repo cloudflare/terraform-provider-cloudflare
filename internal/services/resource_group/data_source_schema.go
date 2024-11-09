@@ -27,15 +27,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"id": schema.StringAttribute{
 				Description: "Identifier of the group.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Name of the resource group.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"meta": schema.SingleNestedAttribute{
 				Description: "Attributes associated to the resource group.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ResourceGroupMetaDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"key": schema.StringAttribute{
 						Computed: true,
@@ -47,7 +48,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"scope": schema.ListNestedAttribute{
 				Description: "The scope associated to the resource group",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[ResourceGroupScopeDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"key": schema.StringAttribute{

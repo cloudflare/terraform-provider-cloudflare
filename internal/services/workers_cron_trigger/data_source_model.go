@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/workers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,9 +17,9 @@ type WorkersCronTriggerResultDataSourceEnvelope struct {
 }
 
 type WorkersCronTriggerDataSourceModel struct {
-	AccountID  types.String                                   `tfsdk:"account_id" path:"account_id,required"`
-	ScriptName types.String                                   `tfsdk:"script_name" path:"script_name,required"`
-	Schedules  *[]*WorkersCronTriggerSchedulesDataSourceModel `tfsdk:"schedules" json:"schedules,optional"`
+	AccountID  types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
+	ScriptName types.String                                                             `tfsdk:"script_name" path:"script_name,required"`
+	Schedules  customfield.NestedObjectList[WorkersCronTriggerSchedulesDataSourceModel] `tfsdk:"schedules" json:"schedules,computed"`
 }
 
 func (m *WorkersCronTriggerDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptScheduleGetParams, diags diag.Diagnostics) {

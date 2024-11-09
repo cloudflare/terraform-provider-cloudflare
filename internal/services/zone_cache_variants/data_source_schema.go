@@ -25,19 +25,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"id": schema.StringAttribute{
 				Description: "ID of the zone setting.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("variants"),
 				},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "last time this setting was modified.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"value": schema.SingleNestedAttribute{
 				Description: "Value of the zone setting.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZoneCacheVariantsValueDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"avif": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for avif.",

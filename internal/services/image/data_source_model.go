@@ -23,19 +23,19 @@ type ImageItemsListDataSourceEnvelope struct {
 }
 
 type ImageDataSourceModel struct {
-	AccountID         types.String                     `tfsdk:"account_id" path:"account_id,optional"`
-	ImageID           types.String                     `tfsdk:"image_id" path:"image_id,optional"`
-	Filename          types.String                     `tfsdk:"filename" json:"filename,optional"`
-	ID                types.String                     `tfsdk:"id" json:"id,optional"`
-	Success           types.Bool                       `tfsdk:"success" json:"success,optional"`
-	Uploaded          timetypes.RFC3339                `tfsdk:"uploaded" json:"uploaded,optional" format:"date-time"`
-	Variants          *[]types.String                  `tfsdk:"variants" json:"variants,optional"`
-	Errors            *[]*ImageErrorsDataSourceModel   `tfsdk:"errors" json:"errors,optional"`
-	Messages          *[]*ImageMessagesDataSourceModel `tfsdk:"messages" json:"messages,optional"`
-	Result            *ImageResultDataSourceModel      `tfsdk:"result" json:"result,optional"`
-	Meta              jsontypes.Normalized             `tfsdk:"meta" json:"meta,optional"`
-	RequireSignedURLs types.Bool                       `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed_optional"`
-	Filter            *ImageFindOneByDataSourceModel   `tfsdk:"filter"`
+	AccountID         types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
+	ImageID           types.String                                               `tfsdk:"image_id" path:"image_id,optional"`
+	Filename          types.String                                               `tfsdk:"filename" json:"filename,computed"`
+	ID                types.String                                               `tfsdk:"id" json:"id,computed"`
+	RequireSignedURLs types.Bool                                                 `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed"`
+	Success           types.Bool                                                 `tfsdk:"success" json:"success,computed"`
+	Uploaded          timetypes.RFC3339                                          `tfsdk:"uploaded" json:"uploaded,computed" format:"date-time"`
+	Variants          customfield.List[types.String]                             `tfsdk:"variants" json:"variants,computed"`
+	Errors            customfield.NestedObjectList[ImageErrorsDataSourceModel]   `tfsdk:"errors" json:"errors,computed"`
+	Messages          customfield.NestedObjectList[ImageMessagesDataSourceModel] `tfsdk:"messages" json:"messages,computed"`
+	Result            customfield.NestedObject[ImageResultDataSourceModel]       `tfsdk:"result" json:"result,computed"`
+	Meta              jsontypes.Normalized                                       `tfsdk:"meta" json:"meta,computed"`
+	Filter            *ImageFindOneByDataSourceModel                             `tfsdk:"filter"`
 }
 
 func (m *ImageDataSourceModel) toReadParams(_ context.Context) (params images.V1GetParams, diags diag.Diagnostics) {

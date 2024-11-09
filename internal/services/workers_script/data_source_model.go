@@ -18,19 +18,19 @@ type WorkersScriptResultListDataSourceEnvelope struct {
 }
 
 type WorkersScriptDataSourceModel struct {
-	AccountID     types.String                                  `tfsdk:"account_id" path:"account_id,optional"`
-	ScriptName    types.String                                  `tfsdk:"script_name" path:"script_name,optional"`
-	CreatedOn     timetypes.RFC3339                             `tfsdk:"created_on" json:"created_on,optional" format:"date-time"`
-	Etag          types.String                                  `tfsdk:"etag" json:"etag,optional"`
-	HasAssets     types.Bool                                    `tfsdk:"has_assets" json:"has_assets,optional"`
-	HasModules    types.Bool                                    `tfsdk:"has_modules" json:"has_modules,optional"`
-	ID            types.String                                  `tfsdk:"id" json:"id,optional"`
-	Logpush       types.Bool                                    `tfsdk:"logpush" json:"logpush,optional"`
-	ModifiedOn    timetypes.RFC3339                             `tfsdk:"modified_on" json:"modified_on,optional" format:"date-time"`
-	PlacementMode types.String                                  `tfsdk:"placement_mode" json:"placement_mode,optional"`
-	UsageModel    types.String                                  `tfsdk:"usage_model" json:"usage_model,optional"`
-	TailConsumers *[]*WorkersScriptTailConsumersDataSourceModel `tfsdk:"tail_consumers" json:"tail_consumers,optional"`
-	Filter        *WorkersScriptFindOneByDataSourceModel        `tfsdk:"filter"`
+	AccountID     types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
+	ScriptName    types.String                                                            `tfsdk:"script_name" path:"script_name,optional"`
+	CreatedOn     timetypes.RFC3339                                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Etag          types.String                                                            `tfsdk:"etag" json:"etag,computed"`
+	HasAssets     types.Bool                                                              `tfsdk:"has_assets" json:"has_assets,computed"`
+	HasModules    types.Bool                                                              `tfsdk:"has_modules" json:"has_modules,computed"`
+	ID            types.String                                                            `tfsdk:"id" json:"id,computed"`
+	Logpush       types.Bool                                                              `tfsdk:"logpush" json:"logpush,computed"`
+	ModifiedOn    timetypes.RFC3339                                                       `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	PlacementMode types.String                                                            `tfsdk:"placement_mode" json:"placement_mode,computed"`
+	UsageModel    types.String                                                            `tfsdk:"usage_model" json:"usage_model,computed"`
+	TailConsumers customfield.NestedObjectList[WorkersScriptTailConsumersDataSourceModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
+	Filter        *WorkersScriptFindOneByDataSourceModel                                  `tfsdk:"filter"`
 }
 
 func (m *WorkersScriptDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptGetParams, diags diag.Diagnostics) {

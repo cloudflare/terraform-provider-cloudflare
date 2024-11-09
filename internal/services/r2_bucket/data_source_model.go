@@ -18,10 +18,10 @@ type R2BucketResultDataSourceEnvelope struct {
 type R2BucketDataSourceModel struct {
 	AccountID    types.String `tfsdk:"account_id" path:"account_id,required"`
 	BucketName   types.String `tfsdk:"bucket_name" path:"bucket_name,required"`
-	CreationDate types.String `tfsdk:"creation_date" json:"creation_date,optional"`
-	Location     types.String `tfsdk:"location" json:"location,optional"`
-	Name         types.String `tfsdk:"name" json:"name,optional"`
-	StorageClass types.String `tfsdk:"storage_class" json:"storage_class,computed_optional"`
+	CreationDate types.String `tfsdk:"creation_date" json:"creation_date,computed"`
+	Location     types.String `tfsdk:"location" json:"location,computed"`
+	Name         types.String `tfsdk:"name" json:"name,computed"`
+	StorageClass types.String `tfsdk:"storage_class" json:"storage_class,computed"`
 }
 
 func (m *R2BucketDataSourceModel) toReadParams(_ context.Context) (params r2.BucketGetParams, diags diag.Diagnostics) {

@@ -23,8 +23,8 @@ type CloudforceOneRequestResultListDataSourceEnvelope struct {
 type CloudforceOneRequestDataSourceModel struct {
 	AccountIdentifier types.String                                  `tfsdk:"account_identifier" path:"account_identifier,optional"`
 	RequestIdentifier types.String                                  `tfsdk:"request_identifier" path:"request_identifier,optional"`
-	Content           types.String                                  `tfsdk:"content" json:"content,optional"`
 	Completed         timetypes.RFC3339                             `tfsdk:"completed" json:"completed,computed" format:"date-time"`
+	Content           types.String                                  `tfsdk:"content" json:"content,computed"`
 	Created           timetypes.RFC3339                             `tfsdk:"created" json:"created,computed" format:"date-time"`
 	ID                types.String                                  `tfsdk:"id" json:"id,computed"`
 	MessageTokens     types.Int64                                   `tfsdk:"message_tokens" json:"message_tokens,computed"`

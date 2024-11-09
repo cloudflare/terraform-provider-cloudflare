@@ -31,24 +31,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the live input was created.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"delete_recording_after_days": schema.Float64Attribute{
 				Description: "Indicates the number of days after which the live inputs recordings will be deleted. When a stream completes and the recording is ready, the value is used to calculate a scheduled deletion date for that recording. Omit the field to indicate no change, or include with a `null` value to remove an existing scheduled deletion.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.Float64{
 					float64validator.AtLeast(30),
 				},
 			},
 			"modified": schema.StringAttribute{
 				Description: "The date and time the live input was last modified.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
 				Description: "The connection status of a live input.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"connected",
@@ -64,11 +64,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"uid": schema.StringAttribute{
 				Description: "A unique identifier for a live input.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"recording": schema.SingleNestedAttribute{
 				Description: "Records the input to a Cloudflare Stream video. Behavior depends on the mode. In most cases, the video will initially be viewable as a live video and transition to on-demand after a condition is satisfied.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[StreamLiveInputRecordingDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"allowed_origins": schema.ListAttribute{
 						Description: "Lists the origins allowed to display videos created with this input. Enter allowed origin domains in an array and use `*` for wildcard subdomains. An empty array allows videos to be viewed on any origin.",
@@ -99,7 +100,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rtmps": schema.SingleNestedAttribute{
 				Description: "Details for streaming to an live input using RTMPS.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[StreamLiveInputRtmpsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"stream_key": schema.StringAttribute{
 						Description: "The secret key to use when streaming via RTMPS to a live input.",
@@ -113,7 +115,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rtmps_playback": schema.SingleNestedAttribute{
 				Description: "Details for playback from an live input using RTMPS.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[StreamLiveInputRtmpsPlaybackDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"stream_key": schema.StringAttribute{
 						Description: "The secret key to use for playback via RTMPS.",
@@ -127,7 +130,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"srt": schema.SingleNestedAttribute{
 				Description: "Details for streaming to a live input using SRT.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[StreamLiveInputSrtDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"passphrase": schema.StringAttribute{
 						Description: "The secret key to use when streaming via SRT to a live input.",
@@ -145,7 +149,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"srt_playback": schema.SingleNestedAttribute{
 				Description: "Details for playback from an live input using SRT.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[StreamLiveInputSrtPlaybackDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"passphrase": schema.StringAttribute{
 						Description: "The secret key to use for playback via SRT.",
@@ -163,7 +168,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"web_rtc": schema.SingleNestedAttribute{
 				Description: "Details for streaming to a live input using WebRTC.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[StreamLiveInputWebRtcDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"url": schema.StringAttribute{
 						Description: "The WebRTC URL you provide to the broadcaster, which they stream live video to.",
@@ -173,7 +179,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"web_rtc_playback": schema.SingleNestedAttribute{
 				Description: "Details for playback from a live input using WebRTC.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[StreamLiveInputWebRtcPlaybackDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"url": schema.StringAttribute{
 						Description: "The URL used to play live video over WebRTC.",
@@ -183,7 +190,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"meta": schema.StringAttribute{
 				Description: "A user modifiable key-value store used to reference other systems of record for managing live inputs.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  jsontypes.NormalizedType{},
 			},
 		},
