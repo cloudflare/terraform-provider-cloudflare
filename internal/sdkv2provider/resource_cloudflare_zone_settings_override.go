@@ -51,6 +51,7 @@ var fetchAsSingleSetting = []string{
 	"nel",
 	"replace_insecure_js",
 	"speed_brain",
+	"aegis",
 }
 
 func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -202,7 +203,7 @@ func flattenZoneSettings(ctx context.Context, d *schema.ResourceData, settings [
 			continue
 		}
 
-		if s.ID == "nel" {
+		if s.ID == "nel" || s.ID == "aegis" {
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})}
 		} else if s.ID == "security_header" {
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})["strict_transport_security"]}
@@ -371,6 +372,7 @@ func expandZoneSetting(d *schema.ResourceData, keyFormatString, k string, settin
 			}
 		}
 	case "nel":
+	case "aegis":
 		{
 			listValue := settingValue.([]interface{})
 			if len(listValue) > 0 && listValue != nil {

@@ -248,6 +248,38 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 }`, rnd, zoneID)
 }
 
+func TestAccCloudflareZoneSettingsOverride_Aegis(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_zone_settings_override." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareZoneSettingsOverrideAegis(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareZoneSettings(name),
+					resource.TestCheckResourceAttr(name, "settings.0.aegis.0.pool_id", "example-pool"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareZoneSettingsOverrideAegis(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zone_settings_override" "%[1]s" {
+  zone_id = "%[2]s"
+  settings {
+    aegis {
+      pool_id = "example-pool"
+	}
+  }
+}`, rnd, zoneID)
+}
+
 func TestAccCloudflareZoneSettingsOverride_SpeedBrain(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()

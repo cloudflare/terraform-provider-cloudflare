@@ -107,6 +107,7 @@ Optional:
 - `minify` (Block List, Max: 1) (see [below for nested schema](#nestedblock--settings--minify))
 - `mirage` (String)
 - `mobile_redirect` (Block List, Max: 1, Deprecated) (see [below for nested schema](#nestedblock--settings--mobile_redirect))
+- `aegis` (Block List, Max: 1) (see [below for nested schema](#nestedblock--settings--aegis))
 - `nel` (Block List, Max: 1) (see [below for nested schema](#nestedblock--settings--nel))
 - `opportunistic_encryption` (String)
 - `opportunistic_onion` (String)
@@ -165,6 +166,14 @@ Required:
 
 - `enabled` (Boolean)
 
+<a id="nestedblock--settings--aegis"></a>
+### Nested Schema for `settings.aegis`
+
+Optional:
+
+- `enabled` (Boolean)
+- `pool_id` (String)
+
 
 <a id="nestedblock--settings--security_header"></a>
 ### Nested Schema for `settings.security_header`
@@ -213,6 +222,7 @@ Read-Only:
 - `minify` (List of Object) (see [below for nested schema](#nestedobjatt--initial_settings--minify))
 - `mirage` (String)
 - `mobile_redirect` (List of Object) (see [below for nested schema](#nestedobjatt--initial_settings--mobile_redirect))
+- `aegis` (List of Object) (see [below for nested schema](#nestedobjatt--initial_settings--aegis))
 - `nel` (List of Object) (see [below for nested schema](#nestedobjatt--initial_settings--nel))
 - `opportunistic_encryption` (String)
 - `opportunistic_onion` (String)
@@ -270,6 +280,14 @@ Read-Only:
 Read-Only:
 
 - `enabled` (Boolean)
+
+<a id="nestedobjatt--initial_settings--aegis"></a>
+### Nested Schema for `initial_settings.aegis`
+
+Read-Only:
+
+- `enabled` (Boolean)
+- `pool_id` (String)
 
 
 <a id="nestedobjatt--initial_settings--security_header"></a>
