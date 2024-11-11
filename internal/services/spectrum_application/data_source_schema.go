@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -16,7 +15,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*SpectrumApplicationDataSource)(nil)
@@ -218,13 +216,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"origin_port": schema.DynamicAttribute{
-							Description: "The destination port at the origin. Only specified in conjunction with origin_dns. May use an integer to specify a single origin port, for example `1000`, or a string to specify a range of origin ports, for example `\"1000-2000\"`.\nNotes: If specifying a port range, the number of ports in the range must match the number of ports specified in the \"protocol\" field.",
-							Computed:    true,
-							Validators: []validator.Dynamic{
-								customvalidator.AllowedSubtypes(basetypes.Int64Type{}, basetypes.StringType{}),
-							},
-						},
+						// TODO: don't generate nested dynamic types that are nested
+						// as they are not supported by Terraform at this time.
+						//
+						// "origin_port": schema.DynamicAttribute{
+						// 	Description: "The destination port at the origin. Only specified in conjunction with origin_dns. May use an integer to specify a single origin port, for example `1000`, or a string to specify a range of origin ports, for example `\"1000-2000\"`.\nNotes: If specifying a port range, the number of ports in the range must match the number of ports specified in the \"protocol\" field.",
+						// 	Computed:    true,
+						// 	Validators: []validator.Dynamic{
+						// 		customvalidator.AllowedSubtypes(basetypes.Int64Type{}, basetypes.StringType{}),
+						// 	},
+						// },
 					},
 				},
 			},
