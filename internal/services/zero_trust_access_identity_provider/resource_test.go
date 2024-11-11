@@ -288,10 +288,6 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Config_Secret(t *testing.T) {
 				return errors.New("secret is empty")
 			}
 
-			// if strings.Contains(value, "*") {
-			// 	return errors.New("secret was redacted")
-			// }
-
 			return nil
 		}),
 	)
@@ -345,7 +341,7 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Secret_Enabled_After_Resource_
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderAzureADNoSCIM(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "scim_config.secret", ""),
+					resource.TestCheckNoResourceAttr(resourceName, "scim_config.secret"),
 				),
 			},
 			{
