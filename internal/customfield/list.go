@@ -100,6 +100,7 @@ type ListLike interface {
 	NullValue(ctx context.Context) ListLike
 	UnknownValue(ctx context.Context) ListLike
 	KnownValue(ctx context.Context, T any) ListLike
+	IsNullOrUnknown() bool
 }
 
 var _ ListLike = (*List[basetypes.StringValue])(nil)
@@ -122,6 +123,10 @@ func (v List[T]) UnknownValue(ctx context.Context) ListLike {
 func (v List[T]) KnownValue(ctx context.Context, values any) ListLike {
 	r, _ := NewList[T](ctx, values)
 	return r
+}
+
+func (v List[T]) IsNullOrUnknown() bool {
+	return v.IsNull() || v.IsUnknown()
 }
 
 func (v List[T]) Equal(o attr.Value) bool {

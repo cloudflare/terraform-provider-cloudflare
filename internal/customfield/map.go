@@ -16,6 +16,7 @@ var (
 )
 
 type MapLike interface {
+	basetypes.MapValuable
 	ValueAttr(ctx context.Context) (any, diag.Diagnostics)
 	NullValue(ctx context.Context) MapLike
 	UnknownValue(ctx context.Context) MapLike
