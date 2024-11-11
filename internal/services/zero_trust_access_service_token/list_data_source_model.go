@@ -20,12 +20,21 @@ type ZeroTrustAccessServiceTokensResultListDataSourceEnvelope struct {
 type ZeroTrustAccessServiceTokensDataSourceModel struct {
 	AccountID types.String                                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID    types.String                                                                    `tfsdk:"zone_id" path:"zone_id,optional"`
+	Name      types.String                                                                    `tfsdk:"name" query:"name,optional"`
+	Search    types.String                                                                    `tfsdk:"search" query:"search,optional"`
 	MaxItems  types.Int64                                                                     `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustAccessServiceTokensResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustAccessServiceTokensDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessServiceTokenListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessServiceTokenListParams{}
+
+	if !m.Name.IsNull() {
+		params.Name = cloudflare.F(m.Name.ValueString())
+	}
+	if !m.Search.IsNull() {
+		params.Search = cloudflare.F(m.Search.ValueString())
+	}
 
 	if !m.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.AccountID.ValueString())

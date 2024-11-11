@@ -73,6 +73,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 						Optional:    true,
 					},
+					"name": schema.StringAttribute{
+						Description: "The name of the service token.",
+						Optional:    true,
+					},
+					"search": schema.StringAttribute{
+						Description: "Search for service tokens by other listed query parameters.",
+						Optional:    true,
+					},
 				},
 			},
 		},
