@@ -3,10 +3,11 @@ package observatory_scheduled_test_test
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"testing"
 
-	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -31,9 +32,10 @@ func TestAccCloudflareObservatoryScheduledTest_Create(t *testing.T) {
 				Config: testAccCloudflareObservatoryScheduledTest(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "url", domain+"/"+rnd),
-					resource.TestCheckResourceAttr(name, "region", "us-central1"),
-					resource.TestCheckResourceAttr(name, "frequency", "DAILY"),
+					resource.TestCheckResourceAttr(name, "url", url.PathEscape(domain+"/"+rnd)),
+					resource.TestCheckResourceAttr(name, "test.url", domain+"/"+rnd),
+					resource.TestCheckResourceAttr(name, "schedule.region", "us-central1"),
+					resource.TestCheckResourceAttr(name, "schedule.frequency", "DAILY"),
 				),
 			},
 		},
