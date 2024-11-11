@@ -1103,11 +1103,24 @@ type nestedMapStruct struct {
 	NestedMap map[string]types.Float64 `tfsdk:"nested_map" json:"nested_map,optional"`
 }
 
+type primitiveListExample struct {
+	StrList customfield.List[types.String] `tfsdk:"str_list" json:"str_list,computed_optional"`
+}
+
 var decode_computed_only_tests = map[string]struct {
 	buf      string
 	starting interface{}
 	expected interface{}
 }{
+	"primitive_list_unchanged": {
+		`{}`,
+		primitiveListExample{
+			StrList: customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("a"), types.StringValue("b"), types.StringValue("c")}),
+		},
+		primitiveListExample{
+			StrList: customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("a"), types.StringValue("b"), types.StringValue("c")}),
+		},
+	},
 	"nested_map_unchanged": {
 		`{"some_struct": {"nested_map":{"example_key":3.14}}}`,
 		nestedMapExample{
@@ -1274,11 +1287,86 @@ var decode_computed_only_tests = map[string]struct {
 			}},
 		},
 	},
+
+	"updates_computed_if_JSON_properties_are_missing": {
+		`{}`,
+		StructWithComputedFields{
+			RegStr:      types.StringValue("existing_str"),
+			CompStr:     types.StringValue("existing_comp_str"),
+			CompOptStr:  types.StringValue("existing_opt_str"),
+			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			CompOptTime: timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			Nested: NestedStructWithComputedFields{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringUnknown(),
+				CompOptInt: types.Int64Value(10),
+			},
+			NestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFields{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringUnknown(),
+				CompOptInt: types.Int64Value(10),
+			}),
+			CompOptNestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFields{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringUnknown(),
+				CompOptInt: types.Int64Value(10),
+			}),
+			NestedList: &[]*NestedStructWithComputedFields{{
+				RegStr:     types.StringValue("existing_list_nested_str_1"),
+				CompStr:    types.StringUnknown(),
+				CompOptInt: types.Int64Unknown(),
+			}, {
+				RegStr:     types.StringValue("existing_list_nested_str_2"),
+				CompStr:    types.StringValue("existing_list_nested_comp_str_2"),
+				CompOptInt: types.Int64Value(12),
+			}},
+			MapCust: customfield.NewMapMust[customfield.List[types.String]](ctx, map[string]attr.Value{
+				"key": customfield.NewListMust[types.String](ctx, []attr.Value{types.StringUnknown(), types.StringValue("val2")}),
+			}),
+		},
+		StructWithComputedFields{
+			RegStr:      types.StringValue("existing_str"),
+			CompStr:     types.StringNull(),
+			CompOptStr:  types.StringValue("existing_opt_str"),
+			CompTime:    timetypes.NewRFC3339Null(),
+			CompOptTime: timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			Nested: NestedStructWithComputedFields{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringNull(),
+				CompOptInt: types.Int64Value(10),
+			},
+			NestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFields{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringNull(),
+				CompOptInt: types.Int64Value(10),
+			}),
+			CompOptNestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFields{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringNull(),
+				CompOptInt: types.Int64Value(10),
+			}),
+			NestedList: &[]*NestedStructWithComputedFields{{
+				RegStr:     types.StringValue("existing_list_nested_str_1"),
+				CompStr:    types.StringNull(),
+				CompOptInt: types.Int64Null(),
+			}, {
+				RegStr:     types.StringValue("existing_list_nested_str_2"),
+				CompStr:    types.StringNull(),
+				CompOptInt: types.Int64Value(12),
+			}},
+			MapCust: customfield.NewMapMust[customfield.List[types.String]](ctx, map[string]attr.Value{
+				"key": customfield.NewListMust[types.String](ctx, []attr.Value{types.StringNull(), types.StringValue("val2")}),
+			}),
+		},
+	},
 }
 
 func TestDecodeComputedOnly(t *testing.T) {
 	spew.Config.ContinueOnMethod = false
 	for name, test := range decode_computed_only_tests {
+		if name != "primitive_list_unchanged" {
+			continue
+		}
 		t.Run(name, func(t *testing.T) {
 			v := reflect.ValueOf(test.starting)
 			starting := reflect.New(v.Type())

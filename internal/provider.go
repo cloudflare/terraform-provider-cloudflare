@@ -150,11 +150,14 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_service_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_short_lived_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_tag"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_certificates"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_custom_profile"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_custom_profile_local_domain_fallback"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile_certificates"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile_local_domain_fallback"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_managed_networks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_rule"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_profiles"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dex_test"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_dataset"
@@ -164,7 +167,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_proxy_endpoint"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_list"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_local_domain_fallback"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_organization"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_risk_scoring_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared"
@@ -448,9 +450,11 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		workers_secret.NewResource,
 		zero_trust_dex_test.NewResource,
 		zero_trust_device_managed_networks.NewResource,
-		zero_trust_device_profiles.NewResource,
-		zero_trust_device_certificates.NewResource,
-		zero_trust_local_domain_fallback.NewResource,
+		zero_trust_device_default_profile.NewResource,
+		zero_trust_device_default_profile_local_domain_fallback.NewResource,
+		zero_trust_device_default_profile_certificates.NewResource,
+		zero_trust_device_custom_profile.NewResource,
+		zero_trust_device_custom_profile_local_domain_fallback.NewResource,
 		zero_trust_device_posture_rule.NewResource,
 		zero_trust_device_posture_integration.NewResource,
 		zero_trust_access_identity_provider.NewResource,
@@ -690,11 +694,12 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_dex_test.NewZeroTrustDEXTestsDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksListDataSource,
-		zero_trust_device_profiles.NewZeroTrustDeviceProfilesDataSource,
-		zero_trust_device_profiles.NewZeroTrustDeviceProfilesListDataSource,
-		zero_trust_device_certificates.NewZeroTrustDeviceCertificatesDataSource,
-		zero_trust_local_domain_fallback.NewZeroTrustLocalDomainFallbackDataSource,
-		zero_trust_local_domain_fallback.NewZeroTrustLocalDomainFallbacksDataSource,
+		zero_trust_device_default_profile.NewZeroTrustDeviceDefaultProfileDataSource,
+		zero_trust_device_default_profile_local_domain_fallback.NewZeroTrustDeviceDefaultProfileLocalDomainFallbackDataSource,
+		zero_trust_device_default_profile_certificates.NewZeroTrustDeviceDefaultProfileCertificatesDataSource,
+		zero_trust_device_custom_profile.NewZeroTrustDeviceCustomProfileDataSource,
+		zero_trust_device_custom_profile.NewZeroTrustDeviceCustomProfilesDataSource,
+		zero_trust_device_custom_profile_local_domain_fallback.NewZeroTrustDeviceCustomProfileLocalDomainFallbackDataSource,
 		zero_trust_device_posture_rule.NewZeroTrustDevicePostureRuleDataSource,
 		zero_trust_device_posture_rule.NewZeroTrustDevicePostureRulesDataSource,
 		zero_trust_device_posture_integration.NewZeroTrustDevicePostureIntegrationDataSource,

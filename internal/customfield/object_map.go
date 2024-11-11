@@ -99,6 +99,7 @@ func (t NestedObjectMapType[T]) NullValue(ctx context.Context) (attr.Value, diag
 }
 
 type NestedObjectMapLike interface {
+	basetypes.MapValuable
 	AsStructMap(ctx context.Context) (any, diag.Diagnostics)
 	NullValue(ctx context.Context) NestedObjectMapLike
 	UnknownValue(ctx context.Context) NestedObjectMapLike

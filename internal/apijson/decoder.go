@@ -197,8 +197,7 @@ func (d *decoderBuilder) newTypeDecoder(t reflect.Type) decoderFunc {
 				return fmt.Errorf("apijson: unexpected invalid reflection value %+#v", v)
 			}
 
-			//
-			if (v.IsNil() && b == OnlyNested) || (!v.IsNil() && b == IfUnset) {
+			if (v.IsNil() && b == OnlyNested) || (!v.IsNil() && b == IfUnset) || (v.IsNil() && n.Type == gjson.Null) {
 				return nil
 			}
 
@@ -318,16 +317,14 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 	return func(node gjson.Result, value reflect.Value, state *decoderState) (err error) {
 		mapValue := reflect.MakeMapWithSize(t, len(node.Map()))
 
-		if updateBehavior == IfUnset && !value.IsNil() {
-			return nil
-		}
-
-		existingKeys := map[reflect.Value]bool{}
+		extraKeys := map[reflect.Value]bool{}
+		var nonEmpty bool
 
 		if updateBehavior == OnlyNested {
 			// populate existing values regardless of whether they are coming from the API
 			for _, key := range value.MapKeys() {
-				existingKeys[key] = true
+				nonEmpty = true
+				extraKeys[key] = true
 				item := value.MapIndex(key)
 				mapValue.SetMapIndex(key, item)
 			}
@@ -350,7 +347,7 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 				return false
 			}
 
-			if updateBehavior == OnlyNested && !existingKeys[keyValue] {
+			if updateBehavior == OnlyNested && !extraKeys[keyValue] {
 				// skip keys that aren't already in the map
 				return true
 			}
@@ -369,33 +366,76 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 			}
 
 			mapValue.SetMapIndex(keyValue, itemValue)
+			extraKeys[keyValue] = false
+			nonEmpty = true
 			return true
 		})
 
 		if err != nil {
 			return err
 		}
-		value.Set(mapValue)
+
+		// set additional keys not present in JSON to a zero value (or null)
+		for key, exists := range extraKeys {
+			if !exists {
+				continue
+			}
+			existingValue := value.MapIndex(key)
+			itemValue := reflect.New(itemType).Elem()
+			itemValue.Set(existingValue)
+			itemerr := itemDecoder(gjson.Result{}, itemValue, state)
+			if itemerr != nil {
+				return itemerr
+			}
+
+			mapValue.SetMapIndex(key, itemValue)
+		}
+		if nonEmpty {
+			value.Set(mapValue)
+		}
+
 		return nil
 	}
 }
 
 func (d *decoderBuilder) newArrayTypeDecoder(t reflect.Type) decoderFunc {
+	updateBehavior := d.updateBehavior
 	itemDecoder := d.typeDecoder(t.Elem())
 
 	return func(node gjson.Result, value reflect.Value, state *decoderState) (err error) {
-		if !node.IsArray() {
+
+		if node.Type == gjson.Null {
+			if updateBehavior == Always {
+				value.Set(reflect.Zero(t))
+				return nil
+			}
+		}
+
+		if node.Type != gjson.Null && !node.IsArray() {
 			return fmt.Errorf("apijson: could not deserialize to an array")
 		}
 
 		arrayNode := node.Array()
 
-		arrayValue := reflect.MakeSlice(reflect.SliceOf(t.Elem()), len(arrayNode), len(arrayNode))
 		existingLen := value.Len()
+		var numItems int
+
+		// if we are only updating nested values, we won't change the length of the array
+		if updateBehavior == OnlyNested || updateBehavior == IfUnset {
+			numItems = existingLen
+		} else {
+			numItems = len(arrayNode)
+		}
+
+		// populate the array with the existing values
+		arrayValue := reflect.MakeSlice(reflect.SliceOf(t.Elem()), numItems, numItems)
+		for i := 0; i < existingLen && i < numItems; i++ {
+			arrayValue.Index(i).Set(value.Index(i))
+		}
+
 		for i, itemNode := range arrayNode {
-			if i < existingLen {
-				existing := value.Index(i)
-				arrayValue.Index(i).Set(existing)
+			if i >= numItems {
+				break
 			}
 			err = itemDecoder(itemNode, arrayValue.Index(i), state)
 			if err != nil {
@@ -403,8 +443,42 @@ func (d *decoderBuilder) newArrayTypeDecoder(t reflect.Type) decoderFunc {
 			}
 		}
 
+		// set any additional values not in the JSON to a zero value (or null)
+		for i := len(arrayNode); i < numItems; i++ {
+			err = itemDecoder(gjson.Result{}, arrayValue.Index(i), state)
+			if err != nil {
+				return
+			}
+		}
+
 		value.Set(arrayValue)
 		return nil
+	}
+}
+
+func (d *decoderBuilder) decodeTerraformPrimitive(nullValue func() any, decodeNonNull decoderFunc) decoderFunc {
+	updateBehavior := d.updateBehavior
+	return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+		var isNullOrUnknown bool
+		attr, ok := value.Interface().(attr.Value)
+		if !ok || (attr.IsNull() || attr.IsUnknown()) {
+			isNullOrUnknown = true
+		}
+
+		if updateBehavior == IfUnset && !isNullOrUnknown {
+			return nil
+		}
+
+		if node.Type == gjson.Null && (updateBehavior == Always || isNullOrUnknown) {
+			value.Set(reflect.ValueOf(nullValue()))
+			return nil
+		}
+
+		if updateBehavior == OnlyNested {
+			return nil
+		}
+
+		return decodeNonNull(node, value, state)
 	}
 }
 
@@ -414,31 +488,17 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 	b := d.updateBehavior
 
 	if (t == reflect.TypeOf(basetypes.StringValue{})) {
-		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if !shouldUpdatePrimitive(value, b) {
-				return nil
-			}
-			if node.Type == gjson.Null {
-				value.Set(reflect.ValueOf(types.StringNull()))
-				return nil
-			}
+		return d.decodeTerraformPrimitive(func() any { return types.StringNull() }, func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			if node.Type == gjson.String {
 				value.Set(reflect.ValueOf(types.StringValue(node.String())))
 				return nil
 			}
 			return fmt.Errorf("apijson: cannot deserialize types.StringValue")
-		}
+		})
 	}
 
 	if (t == reflect.TypeOf(basetypes.Int64Value{})) {
-		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if !shouldUpdatePrimitive(value, b) {
-				return nil
-			}
-			if node.Type == gjson.Null {
-				value.Set(reflect.ValueOf(types.Int64Null()))
-				return nil
-			}
+		return d.decodeTerraformPrimitive(func() any { return types.Int64Null() }, func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			// use ParseFloat just to validate that it's a valid number
 			_, err := strconv.ParseFloat(node.Str, 64)
 			if node.Type == gjson.JSON || (node.Type == gjson.String && err != nil) {
@@ -446,18 +506,11 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			}
 			value.Set(reflect.ValueOf(types.Int64Value(node.Int())))
 			return nil
-		}
+		})
 	}
 
 	if (t == reflect.TypeOf(basetypes.Float64Value{})) {
-		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if !shouldUpdatePrimitive(value, b) {
-				return nil
-			}
-			if node.Type == gjson.Null {
-				value.Set(reflect.ValueOf(types.Float64Null()))
-				return nil
-			}
+		return d.decodeTerraformPrimitive(func() any { return types.Float64Null() }, func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			// use ParseFloat just to validate that it's a valid number
 			_, err := strconv.ParseFloat(node.Str, 64)
 			if node.Type == gjson.JSON || (node.Type == gjson.String && err != nil) {
@@ -465,42 +518,28 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			}
 			value.Set(reflect.ValueOf(types.Float64Value(node.Float())))
 			return nil
-		}
+		})
 	}
 
 	if (t == reflect.TypeOf(basetypes.NumberValue{})) {
-		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if !shouldUpdatePrimitive(value, b) {
-				return nil
-			}
-			if node.Type == gjson.Null {
-				value.Set(reflect.ValueOf(types.Float64Null()))
-				return nil
-			}
+		return d.decodeTerraformPrimitive(func() any { return types.NumberNull() }, func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			value.Set(reflect.ValueOf(types.NumberValue(big.NewFloat(node.Float()))))
 			_, err := strconv.ParseFloat(node.Str, 64)
 			if node.Type == gjson.JSON || (node.Type == gjson.String && err != nil) {
 				return fmt.Errorf("apijson: failed to parse types.Float64Value")
 			}
 			return nil
-		}
+		})
 	}
 
 	if (t == reflect.TypeOf(basetypes.BoolValue{})) {
-		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if !shouldUpdatePrimitive(value, b) {
-				return nil
-			}
-			if node.Type == gjson.Null {
-				value.Set(reflect.ValueOf(types.BoolNull()))
-				return nil
-			}
+		return d.decodeTerraformPrimitive(func() any { return types.BoolNull() }, func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			if node.Type == gjson.True || node.Type == gjson.False {
 				value.Set(reflect.ValueOf(types.BoolValue(node.Bool())))
 				return nil
 			}
 			return fmt.Errorf("cannot deserialize bool")
-		}
+		})
 	}
 
 	if (t == reflect.TypeOf(basetypes.ListValue{})) {
@@ -509,20 +548,19 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 				return nil
 			}
 			eleType := value.Interface().(basetypes.ListValue).ElementType(ctx)
-			switch node.Type {
-			case gjson.Null:
+			if b == Always && node.Type == gjson.Null {
 				value.Set(reflect.ValueOf(types.ListNull(eleType)))
 				return nil
-			case gjson.JSON:
+			}
+			if node.Type == gjson.JSON {
 				attr, err := d.inferTerraformAttrFromValue(node)
 				if err != nil {
 					return err
 				}
 				value.Set(reflect.ValueOf(attr))
 				return nil
-			default:
-				return fmt.Errorf("apijson: cannot deserialize unexpected type %s to types.ListValue", node.Type)
 			}
+			return fmt.Errorf("apijson: cannot deserialize unexpected type %s to types.ListValue", node.Type)
 		}
 	}
 
@@ -594,7 +632,9 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			eleType := value.Interface().(basetypes.MapValue).ElementType(ctx)
 			switch node.Type {
 			case gjson.Null:
-				value.Set(reflect.ValueOf(types.ListNull(eleType)))
+				if b == Always {
+					value.Set(reflect.ValueOf(types.ListNull(eleType)))
+				}
 				return nil
 			case gjson.JSON:
 				attributes := map[string]attr.Value{}
@@ -632,7 +672,9 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			attrTypes := objValue.AttributeTypes(ctx)
 			switch node.Type {
 			case gjson.Null:
-				value.Set(reflect.ValueOf(types.ObjectNull(attrTypes)))
+				if b == Always {
+					value.Set(reflect.ValueOf(types.ObjectNull(attrTypes)))
+				}
 				return nil
 			case gjson.JSON:
 				if len(attrTypes) > 0 {
@@ -681,9 +723,11 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			}
 			objectValue := value.Interface().(customfield.NestedObjectLike)
 			if node.Type == gjson.Null {
-				nullValue := objectValue.NullValue(ctx)
-				value.Set(reflect.ValueOf(nullValue))
-				return nil
+				if b == Always || objectValue.IsNull() || objectValue.IsUnknown() {
+					nullValue := objectValue.NullValue(ctx)
+					value.Set(reflect.ValueOf(nullValue))
+					return nil
+				}
 			}
 
 			structValue := reflect.New(structType)
@@ -711,9 +755,10 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			}
 			existingObjectListValue := value.Interface().(customfield.NestedObjectListLike)
 			if node.Type == gjson.Null {
-				nullValue := existingObjectListValue.NullValue(ctx)
-				value.Set(reflect.ValueOf(nullValue))
-				return nil
+				if b == Always {
+					nullValue := existingObjectListValue.NullValue(ctx)
+					value.Set(reflect.ValueOf(nullValue))
+				}
 			}
 
 			newObjectListValue := reflect.New(structSliceType).Elem()
@@ -735,14 +780,16 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 		sliceOfStruct := reflect.SliceOf(structType)
 		dec := d.typeDecoder(sliceOfStruct)
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if !shouldUpdatePrimitive(value, b) {
+			if !shouldUpdateNested(value, b) {
 				return nil
 			}
 			objectListValue := value.Interface().(customfield.ListLike)
 			if node.Type == gjson.Null {
-				nullValue := objectListValue.NullValue(ctx)
-				value.Set(reflect.ValueOf(nullValue))
-				return nil
+				if b == Always || objectListValue.IsNullOrUnknown() {
+					nullValue := objectListValue.NullValue(ctx)
+					value.Set(reflect.ValueOf(nullValue))
+					return nil
+				}
 			}
 			lv, _ := objectListValue.ValueAttr(ctx)
 			val := reflect.New(sliceOfStruct).Elem()
@@ -767,9 +814,11 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			}
 			existingObjectMapValue := value.Interface().(customfield.NestedObjectMapLike)
 			if node.Type == gjson.Null {
-				nullValue := existingObjectMapValue.NullValue(ctx)
-				value.Set(reflect.ValueOf(nullValue))
-				return nil
+				if b == Always || existingObjectMapValue.IsNull() || existingObjectMapValue.IsUnknown() {
+					nullValue := existingObjectMapValue.NullValue(ctx)
+					value.Set(reflect.ValueOf(nullValue))
+					return nil
+				}
 			}
 
 			newObjectMapValue := reflect.New(structMapType).Elem()
@@ -791,14 +840,16 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 		mapOfStruct := reflect.MapOf(reflect.TypeOf(""), structType)
 		dec := d.typeDecoder(mapOfStruct)
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if !shouldUpdatePrimitive(value, b) {
+			if !shouldUpdateNested(value, b) {
 				return nil
 			}
 			objectMapValue := value.Interface().(customfield.MapLike)
 			if node.Type == gjson.Null {
-				nullValue := objectMapValue.NullValue(ctx)
-				value.Set(reflect.ValueOf(nullValue))
-				return nil
+				if b == Always || objectMapValue.IsNull() || objectMapValue.IsUnknown() {
+					nullValue := objectMapValue.NullValue(ctx)
+					value.Set(reflect.ValueOf(nullValue))
+					return nil
+				}
 			}
 			mv, _ := objectMapValue.ValueAttr(ctx)
 			val := reflect.New(mapOfStruct).Elem()
@@ -852,15 +903,9 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 	}
 
 	if (t == reflect.TypeOf(jsontypes.Normalized{})) {
-		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if !shouldUpdatePrimitive(value, b) {
-				return nil
-			}
+		return d.decodeTerraformPrimitive(func() any { return jsontypes.NewNormalizedNull() }, func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			raw := ""
 			switch node.Type {
-			case gjson.Null:
-				value.Set(reflect.ValueOf(jsontypes.NewNormalizedNull()))
-				return nil
 			case gjson.Number:
 				fallthrough
 			case gjson.String:
@@ -870,7 +915,7 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			}
 			value.Set(reflect.ValueOf(jsontypes.NewNormalizedValue(raw)))
 			return nil
-		}
+		})
 	}
 
 	return func(node gjson.Result, value reflect.Value, state *decoderState) error {
@@ -1063,7 +1108,8 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 
 			// note that we don't include pointers to structs, because
 			// that could be recursive and would cause an infinite loop.
-			if dest.IsValid() && dest.Kind() == reflect.Struct {
+			// if dest.IsValid() && dest.Kind() == reflect.Struct {
+			if dest.IsValid() {
 				_ = fn(gjson.Result{}, dest, state)
 			}
 		}
