@@ -192,6 +192,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "URL to send the SAML authentication requests to",
 						Optional:    true,
 					},
+					"redirect_url": schema.StringAttribute{
+						Computed: true,
+					},
 				},
 			},
 			"scim_config": schema.SingleNestedAttribute{

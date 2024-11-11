@@ -57,6 +57,7 @@ type ZeroTrustAccessIdentityProviderConfigModel struct {
 	IssuerURL                types.String                                                   `tfsdk:"issuer_url" json:"issuer_url,optional"`
 	SignRequest              types.Bool                                                     `tfsdk:"sign_request" json:"sign_request,optional"`
 	SSOTargetURL             types.String                                                   `tfsdk:"sso_target_url" json:"sso_target_url,optional"`
+	RedirectURL              types.String                                                   `tfsdk:"redirect_url" json:"redirect_url,computed"`
 }
 
 type ZeroTrustAccessIdentityProviderConfigHeaderAttributesModel struct {
