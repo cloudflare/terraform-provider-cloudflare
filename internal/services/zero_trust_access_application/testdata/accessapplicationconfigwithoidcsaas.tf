@@ -1,4 +1,3 @@
-
 resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
@@ -15,13 +14,13 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
     refresh_token_options = {
       lifetime = "1h"
     }
-    custom_claim = [{
+    custom_claims = [{
       name     = "rank"
       required = true
       scope    = "profile"
-      source = [{
+      source = {
         name = "rank"
-      }]
+      }
     }]
 
     hybrid_and_implicit_options = {

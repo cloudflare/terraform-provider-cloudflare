@@ -1,8 +1,11 @@
-
 resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
   account_id = "%[4]s"
   name = "%[1]s"
   type = "onetimepin"
+  config = {
+    client_id = "test"
+    client_secret = "test"
+  }
 }
 resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                   = "%[2]s"
