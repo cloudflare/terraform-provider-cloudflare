@@ -117,6 +117,10 @@ func (v Set[T]) KnownValue(ctx context.Context, values any) ListLike {
 	return r
 }
 
+func (v Set[T]) IsNullOrUnknown() bool {
+	return v.IsNull() || v.IsUnknown()
+}
+
 func (v Set[T]) Equal(o attr.Value) bool {
 	other, ok := o.(Set[T])
 	if !ok {
