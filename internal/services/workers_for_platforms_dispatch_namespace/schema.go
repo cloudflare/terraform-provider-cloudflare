@@ -18,12 +18,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "API Resource UUID tag.",
+				Description:   "Name of the Workers for Platforms dispatch namespace.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"namespace_id": schema.StringAttribute{
-				Description:   "API Resource UUID tag.",
+			"namespace_name": schema.StringAttribute{
+				Description:   "Name of the Workers for Platforms dispatch namespace.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
@@ -55,8 +55,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"namespace_name": schema.StringAttribute{
-				Description: "Name of the Workers for Platforms dispatch namespace.",
+			"namespace_id": schema.StringAttribute{
+				Description: "API Resource UUID tag.",
 				Computed:    true,
 			},
 			"script_count": schema.Int64Attribute{
