@@ -97,10 +97,85 @@ type AccountMemberPoliciesResourceGroupsMetaDataSourceModel struct {
 }
 
 type AccountMemberRolesDataSourceModel struct {
-	ID          types.String                   `tfsdk:"id" json:"id,computed"`
-	Description types.String                   `tfsdk:"description" json:"description,computed"`
-	Name        types.String                   `tfsdk:"name" json:"name,computed"`
-	Permissions customfield.List[types.String] `tfsdk:"permissions" json:"permissions,computed"`
+	ID          types.String                                                           `tfsdk:"id" json:"id,computed"`
+	Description types.String                                                           `tfsdk:"description" json:"description,computed"`
+	Name        types.String                                                           `tfsdk:"name" json:"name,computed"`
+	Permissions customfield.NestedObject[AccountMemberRolesPermissionsDataSourceModel] `tfsdk:"permissions" json:"permissions,computed"`
+}
+
+type AccountMemberRolesPermissionsDataSourceModel struct {
+	Analytics    customfield.NestedObject[AccountMemberRolesPermissionsAnalyticsDataSourceModel]    `tfsdk:"analytics" json:"analytics,computed"`
+	Billing      customfield.NestedObject[AccountMemberRolesPermissionsBillingDataSourceModel]      `tfsdk:"billing" json:"billing,computed"`
+	CachePurge   customfield.NestedObject[AccountMemberRolesPermissionsCachePurgeDataSourceModel]   `tfsdk:"cache_purge" json:"cache_purge,computed"`
+	DNS          customfield.NestedObject[AccountMemberRolesPermissionsDNSDataSourceModel]          `tfsdk:"dns" json:"dns,computed"`
+	DNSRecords   customfield.NestedObject[AccountMemberRolesPermissionsDNSRecordsDataSourceModel]   `tfsdk:"dns_records" json:"dns_records,computed"`
+	LB           customfield.NestedObject[AccountMemberRolesPermissionsLBDataSourceModel]           `tfsdk:"lb" json:"lb,computed"`
+	Logs         customfield.NestedObject[AccountMemberRolesPermissionsLogsDataSourceModel]         `tfsdk:"logs" json:"logs,computed"`
+	Organization customfield.NestedObject[AccountMemberRolesPermissionsOrganizationDataSourceModel] `tfsdk:"organization" json:"organization,computed"`
+	SSL          customfield.NestedObject[AccountMemberRolesPermissionsSSLDataSourceModel]          `tfsdk:"ssl" json:"ssl,computed"`
+	WAF          customfield.NestedObject[AccountMemberRolesPermissionsWAFDataSourceModel]          `tfsdk:"waf" json:"waf,computed"`
+	ZoneSettings customfield.NestedObject[AccountMemberRolesPermissionsZoneSettingsDataSourceModel] `tfsdk:"zone_settings" json:"zone_settings,computed"`
+	Zones        customfield.NestedObject[AccountMemberRolesPermissionsZonesDataSourceModel]        `tfsdk:"zones" json:"zones,computed"`
+}
+
+type AccountMemberRolesPermissionsAnalyticsDataSourceModel struct {
+	Read  types.Bool `tfsdk:"read" json:"read,computed"`
+	Write types.Bool `tfsdk:"write" json:"write,computed"`
+}
+
+type AccountMemberRolesPermissionsBillingDataSourceModel struct {
+	Read  types.Bool `tfsdk:"read" json:"read,computed"`
+	Write types.Bool `tfsdk:"write" json:"write,computed"`
+}
+
+type AccountMemberRolesPermissionsCachePurgeDataSourceModel struct {
+	Read  types.Bool `tfsdk:"read" json:"read,computed"`
+	Write types.Bool `tfsdk:"write" json:"write,computed"`
+}
+
+type AccountMemberRolesPermissionsDNSDataSourceModel struct {
+	Read  types.Bool `tfsdk:"read" json:"read,computed"`
+	Write types.Bool `tfsdk:"write" json:"write,computed"`
+}
+
+type AccountMemberRolesPermissionsDNSRecordsDataSourceModel struct {
+	Read  types.Bool `tfsdk:"read" json:"read,computed"`
+	Write types.Bool `tfsdk:"write" json:"write,computed"`
+}
+
+type AccountMemberRolesPermissionsLBDataSourceModel struct {
+	Read  types.Bool `tfsdk:"read" json:"read,computed"`
+	Write types.Bool `tfsdk:"write" json:"write,computed"`
+}
+
+type AccountMemberRolesPermissionsLogsDataSourceModel struct {
+	Read  types.Bool `tfsdk:"read" json:"read,computed"`
+	Write types.Bool `tfsdk:"write" json:"write,computed"`
+}
+
+type AccountMemberRolesPermissionsOrganizationDataSourceModel struct {
+	Read  types.Bool `tfsdk:"read" json:"read,computed"`
+	Write types.Bool `tfsdk:"write" json:"write,computed"`
+}
+
+type AccountMemberRolesPermissionsSSLDataSourceModel struct {
+	Read  types.Bool `tfsdk:"read" json:"read,computed"`
+	Write types.Bool `tfsdk:"write" json:"write,computed"`
+}
+
+type AccountMemberRolesPermissionsWAFDataSourceModel struct {
+	Read  types.Bool `tfsdk:"read" json:"read,computed"`
+	Write types.Bool `tfsdk:"write" json:"write,computed"`
+}
+
+type AccountMemberRolesPermissionsZoneSettingsDataSourceModel struct {
+	Read  types.Bool `tfsdk:"read" json:"read,computed"`
+	Write types.Bool `tfsdk:"write" json:"write,computed"`
+}
+
+type AccountMemberRolesPermissionsZonesDataSourceModel struct {
+	Read  types.Bool `tfsdk:"read" json:"read,computed"`
+	Write types.Bool `tfsdk:"write" json:"write,computed"`
 }
 
 type AccountMemberUserDataSourceModel struct {
