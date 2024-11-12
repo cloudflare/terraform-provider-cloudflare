@@ -13,5 +13,4 @@ fi
 
 echo "==> Installing Go dependencies…"
 
-go get github.com/cloudflare/cloudflare-go/v3@v3.0.1
 go mod tidy
