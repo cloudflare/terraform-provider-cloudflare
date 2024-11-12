@@ -4,9 +4,12 @@ package internal
 
 import (
 	"context"
+	"fmt"
+	"regexp"
 
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_member"
@@ -94,8 +97,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_custom_domain"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_managed_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
@@ -179,10 +180,14 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_lockdown"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -198,11 +203,12 @@ type CloudflareProvider struct {
 
 // CloudflareProviderModel describes the provider data model.
 type CloudflareProviderModel struct {
-	BaseURL        types.String `tfsdk:"base_url" json:"base_url,optional"`
-	APIToken       types.String `tfsdk:"api_token" json:"api_token,optional"`
-	APIKey         types.String `tfsdk:"api_key" json:"api_key,optional"`
-	APIEmail       types.String `tfsdk:"api_email" json:"api_email,optional"`
-	UserServiceKey types.String `tfsdk:"user_service_key" json:"user_service_key,optional"`
+	APIKey                  types.String `tfsdk:"api_key" json:"api_key"`
+	APIUserServiceKey       types.String `tfsdk:"api_user_service_key" json:"api_user_service_key"`
+	Email                   types.String `tfsdk:"email" json:"email"`
+	APIToken                types.String `tfsdk:"api_token" json:"api_token"`
+	UserAgentOperatorSuffix types.String `tfsdk:"user_agent_operator_suffix" json:"user_agent_operator_suffix"`
+	BaseURL                 types.String `tfsdk:"base_url" json:"base_url"`
 }
 
 func (p *CloudflareProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -213,21 +219,50 @@ func (p *CloudflareProvider) Metadata(ctx context.Context, req provider.Metadata
 func ProviderSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"base_url": schema.StringAttribute{
-				Description: "Set the base url that the provider connects to. This can be used for testing in other environments.",
-				Optional:    true,
+			consts.EmailSchemaKey: schema.StringAttribute{
+				Optional:            true,
+				MarkdownDescription: fmt.Sprintf("A registered Cloudflare email address. Alternatively, can be configured using the `%s` environment variable. Required when using `api_key`. Conflicts with `api_token`.", consts.EmailEnvVarKey),
+				Validators:          []validator.String{},
 			},
-			"api_token": schema.StringAttribute{
-				Optional: true,
+
+			consts.APIKeySchemaKey: schema.StringAttribute{
+				Optional:            true,
+				MarkdownDescription: fmt.Sprintf("The API key for operations. Alternatively, can be configured using the `%s` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/fundamentals/api/get-started/keys/#limitations), API tokens should be used instead. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIKeyEnvVarKey),
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(
+						regexp.MustCompile(`[0-9a-f]{37}`),
+						"API key must be 37 characters long and only contain characters 0-9 and a-f (all lowercased)",
+					),
+					stringvalidator.AlsoRequires(path.Expressions{
+						path.MatchRoot(consts.EmailSchemaKey),
+					}...),
+				},
 			},
-			"api_key": schema.StringAttribute{
-				Optional: true,
+
+			consts.APITokenSchemaKey: schema.StringAttribute{
+				Optional:            true,
+				MarkdownDescription: fmt.Sprintf("The API Token for operations. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APITokenEnvVarKey),
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(
+						regexp.MustCompile(`[A-Za-z0-9-_]{40}`),
+						"API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores",
+					),
+				},
 			},
-			"api_email": schema.StringAttribute{
-				Optional: true,
+
+			consts.APIUserServiceKeySchemaKey: schema.StringAttribute{
+				Optional:            true,
+				MarkdownDescription: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIUserServiceKeyEnvVarKey),
 			},
-			"user_service_key": schema.StringAttribute{
-				Optional: true,
+
+			consts.UserAgentOperatorSuffixSchemaKey: schema.StringAttribute{
+				Optional:            true,
+				MarkdownDescription: fmt.Sprintf("A value to append to the HTTP User Agent for all API calls. This value is not something most users need to modify however, if you are using a non-standard provider or operator configuration, this is recommended to assist in uniquely identifying your traffic. **Setting this value will remove the Terraform version from the HTTP User Agent string and may have unintended consequences**. Alternatively, can be configured using the `%s` environment variable.", consts.UserAgentOperatorSuffixEnvVarKey),
+			},
+
+			consts.BaseURLSchemaKey: schema.StringAttribute{
+				Optional:            true,
+				MarkdownDescription: fmt.Sprintf("Value to override the default HTTP client base URL. Alternatively, can be configured using the `%s` environment variable.", consts.BaseURLSchemaKey),
 			},
 		},
 	}
@@ -256,11 +291,34 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 	if !data.APIKey.IsNull() {
 		opts = append(opts, option.WithAPIKey(data.APIKey.ValueString()))
 	}
-	if !data.APIEmail.IsNull() {
-		opts = append(opts, option.WithAPIEmail(data.APIEmail.ValueString()))
+	if !data.Email.IsNull() {
+		opts = append(opts, option.WithAPIEmail(data.Email.ValueString()))
 	}
-	if !data.UserServiceKey.IsNull() {
-		opts = append(opts, option.WithUserServiceKey(data.UserServiceKey.ValueString()))
+	if !data.APIUserServiceKey.IsNull() {
+		opts = append(opts, option.WithUserServiceKey(data.APIUserServiceKey.ValueString()))
+	}
+
+	pluginVersion := utils.FindGoModuleVersion("github.com/hashicorp/terraform-plugin-framework")
+	framework := "terraform-plugin-framework"
+	userAgentParams := utils.UserAgentBuilderParams{
+		ProviderVersion: &p.version,
+		PluginType:      &framework,
+		PluginVersion:   pluginVersion,
+	}
+
+	if !data.UserAgentOperatorSuffix.IsNull() {
+		operatorSuffix := data.UserAgentOperatorSuffix.String()
+		userAgentParams.OperatorSuffix = &operatorSuffix
+	} else {
+		userAgentParams.TerraformVersion = &req.TerraformVersion
+	}
+
+	opts = append(opts, option.WithHeader("user-agent", userAgentParams.String()))
+	opts = append(opts, option.WithHeader("x-stainless-package-version", p.version))
+	opts = append(opts, option.WithHeader("x-stainless-runtime", framework))
+	opts = append(opts, option.WithHeader("x-stainless-lang", "Terraform"))
+	if pluginVersion != nil {
+		opts = append(opts, option.WithHeader("x-stainless-runtime-version", *pluginVersion))
 	}
 
 	client := cloudflare.NewClient(
@@ -388,8 +446,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		notification_policy.NewResource,
 		d1_database.NewResource,
 		r2_bucket.NewResource,
-		r2_custom_domain.NewResource,
-		r2_managed_domain.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
 		workers_secret.NewResource,
 		zero_trust_dex_test.NewResource,
@@ -630,7 +686,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		d1_database.NewD1DatabaseDataSource,
 		d1_database.NewD1DatabasesDataSource,
 		r2_bucket.NewR2BucketDataSource,
-		r2_custom_domain.NewR2CustomDomainDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespaceDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespacesDataSource,
 		workers_secret.NewWorkersSecretDataSource,

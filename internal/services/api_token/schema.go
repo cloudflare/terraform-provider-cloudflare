@@ -53,7 +53,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
 										Description: "Identifier of the group.",
-										Computed:    true,
+										Required:    true,
 									},
 									"meta": schema.SingleNestedAttribute{
 										Description: "Attributes associated to the permission group.",
@@ -74,17 +74,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"resources": schema.SingleNestedAttribute{
+						"resources": schema.MapAttribute{
 							Description: "A list of resource names that the policy applies to.",
 							Required:    true,
-							Attributes: map[string]schema.Attribute{
-								"resource": schema.StringAttribute{
-									Optional: true,
-								},
-								"scope": schema.StringAttribute{
-									Optional: true,
-								},
-							},
+							ElementType: types.StringType,
 						},
 					},
 				},
