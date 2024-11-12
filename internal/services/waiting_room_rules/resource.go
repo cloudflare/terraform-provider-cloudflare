@@ -67,7 +67,7 @@ func (r *WaitingRoomRulesResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 	res := new(http.Response)
-	env := WaitingRoomRulesResultEnvelope{data.Body}
+	env := WaitingRoomRulesResultEnvelope{data.Rules}
 	_, err = r.client.WaitingRooms.Rules.New(
 		ctx,
 		data.WaitingRoomID.ValueString(),
@@ -88,7 +88,7 @@ func (r *WaitingRoomRulesResource) Create(ctx context.Context, req resource.Crea
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Rules = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -116,7 +116,7 @@ func (r *WaitingRoomRulesResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 	res := new(http.Response)
-	env := WaitingRoomRulesResultEnvelope{data.Body}
+	env := WaitingRoomRulesResultEnvelope{data.Rules}
 	_, err = r.client.WaitingRooms.Rules.Update(
 		ctx,
 		data.WaitingRoomID.ValueString(),
@@ -137,7 +137,7 @@ func (r *WaitingRoomRulesResource) Update(ctx context.Context, req resource.Upda
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Rules = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -152,7 +152,7 @@ func (r *WaitingRoomRulesResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	res := new(http.Response)
-	env := WaitingRoomRulesResultEnvelope{data.Body}
+	env := WaitingRoomRulesResultEnvelope{data.Rules}
 	_, err := r.client.WaitingRooms.Rules.Get(
 		ctx,
 		data.WaitingRoomID.ValueString(),
@@ -172,7 +172,7 @@ func (r *WaitingRoomRulesResource) Read(ctx context.Context, req resource.ReadRe
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Rules = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
