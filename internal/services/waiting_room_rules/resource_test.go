@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-func TestAccCloudflareWaitingRoomRules_Create(t *testing.T) {
+func TestAccCloudflareWaitingRoomRules_Basic(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -39,14 +39,12 @@ func TestAccCloudflareWaitingRoomRules_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rules.0.description", "ip bypass"),
 					resource.TestCheckResourceAttr(name, "rules.0.expression", "ip.src in {192.0.2.1}"),
 					resource.TestCheckResourceAttr(name, "rules.0.action", "bypass_waiting_room"),
-					resource.TestCheckResourceAttr(name, "rules.0.status", "enabled"),
-					resource.TestCheckResourceAttr(name, "rules.0.version", "1"),
+					resource.TestCheckResourceAttr(name, "rules.0.enabled", "true"),
 
 					resource.TestCheckResourceAttr(name, "rules.1.description", "query string bypass"),
 					resource.TestCheckResourceAttr(name, "rules.1.expression", "http.request.uri.query contains \"bypass=true\""),
 					resource.TestCheckResourceAttr(name, "rules.1.action", "bypass_waiting_room"),
-					resource.TestCheckResourceAttr(name, "rules.1.status", "disabled"),
-					resource.TestCheckResourceAttr(name, "rules.1.version", "1"),
+					resource.TestCheckResourceAttr(name, "rules.1.enabled", "false"),
 				),
 			},
 		},
