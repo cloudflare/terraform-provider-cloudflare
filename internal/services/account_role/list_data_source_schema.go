@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*AccountRolesDataSource)(nil)
@@ -44,14 +43,158 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"name": schema.StringAttribute{
-							Description: "Role Name.",
+							Description: "Role name.",
 							Computed:    true,
 						},
-						"permissions": schema.ListAttribute{
-							Description: "Access permissions for this User.",
-							Computed:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
-							ElementType: types.StringType,
+						"permissions": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"analytics": schema.SingleNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsAnalyticsDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"read": schema.BoolAttribute{
+											Computed: true,
+										},
+										"write": schema.BoolAttribute{
+											Computed: true,
+										},
+									},
+								},
+								"billing": schema.SingleNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsBillingDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"read": schema.BoolAttribute{
+											Computed: true,
+										},
+										"write": schema.BoolAttribute{
+											Computed: true,
+										},
+									},
+								},
+								"cache_purge": schema.SingleNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsCachePurgeDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"read": schema.BoolAttribute{
+											Computed: true,
+										},
+										"write": schema.BoolAttribute{
+											Computed: true,
+										},
+									},
+								},
+								"dns": schema.SingleNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsDNSDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"read": schema.BoolAttribute{
+											Computed: true,
+										},
+										"write": schema.BoolAttribute{
+											Computed: true,
+										},
+									},
+								},
+								"dns_records": schema.SingleNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsDNSRecordsDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"read": schema.BoolAttribute{
+											Computed: true,
+										},
+										"write": schema.BoolAttribute{
+											Computed: true,
+										},
+									},
+								},
+								"lb": schema.SingleNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsLBDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"read": schema.BoolAttribute{
+											Computed: true,
+										},
+										"write": schema.BoolAttribute{
+											Computed: true,
+										},
+									},
+								},
+								"logs": schema.SingleNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsLogsDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"read": schema.BoolAttribute{
+											Computed: true,
+										},
+										"write": schema.BoolAttribute{
+											Computed: true,
+										},
+									},
+								},
+								"organization": schema.SingleNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsOrganizationDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"read": schema.BoolAttribute{
+											Computed: true,
+										},
+										"write": schema.BoolAttribute{
+											Computed: true,
+										},
+									},
+								},
+								"ssl": schema.SingleNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsSSLDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"read": schema.BoolAttribute{
+											Computed: true,
+										},
+										"write": schema.BoolAttribute{
+											Computed: true,
+										},
+									},
+								},
+								"waf": schema.SingleNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsWAFDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"read": schema.BoolAttribute{
+											Computed: true,
+										},
+										"write": schema.BoolAttribute{
+											Computed: true,
+										},
+									},
+								},
+								"zone_settings": schema.SingleNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsZoneSettingsDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"read": schema.BoolAttribute{
+											Computed: true,
+										},
+										"write": schema.BoolAttribute{
+											Computed: true,
+										},
+									},
+								},
+								"zones": schema.SingleNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[AccountRolesPermissionsZonesDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"read": schema.BoolAttribute{
+											Computed: true,
+										},
+										"write": schema.BoolAttribute{
+											Computed: true,
+										},
+									},
+								},
+							},
 						},
 					},
 				},
