@@ -150,12 +150,52 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(fmt.Errorf("failed to find Teams List ID in update response; resource was empty"))
 	}
 
-	if d.HasChange("items") {
+	if d.HasChanges("items", "items_with_description") {
 		oldItemsIface, newItemsIface := d.GetChange("items")
+		oldItemsWithDescriptionIface, newItemsWithDescriptionIface := d.GetChange("items_with_description")
+
 		oldItems := oldItemsIface.(*schema.Set).List()
 		newItems := newItemsIface.(*schema.Set).List()
+		oldItemsWithDescription := oldItemsWithDescriptionIface.(*schema.Set).List()
+		newItemsWithDescription := newItemsWithDescriptionIface.(*schema.Set).List()
+
+		convertedOldItems := []cloudflare.TeamsListItem{}
+		convertedNewItems := []cloudflare.TeamsListItem{}
+
+		for _, v := range oldItems {
+			item, err := convertItemCFTeamsListItems(v)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("error creating Teams List for account %q: %w", accountID, err))
+			}
+			convertedOldItems = append(convertedOldItems, *item)
+		}
+
+		for _, v := range oldItemsWithDescription {
+			item, err := convertItemCFTeamsListItems(v)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("error creating Teams List for account %q: %w", accountID, err))
+			}
+			convertedOldItems = append(convertedOldItems, *item)
+		}
+
+		for _, v := range newItems {
+			item, err := convertItemCFTeamsListItems(v)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("error creating Teams List for account %q: %w", accountID, err))
+			}
+			convertedNewItems = append(convertedNewItems, *item)
+		}
+
+		for _, v := range newItemsWithDescription {
+			item, err := convertItemCFTeamsListItems(v)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("error creating Teams List for account %q: %w", accountID, err))
+			}
+			convertedNewItems = append(convertedNewItems, *item)
+		}
+
 		patchTeamsList := cloudflare.PatchTeamsListParams{ID: d.Id()}
-		setListItemDiff(&patchTeamsList, oldItems, newItems)
+		setListItemDiff(&patchTeamsList, convertedOldItems, convertedNewItems)
 
 		l, err := client.PatchTeamsList(ctx, identifier, patchTeamsList)
 
@@ -206,21 +246,22 @@ func resourceCloudflareTeamsListImport(ctx context.Context, d *schema.ResourceDa
 	return []*schema.ResourceData{d}, nil
 }
 
-func setListItemDiff(patchList *cloudflare.PatchTeamsListParams, oldItems, newItems []interface{}) {
-	counts := make(map[string]int)
-	for _, val := range newItems {
-		counts[val.(string)] += 1
+func setListItemDiff(patchList *cloudflare.PatchTeamsListParams, oldItems, newItems []cloudflare.TeamsListItem) {
+	counts := make(map[cloudflare.TeamsListItem]int)
+
+	for _, item := range newItems {
+		counts[item] += 1
 	}
-	for _, val := range oldItems {
-		counts[val.(string)] -= 1
+	for _, item := range oldItems {
+		counts[item] -= 1
 	}
 
-	for key, val := range counts {
+	for item, val := range counts {
 		if val > 0 {
-			patchList.Append = append(patchList.Append, cloudflare.TeamsListItem{Value: key})
+			patchList.Append = append(patchList.Append, item)
 		}
 		if val < 0 {
-			patchList.Remove = append(patchList.Remove, key)
+			patchList.Remove = append(patchList.Remove, item.Value)
 		}
 	}
 }

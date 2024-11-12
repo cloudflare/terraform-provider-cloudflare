@@ -81,6 +81,20 @@ func TestAccCloudflareTeamsList_BasicWithDescription(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "items_with_description.1.description", "test-2"),
 				),
 			},
+			{
+				Config: testAccCloudflareTeamsListUpdatedConfigBasicWithDescription(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "DOMAIN"),
+					resource.TestCheckResourceAttr(name, "description", "My description"),
+					resource.TestCheckResourceAttr(name, "items.#", "1"),
+					resource.TestCheckResourceAttr(name, "items_with_description.#", "1"),
+					resource.TestCheckResourceAttr(name, "items.0", "fedcba.com"),
+					resource.TestCheckResourceAttr(name, "items_with_description.0.value", "abcd.com"),
+					resource.TestCheckResourceAttr(name, "items_with_description.0.description", "updated test"),
+				),
+			},
 		},
 	})
 }
@@ -162,8 +176,21 @@ resource "cloudflare_zero_trust_list" "%[1]s" {
 	name                   = "%[1]s"
 	description            = "My description"
 	type                   = "DOMAIN"
-	items                  = [ "abcdef.com"]
+	items                  = ["abcdef.com"]
     items_with_description = [{"value" : "abcd.com", "description": "test"},  {"value" : "abcdefghijk.com", "description": "test-2"}]
+}
+`, rnd, accountID)
+}
+
+func testAccCloudflareTeamsListUpdatedConfigBasicWithDescription(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zero_trust_list" "%[1]s" {
+	account_id             = "%[2]s"
+	name                   = "%[1]s"
+	description            = "My description"
+	type                   = "DOMAIN"
+	items                  = ["fedcba.com"]
+    items_with_description = [{"value" : "abcd.com", "description": "updated test"}]
 }
 `, rnd, accountID)
 }
