@@ -19,13 +19,17 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDeviceCustomProfileReso
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			"id": schema.StringAttribute{
+				Description: "Device ID.",
+				Computed:    true,
 			},
 			"policy_id": schema.StringAttribute{
 				Description:   "Device ID.",
-				Optional:      true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
+			"account_id": schema.StringAttribute{
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"lan_allow_minutes": schema.Float64Attribute{
