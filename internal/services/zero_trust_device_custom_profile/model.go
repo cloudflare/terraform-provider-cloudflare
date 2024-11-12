@@ -13,8 +13,9 @@ type ZeroTrustDeviceCustomProfileResultEnvelope struct {
 }
 
 type ZeroTrustDeviceCustomProfileModel struct {
+	ID                  types.String                                                                   `tfsdk:"id" json:"-,computed"`
+	PolicyID            types.String                                                                   `tfsdk:"policy_id" json:"policy_id,computed"`
 	AccountID           types.String                                                                   `tfsdk:"account_id" path:"account_id,required"`
-	PolicyID            types.String                                                                   `tfsdk:"policy_id" path:"policy_id,optional"`
 	LANAllowMinutes     types.Float64                                                                  `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional"`
 	LANAllowSubnetSize  types.Float64                                                                  `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional"`
 	Match               types.String                                                                   `tfsdk:"match" json:"match,required"`

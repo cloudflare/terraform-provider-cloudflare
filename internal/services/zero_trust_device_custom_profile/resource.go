@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -19,6 +20,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustDeviceCustomProfileResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ZeroTrustDeviceCustomProfileResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustDeviceCustomProfileResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustDeviceCustomProfileResource{}
@@ -88,6 +90,7 @@ func (r *ZeroTrustDeviceCustomProfileResource) Create(ctx context.Context, req r
 		return
 	}
 	data = &env.Result
+	data.ID = data.PolicyID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -137,6 +140,7 @@ func (r *ZeroTrustDeviceCustomProfileResource) Update(ctx context.Context, req r
 		return
 	}
 	data = &env.Result
+	data.ID = data.PolicyID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -172,6 +176,7 @@ func (r *ZeroTrustDeviceCustomProfileResource) Read(ctx context.Context, req res
 		return
 	}
 	data = &env.Result
+	data.ID = data.PolicyID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -197,6 +202,50 @@ func (r *ZeroTrustDeviceCustomProfileResource) Delete(ctx context.Context, req r
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.PolicyID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZeroTrustDeviceCustomProfileResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZeroTrustDeviceCustomProfileModel
+
+	path_account_id := ""
+	path_policy_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<policy_id>",
+		&path_account_id,
+		&path_policy_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustDeviceCustomProfileResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Devices.Policies.Custom.Get(
+		ctx,
+		path_policy_id,
+		zero_trust.DevicePolicyCustomGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.PolicyID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
