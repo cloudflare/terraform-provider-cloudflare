@@ -100,6 +100,8 @@ func testAccCloudflareAPITokenWithoutCondition(resourceName, rnd, permissionID s
 }
 
 func TestAccAPIToken_SetIndividualCondition(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending service fix to address nested object syntax as strings for `conditions`.")
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
 	// endpoint does not yet support the API tokens without an explicit scope.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -131,6 +133,8 @@ func testAccCloudflareAPITokenWithIndividualCondition(rnd string, permissionID s
 }
 
 func TestAccAPIToken_SetAllCondition(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending service fix to address nested object syntax as strings for `conditions`.")
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
 	// endpoint does not yet support the API tokens without an explicit scope.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
