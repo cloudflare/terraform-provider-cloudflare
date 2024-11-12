@@ -150,7 +150,7 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(fmt.Errorf("failed to find Teams List ID in update response; resource was empty"))
 	}
 
-	if d.HasChange("items") || d.HasChange("items_with_description") {
+	if d.HasChanges("items", "items_with_description") {
 		oldItemsIface, newItemsIface := d.GetChange("items")
 		oldItemsWithDescriptionIface, newItemsWithDescriptionIface := d.GetChange("items_with_description")
 
