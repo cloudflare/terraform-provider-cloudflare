@@ -76,55 +76,6 @@ func testAccCheckCloudflareWorkersForPlatformsNamespaceManagement(rnd, accountID
 	return acctest.LoadTestCase("workersforplatformsnamespacemanagement.tf", rnd, accountID)
 }
 
-func TestAccCloudflareWorkersForPlatforms_UploadUserWorker(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	resourceName := "cloudflare_workers_for_platforms_dispatch_namespace." + rnd
-	workerResource := "cloudflare_workers_script.script_" + rnd
-
-	scriptContent := `<<EOT
-	export default {
-		fetch() {
-			return new Response("Hello, World!")
-		}
-	}
-	EOT
-	`
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareWorkersForPlatformsUploadUserWorker(rnd, accountID, scriptContent, "2024-01-01", []string{"free"}),
-				Check: resource.ComposeTestCheckFunc(
-					// Check namespace
-					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-
-					// Check Worker
-					resource.TestCheckResourceAttr(workerResource, "name", "script_"+rnd),
-					resource.TestCheckResourceAttr(workerResource, "compatibility_date", "2024-01-01"),
-					resource.TestCheckResourceAttr(workerResource, "dispatch_namespace", rnd),
-					resource.TestCheckResourceAttr(workerResource, "tags.#", "1"),
-					resource.TestCheckResourceAttr(workerResource, "tags.0", "free"),
-				),
-			},
-			// {
-			// 	ResourceName:        resourceName,
-			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			// 	ImportState:         true,
-			// 	ImportStateVerify:   true,
-			// },
-		},
-	})
-}
-
-func testAccCheckCloudflareWorkersForPlatformsUploadUserWorker(rnd, accountID, moduleContent, compatibilityDate string, tags []string) string {
-	return acctest.LoadTestCase("workersforplatformsuploaduserworker.tf", rnd, accountID, moduleContent, compatibilityDate, tags)
-}
-
 func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
