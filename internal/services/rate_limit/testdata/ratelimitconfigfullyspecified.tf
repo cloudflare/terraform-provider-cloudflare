@@ -3,8 +3,8 @@ resource "cloudflare_rate_limit" "%[1]s" {
   zone_id = "%[2]s"
   threshold = 2000
   period = 10
-  match =[ {
-    request =[ {
+  match = [{
+    request = [{
       url_pattern = "%[3]s/tfacc-full-%[1]s"
       schemes = ["HTTP", "HTTPS"]
       methods = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"]
@@ -26,7 +26,7 @@ resource "cloudflare_rate_limit" "%[1]s" {
       ]
     }]
   }
-  action =[ {
+  action = [{
     mode = "simulate"
     timeout = 43200
     response = {
@@ -34,7 +34,7 @@ resource "cloudflare_rate_limit" "%[1]s" {
       body = "my response body"
     }
   }]
-  correlate =[ {
+  correlate = [{
 	  by = "nat"
   }]
   disabled = true
