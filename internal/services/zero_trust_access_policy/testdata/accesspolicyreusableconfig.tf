@@ -2,7 +2,7 @@
       name           = "%[1]s"
       account_id     = "%[2]s"
       decision       = "allow"
-      include =[ {
+      include = [{
         email = ["a@example.com"]
       }]
     }

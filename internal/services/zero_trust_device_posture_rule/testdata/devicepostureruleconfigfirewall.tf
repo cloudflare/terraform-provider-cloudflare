@@ -6,7 +6,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 	description               = "firewall description"
 	schedule                  = "24h"
 	expiration                = "24h"
-	match =[ {
+	match = [{
 		platform = "windows"
 	}]
 	input = {

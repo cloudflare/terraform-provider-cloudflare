@@ -5,7 +5,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
   description = "check for /dev/random"
   schedule    = "1h"
 
-  match =[ {
+  match = [{
     platform = "linux"
   }]
 
