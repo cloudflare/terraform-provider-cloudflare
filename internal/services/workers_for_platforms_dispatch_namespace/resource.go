@@ -90,7 +90,7 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Create(ctx context.Contex
 		return
 	}
 	data = &env.Result
-	data.ID = data.NamespaceID
+	data.ID = data.NamespaceName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,7 +122,7 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Update(ctx context.Contex
 	_, err = r.client.WorkersForPlatforms.Dispatch.Namespaces.New(
 		ctx,
 		workers_for_platforms.DispatchNamespaceNewParams{
-			AccountID: cloudflare.F(data.NamespaceID.ValueString()),
+			AccountID: cloudflare.F(data.NamespaceName.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -139,7 +139,7 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Update(ctx context.Contex
 		return
 	}
 	data = &env.Result
-	data.ID = data.NamespaceID
+	data.ID = data.NamespaceName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -157,7 +157,7 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Read(ctx context.Context,
 	env := WorkersForPlatformsDispatchNamespaceResultEnvelope{*data}
 	_, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.Get(
 		ctx,
-		data.NamespaceID.ValueString(),
+		data.NamespaceName.ValueString(),
 		workers_for_platforms.DispatchNamespaceGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -175,7 +175,7 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Read(ctx context.Context,
 		return
 	}
 	data = &env.Result
-	data.ID = data.NamespaceID
+	data.ID = data.NamespaceName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -191,7 +191,7 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Delete(ctx context.Contex
 
 	_, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.Delete(
 		ctx,
-		data.NamespaceID.ValueString(),
+		data.NamespaceName.ValueString(),
 		workers_for_platforms.DispatchNamespaceDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -201,7 +201,7 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Delete(ctx context.Contex
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	data.ID = data.NamespaceID
+	data.ID = data.NamespaceName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -244,7 +244,7 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) ImportState(ctx context.C
 		return
 	}
 	data = &env.Result
-	data.ID = data.NamespaceID
+	data.ID = data.NamespaceName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
