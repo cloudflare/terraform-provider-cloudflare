@@ -14,7 +14,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
@@ -64,9 +63,7 @@ func (r *APITokenResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	spew.Dump(data)
 	dataBytes, err := data.MarshalJSON()
-	spew.Dump(string(dataBytes))
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
