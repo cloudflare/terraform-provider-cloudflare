@@ -68,10 +68,10 @@ func (r *WaitingRoomRulesResource) Create(ctx context.Context, req resource.Crea
 	}
 	res := new(http.Response)
 	env := WaitingRoomRulesResultEnvelope{data.Rules}
-	_, err = r.client.WaitingRooms.Rules.New(
+	_, err = r.client.WaitingRooms.Rules.Update(
 		ctx,
 		data.WaitingRoomID.ValueString(),
-		waiting_rooms.RuleNewParams{
+		waiting_rooms.RuleUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
