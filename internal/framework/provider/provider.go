@@ -33,6 +33,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/risk_behavior"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/snippet_rules"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms_dispatch_namespace"
@@ -368,6 +370,8 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		snippet_rules.NewResource,
+		snippets.NewResource,
 		cloud_connector_rules.NewResource,
 		d1.NewResource,
 		email_routing_address.NewResource,
