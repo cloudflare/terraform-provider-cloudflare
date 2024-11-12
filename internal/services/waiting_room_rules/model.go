@@ -8,14 +8,14 @@ import (
 )
 
 type WaitingRoomRulesResultEnvelope struct {
-	Result *WaitingRoomRulesRulesModel `json:"result"`
+	Result *[]*WaitingRoomRulesRulesModel `json:"result"`
 }
 
 type WaitingRoomRulesModel struct {
-	WaitingRoomID types.String                `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
-	ZoneID        types.String                `tfsdk:"zone_id" path:"zone_id,required"`
-	RuleID        types.String                `tfsdk:"rule_id" path:"rule_id,optional"`
-	Rules         *WaitingRoomRulesRulesModel `tfsdk:"rules" json:"rules,required"`
+	WaitingRoomID types.String                   `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
+	ZoneID        types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
+	RuleID        types.String                   `tfsdk:"rule_id" path:"rule_id,optional"`
+	Rules         *[]*WaitingRoomRulesRulesModel `tfsdk:"rules" json:"rules,required"`
 }
 
 func (m WaitingRoomRulesModel) MarshalJSON() (data []byte, err error) {
