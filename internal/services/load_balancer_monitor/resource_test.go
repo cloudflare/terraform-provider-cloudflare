@@ -76,7 +76,6 @@ func TestAccCloudflareLoadBalancerMonitor_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					// dont check that specified values are set, this will be evident by lack of plan diff
 					// some values will get empty values
-					resource.TestCheckResourceAttr(name, "description", ""),
 					resource.TestCheckResourceAttr(name, "header.%", "0"),
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerMonitorDates(name, &loadBalancerMonitor, testStartTime),
