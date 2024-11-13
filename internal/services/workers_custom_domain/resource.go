@@ -90,7 +90,6 @@ func (r *WorkersCustomDomainResource) Create(ctx context.Context, req resource.C
 		return
 	}
 	data = &env.Result
-	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,7 +121,7 @@ func (r *WorkersCustomDomainResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.Workers.Domains.Update(
 		ctx,
 		workers.DomainUpdateParams{
-			AccountID: cloudflare.F(data.Hostname.ValueString()),
+			AccountID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -139,7 +138,6 @@ func (r *WorkersCustomDomainResource) Update(ctx context.Context, req resource.U
 		return
 	}
 	data = &env.Result
-	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -157,7 +155,7 @@ func (r *WorkersCustomDomainResource) Read(ctx context.Context, req resource.Rea
 	env := WorkersCustomDomainResultEnvelope{*data}
 	_, err := r.client.Workers.Domains.Get(
 		ctx,
-		data.Hostname.ValueString(),
+		data.ID.ValueString(),
 		workers.DomainGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -175,7 +173,6 @@ func (r *WorkersCustomDomainResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	data = &env.Result
-	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -191,7 +188,7 @@ func (r *WorkersCustomDomainResource) Delete(ctx context.Context, req resource.D
 
 	err := r.client.Workers.Domains.Delete(
 		ctx,
-		data.Hostname.ValueString(),
+		data.ID.ValueString(),
 		workers.DomainDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -201,7 +198,6 @@ func (r *WorkersCustomDomainResource) Delete(ctx context.Context, req resource.D
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -244,7 +240,6 @@ func (r *WorkersCustomDomainResource) ImportState(ctx context.Context, req resou
 		return
 	}
 	data = &env.Result
-	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
