@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package waiting_room_setting
+package waiting_room_settings
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-var _ resource.ResourceWithConfigValidators = (*WaitingRoomSettingResource)(nil)
+var _ resource.ResourceWithConfigValidators = (*WaitingRoomSettingsResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -37,10 +37,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (r *WaitingRoomSettingResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *WaitingRoomSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *WaitingRoomSettingResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+func (r *WaitingRoomSettingsResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
 	return []resource.ConfigValidator{}
 }

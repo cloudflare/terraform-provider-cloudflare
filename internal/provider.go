@@ -121,7 +121,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room_event"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room_rules"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room_setting"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/web3_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/web_analytics_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/web_analytics_site"
@@ -382,7 +382,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		waiting_room.NewResource,
 		waiting_room_event.NewResource,
 		waiting_room_rules.NewResource,
-		waiting_room_setting.NewResource,
+		waiting_room_settings.NewResource,
 		web3_hostname.NewResource,
 		workers_script.NewResource,
 		workers_script_subdomain.NewResource,
@@ -575,7 +575,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		waiting_room_event.NewWaitingRoomEventDataSource,
 		waiting_room_event.NewWaitingRoomEventsDataSource,
 		waiting_room_rules.NewWaitingRoomRulesDataSource,
-		waiting_room_setting.NewWaitingRoomSettingDataSource,
+		waiting_room_settings.NewWaitingRoomSettingsDataSource,
 		web3_hostname.NewWeb3HostnameDataSource,
 		web3_hostname.NewWeb3HostnamesDataSource,
 		workers_script.NewWorkersScriptDataSource,

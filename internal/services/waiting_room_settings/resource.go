@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package waiting_room_setting
+package waiting_room_settings
 
 import (
 	"context"
@@ -18,24 +18,24 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*WaitingRoomSettingResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*WaitingRoomSettingResource)(nil)
-var _ resource.ResourceWithImportState = (*WaitingRoomSettingResource)(nil)
+var _ resource.ResourceWithConfigure = (*WaitingRoomSettingsResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*WaitingRoomSettingsResource)(nil)
+var _ resource.ResourceWithImportState = (*WaitingRoomSettingsResource)(nil)
 
 func NewResource() resource.Resource {
-	return &WaitingRoomSettingResource{}
+	return &WaitingRoomSettingsResource{}
 }
 
-// WaitingRoomSettingResource defines the resource implementation.
-type WaitingRoomSettingResource struct {
+// WaitingRoomSettingsResource defines the resource implementation.
+type WaitingRoomSettingsResource struct {
 	client *cloudflare.Client
 }
 
-func (r *WaitingRoomSettingResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_waiting_room_setting"
+func (r *WaitingRoomSettingsResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_waiting_room_settings"
 }
 
-func (r *WaitingRoomSettingResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *WaitingRoomSettingsResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -54,8 +54,8 @@ func (r *WaitingRoomSettingResource) Configure(ctx context.Context, req resource
 	r.client = client
 }
 
-func (r *WaitingRoomSettingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *WaitingRoomSettingModel
+func (r *WaitingRoomSettingsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *WaitingRoomSettingsModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -69,7 +69,7 @@ func (r *WaitingRoomSettingResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	res := new(http.Response)
-	env := WaitingRoomSettingResultEnvelope{*data}
+	env := WaitingRoomSettingsResultEnvelope{*data}
 	_, err = r.client.WaitingRooms.Settings.Update(
 		ctx,
 		waiting_rooms.SettingUpdateParams{
@@ -95,8 +95,8 @@ func (r *WaitingRoomSettingResource) Create(ctx context.Context, req resource.Cr
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WaitingRoomSettingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *WaitingRoomSettingModel
+func (r *WaitingRoomSettingsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *WaitingRoomSettingsModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -104,7 +104,7 @@ func (r *WaitingRoomSettingResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
-	var state *WaitingRoomSettingModel
+	var state *WaitingRoomSettingsModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -118,7 +118,7 @@ func (r *WaitingRoomSettingResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	res := new(http.Response)
-	env := WaitingRoomSettingResultEnvelope{*data}
+	env := WaitingRoomSettingsResultEnvelope{*data}
 	_, err = r.client.WaitingRooms.Settings.Update(
 		ctx,
 		waiting_rooms.SettingUpdateParams{
@@ -144,8 +144,8 @@ func (r *WaitingRoomSettingResource) Update(ctx context.Context, req resource.Up
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WaitingRoomSettingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *WaitingRoomSettingModel
+func (r *WaitingRoomSettingsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *WaitingRoomSettingsModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -154,7 +154,7 @@ func (r *WaitingRoomSettingResource) Read(ctx context.Context, req resource.Read
 	}
 
 	res := new(http.Response)
-	env := WaitingRoomSettingResultEnvelope{*data}
+	env := WaitingRoomSettingsResultEnvelope{*data}
 	_, err := r.client.WaitingRooms.Settings.Get(
 		ctx,
 		waiting_rooms.SettingGetParams{
@@ -179,12 +179,12 @@ func (r *WaitingRoomSettingResource) Read(ctx context.Context, req resource.Read
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WaitingRoomSettingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *WaitingRoomSettingsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 
 }
 
-func (r *WaitingRoomSettingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WaitingRoomSettingModel
+func (r *WaitingRoomSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *WaitingRoomSettingsModel
 
 	path := ""
 	diags := importpath.ParseImportID(
@@ -198,7 +198,7 @@ func (r *WaitingRoomSettingResource) ImportState(ctx context.Context, req resour
 	}
 
 	res := new(http.Response)
-	env := WaitingRoomSettingResultEnvelope{*data}
+	env := WaitingRoomSettingsResultEnvelope{*data}
 	_, err := r.client.WaitingRooms.Settings.Get(
 		ctx,
 		waiting_rooms.SettingGetParams{
@@ -223,7 +223,7 @@ func (r *WaitingRoomSettingResource) ImportState(ctx context.Context, req resour
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WaitingRoomSettingResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+func (r *WaitingRoomSettingsResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
 	if req.State.Raw.IsNull() {
 		resp.Diagnostics.AddWarning(
 			"Resource Destruction Considerations",
