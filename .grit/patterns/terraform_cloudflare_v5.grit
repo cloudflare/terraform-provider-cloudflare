@@ -1,0 +1,8 @@
+language hcl
+
+pattern terraform_cloudflare_v5() {
+  any {
+    terraform_cloudflare_v5_attribute_renames(),
+    terraform_cloudflare_v5_block_to_attribute(),
+  }
+}
