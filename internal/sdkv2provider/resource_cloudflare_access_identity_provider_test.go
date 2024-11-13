@@ -262,11 +262,12 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 				Check:  checkFn,
 			},
 			{
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				Check:               checkFn,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"config.0.client_secret"},
+				ResourceName:            resourceName,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				Check:                   checkFn,
 			},
 		},
 	})
