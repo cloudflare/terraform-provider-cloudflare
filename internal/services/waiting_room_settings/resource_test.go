@@ -1,4 +1,4 @@
-package waiting_room_setting_test
+package waiting_room_settings_test
 
 import (
 	"fmt"
@@ -12,7 +12,6 @@ import (
 )
 
 func TestAccCloudflareWaitingRoomSettings_Create(t *testing.T) {
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_waiting_room_settings.%s", rnd)
