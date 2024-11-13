@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package waiting_room_setting
+package waiting_room_settings
 
 import (
 	"context"
@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type WaitingRoomSettingDataSource struct {
+type WaitingRoomSettingsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*WaitingRoomSettingDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*WaitingRoomSettingsDataSource)(nil)
 
-func NewWaitingRoomSettingDataSource() datasource.DataSource {
-	return &WaitingRoomSettingDataSource{}
+func NewWaitingRoomSettingsDataSource() datasource.DataSource {
+	return &WaitingRoomSettingsDataSource{}
 }
 
-func (d *WaitingRoomSettingDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_waiting_room_setting"
+func (d *WaitingRoomSettingsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_waiting_room_settings"
 }
 
-func (d *WaitingRoomSettingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WaitingRoomSettingsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *WaitingRoomSettingDataSource) Configure(ctx context.Context, req dataso
 	d.client = client
 }
 
-func (d *WaitingRoomSettingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *WaitingRoomSettingDataSourceModel
+func (d *WaitingRoomSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *WaitingRoomSettingsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -64,7 +64,7 @@ func (d *WaitingRoomSettingDataSource) Read(ctx context.Context, req datasource.
 	}
 
 	res := new(http.Response)
-	env := WaitingRoomSettingResultDataSourceEnvelope{*data}
+	env := WaitingRoomSettingsResultDataSourceEnvelope{*data}
 	_, err := d.client.WaitingRooms.Settings.Get(
 		ctx,
 		params,

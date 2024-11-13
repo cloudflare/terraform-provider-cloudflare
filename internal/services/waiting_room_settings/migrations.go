@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package waiting_room_setting
+package waiting_room_settings
 
 import (
 	"context"
@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = (*WaitingRoomSettingResource)(nil)
+var _ resource.ResourceWithUpgradeState = (*WaitingRoomSettingsResource)(nil)
 
-func (r *WaitingRoomSettingResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+func (r *WaitingRoomSettingsResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}
 }
