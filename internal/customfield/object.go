@@ -164,8 +164,7 @@ func (v NestedObject[T]) Value(ctx context.Context) (*T, diag.Diagnostics) {
 
 	ptr := new(T)
 
-	diags.Append(v.ObjectValue.As(ctx, ptr, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-
+	diags.Append(v.ObjectValue.As(ctx, ptr, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil, diags
 	}
