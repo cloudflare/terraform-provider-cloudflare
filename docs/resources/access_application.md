@@ -262,7 +262,7 @@ Optional:
 
 Required:
 
-- `idp_uid` (String) The UID of the IdP to use as the source for SCIM resources to provision to this application.
+- `idp_uid` (String) The UIDs of the IdP to use as the source for SCIM resources to provision to this application.
 - `remote_uri` (String) The base URI for the application's SCIM-compatible API.
 
 Optional:
@@ -299,11 +299,12 @@ Required:
 - `schema` (String) Which SCIM resource type this mapping applies to.
 
 Optional:
-- `enabled` (Boolean) Whether this mapping is enabled.
+
+- `enabled` (Boolean) Whether or not this mapping is enabled.
 - `filter` (String) A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.
+- `operations` (Block List, Max: 1) Whether or not this mapping applies to creates, updates, or deletes. (see [below for nested schema](#nestedblock--scim_config--mappings--operations))
+- `strictness` (String) How strictly to adhere to outbound resource schemas when provisioning to this mapping. "strict" will remove unknown values when provisioning, while "passthrough" will pass unknown values to the target.
 - `transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.
-- `operations` (Block List, Max: 1) Whether this mapping applies to creates, updates, or deletes. See [below for nested schema](#nestedblock--scim_config--mapping--operations)
-- `strictness` (String) Available values: `strict`, `passthrough`. How strictly to adhere to outbound resource schemas when provisioning to this mapping. `strict` will remove unknown values when provisioning, while `passthrough` will pass unknown values to the target.
 
 <a id="nestedblock--scim_config--mappings--operations"></a>
 ### Nested Schema for `scim_config.mappings.operations`
