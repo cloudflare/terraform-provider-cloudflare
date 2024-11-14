@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package access_rule
+package rate_limit
 
 import (
 	"context"
@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type AccessRuleDataSource struct {
+type RateLimitDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*AccessRuleDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*RateLimitDataSource)(nil)
 
-func NewAccessRuleDataSource() datasource.DataSource {
-	return &AccessRuleDataSource{}
+func NewRateLimitDataSource() datasource.DataSource {
+	return &RateLimitDataSource{}
 }
 
-func (d *AccessRuleDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_access_rule"
+func (d *RateLimitDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_rate_limit"
 }
 
-func (d *AccessRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *RateLimitDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *AccessRuleDataSource) Configure(ctx context.Context, req datasource.Con
 	d.client = client
 }
 
-func (d *AccessRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *AccessRuleDataSourceModel
+func (d *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *RateLimitDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -65,10 +65,10 @@ func (d *AccessRuleDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		}
 
 		res := new(http.Response)
-		env := AccessRuleResultDataSourceEnvelope{*data}
-		_, err := d.client.Firewall.AccessRules.Get(
+		env := RateLimitResultDataSourceEnvelope{*data}
+		_, err := d.client.RateLimits.Get(
 			ctx,
-			data.RuleID.ValueString(),
+			data.RateLimitID.ValueString(),
 			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
@@ -91,8 +91,8 @@ func (d *AccessRuleDataSource) Read(ctx context.Context, req datasource.ReadRequ
 			return
 		}
 
-		env := AccessRuleResultListDataSourceEnvelope{}
-		page, err := d.client.Firewall.AccessRules.List(ctx, params)
+		env := RateLimitResultListDataSourceEnvelope{}
+		page, err := d.client.RateLimits.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

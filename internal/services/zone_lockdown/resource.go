@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package access_rule
+package zone_lockdown
 
 import (
 	"context"
@@ -18,24 +18,24 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*AccessRuleResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*AccessRuleResource)(nil)
-var _ resource.ResourceWithImportState = (*AccessRuleResource)(nil)
+var _ resource.ResourceWithConfigure = (*ZoneLockdownResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ZoneLockdownResource)(nil)
+var _ resource.ResourceWithImportState = (*ZoneLockdownResource)(nil)
 
 func NewResource() resource.Resource {
-	return &AccessRuleResource{}
+	return &ZoneLockdownResource{}
 }
 
-// AccessRuleResource defines the resource implementation.
-type AccessRuleResource struct {
+// ZoneLockdownResource defines the resource implementation.
+type ZoneLockdownResource struct {
 	client *cloudflare.Client
 }
 
-func (r *AccessRuleResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_access_rule"
+func (r *ZoneLockdownResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_zone_lockdown"
 }
 
-func (r *AccessRuleResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *ZoneLockdownResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -54,8 +54,8 @@ func (r *AccessRuleResource) Configure(ctx context.Context, req resource.Configu
 	r.client = client
 }
 
-func (r *AccessRuleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *AccessRuleModel
+func (r *ZoneLockdownResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *ZoneLockdownModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -69,18 +69,12 @@ func (r *AccessRuleResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 	res := new(http.Response)
-	env := AccessRuleResultEnvelope{*data}
-	params := firewall.AccessRuleNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err = r.client.Firewall.AccessRules.New(
+	env := ZoneLockdownResultEnvelope{*data}
+	_, err = r.client.Firewall.Lockdowns.New(
 		ctx,
-		params,
+		firewall.LockdownNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -100,8 +94,8 @@ func (r *AccessRuleResource) Create(ctx context.Context, req resource.CreateRequ
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessRuleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *AccessRuleModel
+func (r *ZoneLockdownResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *ZoneLockdownModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -109,7 +103,7 @@ func (r *AccessRuleResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	var state *AccessRuleModel
+	var state *ZoneLockdownModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -123,19 +117,13 @@ func (r *AccessRuleResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 	res := new(http.Response)
-	env := AccessRuleResultEnvelope{*data}
-	params := firewall.AccessRuleEditParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err = r.client.Firewall.AccessRules.Edit(
+	env := ZoneLockdownResultEnvelope{*data}
+	_, err = r.client.Firewall.Lockdowns.Update(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		firewall.LockdownUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -155,8 +143,8 @@ func (r *AccessRuleResource) Update(ctx context.Context, req resource.UpdateRequ
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessRuleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *AccessRuleModel
+func (r *ZoneLockdownResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *ZoneLockdownModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -165,19 +153,13 @@ func (r *AccessRuleResource) Read(ctx context.Context, req resource.ReadRequest,
 	}
 
 	res := new(http.Response)
-	env := AccessRuleResultEnvelope{*data}
-	params := firewall.AccessRuleGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err := r.client.Firewall.AccessRules.Get(
+	env := ZoneLockdownResultEnvelope{*data}
+	_, err := r.client.Firewall.Lockdowns.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		firewall.LockdownGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -196,8 +178,8 @@ func (r *AccessRuleResource) Read(ctx context.Context, req resource.ReadRequest,
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessRuleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *AccessRuleModel
+func (r *ZoneLockdownResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *ZoneLockdownModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -205,18 +187,12 @@ func (r *AccessRuleResource) Delete(ctx context.Context, req resource.DeleteRequ
 		return
 	}
 
-	params := firewall.AccessRuleDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err := r.client.Firewall.AccessRules.Delete(
+	_, err := r.client.Firewall.Lockdowns.Delete(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		firewall.LockdownDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
@@ -227,38 +203,30 @@ func (r *AccessRuleResource) Delete(ctx context.Context, req resource.DeleteRequ
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *AccessRuleModel
-	params := firewall.AccessRuleGetParams{}
+func (r *ZoneLockdownResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZoneLockdownModel
 
-	path_accounts_or_zones, path_account_id_or_zone_id := "", ""
-	path_rule_id := ""
+	path_zone_id := ""
+	path_lock_downs_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<{accounts|zones}/{account_id|zone_id}>/<rule_id>",
-		&path_accounts_or_zones,
-		&path_account_id_or_zone_id,
-		&path_rule_id,
+		"<zone_id>/<lock_downs_id>",
+		&path_zone_id,
+		&path_lock_downs_id,
 	)
 	resp.Diagnostics.Append(diags...)
-	switch path_accounts_or_zones {
-	case "accounts":
-		params.AccountID = cloudflare.F(path_account_id_or_zone_id)
-	case "zones":
-		params.ZoneID = cloudflare.F(path_account_id_or_zone_id)
-	default:
-		resp.Diagnostics.AddError("invalid discriminator segment - <{accounts|zones}/{account_id|zone_id}>", "expected discriminator to be one of {accounts|zones}")
-	}
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
-	env := AccessRuleResultEnvelope{*data}
-	_, err := r.client.Firewall.AccessRules.Get(
+	env := ZoneLockdownResultEnvelope{*data}
+	_, err := r.client.Firewall.Lockdowns.Get(
 		ctx,
-		path_rule_id,
-		params,
+		path_lock_downs_id,
+		firewall.LockdownGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -277,6 +245,6 @@ func (r *AccessRuleResource) ImportState(ctx context.Context, req resource.Impor
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessRuleResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *ZoneLockdownResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }
