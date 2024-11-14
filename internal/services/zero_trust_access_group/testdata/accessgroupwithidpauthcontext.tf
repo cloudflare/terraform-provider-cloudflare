@@ -1,13 +1,12 @@
-
 resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
   account_id = "%[1]s"
   name = "%[2]s"
   type = "azureAD"
   config = {
-  client_id = "test"
+    client_id = "test"
     client_secret = "secret"
-	directory_id = "foo"
-}
+    directory_id = "foo"
+  }
 }
 
 resource "cloudflare_zero_trust_access_group" "%[2]s" {
