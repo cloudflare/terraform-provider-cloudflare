@@ -42,6 +42,19 @@ func (m *ZeroTrustAccessApplicationDataSourceModel) toReadParams(_ context.Conte
 func (m *ZeroTrustAccessApplicationDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessApplicationListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessApplicationListParams{}
 
+	if !m.Filter.AUD.IsNull() {
+		params.AUD = cloudflare.F(m.Filter.AUD.ValueString())
+	}
+	if !m.Filter.Domain.IsNull() {
+		params.Domain = cloudflare.F(m.Filter.Domain.ValueString())
+	}
+	if !m.Filter.Name.IsNull() {
+		params.Name = cloudflare.F(m.Filter.Name.ValueString())
+	}
+	if !m.Filter.Search.IsNull() {
+		params.Search = cloudflare.F(m.Filter.Search.ValueString())
+	}
+
 	if !m.Filter.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
 	} else {
@@ -54,4 +67,8 @@ func (m *ZeroTrustAccessApplicationDataSourceModel) toListParams(_ context.Conte
 type ZeroTrustAccessApplicationFindOneByDataSourceModel struct {
 	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	AUD       types.String `tfsdk:"aud" query:"aud,optional"`
+	Domain    types.String `tfsdk:"domain" query:"domain,optional"`
+	Name      types.String `tfsdk:"name" query:"name,optional"`
+	Search    types.String `tfsdk:"search" query:"search,optional"`
 }

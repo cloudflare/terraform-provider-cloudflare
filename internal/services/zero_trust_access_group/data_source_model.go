@@ -51,6 +51,13 @@ func (m *ZeroTrustAccessGroupDataSourceModel) toReadParams(_ context.Context) (p
 func (m *ZeroTrustAccessGroupDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessGroupListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessGroupListParams{}
 
+	if !m.Filter.Name.IsNull() {
+		params.Name = cloudflare.F(m.Filter.Name.ValueString())
+	}
+	if !m.Filter.Search.IsNull() {
+		params.Search = cloudflare.F(m.Filter.Search.ValueString())
+	}
+
 	if !m.Filter.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
 	} else {
@@ -471,4 +478,6 @@ type ZeroTrustAccessGroupRequireDevicePostureDataSourceModel struct {
 type ZeroTrustAccessGroupFindOneByDataSourceModel struct {
 	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	Name      types.String `tfsdk:"name" query:"name,optional"`
+	Search    types.String `tfsdk:"search" query:"search,optional"`
 }

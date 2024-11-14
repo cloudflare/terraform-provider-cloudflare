@@ -67,7 +67,7 @@ type ZeroTrustAccessIdentityProviderConfigHeaderAttributesModel struct {
 
 type ZeroTrustAccessIdentityProviderSCIMConfigModel struct {
 	Enabled                types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
-	GroupMemberDeprovision types.Bool   `tfsdk:"group_member_deprovision" json:"group_member_deprovision,optional"`
+	IdentityUpdateBehavior types.String `tfsdk:"identity_update_behavior" json:"identity_update_behavior,optional"`
 	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision,optional"`
 	Secret                 types.String `tfsdk:"secret" json:"secret,computed"`
 	UserDeprovision        types.Bool   `tfsdk:"user_deprovision" json:"user_deprovision,optional"`
