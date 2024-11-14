@@ -44,6 +44,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 						Optional:    true,
 					},
+					"aud": schema.StringAttribute{
+						Description: "The aud of the app.",
+						Optional:    true,
+					},
+					"domain": schema.StringAttribute{
+						Description: "The domain of the app.",
+						Optional:    true,
+					},
+					"name": schema.StringAttribute{
+						Description: "The name of the app.",
+						Optional:    true,
+					},
+					"search": schema.StringAttribute{
+						Description: "Search for apps by other listed query parameters.",
+						Optional:    true,
+					},
 				},
 			},
 		},
