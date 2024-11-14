@@ -6,13 +6,16 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*AccessRulesDataSource)(nil)
@@ -104,7 +107,102 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[AccessRulesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{},
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "The unique identifier of the IP Access rule.",
+							Computed:    true,
+						},
+						"allowed_modes": schema.ListAttribute{
+							Description: "The available actions that a rule can apply to a matched request.",
+							Computed:    true,
+							Validators: []validator.List{
+								listvalidator.ValueStringsAre(
+									stringvalidator.OneOfCaseInsensitive(
+										"block",
+										"challenge",
+										"whitelist",
+										"js_challenge",
+										"managed_challenge",
+									),
+								),
+							},
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"configuration": schema.SingleNestedAttribute{
+							Description: "The rule configuration.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[AccessRulesConfigurationDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"target": schema.StringAttribute{
+									Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the rule.",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"ip",
+											"ip6",
+											"ip_range",
+											"asn",
+											"country",
+										),
+									},
+								},
+								"value": schema.StringAttribute{
+									Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
+									Computed:    true,
+								},
+							},
+						},
+						"mode": schema.StringAttribute{
+							Description: "The action to apply to a matched request.",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"block",
+									"challenge",
+									"whitelist",
+									"js_challenge",
+									"managed_challenge",
+								),
+							},
+						},
+						"created_on": schema.StringAttribute{
+							Description: "The timestamp of when the rule was created.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"modified_on": schema.StringAttribute{
+							Description: "The timestamp of when the rule was last modified.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"notes": schema.StringAttribute{
+							Description: "An informative summary of the rule, typically used as a reminder or explanation.",
+							Computed:    true,
+						},
+						"scope": schema.SingleNestedAttribute{
+							Description: "All zones owned by the user will have the rule applied.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[AccessRulesScopeDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "Identifier",
+									Computed:    true,
+								},
+								"email": schema.StringAttribute{
+									Description: "The contact email address of the user.",
+									Computed:    true,
+								},
+								"type": schema.StringAttribute{
+									Description: "The scope of the rule.",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("user", "organization"),
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
