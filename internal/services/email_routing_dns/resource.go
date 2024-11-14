@@ -90,6 +90,7 @@ func (r *EmailRoutingDNSResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -121,7 +122,7 @@ func (r *EmailRoutingDNSResource) Update(ctx context.Context, req resource.Updat
 	_, err = r.client.EmailRouting.DNS.Edit(
 		ctx,
 		email_routing.DNSEditParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -138,6 +139,7 @@ func (r *EmailRoutingDNSResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -156,7 +158,7 @@ func (r *EmailRoutingDNSResource) Read(ctx context.Context, req resource.ReadReq
 	_, err := r.client.EmailRouting.DNS.Get(
 		ctx,
 		email_routing.DNSGetParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -172,6 +174,7 @@ func (r *EmailRoutingDNSResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -188,7 +191,7 @@ func (r *EmailRoutingDNSResource) Delete(ctx context.Context, req resource.Delet
 	_, err := r.client.EmailRouting.DNS.Delete(
 		ctx,
 		email_routing.DNSDeleteParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -196,6 +199,7 @@ func (r *EmailRoutingDNSResource) Delete(ctx context.Context, req resource.Delet
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -235,6 +239,7 @@ func (r *EmailRoutingDNSResource) ImportState(ctx context.Context, req resource.
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
