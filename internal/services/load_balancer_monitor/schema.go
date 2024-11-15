@@ -31,16 +31,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"expected_codes": schema.StringAttribute{
-				Description: "The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS monitors.",
-				Required:    true,
-			},
 			"description": schema.StringAttribute{
 				Description: "Object description.",
 				Optional:    true,
 			},
 			"expected_body": schema.StringAttribute{
 				Description: "A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.",
+				Optional:    true,
+			},
+			"expected_codes": schema.StringAttribute{
+				Description: "The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS monitors.",
 				Optional:    true,
 			},
 			"probe_zone": schema.StringAttribute{
