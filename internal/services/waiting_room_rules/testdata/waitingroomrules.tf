@@ -19,17 +19,16 @@ resource "cloudflare_waiting_room_rules" "%[1]s" {
   zone_id		  = "%[2]s"
   waiting_room_id = cloudflare_waiting_room.%[1]s.id
 
-  rules {
+  rules = [{
     action      = "bypass_waiting_room"
     expression  = "ip.src in {192.0.2.1}"
     description = "ip bypass"
-    status 	    = "enabled"
-  }
-
-  rules {
+    enabled 	    = true
+  },
+  {
     action      = "bypass_waiting_room"
     expression 	= "http.request.uri.query contains \"bypass=true\""
     description = "query string bypass"
-    status 	    = "disabled"
-  }
+    enabled 	  = false
+  }]
 }
