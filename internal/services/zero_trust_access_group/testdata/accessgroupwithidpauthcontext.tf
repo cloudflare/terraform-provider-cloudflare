@@ -14,14 +14,14 @@ resource "cloudflare_zero_trust_access_group" "%[2]s" {
   name = "%[2]s"
 
   include = [{
-    any_valid_service_token = true
+    any_valid_service_token = {}
   }]
 
   require = [{
-    auth_context = [{
+    auth_context = {
       id = "%[3]s"
       ac_id = "%[4]s"
       identity_provider_id = cloudflare_zero_trust_access_identity_provider.%[2]s.id
     }
-  }
-}]
+  }]
+}

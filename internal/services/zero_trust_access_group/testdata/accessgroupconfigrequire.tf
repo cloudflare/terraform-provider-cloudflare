@@ -3,11 +3,11 @@ resource "cloudflare_zero_trust_access_group" "%[1]s" {
   name = "%[1]s"
 
   include = [{
-    email = ["%[3]s"]
-    email_domain = ["example.com"]
+    email = { email = "%[3]s" }
+    email_domain = { domain = "example.com" }
   }]
 
   require = [{
-    email = ["%[3]s"]
+    email = { email = "%[3]s" }
   }]
 }
