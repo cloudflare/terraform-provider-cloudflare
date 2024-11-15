@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareTunneVirtualNetwork_MatchName(t *testing.T) {
+func TestAccCloudflareTunneVirtualNetworkDatasource_MatchName(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{

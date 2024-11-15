@@ -76,7 +76,7 @@ func TestAccCloudflareTunnelVirtualNetwork_Exists(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "comment", rnd),
-					resource.TestCheckResourceAttr(name, "is_default_network", "false"),
+					resource.TestCheckResourceAttr(name, "is_default", "false"),
 				),
 			},
 		},
