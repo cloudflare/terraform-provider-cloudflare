@@ -1,6 +1,6 @@
 language hcl
 
-pattern terraform_cloudflare_v5_attribute_renames() {
+pattern cloudflare_terraform_v5_attribute_renames() {
   any {
     // provider
     `version = $version` => `version = "~> 5"` where { $match <: within `provider "cloudflare" { $_ }` },
@@ -8,12 +8,15 @@ pattern terraform_cloudflare_v5_attribute_renames() {
     // cloudflare_api_token
     `policy = $v` as $p => `policies = $v` where { $p <: within `resource "cloudflare_api_token" $_ { $_ }` },
 
-    // cloudflare_access_policy
+    // cloudflare_access_policy & cloudflare_zero_trust_access_group
     `application_id = $id` as $app_id => . where { $app_id <: within `resource "cloudflare_access_policy" $_ { $_ }` },
     `precedence = $p` as $precedence => . where { $precedence <: within `resource "cloudflare_access_policy" $_ { $_ }` },
+    `application_id = $id` as $app_id => . where { $app_id <: within `resource "cloudflare_zero_trust_access_group" $_ { $_ }` },
+    `precedence = $p` as $precedence => . where { $precedence <: within `resource "cloudflare_zero_trust_access_group" $_ { $_ }` },
 
     // cloudflare_access_service_token
     `min_days_for_renewal = $days` as $renewal => . where { $renewal <: within `resource "cloudflare_access_service_token" $_ { $_ }` },
+    `min_days_for_renewal = $days` as $renewal => . where { $renewal <: within `resource "cloudflare_zero_trust_access_service_token" $_ { $_ }` },
 
     // cloudflare_hostname_tls_setting
     `setting = $v` as $setting => `setting_id = $v` where { $setting <: within `resource "cloudflare_hostname_tls_setting" $_ { $_ }` },
@@ -22,7 +25,7 @@ pattern terraform_cloudflare_v5_attribute_renames() {
     `fallback_pool_id = $v` as $fp => `fallback_pool = $v` where { $fp <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
     `default_pool_ids = $v` as $dp => `default_pools = $v` where { $dp <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
 
-    // cloudflare_teams_list
+    // cloudflare_teams_list & cloudflare_zero_trust_list
     `items = [$items]` as $all_items where {
         $values = [],
         $items <: some bubble($values) `$item` where {
@@ -30,6 +33,13 @@ pattern terraform_cloudflare_v5_attribute_renames() {
         },
         $new_colors = join(list=$values, separator=", ")
     } => `items = [$new_colors]` where $all_items <: within `resource "cloudflare_teams_list" $_ { $_ }`,
+    `items = [$items]` as $all_items where {
+        $values = [],
+        $items <: some bubble($values) `$item` where {
+            $values += `{ value = $item}`
+        },
+        $new_colors = join(list=$values, separator=", ")
+    } => `items = [$new_colors]` where $all_items <: within `resource "cloudflare_zero_trust_list" $_ { $_ }`,
 
     // cloudflare_queue
     `name = $v` as $name => `queue_name = $v` where { $name <: within `resource "cloudflare_queue" $_ { $_ }` },
@@ -52,7 +62,9 @@ pattern terraform_cloudflare_v5_attribute_renames() {
         }`
     },
 
-    // zero_trust_tunnel_cloudflared
+    // cloudflare_tunnel & zero_trust_tunnel_cloudflared
+    `secret = $v` as $p => `tunnel_secret = $v` where { $p <: within `resource "zero_trust_tunnel_cloudflared" $_ { $_ }` },
+    `cname = $v` as $cname => . where { $cname <: within `resource "zero_trust_tunnel_cloudflared" $_ { $_ }` },
     `secret = $v` as $p => `tunnel_secret = $v` where { $p <: within `resource "zero_trust_tunnel_cloudflared" $_ { $_ }` },
     `cname = $v` as $cname => . where { $cname <: within `resource "zero_trust_tunnel_cloudflared" $_ { $_ }` },
 

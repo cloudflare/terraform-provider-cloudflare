@@ -5,7 +5,7 @@
 // `terraform state mv` operation _may_ get you what want.
 language hcl
 
-pattern terraform_cloudflare_v5_resource_renames() {
+pattern cloudflare_terraform_v5_resource_renames() {
   any {
     `"cloudflare_access_application"` => `"cloudflare_zero_trust_access_application"`,
     `"cloudflare_access_ca_certificate"` => `"cloudflare_zero_trust_access_short_lived_certificate"`,

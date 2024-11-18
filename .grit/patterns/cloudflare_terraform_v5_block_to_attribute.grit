@@ -1,6 +1,6 @@
 language hcl
 
-pattern terraform_cloudflare_v5_block_to_attribute() {
+pattern cloudflare_terraform_v5_block_to_attribute() {
   any {
     inline_cloudflare_block_to_map(`cors_headers`) as $block where { $block <: within `resource "cloudflare_access_application" $_ { $_ }` },
     inline_cloudflare_block_to_list(`footer_links`) as $block where { $block <: within `resource "cloudflare_access_application" $_ { $_ }` },

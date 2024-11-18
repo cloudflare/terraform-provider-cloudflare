@@ -6,7 +6,10 @@ description: Terraform Cloudflare Provider Version 5 Upgrade Guide
 
 # Terraform Cloudflare Provider Version 5 Upgrade Guide
 
-Version 5 of the Cloudflare Terraform Provider is a ground-up rewrite of the provider, using code generation from our OpenAPI spec.
+Version 5 of the Cloudflare Terraform Provider is a ground-up rewrite of the
+provider, using code generation from our OpenAPI spec. While this introduces
+attribute and resource changes, it moves the provider to align more closely
+with the service endpoints and makes automatic support going forward possible.
 
 ## Provider Version Configuration
 
@@ -25,7 +28,7 @@ We highly recommend reviewing this guide, make necessary changes and move to
 security fixes.
 
 ~> Before attempting to upgrade to version 5, you should first upgrade to the
-   latest version of 4 to ensure any transitional updates are applied to your
+   latest version of 4.x to ensure any transitional updates are applied to your
    existing configuration.
 
 Once ready, make the following change to use the latest 5.x release:
@@ -37,18 +40,29 @@ provider "cloudflare" {
 }
 ```
 
+## Resource renames
+
+For an in depth guide on how to perform migrations for resources or datasources that
+have been renamed, check out [migrating renamed resources].
+
 ## Automatic migration
 
 For assisting with automatic migrations, we have provided a [GritQL] pattern.
-This will allow you to rewrite the parts of your Terraform configuration that have changed automatically. Once you [install Grit], you can run the following
+
+This will allow you to rewrite the parts of your Terraform configuration (not state)
+that have changed automatically. Once you [install Grit], you can run the following
 command in the directory where your Terraform configuration is located.
 
 ```bash
-$ grit apply terraform_cloudflare_v5
+$ grit apply cloudflare_terraform_v5
 ```
 
+We recommend ensuring you are using version control for these changes or make a
+backup prior to initiating the change to enable reverting if needed.
+
 ~> If you are using modules or other dynamic features of HCL, the provided
-   codemods may not be as effective. We recommend reviewing the migration notes below to verify all the changes.
+   codemods may not be as effective. We recommend reviewing the migration notes below
+   to verify all the changes.
 
 <!-- This code block is only used for confirming grit patterns -->
 ```grit
@@ -57,67 +71,186 @@ language hcl
 terraform_cloudflare_v5()
 ```
 
-## Additions
-
-<!-- TODO: grab a dump of all new resources and datasources just before release -->
-
-## Removals
-
-- `cloudflare_zone_settings_override`. Use `cloudflare_zone_setting` instead on a per setting basis.
-
-## Renames
-
 ## cloudflare_access_application
+
+- Renamed to `cloudflare_zero_trust_access_application`
+
+## cloudflare_access_ca_certificate
+
+- Renamed to `cloudflare_zero_trust_access_short_lived_certificate`
+
+## cloudflare_access_custom_page
+
+- Renamed to `cloudflare_zero_trust_access_custom_page`
+
 ## cloudflare_access_group
+
+- Renamed to `cloudflare_zero_trust_access_group`
+
 ## cloudflare_access_identity_provider
+
+- Renamed to `cloudflare_zero_trust_access_identity_provider`
+
+## cloudflare_access_keys_configuration
+
+- Renamed to `cloudflare_zero_trust_access_key_configuration`
+
+## cloudflare_access_mutual_tls_certificate
+
+- Renamed to `cloudflare_zero_trust_access_mtls_certificate`
+
 ## cloudflare_access_mutual_tls_hostname_settings
+
+- Renamed to `cloudflare_zero_trust_access_mtls_hostname_settings`
+
 ## cloudflare_access_organization
+
+- Renamed to `cloudflare_zero_trust_organization`
+
 ## cloudflare_access_policy
 
-- `application_id` and `precedence` no longer used.
-
-  Before
-  ```hcl
-  resource "cloudflare_access_policy" "example" {
-    account_id      = "f037e56e89293a057740de681ac9abbe"
-    application_id  = "foo"
-    name            = "example"
-    precedence      = 3
-  }
-  ```
-
-  After
-  ```hcl
-  resource "cloudflare_access_policy" "example" {
-    account_id = "f037e56e89293a057740de681ac9abbe"
-    name       = "example"
-  }
-  ```
+- Renamed to `cloudflare_zero_trust_access_policy`
 
 ## cloudflare_access_service_token
 
-- `min_days_for_renewal` is no longer used. If you would like similar functionality, you can use `duration = "forever"` instead.
+- Renamed to `cloudflare_zero_trust_access_service_token`
 
-  Before
-  ```hcl
-  resource "cloudflare_access_service_token" "example" {
-    account_id           = "f037e56e89293a057740de681ac9abbe"
-    name                 = "CI/CD app renewed"
-    min_days_for_renewal = 30
-  }
-  ```
+## cloudflare_access_tag
 
-  After
-  ```hcl
-  resource "cloudflare_access_service_token" "example" {
-    account_id = "f037e56e89293a057740de681ac9abbe"
-    name       = "CI/CD app renewed"
-  }
-  ```
+- Renamed to `cloudflare_zero_trust_access_tag`
 
-## cloudflare_access_rule
-## cloudflare_address_map
-## cloudflare_api_shield
+## cloudflare_device_dex_test
+
+- Renamed to `cloudflare_zero_trust_dex_test`
+
+## cloudflare_device_managed_networks
+
+- Renamed to `cloudflare_zero_trust_device_managed_networks`
+
+## cloudflare_device_policy_certificates
+
+- Renamed to `cloudflare_zero_trust_device_certificates`
+
+## cloudflare_device_posture_integration
+
+- Renamed to `cloudflare_zero_trust_device_posture_integration`
+
+## cloudflare_device_posture_rule
+
+- Renamed to `cloudflare_zero_trust_device_posture_rule`
+
+## cloudflare_device_settings_policy
+
+- Renamed to `cloudflare_zero_trust_device_profiles`
+
+## cloudflare_dlp_custom_profile
+
+- Renamed to `cloudflare_zero_trust_dlp_custom_profile`
+
+## cloudflare_dlp_predefined_profile
+
+- Renamed to `cloudflare_zero_trust_dlp_predefined_profile`
+
+## cloudflare_dlp_profile
+
+- Renamed to `cloudflare_zero_trust_dlp_profile`
+
+## cloudflare_fallback_domain
+
+- Renamed to `cloudflare_zero_trust_local_domain_fallback`
+
+## cloudflare_gateway_app_types
+
+- Renamed to `cloudflare_zero_trust_gateway_app_types`
+
+## cloudflare_gre_tunnel
+
+- Renamed to `cloudflare_magic_wan_gre_tunnel`
+
+## cloudflare_ipsec_tunnel
+
+- Renamed to `cloudflare_magic_wan_ipsec_tunnel`
+
+## cloudflare_record
+
+- Renamed to `cloudflare_dns_record`
+
+## cloudflare_risk_behavior
+
+- Renamed to `cloudflare_zero_trust_risk_behavior`
+
+## cloudflare_split_tunnel
+
+- Renamed to `cloudflare_zero_trust_split_tunnels`
+
+## cloudflare_static_route
+
+- Renamed to `cloudflare_magic_wan_static_route`
+
+## cloudflare_teams_account
+
+- Renamed to `cloudflare_zero_trust_gateway_settings`
+
+## cloudflare_teams_list
+
+- Renamed to `cloudflare_zero_trust_list`
+
+## cloudflare_teams_location
+
+- Renamed to `cloudflare_zero_trust_dns_location`
+
+## cloudflare_teams_proxy_endpoint
+
+- Renamed to `cloudflare_zero_trust_gateway_proxy_endpoint`
+
+## cloudflare_teams_rule
+
+- Renamed to `cloudflare_zero_trust_gateway_policy`
+
+## cloudflare_tunnel
+
+- Renamed to `cloudflare_zero_trust_tunnel_cloudflared`
+
+## cloudflare_tunnel_config
+
+- Renamed to `cloudflare_zero_trust_tunnel_cloudflared_config`
+
+## cloudflare_tunnel_route
+
+- Renamed to `cloudflare_zero_trust_tunnel_route`
+
+## cloudflare_tunnel_virtual_network
+
+- Renamed to `cloudflare_zero_trust_tunnel_virtual_network`
+
+## cloudflare_worker_cron_trigger
+
+- Renamed to `cloudflare_workers_cron_trigger`
+
+## cloudflare_worker_domain
+
+- Renamed to `cloudflare_workers_custom_domain`
+
+## cloudflare_worker_script
+
+- Renamed to `cloudflare_workers_script`
+
+## cloudflare_worker_secret
+
+- Renamed to `cloudflare_workers_secret`
+
+## cloudflare_workers_for_platforms_namespace
+
+- Renamed to `cloudflare_workers_for_platforms_dispatch_namespace`
+
+## cloudflare_zone_dnssec
+
+- Renamed to `cloudflare_dns_zone_dnssec`
+
+## cloudflare_managed_headers
+
+- Renamed to `cloudflare_managed_transforms`
+
 ## cloudflare_api_token
 
 - `policy` is now `policies`.
@@ -158,18 +291,6 @@ terraform_cloudflare_v5()
   }
   ```
 
-## cloudflare_certificate_pack
-## cloudflare_custom_hostname
-## cloudflare_custom_ssl
-## cloudflare_device_dex_test
-## cloudflare_device_managed_networks
-## cloudflare_device_posture_integration
-## cloudflare_device_posture_rule
-## cloudflare_dlp_profile
-## cloudflare_email_routing_catch_all
-## cloudflare_email_routing_rule
-## cloudflare_fallback_domain
-## cloudflare_healthcheck
 ## cloudflare_hostname_tls_setting
 
 - `setting` is now `setting_id`.
@@ -192,8 +313,6 @@ terraform_cloudflare_v5()
   }
   ```
 
-## cloudflare_list
-## cloudflare_list_item
 ## cloudflare_load_balancer
 
 - `fallback_pool_id` is now `fallback_pool`.
@@ -232,17 +351,6 @@ terraform_cloudflare_v5()
   }
   ```
 
-## cloudflare_load_balancer_monitor
-## cloudflare_load_balancer_pool
-## cloudflare_logpush_job
-## cloudflare_managed_headers
-## cloudflare_notification_policy
-## cloudflare_page_rule
-## cloudflare_pages_project
-## cloudflare_rate_limit
-## cloudflare_record
-## cloudflare_risk_behavior
-## cloudflare_ruleset
 ## cloudflare_r2_bucket
 
 - `location_hint` is now `location`.
@@ -265,8 +373,6 @@ terraform_cloudflare_v5()
   }
   ```
 
-## cloudflare_spectrum_application
-## cloudflare_split_tunneclououdflare_teams_account
 ## cloudflare_teams_list
 
 - `items` is now an object of `value = $item` instead of `items = [$item1, $item2]`
@@ -289,17 +395,10 @@ terraform_cloudflare_v5()
    	name        = "example"
    	description = "My description"
    	type        = "SERIAL"
-   	items       = [{value = "item-1234"}, {value = "item-5678"}]
+   	items       = [{ value = "item-1234" }, { value = "item-5678" }]
   }
   ```
 
-## cloudflare_teams_location
-## cloudflare_teams_rule
-## cloudflare_tunnel_config
-## cloudflare_user_agent_blocking_rule
-## cloudflare_waiting_room
-## cloudflare_waiting_room_rules
-## cloudflare_worker_script
 ## cloudflare_workers_kv
 
 - `key` is now `key_name`.
@@ -388,9 +487,13 @@ terraform_cloudflare_v5()
   }
   ```
 
-## cloudflare_zone_lockdown
+## cloudflare_zone_settings_override
+
+- `cloudflare_zone_settings_override` has been removed. Use `cloudflare_zone_setting` instead on a per setting basis.
+
 ## cloudflare_zone
 
+- Zone subscriptions are now controlled independently using `cloudflare_zone_subscription` resource.
 - `zone` is now an `name`.
 
   Before
@@ -450,5 +553,49 @@ terraform_cloudflare_v5()
     }
     ```
 
+## cloudflare_zero_trust_access_group
+
+- `application_id` and `precedence` no longer used.
+
+  Before
+  ```hcl
+  resource "cloudflare_zero_trust_access_group" "example" {
+    account_id      = "f037e56e89293a057740de681ac9abbe"
+    application_id  = "foo"
+    name            = "example"
+    precedence      = 3
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_zero_trust_access_group" "example" {
+    account_id = "f037e56e89293a057740de681ac9abbe"
+    name       = "example"
+  }
+  ```
+
+## cloudflare_zero_trust_access_service_token
+
+- `min_days_for_renewal` is no longer used. If you would like similar functionality, you can use `duration = "forever"` instead.
+
+  Before
+  ```hcl
+  resource "cloudflare_zero_trust_access_service_token" "example" {
+    account_id           = "f037e56e89293a057740de681ac9abbe"
+    name                 = "CI/CD app renewed"
+    min_days_for_renewal = 30
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_zero_trust_access_service_token" "example" {
+    account_id = "f037e56e89293a057740de681ac9abbe"
+    name       = "CI/CD app renewed"
+  }
+  ```
+
 [GritQL]: https://www.grit.io/
 [install Grit]: https://docs.grit.io/cli/quickstart
+[migrating renamed resources]: https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/migrating-renamed-resources
