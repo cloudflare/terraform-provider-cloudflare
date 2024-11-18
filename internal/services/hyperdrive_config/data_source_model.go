@@ -23,6 +23,7 @@ type HyperdriveConfigResultListDataSourceEnvelope struct {
 type HyperdriveConfigDataSourceModel struct {
 	AccountID    types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	HyperdriveID types.String                                                     `tfsdk:"hyperdrive_id" path:"hyperdrive_id,optional"`
+	ID           types.String                                                     `tfsdk:"id" json:"id,computed"`
 	Name         types.String                                                     `tfsdk:"name" json:"name,computed"`
 	Caching      customfield.NestedObject[HyperdriveConfigCachingDataSourceModel] `tfsdk:"caching" json:"caching,computed"`
 	Origin       customfield.NestedObject[HyperdriveConfigOriginDataSourceModel]  `tfsdk:"origin" json:"origin,computed"`
@@ -52,12 +53,14 @@ type HyperdriveConfigCachingDataSourceModel struct {
 }
 
 type HyperdriveConfigOriginDataSourceModel struct {
-	Database       types.String `tfsdk:"database" json:"database,computed"`
-	Host           types.String `tfsdk:"host" json:"host,computed"`
-	Scheme         types.String `tfsdk:"scheme" json:"scheme,computed"`
-	User           types.String `tfsdk:"user" json:"user,computed"`
-	AccessClientID types.String `tfsdk:"access_client_id" json:"access_client_id,computed"`
-	Port           types.Int64  `tfsdk:"port" json:"port,computed"`
+	Database           types.String `tfsdk:"database" json:"database,computed"`
+	Host               types.String `tfsdk:"host" json:"host,computed"`
+	Password           types.String `tfsdk:"password" json:"password,computed"`
+	Port               types.Int64  `tfsdk:"port" json:"port,computed"`
+	Scheme             types.String `tfsdk:"scheme" json:"scheme,computed"`
+	User               types.String `tfsdk:"user" json:"user,computed"`
+	AccessClientID     types.String `tfsdk:"access_client_id" json:"access_client_id,computed"`
+	AccessClientSecret types.String `tfsdk:"access_client_secret" json:"access_client_secret,computed"`
 }
 
 type HyperdriveConfigFindOneByDataSourceModel struct {
