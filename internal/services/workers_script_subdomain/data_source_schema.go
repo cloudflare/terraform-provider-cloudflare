@@ -26,6 +26,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether the Worker is available on the workers.dev subdomain.",
 				Computed:    true,
 			},
+			"previews_enabled": schema.BoolAttribute{
+				Description: "Whether the Worker's Preview URLs should be available on the workers.dev subdomain.",
+				Computed:    true,
+			},
 		},
 	}
 }

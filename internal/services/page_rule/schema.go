@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -21,41 +22,36 @@ var _ resource.ResourceWithConfigValidators = (*PageRuleResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "Identifier",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"pagerule_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"actions": schema.ListNestedAttribute{
-				Description: "The set of actions to perform if the targets of this rule match the request. Actions can redirect to another URL or override settings, but not both.",
+				Description: "The set of actions to perform if the targets of this rule match the\nrequest. Actions can redirect to another URL or override settings, but\nnot both.\n",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"modified_on": schema.StringAttribute{
-							Description: "The timestamp of when the override was last modified.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
-						"name": schema.StringAttribute{
-							Description: "The type of route.",
+						"id": schema.StringAttribute{
+							Description: "Redirects one URL to another using an `HTTP 301/302` redirect. Refer\nto [Wildcard matching and referencing](https://developers.cloudflare.com/rules/page-rules/reference/wildcard-matching/).\n",
 							Optional:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("forward_url"),
+								stringvalidator.OneOfCaseInsensitive("forwarding_url"),
 							},
 						},
 						"value": schema.SingleNestedAttribute{
 							Optional: true,
 							Attributes: map[string]schema.Attribute{
-								"type": schema.StringAttribute{
-									Description: "The response type for the URL redirect.",
+								"status_code": schema.Int64Attribute{
+									Description: "The status code to use for the URL redirect. 301 is a permanent\nredirect. 302 is a temporary redirect.\n",
 									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("temporary", "permanent"),
+									Validators: []validator.Int64{
+										int64validator.OneOf(301, 302),
 									},
 								},
 								"url": schema.StringAttribute{
@@ -108,7 +104,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"priority": schema.Int64Attribute{
-				Description: "The priority of the rule, used to define which Page Rule is processed over another. A higher number indicates a higher priority. For example, if you have a catch-all Page Rule (rule A: `/images/*`) but want a more specific Page Rule to take precedence (rule B: `/images/special/*`), specify a higher priority for rule B so it overrides rule A.",
+				Description: "The priority of the rule, used to define which Page Rule is processed\nover another. A higher number indicates a higher priority. For example,\nif you have a catch-all Page Rule (rule A: `/images/*`) but want a more\nspecific Page Rule to take precedence (rule B: `/images/special/*`),\nspecify a higher priority for rule B so it overrides rule A.\n",
 				Computed:    true,
 				Optional:    true,
 				Default:     int64default.StaticInt64(1),
@@ -121,6 +117,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("active", "disabled"),
 				},
 				Default: stringdefault.StaticString("disabled"),
+			},
+			"created_on": schema.StringAttribute{
+				Description: "The timestamp of when the Page Rule was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "The timestamp of when the Page Rule was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}

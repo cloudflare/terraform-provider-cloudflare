@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/cloudflare-go/v3/pagerules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -19,6 +20,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*PageRuleResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*PageRuleResource)(nil)
+var _ resource.ResourceWithImportState = (*PageRuleResource)(nil)
 
 func NewResource() resource.Resource {
 	return &PageRuleResource{}
@@ -118,7 +120,7 @@ func (r *PageRuleResource) Update(ctx context.Context, req resource.UpdateReques
 	env := PageRuleResultEnvelope{*data}
 	_, err = r.client.Pagerules.Update(
 		ctx,
-		data.PageruleID.ValueString(),
+		data.ID.ValueString(),
 		pagerules.PageruleUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -154,7 +156,7 @@ func (r *PageRuleResource) Read(ctx context.Context, req resource.ReadRequest, r
 	env := PageRuleResultEnvelope{*data}
 	_, err := r.client.Pagerules.Get(
 		ctx,
-		data.PageruleID.ValueString(),
+		data.ID.ValueString(),
 		pagerules.PageruleGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -187,7 +189,7 @@ func (r *PageRuleResource) Delete(ctx context.Context, req resource.DeleteReques
 
 	_, err := r.client.Pagerules.Delete(
 		ctx,
-		data.PageruleID.ValueString(),
+		data.ID.ValueString(),
 		pagerules.PageruleDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -197,6 +199,48 @@ func (r *PageRuleResource) Delete(ctx context.Context, req resource.DeleteReques
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *PageRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *PageRuleModel
+
+	path_zone_id := ""
+	path_pagerule_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<pagerule_id>",
+		&path_zone_id,
+		&path_pagerule_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := PageRuleResultEnvelope{*data}
+	_, err := r.client.Pagerules.Get(
+		ctx,
+		path_pagerule_id,
+		pagerules.PageruleGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
