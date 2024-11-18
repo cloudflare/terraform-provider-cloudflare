@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
@@ -20,14 +19,14 @@ var _ resource.ResourceWithConfigValidators = (*HyperdriveConfigResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "Identifier",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"hyperdrive_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
@@ -44,18 +43,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The host (hostname or IP) of your origin database.",
 						Required:    true,
 					},
+					"password": schema.StringAttribute{
+						Description: "The password required to access your origin database. This value is write-only and never returned by the API.",
+						Required:    true,
+					},
+					"port": schema.Int64Attribute{
+						Description: "The port (default: 5432 for Postgres) of your origin database.",
+						Optional:    true,
+					},
 					"scheme": schema.StringAttribute{
 						Description: "Specifies the URL scheme used to connect to your origin database.",
-						Computed:    true,
-						Optional:    true,
+						Required:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"postgres",
-								"postgresql",
-								"mysql",
-							),
+							stringvalidator.OneOfCaseInsensitive("postgres", "postgresql"),
 						},
-						Default: stringdefault.StaticString("postgres"),
 					},
 					"user": schema.StringAttribute{
 						Description: "The user of your origin database.",
@@ -65,8 +66,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The Client ID of the Access token to use when connecting to the origin database",
 						Optional:    true,
 					},
-					"port": schema.Int64Attribute{
-						Description: "The port (default: 5432 for Postgres) of your origin database.",
+					"access_client_secret": schema.StringAttribute{
+						Description: "The Client Secret of the Access token to use when connecting to the origin database. This value is write-only and never returned by the API.",
 						Optional:    true,
 					},
 				},
@@ -81,11 +82,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"max_age": schema.Int64Attribute{
-						Description: "When present, specifies max duration for which items should persist in the cache. (Default: 60)",
+						Description: "When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)",
 						Optional:    true,
 					},
 					"stale_while_revalidate": schema.Int64Attribute{
-						Description: "When present, indicates the number of seconds cache may serve the response after it becomes stale. (Default: 15)",
+						Description: "When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)",
 						Optional:    true,
 					},
 				},

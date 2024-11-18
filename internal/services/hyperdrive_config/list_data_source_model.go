@@ -32,6 +32,7 @@ func (m *HyperdriveConfigsDataSourceModel) toListParams(_ context.Context) (para
 
 type HyperdriveConfigsResultDataSourceModel struct {
 	Caching customfield.NestedObject[HyperdriveConfigsCachingDataSourceModel] `tfsdk:"caching" json:"caching,computed"`
+	ID      types.String                                                      `tfsdk:"id" json:"id,computed"`
 	Name    types.String                                                      `tfsdk:"name" json:"name,computed"`
 	Origin  customfield.NestedObject[HyperdriveConfigsOriginDataSourceModel]  `tfsdk:"origin" json:"origin,computed"`
 }
@@ -43,10 +44,12 @@ type HyperdriveConfigsCachingDataSourceModel struct {
 }
 
 type HyperdriveConfigsOriginDataSourceModel struct {
-	Database       types.String `tfsdk:"database" json:"database,computed"`
-	Host           types.String `tfsdk:"host" json:"host,computed"`
-	Scheme         types.String `tfsdk:"scheme" json:"scheme,computed"`
-	User           types.String `tfsdk:"user" json:"user,computed"`
-	AccessClientID types.String `tfsdk:"access_client_id" json:"access_client_id,computed"`
-	Port           types.Int64  `tfsdk:"port" json:"port,computed"`
+	Database           types.String `tfsdk:"database" json:"database,computed"`
+	Host               types.String `tfsdk:"host" json:"host,computed"`
+	Password           types.String `tfsdk:"password" json:"password,computed"`
+	Port               types.Int64  `tfsdk:"port" json:"port,computed"`
+	Scheme             types.String `tfsdk:"scheme" json:"scheme,computed"`
+	User               types.String `tfsdk:"user" json:"user,computed"`
+	AccessClientID     types.String `tfsdk:"access_client_id" json:"access_client_id,computed"`
+	AccessClientSecret types.String `tfsdk:"access_client_secret" json:"access_client_secret,computed"`
 }
