@@ -161,7 +161,7 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 					"email": {
 						Type:        schema.TypeList,
 						Description: "The email of the Google Workspace group.",
-						Optional:    true,
+						Required:    true,
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
@@ -169,7 +169,7 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 					"identity_provider_id": {
 						Type:        schema.TypeString,
 						Description: "The ID of your Google Workspace identity provider.",
-						Optional:    true,
+						Required:    true,
 					},
 				},
 			},
