@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -253,7 +254,29 @@ func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scim_config.0.user_deprovision", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scim_config.0.seat_deprovision", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scim_config.0.group_member_deprovision", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scim_config.0.identity_update_behavior", "reauth"),
 				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessIdentityProvider_IdentityUpdateBehaviorErr(t *testing.T) {
+	skipForDefaultAccount(t, "Pending investigation into automating Azure IDP.")
+
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareAccessIdentityProviderAzureADBadIdentityUpdateBehavior(accountID, rnd),
+				ExpectError: regexp.MustCompile("value dance was not one of \\[no_action reauth automatic]"),
 			},
 		},
 	})
@@ -439,6 +462,7 @@ resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
 		group_member_deprovision = true
 		seat_deprovision         = true
 		user_deprovision         = true
+		identity_update_behavior = "reauth"
 	}
 }`, accountID, name)
 }
@@ -457,9 +481,32 @@ resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
 	}
 	scim_config {
 		enabled                  = true
-		group_member_deprovision = true
+		group_member_deprovision = false
 		seat_deprovision         = false
 		user_deprovision         = true
+		identity_update_behavior = "automatic"
+	}
+}`, accountID, name)
+}
+
+func testAccCheckCloudflareAccessIdentityProviderAzureADBadIdentityUpdateBehavior(accountID, name string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
+	account_id = "%[1]s"
+	name       = "%[2]s"
+	type       = "azureAD"
+	config {
+		client_id      = "test2"
+		client_secret  = "test2"
+		directory_id   = "directory"
+		support_groups = true
+	}
+	scim_config {
+		enabled                  = true
+		group_member_deprovision = false
+		seat_deprovision         = false
+		user_deprovision         = true
+		identity_update_behavior = "dance"
 	}
 }`, accountID, name)
 }
