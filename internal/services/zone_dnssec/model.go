@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_zone_dnssec
+package zone_dnssec
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
@@ -8,11 +8,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type DNSZoneDNSSECResultEnvelope struct {
-	Result DNSZoneDNSSECModel `json:"result"`
+type ZoneDNSSECResultEnvelope struct {
+	Result ZoneDNSSECModel `json:"result"`
 }
 
-type DNSZoneDNSSECModel struct {
+type ZoneDNSSECModel struct {
 	ID                types.String      `tfsdk:"id" json:"-,computed"`
 	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	DNSSECMultiSigner types.Bool        `tfsdk:"dnssec_multi_signer" json:"dnssec_multi_signer,optional"`
@@ -30,10 +30,10 @@ type DNSZoneDNSSECModel struct {
 	PublicKey         types.String      `tfsdk:"public_key" json:"public_key,computed"`
 }
 
-func (m DNSZoneDNSSECModel) MarshalJSON() (data []byte, err error) {
+func (m ZoneDNSSECModel) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(m)
 }
 
-func (m DNSZoneDNSSECModel) MarshalJSONForUpdate(state DNSZoneDNSSECModel) (data []byte, err error) {
+func (m ZoneDNSSECModel) MarshalJSONForUpdate(state ZoneDNSSECModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
 }

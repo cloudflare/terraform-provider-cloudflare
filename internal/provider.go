@@ -43,7 +43,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dcv_delegation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_dnssec"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_catch_all"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_dns"
@@ -179,6 +178,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_reserve"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_variants"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dnssec"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_hold"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_lockdown"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_setting"
@@ -364,7 +364,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		custom_hostname_fallback_origin.NewResource,
 		dns_record.NewResource,
 		dns_firewall.NewResource,
-		dns_zone_dnssec.NewResource,
+		zone_dnssec.NewResource,
 		email_security_allow_pattern.NewResource,
 		email_security_block_sender.NewResource,
 		email_security_impersonation_registry.NewResource,
@@ -547,7 +547,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		dns_record.NewDNSRecordsDataSource,
 		dns_firewall.NewDNSFirewallDataSource,
 		dns_firewall.NewDNSFirewallsDataSource,
-		dns_zone_dnssec.NewDNSZoneDNSSECDataSource,
+		zone_dnssec.NewZoneDNSSECDataSource,
 		email_security_allow_pattern.NewEmailSecurityAllowPatternDataSource,
 		email_security_allow_pattern.NewEmailSecurityAllowPatternsDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSenderDataSource,
