@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -93,11 +94,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"everyone": schema.SingleNestedAttribute{
+									"everyone": schema.StringAttribute{
 										Description: "An empty object which matches on all users.",
 										Computed:    true,
-										CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeEveryoneDataSourceModel](ctx),
-										Attributes:  map[string]schema.Attribute{},
+										CustomType:  jsontypes.NormalizedType{},
 									},
 									"ip": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -218,11 +218,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"any_valid_service_token": schema.SingleNestedAttribute{
+									"any_valid_service_token": schema.StringAttribute{
 										Description: "An empty object which matches on all service tokens.",
 										Computed:    true,
-										CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeAnyValidServiceTokenDataSourceModel](ctx),
-										Attributes:  map[string]schema.Attribute{},
+										CustomType:  jsontypes.NormalizedType{},
 									},
 									"external_evaluation": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -307,11 +306,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"everyone": schema.SingleNestedAttribute{
+									"everyone": schema.StringAttribute{
 										Description: "An empty object which matches on all users.",
 										Computed:    true,
-										CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeEveryoneDataSourceModel](ctx),
-										Attributes:  map[string]schema.Attribute{},
+										CustomType:  jsontypes.NormalizedType{},
 									},
 									"ip": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -432,11 +430,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"any_valid_service_token": schema.SingleNestedAttribute{
+									"any_valid_service_token": schema.StringAttribute{
 										Description: "An empty object which matches on all service tokens.",
 										Computed:    true,
-										CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeAnyValidServiceTokenDataSourceModel](ctx),
-										Attributes:  map[string]schema.Attribute{},
+										CustomType:  jsontypes.NormalizedType{},
 									},
 									"external_evaluation": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -521,11 +518,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"everyone": schema.SingleNestedAttribute{
+									"everyone": schema.StringAttribute{
 										Description: "An empty object which matches on all users.",
 										Computed:    true,
-										CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultEveryoneDataSourceModel](ctx),
-										Attributes:  map[string]schema.Attribute{},
+										CustomType:  jsontypes.NormalizedType{},
 									},
 									"ip": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -646,11 +642,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"any_valid_service_token": schema.SingleNestedAttribute{
+									"any_valid_service_token": schema.StringAttribute{
 										Description: "An empty object which matches on all service tokens.",
 										Computed:    true,
-										CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultAnyValidServiceTokenDataSourceModel](ctx),
-										Attributes:  map[string]schema.Attribute{},
+										CustomType:  jsontypes.NormalizedType{},
 									},
 									"external_evaluation": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -739,11 +734,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"everyone": schema.SingleNestedAttribute{
+									"everyone": schema.StringAttribute{
 										Description: "An empty object which matches on all users.",
 										Computed:    true,
-										CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireEveryoneDataSourceModel](ctx),
-										Attributes:  map[string]schema.Attribute{},
+										CustomType:  jsontypes.NormalizedType{},
 									},
 									"ip": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -864,11 +858,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"any_valid_service_token": schema.SingleNestedAttribute{
+									"any_valid_service_token": schema.StringAttribute{
 										Description: "An empty object which matches on all service tokens.",
 										Computed:    true,
-										CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireAnyValidServiceTokenDataSourceModel](ctx),
-										Attributes:  map[string]schema.Attribute{},
+										CustomType:  jsontypes.NormalizedType{},
 									},
 									"external_evaluation": schema.SingleNestedAttribute{
 										Computed:   true,
