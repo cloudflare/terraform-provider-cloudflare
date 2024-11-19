@@ -29,11 +29,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"enabled": schema.BoolAttribute{
 				Description:   "Whether the Worker should be available on the workers.dev subdomain.",
-				Required:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
-			},
-			"previews_enabled": schema.BoolAttribute{
-				Description:   "Whether the Worker's Preview URLs should be available on the workers.dev subdomain.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},
