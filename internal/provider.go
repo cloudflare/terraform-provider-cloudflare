@@ -48,7 +48,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_settings"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_allow_pattern"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_block_sender"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_impersonation_registry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains"
@@ -365,7 +364,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		dns_record.NewResource,
 		dns_firewall.NewResource,
 		zone_dnssec.NewResource,
-		email_security_allow_pattern.NewResource,
 		email_security_block_sender.NewResource,
 		email_security_impersonation_registry.NewResource,
 		email_security_trusted_domains.NewResource,
@@ -548,8 +546,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		dns_firewall.NewDNSFirewallDataSource,
 		dns_firewall.NewDNSFirewallsDataSource,
 		zone_dnssec.NewZoneDNSSECDataSource,
-		email_security_allow_pattern.NewEmailSecurityAllowPatternDataSource,
-		email_security_allow_pattern.NewEmailSecurityAllowPatternsDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSenderDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSendersDataSource,
 		email_security_impersonation_registry.NewEmailSecurityImpersonationRegistryDataSource,
