@@ -31,12 +31,12 @@ func (m HyperdriveConfigModel) MarshalJSONForUpdate(state HyperdriveConfigModel)
 type HyperdriveConfigOriginModel struct {
 	Database           types.String `tfsdk:"database" json:"database,required"`
 	Host               types.String `tfsdk:"host" json:"host,required"`
-	Scheme             types.String `tfsdk:"scheme" json:"scheme,computed_optional"`
+	Password           types.String `tfsdk:"password" json:"password,required"`
+	Port               types.Int64  `tfsdk:"port" json:"port,optional"`
+	Scheme             types.String `tfsdk:"scheme" json:"scheme,required"`
 	User               types.String `tfsdk:"user" json:"user,required"`
 	AccessClientID     types.String `tfsdk:"access_client_id" json:"access_client_id,optional"`
 	AccessClientSecret types.String `tfsdk:"access_client_secret" json:"access_client_secret,optional"`
-	Port               types.Int64  `tfsdk:"port" json:"port,optional"`
-	Password           types.String `tfsdk:"password" json:"password,required"`
 }
 
 type HyperdriveConfigCachingModel struct {
