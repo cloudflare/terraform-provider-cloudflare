@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_zone_dnssec
+package zone_dnssec
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*DNSZoneDNSSECDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*ZoneDNSSECDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -87,10 +87,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *DNSZoneDNSSECDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *ZoneDNSSECDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = DataSourceSchema(ctx)
 }
 
-func (d *DNSZoneDNSSECDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *ZoneDNSSECDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
 }

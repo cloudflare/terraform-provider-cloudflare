@@ -1,19 +1,19 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_zone_dnssec_test
+package zone_dnssec_test
 
 import (
 	"context"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_dnssec"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dnssec"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
-func TestDNSZoneDNSSECModelSchemaParity(t *testing.T) {
+func TestZoneDNSSECModelSchemaParity(t *testing.T) {
 	t.Parallel()
-	model := (*dns_zone_dnssec.DNSZoneDNSSECModel)(nil)
-	schema := dns_zone_dnssec.ResourceSchema(context.TODO())
+	model := (*zone_dnssec.ZoneDNSSECModel)(nil)
+	schema := zone_dnssec.ResourceSchema(context.TODO())
 	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
 	errs.Report(t)
 }

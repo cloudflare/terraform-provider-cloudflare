@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_zone_dnssec
+package zone_dnssec
 
 import (
 	"context"
@@ -12,11 +12,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type DNSZoneDNSSECResultDataSourceEnvelope struct {
-	Result DNSZoneDNSSECDataSourceModel `json:"result,computed"`
+type ZoneDNSSECResultDataSourceEnvelope struct {
+	Result ZoneDNSSECDataSourceModel `json:"result,computed"`
 }
 
-type DNSZoneDNSSECDataSourceModel struct {
+type ZoneDNSSECDataSourceModel struct {
 	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	Algorithm         types.String      `tfsdk:"algorithm" json:"algorithm,computed"`
 	Digest            types.String      `tfsdk:"digest" json:"digest,computed"`
@@ -33,7 +33,7 @@ type DNSZoneDNSSECDataSourceModel struct {
 	Status            types.String      `tfsdk:"status" json:"status,computed"`
 }
 
-func (m *DNSZoneDNSSECDataSourceModel) toReadParams(_ context.Context) (params dnssec.DNSSECGetParams, diags diag.Diagnostics) {
+func (m *ZoneDNSSECDataSourceModel) toReadParams(_ context.Context) (params dnssec.DNSSECGetParams, diags diag.Diagnostics) {
 	params = dnssec.DNSSECGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_zone_dnssec
+package zone_dnssec
 
 import (
 	"context"
@@ -18,24 +18,24 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*DNSZoneDNSSECResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*DNSZoneDNSSECResource)(nil)
-var _ resource.ResourceWithImportState = (*DNSZoneDNSSECResource)(nil)
+var _ resource.ResourceWithConfigure = (*ZoneDNSSECResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ZoneDNSSECResource)(nil)
+var _ resource.ResourceWithImportState = (*ZoneDNSSECResource)(nil)
 
 func NewResource() resource.Resource {
-	return &DNSZoneDNSSECResource{}
+	return &ZoneDNSSECResource{}
 }
 
-// DNSZoneDNSSECResource defines the resource implementation.
-type DNSZoneDNSSECResource struct {
+// ZoneDNSSECResource defines the resource implementation.
+type ZoneDNSSECResource struct {
 	client *cloudflare.Client
 }
 
-func (r *DNSZoneDNSSECResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_dns_zone_dnssec"
+func (r *ZoneDNSSECResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_zone_dnssec"
 }
 
-func (r *DNSZoneDNSSECResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *ZoneDNSSECResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -54,8 +54,8 @@ func (r *DNSZoneDNSSECResource) Configure(ctx context.Context, req resource.Conf
 	r.client = client
 }
 
-func (r *DNSZoneDNSSECResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *DNSZoneDNSSECModel
+func (r *ZoneDNSSECResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *ZoneDNSSECModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -69,7 +69,7 @@ func (r *DNSZoneDNSSECResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	res := new(http.Response)
-	env := DNSZoneDNSSECResultEnvelope{*data}
+	env := ZoneDNSSECResultEnvelope{*data}
 	_, err = r.client.DNSSEC.Edit(
 		ctx,
 		dnssec.DNSSECEditParams{
@@ -95,8 +95,8 @@ func (r *DNSZoneDNSSECResource) Create(ctx context.Context, req resource.CreateR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSZoneDNSSECResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *DNSZoneDNSSECModel
+func (r *ZoneDNSSECResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *ZoneDNSSECModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -104,7 +104,7 @@ func (r *DNSZoneDNSSECResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	var state *DNSZoneDNSSECModel
+	var state *ZoneDNSSECModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -118,7 +118,7 @@ func (r *DNSZoneDNSSECResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 	res := new(http.Response)
-	env := DNSZoneDNSSECResultEnvelope{*data}
+	env := ZoneDNSSECResultEnvelope{*data}
 	_, err = r.client.DNSSEC.Edit(
 		ctx,
 		dnssec.DNSSECEditParams{
@@ -144,8 +144,8 @@ func (r *DNSZoneDNSSECResource) Update(ctx context.Context, req resource.UpdateR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSZoneDNSSECResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *DNSZoneDNSSECModel
+func (r *ZoneDNSSECResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *ZoneDNSSECModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -154,7 +154,7 @@ func (r *DNSZoneDNSSECResource) Read(ctx context.Context, req resource.ReadReque
 	}
 
 	res := new(http.Response)
-	env := DNSZoneDNSSECResultEnvelope{*data}
+	env := ZoneDNSSECResultEnvelope{*data}
 	_, err := r.client.DNSSEC.Get(
 		ctx,
 		dnssec.DNSSECGetParams{
@@ -179,8 +179,8 @@ func (r *DNSZoneDNSSECResource) Read(ctx context.Context, req resource.ReadReque
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSZoneDNSSECResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *DNSZoneDNSSECModel
+func (r *ZoneDNSSECResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *ZoneDNSSECModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -204,8 +204,8 @@ func (r *DNSZoneDNSSECResource) Delete(ctx context.Context, req resource.DeleteR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSZoneDNSSECResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *DNSZoneDNSSECModel
+func (r *ZoneDNSSECResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZoneDNSSECModel
 
 	path := ""
 	diags := importpath.ParseImportID(
@@ -219,7 +219,7 @@ func (r *DNSZoneDNSSECResource) ImportState(ctx context.Context, req resource.Im
 	}
 
 	res := new(http.Response)
-	env := DNSZoneDNSSECResultEnvelope{*data}
+	env := ZoneDNSSECResultEnvelope{*data}
 	_, err := r.client.DNSSEC.Get(
 		ctx,
 		dnssec.DNSSECGetParams{
@@ -244,6 +244,6 @@ func (r *DNSZoneDNSSECResource) ImportState(ctx context.Context, req resource.Im
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSZoneDNSSECResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *ZoneDNSSECResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }
