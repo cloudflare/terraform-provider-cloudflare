@@ -154,7 +154,6 @@ func (r *EmailRoutingDNSResource) Read(ctx context.Context, req resource.ReadReq
 	}
 
 	res := new(http.Response)
-	env := EmailRoutingDNSResultEnvelope{*data}
 	_, err := r.client.EmailRouting.DNS.Get(
 		ctx,
 		email_routing.DNSGetParams{
@@ -168,12 +167,11 @@ func (r *EmailRoutingDNSResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -219,7 +217,6 @@ func (r *EmailRoutingDNSResource) ImportState(ctx context.Context, req resource.
 	}
 
 	res := new(http.Response)
-	env := EmailRoutingDNSResultEnvelope{*data}
 	_, err := r.client.EmailRouting.DNS.Get(
 		ctx,
 		email_routing.DNSGetParams{
@@ -233,12 +230,11 @@ func (r *EmailRoutingDNSResource) ImportState(ctx context.Context, req resource.
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

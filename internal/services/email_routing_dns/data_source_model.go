@@ -11,12 +11,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type EmailRoutingDNSResultDataSourceEnvelope struct {
-	Result EmailRoutingDNSDataSourceModel `json:"result,computed"`
-}
-
 type EmailRoutingDNSDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	Subdomain types.String `tfsdk:"subdomain" query:"subdomain,optional"`
 }
 
 func (m *EmailRoutingDNSDataSourceModel) toReadParams(_ context.Context) (params email_routing.DNSGetParams, diags diag.Diagnostics) {
