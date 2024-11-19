@@ -18,6 +18,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Required:    true,
 			},
+			"subdomain": schema.StringAttribute{
+				Description: "Domain of your zone.",
+				Optional:    true,
+			},
 		},
 	}
 }
