@@ -132,6 +132,7 @@ var notificationPolicyAlertTypes = []string{
 	"http_alert_edge_error",
 	"http_alert_origin_error",
 	"image_notification",
+	"image_resizing_notification",
 	"incident_alert",
 	"load_balancing_health_alert",
 	"load_balancing_pool_enablement_alert",
