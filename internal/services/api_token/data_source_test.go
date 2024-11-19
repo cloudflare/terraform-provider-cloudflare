@@ -5,37 +5,33 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-var tokenID = "ab577ebc55ec0425cfdce9cdbfe45cbe"
-
 func TestAccCloudflareAPITokenData(t *testing.T) {
 	t.Parallel()
-	name := fmt.Sprintf("data.cloudflare_api_token.%s", "all")
+	rnd := utils.GenerateRandomResourceName()
+	permissionID := "82e64a83756745bbbb1c9c2701bf816b"
+	dataSourceName := fmt.Sprintf("data.cloudflare_api_token.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareZoneConfigBasic(),
+				Config: testAccCloudflareZoneConfigBasic(rnd, permissionID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(name, "name"),
-					resource.TestCheckResourceAttrSet(name, "id"),
-					resource.TestCheckResourceAttrSet(name, "status"),
-					resource.TestCheckResourceAttr(name, "status", "active"),
-					resource.TestCheckResourceAttr(name, "token_id", tokenID),
+					resource.TestCheckResourceAttr(dataSourceName, "name", rnd),
+					resource.TestCheckResourceAttrSet(dataSourceName, "id"),
+					resource.TestCheckResourceAttrSet(dataSourceName, "status"),
+					resource.TestCheckResourceAttr(dataSourceName, "status", "active"),
 				),
 			},
 		},
 	})
 }
 
-func testAccCloudflareZoneConfigBasic() string {
-	return fmt.Sprintf(`
-data "cloudflare_api_token" "all" {
-	token_id = "%s"
-}
-`, tokenID)
+func testAccCloudflareZoneConfigBasic(name, permissionID string) string {
+	return acctest.LoadTestCase("apitokendatasource.tf", name, permissionID)
 }
