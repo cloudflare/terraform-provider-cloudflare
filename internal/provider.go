@@ -16,6 +16,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/address_map"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_operation"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_operation_discovery"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_operation_schema_validation_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_schema"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_schema_validation_settings"
@@ -336,6 +337,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		queue.NewResource,
 		queue_consumer.NewResource,
 		api_shield.NewResource,
+		api_shield_operation_discovery.NewResource,
 		api_shield_operation.NewResource,
 		api_shield_operation_schema_validation_settings.NewResource,
 		api_shield_schema_validation_settings.NewResource,
@@ -536,6 +538,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		queue.NewQueuesDataSource,
 		queue_consumer.NewQueueConsumerDataSource,
 		api_shield.NewAPIShieldDataSource,
+		api_shield_operation_discovery.NewAPIShieldOperationDiscoveryDataSource,
+		api_shield_operation_discovery.NewAPIShieldOperationDiscoveriesDataSource,
 		api_shield_operation.NewAPIShieldOperationDataSource,
 		api_shield_operation.NewAPIShieldOperationsDataSource,
 		api_shield_operation_schema_validation_settings.NewAPIShieldOperationSchemaValidationSettingsDataSource,

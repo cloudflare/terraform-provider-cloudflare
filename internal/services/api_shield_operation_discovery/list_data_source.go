@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package api_shield_operation
+package api_shield_operation_discovery
 
 import (
 	"context"
@@ -13,21 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type APIShieldOperationsDataSource struct {
+type APIShieldOperationDiscoveriesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*APIShieldOperationsDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*APIShieldOperationDiscoveriesDataSource)(nil)
 
-func NewAPIShieldOperationsDataSource() datasource.DataSource {
-	return &APIShieldOperationsDataSource{}
+func NewAPIShieldOperationDiscoveriesDataSource() datasource.DataSource {
+	return &APIShieldOperationDiscoveriesDataSource{}
 }
 
-func (d *APIShieldOperationsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_api_shield_operations"
+func (d *APIShieldOperationDiscoveriesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_api_shield_operation_discoveries"
 }
 
-func (d *APIShieldOperationsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *APIShieldOperationDiscoveriesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,8 +46,8 @@ func (d *APIShieldOperationsDataSource) Configure(ctx context.Context, req datas
 	d.client = client
 }
 
-func (d *APIShieldOperationsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *APIShieldOperationsDataSourceModel
+func (d *APIShieldOperationDiscoveriesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *APIShieldOperationDiscoveriesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -61,13 +61,13 @@ func (d *APIShieldOperationsDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	env := APIShieldOperationsResultListDataSourceEnvelope{}
+	env := APIShieldOperationDiscoveriesResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.APIGateway.Operations.List(ctx, params)
+	page, err := d.client.APIGateway.Discovery.Operations.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
@@ -92,7 +92,7 @@ func (d *APIShieldOperationsDataSource) Read(ctx context.Context, req datasource
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[APIShieldOperationsResultDataSourceModel](ctx, acc)
+	result, diags := customfield.NewObjectListFromAttributes[APIShieldOperationDiscoveriesResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result
 
