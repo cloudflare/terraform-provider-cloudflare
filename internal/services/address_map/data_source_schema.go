@@ -71,7 +71,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"ip": schema.StringAttribute{
-							Description: "An IPv4 or IPv6 address.",
+							Description: "An IPv4 or IPv6 address. foo",
 							Computed:    true,
 						},
 					},
