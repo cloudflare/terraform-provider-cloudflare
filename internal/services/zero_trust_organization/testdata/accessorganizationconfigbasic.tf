@@ -14,7 +14,7 @@
   background_color = "#FFFFFF"
 				text_color       = "#000000"
 				logo_path        = "https://example.com/logo.png"
-				header_text      = "My header text"
+				header_text      = "%[3]s"
 				footer_text      = "My footer text"
 }
 		}
