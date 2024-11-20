@@ -68,7 +68,7 @@ func (r *ZeroTrustOrganizationResource) Create(ctx context.Context, req resource
 	}
 	res := new(http.Response)
 	env := ZeroTrustOrganizationResultEnvelope{*data}
-	params := zero_trust.OrganizationUpdateParams{}
+	params := zero_trust.OrganizationNewParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
@@ -76,7 +76,7 @@ func (r *ZeroTrustOrganizationResource) Create(ctx context.Context, req resource
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	_, err = r.client.ZeroTrust.Organizations.Update(
+	_, err = r.client.ZeroTrust.Organizations.New(
 		ctx,
 		params,
 		option.WithRequestBody("application/json", dataBytes),
@@ -94,6 +94,7 @@ func (r *ZeroTrustOrganizationResource) Create(ctx context.Context, req resource
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -148,6 +149,7 @@ func (r *ZeroTrustOrganizationResource) Update(ctx context.Context, req resource
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -188,6 +190,7 @@ func (r *ZeroTrustOrganizationResource) Read(ctx context.Context, req resource.R
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
