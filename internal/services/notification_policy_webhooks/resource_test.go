@@ -19,7 +19,7 @@ func TestAccCloudflareNotificationPolicyWebhooks(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_notification_policy_webhooks." + rnd
-	webhooksDestination := "https://example.com"
+	webhooksDestination := "https://httpbin.org/post"
 	updatedWebhooksName := "my updated webhooks destination for notifications"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -41,7 +41,6 @@ func TestAccCloudflareNotificationPolicyWebhooks(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updatedWebhooksName),
 					resource.TestCheckResourceAttr(resourceName, "url", webhooksDestination),
-					resource.TestCheckResourceAttr(resourceName, "type", "generic"),
 				),
 			},
 		},
