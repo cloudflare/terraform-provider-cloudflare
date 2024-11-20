@@ -3,6 +3,6 @@ resource "cloudflare_zero_trust_access_group" "%[1]s" {
   name     = "%[1]s"
 
   include = [{
-    common_name = "common"
+    common_name = { common_name = "common" }
   }]
 }
