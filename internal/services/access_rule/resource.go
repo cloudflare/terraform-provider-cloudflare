@@ -12,7 +12,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3/firewall"
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -20,7 +19,6 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*AccessRuleResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*AccessRuleResource)(nil)
-var _ resource.ResourceWithImportState = (*AccessRuleResource)(nil)
 
 func NewResource() resource.Resource {
 	return &AccessRuleResource{}
@@ -124,7 +122,7 @@ func (r *AccessRuleResource) Update(ctx context.Context, req resource.UpdateRequ
 	}
 	res := new(http.Response)
 	env := AccessRuleResultEnvelope{*data}
-	params := firewall.AccessRuleEditParams{}
+	params := firewall.AccessRuleNewParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
@@ -132,9 +130,8 @@ func (r *AccessRuleResource) Update(ctx context.Context, req resource.UpdateRequ
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	_, err = r.client.Firewall.AccessRules.Edit(
+	_, err = r.client.Firewall.AccessRules.New(
 		ctx,
-		data.ID.ValueString(),
 		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -156,127 +153,27 @@ func (r *AccessRuleResource) Update(ctx context.Context, req resource.UpdateRequ
 }
 
 func (r *AccessRuleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *AccessRuleModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := AccessRuleResultEnvelope{*data}
-	params := firewall.AccessRuleGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err := r.client.Firewall.AccessRules.Get(
-		ctx,
-		data.ID.ValueString(),
-		params,
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *AccessRuleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *AccessRuleModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	params := firewall.AccessRuleDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err := r.client.Firewall.AccessRules.Delete(
-		ctx,
-		data.ID.ValueString(),
-		params,
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *AccessRuleModel
-	params := firewall.AccessRuleGetParams{}
-
-	path_accounts_or_zones, path_account_id_or_zone_id := "", ""
-	path_rule_id := ""
-	diags := importpath.ParseImportID(
-		req.ID,
-		"<{accounts|zones}/{account_id|zone_id}>/<rule_id>",
-		&path_accounts_or_zones,
-		&path_account_id_or_zone_id,
-		&path_rule_id,
-	)
-	resp.Diagnostics.Append(diags...)
-	switch path_accounts_or_zones {
-	case "accounts":
-		params.AccountID = cloudflare.F(path_account_id_or_zone_id)
-	case "zones":
-		params.ZoneID = cloudflare.F(path_account_id_or_zone_id)
-	default:
-		resp.Diagnostics.AddError("invalid discriminator segment - <{accounts|zones}/{account_id|zone_id}>", "expected discriminator to be one of {accounts|zones}")
+func (r *AccessRuleResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	if req.State.Raw.IsNull() {
+		resp.Diagnostics.AddWarning(
+			"Resource Destruction Considerations",
+			"This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
+				"present in the API until manually deleted.",
+		)
 	}
-	if resp.Diagnostics.HasError() {
-		return
+	if req.Plan.Raw.IsNull() {
+		resp.Diagnostics.AddWarning(
+			"Resource Destruction Considerations",
+			"Applying this resource destruction will remove the resource from the Terraform state "+
+				"but will not change it in the API. If you would like to destroy or reset this resource "+
+				"in the API, refer to the documentation for how to do it manually.",
+		)
 	}
-
-	res := new(http.Response)
-	env := AccessRuleResultEnvelope{*data}
-	_, err := r.client.Firewall.AccessRules.Get(
-		ctx,
-		path_rule_id,
-		params,
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *AccessRuleResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
 }
