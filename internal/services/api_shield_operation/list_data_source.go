@@ -67,7 +67,7 @@ func (d *APIShieldOperationsDataSource) Read(ctx context.Context, req datasource
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.APIGateway.Discovery.Operations.List(ctx, params)
+	page, err := d.client.APIGateway.Operations.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
