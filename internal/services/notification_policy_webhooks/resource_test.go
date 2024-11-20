@@ -19,7 +19,7 @@ func TestAccCloudflareNotificationPolicyWebhooks(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_notification_policy_webhooks." + rnd
-	webhooksDestination := "https://httpbin.cfdata.org/post"
+	webhooksDestination := "https://httpbin.org/post"
 	updatedWebhooksName := "my updated webhooks destination for notifications"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
