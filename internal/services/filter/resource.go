@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package api_shield_operation_discovery
+package filter
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/api_gateway"
+	"github.com/cloudflare/cloudflare-go/v3/filters"
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -17,23 +17,23 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*APIShieldOperationDiscoveryResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*APIShieldOperationDiscoveryResource)(nil)
+var _ resource.ResourceWithConfigure = (*FilterResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*FilterResource)(nil)
 
 func NewResource() resource.Resource {
-	return &APIShieldOperationDiscoveryResource{}
+	return &FilterResource{}
 }
 
-// APIShieldOperationDiscoveryResource defines the resource implementation.
-type APIShieldOperationDiscoveryResource struct {
+// FilterResource defines the resource implementation.
+type FilterResource struct {
 	client *cloudflare.Client
 }
 
-func (r *APIShieldOperationDiscoveryResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_api_shield_operation_discovery"
+func (r *FilterResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_filter"
 }
 
-func (r *APIShieldOperationDiscoveryResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *FilterResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -52,8 +52,8 @@ func (r *APIShieldOperationDiscoveryResource) Configure(ctx context.Context, req
 	r.client = client
 }
 
-func (r *APIShieldOperationDiscoveryResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *APIShieldOperationDiscoveryModel
+func (r *FilterResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *FilterModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -67,11 +67,10 @@ func (r *APIShieldOperationDiscoveryResource) Create(ctx context.Context, req re
 		return
 	}
 	res := new(http.Response)
-	env := APIShieldOperationDiscoveryResultEnvelope{*data}
-	_, err = r.client.APIGateway.Discovery.Operations.Edit(
+	env := FilterResultEnvelope{*data}
+	_, err = r.client.Filters.New(
 		ctx,
-		data.OperationID.ValueString(),
-		api_gateway.DiscoveryOperationEditParams{
+		filters.FilterNewParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -89,13 +88,12 @@ func (r *APIShieldOperationDiscoveryResource) Create(ctx context.Context, req re
 		return
 	}
 	data = &env.Result
-	data.ID = data.OperationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *APIShieldOperationDiscoveryResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *APIShieldOperationDiscoveryModel
+func (r *FilterResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *FilterModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -103,7 +101,7 @@ func (r *APIShieldOperationDiscoveryResource) Update(ctx context.Context, req re
 		return
 	}
 
-	var state *APIShieldOperationDiscoveryModel
+	var state *FilterModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -117,11 +115,11 @@ func (r *APIShieldOperationDiscoveryResource) Update(ctx context.Context, req re
 		return
 	}
 	res := new(http.Response)
-	env := APIShieldOperationDiscoveryResultEnvelope{*data}
-	_, err = r.client.APIGateway.Discovery.Operations.Edit(
+	env := FilterResultEnvelope{*data}
+	_, err = r.client.Filters.Update(
 		ctx,
-		data.OperationID.ValueString(),
-		api_gateway.DiscoveryOperationEditParams{
+		data.FilterID.ValueString(),
+		filters.FilterUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -139,33 +137,70 @@ func (r *APIShieldOperationDiscoveryResource) Update(ctx context.Context, req re
 		return
 	}
 	data = &env.Result
-	data.ID = data.OperationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *APIShieldOperationDiscoveryResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+func (r *FilterResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *FilterModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := FilterResultEnvelope{*data}
+	_, err := r.client.Filters.Get(
+		ctx,
+		data.FilterID.ValueString(),
+		filters.FilterGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *APIShieldOperationDiscoveryResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *FilterResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *FilterModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	_, err := r.client.Filters.Delete(
+		ctx,
+		data.FilterID.ValueString(),
+		filters.FilterDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *APIShieldOperationDiscoveryResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	if req.State.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
-				"present in the API until manually deleted.",
-		)
-	}
-	if req.Plan.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"Applying this resource destruction will remove the resource from the Terraform state "+
-				"but will not change it in the API. If you would like to destroy or reset this resource "+
-				"in the API, refer to the documentation for how to do it manually.",
-		)
-	}
+func (r *FilterResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }
