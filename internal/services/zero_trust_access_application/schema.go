@@ -89,7 +89,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"service_auth_401_redirect": schema.BoolAttribute{
-				Description: "Returns a 401 status code when the request is blocked by a Service Auth policy foo.",
+				Description: "Returns a 401 status code when the request is blocked by a Service Auth policy.",
 				Optional:    true,
 			},
 			"skip_interstitial": schema.BoolAttribute{
