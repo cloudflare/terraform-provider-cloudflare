@@ -38,6 +38,7 @@ var notificationAffectedComponents = map[string]string{
 	"DNS Root Servers":                    "4l9qztbt6rbj",
 	"DNS Updates":                         "7j656z7tqk7f",
 	"Durable Objects":                     "bty1yz6dhh0v",
+	"D1":                                  "z0yd3sxqjqdm",
 	"Email Routing":                       "gjb0yzvvrpf6",
 	"Ethereum Gateway":                    "7yyjz9qdsjbx",
 	"Firewall":                            "d1r0plwsl5qb",
