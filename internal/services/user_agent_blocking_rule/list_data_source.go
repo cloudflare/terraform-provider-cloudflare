@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package api_shield_operation_discovery
+package user_agent_blocking_rule
 
 import (
 	"context"
@@ -13,21 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type APIShieldOperationDiscoveriesDataSource struct {
+type UserAgentBlockingRulesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*APIShieldOperationDiscoveriesDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*UserAgentBlockingRulesDataSource)(nil)
 
-func NewAPIShieldOperationDiscoveriesDataSource() datasource.DataSource {
-	return &APIShieldOperationDiscoveriesDataSource{}
+func NewUserAgentBlockingRulesDataSource() datasource.DataSource {
+	return &UserAgentBlockingRulesDataSource{}
 }
 
-func (d *APIShieldOperationDiscoveriesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_api_shield_operation_discoveries"
+func (d *UserAgentBlockingRulesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_user_agent_blocking_rules"
 }
 
-func (d *APIShieldOperationDiscoveriesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *UserAgentBlockingRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,8 +46,8 @@ func (d *APIShieldOperationDiscoveriesDataSource) Configure(ctx context.Context,
 	d.client = client
 }
 
-func (d *APIShieldOperationDiscoveriesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *APIShieldOperationDiscoveriesDataSourceModel
+func (d *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *UserAgentBlockingRulesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -61,13 +61,13 @@ func (d *APIShieldOperationDiscoveriesDataSource) Read(ctx context.Context, req 
 		return
 	}
 
-	env := APIShieldOperationDiscoveriesResultListDataSourceEnvelope{}
+	env := UserAgentBlockingRulesResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.APIGateway.Discovery.Operations.List(ctx, params)
+	page, err := d.client.Firewall.UARules.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
@@ -92,7 +92,7 @@ func (d *APIShieldOperationDiscoveriesDataSource) Read(ctx context.Context, req 
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[APIShieldOperationDiscoveriesResultDataSourceModel](ctx, acc)
+	result, diags := customfield.NewObjectListFromAttributes[UserAgentBlockingRulesResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result
 

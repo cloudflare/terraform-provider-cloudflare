@@ -38,13 +38,8 @@ func (m *PageRuleDataSourceModel) toReadParams(_ context.Context) (params pageru
 }
 
 type PageRuleActionsDataSourceModel struct {
-	ID    types.String                                                  `tfsdk:"id" json:"id,computed"`
-	Value customfield.NestedObject[PageRuleActionsValueDataSourceModel] `tfsdk:"value" json:"value,computed"`
-}
-
-type PageRuleActionsValueDataSourceModel struct {
-	StatusCode types.Int64  `tfsdk:"status_code" json:"status_code,computed"`
-	URL        types.String `tfsdk:"url" json:"url,computed"`
+	ID    types.String `tfsdk:"id" json:"id,computed"`
+	Value types.Int64  `tfsdk:"value" json:"value,computed"`
 }
 
 type PageRuleTargetsDataSourceModel struct {
