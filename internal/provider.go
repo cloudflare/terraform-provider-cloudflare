@@ -19,7 +19,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/address_map"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_operation"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_operation_discovery"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_operation_schema_validation_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_schema"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_schema_validation_settings"
@@ -52,6 +51,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_block_sender"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_impersonation_registry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/filter"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/healthcheck"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/hostname_tls_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/hyperdrive_config"
@@ -97,6 +98,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_custom_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_managed_domain"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
@@ -120,6 +122,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/turnstile_widget"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/url_normalization_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user_agent_blocking_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room_event"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room_rules"
@@ -176,6 +179,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_variants"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dnssec"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_hold"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_lockdown"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -368,7 +372,11 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		email_routing_rule.NewResource,
 		email_routing_catch_all.NewResource,
 		email_routing_address.NewResource,
+		filter.NewResource,
+		zone_lockdown.NewResource,
+		firewall_rule.NewResource,
 		access_rule.NewResource,
+		user_agent_blocking_rule.NewResource,
 		healthcheck.NewResource,
 		keyless_certificate.NewResource,
 		logpush_job.NewResource,
@@ -377,6 +385,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		authenticated_origin_pulls_certificate.NewResource,
 		authenticated_origin_pulls.NewResource,
 		page_rule.NewResource,
+		rate_limit.NewResource,
 		secondary_dns_incoming.NewResource,
 		secondary_dns_outgoing.NewResource,
 		secondary_dns_acl.NewResource,
@@ -397,7 +406,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		queue.NewResource,
 		queue_consumer.NewResource,
 		api_shield.NewResource,
-		api_shield_operation_discovery.NewResource,
 		api_shield_operation.NewResource,
 		api_shield_operation_schema_validation_settings.NewResource,
 		api_shield_schema_validation_settings.NewResource,
@@ -551,8 +559,16 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		email_routing_catch_all.NewEmailRoutingCatchAllDataSource,
 		email_routing_address.NewEmailRoutingAddressDataSource,
 		email_routing_address.NewEmailRoutingAddressesDataSource,
+		filter.NewFilterDataSource,
+		filter.NewFiltersDataSource,
+		zone_lockdown.NewZoneLockdownDataSource,
+		zone_lockdown.NewZoneLockdownsDataSource,
+		firewall_rule.NewFirewallRuleDataSource,
+		firewall_rule.NewFirewallRulesDataSource,
 		access_rule.NewAccessRuleDataSource,
 		access_rule.NewAccessRulesDataSource,
+		user_agent_blocking_rule.NewUserAgentBlockingRuleDataSource,
+		user_agent_blocking_rule.NewUserAgentBlockingRulesDataSource,
 		healthcheck.NewHealthcheckDataSource,
 		healthcheck.NewHealthchecksDataSource,
 		keyless_certificate.NewKeylessCertificateDataSource,
@@ -566,6 +582,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificatesDataSource,
 		authenticated_origin_pulls.NewAuthenticatedOriginPullsDataSource,
 		page_rule.NewPageRuleDataSource,
+		rate_limit.NewRateLimitDataSource,
+		rate_limit.NewRateLimitsDataSource,
 		secondary_dns_incoming.NewSecondaryDNSIncomingDataSource,
 		secondary_dns_outgoing.NewSecondaryDNSOutgoingDataSource,
 		secondary_dns_acl.NewSecondaryDNSACLDataSource,
@@ -596,8 +614,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		queue.NewQueuesDataSource,
 		queue_consumer.NewQueueConsumerDataSource,
 		api_shield.NewAPIShieldDataSource,
-		api_shield_operation_discovery.NewAPIShieldOperationDiscoveryDataSource,
-		api_shield_operation_discovery.NewAPIShieldOperationDiscoveriesDataSource,
 		api_shield_operation.NewAPIShieldOperationDataSource,
 		api_shield_operation.NewAPIShieldOperationsDataSource,
 		api_shield_operation_schema_validation_settings.NewAPIShieldOperationSchemaValidationSettingsDataSource,
