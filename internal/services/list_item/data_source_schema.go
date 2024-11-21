@@ -6,9 +6,11 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ListItemDataSource)(nil)
@@ -27,6 +29,38 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"list_id": schema.StringAttribute{
 				Description: "The unique ID of the list.",
 				Optional:    true,
+			},
+			"include_subdomains": schema.BoolAttribute{
+				Computed: true,
+			},
+			"preserve_path_suffix": schema.BoolAttribute{
+				Computed: true,
+			},
+			"preserve_query_string": schema.BoolAttribute{
+				Computed: true,
+			},
+			"source_url": schema.StringAttribute{
+				Computed: true,
+			},
+			"status_code": schema.Int64Attribute{
+				Computed: true,
+				Validators: []validator.Int64{
+					int64validator.OneOf(
+						301,
+						302,
+						307,
+						308,
+					),
+				},
+			},
+			"subpath_matching": schema.BoolAttribute{
+				Computed: true,
+			},
+			"target_url": schema.StringAttribute{
+				Computed: true,
+			},
+			"url_hostname": schema.StringAttribute{
+				Computed: true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

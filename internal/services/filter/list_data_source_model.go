@@ -53,8 +53,8 @@ func (m *FiltersDataSourceModel) toListParams(_ context.Context) (params filters
 
 type FiltersResultDataSourceModel struct {
 	ID          types.String `tfsdk:"id" json:"id,computed"`
+	Description types.String `tfsdk:"description" json:"description,computed"`
 	Expression  types.String `tfsdk:"expression" json:"expression,computed"`
 	Paused      types.Bool   `tfsdk:"paused" json:"paused,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
 	Ref         types.String `tfsdk:"ref" json:"ref,computed"`
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -76,4 +77,27 @@ func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Cont
 }
 
 type ZeroTrustTunnelCloudflaredsResultDataSourceModel struct {
+	ID              types.String                                                                        `tfsdk:"id" json:"id,computed"`
+	AccountTag      types.String                                                                        `tfsdk:"account_tag" json:"account_tag,computed"`
+	Connections     customfield.NestedObjectList[ZeroTrustTunnelCloudflaredsConnectionsDataSourceModel] `tfsdk:"connections" json:"connections,computed"`
+	ConnsActiveAt   timetypes.RFC3339                                                                   `tfsdk:"conns_active_at" json:"conns_active_at,computed" format:"date-time"`
+	ConnsInactiveAt timetypes.RFC3339                                                                   `tfsdk:"conns_inactive_at" json:"conns_inactive_at,computed" format:"date-time"`
+	CreatedAt       timetypes.RFC3339                                                                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	DeletedAt       timetypes.RFC3339                                                                   `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
+	Metadata        jsontypes.Normalized                                                                `tfsdk:"metadata" json:"metadata,computed"`
+	Name            types.String                                                                        `tfsdk:"name" json:"name,computed"`
+	RemoteConfig    types.Bool                                                                          `tfsdk:"remote_config" json:"remote_config,computed"`
+	Status          types.String                                                                        `tfsdk:"status" json:"status,computed"`
+	TunType         types.String                                                                        `tfsdk:"tun_type" json:"tun_type,computed"`
+}
+
+type ZeroTrustTunnelCloudflaredsConnectionsDataSourceModel struct {
+	ID                 types.String      `tfsdk:"id" json:"id,computed"`
+	ClientID           types.String      `tfsdk:"client_id" json:"client_id,computed"`
+	ClientVersion      types.String      `tfsdk:"client_version" json:"client_version,computed"`
+	ColoName           types.String      `tfsdk:"colo_name" json:"colo_name,computed"`
+	IsPendingReconnect types.Bool        `tfsdk:"is_pending_reconnect" json:"is_pending_reconnect,computed"`
+	OpenedAt           timetypes.RFC3339 `tfsdk:"opened_at" json:"opened_at,computed" format:"date-time"`
+	OriginIP           types.String      `tfsdk:"origin_ip" json:"origin_ip,computed"`
+	UUID               types.String      `tfsdk:"uuid" json:"uuid,computed"`
 }

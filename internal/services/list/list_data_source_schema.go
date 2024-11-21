@@ -43,6 +43,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The RFC 3339 timestamp of when the list was created.",
 							Computed:    true,
 						},
+						"description": schema.StringAttribute{
+							Description: "An informative summary of the list.",
+							Computed:    true,
+						},
 						"kind": schema.StringAttribute{
 							Description: "The type of the list. Each type supports specific list items (IP addresses, ASNs, hostnames or redirects).",
 							Computed:    true,
@@ -65,10 +69,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"num_items": schema.Float64Attribute{
 							Description: "The number of items in the list.",
-							Computed:    true,
-						},
-						"description": schema.StringAttribute{
-							Description: "An informative summary of the list.",
 							Computed:    true,
 						},
 						"num_referencing_filters": schema.Float64Attribute{

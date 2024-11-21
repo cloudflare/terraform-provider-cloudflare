@@ -5,6 +5,7 @@ package zone_setting
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -105,6 +106,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("on", "off"),
 				},
 				Default: stringdefault.StaticString("off"),
+			},
+			"editable": schema.BoolAttribute{
+				Description: "Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).",
+				Computed:    true,
+				Default:     booldefault.StaticBool(true),
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "last time this setting was modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"time_remaining": schema.Float64Attribute{
+				Description: "Value of the zone setting.\nNotes: The interval (in seconds) from when development mode expires (positive integer) or last expired (negative integer) for the domain. If development mode has never been enabled, this value is false.",
+				Computed:    true,
 			},
 		},
 	}

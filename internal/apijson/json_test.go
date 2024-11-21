@@ -1074,6 +1074,9 @@ type StructWithComputedFields struct {
 	CompOptNestedCust customfield.NestedObject[NestedStructWithComputedFields] `tfsdk:"opt_nested_obj" json:"opt_nested_obj,computed_optional"`
 	NestedList        *[]*NestedStructWithComputedFields                       `tfsdk:"nested_list" json:"nested_list,optional"`
 	MapCust           customfield.Map[customfield.List[types.String]]          `tfsdk:"map_cust" json:"map_cust,optional"`
+	MapRegular        *map[string][]*NestedStructWithComputedFields            `tfsdk:"map_regular" json:"map_regular,optional"`
+	CompMap           *map[string]*NestedStructWithComputedFields              `tfsdk:"comp_map" json:"comp_map,computed"`
+	CompMapList       *map[string][]*NestedStructWithComputedFields            `tfsdk:"comp_map_list" json:"comp_map_list,computed"`
 }
 
 type NestedStructWithComputedFields struct {
@@ -1090,9 +1093,12 @@ var exampleNestedJson = `{
 	"opt_time":"2006-01-02T15:04:05Z",
 	"nested":{"nested_str":"nested_str","nested_comp_str":"nested_comp_str","nested_comp_opt_int":42},
 	"nested_obj":{"nested_str":"nested_str","nested_comp_str":"nested_comp_str","nested_comp_opt_int":42},
-	"opt_nested_obj":{"nested_str":"nested_str","nested_comp_str":"nested_comp_str","nested_comp_opt_int":42}
-	"nested_list":[{"nested_str":"nested_str","nested_comp_str":"list_nested_comp_str_1","nested_comp_opt_int":43},{"nested_str":"nested_str","nested_comp_str":"list_nested_comp_str_2","nested_comp_opt_int":44}]
-	"map_cust":{"key":["val1","val2"]}
+	"opt_nested_obj":{"nested_str":"nested_str","nested_comp_str":"nested_comp_str","nested_comp_opt_int":42},
+	"nested_list":[{"nested_str":"nested_str","nested_comp_str":"list_nested_comp_str_1","nested_comp_opt_int":43},{"nested_str":"nested_str","nested_comp_str":"list_nested_comp_str_2","nested_comp_opt_int":44}],
+	"map_cust":{"key":["val1","val2"]},
+	"map_regular":{"key":[{"nested_str":"nested_str","nested_comp_str":"nested_comp_str","nested_comp_opt_int":42}]},
+	"comp_map":{"comp_key":{"nested_comp_str":"nested_comp_str"}},
+	"comp_map_list":{"comp_list_key":[{"nested_comp_str":"nested_comp_str"}]}
 }`
 
 type nestedMapExample struct {
@@ -1162,6 +1168,13 @@ var decode_computed_only_tests = map[string]struct {
 			},
 			NestedCust:        customfield.NullObject[NestedStructWithComputedFields](ctx),
 			CompOptNestedCust: customfield.NullObject[NestedStructWithComputedFields](ctx),
+			MapRegular: P(map[string][]*NestedStructWithComputedFields{"key": {
+				&NestedStructWithComputedFields{
+					RegStr:     types.StringNull(),
+					CompStr:    types.StringNull(),
+					CompOptInt: types.Int64Null(),
+				},
+			}}),
 		},
 		StructWithComputedFields{
 			RegStr:      types.StringNull(),
@@ -1180,7 +1193,21 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(42),
 			}),
-			NestedList: nil,
+			MapRegular: P(map[string][]*NestedStructWithComputedFields{"key": {
+				&NestedStructWithComputedFields{
+					RegStr:     types.StringNull(),
+					CompStr:    types.StringValue("nested_comp_str"),
+					CompOptInt: types.Int64Value(42),
+				},
+			}}),
+			CompMap: P(map[string]*NestedStructWithComputedFields{"comp_key": {
+				CompStr: types.StringValue("nested_comp_str"),
+			}}),
+			CompMapList: P(map[string][]*NestedStructWithComputedFields{"comp_list_key": {
+				&NestedStructWithComputedFields{
+					CompStr: types.StringValue("nested_comp_str"),
+				},
+			}}),
 		},
 	},
 	"only_updates_computed_props_from_unknown": {
@@ -1218,7 +1245,14 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(42),
 			}),
-			NestedList: nil,
+			CompMap: P(map[string]*NestedStructWithComputedFields{"comp_key": {
+				CompStr: types.StringValue("nested_comp_str"),
+			}}),
+			CompMapList: P(map[string][]*NestedStructWithComputedFields{"comp_list_key": {
+				&NestedStructWithComputedFields{
+					CompStr: types.StringValue("nested_comp_str"),
+				},
+			}}),
 		},
 	},
 
@@ -1285,6 +1319,14 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringValue("list_nested_comp_str_2"),
 				CompOptInt: types.Int64Value(12),
 			}},
+			CompMap: P(map[string]*NestedStructWithComputedFields{"comp_key": {
+				CompStr: types.StringValue("nested_comp_str"),
+			}}),
+			CompMapList: P(map[string][]*NestedStructWithComputedFields{"comp_list_key": {
+				&NestedStructWithComputedFields{
+					CompStr: types.StringValue("nested_comp_str"),
+				},
+			}}),
 		},
 	},
 
@@ -1364,9 +1406,6 @@ var decode_computed_only_tests = map[string]struct {
 func TestDecodeComputedOnly(t *testing.T) {
 	spew.Config.ContinueOnMethod = false
 	for name, test := range decode_computed_only_tests {
-		if name != "primitive_list_unchanged" {
-			continue
-		}
 		t.Run(name, func(t *testing.T) {
 			v := reflect.ValueOf(test.starting)
 			starting := reflect.New(v.Type())

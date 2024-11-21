@@ -58,16 +58,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The unique identifier of the filter.",
 							Computed:    true,
 						},
+						"description": schema.StringAttribute{
+							Description: "An informative summary of the filter.",
+							Computed:    true,
+						},
 						"expression": schema.StringAttribute{
 							Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
 							Computed:    true,
 						},
 						"paused": schema.BoolAttribute{
 							Description: "When true, indicates that the filter is currently paused.",
-							Computed:    true,
-						},
-						"description": schema.StringAttribute{
-							Description: "An informative summary of the filter.",
 							Computed:    true,
 						},
 						"ref": schema.StringAttribute{

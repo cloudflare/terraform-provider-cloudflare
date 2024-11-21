@@ -12,12 +12,20 @@ type ListItemResultEnvelope struct {
 }
 
 type ListItemModel struct {
-	ListID            types.String          `tfsdk:"list_id" path:"list_id,required"`
-	AccountID         types.String          `tfsdk:"account_id" path:"account_id,optional"`
-	AccountIdentifier types.String          `tfsdk:"account_identifier" path:"account_identifier,optional"`
-	ItemID            types.String          `tfsdk:"item_id" path:"item_id,optional"`
-	Body              *[]*ListItemBodyModel `tfsdk:"body" json:"body,required"`
-	OperationID       types.String          `tfsdk:"operation_id" json:"operation_id,computed"`
+	ListID              types.String          `tfsdk:"list_id" path:"list_id,required"`
+	AccountID           types.String          `tfsdk:"account_id" path:"account_id,optional"`
+	AccountIdentifier   types.String          `tfsdk:"account_identifier" path:"account_identifier,optional"`
+	ItemID              types.String          `tfsdk:"item_id" path:"item_id,optional"`
+	Body                *[]*ListItemBodyModel `tfsdk:"body" json:"body,required"`
+	IncludeSubdomains   types.Bool            `tfsdk:"include_subdomains" json:"include_subdomains,computed"`
+	OperationID         types.String          `tfsdk:"operation_id" json:"operation_id,computed"`
+	PreservePathSuffix  types.Bool            `tfsdk:"preserve_path_suffix" json:"preserve_path_suffix,computed"`
+	PreserveQueryString types.Bool            `tfsdk:"preserve_query_string" json:"preserve_query_string,computed"`
+	SourceURL           types.String          `tfsdk:"source_url" json:"source_url,computed"`
+	StatusCode          types.Int64           `tfsdk:"status_code" json:"status_code,computed"`
+	SubpathMatching     types.Bool            `tfsdk:"subpath_matching" json:"subpath_matching,computed"`
+	TargetURL           types.String          `tfsdk:"target_url" json:"target_url,computed"`
+	URLHostname         types.String          `tfsdk:"url_hostname" json:"url_hostname,computed"`
 }
 
 func (m ListItemModel) MarshalJSON() (data []byte, err error) {

@@ -41,7 +41,40 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[ListItemsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{},
+					Attributes: map[string]schema.Attribute{
+						"source_url": schema.StringAttribute{
+							Computed: true,
+						},
+						"target_url": schema.StringAttribute{
+							Computed: true,
+						},
+						"include_subdomains": schema.BoolAttribute{
+							Computed: true,
+						},
+						"preserve_path_suffix": schema.BoolAttribute{
+							Computed: true,
+						},
+						"preserve_query_string": schema.BoolAttribute{
+							Computed: true,
+						},
+						"status_code": schema.Int64Attribute{
+							Computed: true,
+							Validators: []validator.Int64{
+								int64validator.OneOf(
+									301,
+									302,
+									307,
+									308,
+								),
+							},
+						},
+						"subpath_matching": schema.BoolAttribute{
+							Computed: true,
+						},
+						"url_hostname": schema.StringAttribute{
+							Computed: true,
+						},
+					},
 				},
 			},
 		},

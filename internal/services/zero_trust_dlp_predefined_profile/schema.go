@@ -6,10 +6,13 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPPredefinedProfileResource)(nil)
@@ -72,6 +75,38 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"created_at": schema.StringAttribute{
+				Description: "When the profile was created",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"description": schema.StringAttribute{
+				Description: "The description of the profile",
+				Computed:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the profile",
+				Computed:    true,
+			},
+			"open_access": schema.BoolAttribute{
+				Description: "Whether this profile can be accessed by anyone",
+				Computed:    true,
+			},
+			"type": schema.StringAttribute{
+				Computed: true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"custom",
+						"predefined",
+						"integration",
+					),
+				},
+			},
+			"updated_at": schema.StringAttribute{
+				Description: "When the profile was lasted updated",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}

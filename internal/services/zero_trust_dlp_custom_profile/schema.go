@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -249,6 +250,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"created_at": schema.StringAttribute{
+				Description: "When the profile was created",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"open_access": schema.BoolAttribute{
+				Description: "Whether this profile can be accessed by anyone",
+				Computed:    true,
+			},
+			"type": schema.StringAttribute{
+				Computed: true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"custom",
+						"predefined",
+						"integration",
+					),
+				},
+			},
+			"updated_at": schema.StringAttribute{
+				Description: "When the profile was lasted updated",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}
