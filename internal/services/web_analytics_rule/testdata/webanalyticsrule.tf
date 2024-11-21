@@ -8,7 +8,7 @@ resource "cloudflare_web_analytics_site" "%[1]s" {
 resource "cloudflare_web_analytics_rule" "%[1]s" {
   depends_on = [cloudflare_web_analytics_site.%[1]s]
   account_id = "%[2]s"
-  ruleset_id = cloudflare_web_analytics_site.%[1]s.ruleset_id
+  ruleset_id = cloudflare_web_analytics_site.%[1]s.ruleset.id
   host       = "%[3]s"
   paths      = ["/excluded"]
   inclusive  = false
