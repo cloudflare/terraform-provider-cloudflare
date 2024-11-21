@@ -151,7 +151,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_custom_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_custom_profile_local_domain_fallback"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile_local_domain_fallback"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_managed_networks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_integration"
@@ -396,7 +395,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_device_managed_networks.NewResource,
 		zero_trust_device_default_profile.NewResource,
 		zero_trust_device_default_profile_local_domain_fallback.NewResource,
-		zero_trust_device_default_profile_certificates.NewResource,
 		zero_trust_device_custom_profile.NewResource,
 		zero_trust_device_custom_profile_local_domain_fallback.NewResource,
 		zero_trust_device_posture_rule.NewResource,
@@ -641,7 +639,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksListDataSource,
 		zero_trust_device_default_profile.NewZeroTrustDeviceDefaultProfileDataSource,
 		zero_trust_device_default_profile_local_domain_fallback.NewZeroTrustDeviceDefaultProfileLocalDomainFallbackDataSource,
-		zero_trust_device_default_profile_certificates.NewZeroTrustDeviceDefaultProfileCertificatesDataSource,
 		zero_trust_device_custom_profile.NewZeroTrustDeviceCustomProfileDataSource,
 		zero_trust_device_custom_profile.NewZeroTrustDeviceCustomProfilesDataSource,
 		zero_trust_device_custom_profile_local_domain_fallback.NewZeroTrustDeviceCustomProfileLocalDomainFallbackDataSource,
