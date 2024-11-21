@@ -5,7 +5,10 @@ package email_routing_dns
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -64,9 +67,245 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"success": schema.BoolAttribute{
+				Description: "Whether the API call was successful",
+				Computed:    true,
+			},
 			"tag": schema.StringAttribute{
 				Description: "Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)",
 				Computed:    true,
+			},
+			"errors": schema.ListNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[EmailRoutingDNSErrorsModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"code": schema.Int64Attribute{
+							Computed: true,
+							Validators: []validator.Int64{
+								int64validator.AtLeast(1000),
+							},
+						},
+						"message": schema.StringAttribute{
+							Computed: true,
+						},
+					},
+				},
+			},
+			"messages": schema.ListNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[EmailRoutingDNSMessagesModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"code": schema.Int64Attribute{
+							Computed: true,
+							Validators: []validator.Int64{
+								int64validator.AtLeast(1000),
+							},
+						},
+						"message": schema.StringAttribute{
+							Computed: true,
+						},
+					},
+				},
+			},
+			"result": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[EmailRoutingDNSResultModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"errors": schema.ListNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectListType[EmailRoutingDNSResultErrorsModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"code": schema.StringAttribute{
+									Computed: true,
+								},
+								"missing": schema.SingleNestedAttribute{
+									Description: "List of records needed to enable an Email Routing zone.",
+									Computed:    true,
+									CustomType:  customfield.NewNestedObjectType[EmailRoutingDNSResultErrorsMissingModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"content": schema.StringAttribute{
+											Description: "DNS record content.",
+											Computed:    true,
+										},
+										"name": schema.StringAttribute{
+											Description: "DNS record name (or @ for the zone apex).",
+											Computed:    true,
+										},
+										"priority": schema.Float64Attribute{
+											Description: "Required for MX, SRV and URI records. Unused by other record types. Records with lower priorities are preferred.",
+											Computed:    true,
+											Validators: []validator.Float64{
+												float64validator.Between(0, 65535),
+											},
+										},
+										"ttl": schema.Float64Attribute{
+											Description: "Time to live, in seconds, of the DNS record. Must be between 60 and 86400, or 1 for 'automatic'.",
+											Computed:    true,
+											Validators: []validator.Float64{
+												float64validator.Between(1, 86400),
+											},
+										},
+										"type": schema.StringAttribute{
+											Description: "DNS record type.",
+											Computed:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive(
+													"A",
+													"AAAA",
+													"CNAME",
+													"HTTPS",
+													"TXT",
+													"SRV",
+													"LOC",
+													"MX",
+													"NS",
+													"CERT",
+													"DNSKEY",
+													"DS",
+													"NAPTR",
+													"SMIMEA",
+													"SSHFP",
+													"SVCB",
+													"TLSA",
+													"URI",
+												),
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+					"record": schema.ListNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectListType[EmailRoutingDNSResultRecordModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"content": schema.StringAttribute{
+									Description: "DNS record content.",
+									Computed:    true,
+								},
+								"name": schema.StringAttribute{
+									Description: "DNS record name (or @ for the zone apex).",
+									Computed:    true,
+								},
+								"priority": schema.Float64Attribute{
+									Description: "Required for MX, SRV and URI records. Unused by other record types. Records with lower priorities are preferred.",
+									Computed:    true,
+									Validators: []validator.Float64{
+										float64validator.Between(0, 65535),
+									},
+								},
+								"ttl": schema.Float64Attribute{
+									Description: "Time to live, in seconds, of the DNS record. Must be between 60 and 86400, or 1 for 'automatic'.",
+									Computed:    true,
+									Validators: []validator.Float64{
+										float64validator.Between(1, 86400),
+									},
+								},
+								"type": schema.StringAttribute{
+									Description: "DNS record type.",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"A",
+											"AAAA",
+											"CNAME",
+											"HTTPS",
+											"TXT",
+											"SRV",
+											"LOC",
+											"MX",
+											"NS",
+											"CERT",
+											"DNSKEY",
+											"DS",
+											"NAPTR",
+											"SMIMEA",
+											"SSHFP",
+											"SVCB",
+											"TLSA",
+											"URI",
+										),
+									},
+								},
+							},
+						},
+					},
+					"content": schema.StringAttribute{
+						Description: "DNS record content.",
+						Computed:    true,
+					},
+					"name": schema.StringAttribute{
+						Description: "DNS record name (or @ for the zone apex).",
+						Computed:    true,
+					},
+					"priority": schema.Float64Attribute{
+						Description: "Required for MX, SRV and URI records. Unused by other record types. Records with lower priorities are preferred.",
+						Computed:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 65535),
+						},
+					},
+					"ttl": schema.Float64Attribute{
+						Description: "Time to live, in seconds, of the DNS record. Must be between 60 and 86400, or 1 for 'automatic'.",
+						Computed:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(1, 86400),
+						},
+					},
+					"type": schema.StringAttribute{
+						Description: "DNS record type.",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"A",
+								"AAAA",
+								"CNAME",
+								"HTTPS",
+								"TXT",
+								"SRV",
+								"LOC",
+								"MX",
+								"NS",
+								"CERT",
+								"DNSKEY",
+								"DS",
+								"NAPTR",
+								"SMIMEA",
+								"SSHFP",
+								"SVCB",
+								"TLSA",
+								"URI",
+							),
+						},
+					},
+				},
+			},
+			"result_info": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[EmailRoutingDNSResultInfoModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"count": schema.Float64Attribute{
+						Description: "Total number of results for the requested service",
+						Computed:    true,
+					},
+					"page": schema.Float64Attribute{
+						Description: "Current page within paginated list of results",
+						Computed:    true,
+					},
+					"per_page": schema.Float64Attribute{
+						Description: "Number of results per page of results",
+						Computed:    true,
+					},
+					"total_count": schema.Float64Attribute{
+						Description: "Total results available without any search parameters",
+						Computed:    true,
+					},
+				},
 			},
 		},
 	}

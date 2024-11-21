@@ -4,6 +4,7 @@ package zone_setting
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -12,11 +13,14 @@ type ZoneSettingResultEnvelope struct {
 }
 
 type ZoneSettingModel struct {
-	SettingID types.String `tfsdk:"setting_id" path:"setting_id,required"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,required"`
-	ID        types.String `tfsdk:"id" json:"id,optional"`
-	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Value     types.String `tfsdk:"value" json:"value,computed_optional"`
+	SettingID     types.String      `tfsdk:"setting_id" path:"setting_id,required"`
+	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ID            types.String      `tfsdk:"id" json:"id,optional"`
+	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Value         types.String      `tfsdk:"value" json:"value,computed_optional"`
+	Editable      types.Bool        `tfsdk:"editable" json:"editable,computed"`
+	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	TimeRemaining types.Float64     `tfsdk:"time_remaining" json:"time_remaining,computed"`
 }
 
 func (m ZoneSettingModel) MarshalJSON() (data []byte, err error) {

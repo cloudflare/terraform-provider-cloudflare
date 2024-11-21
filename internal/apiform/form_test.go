@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -39,17 +40,24 @@ type PrimitivePointers struct {
 }
 
 type TerraformTypes struct {
-	A types.Bool                                    `tfsdk:"a" json:"a"`
-	B types.Int64                                   `tfsdk:"b" json:"b"`
-	C types.Float64                                 `tfsdk:"c" json:"c"`
-	D types.String                                  `tfsdk:"d" json:"d"`
-	E timetypes.RFC3339                             `tfsdk:"e" json:"e"`
-	F customfield.NestedObject[NestedTerraformType] `tfsdk:"f" json:"f"`
-	G types.Object                                  `tfsdk:"g" json:"g"`
-	H types.List                                    `tfsdk:"h" json:"h"`
-	I types.Map                                     `tfsdk:"i" json:"i"`
-	J types.Set                                     `tfsdk:"j" json:"j"`
-	K types.Dynamic                                 `tfsdk:"k" json:"k"`
+	A types.Bool                                        `tfsdk:"a" json:"a"`
+	B types.Int64                                       `tfsdk:"b" json:"b"`
+	C types.Float64                                     `tfsdk:"c" json:"c"`
+	D types.String                                      `tfsdk:"d" json:"d"`
+	E timetypes.RFC3339                                 `tfsdk:"e" json:"e"`
+	F customfield.NestedObject[NestedTerraformType]     `tfsdk:"f" json:"f"`
+	G types.Object                                      `tfsdk:"g" json:"g"`
+	H types.List                                        `tfsdk:"h" json:"h"`
+	I types.Map                                         `tfsdk:"i" json:"i"`
+	J types.Set                                         `tfsdk:"j" json:"j"`
+	K types.Dynamic                                     `tfsdk:"k" json:"k"`
+	L customfield.List[types.String]                    `tfsdk:"l" json:"l"`
+	M customfield.Map[types.String]                     `tfsdk:"m" json:"m"`
+	N customfield.Set[types.String]                     `tfsdk:"n" json:"n"`
+	O customfield.NestedObjectList[NestedTerraformType] `tfsdk:"o" json:"o"`
+	P customfield.NestedObjectMap[NestedTerraformType]  `tfsdk:"p" json:"p"`
+	Q customfield.NestedObjectSet[NestedTerraformType]  `tfsdk:"q" json:"q"`
+	R jsontypes.Normalized                              `tfsdk:"r" json:"r"`
 }
 
 type NestedTerraformType struct {
@@ -255,6 +263,58 @@ Content-Disposition: form-data; name="j.1"
 Content-Disposition: form-data; name="k.dynamic_hello"
 
 dynamic_world
+--xxx
+Content-Disposition: form-data; name="l.0"
+
+a
+--xxx
+Content-Disposition: form-data; name="l.1"
+
+b
+--xxx
+Content-Disposition: form-data; name="m.a"
+
+3
+--xxx
+Content-Disposition: form-data; name="m.b"
+
+8932
+--xxx
+Content-Disposition: form-data; name="n.0"
+
+23.345
+--xxx
+Content-Disposition: form-data; name="n.1"
+
+15
+--xxx
+Content-Disposition: form-data; name="o.0.nested_a"
+
+false
+--xxx
+Content-Disposition: form-data; name="o.1.nested_a"
+
+true
+--xxx
+Content-Disposition: form-data; name="p.a.nested_a"
+
+false
+--xxx
+Content-Disposition: form-data; name="p.b.nested_a"
+
+true
+--xxx
+Content-Disposition: form-data; name="q.0.nested_a"
+
+false
+--xxx
+Content-Disposition: form-data; name="q.1.nested_a"
+
+true
+--xxx
+Content-Disposition: form-data; name="r"
+
+{"hello": "world"}
 --xxx--
 `,
 		TerraformTypes{
@@ -271,6 +331,34 @@ dynamic_world
 			I: types.MapValueMust(basetypes.Int64Type{}, map[string]attr.Value{"a": basetypes.NewInt64Value(3), "b": basetypes.NewInt64Value(8932)}),
 			J: types.SetValueMust(basetypes.Float64Type{}, []attr.Value{basetypes.NewFloat64Value(23.345), basetypes.NewFloat64Value(15)}),
 			K: types.DynamicValue(types.ObjectValueMust(map[string]attr.Type{"dynamic_hello": basetypes.StringType{}}, map[string]attr.Value{"dynamic_hello": basetypes.NewStringValue("dynamic_world")})),
+			L: customfield.NewListMust[types.String](context.TODO(), []attr.Value{basetypes.NewStringValue("a"), basetypes.NewStringValue("b")}),
+			M: customfield.NewMapMust[types.String](context.TODO(), map[string]attr.Value{"a": basetypes.NewStringValue("3"), "b": basetypes.NewStringValue("8932")}),
+			N: customfield.NewSetMust[types.String](context.TODO(), []attr.Value{basetypes.NewStringValue("23.345"), basetypes.NewStringValue("15")}),
+			O: customfield.NewObjectListMust(context.TODO(), []NestedTerraformType{
+				{
+					NestedA: types.BoolValue(false),
+				},
+				{
+					NestedA: types.BoolValue(true),
+				},
+			}),
+			P: customfield.NewObjectMapMust(context.TODO(), map[string]NestedTerraformType{
+				"a": {
+					NestedA: types.BoolValue(false),
+				},
+				"b": {
+					NestedA: types.BoolValue(true),
+				},
+			}),
+			Q: customfield.NewObjectSetMust(context.TODO(), []NestedTerraformType{
+				{
+					NestedA: types.BoolValue(false),
+				},
+				{
+					NestedA: types.BoolValue(true),
+				},
+			}),
+			R: jsontypes.NewNormalizedValue(`{"hello": "world"}`),
 		},
 	},
 
@@ -532,11 +620,11 @@ func TestEncode(t *testing.T) {
 			writer.SetBoundary("xxx")
 			err := Marshal(test.val, writer)
 			if err != nil {
-				t.Errorf("serialization of %v failed with error %v", test.val, err)
+				t.Errorf("serialization of %v\nfailed with error:\n%v", test.val, err)
 			}
 			err = writer.Close()
 			if err != nil {
-				t.Errorf("serialization of %v failed with error %v", test.val, err)
+				t.Errorf("serialization of %v\nfailed with error:\n%v", test.val, err)
 			}
 			raw := buf.Bytes()
 			if string(raw) != strings.ReplaceAll(test.buf, "\n", "\r\n") {

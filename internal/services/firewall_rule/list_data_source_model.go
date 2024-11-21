@@ -50,9 +50,9 @@ func (m *FirewallRulesDataSourceModel) toListParams(_ context.Context) (params f
 type FirewallRulesResultDataSourceModel struct {
 	ID          types.String                                                 `tfsdk:"id" json:"id,computed"`
 	Action      types.String                                                 `tfsdk:"action" json:"action,computed"`
+	Description types.String                                                 `tfsdk:"description" json:"description,computed"`
 	Filter      customfield.NestedObject[FirewallRulesFilterDataSourceModel] `tfsdk:"filter" json:"filter,computed"`
 	Paused      types.Bool                                                   `tfsdk:"paused" json:"paused,computed"`
-	Description types.String                                                 `tfsdk:"description" json:"description,computed"`
 	Priority    types.Float64                                                `tfsdk:"priority" json:"priority,computed"`
 	Products    customfield.List[types.String]                               `tfsdk:"products" json:"products,computed"`
 	Ref         types.String                                                 `tfsdk:"ref" json:"ref,computed"`

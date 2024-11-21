@@ -317,14 +317,14 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 	return func(node gjson.Result, value reflect.Value, state *decoderState) (err error) {
 		mapValue := reflect.MakeMapWithSize(t, len(node.Map()))
 
-		extraKeys := map[reflect.Value]bool{}
+		extraKeys := map[any]bool{}
 		var nonEmpty bool
 
 		if updateBehavior == OnlyNested {
 			// populate existing values regardless of whether they are coming from the API
 			for _, key := range value.MapKeys() {
 				nonEmpty = true
-				extraKeys[key] = true
+				extraKeys[key.Interface()] = true
 				item := value.MapIndex(key)
 				mapValue.SetMapIndex(key, item)
 			}
@@ -347,7 +347,7 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 				return false
 			}
 
-			if updateBehavior == OnlyNested && !extraKeys[keyValue] {
+			if updateBehavior == OnlyNested && !extraKeys[key.Value()] {
 				// skip keys that aren't already in the map
 				return true
 			}
@@ -366,7 +366,7 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 			}
 
 			mapValue.SetMapIndex(keyValue, itemValue)
-			extraKeys[keyValue] = false
+			extraKeys[key.Value()] = false
 			nonEmpty = true
 			return true
 		})
@@ -380,7 +380,7 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 			if !exists {
 				continue
 			}
-			existingValue := value.MapIndex(key)
+			existingValue := value.MapIndex(reflect.ValueOf(key))
 			itemValue := reflect.New(itemType).Elem()
 			itemValue.Set(existingValue)
 			itemerr := itemDecoder(gjson.Result{}, itemValue, state)
@@ -388,7 +388,7 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 				return itemerr
 			}
 
-			mapValue.SetMapIndex(key, itemValue)
+			mapValue.SetMapIndex(reflect.ValueOf(key), itemValue)
 		}
 		if nonEmpty {
 			value.Set(mapValue)

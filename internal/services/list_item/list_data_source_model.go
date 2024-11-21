@@ -37,4 +37,12 @@ func (m *ListItemsDataSourceModel) toListParams(_ context.Context) (params rules
 }
 
 type ListItemsResultDataSourceModel struct {
+	SourceURL           types.String `tfsdk:"source_url" json:"source_url,computed"`
+	TargetURL           types.String `tfsdk:"target_url" json:"target_url,computed"`
+	IncludeSubdomains   types.Bool   `tfsdk:"include_subdomains" json:"include_subdomains,computed"`
+	PreservePathSuffix  types.Bool   `tfsdk:"preserve_path_suffix" json:"preserve_path_suffix,computed"`
+	PreserveQueryString types.Bool   `tfsdk:"preserve_query_string" json:"preserve_query_string,computed"`
+	StatusCode          types.Int64  `tfsdk:"status_code" json:"status_code,computed"`
+	SubpathMatching     types.Bool   `tfsdk:"subpath_matching" json:"subpath_matching,computed"`
+	URLHostname         types.String `tfsdk:"url_hostname" json:"url_hostname,computed"`
 }

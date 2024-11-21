@@ -5,6 +5,7 @@ package bot_management
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -90,6 +91,45 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
+			},
+			"using_latest_model": schema.BoolAttribute{
+				Description: "A read-only field that indicates whether the zone currently is running the latest ML model.\n",
+				Computed:    true,
+			},
+			"stale_zone_configuration": schema.SingleNestedAttribute{
+				Description: "A read-only field that shows which unauthorized settings are currently active on the zone. These settings typically result from upgrades or downgrades.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[BotManagementStaleZoneConfigurationModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"optimize_wordpress": schema.BoolAttribute{
+						Description: "Indicates that the zone's wordpress optimization for SBFM is turned on.",
+						Computed:    true,
+					},
+					"sbfm_definitely_automated": schema.StringAttribute{
+						Description: "Indicates that the zone's definitely automated requests are being blocked or challenged.",
+						Computed:    true,
+					},
+					"sbfm_likely_automated": schema.StringAttribute{
+						Description: "Indicates that the zone's likely automated requests are being blocked or challenged.",
+						Computed:    true,
+					},
+					"sbfm_static_resource_protection": schema.StringAttribute{
+						Description: "Indicates that the zone's static resource protection is turned on.",
+						Computed:    true,
+					},
+					"sbfm_verified_bots": schema.StringAttribute{
+						Description: "Indicates that the zone's verified bot requests are being blocked.",
+						Computed:    true,
+					},
+					"suppress_session_score": schema.BoolAttribute{
+						Description: "Indicates that the zone's session score tracking is disabled.",
+						Computed:    true,
+					},
+					"fight_mode": schema.BoolAttribute{
+						Description: "Indicates that the zone's Bot Fight Mode is turned on.",
+						Computed:    true,
+					},
+				},
 			},
 		},
 	}

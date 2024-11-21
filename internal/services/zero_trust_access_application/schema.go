@@ -1506,6 +1506,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"aud": schema.StringAttribute{
+				Description: "Audience tag.",
+				Computed:    true,
+			},
+			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"updated_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 		},
 	}
 }

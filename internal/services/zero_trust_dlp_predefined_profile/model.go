@@ -5,6 +5,7 @@ package zero_trust_dlp_predefined_profile
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,6 +22,12 @@ type ZeroTrustDLPPredefinedProfileModel struct {
 	ConfidenceThreshold types.String                                                                 `tfsdk:"confidence_threshold" json:"confidence_threshold,optional"`
 	OCREnabled          types.Bool                                                                   `tfsdk:"ocr_enabled" json:"ocr_enabled,optional"`
 	ContextAwareness    customfield.NestedObject[ZeroTrustDLPPredefinedProfileContextAwarenessModel] `tfsdk:"context_awareness" json:"context_awareness,computed_optional"`
+	CreatedAt           timetypes.RFC3339                                                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Description         types.String                                                                 `tfsdk:"description" json:"description,computed"`
+	Name                types.String                                                                 `tfsdk:"name" json:"name,computed"`
+	OpenAccess          types.Bool                                                                   `tfsdk:"open_access" json:"open_access,computed"`
+	Type                types.String                                                                 `tfsdk:"type" json:"type,computed"`
+	UpdatedAt           timetypes.RFC3339                                                            `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 func (m ZeroTrustDLPPredefinedProfileModel) MarshalJSON() (data []byte, err error) {
