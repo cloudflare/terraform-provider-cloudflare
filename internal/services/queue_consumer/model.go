@@ -13,15 +13,12 @@ type QueueConsumerResultEnvelope struct {
 }
 
 type QueueConsumerModel struct {
-	AccountID       types.String                                         `tfsdk:"account_id" path:"account_id,required"`
-	QueueID         types.String                                         `tfsdk:"queue_id" path:"queue_id,required"`
-	ConsumerID      types.String                                         `tfsdk:"consumer_id" path:"consumer_id,optional"`
-	CreatedOn       types.String                                         `tfsdk:"created_on" json:"created_on,computed"`
-	DeadLetterQueue types.String                                         `tfsdk:"dead_letter_queue" json:"dead_letter_queue,computed"`
-	Environment     types.String                                         `tfsdk:"environment" json:"environment,computed"`
-	QueueName       types.String                                         `tfsdk:"queue_name" json:"queue_name,computed"`
-	ScriptName      types.String                                         `tfsdk:"script_name" json:"script_name,computed"`
-	Settings        customfield.NestedObject[QueueConsumerSettingsModel] `tfsdk:"settings" json:"settings,computed"`
+	AccountID  types.String                                         `tfsdk:"account_id" path:"account_id,required"`
+	QueueID    types.String                                         `tfsdk:"queue_id" path:"queue_id,required"`
+	ConsumerID types.String                                         `tfsdk:"consumer_id" path:"consumer_id,optional"`
+	ScriptName types.String                                         `tfsdk:"script_name" json:"script_name,optional"`
+	Type       types.String                                         `tfsdk:"type" json:"type,optional"`
+	Settings   customfield.NestedObject[QueueConsumerSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
 }
 
 func (m QueueConsumerModel) MarshalJSON() (data []byte, err error) {
@@ -33,7 +30,10 @@ func (m QueueConsumerModel) MarshalJSONForUpdate(state QueueConsumerModel) (data
 }
 
 type QueueConsumerSettingsModel struct {
-	BatchSize     types.Float64 `tfsdk:"batch_size" json:"batch_size,computed"`
-	MaxRetries    types.Float64 `tfsdk:"max_retries" json:"max_retries,computed"`
-	MaxWaitTimeMs types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,computed"`
+	BatchSize           types.Float64 `tfsdk:"batch_size" json:"batch_size,optional"`
+	MaxConcurrency      types.Float64 `tfsdk:"max_concurrency" json:"max_concurrency,optional"`
+	MaxRetries          types.Float64 `tfsdk:"max_retries" json:"max_retries,optional"`
+	MaxWaitTimeMs       types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,optional"`
+	RetryDelay          types.Float64 `tfsdk:"retry_delay" json:"retry_delay,optional"`
+	VisibilityTimeoutMs types.Float64 `tfsdk:"visibility_timeout_ms" json:"visibility_timeout_ms,optional"`
 }

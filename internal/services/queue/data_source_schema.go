@@ -7,9 +7,11 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*QueueDataSource)(nil)
@@ -18,11 +20,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "A Resource identifier.",
 				Optional:    true,
 			},
 			"queue_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "A Resource identifier.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -46,17 +48,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectListType[QueueConsumersDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"consumer_id": schema.StringAttribute{
+							Description: "A Resource identifier.",
+							Computed:    true,
+						},
 						"created_on": schema.StringAttribute{
 							Computed: true,
 						},
-						"environment": schema.StringAttribute{
-							Computed: true,
+						"queue_id": schema.StringAttribute{
+							Description: "A Resource identifier.",
+							Computed:    true,
 						},
-						"queue_name": schema.StringAttribute{
-							Computed: true,
+						"script": schema.StringAttribute{
+							Description: "Name of a Worker",
+							Computed:    true,
 						},
-						"service": schema.StringAttribute{
-							Computed: true,
+						"script_name": schema.StringAttribute{
+							Description: "Name of a Worker",
+							Computed:    true,
 						},
 						"settings": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -66,13 +75,32 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "The maximum number of messages to include in a batch.",
 									Computed:    true,
 								},
+								"max_concurrency": schema.Float64Attribute{
+									Description: "Maximum number of concurrent consumers that may consume from this Queue. Set to `null` to automatically opt in to the platform's maximum (recommended).",
+									Computed:    true,
+								},
 								"max_retries": schema.Float64Attribute{
 									Description: "The maximum number of retries",
 									Computed:    true,
 								},
 								"max_wait_time_ms": schema.Float64Attribute{
-									Computed: true,
+									Description: "The number of milliseconds to wait for a batch to fill up before attempting to deliver it",
+									Computed:    true,
 								},
+								"retry_delay": schema.Float64Attribute{
+									Description: "The number of seconds to delay before making the message available for another attempt.",
+									Computed:    true,
+								},
+								"visibility_timeout_ms": schema.Float64Attribute{
+									Description: "The number of milliseconds that a message is exclusively leased. After the timeout, the message becomes available for another attempt.",
+									Computed:    true,
+								},
+							},
+						},
+						"type": schema.StringAttribute{
+							Computed: true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("worker", "http_pull"),
 							},
 						},
 					},
@@ -83,12 +111,32 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectListType[QueueProducersDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"environment": schema.StringAttribute{
+						"script": schema.StringAttribute{
 							Computed: true,
 						},
-						"service": schema.StringAttribute{
+						"type": schema.StringAttribute{
+							Computed: true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("worker", "r2_bucket"),
+							},
+						},
+						"bucket_name": schema.StringAttribute{
 							Computed: true,
 						},
+					},
+				},
+			},
+			"settings": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[QueueSettingsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"delivery_delay": schema.Float64Attribute{
+						Description: "Number of seconds to delay delivery of all messages to consumers.",
+						Computed:    true,
+					},
+					"message_retention_period": schema.Float64Attribute{
+						Description: "Number of seconds after which an unconsumed message will be delayed.",
+						Computed:    true,
 					},
 				},
 			},
@@ -96,7 +144,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
-						Description: "Identifier.",
+						Description: "A Resource identifier.",
 						Required:    true,
 					},
 				},
