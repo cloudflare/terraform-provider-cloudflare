@@ -44,6 +44,7 @@ type ZeroTrustAccessApplicationModel struct {
 	SessionDuration          types.String                                                                `tfsdk:"session_duration" json:"session_duration,computed_optional"`
 	SkipAppLauncherLoginPage types.Bool                                                                  `tfsdk:"skip_app_launcher_login_page" json:"skip_app_launcher_login_page,computed_optional"`
 	CORSHeaders              customfield.NestedObject[ZeroTrustAccessApplicationCORSHeadersModel]        `tfsdk:"cors_headers" json:"cors_headers,computed_optional"`
+	Destinations             customfield.NestedObjectList[ZeroTrustAccessApplicationDestinationsModel]   `tfsdk:"destinations" json:"destinations,computed_optional"`
 	FooterLinks              customfield.NestedObjectList[ZeroTrustAccessApplicationFooterLinksModel]    `tfsdk:"footer_links" json:"footer_links,computed_optional"`
 	LandingPageDesign        customfield.NestedObject[ZeroTrustAccessApplicationLandingPageDesignModel]  `tfsdk:"landing_page_design" json:"landing_page_design,computed_optional"`
 	Policies                 customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesModel]       `tfsdk:"policies" json:"policies,computed_optional"`
@@ -69,6 +70,11 @@ type ZeroTrustAccessApplicationCORSHeadersModel struct {
 	AllowedMethods   *[]types.String `tfsdk:"allowed_methods" json:"allowed_methods,optional"`
 	AllowedOrigins   *[]types.String `tfsdk:"allowed_origins" json:"allowed_origins,optional"`
 	MaxAge           types.Float64   `tfsdk:"max_age" json:"max_age,optional"`
+}
+
+type ZeroTrustAccessApplicationDestinationsModel struct {
+	Type types.String `tfsdk:"type" json:"type,optional"`
+	URI  types.String `tfsdk:"uri" json:"uri,optional"`
 }
 
 type ZeroTrustAccessApplicationFooterLinksModel struct {
