@@ -65,7 +65,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"domain": schema.StringAttribute{
-				Description: "The primary hostname and path secured by Access. This domain will be displayed if the app is visible in the App Launcher.",
+				Description: "The primary hostname and path that Access will secure. If the app is visible in the App Launcher dashboard, this is the domain that will be displayed.",
 				Optional:    true,
 			},
 			"header_bg_color": schema.StringAttribute{
@@ -111,7 +111,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"self_hosted_domains": schema.ListAttribute{
-				Description: "List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.\n",
+				Description: "List of domains that Access will secure.",
 				Optional:    true,
 				ElementType: types.StringType,
 			},
@@ -218,26 +218,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(-1, 86400),
-						},
-					},
-				},
-			},
-			"destinations": schema.ListNestedAttribute{
-				Description: "List of destinations secured by Access. This supersedes `self_hosted_domains` to allow for more flexibility in defining different types of domains. If `destinations` are provided, then `self_hosted_domains` will be ignored.\n",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationDestinationsModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"type": schema.StringAttribute{
-							Optional: true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("public", "private"),
-							},
-						},
-						"uri": schema.StringAttribute{
-							Description: "The URI of the destination. Public destinations can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/). Private destinations are an early access feature and gated behind a feature flag. Private destinations support private IPv4, IPv6, and Server Name Indications (SNI) with optional port ranges.\n",
-							Optional:    true,
 						},
 					},
 				},
