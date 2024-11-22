@@ -28,8 +28,8 @@ We highly recommend reviewing this guide, make necessary changes and move to
 security fixes.
 
 ~> Before attempting to upgrade to version 5, you should first upgrade to the
-   latest version of 4.x to ensure any transitional updates are applied to your
-   existing configuration.
+latest version of 4.x to ensure any transitional updates are applied to your
+existing configuration.
 
 Once ready, make the following change to use the latest 5.x release:
 
@@ -61,10 +61,11 @@ We recommend ensuring you are using version control for these changes or make a
 backup prior to initiating the change to enable reverting if needed.
 
 ~> If you are using modules or other dynamic features of HCL, the provided
-   codemods may not be as effective. We recommend reviewing the migration notes below
-   to verify all the changes.
+codemods may not be as effective. We recommend reviewing the migration notes below
+to verify all the changes.
 
 <!-- This code block is only used for confirming grit patterns -->
+
 ```grit
 language hcl
 
@@ -251,53 +252,157 @@ terraform_cloudflare_v5()
 
 - Renamed to `cloudflare_managed_transforms`
 
+## cloudflare_account_member
+
+- `email_address` is now `email`.
+- `role_ids` is now `roles`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_account_member" "example" {
+    email_address = "me@example.com"
+    role_ids = ["a", "b", "c"]
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_account_member" "example" {
+    email = "me@example.com"
+    roles = ["a", "b", "c"]
+  }
+  ```
+
+## cloudflare_account
+
+- `enforce_twofactor` is now `settings.enforce_twofactor`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_account" "example" {
+    enforce_twofactor = true
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_account" "example" {
+    settings = {
+      enforce_twofactor = true
+    }
+  }
+  ```
+
+## cloudflare_byo_ip_prefix
+
+- `advertisement` is now `advertised`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_byo_ip_prefix" "example" {
+    advertisement = true
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_byo_ip_prefix" "example" {
+    advertised = true
+  }
+  ```
+
+## cloudflare_healthcheck
+
+- `allow_insecure` is now nested under `http_config`
+- `expected_body` is now nested under `http_config`.
+- `expected_codes` is now nested under `http_config`.
+- `follow_redirects` is now nested under `http_config`.
+- `method` is now nested under `http_config`.
+- `path` is now nested under `http_config`.
+- `port` is now nested under `http_config`.
+
+## cloudflare_zone_cache_reserve
+
+- `enabled` is now `value`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_zone_cache_reserve" "example" {
+    enabled = true
+  }
+
+  resource "cloudflare_zone_cache_reserve" "example" {
+    enabled = false
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_zone_cache_reserve" "example" {
+    value = "on"
+  }
+
+  resource "cloudflare_zone_cache_reserve" "example" {
+    value = "off"
+  }
+  ```
+
 ## cloudflare_api_token
 
 - `condition` is now a single nested attribute (`condition = { ... }`) instead of a block (`condition { ... }`).
 - `request_ip` is now a single nested attribute (`request_ip = { ... }`) instead of a block (`request_ip { ... }`).
 - `policy` is now `policies`.
 
-  Before
-  ```hcl
-  resource "cloudflare_api_token" "example" {
-    name = "example"
-		policy = [{
-			effect = "allow"
-			permission_groups = [ "%[2]s" ]
-			resources = { "com.cloudflare.api.account.zone.*" = "*" }
-		}]
-		condition {
-      request_ip {
-				in     = ["192.0.2.1/32"]
-				not_in = ["198.51.100.1/32"]
-			}
-		}
+Before
+```hcl
+resource "cloudflare_api_token" "example" {
+  name = "example"
+  policy = [{
+    effect            = "allow"
+    permission_groups = ["%[2]s"]
+    resources         = { "com.cloudflare.api.account.zone.*" = "*" }
+  }]
+  condition {
+    request_ip {
+      in     = ["192.0.2.1/32"]
+      not_in = ["198.51.100.1/32"]
+    }
   }
-  ```
+}
+```
 
-  After
-  ```hcl
-  resource "cloudflare_api_token" "example" {
-    name = "example"
-		policies = [{
-			effect = "allow"
-			permission_groups = [ "%[2]s" ]
-			resources = { "com.cloudflare.api.account.zone.*" = "*" }
-		}]
-		condition = {
-      request_ip = {
-				in     = ["192.0.2.1/32"]
-				not_in = ["198.51.100.1/32"]
-			}
-		}
+After
+```hcl
+resource "cloudflare_api_token" "example" {
+  name = "example"
+  policies = [{
+    effect            = "allow"
+    permission_groups = ["%[2]s"]
+    resources         = { "com.cloudflare.api.account.zone.*" = "*" }
+  }]
+  condition = {
+    request_ip = {
+      in     = ["192.0.2.1/32"]
+      not_in = ["198.51.100.1/32"]
+    }
   }
-  ```
+}
+```
 
 ## cloudflare_hostname_tls_setting
 
 - `setting` is now `setting_id`.
 
   Before
+
   ```hcl
   resource "cloudflare_hostname_tls_setting" "example" {
     setting = "min_tls_version"
@@ -305,11 +410,239 @@ terraform_cloudflare_v5()
   ```
 
   After
+
   ```hcl
   resource "cloudflare_hostname_tls_setting" "example" {
     setting_id = "min_tls_version"
   }
   ```
+
+## cloudflare_logpull_retention
+
+- `enabled` is now `flag`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_logpull_retention" "example" {
+    enabled = true
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_logpull_retention" "example" {
+    flag = true
+  }
+  ```
+
+## cloudflare_logpush_ownership_challenge
+
+- `ownership_challenge_filename` is now `filename`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_logpush_ownership_challenge" "example" {
+    ownership_challenge_filename = "example"
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_logpush_ownership_challenge" "example" {
+    filename = "example"
+  }
+  ```
+
+## cloudflare_magic_wan_gre_tunnel
+
+- `health_check_enabled` is now `health_check.enabled`.
+- `health_check_type` is now `health_check.type`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_magic_wan_gre_tunnel" "example" {
+    health_check_enabled = true
+    health_check_type = "reply"
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_magic_wan_gre_tunnel" "example" {
+    health_check = {
+      enabled = true
+      type = "reply"
+    }
+  }
+  ```
+
+## cloudflare_magic_wan_ipsec_tunnel
+
+- `health_check_direction` is now `health_check.direction`.
+- `health_check_enabled` is now `health_check.enabled`.
+- `health_check_rate` is now `health_check.rate`.
+- `health_check_target` is now `health_check.target` with further nested attributes.
+- `health_check_type` is now `health_check.type`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_magic_wan_ipsec_tunnel" "example" {
+    health_check_direction = "unidirectional"
+    health_check_type = "reply"
+    health_check_enabled = true
+    health_check_rate = "low"
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_magic_wan_ipsec_tunnel" "example" {
+    health_check = {
+      direction = "unidirectional"
+      type = "reply"
+      enabled = true
+      rate = "low"
+    }
+  }
+  ```
+
+## cloudflare_zero_trust_tunnel_cloudflared
+
+- `secret` is now `tunnel_secret`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_zero_trust_tunnel_cloudflared" "example" {
+    secret = "my_s3cr3t!"
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_zero_trust_tunnel_cloudflared" "example" {
+    tunnel_secret = "my_s3cr3t!"
+  }
+  ```
+
+## cloudflare_zero_trust_access_short_lived_certificate
+
+- `application_id` is now `app_id`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_zero_trust_access_short_lived_certificate" "example" {
+    application_id = "21d2f241bab5a0af65be098a0ba3d6c1"
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_zero_trust_access_short_lived_certificate" "example" {
+    app_id = "21d2f241bab5a0af65be098a0ba3d6c1"
+  }
+  ```
+
+## cloudflare_workers_secret
+
+- `secret_text` is now `text`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_workers_secret" "example" {
+    secret_text = "my_s3cr3t!"
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_workers_secret" "example" {
+    text = "my_s3cr3t!"
+  }
+  ```
+
+## cloudflare_workers_kv
+
+- `key` is now `key_name`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_workers_kv" "example" {
+    key = "my_key"
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_workers_kv" "example" {
+    key_name = "my_key"
+  }
+  ```
+
+## cloudflare_tiered_cache
+
+- `cache_type` is now `value`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_tiered_cache" "example" {
+    cache_type = "on"
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_tiered_cache" "example" {
+    value = "on"
+  }
+  ```
+
+## cloudflare_web_analytics_site
+
+- `ruleset_id` is now `ruleset.id`.
+
+  Before
+
+  ```hcl
+  resource "cloudflare_web_analytics_site" "example" {
+    ruleset_id = "deadbeef"
+  }
+  ```
+
+  After
+
+  ```hcl
+  resource "cloudflare_web_analytics_site" "example" {
+    ruleset = {
+      id = "deadbeef"
+    }
+  }
+  ```
+
+## cloudflare_zero_trust_gateway_settings
+
+- `activity_log_enabled` is now `settings.activity_log.enabled`.
+- `non_identity_browser_isolation_enabled` is now `settings.browser_isolation.non_identity_enabled`.
+- `protocol_detection_enabled` is now `settings.protocol_detection.enabled`.
+- `tls_decrypt_enabled` is now `settings.tls_decrypt.enabled`.
+- `url_browser_isolation_enabled` is now `settings.browser_isolation.url_browser_isolation_enabled`.
 
 ## cloudflare_load_balancer
 
@@ -326,6 +659,7 @@ terraform_cloudflare_v5()
 - `fallback_pool_id` is now `fallback_pool`.
 
   Before
+
   ```hcl
   resource "cloudflare_load_balancer" "example" {
     fallback_pool_id = "520636c63a13852db69ca56570b0abf4"
@@ -333,6 +667,7 @@ terraform_cloudflare_v5()
   ```
 
   After
+
   ```hcl
   resource "cloudflare_load_balancer" "example" {
     fallback_pool = "520636c63a13852db69ca56570b0abf4"
@@ -342,6 +677,7 @@ terraform_cloudflare_v5()
 - `default_pool_ids` is now `default_pools`.
 
   Before
+
   ```hcl
   resource "cloudflare_load_balancer" "example" {
     default_pool_ids = ["520636c63a13852db69ca56570b0abf4", "4cc60288984088b5188246199f87daa7"]
@@ -349,6 +685,7 @@ terraform_cloudflare_v5()
   ```
 
   After
+
   ```hcl
   resource "cloudflare_load_balancer" "example" {
     default_pools = ["520636c63a13852db69ca56570b0abf4", "4cc60288984088b5188246199f87daa7"]
@@ -360,6 +697,7 @@ terraform_cloudflare_v5()
 - `location_hint` is now `location`.
 
   Before
+
   ```hcl
   resource "cloudflare_r2_bucket" "example" {
    	location_hint = "APAC"
@@ -367,6 +705,7 @@ terraform_cloudflare_v5()
   ```
 
   After
+
   ```hcl
   resource "cloudflare_r2_bucket" "example" {
    	location   = "APAC"
@@ -375,9 +714,10 @@ terraform_cloudflare_v5()
 
 ## cloudflare_teams_list
 
-- `items` is now an object of `value = $item` instead of `items = [$item1, $item2]`
+- `items` is now a list of objects (`[{ value = $item }]`) instead of `items = [$item1, $item2]`
 
   Before
+
   ```hcl
   resource "cloudflare_teams_list" "example" {
    	items = ["item-1234", "item-5678"	]
@@ -385,6 +725,7 @@ terraform_cloudflare_v5()
   ```
 
   After
+
   ```hcl
   resource "cloudflare_teams_list" "example" {
    	items = [{ value = "item-1234" }, { value = "item-5678" }]
@@ -396,6 +737,7 @@ terraform_cloudflare_v5()
 - `key` is now `key_name`.
 
   Before
+
   ```hcl
   resource "cloudflare_workers_kv" "example" {
     key = "my-simple-key"
@@ -403,6 +745,7 @@ terraform_cloudflare_v5()
   ```
 
   After
+
   ```hcl
   resource "cloudflare_workers_kv" "example" {
     key_name= "my-simple-key"
@@ -415,6 +758,7 @@ terraform_cloudflare_v5()
 - `cname` is no longer available.
 
   Before
+
   ```hcl
   resource "zero_trust_tunnel_cloudflared" "example" {
     account_id = "0da42c8d2132a9ddaf714f9e7c920711"
@@ -424,6 +768,7 @@ terraform_cloudflare_v5()
   ```
 
   After
+
   ```hcl
   resource "zero_trust_tunnel_cloudflared" "example" {
     account_id = "0da42c8d2132a9ddaf714f9e7c920711"
@@ -436,6 +781,7 @@ terraform_cloudflare_v5()
 - file extensions are now nested under the `value` object.
 
   Before
+
   ```hcl
   resource "cloudflare_zone_cache_variants" "example" {
     zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
@@ -454,6 +800,7 @@ terraform_cloudflare_v5()
   ```
 
   After
+
   ```hcl
   resource "cloudflare_zone_cache_variants" "example" {
     zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
@@ -483,6 +830,7 @@ terraform_cloudflare_v5()
 - `zone` is now an `name`.
 
   Before
+
   ```hcl
   resource "cloudflare_zone" "example" {
     zone = "example.com"
@@ -490,6 +838,7 @@ terraform_cloudflare_v5()
   ```
 
   After
+
   ```hcl
   resource "cloudflare_zone" "example" {
     name = "example.com"
@@ -499,6 +848,7 @@ terraform_cloudflare_v5()
 - `account_id` is now an `account` object with the `id` attribute inside.
 
   Before
+
   ```hcl
   resource "cloudflare_zone" "example" {
     account_id = "f037e56e89293a057740de681ac9abbe"
@@ -507,6 +857,7 @@ terraform_cloudflare_v5()
   ```
 
   After
+
   ```hcl
   resource "cloudflare_zone" "example" {
     account = {
@@ -519,6 +870,7 @@ terraform_cloudflare_v5()
   - `jump_start` is no longer an attribute.
 
     Before
+
     ```hcl
     resource "cloudflare_zone" "example" {
       account = {
@@ -530,6 +882,7 @@ terraform_cloudflare_v5()
     ```
 
     After
+
     ```hcl
     resource "cloudflare_zone" "example" {
       account = {
@@ -554,6 +907,7 @@ terraform_cloudflare_v5()
 - `application_id` and `precedence` no longer used.
 
   Before
+
   ```hcl
   resource "cloudflare_zero_trust_access_group" "example" {
     account_id      = "f037e56e89293a057740de681ac9abbe"
@@ -564,6 +918,7 @@ terraform_cloudflare_v5()
   ```
 
   After
+
   ```hcl
   resource "cloudflare_zero_trust_access_group" "example" {
     account_id = "f037e56e89293a057740de681ac9abbe"
@@ -576,6 +931,7 @@ terraform_cloudflare_v5()
 - `min_days_for_renewal` is no longer used. If you would like similar functionality, you can use `duration = "forever"` instead.
 
   Before
+
   ```hcl
   resource "cloudflare_zero_trust_access_service_token" "example" {
     account_id           = "f037e56e89293a057740de681ac9abbe"
@@ -585,6 +941,7 @@ terraform_cloudflare_v5()
   ```
 
   After
+
   ```hcl
   resource "cloudflare_zero_trust_access_service_token" "example" {
     account_id = "f037e56e89293a057740de681ac9abbe"
@@ -663,7 +1020,6 @@ terraform_cloudflare_v5()
 ## cloudflare_zero_trust_dex_test
 
 - `data` is now a single nested attribute (`data = { ... }`) instead of a block (`data { ... }`).
-
 
 ## cloudflare_zero_trust_device_managed_networks
 
@@ -861,6 +1217,10 @@ terraform_cloudflare_v5()
 
 ## cloudflare_workers_script
 
+- `name` is now `script_name`.
+- `compatibility_date` is now `metadata.compatibility_date`.
+- `compatibility_flags` is now `metadata.compatibility_flags`.
+- `tags` is now `metadata.tags`.
 - `analytics_engine_binding` is now a list of objects (`analytics_engine_binding = [{ ... }]`) instead of multiple block attribute (`analytics_engine_binding { ... }`).
 - `d1_database_binding` is now a list of objects (`d1_database_binding = [{ ... }]`) instead of multiple block attribute (`d1_database_binding { ... }`).
 - `kv_namespace_binding` is now a list of objects (`kv_namespace_binding = [{ ... }]`) instead of multiple block attribute (`kv_namespace_binding { ... }`).
@@ -871,6 +1231,11 @@ terraform_cloudflare_v5()
 - `secret_text_binding` is now a list of objects (`secret_text_binding = [{ ... }]`) instead of multiple block attribute (`secret_text_binding { ... }`).
 - `service_binding` is now a list of objects (`service_binding = [{ ... }]`) instead of multiple block attribute (`service_binding { ... }`).
 - `webassembly_binding` is now a list of objects (`webassembly_binding = [{ ... }]`) instead of multiple block attribute (`webassembly_binding { ... }`).
+
+## cloudflare_magic_wan_static_route
+
+- `colo_names` is now `scope.colo_names`
+- `colo_regions` is now `scope.colo_regions`
 
 [GritQL]: https://www.grit.io/
 [install Grit]: https://docs.grit.io/cli/quickstart
