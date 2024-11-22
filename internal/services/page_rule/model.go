@@ -33,7 +33,7 @@ func (m PageRuleModel) MarshalJSONForUpdate(state PageRuleModel) (data []byte, e
 
 type PageRuleActionsModel struct {
 	ID    types.String `tfsdk:"id" json:"id,optional"`
-	Value types.Int64  `tfsdk:"value" json:"value,optional"`
+	Value types.String `tfsdk:"value" json:"value,optional"`
 }
 
 type PageRuleTargetsModel struct {
