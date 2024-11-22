@@ -130,6 +130,7 @@ Optional:
 
 - `enabled` (Boolean)
 - `group_member_deprovision` (Boolean)
+- `identity_update_behavior` (String)
 - `seat_deprovision` (Boolean)
 - `secret` (String, Sensitive)
 - `user_deprovision` (Boolean)

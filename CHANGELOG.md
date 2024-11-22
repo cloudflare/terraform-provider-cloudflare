@@ -1,4 +1,27 @@
-## 4.46.0 (Unreleased)
+## 4.47.0 (Unreleased)
+
+## 4.46.0 (November 13th, 2024)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_waiting_room: add "bg-BG", "hr-HR", "cs-CZ", "da-DK", "fi-FI", "lt-LT", "ms-MY", "nb-NO", "ro-RO", "el-GR", "he-IL" "hi-IN", "hu-HU", "sr-BA", "sk-SK", "sl-SI", "sv-SE", "tl-PH", "th-TH", "uk-UA", and "vi-VN" to default_template_language field ([#4509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4509))
+
+BUG FIXES:
+
+* resource/cloudflare_certificate_pack: Fix importing existing resources issue due to 3 ignored required fields in importer ([#4544](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4544))
+* resource/cloudflare_list: Don't read list items if there are none configured ([#4511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4511))
+* resource/cloudflare_zero_trust_list: Consider `items_with_description` when updating a ZT list ([#4477](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4477))
+* resource/turnstile: Force recreate on region update ([#4496](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4496))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.108.0 to 0.109.0 ([#4523](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4523))
+* provider: bump github.com/hashicorp/terraform-plugin-framework-validators from 0.14.0 to 0.15.0 ([#4492](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4492))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.24.0 to 0.25.0 ([#4483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4483))
+* provider: bump github.com/hashicorp/terraform-plugin-mux from 0.16.0 to 0.17.0 ([#4484](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4484))
+* provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.34.0 to 2.35.0 ([#4491](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4491))
+* provider: bump golang.org/x/net from 0.30.0 to 0.31.0 ([#4541](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4541))
+* provider: bump goreleaser/goreleaser-action from 6.0.0 to 6.1.0 ([#4531](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4531))
 
 ## 4.45.0 (October 30th, 2024)
 

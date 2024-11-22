@@ -462,7 +462,7 @@ func inflateLoggingSettings(log interface{}) *cloudflare.TeamsLoggingSettings {
 				LogBlocks: l4RuleSettings["log_blocks"].(bool),
 			},
 		},
-		RedactPii: logSettings["redact_pii"].(bool),
+		RedactPii: cloudflare.BoolPtr(logSettings["redact_pii"].(bool)),
 	}
 }
 

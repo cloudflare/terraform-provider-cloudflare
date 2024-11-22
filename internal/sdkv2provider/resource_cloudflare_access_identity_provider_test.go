@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -20,6 +21,30 @@ func init() {
 		Name: "cloudflare_zero_trust_access_identity_provider",
 		F:    testSweepCloudflareAccessIdentityProviders,
 	})
+}
+
+func testSecretPresent(value string) error {
+	if value == "" {
+		return errors.New("secret is empty")
+	}
+
+	if strings.Contains(value, "*") {
+		return errors.New("secret was redacted")
+	}
+
+	return nil
+}
+
+func testSecretRedacted(value string) error {
+	if value == "" {
+		return errors.New("secret is empty")
+	}
+
+	if strings.Contains(value, "*") {
+		return nil
+	}
+
+	return errors.New("secret was set to secret  value")
 }
 
 func testSweepCloudflareAccessIdentityProviders(r string) error {
@@ -115,6 +140,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_identity_provider." + rnd
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -129,7 +155,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
-					resource.TestCheckResourceAttrSet(resourceName, "config.0.client_secret"),
+					resource.TestCheckResourceAttrWith(resourceName, "config.0.client_secret", testSecretPresent),
 				),
 			},
 		},
@@ -155,7 +181,6 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
-					resource.TestCheckResourceAttrSet(resourceName, "config.0.client_secret"),
 				),
 			},
 			{
@@ -165,7 +190,6 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd+"-updated"),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
-					resource.TestCheckResourceAttrSet(resourceName, "config.0.client_secret"),
 				),
 			},
 		},
@@ -225,12 +249,34 @@ func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "azureAD"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.directory_id", "directory"),
-					resource.TestCheckResourceAttr(resourceName, "config.0.condtional_access_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.conditional_access_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "scim_config.0.enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scim_config.0.user_deprovision", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scim_config.0.seat_deprovision", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scim_config.0.group_member_deprovision", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scim_config.0.identity_update_behavior", "reauth"),
 				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessIdentityProvider_IdentityUpdateBehaviorErr(t *testing.T) {
+	skipForDefaultAccount(t, "Pending investigation into automating Azure IDP.")
+
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareAccessIdentityProviderAzureADBadIdentityUpdateBehavior(accountID, rnd),
+				ExpectError: regexp.MustCompile("value dance was not one of \\[no_action reauth automatic]"),
 			},
 		},
 	})
@@ -247,7 +293,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 		resource.TestCheckResourceAttr(resourceName, "name", rnd),
 		resource.TestCheckResourceAttr(resourceName, "type", "github"),
 		resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
-		resource.TestCheckResourceAttrSet(resourceName, "config.0.client_secret"),
+		resource.TestCheckResourceAttrWith(resourceName, "config.0.client_secret", testSecretPresent),
 	)
 
 	resource.Test(t, resource.TestCase{
@@ -267,6 +313,8 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 				ResourceName:        resourceName,
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
 				Check:               checkFn,
+				// We never return secrets so we should just ignore the import
+				ImportStateVerifyIgnore: []string{"config.0.client_secret"},
 			},
 		},
 	})
@@ -279,17 +327,7 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Config_Secret(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_identity_provider." + rnd
 
 	checkFn := resource.ComposeTestCheckFunc(
-		resource.TestCheckResourceAttrWith(resourceName, "scim_config.0.secret", func(value string) error {
-			if value == "" {
-				return errors.New("secret is empty")
-			}
-
-			if strings.Contains(value, "*") {
-				return errors.New("secret was redacted")
-			}
-
-			return nil
-		}),
+		resource.TestCheckResourceAttrWith(resourceName, "scim_config.0.secret", testSecretPresent),
 	)
 
 	resource.Test(t, resource.TestCase{
@@ -424,6 +462,7 @@ resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
 		group_member_deprovision = true
 		seat_deprovision         = true
 		user_deprovision         = true
+		identity_update_behavior = "reauth"
 	}
 }`, accountID, name)
 }
@@ -442,9 +481,32 @@ resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
 	}
 	scim_config {
 		enabled                  = true
-		group_member_deprovision = true
+		group_member_deprovision = false
 		seat_deprovision         = false
 		user_deprovision         = true
+		identity_update_behavior = "automatic"
+	}
+}`, accountID, name)
+}
+
+func testAccCheckCloudflareAccessIdentityProviderAzureADBadIdentityUpdateBehavior(accountID, name string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
+	account_id = "%[1]s"
+	name       = "%[2]s"
+	type       = "azureAD"
+	config {
+		client_id      = "test2"
+		client_secret  = "test2"
+		directory_id   = "directory"
+		support_groups = true
+	}
+	scim_config {
+		enabled                  = true
+		group_member_deprovision = false
+		seat_deprovision         = false
+		user_deprovision         = true
+		identity_update_behavior = "dance"
 	}
 }`, accountID, name)
 }

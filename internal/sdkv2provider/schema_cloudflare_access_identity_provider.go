@@ -2,10 +2,19 @@ package sdkv2provider
 
 import (
 	"fmt"
+	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"slices"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+)
+
+const (
+	IdentityUpdateBehaviorNoAction  = "no_action"
+	IdentityUpdateBehaviorReauth    = "reauth"
+	IdentityUpdateBehaviorAutomatic = "automatic"
 )
 
 func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema {
@@ -206,6 +215,27 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 					"group_member_deprovision": {
 						Type:     schema.TypeBool,
 						Optional: true,
+					},
+					"identity_update_behavior": {
+						Type:     schema.TypeString,
+						Optional: true,
+						ValidateDiagFunc: func(val interface{}, path cty.Path) diag.Diagnostics {
+							s, ok := val.(string)
+
+							if !ok {
+								return diag.Errorf("value %s was not a string", val)
+							}
+
+							allowedValues := []string{IdentityUpdateBehaviorNoAction, IdentityUpdateBehaviorReauth, IdentityUpdateBehaviorAutomatic}
+
+							isValid := slices.Contains(allowedValues, s)
+
+							if !isValid {
+								return diag.Errorf("value %s was not one of %s", val, allowedValues)
+							}
+
+							return nil
+						},
 					},
 				},
 			},

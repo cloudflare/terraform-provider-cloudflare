@@ -115,6 +115,9 @@ func resourceCloudflareCertificatePackRead(ctx context.Context, d *schema.Resour
 
 	d.Set("type", certificatePack.Type)
 	d.Set("hosts", expandStringListToSet(certificatePack.Hosts))
+	d.Set("validation_method", certificatePack.ValidationMethod)
+	d.Set("validity_days", certificatePack.ValidityDays)
+	d.Set("certificate_authority", certificatePack.CertificateAuthority)
 
 	if !reflect.ValueOf(certificatePack.ValidationErrors).IsNil() {
 		errors := []map[string]interface{}{}

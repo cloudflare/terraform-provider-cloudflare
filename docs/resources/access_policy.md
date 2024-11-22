@@ -192,7 +192,7 @@ Optional:
 <a id="nestedblock--include--gsuite"></a>
 ### Nested Schema for `include.gsuite`
 
-Optional:
+Required:
 
 - `email` (List of String) The email of the Google Workspace group.
 - `identity_provider_id` (String) The ID of your Google Workspace identity provider.
@@ -317,7 +317,7 @@ Optional:
 <a id="nestedblock--exclude--gsuite"></a>
 ### Nested Schema for `exclude.gsuite`
 
-Optional:
+Required:
 
 - `email` (List of String) The email of the Google Workspace group.
 - `identity_provider_id` (String) The ID of your Google Workspace identity provider.
@@ -413,7 +413,7 @@ Optional:
 <a id="nestedblock--require--gsuite"></a>
 ### Nested Schema for `require.gsuite`
 
-Optional:
+Required:
 
 - `email` (List of String) The email of the Google Workspace group.
 - `identity_provider_id` (String) The ID of your Google Workspace identity provider.
