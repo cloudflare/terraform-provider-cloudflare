@@ -73,6 +73,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
+						"description": schema.StringAttribute{
+							Description: "An informative summary of the firewall rule.",
+							Computed:    true,
+						},
 						"filter": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[FirewallRulesFilterDataSourceModel](ctx),
@@ -105,10 +109,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"paused": schema.BoolAttribute{
 							Description: "When true, indicates that the firewall rule is currently paused.",
-							Computed:    true,
-						},
-						"description": schema.StringAttribute{
-							Description: "An informative summary of the firewall rule.",
 							Computed:    true,
 						},
 						"priority": schema.Float64Attribute{

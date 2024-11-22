@@ -109,9 +109,46 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"include_subdomains": schema.BoolAttribute{
+				Computed: true,
+				Default:  booldefault.StaticBool(false),
+			},
 			"operation_id": schema.StringAttribute{
 				Description: "The unique operation ID of the asynchronous action.",
 				Computed:    true,
+			},
+			"preserve_path_suffix": schema.BoolAttribute{
+				Computed: true,
+				Default:  booldefault.StaticBool(false),
+			},
+			"preserve_query_string": schema.BoolAttribute{
+				Computed: true,
+				Default:  booldefault.StaticBool(false),
+			},
+			"source_url": schema.StringAttribute{
+				Computed: true,
+			},
+			"status_code": schema.Int64Attribute{
+				Computed: true,
+				Validators: []validator.Int64{
+					int64validator.OneOf(
+						301,
+						302,
+						307,
+						308,
+					),
+				},
+				Default: int64default.StaticInt64(301),
+			},
+			"subpath_matching": schema.BoolAttribute{
+				Computed: true,
+				Default:  booldefault.StaticBool(false),
+			},
+			"target_url": schema.StringAttribute{
+				Computed: true,
+			},
+			"url_hostname": schema.StringAttribute{
+				Computed: true,
 			},
 		},
 	}

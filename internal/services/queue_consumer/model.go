@@ -19,6 +19,8 @@ type QueueConsumerModel struct {
 	ScriptName types.String                                         `tfsdk:"script_name" json:"script_name,optional"`
 	Type       types.String                                         `tfsdk:"type" json:"type,optional"`
 	Settings   customfield.NestedObject[QueueConsumerSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
+	CreatedOn  types.String                                         `tfsdk:"created_on" json:"created_on,computed"`
+	Script     types.String                                         `tfsdk:"script" json:"script,computed"`
 }
 
 func (m QueueConsumerModel) MarshalJSON() (data []byte, err error) {

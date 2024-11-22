@@ -51,6 +51,9 @@ type ZeroTrustAccessApplicationModel struct {
 	SaaSApp                  customfield.NestedObject[ZeroTrustAccessApplicationSaaSAppModel]            `tfsdk:"saas_app" json:"saas_app,computed_optional"`
 	SCIMConfig               customfield.NestedObject[ZeroTrustAccessApplicationSCIMConfigModel]         `tfsdk:"scim_config" json:"scim_config,computed_optional"`
 	TargetCriteria           customfield.NestedObjectList[ZeroTrustAccessApplicationTargetCriteriaModel] `tfsdk:"target_criteria" json:"target_criteria,computed_optional"`
+	AUD                      types.String                                                                `tfsdk:"aud" json:"aud,computed"`
+	CreatedAt                timetypes.RFC3339                                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	UpdatedAt                timetypes.RFC3339                                                           `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 func (m ZeroTrustAccessApplicationModel) MarshalJSON() (data []byte, err error) {

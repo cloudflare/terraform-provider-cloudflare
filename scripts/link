@@ -12,5 +12,5 @@ else
 fi
 
 echo "==> Linking with local directory"
-go mod tidy
+go mod tidy -e
 go mod edit -replace github.com/cloudflare/cloudflare-go/v3="$LOCAL_GO"

@@ -35,24 +35,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[HyperdriveConfigsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"caching": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[HyperdriveConfigsCachingDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"disabled": schema.BoolAttribute{
-									Description: "When set to true, disables the caching of SQL responses. (Default: false)",
-									Computed:    true,
-								},
-								"max_age": schema.Int64Attribute{
-									Description: "When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)",
-									Computed:    true,
-								},
-								"stale_while_revalidate": schema.Int64Attribute{
-									Description: "When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)",
-									Computed:    true,
-								},
-							},
-						},
 						"id": schema.StringAttribute{
 							Description: "Identifier",
 							Computed:    true,
@@ -97,6 +79,24 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 								"access_client_secret": schema.StringAttribute{
 									Description: "The Client Secret of the Access token to use when connecting to the origin database. This value is write-only and never returned by the API.",
+									Computed:    true,
+								},
+							},
+						},
+						"caching": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[HyperdriveConfigsCachingDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"disabled": schema.BoolAttribute{
+									Description: "When set to true, disables the caching of SQL responses. (Default: false)",
+									Computed:    true,
+								},
+								"max_age": schema.Int64Attribute{
+									Description: "When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)",
+									Computed:    true,
+								},
+								"stale_while_revalidate": schema.Int64Attribute{
+									Description: "When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)",
 									Computed:    true,
 								},
 							},

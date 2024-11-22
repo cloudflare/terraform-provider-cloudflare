@@ -75,6 +75,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"created_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"script": schema.StringAttribute{
+				Description: "Name of a Worker",
+				Computed:    true,
+			},
 		},
 	}
 }
