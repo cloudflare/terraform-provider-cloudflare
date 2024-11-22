@@ -30,6 +30,7 @@ var notificationAffectedComponents = map[string]string{
 	"Challenge Platform":                  "x0tkn0hzrtw7",
 	"Cloud Access Security Broker (CASB)": "h2p0jj4ltvcq",
 	"Community Site":                      "qgh1bfr4hxrl",
+	"D1":                                  "z0yd3sxqjqdm",
 	"Data Loss Prevention (DLP)":          "rppy995xymxv",
 	"Dashboard":                           "3sq3s4d20ywk",
 	"Developer's Site":                    "rzcwwk4rgb0w",
