@@ -283,6 +283,7 @@ func convertScimConfigSchemaToStruct(d *schema.ResourceData) cloudflare.AccessId
 		ScimConfig.GroupMemberDeprovision = d.Get("scim_config.0.group_member_deprovision").(bool)
 		ScimConfig.UserDeprovision = d.Get("scim_config.0.user_deprovision").(bool)
 		ScimConfig.SeatDeprovision = d.Get("scim_config.0.seat_deprovision").(bool)
+		ScimConfig.IdentityUpdateBehavior = d.Get("scim_config.0.identity_update_behavior").(string)
 	}
 
 	return ScimConfig
@@ -334,6 +335,7 @@ func convertAccessIDPScimConfigStructToSchema(secret string, options cloudflare.
 		"user_deprovision":         options.UserDeprovision,
 		"seat_deprovision":         options.SeatDeprovision,
 		"group_member_deprovision": options.GroupMemberDeprovision,
+		"identity_update_behavior": options.IdentityUpdateBehavior,
 	}
 
 	return []interface{}{m}
