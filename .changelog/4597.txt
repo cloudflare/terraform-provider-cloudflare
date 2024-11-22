@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_zero_trust_access_policy: make gsuite  parameters required
+```
