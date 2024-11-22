@@ -19,12 +19,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Name of the script, used in URLs and route configuration.",
+				Description:   "The name of this secret, this is what will be used to access it inside the Worker.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"script_name": schema.StringAttribute{
-				Description:   "Name of the script, used in URLs and route configuration.",
+			"name": schema.StringAttribute{
+				Description:   "The name of this secret, this is what will be used to access it inside the Worker.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
@@ -38,9 +38,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"name": schema.StringAttribute{
-				Description: "The name of this secret, this is what will be used to access it inside the Worker.",
-				Optional:    true,
+			"script_name": schema.StringAttribute{
+				Description:   "Name of the script, used in URLs and route configuration.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"text": schema.StringAttribute{
 				Description: "The value of the secret.",
