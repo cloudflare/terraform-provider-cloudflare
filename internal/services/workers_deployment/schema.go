@@ -66,7 +66,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[WorkersDeploymentAnnotationsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"workers_message": schema.StringAttribute{
-						Description: "Human-readable message about the deployment.",
+						Description: "Human-readable message about the deployment. Truncated to 100 bytes.",
 						Optional:    true,
 					},
 				},
@@ -117,7 +117,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[WorkersDeploymentDeploymentsAnnotationsModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"workers_message": schema.StringAttribute{
-									Description: "Human-readable message about the deployment.",
+									Description: "Human-readable message about the deployment. Truncated to 100 bytes.",
 									Computed:    true,
 								},
 							},
