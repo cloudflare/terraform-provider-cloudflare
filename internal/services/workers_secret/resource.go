@@ -92,7 +92,7 @@ func (r *WorkersSecretResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	data = &env.Result
-	data.ID = data.ScriptName
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -143,7 +143,7 @@ func (r *WorkersSecretResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 	data = &env.Result
-	data.ID = data.ScriptName
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -163,7 +163,7 @@ func (r *WorkersSecretResource) Read(ctx context.Context, req resource.ReadReque
 		ctx,
 		data.DispatchNamespace.ValueString(),
 		data.ScriptName.ValueString(),
-		data.ScriptName.ValueString(),
+		data.Name.ValueString(),
 		workers_for_platforms.DispatchNamespaceScriptSecretGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -181,7 +181,7 @@ func (r *WorkersSecretResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 	data = &env.Result
-	data.ID = data.ScriptName
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -234,7 +234,7 @@ func (r *WorkersSecretResource) ImportState(ctx context.Context, req resource.Im
 		return
 	}
 	data = &env.Result
-	data.ID = data.ScriptName
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
