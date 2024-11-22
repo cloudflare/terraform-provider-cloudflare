@@ -62,7 +62,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[WorkersDeploymentDeploymentsAnnotationsDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"workers_message": schema.StringAttribute{
-									Description: "Human-readable message about the deployment.",
+									Description: "Human-readable message about the deployment. Truncated to 100 bytes.",
 									Computed:    true,
 								},
 							},
