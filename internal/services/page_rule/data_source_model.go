@@ -39,7 +39,7 @@ func (m *PageRuleDataSourceModel) toReadParams(_ context.Context) (params pageru
 
 type PageRuleActionsDataSourceModel struct {
 	ID    types.String `tfsdk:"id" json:"id,computed"`
-	Value types.Int64  `tfsdk:"value" json:"value,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type PageRuleTargetsDataSourceModel struct {

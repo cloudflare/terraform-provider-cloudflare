@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -86,11 +85,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"value": schema.Int64Attribute{
-							Description: "The number of seconds to cache resources for. The API prohibits\nsetting this to 0 for non-Enterprise domains.\n",
+						"value": schema.StringAttribute{
+							Description: "The status of Automatic HTTPS Rewrites.\n",
 							Optional:    true,
-							Validators: []validator.Int64{
-								int64validator.Between(0, 31536000),
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("on", "off"),
 							},
 						},
 					},
