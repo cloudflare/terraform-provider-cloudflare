@@ -38,7 +38,6 @@ func TestAccCloudflareAPIShieldBasic(t *testing.T) {
 			{
 				Config: testAccCloudflareAPIShieldDeleteAuthCharacteristics(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					acctest.DumpState,
 					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceID, "auth_id_characteristics.#", "0"),
 					resource.TestCheckResourceAttr(resourceID, "success", "true"),
