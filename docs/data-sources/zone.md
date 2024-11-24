@@ -20,7 +20,9 @@ resource or swap to `cloudflare_zones` to further filter the results.
 
 ```terraform
 data "cloudflare_zone" "example" {
-  name = "example.com"
+  filter {
+    name = "example.com"
+  }
 }
 
 resource "cloudflare_record" "example" {
