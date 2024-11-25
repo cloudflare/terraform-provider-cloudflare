@@ -2,7 +2,7 @@ language hcl
 
 pattern terraform_cloudflare_v5() {
   any {
-    cloudflare_terraform_v5_attribute_renames(),
-    cloudflare_terraform_v5_block_to_attribute(),
+    cloudflare_terraform_v5_attribute_renames_config(),
+    cloudflare_terraform_v5_block_to_attribute_config(),
   }
 }
