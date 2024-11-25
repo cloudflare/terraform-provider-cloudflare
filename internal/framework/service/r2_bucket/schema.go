@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var locationHints = []string{"WNAM", "ENAM", "WEUR", "EEUR", "APAC"}
+var locationHints = []string{"WNAM", "ENAM", "WEUR", "EEUR", "APAC", "OC"}
 
 func (r *R2BucketResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
