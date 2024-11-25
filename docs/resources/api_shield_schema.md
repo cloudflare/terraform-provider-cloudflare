@@ -38,30 +38,9 @@ resource "cloudflare_api_shield_schema" "petstore_schema" {
 ### Read-Only
 
 - `created_at` (String)
-- `errors` (Attributes List) (see [below for nested schema](#nestedatt--errors))
-- `messages` (Attributes List) (see [below for nested schema](#nestedatt--messages))
 - `schema` (Attributes) (see [below for nested schema](#nestedatt--schema))
 - `source` (String) Source of the schema
-- `success` (Boolean) Whether the API call was successful
 - `upload_details` (Attributes) (see [below for nested schema](#nestedatt--upload_details))
-
-<a id="nestedatt--errors"></a>
-### Nested Schema for `errors`
-
-Read-Only:
-
-- `code` (Number)
-- `message` (String)
-
-
-<a id="nestedatt--messages"></a>
-### Nested Schema for `messages`
-
-Read-Only:
-
-- `code` (Number)
-- `message` (String)
-
 
 <a id="nestedatt--schema"></a>
 ### Nested Schema for `schema`

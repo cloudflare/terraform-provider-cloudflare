@@ -17,7 +17,6 @@ description: |-
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `rules` (Attributes List) The list of rules in the ruleset. (see [below for nested schema](#nestedatt--rules))
 - `ruleset_id` (String) The unique ID of the ruleset.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
@@ -29,6 +28,7 @@ description: |-
 - `last_updated` (String) The timestamp of when the ruleset was last modified.
 - `name` (String) The human-readable name of the ruleset.
 - `phase` (String) The phase of the ruleset.
+- `rules` (Attributes List) The list of rules in the ruleset. (see [below for nested schema](#nestedatt--rules))
 - `version` (String) The version of the ruleset.
 
 <a id="nestedatt--filter"></a>
@@ -50,10 +50,12 @@ Read-Only:
 - `categories` (List of String) The categories of the rule.
 - `description` (String) An informative description of the rule.
 - `enabled` (Boolean) Whether the rule should be executed.
+- `exposed_credential_check` (Attributes) Configure checks for exposed credentials. (see [below for nested schema](#nestedatt--rules--exposed_credential_check))
 - `expression` (String) The expression defining which traffic will match the rule.
 - `id` (String) The unique ID of the rule.
 - `last_updated` (String) The timestamp of when the rule was last modified.
 - `logging` (Attributes) An object configuring the rule's logging behavior. (see [below for nested schema](#nestedatt--rules--logging))
+- `ratelimit` (Attributes) An object configuring the rule's ratelimit behavior. (see [below for nested schema](#nestedatt--rules--ratelimit))
 - `ref` (String) The reference of the rule (the rule ID by default).
 - `version` (String) The version of the rule.
 
@@ -436,11 +438,35 @@ Read-Only:
 
 
 
+<a id="nestedatt--rules--exposed_credential_check"></a>
+### Nested Schema for `rules.exposed_credential_check`
+
+Read-Only:
+
+- `password_expression` (String) Expression that selects the password used in the credentials check.
+- `username_expression` (String) Expression that selects the user ID used in the credentials check.
+
+
 <a id="nestedatt--rules--logging"></a>
 ### Nested Schema for `rules.logging`
 
 Read-Only:
 
 - `enabled` (Boolean) Whether to generate a log when the rule matches.
+
+
+<a id="nestedatt--rules--ratelimit"></a>
+### Nested Schema for `rules.ratelimit`
+
+Read-Only:
+
+- `characteristics` (List of String) Characteristics of the request on which the ratelimiter counter will be incremented.
+- `counting_expression` (String) Defines when the ratelimit counter should be incremented. It is optional and defaults to the same as the rule's expression.
+- `mitigation_timeout` (Number) Period of time in seconds after which the action will be disabled following its first execution.
+- `period` (Number) Period in seconds over which the counter is being incremented.
+- `requests_per_period` (Number) The threshold of requests per period after which the action will be executed for the first time.
+- `requests_to_origin` (Boolean) Defines if ratelimit counting is only done when an origin is reached.
+- `score_per_period` (Number) The score threshold per period for which the action will be executed the first time.
+- `score_response_header_name` (String) The response header name provided by the origin which should contain the score to increment ratelimit counter on.
 
 

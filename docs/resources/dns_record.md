@@ -37,6 +37,7 @@ resource "cloudflare_dns_record" "example" {
 - `data` (Attributes) Components of a CAA record. (see [below for nested schema](#nestedatt--data))
 - `priority` (Number) Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
+- `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))
 - `tags` (List of String) Custom tags for the DNS record. This field has no effect on DNS responses.
 
 ### Read-Only
@@ -47,7 +48,6 @@ resource "cloudflare_dns_record" "example" {
 - `meta` (String) Extra Cloudflare-specific information about the record.
 - `modified_on` (String) When the record was last modified.
 - `proxiable` (Boolean) Whether the record can be proxied by Cloudflare or not.
-- `settings` (String) Settings for the DNS record.
 - `tags_modified_on` (String) When the record tags were last modified. Omitted if there are no tags.
 
 <a id="nestedatt--data"></a>
@@ -91,6 +91,14 @@ Optional:
 - `usage` (Number) Usage.
 - `value` (String) Value of the record. This field's semantics depend on the chosen tag.
 - `weight` (Number) The record weight.
+
+
+<a id="nestedatt--settings"></a>
+### Nested Schema for `settings`
+
+Optional:
+
+- `flatten_cname` (Boolean) If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting has no effect on proxied records, which are always flattened.
 
 ## Import
 

@@ -17,7 +17,7 @@ description: |-
 
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `id` (String) ID of the zone setting.
 - `modified_on` (String) last time this setting was modified.

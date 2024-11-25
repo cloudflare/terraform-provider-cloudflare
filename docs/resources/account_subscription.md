@@ -23,10 +23,6 @@ description: |-
 - `rate_plan` (Attributes) The rate plan applied to the subscription. (see [below for nested schema](#nestedatt--rate_plan))
 - `subscription_identifier` (String) Subscription identifier tag.
 
-### Read-Only
-
-- `subscription_id` (String) Subscription identifier tag.
-
 <a id="nestedatt--rate_plan"></a>
 ### Nested Schema for `rate_plan`
 

@@ -17,8 +17,19 @@ description: |-
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `identifier` (String) The unique identifier of the resource.
+- `rule_id` (String) Unique identifier for a rule
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
+
+### Read-Only
+
+- `allowed_modes` (List of String) The available actions that a rule can apply to a matched request.
+- `configuration` (Attributes) The rule configuration. (see [below for nested schema](#nestedatt--configuration))
+- `created_on` (String) The timestamp of when the rule was created.
+- `id` (String) The unique identifier of the IP Access rule.
+- `mode` (String) The action to apply to a matched request.
+- `modified_on` (String) The timestamp of when the rule was last modified.
+- `notes` (String) An informative summary of the rule, typically used as a reminder or explanation.
+- `scope` (Attributes) All zones owned by the user will have the rule applied. (see [below for nested schema](#nestedatt--scope))
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -43,5 +54,25 @@ Optional:
 - `target` (String) The target to search in existing rules.
 - `value` (String) The target value to search for in existing rules: an IP address, an IP address range, or a country code, depending on the provided `configuration.target`.
 Notes: You can search for a single IPv4 address, an IP address range with a subnet of '/16' or '/24', or a two-letter ISO-3166-1 alpha-2 country code.
+
+
+
+<a id="nestedatt--configuration"></a>
+### Nested Schema for `configuration`
+
+Read-Only:
+
+- `target` (String) The configuration target. You must set the target to `ip` when specifying an IP address in the rule.
+- `value` (String) The IP address to match. This address will be compared to the IP address of incoming requests.
+
+
+<a id="nestedatt--scope"></a>
+### Nested Schema for `scope`
+
+Read-Only:
+
+- `email` (String) The contact email address of the user.
+- `id` (String) Identifier
+- `type` (String) The scope of the rule.
 
 

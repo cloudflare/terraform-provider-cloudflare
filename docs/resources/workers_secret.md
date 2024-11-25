@@ -26,17 +26,17 @@ resource "cloudflare_workers_secret" "my_secret" {
 
 - `account_id` (String) Identifier
 - `dispatch_namespace` (String) Name of the Workers for Platforms dispatch namespace.
+- `name` (String) The name of this secret, this is what will be used to access it inside the Worker.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 
 ### Optional
 
-- `name` (String) The name of this secret, this is what will be used to access it inside the Worker.
 - `text` (String) The value of the secret.
 - `type` (String) The type of secret to put.
 
 ### Read-Only
 
-- `id` (String) Name of the script, used in URLs and route configuration.
+- `id` (String) The name of this secret, this is what will be used to access it inside the Worker.
 
 ## Import
 

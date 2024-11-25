@@ -36,6 +36,10 @@ Read-Only:
 - `description` (String) The description of the rule.
 - `device_posture` (String) The wirefilter expression used for device posture check matching.
 - `enabled` (Boolean) True if the rule is enabled.
+- `expiration` (Attributes) The expiration time stamp and default duration of a DNS policy. Takes
+precedence over the policy's `schedule` configuration, if any.
+
+This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--result--expiration))
 - `filters` (List of String) The protocol or layer to evaluate the traffic, identity, and device posture expressions.
 - `id` (String) The API resource UUID.
 - `identity` (String) The wirefilter expression used for identity matching.
@@ -45,6 +49,25 @@ Read-Only:
 - `schedule` (Attributes) The schedule for activating DNS policies. This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--result--schedule))
 - `traffic` (String) The wirefilter expression used for traffic matching.
 - `updated_at` (String)
+
+<a id="nestedatt--result--expiration"></a>
+### Nested Schema for `result.expiration`
+
+Read-Only:
+
+- `duration` (Number) The default duration a policy will be active in minutes. Must be set in order to use the `reset_expiration` endpoint on this rule.
+- `expires_at` (String) The time stamp at which the policy will expire and cease to be
+applied.
+
+Must adhere to RFC 3339 and include a UTC offset. Non-zero
+offsets are accepted but will be converted to the equivalent
+value with offset zero (UTC+00:00) and will be returned as time
+stamps with offset zero denoted by a trailing 'Z'.
+
+Policies with an expiration do not consider the timezone of
+clients they are applied to, and expire "globally" at the point
+given by their `expires_at` value.
+
 
 <a id="nestedatt--result--rule_settings"></a>
 ### Nested Schema for `result.rule_settings`
@@ -70,6 +93,7 @@ Read-Only:
 - `override_host` (String) Override matching DNS queries with a hostname.
 - `override_ips` (List of String) Override matching DNS queries with an IP or set of IPs.
 - `payload_log` (Attributes) Configure DLP payload logging. (see [below for nested schema](#nestedatt--result--rule_settings--payload_log))
+- `quarantine` (Attributes) Settings that apply to quarantine rules (see [below for nested schema](#nestedatt--result--rule_settings--quarantine))
 - `resolve_dns_through_cloudflare` (Boolean) Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when dns_resolvers are specified. Only valid when a rule's action is set to 'resolve'.
 - `untrusted_cert` (Attributes) Configure behavior when an upstream cert is invalid or an SSL error occurs. (see [below for nested schema](#nestedatt--result--rule_settings--untrusted_cert))
 
@@ -168,6 +192,14 @@ Read-Only:
 Read-Only:
 
 - `enabled` (Boolean) Set to true to enable DLP payload logging for this rule.
+
+
+<a id="nestedatt--result--rule_settings--quarantine"></a>
+### Nested Schema for `result.rule_settings.quarantine`
+
+Read-Only:
+
+- `file_types` (List of String) Types of files to sandbox.
 
 
 <a id="nestedatt--result--rule_settings--untrusted_cert"></a>

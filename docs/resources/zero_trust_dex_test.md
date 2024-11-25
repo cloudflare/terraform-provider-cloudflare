@@ -44,7 +44,8 @@ resource "cloudflare_zero_trust_dex_test" "example" {
 
 ### Read-Only
 
-- `id` (String) The name of the DEX test. Must be unique.
+- `id` (String) The unique identifier for the test.
+- `test_id` (String) The unique identifier for the test.
 
 <a id="nestedatt--data"></a>
 ### Nested Schema for `data`

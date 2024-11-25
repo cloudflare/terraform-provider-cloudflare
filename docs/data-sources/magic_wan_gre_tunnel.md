@@ -18,7 +18,7 @@ description: |-
 - `account_id` (String) Identifier
 - `gre_tunnel_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `gre_tunnel` (Attributes) (see [below for nested schema](#nestedatt--gre_tunnel))
 
@@ -44,10 +44,18 @@ Read-Only:
 
 Read-Only:
 
-- `direction` (String) The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel. Note in the case of bidirecitonal healthchecks, the target field in health_check is ignored as the interface_address is used to send traffic into the tunnel.
+- `direction` (String) The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.
 - `enabled` (Boolean) Determines whether to run healthchecks for a tunnel.
 - `rate` (String) How frequent the health check is run. The default value is `mid`.
-- `target` (String) The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target.
+- `target` (Attributes) The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target. Must be in object form if the x-magic-new-hc-target header is set to true and string form if x-magic-new-hc-target is absent or set to false. (see [below for nested schema](#nestedatt--gre_tunnel--health_check--target))
 - `type` (String) The type of healthcheck to run, reply or request. The default value is `reply`.
+
+<a id="nestedatt--gre_tunnel--health_check--target"></a>
+### Nested Schema for `gre_tunnel.health_check.target`
+
+Read-Only:
+
+- `effective` (String) The effective health check target. If 'saved' is empty, then this field will be populated with the calculated default value on GET requests. Ignored in POST, PUT, and PATCH requests.
+- `saved` (String) The saved health check target. Setting the value to the empty string indicates that the calculated default value will be used.
 
 

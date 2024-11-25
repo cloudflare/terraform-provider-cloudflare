@@ -97,12 +97,20 @@ resource "cloudflare_list_item" "example_hostname_item" {
 - `comment` (String) An informative summary of the list item.
 - `hostname` (Attributes) Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-). (see [below for nested schema](#nestedatt--hostname))
 - `ip` (String) An IPv4 address, an IPv4 CIDR, or an IPv6 CIDR. IPv6 CIDRs are limited to a maximum of /64.
-- `item_id` (String) The unique ID of the item in the List.
 - `redirect` (Attributes) The definition of the redirect. (see [below for nested schema](#nestedatt--redirect))
 
 ### Read-Only
 
+- `include_subdomains` (Boolean)
+- `item_id` (String) The unique ID of the item in the List.
 - `operation_id` (String) The unique operation ID of the asynchronous action.
+- `preserve_path_suffix` (Boolean)
+- `preserve_query_string` (Boolean)
+- `source_url` (String)
+- `status_code` (Number)
+- `subpath_matching` (Boolean)
+- `target_url` (String)
+- `url_hostname` (String)
 
 <a id="nestedatt--hostname"></a>
 ### Nested Schema for `hostname`

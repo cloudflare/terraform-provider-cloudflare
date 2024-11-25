@@ -41,11 +41,11 @@ resource "cloudflare_user_agent_blocking_rule" "example_2" {
 
 - `configuration` (Attributes) The rule configuration. (see [below for nested schema](#nestedatt--configuration))
 - `mode` (String) The action to apply to a matched request.
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 ### Optional
 
-- `id` (String) The unique identifier of the User Agent Blocking rule.
+- `ua_rule_id` (String) The unique identifier of the User Agent Blocking rule.
 
 <a id="nestedatt--configuration"></a>
 ### Nested Schema for `configuration`

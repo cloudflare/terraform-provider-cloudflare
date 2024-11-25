@@ -77,15 +77,17 @@ resource "cloudflare_zero_trust_access_group" "example" {
 
 Optional:
 
-- `any_valid_service_token` (String) An empty object which matches on all service tokens.
+- `any_valid_service_token` (Attributes) An empty object which matches on all service tokens. (see [below for nested schema](#nestedatt--include--any_valid_service_token))
+- `auth_context` (Attributes) (see [below for nested schema](#nestedatt--include--auth_context))
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--include--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--include--azure_ad))
-- `certificate` (String)
+- `certificate` (Attributes) (see [below for nested schema](#nestedatt--include--certificate))
+- `common_name` (Attributes) (see [below for nested schema](#nestedatt--include--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--include--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--include--email))
 - `email_domain` (Attributes) (see [below for nested schema](#nestedatt--include--email_domain))
 - `email_list` (Attributes) (see [below for nested schema](#nestedatt--include--email_list))
-- `everyone` (String) An empty object which matches on all users.
+- `everyone` (Attributes) An empty object which matches on all users. (see [below for nested schema](#nestedatt--include--everyone))
 - `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--include--external_evaluation))
 - `geo` (Attributes) (see [below for nested schema](#nestedatt--include--geo))
 - `github_organization` (Attributes) (see [below for nested schema](#nestedatt--include--github_organization))
@@ -96,6 +98,20 @@ Optional:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--include--service_token))
+
+<a id="nestedatt--include--any_valid_service_token"></a>
+### Nested Schema for `include.any_valid_service_token`
+
+
+<a id="nestedatt--include--auth_context"></a>
+### Nested Schema for `include.auth_context`
+
+Required:
+
+- `ac_id` (String) The ACID of an Authentication context.
+- `id` (String) The ID of an Authentication context.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
 
 <a id="nestedatt--include--auth_method"></a>
 ### Nested Schema for `include.auth_method`
@@ -112,6 +128,18 @@ Required:
 
 - `id` (String) The ID of an Azure group.
 - `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--include--certificate"></a>
+### Nested Schema for `include.certificate`
+
+
+<a id="nestedatt--include--common_name"></a>
+### Nested Schema for `include.common_name`
+
+Required:
+
+- `common_name` (String) The common name to match.
 
 
 <a id="nestedatt--include--device_posture"></a>
@@ -146,6 +174,10 @@ Required:
 - `id` (String) The ID of a previously created email list.
 
 
+<a id="nestedatt--include--everyone"></a>
+### Nested Schema for `include.everyone`
+
+
 <a id="nestedatt--include--external_evaluation"></a>
 ### Nested Schema for `include.external_evaluation`
 
@@ -170,6 +202,10 @@ Required:
 
 - `identity_provider_id` (String) The ID of your Github identity provider.
 - `name` (String) The name of the organization.
+
+Optional:
+
+- `team` (String) The name of the team
 
 
 <a id="nestedatt--include--group"></a>
@@ -238,15 +274,17 @@ Required:
 
 Optional:
 
-- `any_valid_service_token` (String) An empty object which matches on all service tokens.
+- `any_valid_service_token` (Attributes) An empty object which matches on all service tokens. (see [below for nested schema](#nestedatt--exclude--any_valid_service_token))
+- `auth_context` (Attributes) (see [below for nested schema](#nestedatt--exclude--auth_context))
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--exclude--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--exclude--azure_ad))
-- `certificate` (String)
+- `certificate` (Attributes) (see [below for nested schema](#nestedatt--exclude--certificate))
+- `common_name` (Attributes) (see [below for nested schema](#nestedatt--exclude--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--exclude--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--exclude--email))
 - `email_domain` (Attributes) (see [below for nested schema](#nestedatt--exclude--email_domain))
 - `email_list` (Attributes) (see [below for nested schema](#nestedatt--exclude--email_list))
-- `everyone` (String) An empty object which matches on all users.
+- `everyone` (Attributes) An empty object which matches on all users. (see [below for nested schema](#nestedatt--exclude--everyone))
 - `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--exclude--external_evaluation))
 - `geo` (Attributes) (see [below for nested schema](#nestedatt--exclude--geo))
 - `github_organization` (Attributes) (see [below for nested schema](#nestedatt--exclude--github_organization))
@@ -257,6 +295,20 @@ Optional:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--exclude--service_token))
+
+<a id="nestedatt--exclude--any_valid_service_token"></a>
+### Nested Schema for `exclude.any_valid_service_token`
+
+
+<a id="nestedatt--exclude--auth_context"></a>
+### Nested Schema for `exclude.auth_context`
+
+Required:
+
+- `ac_id` (String) The ACID of an Authentication context.
+- `id` (String) The ID of an Authentication context.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
 
 <a id="nestedatt--exclude--auth_method"></a>
 ### Nested Schema for `exclude.auth_method`
@@ -273,6 +325,18 @@ Required:
 
 - `id` (String) The ID of an Azure group.
 - `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--exclude--certificate"></a>
+### Nested Schema for `exclude.certificate`
+
+
+<a id="nestedatt--exclude--common_name"></a>
+### Nested Schema for `exclude.common_name`
+
+Required:
+
+- `common_name` (String) The common name to match.
 
 
 <a id="nestedatt--exclude--device_posture"></a>
@@ -307,6 +371,10 @@ Required:
 - `id` (String) The ID of a previously created email list.
 
 
+<a id="nestedatt--exclude--everyone"></a>
+### Nested Schema for `exclude.everyone`
+
+
 <a id="nestedatt--exclude--external_evaluation"></a>
 ### Nested Schema for `exclude.external_evaluation`
 
@@ -331,6 +399,10 @@ Required:
 
 - `identity_provider_id` (String) The ID of your Github identity provider.
 - `name` (String) The name of the organization.
+
+Optional:
+
+- `team` (String) The name of the team
 
 
 <a id="nestedatt--exclude--group"></a>
@@ -399,15 +471,17 @@ Required:
 
 Optional:
 
-- `any_valid_service_token` (String) An empty object which matches on all service tokens.
+- `any_valid_service_token` (Attributes) An empty object which matches on all service tokens. (see [below for nested schema](#nestedatt--require--any_valid_service_token))
+- `auth_context` (Attributes) (see [below for nested schema](#nestedatt--require--auth_context))
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--require--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--require--azure_ad))
-- `certificate` (String)
+- `certificate` (Attributes) (see [below for nested schema](#nestedatt--require--certificate))
+- `common_name` (Attributes) (see [below for nested schema](#nestedatt--require--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--require--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--require--email))
 - `email_domain` (Attributes) (see [below for nested schema](#nestedatt--require--email_domain))
 - `email_list` (Attributes) (see [below for nested schema](#nestedatt--require--email_list))
-- `everyone` (String) An empty object which matches on all users.
+- `everyone` (Attributes) An empty object which matches on all users. (see [below for nested schema](#nestedatt--require--everyone))
 - `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--require--external_evaluation))
 - `geo` (Attributes) (see [below for nested schema](#nestedatt--require--geo))
 - `github_organization` (Attributes) (see [below for nested schema](#nestedatt--require--github_organization))
@@ -418,6 +492,20 @@ Optional:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--require--service_token))
+
+<a id="nestedatt--require--any_valid_service_token"></a>
+### Nested Schema for `require.any_valid_service_token`
+
+
+<a id="nestedatt--require--auth_context"></a>
+### Nested Schema for `require.auth_context`
+
+Required:
+
+- `ac_id` (String) The ACID of an Authentication context.
+- `id` (String) The ID of an Authentication context.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
 
 <a id="nestedatt--require--auth_method"></a>
 ### Nested Schema for `require.auth_method`
@@ -434,6 +522,18 @@ Required:
 
 - `id` (String) The ID of an Azure group.
 - `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--require--certificate"></a>
+### Nested Schema for `require.certificate`
+
+
+<a id="nestedatt--require--common_name"></a>
+### Nested Schema for `require.common_name`
+
+Required:
+
+- `common_name` (String) The common name to match.
 
 
 <a id="nestedatt--require--device_posture"></a>
@@ -468,6 +568,10 @@ Required:
 - `id` (String) The ID of a previously created email list.
 
 
+<a id="nestedatt--require--everyone"></a>
+### Nested Schema for `require.everyone`
+
+
 <a id="nestedatt--require--external_evaluation"></a>
 ### Nested Schema for `require.external_evaluation`
 
@@ -492,6 +596,10 @@ Required:
 
 - `identity_provider_id` (String) The ID of your Github identity provider.
 - `name` (String) The name of the organization.
+
+Optional:
+
+- `team` (String) The name of the team
 
 
 <a id="nestedatt--require--group"></a>

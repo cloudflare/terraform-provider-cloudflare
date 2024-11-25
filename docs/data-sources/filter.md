@@ -16,13 +16,14 @@ description: |-
 ### Optional
 
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `id` (String) The unique identifier of the filter.
-- `zone_identifier` (String) Identifier
+- `filter_id` (String) The unique identifier of the filter.
+- `zone_id` (String) Identifier
 
 ### Read-Only
 
 - `description` (String) An informative summary of the filter.
 - `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
+- `id` (String) The unique identifier of the filter.
 - `paused` (Boolean) When true, indicates that the filter is currently paused.
 - `ref` (String) A short reference tag. Allows you to select related filters.
 
@@ -31,7 +32,7 @@ description: |-
 
 Required:
 
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 Optional:
 

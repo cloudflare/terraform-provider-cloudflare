@@ -40,7 +40,7 @@ resource "cloudflare_workers_script" "customer_worker_1" {
 
 - `created_by` (String) Identifier
 - `created_on` (String) When the script was created.
-- `id` (String) API Resource UUID tag.
+- `id` (String) Name of the Workers for Platforms dispatch namespace.
 - `modified_by` (String) Identifier
 - `modified_on` (String) When the script was last modified.
 - `namespace_id` (String) API Resource UUID tag.

@@ -81,6 +81,7 @@ Optional:
 - `locations` (Attributes) (see [below for nested schema](#nestedatt--input--locations))
 - `network_status` (String) Network status of device.
 - `operating_system` (String) Operating system
+- `operational_state` (String) Agent operational state.
 - `operator` (String) operator
 - `os` (String) Os Version
 - `os_distro_name` (String) Operating System Distribution Name (linux only)

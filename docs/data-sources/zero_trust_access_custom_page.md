@@ -16,7 +16,6 @@ description: |-
 ### Optional
 
 - `account_id` (String) Identifier
-- `custom_html` (String) Custom page HTML.
 - `custom_page_id` (String) UUID
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
@@ -24,6 +23,7 @@ description: |-
 
 - `app_count` (Number) Number of apps the custom page is assigned to.
 - `created_at` (String)
+- `custom_html` (String) Custom page HTML.
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
 - `uid` (String) UUID

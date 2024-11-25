@@ -37,6 +37,7 @@ Read-Only:
 - `name` (String) The name of the DEX test. Must be unique.
 - `target_policies` (Attributes List) Device settings profiles targeted by this test (see [below for nested schema](#nestedatt--result--target_policies))
 - `targeted` (Boolean)
+- `test_id` (String) The unique identifier for the test.
 
 <a id="nestedatt--result--data"></a>
 ### Nested Schema for `result.data`

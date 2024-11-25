@@ -38,6 +38,7 @@ expensive challenges in response to malicious bots (ENT only).
 this setting can determine the clearance level to be set
 - `created_on` (String) When the widget was created.
 - `domains` (List of String)
+- `ephemeral_id` (Boolean) Return the Ephemeral ID in /siteverify (ENT only).
 - `mode` (String) Widget Mode
 - `modified_on` (String) When the widget was modified.
 - `name` (String) Human readable widget name. Not unique. Cloudflare suggests that you

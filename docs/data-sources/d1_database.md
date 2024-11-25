@@ -17,14 +17,14 @@ description: |-
 
 - `account_id` (String) Account identifier tag.
 - `database_id` (String)
-- `file_size` (Number) The D1 database's size, in bytes.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `num_tables` (Number)
 
 ### Read-Only
 
 - `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
+- `file_size` (Number) The D1 database's size, in bytes.
 - `name` (String)
+- `num_tables` (Number)
 - `uuid` (String)
 - `version` (String)
 

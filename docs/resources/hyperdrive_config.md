@@ -40,7 +40,7 @@ resource "cloudflare_hyperdrive_config" "no_defaults" {
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) Identifier
 
 <a id="nestedatt--origin"></a>
 ### Nested Schema for `origin`
@@ -49,13 +49,15 @@ Required:
 
 - `database` (String) The name of your origin database.
 - `host` (String) The host (hostname or IP) of your origin database.
+- `password` (String) The password required to access your origin database. This value is write-only and never returned by the API.
+- `scheme` (String) Specifies the URL scheme used to connect to your origin database.
 - `user` (String) The user of your origin database.
 
 Optional:
 
 - `access_client_id` (String) The Client ID of the Access token to use when connecting to the origin database
+- `access_client_secret` (String) The Client Secret of the Access token to use when connecting to the origin database. This value is write-only and never returned by the API.
 - `port` (Number) The port (default: 5432 for Postgres) of your origin database.
-- `scheme` (String) Specifies the URL scheme used to connect to your origin database.
 
 
 <a id="nestedatt--caching"></a>
@@ -64,8 +66,8 @@ Optional:
 Optional:
 
 - `disabled` (Boolean) When set to true, disables the caching of SQL responses. (Default: false)
-- `max_age` (Number) When present, specifies max duration for which items should persist in the cache. (Default: 60)
-- `stale_while_revalidate` (Number) When present, indicates the number of seconds cache may serve the response after it becomes stale. (Default: 15)
+- `max_age` (Number) When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)
+- `stale_while_revalidate` (Number) When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)
 
 ## Import
 

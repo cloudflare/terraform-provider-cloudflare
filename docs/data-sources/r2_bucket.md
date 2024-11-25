@@ -18,7 +18,7 @@ description: |-
 - `account_id` (String) Account ID
 - `bucket_name` (String) Name of the bucket
 
-### Optional
+### Read-Only
 
 - `creation_date` (String) Creation timestamp
 - `location` (String) Location of the bucket

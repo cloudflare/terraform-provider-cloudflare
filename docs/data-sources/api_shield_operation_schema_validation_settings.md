@@ -18,7 +18,7 @@ description: |-
 - `operation_id` (String) UUID
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `mitigation_action` (String) When set, this applies a mitigation action to this operation
 

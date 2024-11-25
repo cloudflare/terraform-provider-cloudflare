@@ -61,7 +61,8 @@ resource "cloudflare_zero_trust_access_application" "staging_app" {
 - `custom_deny_url` (String) The custom URL a user is redirected to when they are denied access to the application when failing identity-based rules.
 - `custom_non_identity_deny_url` (String) The custom URL a user is redirected to when they are denied access to the application when failing non-identity rules.
 - `custom_pages` (List of String) The custom pages that will be displayed when applicable for this application
-- `domain` (String) The primary hostname and path that Access will secure. If the app is visible in the App Launcher dashboard, this is the domain that will be displayed.
+- `destinations` (Attributes List) List of destinations secured by Access. This supersedes `self_hosted_domains` to allow for more flexibility in defining different types of domains. If `destinations` are provided, then `self_hosted_domains` will be ignored. (see [below for nested schema](#nestedatt--destinations))
+- `domain` (String) The primary hostname and path secured by Access. This domain will be displayed if the app is visible in the App Launcher.
 - `enable_binding_cookie` (Boolean) Enables the binding cookie, which increases security against compromised authorization tokens and CSRF attacks.
 - `footer_links` (Attributes List) The links in the App Launcher footer. (see [below for nested schema](#nestedatt--footer_links))
 - `header_bg_color` (String) The background color of the App Launcher header.
@@ -71,22 +72,26 @@ resource "cloudflare_zero_trust_access_application" "staging_app" {
 - `name` (String) The name of the application.
 - `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.
 - `path_cookie_attribute` (Boolean) Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default
-- `policies` (Attributes List) The policies that will apply to the application, in ascending order of precedence. Items can reference existing policies or create new policies exclusive to the application. (see [below for nested schema](#nestedatt--policies))
+- `policies` (Attributes List) The policies that Access applies to the application, in ascending order of precedence. Items can reference existing policies or create new policies exclusive to the application. (see [below for nested schema](#nestedatt--policies))
 - `saas_app` (Attributes) (see [below for nested schema](#nestedatt--saas_app))
 - `same_site_cookie_attribute` (String) Sets the SameSite cookie setting, which provides increased security against CSRF attacks.
 - `scim_config` (Attributes) Configuration for provisioning to this application via SCIM. This is currently in closed beta. (see [below for nested schema](#nestedatt--scim_config))
-- `self_hosted_domains` (List of String) List of domains that Access will secure.
+- `self_hosted_domains` (List of String) List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.
 - `service_auth_401_redirect` (Boolean) Returns a 401 status code when the request is blocked by a Service Auth policy.
 - `session_duration` (String) The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
 - `skip_app_launcher_login_page` (Boolean) Determines when to skip the App Launcher landing page.
 - `skip_interstitial` (Boolean) Enables automatic authentication through cloudflared.
 - `tags` (List of String) The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
+- `target_criteria` (Attributes List) (see [below for nested schema](#nestedatt--target_criteria))
 - `type` (String) The application type.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
 
+- `aud` (String) Audience tag.
+- `created_at` (String)
 - `id` (String) UUID
+- `updated_at` (String)
 
 <a id="nestedatt--cors_headers"></a>
 ### Nested Schema for `cors_headers`
@@ -101,6 +106,15 @@ Optional:
 - `allowed_methods` (List of String) Allowed HTTP request methods.
 - `allowed_origins` (List of String) Allowed origins.
 - `max_age` (Number) The maximum number of seconds the results of a preflight request can be cached.
+
+
+<a id="nestedatt--destinations"></a>
+### Nested Schema for `destinations`
+
+Optional:
+
+- `type` (String)
+- `uri` (String) The URI of the destination. Public destinations can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/). Private destinations are an early access feature and gated behind a feature flag. Private destinations support private IPv4, IPv6, and Server Name Indications (SNI) with optional port ranges.
 
 
 <a id="nestedatt--footer_links"></a>
@@ -129,8 +143,604 @@ Optional:
 
 Optional:
 
+- `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
+- `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--policies--exclude))
 - `id` (String) The UUID of the policy
+- `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--policies--include))
+- `name` (String) The name of the Access policy.
 - `precedence` (Number) The order of execution for this policy. Must be unique for each policy within an app.
+- `require` (Attributes List) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--policies--require))
+
+<a id="nestedatt--policies--exclude"></a>
+### Nested Schema for `policies.exclude`
+
+Optional:
+
+- `any_valid_service_token` (Attributes) An empty object which matches on all service tokens. (see [below for nested schema](#nestedatt--policies--exclude--any_valid_service_token))
+- `auth_context` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--auth_context))
+- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--auth_method))
+- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--azure_ad))
+- `certificate` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--certificate))
+- `common_name` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--common_name))
+- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--device_posture))
+- `email` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--email))
+- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--email_domain))
+- `email_list` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--email_list))
+- `everyone` (Attributes) An empty object which matches on all users. (see [below for nested schema](#nestedatt--policies--exclude--everyone))
+- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--external_evaluation))
+- `geo` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--geo))
+- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--github_organization))
+- `group` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--group))
+- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--gsuite))
+- `ip` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--ip))
+- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--ip_list))
+- `okta` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--okta))
+- `saml` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--saml))
+- `service_token` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--service_token))
+
+<a id="nestedatt--policies--exclude--any_valid_service_token"></a>
+### Nested Schema for `policies.exclude.any_valid_service_token`
+
+
+<a id="nestedatt--policies--exclude--auth_context"></a>
+### Nested Schema for `policies.exclude.auth_context`
+
+Required:
+
+- `ac_id` (String) The ACID of an Authentication context.
+- `id` (String) The ID of an Authentication context.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--policies--exclude--auth_method"></a>
+### Nested Schema for `policies.exclude.auth_method`
+
+Required:
+
+- `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.
+
+
+<a id="nestedatt--policies--exclude--azure_ad"></a>
+### Nested Schema for `policies.exclude.azure_ad`
+
+Required:
+
+- `id` (String) The ID of an Azure group.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--policies--exclude--certificate"></a>
+### Nested Schema for `policies.exclude.certificate`
+
+
+<a id="nestedatt--policies--exclude--common_name"></a>
+### Nested Schema for `policies.exclude.common_name`
+
+Required:
+
+- `common_name` (String) The common name to match.
+
+
+<a id="nestedatt--policies--exclude--device_posture"></a>
+### Nested Schema for `policies.exclude.device_posture`
+
+Required:
+
+- `integration_uid` (String) The ID of a device posture integration.
+
+
+<a id="nestedatt--policies--exclude--email"></a>
+### Nested Schema for `policies.exclude.email`
+
+Required:
+
+- `email` (String) The email of the user.
+
+
+<a id="nestedatt--policies--exclude--email_domain"></a>
+### Nested Schema for `policies.exclude.email_domain`
+
+Required:
+
+- `domain` (String) The email domain to match.
+
+
+<a id="nestedatt--policies--exclude--email_list"></a>
+### Nested Schema for `policies.exclude.email_list`
+
+Required:
+
+- `id` (String) The ID of a previously created email list.
+
+
+<a id="nestedatt--policies--exclude--everyone"></a>
+### Nested Schema for `policies.exclude.everyone`
+
+
+<a id="nestedatt--policies--exclude--external_evaluation"></a>
+### Nested Schema for `policies.exclude.external_evaluation`
+
+Required:
+
+- `evaluate_url` (String) The API endpoint containing your business logic.
+- `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
+
+
+<a id="nestedatt--policies--exclude--geo"></a>
+### Nested Schema for `policies.exclude.geo`
+
+Required:
+
+- `country_code` (String) The country code that should be matched.
+
+
+<a id="nestedatt--policies--exclude--github_organization"></a>
+### Nested Schema for `policies.exclude.github_organization`
+
+Required:
+
+- `identity_provider_id` (String) The ID of your Github identity provider.
+- `name` (String) The name of the organization.
+
+Optional:
+
+- `team` (String) The name of the team
+
+
+<a id="nestedatt--policies--exclude--group"></a>
+### Nested Schema for `policies.exclude.group`
+
+Required:
+
+- `id` (String) The ID of a previously created Access group.
+
+
+<a id="nestedatt--policies--exclude--gsuite"></a>
+### Nested Schema for `policies.exclude.gsuite`
+
+Required:
+
+- `email` (String) The email of the Google Workspace group.
+- `identity_provider_id` (String) The ID of your Google Workspace identity provider.
+
+
+<a id="nestedatt--policies--exclude--ip"></a>
+### Nested Schema for `policies.exclude.ip`
+
+Required:
+
+- `ip` (String) An IPv4 or IPv6 CIDR block.
+
+
+<a id="nestedatt--policies--exclude--ip_list"></a>
+### Nested Schema for `policies.exclude.ip_list`
+
+Required:
+
+- `id` (String) The ID of a previously created IP list.
+
+
+<a id="nestedatt--policies--exclude--okta"></a>
+### Nested Schema for `policies.exclude.okta`
+
+Required:
+
+- `identity_provider_id` (String) The ID of your Okta identity provider.
+- `name` (String) The name of the Okta group.
+
+
+<a id="nestedatt--policies--exclude--saml"></a>
+### Nested Schema for `policies.exclude.saml`
+
+Required:
+
+- `attribute_name` (String) The name of the SAML attribute.
+- `attribute_value` (String) The SAML attribute value to look for.
+- `identity_provider_id` (String) The ID of your SAML identity provider.
+
+
+<a id="nestedatt--policies--exclude--service_token"></a>
+### Nested Schema for `policies.exclude.service_token`
+
+Required:
+
+- `token_id` (String) The ID of a Service Token.
+
+
+
+<a id="nestedatt--policies--include"></a>
+### Nested Schema for `policies.include`
+
+Optional:
+
+- `any_valid_service_token` (Attributes) An empty object which matches on all service tokens. (see [below for nested schema](#nestedatt--policies--include--any_valid_service_token))
+- `auth_context` (Attributes) (see [below for nested schema](#nestedatt--policies--include--auth_context))
+- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--policies--include--auth_method))
+- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--policies--include--azure_ad))
+- `certificate` (Attributes) (see [below for nested schema](#nestedatt--policies--include--certificate))
+- `common_name` (Attributes) (see [below for nested schema](#nestedatt--policies--include--common_name))
+- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--policies--include--device_posture))
+- `email` (Attributes) (see [below for nested schema](#nestedatt--policies--include--email))
+- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--policies--include--email_domain))
+- `email_list` (Attributes) (see [below for nested schema](#nestedatt--policies--include--email_list))
+- `everyone` (Attributes) An empty object which matches on all users. (see [below for nested schema](#nestedatt--policies--include--everyone))
+- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--policies--include--external_evaluation))
+- `geo` (Attributes) (see [below for nested schema](#nestedatt--policies--include--geo))
+- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--policies--include--github_organization))
+- `group` (Attributes) (see [below for nested schema](#nestedatt--policies--include--group))
+- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--policies--include--gsuite))
+- `ip` (Attributes) (see [below for nested schema](#nestedatt--policies--include--ip))
+- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--policies--include--ip_list))
+- `okta` (Attributes) (see [below for nested schema](#nestedatt--policies--include--okta))
+- `saml` (Attributes) (see [below for nested schema](#nestedatt--policies--include--saml))
+- `service_token` (Attributes) (see [below for nested schema](#nestedatt--policies--include--service_token))
+
+<a id="nestedatt--policies--include--any_valid_service_token"></a>
+### Nested Schema for `policies.include.any_valid_service_token`
+
+
+<a id="nestedatt--policies--include--auth_context"></a>
+### Nested Schema for `policies.include.auth_context`
+
+Required:
+
+- `ac_id` (String) The ACID of an Authentication context.
+- `id` (String) The ID of an Authentication context.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--policies--include--auth_method"></a>
+### Nested Schema for `policies.include.auth_method`
+
+Required:
+
+- `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.
+
+
+<a id="nestedatt--policies--include--azure_ad"></a>
+### Nested Schema for `policies.include.azure_ad`
+
+Required:
+
+- `id` (String) The ID of an Azure group.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--policies--include--certificate"></a>
+### Nested Schema for `policies.include.certificate`
+
+
+<a id="nestedatt--policies--include--common_name"></a>
+### Nested Schema for `policies.include.common_name`
+
+Required:
+
+- `common_name` (String) The common name to match.
+
+
+<a id="nestedatt--policies--include--device_posture"></a>
+### Nested Schema for `policies.include.device_posture`
+
+Required:
+
+- `integration_uid` (String) The ID of a device posture integration.
+
+
+<a id="nestedatt--policies--include--email"></a>
+### Nested Schema for `policies.include.email`
+
+Required:
+
+- `email` (String) The email of the user.
+
+
+<a id="nestedatt--policies--include--email_domain"></a>
+### Nested Schema for `policies.include.email_domain`
+
+Required:
+
+- `domain` (String) The email domain to match.
+
+
+<a id="nestedatt--policies--include--email_list"></a>
+### Nested Schema for `policies.include.email_list`
+
+Required:
+
+- `id` (String) The ID of a previously created email list.
+
+
+<a id="nestedatt--policies--include--everyone"></a>
+### Nested Schema for `policies.include.everyone`
+
+
+<a id="nestedatt--policies--include--external_evaluation"></a>
+### Nested Schema for `policies.include.external_evaluation`
+
+Required:
+
+- `evaluate_url` (String) The API endpoint containing your business logic.
+- `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
+
+
+<a id="nestedatt--policies--include--geo"></a>
+### Nested Schema for `policies.include.geo`
+
+Required:
+
+- `country_code` (String) The country code that should be matched.
+
+
+<a id="nestedatt--policies--include--github_organization"></a>
+### Nested Schema for `policies.include.github_organization`
+
+Required:
+
+- `identity_provider_id` (String) The ID of your Github identity provider.
+- `name` (String) The name of the organization.
+
+Optional:
+
+- `team` (String) The name of the team
+
+
+<a id="nestedatt--policies--include--group"></a>
+### Nested Schema for `policies.include.group`
+
+Required:
+
+- `id` (String) The ID of a previously created Access group.
+
+
+<a id="nestedatt--policies--include--gsuite"></a>
+### Nested Schema for `policies.include.gsuite`
+
+Required:
+
+- `email` (String) The email of the Google Workspace group.
+- `identity_provider_id` (String) The ID of your Google Workspace identity provider.
+
+
+<a id="nestedatt--policies--include--ip"></a>
+### Nested Schema for `policies.include.ip`
+
+Required:
+
+- `ip` (String) An IPv4 or IPv6 CIDR block.
+
+
+<a id="nestedatt--policies--include--ip_list"></a>
+### Nested Schema for `policies.include.ip_list`
+
+Required:
+
+- `id` (String) The ID of a previously created IP list.
+
+
+<a id="nestedatt--policies--include--okta"></a>
+### Nested Schema for `policies.include.okta`
+
+Required:
+
+- `identity_provider_id` (String) The ID of your Okta identity provider.
+- `name` (String) The name of the Okta group.
+
+
+<a id="nestedatt--policies--include--saml"></a>
+### Nested Schema for `policies.include.saml`
+
+Required:
+
+- `attribute_name` (String) The name of the SAML attribute.
+- `attribute_value` (String) The SAML attribute value to look for.
+- `identity_provider_id` (String) The ID of your SAML identity provider.
+
+
+<a id="nestedatt--policies--include--service_token"></a>
+### Nested Schema for `policies.include.service_token`
+
+Required:
+
+- `token_id` (String) The ID of a Service Token.
+
+
+
+<a id="nestedatt--policies--require"></a>
+### Nested Schema for `policies.require`
+
+Optional:
+
+- `any_valid_service_token` (Attributes) An empty object which matches on all service tokens. (see [below for nested schema](#nestedatt--policies--require--any_valid_service_token))
+- `auth_context` (Attributes) (see [below for nested schema](#nestedatt--policies--require--auth_context))
+- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--policies--require--auth_method))
+- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--policies--require--azure_ad))
+- `certificate` (Attributes) (see [below for nested schema](#nestedatt--policies--require--certificate))
+- `common_name` (Attributes) (see [below for nested schema](#nestedatt--policies--require--common_name))
+- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--policies--require--device_posture))
+- `email` (Attributes) (see [below for nested schema](#nestedatt--policies--require--email))
+- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--policies--require--email_domain))
+- `email_list` (Attributes) (see [below for nested schema](#nestedatt--policies--require--email_list))
+- `everyone` (Attributes) An empty object which matches on all users. (see [below for nested schema](#nestedatt--policies--require--everyone))
+- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--policies--require--external_evaluation))
+- `geo` (Attributes) (see [below for nested schema](#nestedatt--policies--require--geo))
+- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--policies--require--github_organization))
+- `group` (Attributes) (see [below for nested schema](#nestedatt--policies--require--group))
+- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--policies--require--gsuite))
+- `ip` (Attributes) (see [below for nested schema](#nestedatt--policies--require--ip))
+- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--policies--require--ip_list))
+- `okta` (Attributes) (see [below for nested schema](#nestedatt--policies--require--okta))
+- `saml` (Attributes) (see [below for nested schema](#nestedatt--policies--require--saml))
+- `service_token` (Attributes) (see [below for nested schema](#nestedatt--policies--require--service_token))
+
+<a id="nestedatt--policies--require--any_valid_service_token"></a>
+### Nested Schema for `policies.require.any_valid_service_token`
+
+
+<a id="nestedatt--policies--require--auth_context"></a>
+### Nested Schema for `policies.require.auth_context`
+
+Required:
+
+- `ac_id` (String) The ACID of an Authentication context.
+- `id` (String) The ID of an Authentication context.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--policies--require--auth_method"></a>
+### Nested Schema for `policies.require.auth_method`
+
+Required:
+
+- `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.
+
+
+<a id="nestedatt--policies--require--azure_ad"></a>
+### Nested Schema for `policies.require.azure_ad`
+
+Required:
+
+- `id` (String) The ID of an Azure group.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--policies--require--certificate"></a>
+### Nested Schema for `policies.require.certificate`
+
+
+<a id="nestedatt--policies--require--common_name"></a>
+### Nested Schema for `policies.require.common_name`
+
+Required:
+
+- `common_name` (String) The common name to match.
+
+
+<a id="nestedatt--policies--require--device_posture"></a>
+### Nested Schema for `policies.require.device_posture`
+
+Required:
+
+- `integration_uid` (String) The ID of a device posture integration.
+
+
+<a id="nestedatt--policies--require--email"></a>
+### Nested Schema for `policies.require.email`
+
+Required:
+
+- `email` (String) The email of the user.
+
+
+<a id="nestedatt--policies--require--email_domain"></a>
+### Nested Schema for `policies.require.email_domain`
+
+Required:
+
+- `domain` (String) The email domain to match.
+
+
+<a id="nestedatt--policies--require--email_list"></a>
+### Nested Schema for `policies.require.email_list`
+
+Required:
+
+- `id` (String) The ID of a previously created email list.
+
+
+<a id="nestedatt--policies--require--everyone"></a>
+### Nested Schema for `policies.require.everyone`
+
+
+<a id="nestedatt--policies--require--external_evaluation"></a>
+### Nested Schema for `policies.require.external_evaluation`
+
+Required:
+
+- `evaluate_url` (String) The API endpoint containing your business logic.
+- `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
+
+
+<a id="nestedatt--policies--require--geo"></a>
+### Nested Schema for `policies.require.geo`
+
+Required:
+
+- `country_code` (String) The country code that should be matched.
+
+
+<a id="nestedatt--policies--require--github_organization"></a>
+### Nested Schema for `policies.require.github_organization`
+
+Required:
+
+- `identity_provider_id` (String) The ID of your Github identity provider.
+- `name` (String) The name of the organization.
+
+Optional:
+
+- `team` (String) The name of the team
+
+
+<a id="nestedatt--policies--require--group"></a>
+### Nested Schema for `policies.require.group`
+
+Required:
+
+- `id` (String) The ID of a previously created Access group.
+
+
+<a id="nestedatt--policies--require--gsuite"></a>
+### Nested Schema for `policies.require.gsuite`
+
+Required:
+
+- `email` (String) The email of the Google Workspace group.
+- `identity_provider_id` (String) The ID of your Google Workspace identity provider.
+
+
+<a id="nestedatt--policies--require--ip"></a>
+### Nested Schema for `policies.require.ip`
+
+Required:
+
+- `ip` (String) An IPv4 or IPv6 CIDR block.
+
+
+<a id="nestedatt--policies--require--ip_list"></a>
+### Nested Schema for `policies.require.ip_list`
+
+Required:
+
+- `id` (String) The ID of a previously created IP list.
+
+
+<a id="nestedatt--policies--require--okta"></a>
+### Nested Schema for `policies.require.okta`
+
+Required:
+
+- `identity_provider_id` (String) The ID of your Okta identity provider.
+- `name` (String) The name of the Okta group.
+
+
+<a id="nestedatt--policies--require--saml"></a>
+### Nested Schema for `policies.require.saml`
+
+Required:
+
+- `attribute_name` (String) The name of the SAML attribute.
+- `attribute_value` (String) The SAML attribute value to look for.
+- `identity_provider_id` (String) The ID of your SAML identity provider.
+
+
+<a id="nestedatt--policies--require--service_token"></a>
+### Nested Schema for `policies.require.service_token`
+
+Required:
+
+- `token_id` (String) The ID of a Service Token.
+
+
 
 
 <a id="nestedatt--saas_app"></a>
@@ -145,8 +755,8 @@ Optional:
 - `client_id` (String) The application client id
 - `client_secret` (String) The application client secret, only returned on POST request.
 - `consumer_service_url` (String) The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.
-- `custom_attributes` (Attributes) (see [below for nested schema](#nestedatt--saas_app--custom_attributes))
-- `custom_claims` (Attributes) (see [below for nested schema](#nestedatt--saas_app--custom_claims))
+- `custom_attributes` (Attributes List) (see [below for nested schema](#nestedatt--saas_app--custom_attributes))
+- `custom_claims` (Attributes List) (see [below for nested schema](#nestedatt--saas_app--custom_claims))
 - `default_relay_state` (String) The URL that the user will be redirected to after a successful login for IDP initiated logins.
 - `grant_types` (List of String) The OIDC flows supported by this application
 - `group_filter_regex` (String) A regex to filter Cloudflare groups returned in ID token and userinfo endpoint
@@ -272,6 +882,7 @@ Optional:
 - `enabled` (Boolean) Whether or not this mapping is enabled.
 - `filter` (String) A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.
 - `operations` (Attributes) Whether or not this mapping applies to creates, updates, or deletes. (see [below for nested schema](#nestedatt--scim_config--mappings--operations))
+- `strictness` (String) The level of adherence to outbound resource schemas when provisioning to this mapping. ‘Strict’ removes unknown values, while ‘passthrough’ passes unknown values to the target.
 - `transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.
 
 <a id="nestedatt--scim_config--mappings--operations"></a>
@@ -282,6 +893,18 @@ Optional:
 - `create` (Boolean) Whether or not this mapping applies to create (POST) operations.
 - `delete` (Boolean) Whether or not this mapping applies to DELETE operations.
 - `update` (Boolean) Whether or not this mapping applies to update (PATCH/PUT) operations.
+
+
+
+
+<a id="nestedatt--target_criteria"></a>
+### Nested Schema for `target_criteria`
+
+Required:
+
+- `port` (Number) The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.
+- `protocol` (String) The communication protocol your application secures.
+- `target_attributes` (Map of List of String) Contains a map of target attribute keys to target attribute values.
 
 ## Import
 

@@ -18,7 +18,7 @@ description: |-
 - `account_id` (String) Identifier
 - `route_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `route` (Attributes) (see [below for nested schema](#nestedatt--route))
 

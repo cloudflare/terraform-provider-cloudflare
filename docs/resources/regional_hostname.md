@@ -42,26 +42,6 @@ resource "cloudflare_regional_hostname" "example" {
 ### Read-Only
 
 - `created_on` (String) When the regional hostname was created
-- `errors` (Attributes List) (see [below for nested schema](#nestedatt--errors))
 - `id` (String) DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`
-- `messages` (Attributes List) (see [below for nested schema](#nestedatt--messages))
-- `success` (Boolean) Whether the API call was successful
-
-<a id="nestedatt--errors"></a>
-### Nested Schema for `errors`
-
-Read-Only:
-
-- `code` (Number)
-- `message` (String)
-
-
-<a id="nestedatt--messages"></a>
-### Nested Schema for `messages`
-
-Read-Only:
-
-- `code` (Number)
-- `message` (String)
 
 

@@ -71,10 +71,13 @@ resource "cloudflare_rate_limit" "example" {
 - `match` (Attributes) Determines which traffic the rate limit counts towards the threshold. (see [below for nested schema](#nestedatt--match))
 - `period` (Number) The time in seconds (an integer value) to count matching traffic. If the count exceeds the configured threshold within this period, Cloudflare will perform the configured action.
 - `threshold` (Number) The threshold that will trigger the configured mitigation action. Configure this value along with the `period` property to establish a threshold per period.
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
+- `bypass` (Attributes List) Criteria specifying when the current rate limit should be bypassed. You can specify that the rate limit should not apply to one or more URLs. (see [below for nested schema](#nestedatt--bypass))
+- `description` (String) An informative summary of the rate limit. This value is sanitized and any tags will be removed.
+- `disabled` (Boolean) When true, indicates that the rate limit is currently disabled.
 - `id` (String) The unique identifier of the rate limit.
 
 <a id="nestedatt--action"></a>
@@ -134,6 +137,16 @@ Optional:
 
 - `origin_traffic` (Boolean) When true, only the uncached traffic served from your origin servers will count towards rate limiting. In this case, any cached traffic served by Cloudflare will not count towards rate limiting. This field is optional.
 Notes: This field is deprecated. Instead, use response headers and set "origin_traffic" to "false" to avoid legacy behaviour interacting with the "response_headers" property.
+
+
+
+<a id="nestedatt--bypass"></a>
+### Nested Schema for `bypass`
+
+Read-Only:
+
+- `name` (String)
+- `value` (String) The URL to bypass.
 
 ## Import
 

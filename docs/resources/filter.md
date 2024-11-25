@@ -31,15 +31,16 @@ resource "cloudflare_filter" "wordpress" {
 ### Required
 
 - `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 ### Optional
 
-- `id` (String) The unique identifier of the filter.
+- `filter_id` (String) The unique identifier of the filter.
 
 ### Read-Only
 
 - `description` (String) An informative summary of the filter.
+- `id` (String) The unique identifier of the filter.
 - `paused` (Boolean) When true, indicates that the filter is currently paused.
 - `ref` (String) A short reference tag. Allows you to select related filters.
 

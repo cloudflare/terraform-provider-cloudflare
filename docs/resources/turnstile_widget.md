@@ -39,6 +39,7 @@ widget, and where it is used.
 expensive challenges in response to malicious bots (ENT only).
 - `clearance_level` (String) If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,
 this setting can determine the clearance level to be set
+- `ephemeral_id` (Boolean) Return the Ephemeral ID in /siteverify (ENT only).
 - `offlabel` (Boolean) Do not show any Cloudflare branding on the widget (ENT only).
 - `region` (String) Region where this widget can be used.
 

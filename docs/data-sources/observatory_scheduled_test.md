@@ -17,12 +17,9 @@ description: |-
 
 - `zone_id` (String) Identifier
 
-### Optional
-
-- `frequency` (String) The frequency of the test.
-
 ### Read-Only
 
+- `frequency` (String) The frequency of the test.
 - `region` (String) A test region.
 - `url` (String) A URL.
 

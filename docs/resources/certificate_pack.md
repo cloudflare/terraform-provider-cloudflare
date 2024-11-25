@@ -49,19 +49,21 @@ resource "cloudflare_certificate_pack" "example" {
 
 ### Required
 
-- `certificate_pack_id` (String) Identifier
-- `zone_id` (String) Identifier
-
-### Read-Only
-
 - `certificate_authority` (String) Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details.](https://developers.cloudflare.com/ssl/reference/certificate-authorities)
-- `cloudflare_branding` (Boolean) Whether or not to add Cloudflare Branding for the order.  This will add sni.cloudflaressl.com as the Common Name if set true.
 - `hosts` (List of String) Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.
-- `id` (String) Identifier
-- `status` (String) Status of certificate pack.
 - `type` (String) Type of certificate pack.
 - `validation_method` (String) Validation Method selected for the order.
 - `validity_days` (Number) Validity Days selected for the order.
+- `zone_id` (String) Identifier
+
+### Optional
+
+- `cloudflare_branding` (Boolean) Whether or not to add Cloudflare Branding for the order.  This will add sni.cloudflaressl.com as the Common Name if set true.
+
+### Read-Only
+
+- `id` (String) Identifier
+- `status` (String) Status of certificate pack.
 
 ## Import
 

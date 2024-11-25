@@ -107,6 +107,7 @@ Optional:
 - `extended_email_matching` (Attributes) Extended e-mail matching settings. (see [below for nested schema](#nestedatt--settings--extended_email_matching))
 - `fips` (Attributes) FIPS settings. (see [below for nested schema](#nestedatt--settings--fips))
 - `protocol_detection` (Attributes) Protocol Detection settings. (see [below for nested schema](#nestedatt--settings--protocol_detection))
+- `sandbox` (Attributes) Sandbox settings. (see [below for nested schema](#nestedatt--settings--sandbox))
 - `tls_decrypt` (Attributes) TLS interception settings. (see [below for nested schema](#nestedatt--settings--tls_decrypt))
 
 <a id="nestedatt--settings--activity_log"></a>
@@ -218,6 +219,15 @@ Optional:
 Optional:
 
 - `enabled` (Boolean) Enable detecting protocol on initial bytes of client traffic.
+
+
+<a id="nestedatt--settings--sandbox"></a>
+### Nested Schema for `settings.sandbox`
+
+Optional:
+
+- `enabled` (Boolean) Enable sandbox.
+- `fallback_action` (String) Action to take when the file cannot be scanned.
 
 
 <a id="nestedatt--settings--tls_decrypt"></a>

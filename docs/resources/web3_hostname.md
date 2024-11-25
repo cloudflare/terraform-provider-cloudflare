@@ -15,6 +15,7 @@ description: |-
 
 ### Required
 
+- `name` (String) The hostname that will point to the target gateway via CNAME.
 - `target` (String) Target gateway of the hostname.
 - `zone_id` (String) Identifier
 
@@ -28,7 +29,6 @@ description: |-
 - `created_on` (String)
 - `id` (String) Identifier
 - `modified_on` (String)
-- `name` (String) The hostname that will point to the target gateway via CNAME.
 - `status` (String) Status of the hostname's activation.
 
 

@@ -15,16 +15,28 @@ description: |-
 
 ### Optional
 
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+- `rate_limit_id` (String) The unique identifier of the rate limit.
+- `zone_id` (String) Identifier
+
+### Read-Only
+
 - `action` (Attributes) The action to perform when the threshold of matched traffic within the configured period is exceeded. (see [below for nested schema](#nestedatt--action))
 - `bypass` (Attributes List) Criteria specifying when the current rate limit should be bypassed. You can specify that the rate limit should not apply to one or more URLs. (see [below for nested schema](#nestedatt--bypass))
 - `description` (String) An informative summary of the rate limit. This value is sanitized and any tags will be removed.
 - `disabled` (Boolean) When true, indicates that the rate limit is currently disabled.
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `id` (String) The unique identifier of the rate limit.
 - `match` (Attributes) Determines which traffic the rate limit counts towards the threshold. (see [below for nested schema](#nestedatt--match))
 - `period` (Number) The time in seconds (an integer value) to count matching traffic. If the count exceeds the configured threshold within this period, Cloudflare will perform the configured action.
 - `threshold` (Number) The threshold that will trigger the configured mitigation action. Configure this value along with the `period` property to establish a threshold per period.
-- `zone_identifier` (String) Identifier
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Required:
+
+- `zone_id` (String) Identifier
+
 
 <a id="nestedatt--action"></a>
 ### Nested Schema for `action`
@@ -54,14 +66,6 @@ Read-Only:
 
 - `name` (String)
 - `value` (String) The URL to bypass.
-
-
-<a id="nestedatt--filter"></a>
-### Nested Schema for `filter`
-
-Required:
-
-- `zone_identifier` (String) Identifier
 
 
 <a id="nestedatt--match"></a>

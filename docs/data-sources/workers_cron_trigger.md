@@ -18,7 +18,7 @@ description: |-
 - `account_id` (String) Identifier
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 
-### Optional
+### Read-Only
 
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 

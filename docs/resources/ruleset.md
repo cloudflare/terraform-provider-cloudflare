@@ -448,8 +448,10 @@ Optional:
 - `action_parameters` (Attributes) The parameters configuring the rule's action. (see [below for nested schema](#nestedatt--rules--action_parameters))
 - `description` (String) An informative description of the rule.
 - `enabled` (Boolean) Whether the rule should be executed.
+- `exposed_credential_check` (Attributes) Configure checks for exposed credentials. (see [below for nested schema](#nestedatt--rules--exposed_credential_check))
 - `expression` (String) The expression defining which traffic will match the rule.
 - `logging` (Attributes) An object configuring the rule's logging behavior. (see [below for nested schema](#nestedatt--rules--logging))
+- `ratelimit` (Attributes) An object configuring the rule's ratelimit behavior. (see [below for nested schema](#nestedatt--rules--ratelimit))
 - `ref` (String) The reference of the rule (the rule ID by default).
 
 Read-Only:
@@ -856,12 +858,39 @@ Optional:
 
 
 
+<a id="nestedatt--rules--exposed_credential_check"></a>
+### Nested Schema for `rules.exposed_credential_check`
+
+Required:
+
+- `password_expression` (String) Expression that selects the password used in the credentials check.
+- `username_expression` (String) Expression that selects the user ID used in the credentials check.
+
+
 <a id="nestedatt--rules--logging"></a>
 ### Nested Schema for `rules.logging`
 
 Required:
 
 - `enabled` (Boolean) Whether to generate a log when the rule matches.
+
+
+<a id="nestedatt--rules--ratelimit"></a>
+### Nested Schema for `rules.ratelimit`
+
+Required:
+
+- `characteristics` (List of String) Characteristics of the request on which the ratelimiter counter will be incremented.
+- `period` (Number) Period in seconds over which the counter is being incremented.
+
+Optional:
+
+- `counting_expression` (String) Defines when the ratelimit counter should be incremented. It is optional and defaults to the same as the rule's expression.
+- `mitigation_timeout` (Number) Period of time in seconds after which the action will be disabled following its first execution.
+- `requests_per_period` (Number) The threshold of requests per period after which the action will be executed for the first time.
+- `requests_to_origin` (Boolean) Defines if ratelimit counting is only done when an origin is reached.
+- `score_per_period` (Number) The score threshold per period for which the action will be executed the first time.
+- `score_response_header_name` (String) The response header name provided by the origin which should contain the score to increment ratelimit counter on.
 
 ## Import
 

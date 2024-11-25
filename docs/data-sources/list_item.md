@@ -20,6 +20,17 @@ description: |-
 - `item_id` (String) The unique ID of the item in the List.
 - `list_id` (String) The unique ID of the list.
 
+### Read-Only
+
+- `include_subdomains` (Boolean)
+- `preserve_path_suffix` (Boolean)
+- `preserve_query_string` (Boolean)
+- `source_url` (String)
+- `status_code` (Number)
+- `subpath_matching` (Boolean)
+- `target_url` (String)
+- `url_hostname` (String)
+
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
 

@@ -46,8 +46,6 @@ resource "cloudflare_magic_wan_static_route" "example" {
 
 ### Read-Only
 
-- `deleted` (Boolean)
-- `deleted_route` (Attributes) (see [below for nested schema](#nestedatt--deleted_route))
 - `modified` (Boolean)
 - `modified_route` (Attributes) (see [below for nested schema](#nestedatt--modified_route))
 - `route` (Attributes) (see [below for nested schema](#nestedatt--route))
@@ -60,31 +58,6 @@ Optional:
 
 - `colo_names` (List of String) List of colo names for the ECMP scope.
 - `colo_regions` (List of String) List of colo regions for the ECMP scope.
-
-
-<a id="nestedatt--deleted_route"></a>
-### Nested Schema for `deleted_route`
-
-Read-Only:
-
-- `created_on` (String) When the route was created.
-- `description` (String) An optional human provided description of the static route.
-- `id` (String) Identifier
-- `modified_on` (String) When the route was last modified.
-- `nexthop` (String) The next-hop IP Address for the static route.
-- `prefix` (String) IP Prefix in Classless Inter-Domain Routing format.
-- `priority` (Number) Priority of the static route.
-- `scope` (Attributes) Used only for ECMP routes. (see [below for nested schema](#nestedatt--deleted_route--scope))
-- `weight` (Number) Optional weight of the ECMP scope - if provided.
-
-<a id="nestedatt--deleted_route--scope"></a>
-### Nested Schema for `deleted_route.scope`
-
-Read-Only:
-
-- `colo_names` (List of String) List of colo names for the ECMP scope.
-- `colo_regions` (List of String) List of colo regions for the ECMP scope.
-
 
 
 <a id="nestedatt--modified_route"></a>

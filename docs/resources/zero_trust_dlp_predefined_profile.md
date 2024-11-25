@@ -22,12 +22,19 @@ description: |-
 ### Optional
 
 - `allowed_match_count` (Number)
+- `confidence_threshold` (String)
 - `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
 - `ocr_enabled` (Boolean)
 
 ### Read-Only
 
+- `created_at` (String) When the profile was created
+- `description` (String) The description of the profile
 - `id` (String) The ID of this resource.
+- `name` (String) The name of the profile
+- `open_access` (Boolean) Whether this profile can be accessed by anyone
+- `type` (String)
+- `updated_at` (String) When the profile was lasted updated
 
 <a id="nestedatt--entries"></a>
 ### Nested Schema for `entries`

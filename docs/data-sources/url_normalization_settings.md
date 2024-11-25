@@ -17,7 +17,7 @@ description: |-
 
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `scope` (String) The scope of the URL normalization.
 - `type` (String) The type of URL normalization performed by Cloudflare.

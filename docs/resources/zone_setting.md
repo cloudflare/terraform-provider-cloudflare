@@ -15,13 +15,19 @@ description: |-
 
 ### Required
 
-- `id` (String) ID of the zone setting.
 - `setting_id` (String) Setting name
+- `value` (Dynamic) Current value of the zone setting.
 - `zone_id` (String) Identifier
 
 ### Optional
 
-- `enabled` (Boolean) ssl-recommender enrollment setting.
-- `value` (String) Current value of the zone setting.
+- `id` (String) ID of the zone setting.
+
+### Read-Only
+
+- `editable` (Boolean) Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).
+- `modified_on` (String) last time this setting was modified.
+- `time_remaining` (Number) Value of the zone setting.
+Notes: The interval (in seconds) from when development mode expires (positive integer) or last expired (negative integer) for the domain. If development mode has never been enabled, this value is false.
 
 

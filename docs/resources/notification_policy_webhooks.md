@@ -35,42 +35,10 @@ resource "cloudflare_notification_policy_webhooks" "example" {
 ### Read-Only
 
 - `created_at` (String) Timestamp of when the webhook destination was created.
-- `errors` (Attributes List) (see [below for nested schema](#nestedatt--errors))
 - `id` (String) UUID
 - `last_failure` (String) Timestamp of the last time an attempt to dispatch a notification to this webhook failed.
 - `last_success` (String) Timestamp of the last time Cloudflare was able to successfully dispatch a notification using this webhook.
-- `messages` (Attributes List) (see [below for nested schema](#nestedatt--messages))
-- `result_info` (Attributes) (see [below for nested schema](#nestedatt--result_info))
-- `success` (Boolean) Whether the API call was successful
 - `type` (String) Type of webhook endpoint.
-
-<a id="nestedatt--errors"></a>
-### Nested Schema for `errors`
-
-Read-Only:
-
-- `code` (Number)
-- `message` (String)
-
-
-<a id="nestedatt--messages"></a>
-### Nested Schema for `messages`
-
-Read-Only:
-
-- `code` (Number)
-- `message` (String)
-
-
-<a id="nestedatt--result_info"></a>
-### Nested Schema for `result_info`
-
-Read-Only:
-
-- `count` (Number) Total number of results for the requested service
-- `page` (Number) Current page within paginated list of results
-- `per_page` (Number) Number of results per page of results
-- `total_count` (Number) Total results available without any search parameters
 
 ## Import
 

@@ -252,7 +252,7 @@ Optional:
 
 - `ai_bindings` (Attributes Map) Constellation bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--ai_bindings))
 - `analytics_engine_datasets` (Attributes Map) Analytics Engine bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--analytics_engine_datasets))
-- `browsers` (Map of String) Browser bindings used for Pages Functions.
+- `browsers` (Attributes Map) Browser bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--browsers))
 - `compatibility_date` (String) Compatibility date used for Pages Functions.
 - `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
 - `d1_databases` (Attributes Map) D1 databases used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--d1_databases))
@@ -281,6 +281,10 @@ Optional:
 Optional:
 
 - `dataset` (String) Name of the dataset.
+
+
+<a id="nestedatt--deployment_configs--preview--browsers"></a>
+### Nested Schema for `deployment_configs.preview.browsers`
 
 
 <a id="nestedatt--deployment_configs--preview--d1_databases"></a>
@@ -386,7 +390,7 @@ Optional:
 
 - `ai_bindings` (Attributes Map) Constellation bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--ai_bindings))
 - `analytics_engine_datasets` (Attributes Map) Analytics Engine bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--analytics_engine_datasets))
-- `browsers` (Map of String) Browser bindings used for Pages Functions.
+- `browsers` (Attributes Map) Browser bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--browsers))
 - `compatibility_date` (String) Compatibility date used for Pages Functions.
 - `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
 - `d1_databases` (Attributes Map) D1 databases used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--d1_databases))
@@ -415,6 +419,10 @@ Optional:
 Optional:
 
 - `dataset` (String) Name of the dataset.
+
+
+<a id="nestedatt--deployment_configs--production--browsers"></a>
+### Nested Schema for `deployment_configs.production.browsers`
 
 
 <a id="nestedatt--deployment_configs--production--d1_databases"></a>

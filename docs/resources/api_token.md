@@ -163,7 +163,7 @@ Required:
 
 - `effect` (String) Allow or deny operations against the resources.
 - `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
-- `resources` (Attributes) A list of resource names that the policy applies to. (see [below for nested schema](#nestedatt--policies--resources))
+- `resources` (Map of String) A list of resource names that the policy applies to.
 
 Read-Only:
 
@@ -172,13 +172,16 @@ Read-Only:
 <a id="nestedatt--policies--permission_groups"></a>
 ### Nested Schema for `policies.permission_groups`
 
+Required:
+
+- `id` (String) Identifier of the group.
+
 Optional:
 
 - `meta` (Attributes) Attributes associated to the permission group. (see [below for nested schema](#nestedatt--policies--permission_groups--meta))
 
 Read-Only:
 
-- `id` (String) Identifier of the group.
 - `name` (String) Name of the group.
 
 <a id="nestedatt--policies--permission_groups--meta"></a>
@@ -189,15 +192,6 @@ Optional:
 - `key` (String)
 - `value` (String)
 
-
-
-<a id="nestedatt--policies--resources"></a>
-### Nested Schema for `policies.resources`
-
-Optional:
-
-- `resource` (String)
-- `scope` (String)
 
 
 

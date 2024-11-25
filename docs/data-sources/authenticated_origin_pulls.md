@@ -17,7 +17,7 @@ description: |-
 
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `cert_id` (String) Identifier
 - `cert_status` (String) Status of the certificate or the association.
@@ -27,14 +27,11 @@ description: |-
 - `created_at` (String) The time when the certificate was created.
 - `enabled` (Boolean) Indicates whether hostname-level authenticated origin pulls is enabled. A null value voids the association.
 - `expires_on` (String) The date when the certificate expires.
+- `hostname` (String) The hostname on the origin for which the client certificate uploaded will be used.
 - `issuer` (String) The certificate authority that issued the certificate.
 - `serial_number` (String) The serial number on the uploaded certificate.
 - `signature` (String) The type of hash used for the certificate.
 - `status` (String) Status of the certificate or the association.
 - `updated_at` (String) The time when the certificate was updated.
-
-### Read-Only
-
-- `hostname` (String) The hostname on the origin for which the client certificate uploaded will be used.
 
 

@@ -17,7 +17,7 @@ description: |-
 
 - `account_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `days_until_next_rotation` (Number) The number of days until the next key rotation.
 - `key_rotation_interval_days` (Number) The number of days between key rotations.

@@ -37,4 +37,33 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
+Read-Only:
+
+- `account_tag` (String) Cloudflare account ID
+- `connections` (Attributes List) The Cloudflare Tunnel connections between your origin and Cloudflare's edge. (see [below for nested schema](#nestedatt--result--connections))
+- `conns_active_at` (String) Timestamp of when the tunnel established at least one connection to Cloudflare's edge. If `null`, the tunnel is inactive.
+- `conns_inactive_at` (String) Timestamp of when the tunnel became inactive (no connections to Cloudflare's edge). If `null`, the tunnel is active.
+- `created_at` (String) Timestamp of when the resource was created.
+- `deleted_at` (String) Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.
+- `id` (String) UUID of the tunnel.
+- `metadata` (String) Metadata associated with the tunnel.
+- `name` (String) A user-friendly name for a tunnel.
+- `remote_config` (Boolean) If `true`, the tunnel can be configured remotely from the Zero Trust dashboard. If `false`, the tunnel must be configured locally on the origin machine.
+- `status` (String) The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).
+- `tun_type` (String) The type of tunnel.
+
+<a id="nestedatt--result--connections"></a>
+### Nested Schema for `result.connections`
+
+Read-Only:
+
+- `client_id` (String) UUID of the Cloudflare Tunnel connector.
+- `client_version` (String) The cloudflared version used to establish this connection.
+- `colo_name` (String) The Cloudflare data center used for this connection.
+- `id` (String) UUID of the Cloudflare Tunnel connection.
+- `is_pending_reconnect` (Boolean) Cloudflare continues to track connections for several minutes after they disconnect. This is an optimization to improve latency and reliability of reconnecting.  If `true`, the connection has disconnected but is still being tracked. If `false`, the connection is actively serving traffic.
+- `opened_at` (String) Timestamp of when the connection was established.
+- `origin_ip` (String) The public IP address of the host running cloudflared.
+- `uuid` (String) UUID of the Cloudflare Tunnel connection.
+
 
