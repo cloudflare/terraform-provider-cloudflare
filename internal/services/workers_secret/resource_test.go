@@ -6,10 +6,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
@@ -37,7 +37,7 @@ func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountID),
+					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountID, name),
 				),
 			},
 			// {
@@ -62,19 +62,18 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 		if rs.Type != "cloudflare_workers_secret" {
 			continue
 		}
+		client := acctest.SharedClient()
 
-		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-		}
-		params := cloudflare.ListWorkersSecretsParams{
-			ScriptName: rs.Primary.Attributes["script_name"],
-		}
-
-		secretResponse, err := client.ListWorkersSecrets(context.Background(), cloudflare.AccountIdentifier(accountId), params)
-
+		namespace := rs.Primary.Attributes["dispatch_namespace"]
+		scriptName := rs.Primary.Attributes["script_name"]
+		secretResponse, err := client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.List(
+			context.Background(),
+			namespace,
+			scriptName,
+			workers_for_platforms.DispatchNamespaceScriptSecretListParams{AccountID: cloudflare.F(accountId)},
+		)
 		if err == nil {
-			return fmt.Errorf("worker secret %q still exists against %q", secretResponse.Result[0].Name, params.ScriptName)
+			return fmt.Errorf("worker secret %q still exists against %q", secretResponse.Result[0].Name, scriptName)
 		}
 	}
 
@@ -85,18 +84,15 @@ func testAccCheckCloudflareWorkerSecretWithWorkerScript(scriptName string, name 
 	return acctest.LoadTestCase("workersecretwithworkerscript.tf", scriptName, name, secretText, accountId, scriptContentForSecret)
 }
 
-func testAccCheckCloudflareWorkerSecretExists(scriptName string, name string, accountId string) resource.TestCheckFunc {
+func testAccCheckCloudflareWorkerSecretExists(scriptName, name, accountId, namespace string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-		}
-		params := cloudflare.ListWorkersSecretsParams{
-			ScriptName: scriptName,
-		}
-
-		secretResponse, err := client.ListWorkersSecrets(context.Background(), cloudflare.AccountIdentifier(accountId), params)
-
+		client := acctest.SharedClient()
+		secretResponse, err := client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.List(
+			context.Background(),
+			namespace,
+			scriptName,
+			workers_for_platforms.DispatchNamespaceScriptSecretListParams{AccountID: cloudflare.F(accountId)},
+		)
 		if err != nil {
 			return err
 		}
