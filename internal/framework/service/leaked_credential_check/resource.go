@@ -135,8 +135,7 @@ func (r *LeakedCredentialCheckResource) Delete(ctx context.Context, req resource
 }
 
 func (r *LeakedCredentialCheckResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	// req.ID is the zoneID for which you want to read the state of the
+	// req.ID is the zoneID for which you want to import the state of the
 	// Leaked Credential Check feature
-	cloudflare.ZoneIdentifier("asd")
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("zone_id"), req.ID)...)
 }
