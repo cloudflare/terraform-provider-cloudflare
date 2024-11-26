@@ -15,7 +15,6 @@ type PageRuleResultEnvelope struct {
 type PageRuleModel struct {
 	ID         types.String             `tfsdk:"id" json:"id,computed"`
 	ZoneID     types.String             `tfsdk:"zone_id" path:"zone_id,required"`
-	Actions    *[]*PageRuleActionsModel `tfsdk:"actions" json:"actions,required"`
 	Targets    *[]*PageRuleTargetsModel `tfsdk:"targets" json:"targets,required"`
 	Priority   types.Int64              `tfsdk:"priority" json:"priority,computed_optional"`
 	Status     types.String             `tfsdk:"status" json:"status,computed_optional"`
@@ -29,11 +28,6 @@ func (m PageRuleModel) MarshalJSON() (data []byte, err error) {
 
 func (m PageRuleModel) MarshalJSONForUpdate(state PageRuleModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
-}
-
-type PageRuleActionsModel struct {
-	ID    types.String `tfsdk:"id" json:"id,optional"`
-	Value types.String `tfsdk:"value" json:"value,optional"`
 }
 
 type PageRuleTargetsModel struct {
