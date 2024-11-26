@@ -206,6 +206,7 @@ Required:
 Required:
 
 - `usernames` (List of String) Contains the Unix usernames that may be used when connecting over SSH.
+- `allow_email_alias` (Boolean) Allows connecting to Unix username that matches the authenticating email prefix.
 
 
 

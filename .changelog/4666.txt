@@ -1,0 +1,3 @@
+```release-note:enhancement
+Adds support for new Access for infra allow_email_alias connection rule flag
+```

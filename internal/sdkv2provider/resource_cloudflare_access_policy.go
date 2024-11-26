@@ -66,6 +66,7 @@ func apiAccessPolicyApprovalGroupToSchema(approvalGroup cloudflare.AccessApprova
 
 func schemaAccessPolicyConnectionRulesToAPI(connectionRules map[string]interface{}) (*cloudflare.AccessInfrastructureConnectionRules, error) {
 	usernames := []string{}
+	var allowEmailAlias *bool
 	if sshVal, ok := connectionRules["ssh"].([]interface{}); ok && len(sshVal) > 0 {
 		if sshMap, ok := sshVal[0].(map[string]interface{}); ok {
 			str_return := []string{}
@@ -75,12 +76,18 @@ func schemaAccessPolicyConnectionRulesToAPI(connectionRules map[string]interface
 				}
 			}
 			usernames = str_return
+
+			if allowAlias, ok := sshMap["allow_email_alias"].(bool); ok {
+				allowEmailAlias = &allowAlias
+			}
+
 		}
 	}
 
 	return &cloudflare.AccessInfrastructureConnectionRules{
 		SSH: &cloudflare.AccessInfrastructureConnectionRulesSSH{
-			Usernames: usernames,
+			Usernames:       usernames,
+			AllowEmailAlias: allowEmailAlias,
 		},
 	}, nil
 }
@@ -91,14 +98,15 @@ func apiAccessPolicyConnectionRulesToSchema(connectionRules *cloudflare.AccessIn
 	}
 
 	var connectionRulesSchema []interface{}
-	var usernameList []map[string]interface{}
+	var sshArgList []map[string]interface{}
 
-	usernameMap := map[string]interface{}{
-		"usernames": connectionRules.SSH.Usernames,
+	sshArgMap := map[string]interface{}{
+		"usernames":         connectionRules.SSH.Usernames,
+		"allow_email_alias": connectionRules.SSH.AllowEmailAlias,
 	}
-	usernameList = append(usernameList, usernameMap)
+	sshArgList = append(sshArgList, sshArgMap)
 	connectionRulesSchema = append(connectionRulesSchema, map[string]interface{}{
-		"ssh": usernameList,
+		"ssh": sshArgList,
 	})
 
 	return connectionRulesSchema
