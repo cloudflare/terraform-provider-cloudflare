@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -19,13 +17,6 @@ var _ datasource.DataSourceWithConfigValidators = (*EmailSecurityTrustedDomainsD
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Account Identifier",
-				Optional:    true,
-			},
-			"pattern_id": schema.Int64Attribute{
-				Optional: true,
-			},
 			"comments": schema.StringAttribute{
 				Computed: true,
 			},
@@ -34,16 +25,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"id": schema.Int64Attribute{
-				Computed: true,
+				Description: "The unique identifier for the trusted domain.",
+				Computed:    true,
 			},
 			"is_recent": schema.BoolAttribute{
-				Computed: true,
+				Description: "Select to prevent recently registered domains from triggering a\nSuspicious or Malicious disposition.",
+				Computed:    true,
 			},
 			"is_regex": schema.BoolAttribute{
 				Computed: true,
 			},
 			"is_similarity": schema.BoolAttribute{
-				Computed: true,
+				Description: "Select for partner or other approved domains that have similar\nspelling to your connected domains. Prevents listed domains from\ntriggering a Spoof disposition.",
+				Computed:    true,
 			},
 			"last_modified": schema.StringAttribute{
 				Computed:   true,
@@ -94,9 +88,5 @@ func (d *EmailSecurityTrustedDomainsDataSource) Schema(ctx context.Context, req 
 }
 
 func (d *EmailSecurityTrustedDomainsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("pattern_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("pattern_id")),
-	}
+	return []datasource.ConfigValidator{}
 }
