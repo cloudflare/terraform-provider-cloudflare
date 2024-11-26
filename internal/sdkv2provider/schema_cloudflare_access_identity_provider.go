@@ -2,9 +2,10 @@ package sdkv2provider
 
 import (
 	"fmt"
+	"slices"
+
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"slices"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -219,6 +220,7 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 					"identity_update_behavior": {
 						Type:     schema.TypeString,
 						Optional: true,
+						Computed: true,
 						ValidateDiagFunc: func(val interface{}, path cty.Path) diag.Diagnostics {
 							s, ok := val.(string)
 
