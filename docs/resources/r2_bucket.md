@@ -29,7 +29,7 @@ resource "cloudflare_r2_bucket" "example" {
 
 ### Optional
 
-- `location` (String) The location hint of the R2 bucket. Available values: `WNAM`, `ENAM`, `WEUR`, `EEUR`, `APAC`
+- `location` (String) The location hint of the R2 bucket. Available values: `WNAM`, `ENAM`, `WEUR`, `EEUR`, `APAC`, `OC`
 
 ### Read-Only
 
