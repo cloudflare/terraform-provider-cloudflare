@@ -8,6 +8,9 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
@@ -102,6 +105,8 @@ func (r *ZeroTrustAccessServiceTokenResource) Create(ctx context.Context, req re
 
 func (r *ZeroTrustAccessServiceTokenResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *ZeroTrustAccessServiceTokenModel
+	secret := types.StringNull()
+	req.State.GetAttribute(ctx, path.Root("client_secret"), &secret)
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -150,13 +155,18 @@ func (r *ZeroTrustAccessServiceTokenResource) Update(ctx context.Context, req re
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+
 	data = &env.Result
+	data.ClientSecret = secret
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustAccessServiceTokenResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data *ZeroTrustAccessServiceTokenModel
+
+	secret := types.StringNull()
+	req.State.GetAttribute(ctx, path.Root("client_secret"), &secret)
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -191,7 +201,9 @@ func (r *ZeroTrustAccessServiceTokenResource) Read(ctx context.Context, req reso
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+
 	data = &env.Result
+	data.ClientSecret = secret
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
