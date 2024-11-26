@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -21,12 +22,35 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
+				Description:   "The unique identifier for the trusted domain.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown(), int64planmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Account Identifier",
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"comments": schema.StringAttribute{
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"is_recent": schema.BoolAttribute{
+				Description:   "Select to prevent recently registered domains from triggering a\nSuspicious or Malicious disposition.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+			},
+			"is_regex": schema.BoolAttribute{
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+			},
+			"is_similarity": schema.BoolAttribute{
+				Description:   "Select for partner or other approved domains that have similar\nspelling to your connected domains. Prevents listed domains from\ntriggering a Spoof disposition.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+			},
+			"pattern": schema.StringAttribute{
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"body": schema.ListNestedAttribute{
@@ -36,13 +60,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"is_recent": schema.BoolAttribute{
-							Required: true,
+							Description: "Select to prevent recently registered domains from triggering a\nSuspicious or Malicious disposition.",
+							Required:    true,
 						},
 						"is_regex": schema.BoolAttribute{
 							Required: true,
 						},
 						"is_similarity": schema.BoolAttribute{
-							Required: true,
+							Description: "Select for partner or other approved domains that have similar\nspelling to your connected domains. Prevents listed domains from\ntriggering a Spoof disposition.",
+							Required:    true,
 						},
 						"pattern": schema.StringAttribute{
 							Required: true,
@@ -53,21 +79,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
-			},
-			"comments": schema.StringAttribute{
-				Optional: true,
-			},
-			"is_recent": schema.BoolAttribute{
-				Optional: true,
-			},
-			"is_regex": schema.BoolAttribute{
-				Optional: true,
-			},
-			"is_similarity": schema.BoolAttribute{
-				Optional: true,
-			},
-			"pattern": schema.StringAttribute{
-				Optional: true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
