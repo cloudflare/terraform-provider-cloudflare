@@ -25,7 +25,6 @@ type PageRuleDataSourceModel struct {
 	ModifiedOn timetypes.RFC3339                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Priority   types.Int64                                                  `tfsdk:"priority" json:"priority,computed"`
 	Status     types.String                                                 `tfsdk:"status" json:"status,computed"`
-	Actions    customfield.NestedObjectList[PageRuleActionsDataSourceModel] `tfsdk:"actions" json:"actions,computed"`
 	Targets    customfield.NestedObjectList[PageRuleTargetsDataSourceModel] `tfsdk:"targets" json:"targets,computed"`
 }
 
@@ -35,11 +34,6 @@ func (m *PageRuleDataSourceModel) toReadParams(_ context.Context) (params pageru
 	}
 
 	return
-}
-
-type PageRuleActionsDataSourceModel struct {
-	ID    types.String `tfsdk:"id" json:"id,computed"`
-	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type PageRuleTargetsDataSourceModel struct {
