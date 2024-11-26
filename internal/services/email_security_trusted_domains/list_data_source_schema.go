@@ -61,20 +61,23 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.Int64Attribute{
-							Computed: true,
+							Description: "The unique identifier for the trusted domain.",
+							Computed:    true,
 						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"is_recent": schema.BoolAttribute{
-							Computed: true,
+							Description: "Select to prevent recently registered domains from triggering a\nSuspicious or Malicious disposition.",
+							Computed:    true,
 						},
 						"is_regex": schema.BoolAttribute{
 							Computed: true,
 						},
 						"is_similarity": schema.BoolAttribute{
-							Computed: true,
+							Description: "Select for partner or other approved domains that have similar\nspelling to your connected domains. Prevents listed domains from\ntriggering a Spoof disposition.",
+							Computed:    true,
 						},
 						"last_modified": schema.StringAttribute{
 							Computed:   true,
