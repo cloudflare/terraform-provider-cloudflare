@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -85,9 +84,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"cloudflare_branding": schema.BoolAttribute{
-				Description:   "Whether or not to add Cloudflare Branding for the order.  This will add sni.cloudflaressl.com as the Common Name if set true.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true.",
+				Optional:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of certificate pack.",
