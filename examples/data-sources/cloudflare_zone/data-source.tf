@@ -1,5 +1,7 @@
 data "cloudflare_zone" "example" {
-  name = "example.com"
+  filter {
+    name = "example.com"
+  }
 }
 
 resource "cloudflare_record" "example" {
