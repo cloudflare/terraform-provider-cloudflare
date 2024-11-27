@@ -38,7 +38,7 @@ func (m CustomHostnameModel) MarshalJSONForUpdate(state CustomHostnameModel) (da
 
 type CustomHostnameSSLModel struct {
 	BundleMethod         types.String                    `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
-	CertificateAuthority types.String                    `tfsdk:"certificate_authority" json:"certificate_authority,optional"`
+  CertificateAuthority types.String                    `tfsdk:"certificate_authority" json:"certificate_authority,computed_optional"`
 	CloudflareBranding   types.Bool                      `tfsdk:"cloudflare_branding" json:"cloudflare_branding,optional"`
 	CustomCertificate    types.String                    `tfsdk:"custom_certificate" json:"custom_certificate,optional"`
 	CustomKey            types.String                    `tfsdk:"custom_key" json:"custom_key,optional"`
