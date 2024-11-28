@@ -53,7 +53,7 @@ func testSweepCloudflareLCC(r string) error {
 	return nil
 }
 
-func TestAccCloudflareLeakedCredentialCheck_CRUD(t *testing.T) {
+func TestAccCloudflareLeakedCredentialCheck_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_leaked_credential_check.%s", rnd)
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
