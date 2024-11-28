@@ -1,0 +1,1 @@
+terraform import cloudflare_leaked_credential_check_rules.example <zone_id>
