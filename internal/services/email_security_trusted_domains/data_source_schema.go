@@ -6,9 +6,11 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -17,6 +19,14 @@ var _ datasource.DataSourceWithConfigValidators = (*EmailSecurityTrustedDomainsD
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"account_id": schema.StringAttribute{
+				Description: "Account Identifier",
+				Optional:    true,
+			},
+			"trusted_domain_id": schema.Int64Attribute{
+				Description: "The unique identifier for the trusted domain.",
+				Optional:    true,
+			},
 			"comments": schema.StringAttribute{
 				Computed: true,
 			},
@@ -88,5 +98,9 @@ func (d *EmailSecurityTrustedDomainsDataSource) Schema(ctx context.Context, req 
 }
 
 func (d *EmailSecurityTrustedDomainsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("trusted_domain_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("trusted_domain_id")),
+	}
 }

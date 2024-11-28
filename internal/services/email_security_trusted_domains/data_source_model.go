@@ -13,20 +13,34 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+type EmailSecurityTrustedDomainsResultDataSourceEnvelope struct {
+	Result EmailSecurityTrustedDomainsDataSourceModel `json:"result,computed"`
+}
+
 type EmailSecurityTrustedDomainsResultListDataSourceEnvelope struct {
 	Result customfield.NestedObjectList[EmailSecurityTrustedDomainsDataSourceModel] `json:"result,computed"`
 }
 
 type EmailSecurityTrustedDomainsDataSourceModel struct {
-	Comments     types.String                                         `tfsdk:"comments" json:"comments,computed"`
-	CreatedAt    timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	ID           types.Int64                                          `tfsdk:"id" json:"id,computed"`
-	IsRecent     types.Bool                                           `tfsdk:"is_recent" json:"is_recent,computed"`
-	IsRegex      types.Bool                                           `tfsdk:"is_regex" json:"is_regex,computed"`
-	IsSimilarity types.Bool                                           `tfsdk:"is_similarity" json:"is_similarity,computed"`
-	LastModified timetypes.RFC3339                                    `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
-	Pattern      types.String                                         `tfsdk:"pattern" json:"pattern,computed"`
-	Filter       *EmailSecurityTrustedDomainsFindOneByDataSourceModel `tfsdk:"filter"`
+	AccountID       types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
+	TrustedDomainID types.Int64                                          `tfsdk:"trusted_domain_id" path:"trusted_domain_id,optional"`
+	Comments        types.String                                         `tfsdk:"comments" json:"comments,computed"`
+	CreatedAt       timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	ID              types.Int64                                          `tfsdk:"id" json:"id,computed"`
+	IsRecent        types.Bool                                           `tfsdk:"is_recent" json:"is_recent,computed"`
+	IsRegex         types.Bool                                           `tfsdk:"is_regex" json:"is_regex,computed"`
+	IsSimilarity    types.Bool                                           `tfsdk:"is_similarity" json:"is_similarity,computed"`
+	LastModified    timetypes.RFC3339                                    `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
+	Pattern         types.String                                         `tfsdk:"pattern" json:"pattern,computed"`
+	Filter          *EmailSecurityTrustedDomainsFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *EmailSecurityTrustedDomainsDataSourceModel) toReadParams(_ context.Context) (params email_security.SettingTrustedDomainGetParams, diags diag.Diagnostics) {
+	params = email_security.SettingTrustedDomainGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 func (m *EmailSecurityTrustedDomainsDataSourceModel) toListParams(_ context.Context) (params email_security.SettingTrustedDomainListParams, diags diag.Diagnostics) {
