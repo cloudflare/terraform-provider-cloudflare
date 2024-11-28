@@ -28,6 +28,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/hyperdrive_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/infrastructure_access_target_deprecated"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/leaked_credential_check"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/leaked_credential_check_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
@@ -388,7 +389,11 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_risk_score_integration.NewResource,
 		infrastructure_access_target_deprecated.NewResource,
 		zero_trust_infrastructure_access_target.NewResource,
+<<<<<<< HEAD
 		leaked_credential_check.NewResource,
+=======
+		leaked_credential_check_rules.NewResource,
+>>>>>>> 9769fdf5b (Add new resource to provider)
 	}
 }
 
