@@ -37,7 +37,7 @@ func testSweepCloudflareLCC(r string) error {
 
 	status, err := client.LeakedCredentialCheckGetStatus(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.LeakedCredentialCheckGetStatusParams{})
 	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to GET Leaked Credentials status: %s", err))
+		tflog.Error(ctx, fmt.Sprintf("Failed to GET Leaked Credential status: %s", err))
 	}
 
 	if *status.Enabled == false {
@@ -45,6 +45,10 @@ func testSweepCloudflareLCC(r string) error {
 		return nil
 	}
 	_, err = client.LeakedCredentialCheckSetStatus(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.LeakCredentialCheckSetStatusParams{Enabled: cfv1.BoolPtr(false)})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to disable Leaked Credential Check: %s", err))
+		return err
+	}
 
 	return nil
 }
