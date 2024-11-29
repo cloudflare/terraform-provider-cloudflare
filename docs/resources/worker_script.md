@@ -19,9 +19,10 @@ resource "cloudflare_workers_kv_namespace" "my_namespace" {
 
 # Sets the script with the name "script_1"
 resource "cloudflare_worker_script" "my_script" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "script_1"
-  content    = file("script.js")
+  account_id     = "f037e56e89293a057740de681ac9abbe"
+  name           = "script_1"
+  content        = file("script.js")
+  tail_consumers = [{ "service" = "consumer" }]
 
   kv_namespace_binding {
     name         = "MY_EXAMPLE_KV_NAMESPACE"
@@ -87,6 +88,7 @@ resource "cloudflare_worker_script" "my_script" {
 - `secret_text_binding` (Block Set) (see [below for nested schema](#nestedblock--secret_text_binding))
 - `service_binding` (Block Set) (see [below for nested schema](#nestedblock--service_binding))
 - `tags` (Set of String)
+- `tail_consumers` (Block Set) (see [below for nested schema](#nestedblock--tail_consumers))
 - `webassembly_binding` (Block Set) (see [below for nested schema](#nestedblock--webassembly_binding))
 
 ### Read-Only
@@ -184,6 +186,19 @@ Required:
 Optional:
 
 - `environment` (String) The name of the Worker environment to bind to.
+
+
+<a id="nestedblock--tail_consumer"></a>
+### Nested Schema for `tail_consumer`
+
+Required:
+
+- `service` (String) The name of the Worker to bind to.
+
+Optional:
+
+- `environment` (String) The name of the environment the Worker is bound to.
+- `namespace` (String) The name of the namespace the Worker is bound to.
 
 
 <a id="nestedblock--webassembly_binding"></a>

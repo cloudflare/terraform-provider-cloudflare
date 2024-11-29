@@ -1,5 +1,7 @@
 ## 4.48.0 (Unreleased)
 
+* resource/cloudflare_workers_script: Adds support for tail_consumers
+
 ## 4.47.0 (November 27th, 2024)
 
 ENHANCEMENTS:

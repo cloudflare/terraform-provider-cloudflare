@@ -175,6 +175,26 @@ var placementResource = &schema.Resource{
 	},
 }
 
+var tailConsumerResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"service": {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The name of the Worker to bind to.",
+		},
+		"environment": {
+			Type:        schema.TypeString,
+			Required:    false,
+			Description: "The name of the environment the Worker is bound to.",
+		},
+		"namespace": {
+			Type:        schema.TypeString,
+			Required:    false,
+			Description: "The name of the namespace the Worker is bound to.",
+		},
+	},
+}
+
 func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
@@ -232,6 +252,11 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			Optional: true,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Computed: true,
+		},
+		"tail_consumers": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem:     tailConsumerResource,
 		},
 		// TODO: dispatch_namespace binding
 		"plain_text_binding": {
