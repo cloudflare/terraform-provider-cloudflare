@@ -37,85 +37,41 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[ImagesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"errors": schema.ListNestedAttribute{
+						"images": schema.ListNestedAttribute{
 							Computed:   true,
-							CustomType: customfield.NewNestedObjectListType[ImagesErrorsDataSourceModel](ctx),
+							CustomType: customfield.NewNestedObjectListType[ImagesImagesDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
-									"code": schema.Int64Attribute{
-										Computed: true,
-										Validators: []validator.Int64{
-											int64validator.AtLeast(1000),
-										},
+									"id": schema.StringAttribute{
+										Description: "Image unique identifier.",
+										Computed:    true,
 									},
-									"message": schema.StringAttribute{
-										Computed: true,
+									"filename": schema.StringAttribute{
+										Description: "Image file name.",
+										Computed:    true,
 									},
-								},
-							},
-						},
-						"messages": schema.ListNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectListType[ImagesMessagesDataSourceModel](ctx),
-							NestedObject: schema.NestedAttributeObject{
-								Attributes: map[string]schema.Attribute{
-									"code": schema.Int64Attribute{
-										Computed: true,
-										Validators: []validator.Int64{
-											int64validator.AtLeast(1000),
-										},
+									"meta": schema.StringAttribute{
+										Description: "User modifiable key-value store. Can be used for keeping references to another system of record for managing images. Metadata must not exceed 1024 bytes.",
+										Computed:    true,
+										CustomType:  jsontypes.NormalizedType{},
 									},
-									"message": schema.StringAttribute{
-										Computed: true,
+									"require_signed_urls": schema.BoolAttribute{
+										Description: "Indicates whether the image can be a accessed only using it's UID. If set to true, a signed token needs to be generated with a signing key to view the image.",
+										Computed:    true,
 									},
-								},
-							},
-						},
-						"result": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[ImagesResultDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"images": schema.ListNestedAttribute{
-									Computed:   true,
-									CustomType: customfield.NewNestedObjectListType[ImagesResultImagesDataSourceModel](ctx),
-									NestedObject: schema.NestedAttributeObject{
-										Attributes: map[string]schema.Attribute{
-											"id": schema.StringAttribute{
-												Description: "Image unique identifier.",
-												Computed:    true,
-											},
-											"filename": schema.StringAttribute{
-												Description: "Image file name.",
-												Computed:    true,
-											},
-											"meta": schema.StringAttribute{
-												Description: "User modifiable key-value store. Can be used for keeping references to another system of record for managing images. Metadata must not exceed 1024 bytes.",
-												Computed:    true,
-												CustomType:  jsontypes.NormalizedType{},
-											},
-											"require_signed_urls": schema.BoolAttribute{
-												Description: "Indicates whether the image can be a accessed only using it's UID. If set to true, a signed token needs to be generated with a signing key to view the image.",
-												Computed:    true,
-											},
-											"uploaded": schema.StringAttribute{
-												Description: "When the media item was uploaded.",
-												Computed:    true,
-												CustomType:  timetypes.RFC3339Type{},
-											},
-											"variants": schema.ListAttribute{
-												Description: "Object specifying available variants for an image.",
-												Computed:    true,
-												CustomType:  customfield.NewListType[types.String](ctx),
-												ElementType: types.StringType,
-											},
-										},
+									"uploaded": schema.StringAttribute{
+										Description: "When the media item was uploaded.",
+										Computed:    true,
+										CustomType:  timetypes.RFC3339Type{},
+									},
+									"variants": schema.ListAttribute{
+										Description: "Object specifying available variants for an image.",
+										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
+										ElementType: types.StringType,
 									},
 								},
 							},
-						},
-						"success": schema.BoolAttribute{
-							Description: "Whether the API call was successful",
-							Computed:    true,
 						},
 					},
 				},
