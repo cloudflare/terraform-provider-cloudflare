@@ -56,6 +56,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image_variant"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/keyless_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer"
@@ -440,6 +441,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_message.NewResource,
 		cloudforce_one_request_priority.NewResource,
 		cloudforce_one_request_asset.NewResource,
+		leaked_credential_check.NewResource,
 	}
 }
 
@@ -716,6 +718,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		permission_group.NewPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
 		resource_group.NewResourceGroupsDataSource,
+		leaked_credential_check.NewLeakedCredentialCheckDataSource,
 	}
 }
 
