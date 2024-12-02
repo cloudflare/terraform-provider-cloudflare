@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -203,7 +204,7 @@ func (r *EmailRoutingAddressResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *EmailRoutingAddressResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *EmailRoutingAddressModel
+	var data *EmailRoutingAddressModel = new(EmailRoutingAddressModel)
 
 	path_account_id := ""
 	path_destination_address_identifier := ""
@@ -217,6 +218,9 @@ func (r *EmailRoutingAddressResource) ImportState(ctx context.Context, req resou
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.ID = types.StringValue(path_destination_address_identifier)
 
 	res := new(http.Response)
 	env := EmailRoutingAddressResultEnvelope{*data}
@@ -234,7 +238,7 @@ func (r *EmailRoutingAddressResource) ImportState(ctx context.Context, req resou
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

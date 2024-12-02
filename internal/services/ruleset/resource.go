@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -228,7 +229,7 @@ func (r *RulesetResource) Delete(ctx context.Context, req resource.DeleteRequest
 }
 
 func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *RulesetModel
+	var data *RulesetModel = new(RulesetModel)
 	params := rulesets.RulesetGetParams{}
 
 	path_accounts_or_zones, path_account_id_or_zone_id := "", ""
@@ -244,14 +245,18 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 	switch path_accounts_or_zones {
 	case "accounts":
 		params.AccountID = cloudflare.F(path_account_id_or_zone_id)
+		data.AccountID = types.StringValue(path_account_id_or_zone_id)
 	case "zones":
 		params.ZoneID = cloudflare.F(path_account_id_or_zone_id)
+		data.ZoneID = types.StringValue(path_account_id_or_zone_id)
 	default:
 		resp.Diagnostics.AddError("invalid discriminator segment - <{accounts|zones}/{account_id|zone_id}>", "expected discriminator to be one of {accounts|zones}")
 	}
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ID = types.StringValue(path_ruleset_id)
 
 	res := new(http.Response)
 	env := RulesetResultEnvelope{*data}
@@ -267,7 +272,7 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

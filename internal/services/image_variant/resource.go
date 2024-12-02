@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -204,7 +205,7 @@ func (r *ImageVariantResource) Delete(ctx context.Context, req resource.DeleteRe
 }
 
 func (r *ImageVariantResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ImageVariantModel
+	var data *ImageVariantModel = new(ImageVariantModel)
 
 	path_account_id := ""
 	path_variant_id := ""
@@ -218,6 +219,9 @@ func (r *ImageVariantResource) ImportState(ctx context.Context, req resource.Imp
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.ID = types.StringValue(path_variant_id)
 
 	res := new(http.Response)
 	env := ImageVariantResultEnvelope{*data}
@@ -235,7 +239,7 @@ func (r *ImageVariantResource) ImportState(ctx context.Context, req resource.Imp
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -204,7 +205,7 @@ func (r *KeylessCertificateResource) Delete(ctx context.Context, req resource.De
 }
 
 func (r *KeylessCertificateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *KeylessCertificateModel
+	var data *KeylessCertificateModel = new(KeylessCertificateModel)
 
 	path_zone_id := ""
 	path_keyless_certificate_id := ""
@@ -218,6 +219,9 @@ func (r *KeylessCertificateResource) ImportState(ctx context.Context, req resour
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.ID = types.StringValue(path_keyless_certificate_id)
 
 	res := new(http.Response)
 	env := KeylessCertificateResultEnvelope{*data}
@@ -235,7 +239,7 @@ func (r *KeylessCertificateResource) ImportState(ctx context.Context, req resour
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

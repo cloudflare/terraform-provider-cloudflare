@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -208,7 +209,7 @@ func (r *TurnstileWidgetResource) Delete(ctx context.Context, req resource.Delet
 }
 
 func (r *TurnstileWidgetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *TurnstileWidgetModel
+	var data *TurnstileWidgetModel = new(TurnstileWidgetModel)
 
 	path_account_id := ""
 	path_sitekey := ""
@@ -222,6 +223,9 @@ func (r *TurnstileWidgetResource) ImportState(ctx context.Context, req resource.
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.Sitekey = types.StringValue(path_sitekey)
 
 	res := new(http.Response)
 	env := TurnstileWidgetResultEnvelope{*data}
@@ -239,7 +243,7 @@ func (r *TurnstileWidgetResource) ImportState(ctx context.Context, req resource.
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -178,7 +179,7 @@ func (r *URLNormalizationSettingsResource) Delete(ctx context.Context, req resou
 }
 
 func (r *URLNormalizationSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *URLNormalizationSettingsModel
+	var data *URLNormalizationSettingsModel = new(URLNormalizationSettingsModel)
 
 	path := ""
 	diags := importpath.ParseImportID(
@@ -190,6 +191,8 @@ func (r *URLNormalizationSettingsResource) ImportState(ctx context.Context, req 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ZoneID = types.StringValue(path)
 
 	res := new(http.Response)
 	_, err := r.client.URLNormalization.Get(
@@ -205,7 +208,7 @@ func (r *URLNormalizationSettingsResource) ImportState(ctx context.Context, req 
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.Unmarshal(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
