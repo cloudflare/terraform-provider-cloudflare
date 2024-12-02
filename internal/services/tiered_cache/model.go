@@ -25,5 +25,5 @@ func (m TieredCacheModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m TieredCacheModel) MarshalJSONForUpdate(state TieredCacheModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

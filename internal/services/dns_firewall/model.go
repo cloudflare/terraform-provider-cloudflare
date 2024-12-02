@@ -35,7 +35,7 @@ func (m DNSFirewallModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m DNSFirewallModel) MarshalJSONForUpdate(state DNSFirewallModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type DNSFirewallAttackMitigationModel struct {

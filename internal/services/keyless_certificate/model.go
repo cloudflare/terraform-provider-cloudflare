@@ -34,7 +34,7 @@ func (m KeylessCertificateModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m KeylessCertificateModel) MarshalJSONForUpdate(state KeylessCertificateModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type KeylessCertificateTunnelModel struct {

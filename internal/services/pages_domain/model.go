@@ -31,7 +31,7 @@ func (m PagesDomainModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m PagesDomainModel) MarshalJSONForUpdate(state PagesDomainModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type PagesDomainValidationDataModel struct {

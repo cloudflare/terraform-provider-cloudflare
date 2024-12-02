@@ -47,7 +47,7 @@ func (m ZeroTrustDeviceCustomProfileModel) MarshalJSON() (data []byte, err error
 }
 
 func (m ZeroTrustDeviceCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustDeviceCustomProfileModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type ZeroTrustDeviceCustomProfileServiceModeV2Model struct {

@@ -20,13 +20,8 @@ type SetType[T attr.Value] struct {
 	basetypes.SetType
 }
 
-func newSetType[T attr.Value](ctx context.Context) (SetType[T], diag.Diagnostics) {
-	return SetType[T]{SetType: basetypes.SetType{ElemType: elemType[T](ctx)}}, nil
-}
-
 func NewSetType[T attr.Value](ctx context.Context) SetType[T] {
-	t, _ := newSetType[T](ctx)
-	return t
+	return SetType[T]{SetType: basetypes.SetType{ElemType: elemType[T](ctx)}}
 }
 
 func (t SetType[T]) Equal(o attr.Type) bool {
@@ -87,7 +82,7 @@ func (t SetType[T]) ValueFromTerraform(ctx context.Context, in tftypes.Value) (a
 }
 
 func (t SetType[T]) ValueType(ctx context.Context) attr.Value {
-	return Set[T]{}
+	return UnknownSet[T](ctx)
 }
 
 func (t SetType[T]) NullValue(ctx context.Context) (attr.Value, diag.Diagnostics) {
@@ -102,6 +97,14 @@ type Set[T attr.Value] struct {
 	//lint:ignore U1000 the placeholder is for easy reflection-based-access
 	placeholder T
 	basetypes.SetValue
+}
+
+func (v Set[T]) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+	tv := v.SetValue
+	if tv.ElementType(ctx) == nil {
+		tv = NullSet[T](ctx).SetValue
+	}
+	return tv.ToTerraformValue(ctx)
 }
 
 func (v Set[T]) NullValue(ctx context.Context) ListLike {

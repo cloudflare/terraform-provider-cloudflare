@@ -31,7 +31,7 @@ func (m AccessRuleModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m AccessRuleModel) MarshalJSONForUpdate(state AccessRuleModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type AccessRuleConfigurationModel struct {

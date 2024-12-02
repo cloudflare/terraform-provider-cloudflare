@@ -95,7 +95,7 @@ func (t MapType[T]) ValueFromTerraform(ctx context.Context, in tftypes.Value) (a
 }
 
 func (t MapType[T]) ValueType(ctx context.Context) attr.Value {
-	return Map[T]{}
+	return UnknownMap[T](ctx)
 }
 
 func (t MapType[T]) NullValue(ctx context.Context) (attr.Value, diag.Diagnostics) {
@@ -110,6 +110,14 @@ type Map[T attr.Value] struct {
 	//lint:ignore U1000 the placeholder is for easy reflection-based-access
 	placeholder T
 	basetypes.MapValue
+}
+
+func (v Map[T]) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+	tv := v.MapValue
+	if tv.ElementType(ctx) == nil {
+		tv = NullMap[T](ctx).MapValue
+	}
+	return tv.ToTerraformValue(ctx)
 }
 
 func (v Map[T]) NullValue(ctx context.Context) MapLike {
@@ -183,7 +191,7 @@ func NewMap[T attr.Value](ctx context.Context, values any) (Map[T], diag.Diagnos
 	return Map[T]{MapValue: setValue}, nil
 }
 
-func NewMapMust[T attr.Value](ctx context.Context, values map[string]attr.Value) Map[T] {
+func NewMapMust[T attr.Value](ctx context.Context, values map[string]T) Map[T] {
 	o, diags := NewMap[T](ctx, values)
 	if diags.HasError() {
 		panic(fmt.Errorf("unexpected error creating a customfield.Map: %v", diags))

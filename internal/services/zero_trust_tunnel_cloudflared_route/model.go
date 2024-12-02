@@ -28,5 +28,5 @@ func (m ZeroTrustTunnelCloudflaredRouteModel) MarshalJSON() (data []byte, err er
 }
 
 func (m ZeroTrustTunnelCloudflaredRouteModel) MarshalJSONForUpdate(state ZeroTrustTunnelCloudflaredRouteModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

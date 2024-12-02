@@ -24,5 +24,5 @@ func (m RegionalTieredCacheModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m RegionalTieredCacheModel) MarshalJSONForUpdate(state RegionalTieredCacheModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

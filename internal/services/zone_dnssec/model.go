@@ -35,5 +35,5 @@ func (m ZoneDNSSECModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m ZoneDNSSECModel) MarshalJSONForUpdate(state ZoneDNSSECModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

@@ -332,7 +332,7 @@ Content-Disposition: form-data; name="r"
 			J: types.SetValueMust(basetypes.Float64Type{}, []attr.Value{basetypes.NewFloat64Value(23.345), basetypes.NewFloat64Value(15)}),
 			K: types.DynamicValue(types.ObjectValueMust(map[string]attr.Type{"dynamic_hello": basetypes.StringType{}}, map[string]attr.Value{"dynamic_hello": basetypes.NewStringValue("dynamic_world")})),
 			L: customfield.NewListMust[types.String](context.TODO(), []attr.Value{basetypes.NewStringValue("a"), basetypes.NewStringValue("b")}),
-			M: customfield.NewMapMust[types.String](context.TODO(), map[string]attr.Value{"a": basetypes.NewStringValue("3"), "b": basetypes.NewStringValue("8932")}),
+			M: customfield.NewMapMust[types.String](context.TODO(), map[string]types.String{"a": basetypes.NewStringValue("3"), "b": basetypes.NewStringValue("8932")}),
 			N: customfield.NewSetMust[types.String](context.TODO(), []attr.Value{basetypes.NewStringValue("23.345"), basetypes.NewStringValue("15")}),
 			O: customfield.NewObjectListMust(context.TODO(), []NestedTerraformType{
 				{

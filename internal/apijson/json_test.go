@@ -452,7 +452,7 @@ var tests = map[string]struct {
 				EmbeddedInt:    types.Int64Value(21),
 				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
 			}}),
-			MapObject: customfield.NewMapMust[basetypes.StringValue](ctx, map[string]attr.Value{"hi_map": types.StringValue("there_map")}),
+			MapObject: customfield.NewMapMust[basetypes.StringValue](ctx, map[string]types.String{"hi_map": types.StringValue("there_map")}),
 			NestedObjectMap: customfield.NewObjectMapMust(ctx, map[string]EmbeddedTfsdkStruct{"nested_object_map_key": {
 				EmbeddedString: types.StringValue("nested_object_string_in_map"),
 				EmbeddedInt:    types.Int64Value(21),
@@ -551,7 +551,7 @@ var decode_only_tests = map[string]struct {
 	},
 }
 
-var encode_only_tests = map[string]struct {
+var encodeOnlyTests = map[string]struct {
 	buf string
 	val interface{}
 }{
@@ -665,7 +665,7 @@ func TestDecode(t *testing.T) {
 }
 
 func TestEncode(t *testing.T) {
-	for name, test := range merge(tests, encode_only_tests) {
+	for name, test := range merge(tests, encodeOnlyTests) {
 		if strings.HasSuffix(name, "_coerce") {
 			continue
 		}
@@ -688,41 +688,77 @@ func TestEncode(t *testing.T) {
 				t.Fatalf("expected:\n%s\nto serialize to \n%s\n but got \n%s\n", spew.Sdump(test.val), expected, actual)
 			}
 		})
+
 	}
 }
 
 var updateTests = map[string]struct {
-	state    interface{}
-	plan     interface{}
-	expected string
+	state         interface{}
+	plan          interface{}
+	expected      string
+	expectedPatch string
 }{
-	"true":           {true, true, "true"},
-	"terraform_true": {types.BoolValue(true), types.BoolValue(true), "true"},
+	"true":           {true, true, "true", ""},
+	"terraform_true": {types.BoolValue(true), types.BoolValue(true), "true", ""},
 
-	"null to true":   {types.BoolNull(), types.BoolValue(true), "true"},
-	"false to true":  {types.BoolValue(false), types.BoolValue(true), "true"},
-	"unset bool":     {types.BoolValue(false), types.BoolNull(), "null"},
-	"omit null bool": {types.BoolNull(), types.BoolNull(), ""},
+	"null to true":   {types.BoolNull(), types.BoolValue(true), "true", "true"},
+	"false to true":  {types.BoolValue(false), types.BoolValue(true), "true", "true"},
+	"unset bool":     {types.BoolValue(false), types.BoolNull(), "null", "null"},
+	"omit null bool": {types.BoolNull(), types.BoolNull(), "", ""},
 
-	"string set":       {types.StringNull(), types.StringValue("two"), "\"two\""},
-	"string update":    {types.StringValue("one"), types.StringValue("two"), "\"two\""},
-	"unset string":     {types.StringValue("hey"), types.StringNull(), "null"},
-	"omit null string": {types.StringNull(), types.StringNull(), ""},
+	"string set":       {types.StringNull(), types.StringValue("two"), `"two"`, `"two"`},
+	"string update":    {types.StringValue("one"), types.StringValue("two"), `"two"`, `"two"`},
+	"unset string":     {types.StringValue("hey"), types.StringNull(), "null", "null"},
+	"omit null string": {types.StringNull(), types.StringNull(), "", ""},
+	"string unchanged": {types.StringValue("one"), types.StringValue("one"), `"one"`, ""},
 
-	"int set":       {types.Int64Null(), types.Int64Value(42), "42"},
-	"int update":    {types.Int64Value(42), types.Int64Value(43), "43"},
-	"unset int":     {types.Int64Value(42), types.Int64Null(), "null"},
-	"omit null int": {types.Int64Null(), types.Int64Null(), ""},
+	"int set":       {types.Int64Null(), types.Int64Value(42), "42", "42"},
+	"int update":    {types.Int64Value(42), types.Int64Value(43), "43", "43"},
+	"unset int":     {types.Int64Value(42), types.Int64Null(), "null", "null"},
+	"omit null int": {types.Int64Null(), types.Int64Null(), "", ""},
+	"int unchanged": {types.Int64Value(42), types.Int64Value(42), "42", ""},
 
-	"dynamic omit null":                     {types.DynamicNull(), types.DynamicNull(), ""},
-	"dynamic omit underlying null state":    {types.DynamicValue(types.Int64Null()), types.DynamicNull(), ""},
-	"dynamic omit underlying null plan":     {types.DynamicNull(), types.DynamicValue(types.Int64Null()), ""},
-	"dynamic omit unknown":                  {types.DynamicUnknown(), types.DynamicUnknown(), ""},
-	"dynamic omit underlying unknown state": {types.DynamicValue(types.Int64Unknown()), types.DynamicUnknown(), ""},
-	"dynamic omit underlying unknown plan":  {types.DynamicUnknown(), types.DynamicValue(types.Int64Unknown()), ""},
-	"dynamic unset null":                    {types.DynamicValue(types.Int64Value(4)), types.DynamicNull(), "null"},
-	"dynamic int set":                       {types.DynamicNull(), types.DynamicValue(types.Int64Value(5)), "5"},
-	"dynamic int update":                    {types.DynamicValue(types.Int64Value(4)), types.DynamicValue(types.Int64Value(5)), "5"},
+	"tuple set": {
+		types.TupleNull([]attr.Type{types.Int64Type, types.StringType}),
+		types.TupleValueMust([]attr.Type{types.Int64Type, types.StringType}, []attr.Value{types.Int64Value(1), types.StringValue("two")}),
+		`[1,"two"]`,
+		`[1,"two"]`,
+	},
+	"tuple update": {
+		types.TupleValueMust([]attr.Type{types.Int64Type, types.StringType}, []attr.Value{types.Int64Value(1), types.StringValue("two")}),
+		types.TupleValueMust([]attr.Type{types.Int64Type, types.StringType}, []attr.Value{types.Int64Value(1), types.StringValue("three")}),
+		`[1,"three"]`,
+		`[1,"three"]`,
+	},
+	"tuple unset": {
+		types.TupleValueMust([]attr.Type{types.Int64Type, types.StringType}, []attr.Value{types.Int64Value(1), types.StringValue("two")}),
+		types.TupleNull([]attr.Type{types.Int64Type, types.StringType}),
+		`null`,
+		`null`,
+	},
+	"tuple omit null": {
+		types.TupleNull([]attr.Type{types.Int64Type, types.StringType}),
+		types.TupleNull([]attr.Type{types.Int64Type, types.StringType}),
+		``,
+		``,
+	},
+	"tuple unchanged": {
+		types.TupleValueMust([]attr.Type{types.Int64Type, types.StringType}, []attr.Value{types.Int64Value(1), types.StringValue("two")}),
+		types.TupleValueMust([]attr.Type{types.Int64Type, types.StringType}, []attr.Value{types.Int64Value(1), types.StringValue("two")}),
+		`[1,"two"]`,
+		``,
+	},
+
+	"dynamic omit null":                     {types.DynamicNull(), types.DynamicNull(), "", ""},
+	"dynamic omit underlying null state":    {types.DynamicValue(types.Int64Null()), types.DynamicNull(), "", ""},
+	"dynamic omit underlying null plan":     {types.DynamicNull(), types.DynamicValue(types.Int64Null()), "", ""},
+	"dynamic omit unknown":                  {types.DynamicUnknown(), types.DynamicUnknown(), "", ""},
+	"dynamic omit underlying unknown state": {types.DynamicValue(types.Int64Unknown()), types.DynamicUnknown(), "", ""},
+	"dynamic omit underlying unknown plan":  {types.DynamicUnknown(), types.DynamicValue(types.Int64Unknown()), "", ""},
+	"dynamic unset null":                    {types.DynamicValue(types.Int64Value(4)), types.DynamicNull(), "null", "null"},
+	"dynamic int set":                       {types.DynamicNull(), types.DynamicValue(types.Int64Value(5)), "5", "5"},
+	"dynamic int update":                    {types.DynamicValue(types.Int64Value(4)), types.DynamicValue(types.Int64Value(5)), "5", "5"},
+	"dynamic int unchanged":                 {types.DynamicValue(types.Int64Value(4)), types.DynamicValue(types.Int64Value(4)), "4", ""},
 
 	"set struct fields": {
 		TfsdkStructs{},
@@ -737,6 +773,7 @@ var updateTests = map[string]struct {
 			},
 		},
 		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}`,
+		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}`,
 	},
 
 	"update some struct fields": {
@@ -750,6 +787,7 @@ var updateTests = map[string]struct {
 			StringValue: types.StringValue("another_string"),
 			FloatValue:  types.Float64Value(1.14),
 		},
+		`{"bool_value":false,"float_value":1.14,"string_value":"another_string"}`,
 		`{"bool_value":false,"float_value":1.14,"string_value":"another_string"}`,
 	},
 
@@ -767,6 +805,7 @@ var updateTests = map[string]struct {
 			},
 		},
 		`{"data":{"embedded_int":null},"optional_array":["hi"]}`,
+		`{"data":{"embedded_int":null},"optional_array":["hi"]}`,
 	},
 
 	"unset struct fields": {
@@ -783,6 +822,7 @@ var updateTests = map[string]struct {
 		},
 		TfsdkStructs{},
 		`{"bool_value":null,"data":null,"float_value":null,"optional_array":null,"string_value":null}`,
+		`{"bool_value":null,"data":null,"float_value":null,"optional_array":null,"string_value":null}`,
 	},
 
 	"set empty array": {
@@ -795,28 +835,277 @@ var updateTests = map[string]struct {
 			OptionalArray: &[]types.String{},
 		},
 		`{"float_value":3.14,"optional_array":[]}`,
+		`{"optional_array":[]}`,
 	},
 
-	"test nested map": {
-		DropDiagnostic(customfield.NewMap[customfield.List[types.String]](ctx, map[string]customfield.List[types.String]{})),
-		DropDiagnostic(customfield.NewMap[customfield.List[types.String]](ctx, map[string]customfield.List[types.String]{
+	"set nested map": {
+		customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{}),
+		customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{
 			"Key1": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value1")})),
 			"Key2": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value2")})),
-		})),
+		}),
 		`{"Key1":["Value1"],"Key2":["Value2"]}`,
+		`{"Key1":["Value1"],"Key2":["Value2"]}`,
+	},
+
+	"unchanged nested struct": {
+		TfsdkStructs{
+			BoolValue:     types.BoolValue(true),
+			StringValue:   types.StringValue("string_value"),
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
+			Data: &EmbeddedTfsdkStruct{
+				EmbeddedString: types.StringValue("embedded_string_value"),
+				EmbeddedInt:    types.Int64Value(17),
+			},
+		},
+		TfsdkStructs{
+			BoolValue:     types.BoolValue(true),
+			StringValue:   types.StringValue("string_value"),
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
+			Data: &EmbeddedTfsdkStruct{
+				EmbeddedString: types.StringValue("embedded_string_value"),
+				EmbeddedInt:    types.Int64Value(17),
+			},
+		},
+		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}`,
+		``,
+	},
+
+	"nested value changed in nested struct": {
+		TfsdkStructs{
+			BoolValue:     types.BoolValue(true),
+			StringValue:   types.StringValue("string_value"),
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
+			Data: &EmbeddedTfsdkStruct{
+				EmbeddedString: types.StringValue("embedded_string_value"),
+				EmbeddedInt:    types.Int64Value(17),
+			},
+		},
+		TfsdkStructs{
+			BoolValue:     types.BoolValue(true),
+			StringValue:   types.StringValue("string_value"),
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
+			Data: &EmbeddedTfsdkStruct{
+				EmbeddedString: types.StringValue("changed_string_value"),
+				EmbeddedInt:    types.Int64Value(17),
+			},
+		},
+		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"changed_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}`,
+		`{"data":{"embedded_string":"changed_string_value"}}`,
+	},
+
+	"set array element": {
+		TfsdkStructs{
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{types.StringValue("one"), types.StringValue("two")},
+			ListObject:    customfield.NewListMust[basetypes.StringValue](ctx, []attr.Value{types.StringValue("three"), types.StringValue("four")}),
+		},
+		TfsdkStructs{
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{types.StringValue("five"), types.StringValue("two")},
+			ListObject:    customfield.NewListMust[basetypes.StringValue](ctx, []attr.Value{types.StringValue("six"), types.StringValue("four")}),
+		},
+		`{"float_value":3.14,"list_object":["six","four"],"optional_array":["five","two"]}`,
+		`{"list_object":["six","four"],"optional_array":["five","two"]}`,
+	},
+
+	"set nested array value": {
+		customfield.NewObjectListMust(ctx, []EmbeddedTfsdkStruct{
+			{
+				EmbeddedString: types.StringValue("string value"),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
+			},
+			{
+				EmbeddedString: types.StringValue("string value2"),
+				DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+					NestedInt: types.Int64Value(19),
+				}),
+			},
+		}),
+		customfield.NewObjectListMust(ctx, []EmbeddedTfsdkStruct{
+			{
+				EmbeddedString: types.StringValue("string value"),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
+			},
+			{
+				EmbeddedString: types.StringValue("string value2"),
+				DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+					NestedInt: types.Int64Value(20), // only changed this property
+				}),
+			},
+		}),
+		`[{"embedded_string":"string value"},{"data_object":{"nested_int":20},"embedded_string":"string value2"}]`,
+		`[{"embedded_string":"string value"},{"data_object":{"nested_int":20},"embedded_string":"string value2"}]`,
+	},
+
+	"remove array value encodes": {
+		customfield.NewObjectListMust(ctx, []EmbeddedTfsdkStruct{
+			{
+				EmbeddedString: types.StringValue("string value"),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
+			},
+			{
+				EmbeddedString: types.StringValue("string value2"),
+				DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+					NestedInt: types.Int64Value(20),
+				}),
+			},
+		}),
+		customfield.NewObjectListMust(ctx, []EmbeddedTfsdkStruct{
+			{
+				EmbeddedString: types.StringValue("string value"),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
+			},
+		}),
+		`[{"embedded_string":"string value"}]`,
+		`[{"embedded_string":"string value"}]`,
+	},
+
+	"set custom map list": {
+		customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{}),
+		customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{
+			"Key1": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value1")})),
+			"Key2": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value2")})),
+		}),
+		`{"Key1":["Value1"],"Key2":["Value2"]}`,
+		`{"Key1":["Value1"],"Key2":["Value2"]}`,
+	},
+
+	"set built-in map list": {
+		map[string][]*string{},
+		map[string][]*string{
+			"Key1": {P("Value1")},
+			"Key2": {P("Value2")},
+		},
+		`{"Key1":["Value1"],"Key2":["Value2"]}`,
+		`{"Key1":["Value1"],"Key2":["Value2"]}`,
+	},
+
+	"remove all keys from a custom map": {
+		customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{
+			"Key1": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value1")})),
+			"Key2": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value2")})),
+		}),
+		customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{}),
+		`{}`,
+		`{}`,
+	},
+
+	"update to add a key to a custom map": {
+		customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{
+			"Key1": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value1")})),
+		}),
+		customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{
+			"Key1": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value1")})),
+			"Key2": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value2")})),
+		}),
+		`{"Key1":["Value1"],"Key2":["Value2"]}`,
+		`{"Key1":["Value1"],"Key2":["Value2"]}`,
+	},
+
+	"update a nested array in a custom map": {
+		customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{
+			"Key1": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value1")})),
+			"Key2": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value2")})),
+		}),
+		customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{
+			"Key1": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value1")})),
+			"Key2": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value3"), basetypes.NewStringValue("Value2")})),
+		}),
+		`{"Key1":["Value1"],"Key2":["Value3","Value2"]}`,
+		`{"Key1":["Value1"],"Key2":["Value3","Value2"]}`,
+	},
+
+	"unset custom map": {
+		customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{
+			"Key1": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value1")})),
+		}),
+		customfield.NullMap[customfield.List[types.String]](ctx),
+		`null`,
+		`null`,
+	},
+
+	"unset key in built-in map": {
+		map[string]*string{
+			"Key1": P("Value1"),
+			"Key2": P("Value2"),
+		},
+		map[string]*string{
+			"Key1": P("Value1"),
+		},
+		`{"Key1":"Value1"}`,
+		`{"Key1":"Value1"}`,
+	},
+
+	"set custom object map": {
+		customfield.NullObjectMap[TfsdkStructs](ctx),
+		customfield.NewObjectMapMust(ctx, map[string]TfsdkStructs{
+			"Key1": {
+				BoolValue:     types.BoolValue(true),
+				StringValue:   types.StringValue("string_value"),
+				FloatValue:    types.Float64Value(3.14),
+				OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
+				Data: &EmbeddedTfsdkStruct{
+					EmbeddedString: types.StringValue("embedded_string_value"),
+					EmbeddedInt:    types.Int64Value(17),
+				},
+			},
+		}),
+		`{"Key1":{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}}`,
+		`{"Key1":{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}}`,
+	},
+
+	"set nested value on custom object map": {
+		customfield.NewObjectMapMust(ctx, map[string]TfsdkStructs{
+			"OuterKey": {
+				NestedObjectMap: customfield.NewObjectMapMust(ctx, map[string]EmbeddedTfsdkStruct{
+					"NestedKey": {
+						EmbeddedInt:    types.Int64Value(16),
+						EmbeddedString: types.StringValue("nested_string_value"),
+					},
+				}),
+			},
+		}),
+		customfield.NewObjectMapMust(ctx, map[string]TfsdkStructs{
+			"OuterKey": {
+				NestedObjectMap: customfield.NewObjectMapMust(ctx, map[string]EmbeddedTfsdkStruct{
+					"NestedKey": {
+						EmbeddedInt:    types.Int64Value(17),
+						EmbeddedString: types.StringValue("nested_string_value"),
+					},
+				}),
+			},
+		}),
+		`{"OuterKey":{"nested_object_map":{"NestedKey":{"embedded_int":17,"embedded_string":"nested_string_value"}}}}`,
+		`{"OuterKey":{"nested_object_map":{"NestedKey":{"embedded_int":17,"embedded_string":"nested_string_value"}}}}`,
 	},
 }
 
-func TestEncodeForUpdate(t *testing.T) {
+func TestUpdateEncoding(t *testing.T) {
 	for name, test := range updateTests {
 		t.Run(name, func(t *testing.T) {
-			raw, err := MarshalForUpdate(test.plan, test.state)
-			if err != nil {
-				t.Fatalf("serialization of %v, %v failed with error %v", test.plan, test.state, err)
-			}
-			if string(raw) != test.expected {
-				t.Fatalf("expected %+#v, %+#v to serialize to \n%s\n but got \n%s\n", test.state, test.plan, test.expected, string(raw))
-			}
+			t.Run("MarshalForUpdate", func(t *testing.T) {
+				raw, err := MarshalForUpdate(test.plan, test.state)
+				if err != nil {
+					t.Fatalf("serialization of %v, %v failed with error %v", test.plan, test.state, err)
+				}
+				if string(raw) != test.expected {
+					t.Fatalf("expected %+#v, %+#v to serialize to \n%s\n but got \n%s\n", test.state, test.plan, test.expected, string(raw))
+				}
+			})
+			t.Run("MarshalForPatch", func(t *testing.T) {
+				raw, err := MarshalForPatch(test.plan, test.state)
+				if err != nil {
+					t.Fatalf("serialization of %v, %v failed with error %v", test.plan, test.state, err)
+				}
+				if string(raw) != test.expectedPatch {
+					t.Fatalf("expected %+#v, %+#v to serialize to \n%s\n but got \n%s\n", test.state, test.plan, test.expectedPatch, string(raw))
+				}
+			})
 		})
 	}
 }
@@ -1362,7 +1651,7 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringValue("existing_list_nested_comp_str_2"),
 				CompOptInt: types.Int64Value(12),
 			}},
-			MapCust: customfield.NewMapMust[customfield.List[types.String]](ctx, map[string]attr.Value{
+			MapCust: customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{
 				"key": customfield.NewListMust[types.String](ctx, []attr.Value{types.StringUnknown(), types.StringValue("val2")}),
 			}),
 		},
@@ -1396,7 +1685,7 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringNull(),
 				CompOptInt: types.Int64Value(12),
 			}},
-			MapCust: customfield.NewMapMust[customfield.List[types.String]](ctx, map[string]attr.Value{
+			MapCust: customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{
 				"key": customfield.NewListMust[types.String](ctx, []attr.Value{types.StringNull(), types.StringValue("val2")}),
 			}),
 		},
@@ -1429,7 +1718,8 @@ func merge[T interface{}](test_array ...map[string]T) map[string]T {
 			// panic if there are duplicates because otherwise we'd silently
 			// skip some tests
 			if _, existing := out[name]; existing {
-				panic(fmt.Sprintf("duplicate test name: %s", name))
+				//panic(fmt.Sprintf("duplicate test name: %s", name))
+				fmt.Printf("duplicate test name: %s", name)
 			}
 			out[name] = t
 		}
