@@ -38,7 +38,7 @@ func (m CustomSSLModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m CustomSSLModel) MarshalJSONForUpdate(state CustomSSLModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type CustomSSLGeoRestrictionsModel struct {

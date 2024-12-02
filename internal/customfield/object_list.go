@@ -3,6 +3,7 @@ package customfield
 import (
 	"context"
 	"fmt"
+	"reflect"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -22,7 +23,10 @@ type NestedObjectListType[T any] struct {
 }
 
 func NewNestedObjectListType[T any](ctx context.Context) NestedObjectListType[T] {
-	elemType, _ := attrType[T](ctx)
+	elemType, err := attrType[T](ctx)
+	if err.HasError() {
+		panic(fmt.Errorf("unexpected error creating NestedObjectListType: %v", err))
+	}
 	t := NestedObjectListType[T]{ListType: basetypes.ListType{ElemType: elemType}}
 	return t
 }
@@ -113,6 +117,14 @@ type NestedObjectList[T any] struct {
 	//lint:ignore U1000 the placeholder is for easy reflection-based-access
 	placeholder T
 	basetypes.ListValue
+}
+
+func (v NestedObjectList[T]) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+	tv := v.ListValue
+	if tv.ElementType(ctx) == nil {
+		tv = NullObjectList[T](ctx).ListValue
+	}
+	return tv.ToTerraformValue(ctx)
 }
 
 func (v NestedObjectList[T]) NullValue(ctx context.Context) NestedObjectListLike {
@@ -228,9 +240,44 @@ func NewObjectListMust[T any](ctx context.Context, values []T) NestedObjectList[
 	return o
 }
 
+func NewObjectListFromValue[T any](ctx context.Context, value reflect.Value) (NestedObjectList[T], diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	elemType, d := attrTypeGeneric(ctx, reflect.Zero(value.Type().Elem()))
+	diags.Append(d...)
+	if diags.HasError() {
+		return UnknownObjectList[T](ctx), diags
+	}
+	listValue, d := basetypes.NewListValueFrom(ctx, elemType, value.Interface())
+	diags.Append(d...)
+	if diags.HasError() {
+		return UnknownObjectList[T](ctx), diags
+	}
+
+	return NestedObjectList[T]{ListValue: listValue}, nil
+}
+
+func NewObjectListFromValueMust[T any](ctx context.Context, value reflect.Value) NestedObjectList[T] {
+	o, diags := NewObjectListFromValue[T](ctx, value)
+	if diags.HasError() {
+		panic(fmt.Errorf("unexpected error creating NestedObjectList: %v", diags))
+	}
+	return o
+}
+
 func attrType[T any](ctx context.Context) (types.ObjectType, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	attrTypes, d := StructToAttributes[T](ctx)
+	diags.Append(d...)
+	if diags.HasError() {
+		return types.ObjectType{}, diags
+	}
+	return types.ObjectType{AttrTypes: attrTypes}, diags
+}
+
+func attrTypeGeneric(ctx context.Context, value reflect.Value) (types.ObjectType, diag.Diagnostics) {
+	var diags diag.Diagnostics
+	attrTypes, d := StructFromAttributesGeneric(ctx, value)
 	diags.Append(d...)
 	if diags.HasError() {
 		return types.ObjectType{}, diags

@@ -27,5 +27,5 @@ func (m ZeroTrustGatewayProxyEndpointModel) MarshalJSON() (data []byte, err erro
 }
 
 func (m ZeroTrustGatewayProxyEndpointModel) MarshalJSONForUpdate(state ZeroTrustGatewayProxyEndpointModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

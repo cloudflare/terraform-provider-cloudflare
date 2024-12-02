@@ -25,7 +25,7 @@ func (m ImageVariantModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m ImageVariantModel) MarshalJSONForUpdate(state ImageVariantModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type ImageVariantOptionsModel struct {

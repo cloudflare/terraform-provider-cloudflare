@@ -28,5 +28,5 @@ func (m ZoneSettingModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m ZoneSettingModel) MarshalJSONForUpdate(state ZoneSettingModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

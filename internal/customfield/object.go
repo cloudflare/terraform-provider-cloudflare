@@ -36,7 +36,10 @@ func newNestedObjectType[T any](ctx context.Context) (NestedObjectType[T], diag.
 }
 
 func NewNestedObjectType[T any](ctx context.Context) NestedObjectType[T] {
-	t, _ := newNestedObjectType[T](ctx)
+	t, err := newNestedObjectType[T](ctx)
+	if err.HasError() {
+		panic(fmt.Errorf("unexpected error creating NestedObjectType: %v", err))
+	}
 	return t
 }
 
@@ -104,7 +107,7 @@ func (t NestedObjectType[T]) ValueFromTerraform(ctx context.Context, in tftypes.
 }
 
 func (t NestedObjectType[T]) ValueType(ctx context.Context) attr.Value {
-	return NestedObject[T]{}
+	return UnknownObject[T](ctx)
 }
 
 func (t NestedObjectType[T]) NullValue(ctx context.Context) (attr.Value, diag.Diagnostics) {
@@ -129,8 +132,25 @@ type NestedObject[T any] struct {
 	basetypes.ObjectValue
 }
 
+func (v NestedObject[T]) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
+	// if the struct is initialized as the zero value, initialize the object type
+	// before returning.
+	if v.ObjectValue.AttributeTypes(ctx) == nil {
+		v.ObjectValue = NullObject[T](ctx).ObjectValue
+	}
+	return v.ObjectValue.ToObjectValue(ctx)
+}
+
 func (v NestedObject[T]) NullValue(ctx context.Context) NestedObjectLike {
 	return NullObject[T](ctx)
+}
+
+func (v NestedObject[T]) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+	tv := v.ObjectValue
+	if v.ObjectValue.Equal(basetypes.ObjectValue{}) {
+		tv = NullObject[T](ctx).ObjectValue
+	}
+	return tv.ToTerraformValue(ctx)
 }
 
 func (v NestedObject[T]) UnknownValue(ctx context.Context) NestedObjectLike {
@@ -164,8 +184,7 @@ func (v NestedObject[T]) Value(ctx context.Context) (*T, diag.Diagnostics) {
 
 	ptr := new(T)
 
-	diags.Append(v.ObjectValue.As(ctx, ptr, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-
+	diags.Append(v.ObjectValue.As(ctx, ptr, basetypes.ObjectAsOptions{})...)
 	if diags.HasError() {
 		return nil, diags
 	}
@@ -174,12 +193,18 @@ func (v NestedObject[T]) Value(ctx context.Context) (*T, diag.Diagnostics) {
 }
 
 func NullObject[T any](ctx context.Context) NestedObject[T] {
-	t, _ := StructToAttributes[T](ctx)
+	t, err := StructToAttributes[T](ctx)
+	if err.HasError() {
+		panic(fmt.Errorf("unexpected error creating NullObject: %v", err))
+	}
 	return NestedObject[T]{ObjectValue: basetypes.NewObjectNull(t)}
 }
 
 func UnknownObject[T any](ctx context.Context) NestedObject[T] {
-	t, _ := StructToAttributes[T](ctx)
+	t, err := StructToAttributes[T](ctx)
+	if err.HasError() {
+		panic(fmt.Errorf("unexpected error creating UnknownObject: %v", err))
+	}
 	return NestedObject[T]{ObjectValue: basetypes.NewObjectUnknown(t)}
 }
 
@@ -212,10 +237,10 @@ func NewObjectMust[T any](ctx context.Context, t *T) NestedObject[T] {
 func StructToAttributes[T any](ctx context.Context) (map[string]attr.Type, diag.Diagnostics) {
 	var t T
 	val := reflect.ValueOf(t)
-	return structFromAttributesInner(ctx, val)
+	return StructFromAttributesGeneric(ctx, val)
 }
 
-func structFromAttributesInner(ctx context.Context, val reflect.Value) (map[string]attr.Type, diag.Diagnostics) {
+func StructFromAttributesGeneric(ctx context.Context, val reflect.Value) (map[string]attr.Type, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	typ := val.Type()
 
@@ -274,7 +299,7 @@ func structFromValue(ctx context.Context, v reflect.Value) (attr.Type, diag.Diag
 		t = t.Elem()
 	}
 	if t.Kind() == reflect.Struct {
-		m, d := structFromAttributesInner(ctx, v)
+		m, d := StructFromAttributesGeneric(ctx, v)
 		diags.Append(d...)
 		if diags.HasError() {
 			return nil, diags
