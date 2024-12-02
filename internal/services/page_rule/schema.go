@@ -31,46 +31,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"targets": schema.ListNestedAttribute{
-				Description: "The rule targets to evaluate on each request.",
-				Required:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"constraint": schema.SingleNestedAttribute{
-							Description: "String constraint.",
-							Required:    true,
-							Attributes: map[string]schema.Attribute{
-								"operator": schema.StringAttribute{
-									Description: "The matches operator can use asterisks and pipes as wildcard and 'or' operators.",
-									Computed:    true,
-									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"matches",
-											"contains",
-											"equals",
-											"not_equal",
-											"not_contain",
-										),
-									},
-									Default: stringdefault.StaticString("contains"),
-								},
-								"value": schema.StringAttribute{
-									Description: "The URL pattern to match against the current request. The pattern may contain up to four asterisks ('*') as placeholders.",
-									Required:    true,
-								},
-							},
-						},
-						"target": schema.StringAttribute{
-							Description: "A target based on the URL of the request.",
-							Required:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("url"),
-							},
-						},
-					},
-				},
-			},
 			"priority": schema.Int64Attribute{
 				Description: "The priority of the rule, used to define which Page Rule is processed\nover another. A higher number indicates a higher priority. For example,\nif you have a catch-all Page Rule (rule A: `/images/*`) but want a more\nspecific Page Rule to take precedence (rule B: `/images/special/*`),\nspecify a higher priority for rule B so it overrides rule A.\n",
 				Computed:    true,
