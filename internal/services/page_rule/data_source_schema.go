@@ -5,7 +5,6 @@ package page_rule
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -49,46 +48,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("active", "disabled"),
-				},
-			},
-			"targets": schema.ListNestedAttribute{
-				Description: "The rule targets to evaluate on each request.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[PageRuleTargetsDataSourceModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"constraint": schema.SingleNestedAttribute{
-							Description: "String constraint.",
-							Computed:    true,
-							CustomType:  customfield.NewNestedObjectType[PageRuleTargetsConstraintDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"operator": schema.StringAttribute{
-									Description: "The matches operator can use asterisks and pipes as wildcard and 'or' operators.",
-									Computed:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"matches",
-											"contains",
-											"equals",
-											"not_equal",
-											"not_contain",
-										),
-									},
-								},
-								"value": schema.StringAttribute{
-									Description: "The URL pattern to match against the current request. The pattern may contain up to four asterisks ('*') as placeholders.",
-									Computed:    true,
-								},
-							},
-						},
-						"target": schema.StringAttribute{
-							Description: "A target based on the URL of the request.",
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("url"),
-							},
-						},
-					},
 				},
 			},
 		},
