@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -204,7 +205,7 @@ func (r *AddressMapResource) Delete(ctx context.Context, req resource.DeleteRequ
 }
 
 func (r *AddressMapResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *AddressMapModel
+	var data *AddressMapModel = new(AddressMapModel)
 
 	path_account_id := ""
 	path_address_map_id := ""
@@ -218,6 +219,9 @@ func (r *AddressMapResource) ImportState(ctx context.Context, req resource.Impor
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.ID = types.StringValue(path_address_map_id)
 
 	res := new(http.Response)
 	env := AddressMapResultEnvelope{*data}
@@ -235,7 +239,7 @@ func (r *AddressMapResource) ImportState(ctx context.Context, req resource.Impor
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

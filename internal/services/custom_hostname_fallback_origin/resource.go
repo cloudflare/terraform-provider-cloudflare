@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -205,7 +206,7 @@ func (r *CustomHostnameFallbackOriginResource) Delete(ctx context.Context, req r
 }
 
 func (r *CustomHostnameFallbackOriginResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CustomHostnameFallbackOriginModel
+	var data *CustomHostnameFallbackOriginModel = new(CustomHostnameFallbackOriginModel)
 
 	path := ""
 	diags := importpath.ParseImportID(
@@ -217,6 +218,8 @@ func (r *CustomHostnameFallbackOriginResource) ImportState(ctx context.Context, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ZoneID = types.StringValue(path)
 
 	res := new(http.Response)
 	env := CustomHostnameFallbackOriginResultEnvelope{*data}
@@ -233,7 +236,7 @@ func (r *CustomHostnameFallbackOriginResource) ImportState(ctx context.Context, 
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

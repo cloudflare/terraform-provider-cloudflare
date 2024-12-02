@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -184,7 +185,7 @@ func (r *MagicTransitConnectorResource) Delete(ctx context.Context, req resource
 }
 
 func (r *MagicTransitConnectorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *MagicTransitConnectorModel
+	var data *MagicTransitConnectorModel = new(MagicTransitConnectorModel)
 
 	path_account_id := ""
 	path_connector_id := ""
@@ -198,6 +199,9 @@ func (r *MagicTransitConnectorResource) ImportState(ctx context.Context, req res
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.ConnectorID = types.StringValue(path_connector_id)
 
 	res := new(http.Response)
 	env := MagicTransitConnectorResultEnvelope{*data}
@@ -215,7 +219,7 @@ func (r *MagicTransitConnectorResource) ImportState(ctx context.Context, req res
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

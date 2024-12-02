@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -184,7 +185,7 @@ func (r *ZeroTrustAccessKeyConfigurationResource) Delete(ctx context.Context, re
 }
 
 func (r *ZeroTrustAccessKeyConfigurationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessKeyConfigurationModel
+	var data *ZeroTrustAccessKeyConfigurationModel = new(ZeroTrustAccessKeyConfigurationModel)
 
 	path := ""
 	diags := importpath.ParseImportID(
@@ -196,6 +197,8 @@ func (r *ZeroTrustAccessKeyConfigurationResource) ImportState(ctx context.Contex
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path)
 
 	res := new(http.Response)
 	env := ZeroTrustAccessKeyConfigurationResultEnvelope{*data}
@@ -212,7 +215,7 @@ func (r *ZeroTrustAccessKeyConfigurationResource) ImportState(ctx context.Contex
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

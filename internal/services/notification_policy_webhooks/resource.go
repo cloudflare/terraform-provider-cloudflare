@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -204,7 +205,7 @@ func (r *NotificationPolicyWebhooksResource) Delete(ctx context.Context, req res
 }
 
 func (r *NotificationPolicyWebhooksResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *NotificationPolicyWebhooksModel
+	var data *NotificationPolicyWebhooksModel = new(NotificationPolicyWebhooksModel)
 
 	path_account_id := ""
 	path_webhook_id := ""
@@ -218,6 +219,9 @@ func (r *NotificationPolicyWebhooksResource) ImportState(ctx context.Context, re
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.ID = types.StringValue(path_webhook_id)
 
 	res := new(http.Response)
 	env := NotificationPolicyWebhooksResultEnvelope{*data}
@@ -235,7 +239,7 @@ func (r *NotificationPolicyWebhooksResource) ImportState(ctx context.Context, re
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

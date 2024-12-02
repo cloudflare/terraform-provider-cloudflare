@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -207,7 +208,7 @@ func (r *D1DatabaseResource) Delete(ctx context.Context, req resource.DeleteRequ
 }
 
 func (r *D1DatabaseResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *D1DatabaseModel
+	var data *D1DatabaseModel = new(D1DatabaseModel)
 
 	path_account_id := ""
 	path_database_id := ""
@@ -221,6 +222,9 @@ func (r *D1DatabaseResource) ImportState(ctx context.Context, req resource.Impor
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.UUID = types.StringValue(path_database_id)
 
 	res := new(http.Response)
 	env := D1DatabaseResultEnvelope{*data}
@@ -238,7 +242,7 @@ func (r *D1DatabaseResource) ImportState(ctx context.Context, req resource.Impor
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
