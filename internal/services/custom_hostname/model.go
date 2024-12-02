@@ -33,7 +33,7 @@ func (m CustomHostnameModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m CustomHostnameModel) MarshalJSONForUpdate(state CustomHostnameModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type CustomHostnameSSLModel struct {

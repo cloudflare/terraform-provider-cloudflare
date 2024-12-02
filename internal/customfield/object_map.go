@@ -90,7 +90,7 @@ func (t NestedObjectMapType[T]) ValueFromTerraform(ctx context.Context, in tftyp
 }
 
 func (t NestedObjectMapType[T]) ValueType(ctx context.Context) attr.Value {
-	return NestedObjectMap[T]{}
+	return UnknownObjectMap[T](ctx)
 }
 
 func (t NestedObjectMapType[T]) NullValue(ctx context.Context) (attr.Value, diag.Diagnostics) {
@@ -113,6 +113,14 @@ type NestedObjectMap[T any] struct {
 	//lint:ignore U1000 the placeholder is for easy reflection-based-access
 	placeholder T
 	basetypes.MapValue
+}
+
+func (v NestedObjectMap[T]) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+	tv := v.MapValue
+	if tv.ElementType(ctx) == nil {
+		tv = NullObjectMap[T](ctx).MapValue
+	}
+	return tv.ToTerraformValue(ctx)
 }
 
 func (v NestedObjectMap[T]) NullValue(ctx context.Context) NestedObjectMapLike {

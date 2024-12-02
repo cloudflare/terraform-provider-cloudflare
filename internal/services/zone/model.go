@@ -38,7 +38,7 @@ func (m ZoneModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m ZoneModel) MarshalJSONForUpdate(state ZoneModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type ZoneAccountModel struct {

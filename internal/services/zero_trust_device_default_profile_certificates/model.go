@@ -21,5 +21,5 @@ func (m ZeroTrustDeviceDefaultProfileCertificatesModel) MarshalJSON() (data []by
 }
 
 func (m ZeroTrustDeviceDefaultProfileCertificatesModel) MarshalJSONForUpdate(state ZeroTrustDeviceDefaultProfileCertificatesModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

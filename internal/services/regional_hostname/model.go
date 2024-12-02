@@ -25,5 +25,5 @@ func (m RegionalHostnameModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m RegionalHostnameModel) MarshalJSONForUpdate(state RegionalHostnameModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

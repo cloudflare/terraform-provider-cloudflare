@@ -24,7 +24,7 @@ func (m ZoneCacheVariantsModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m ZoneCacheVariantsModel) MarshalJSONForUpdate(state ZoneCacheVariantsModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type ZoneCacheVariantsValueModel struct {

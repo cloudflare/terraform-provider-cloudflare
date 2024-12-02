@@ -107,6 +107,14 @@ type NestedObjectSet[T any] struct {
 	basetypes.SetValue
 }
 
+func (v NestedObjectSet[T]) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+	tv := v.SetValue
+	if tv.ElementType(ctx) == nil {
+		tv = NullObjectSet[T](ctx).SetValue
+	}
+	return tv.ToTerraformValue(ctx)
+}
+
 func (v NestedObjectSet[T]) NullValue(ctx context.Context) NestedObjectListLike {
 	return NullObjectSet[T](ctx)
 }

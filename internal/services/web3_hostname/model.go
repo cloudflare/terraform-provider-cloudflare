@@ -29,5 +29,5 @@ func (m Web3HostnameModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m Web3HostnameModel) MarshalJSONForUpdate(state Web3HostnameModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
