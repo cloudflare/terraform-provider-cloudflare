@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"sort"
 	"strings"
-	"time"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/expanders"
@@ -313,13 +312,6 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 			Expression:  flatteners.String(ruleResponse.Expression),
 			Description: types.StringValue(ruleResponse.Description),
 			Enabled:     flatteners.Bool(ruleResponse.Enabled),
-			Version:     flatteners.String(cfv1.String(ruleResponse.Version)),
-		}
-
-		if ruleResponse.LastUpdated != nil {
-			rule.LastUpdated = types.StringValue(ruleResponse.LastUpdated.String())
-		} else {
-			rule.LastUpdated = types.StringNull()
 		}
 
 		// action_parameters
@@ -797,7 +789,6 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 	rr := cfv1.RulesetRule{
 		ID:          r.ID.ValueString(),
 		Ref:         r.Ref.ValueString(),
-		Version:     r.Version.ValueStringPointer(),
 		Action:      r.Action.ValueString(),
 		Expression:  r.Expression.ValueString(),
 		Description: r.Description.ValueString(),
@@ -1357,15 +1348,6 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 		rr.ExposedCredentialCheck = &cfv1.RulesetRuleExposedCredentialCheck{
 			UsernameExpression: e.UsernameExpression.ValueString(),
 			PasswordExpression: e.PasswordExpression.ValueString(),
-		}
-	}
-
-	if !r.LastUpdated.IsNull() {
-		if lastUpdated, err := time.Parse(
-			"2006-01-02 15:04:05.999999999 -0700 MST",
-			r.LastUpdated.ValueString(),
-		); err == nil {
-			rr.LastUpdated = &lastUpdated
 		}
 	}
 
