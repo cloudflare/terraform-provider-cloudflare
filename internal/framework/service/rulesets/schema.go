@@ -303,11 +303,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										Optional:            true,
 										MarkdownDescription: "Pass-through error page for origin.",
 									},
-									"version": schema.StringAttribute{
-										Computed:            true,
-										Optional:            true,
-										MarkdownDescription: "Version of the ruleset to deploy.",
-									},
 								},
 								Blocks: map[string]schema.Block{
 									"algorithms": schema.ListNestedBlock{

@@ -343,7 +343,6 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				OriginErrorPagePassthru: flatteners.Bool(ruleResponse.ActionParameters.OriginErrorPagePassthru),
 				RespectStrongEtags:      flatteners.Bool(ruleResponse.ActionParameters.RespectStrongETags),
 				ReadTimeout:             flatteners.Int64(int64(cfv1.Uint(ruleResponse.ActionParameters.ReadTimeout))),
-				Version:                 flatteners.String(cfv1.String(ruleResponse.ActionParameters.Version)),
 			})
 
 			if !reflect.ValueOf(ruleResponse.ActionParameters.Polish).IsNil() {
@@ -840,12 +839,6 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 
 		if !ap.Ruleset.IsNull() {
 			rr.ActionParameters.Ruleset = ap.Ruleset.ValueString()
-		}
-
-		if !ap.Version.IsNull() {
-			if ap.Version.ValueString() != "" {
-				rr.ActionParameters.Version = cfv1.StringPtr(ap.Version.ValueString())
-			}
 		}
 
 		if !ap.Increment.IsNull() {
