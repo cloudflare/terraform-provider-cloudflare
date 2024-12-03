@@ -27,7 +27,6 @@ type RulesModel struct {
 }
 
 type ActionParametersModel struct {
-	Version                  types.String                                 `tfsdk:"version"`
 	AdditionalCacheablePorts types.Set                                    `tfsdk:"additional_cacheable_ports"`
 	AutomaticHTTPSRewrites   types.Bool                                   `tfsdk:"automatic_https_rewrites"`
 	AutoMinify               []*ActionParameterAutoMinifyModel            `tfsdk:"autominify"`
