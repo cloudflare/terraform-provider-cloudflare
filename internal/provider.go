@@ -43,11 +43,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dcv_delegation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfer_acl"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfer_incoming"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfer_outgoing"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfer_peer"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfer_tsig"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_acl"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_incoming"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_outgoing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_peer"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_tsig"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_catch_all"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_dns"
@@ -360,14 +360,14 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		custom_ssl.NewResource,
 		custom_hostname.NewResource,
 		custom_hostname_fallback_origin.NewResource,
+		dns_firewall.NewResource,
 		zone_dnssec.NewResource,
 		dns_record.NewResource,
-		dns_firewall.NewResource,
-		dns_zone_transfer_incoming.NewResource,
-		dns_zone_transfer_outgoing.NewResource,
-		dns_zone_transfer_acl.NewResource,
-		dns_zone_transfer_peer.NewResource,
-		dns_zone_transfer_tsig.NewResource,
+		dns_zone_transfers_incoming.NewResource,
+		dns_zone_transfers_outgoing.NewResource,
+		dns_zone_transfers_acl.NewResource,
+		dns_zone_transfers_peer.NewResource,
+		dns_zone_transfers_tsig.NewResource,
 		email_security_block_sender.NewResource,
 		email_security_impersonation_registry.NewResource,
 		email_security_trusted_domains.NewResource,
@@ -541,19 +541,19 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		custom_hostname.NewCustomHostnameDataSource,
 		custom_hostname.NewCustomHostnamesDataSource,
 		custom_hostname_fallback_origin.NewCustomHostnameFallbackOriginDataSource,
+		dns_firewall.NewDNSFirewallDataSource,
+		dns_firewall.NewDNSFirewallsDataSource,
 		zone_dnssec.NewZoneDNSSECDataSource,
 		dns_record.NewDNSRecordDataSource,
 		dns_record.NewDNSRecordsDataSource,
-		dns_firewall.NewDNSFirewallDataSource,
-		dns_firewall.NewDNSFirewallsDataSource,
-		dns_zone_transfer_incoming.NewDNSZoneTransferIncomingDataSource,
-		dns_zone_transfer_outgoing.NewDNSZoneTransferOutgoingDataSource,
-		dns_zone_transfer_acl.NewDNSZoneTransferACLDataSource,
-		dns_zone_transfer_acl.NewDNSZoneTransferACLsDataSource,
-		dns_zone_transfer_peer.NewDNSZoneTransferPeerDataSource,
-		dns_zone_transfer_peer.NewDNSZoneTransferPeersDataSource,
-		dns_zone_transfer_tsig.NewDNSZoneTransferTSIGDataSource,
-		dns_zone_transfer_tsig.NewDNSZoneTransferTSIGsDataSource,
+		dns_zone_transfers_incoming.NewDNSZoneTransfersIncomingDataSource,
+		dns_zone_transfers_outgoing.NewDNSZoneTransfersOutgoingDataSource,
+		dns_zone_transfers_acl.NewDNSZoneTransfersACLDataSource,
+		dns_zone_transfers_acl.NewDNSZoneTransfersACLsDataSource,
+		dns_zone_transfers_peer.NewDNSZoneTransfersPeerDataSource,
+		dns_zone_transfers_peer.NewDNSZoneTransfersPeersDataSource,
+		dns_zone_transfers_tsig.NewDNSZoneTransfersTSIGDataSource,
+		dns_zone_transfers_tsig.NewDNSZoneTransfersTSIGsDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSenderDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSendersDataSource,
 		email_security_impersonation_registry.NewEmailSecurityImpersonationRegistryDataSource,

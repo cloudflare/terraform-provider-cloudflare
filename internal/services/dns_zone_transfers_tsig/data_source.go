@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_firewall
+package dns_zone_transfers_tsig
 
 import (
 	"context"
@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type DNSFirewallDataSource struct {
+type DNSZoneTransfersTSIGDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*DNSFirewallDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*DNSZoneTransfersTSIGDataSource)(nil)
 
-func NewDNSFirewallDataSource() datasource.DataSource {
-	return &DNSFirewallDataSource{}
+func NewDNSZoneTransfersTSIGDataSource() datasource.DataSource {
+	return &DNSZoneTransfersTSIGDataSource{}
 }
 
-func (d *DNSFirewallDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_dns_firewall"
+func (d *DNSZoneTransfersTSIGDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_dns_zone_transfers_tsig"
 }
 
-func (d *DNSFirewallDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *DNSZoneTransfersTSIGDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *DNSFirewallDataSource) Configure(ctx context.Context, req datasource.Co
 	d.client = client
 }
 
-func (d *DNSFirewallDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *DNSFirewallDataSourceModel
+func (d *DNSZoneTransfersTSIGDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *DNSZoneTransfersTSIGDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -65,10 +65,10 @@ func (d *DNSFirewallDataSource) Read(ctx context.Context, req datasource.ReadReq
 		}
 
 		res := new(http.Response)
-		env := DNSFirewallResultDataSourceEnvelope{*data}
-		_, err := d.client.DNSFirewall.Get(
+		env := DNSZoneTransfersTSIGResultDataSourceEnvelope{*data}
+		_, err := d.client.DNS.ZoneTransfers.TSIGs.Get(
 			ctx,
-			data.DNSFirewallID.ValueString(),
+			data.TSIGID.ValueString(),
 			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
@@ -91,8 +91,8 @@ func (d *DNSFirewallDataSource) Read(ctx context.Context, req datasource.ReadReq
 			return
 		}
 
-		env := DNSFirewallResultListDataSourceEnvelope{}
-		page, err := d.client.DNSFirewall.List(ctx, params)
+		env := DNSZoneTransfersTSIGResultListDataSourceEnvelope{}
+		page, err := d.client.DNS.ZoneTransfers.TSIGs.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return
