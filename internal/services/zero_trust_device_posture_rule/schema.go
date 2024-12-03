@@ -145,7 +145,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"os_version_extra": schema.StringAttribute{
-						Description: "Additional version data. For Mac or iOS, the Product Verison Extra. For Linux, the kernel release version. (Mac, iOS, and Linux only)",
+						Description: "Additional version data. For Mac or iOS, the Product Version Extra. For Linux, the kernel release version. (Mac, iOS, and Linux only)",
 						Optional:    true,
 					},
 					"enabled": schema.BoolAttribute{
