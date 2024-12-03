@@ -6,7 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/dnssec"
+	"github.com/cloudflare/cloudflare-go/v3/dns"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -33,8 +33,8 @@ type ZoneDNSSECDataSourceModel struct {
 	Status            types.String      `tfsdk:"status" json:"status,computed"`
 }
 
-func (m *ZoneDNSSECDataSourceModel) toReadParams(_ context.Context) (params dnssec.DNSSECGetParams, diags diag.Diagnostics) {
-	params = dnssec.DNSSECGetParams{
+func (m *ZoneDNSSECDataSourceModel) toReadParams(_ context.Context) (params dns.DNSSECGetParams, diags diag.Diagnostics) {
+	params = dns.DNSSECGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
