@@ -43,6 +43,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dcv_delegation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfer_acl"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfer_incoming"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfer_outgoing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfer_peer"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfer_tsig"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_catch_all"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_dns"
@@ -103,11 +108,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_acl"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_incoming"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_outgoing"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_peer"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_tsig"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_audio_track"
@@ -363,6 +363,11 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zone_dnssec.NewResource,
 		dns_record.NewResource,
 		dns_firewall.NewResource,
+		dns_zone_transfer_incoming.NewResource,
+		dns_zone_transfer_outgoing.NewResource,
+		dns_zone_transfer_acl.NewResource,
+		dns_zone_transfer_peer.NewResource,
+		dns_zone_transfer_tsig.NewResource,
 		email_security_block_sender.NewResource,
 		email_security_impersonation_registry.NewResource,
 		email_security_trusted_domains.NewResource,
@@ -385,11 +390,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		authenticated_origin_pulls.NewResource,
 		page_rule.NewResource,
 		rate_limit.NewResource,
-		secondary_dns_incoming.NewResource,
-		secondary_dns_outgoing.NewResource,
-		secondary_dns_acl.NewResource,
-		secondary_dns_peer.NewResource,
-		secondary_dns_tsig.NewResource,
 		waiting_room.NewResource,
 		waiting_room_event.NewResource,
 		waiting_room_rules.NewResource,
@@ -546,6 +546,14 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		dns_record.NewDNSRecordsDataSource,
 		dns_firewall.NewDNSFirewallDataSource,
 		dns_firewall.NewDNSFirewallsDataSource,
+		dns_zone_transfer_incoming.NewDNSZoneTransferIncomingDataSource,
+		dns_zone_transfer_outgoing.NewDNSZoneTransferOutgoingDataSource,
+		dns_zone_transfer_acl.NewDNSZoneTransferACLDataSource,
+		dns_zone_transfer_acl.NewDNSZoneTransferACLsDataSource,
+		dns_zone_transfer_peer.NewDNSZoneTransferPeerDataSource,
+		dns_zone_transfer_peer.NewDNSZoneTransferPeersDataSource,
+		dns_zone_transfer_tsig.NewDNSZoneTransferTSIGDataSource,
+		dns_zone_transfer_tsig.NewDNSZoneTransferTSIGsDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSenderDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSendersDataSource,
 		email_security_impersonation_registry.NewEmailSecurityImpersonationRegistryDataSource,
@@ -584,14 +592,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		page_rule.NewPageRuleDataSource,
 		rate_limit.NewRateLimitDataSource,
 		rate_limit.NewRateLimitsDataSource,
-		secondary_dns_incoming.NewSecondaryDNSIncomingDataSource,
-		secondary_dns_outgoing.NewSecondaryDNSOutgoingDataSource,
-		secondary_dns_acl.NewSecondaryDNSACLDataSource,
-		secondary_dns_acl.NewSecondaryDNSACLsDataSource,
-		secondary_dns_peer.NewSecondaryDNSPeerDataSource,
-		secondary_dns_peer.NewSecondaryDNSPeersDataSource,
-		secondary_dns_tsig.NewSecondaryDNSTSIGDataSource,
-		secondary_dns_tsig.NewSecondaryDNSTSIGsDataSource,
 		waiting_room.NewWaitingRoomDataSource,
 		waiting_room.NewWaitingRoomsDataSource,
 		waiting_room_event.NewWaitingRoomEventDataSource,
