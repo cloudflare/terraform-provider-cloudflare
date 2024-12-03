@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/access_application: fix domain and self_hosted_domains drift after import
+```

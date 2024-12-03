@@ -193,6 +193,10 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 }
 
 func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return resourceCloudflareAccessApplicationReadHelper(ctx, d, meta, false)
+}
+
+func resourceCloudflareAccessApplicationReadHelper(ctx context.Context, d *schema.ResourceData, meta interface{}, importing bool) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
@@ -215,7 +219,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("name", accessApplication.Name)
 	d.Set("aud", accessApplication.AUD)
 	d.Set("session_duration", accessApplication.SessionDuration)
-	if _, domainWasSet := d.GetOk("domain"); domainWasSet {
+	if _, domainWasSet := d.GetOk("domain"); domainWasSet || importing {
 		// Only set the domain if it was set in the configuration, as apps can be created without a domain
 		// if they define a non-empty self_hosted_domains array
 		d.Set("domain", accessApplication.Domain)
@@ -273,7 +277,9 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 		return diag.FromErr(fmt.Errorf("error setting Access Application Infrastructure app configuration: %w", targetContextsErr))
 	}
 
-	if _, ok := d.GetOk("self_hosted_domains"); ok {
+	if _, ok := d.GetOk("destinations"); ok || importing {
+		d.Set("destinations", convertDestinationsToSchema(accessApplication.Destinations))
+	} else if _, ok := d.GetOk("self_hosted_domains"); ok || importing {
 		publicDomains := make([]string, 0, len(accessApplication.Destinations))
 		for _, dest := range accessApplication.Destinations {
 			if dest.Type == cloudflare.AccessDestinationPublic {
@@ -281,10 +287,6 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 			}
 		}
 		d.Set("self_hosted_domains", publicDomains)
-	}
-
-	if _, ok := d.GetOk("destinations"); ok {
-		d.Set("destinations", convertDestinationsToSchema(accessApplication.Destinations))
 	}
 
 	scimConfig := convertScimConfigStructToSchema(accessApplication.SCIMConfig)
@@ -474,7 +476,7 @@ func resourceCloudflareAccessApplicationImport(ctx context.Context, d *schema.Re
 	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(accessApplicationID)
 
-	resourceCloudflareAccessApplicationRead(ctx, d, meta)
+	resourceCloudflareAccessApplicationReadHelper(ctx, d, meta, true)
 
 	return []*schema.ResourceData{d}, nil
 }
