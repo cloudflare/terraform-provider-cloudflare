@@ -1353,3 +1353,46 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 
 	return rr
 }
+
+func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	var state *RulesetResourceModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	var plan *RulesetResourceModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Do nothing if there is no state or no plan.
+	if state == nil || plan == nil {
+		return
+	}
+
+	ruleIDsByRef := make(map[string]types.String)
+	for _, rule := range state.Rules {
+		if ref := rule.Ref.ValueString(); ref != "" {
+			ruleIDsByRef[ref] = rule.ID
+		}
+	}
+
+	for _, rule := range plan.Rules {
+		// Do nothing if the rule's ID is a known planned value.
+		if !rule.ID.IsUnknown() {
+			continue
+		}
+
+		// If the rule's ref matches a rule in the state, populate the planned
+		// value of its ID with the corresponding ID from the state.
+		if ref := rule.Ref.ValueString(); ref != "" {
+			if id, ok := ruleIDsByRef[ref]; ok {
+				rule.ID = id
+			}
+		}
+	}
+
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
+}
