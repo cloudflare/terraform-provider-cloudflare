@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_firewall
+package dns_zone_transfers_outgoing
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/dns_firewall"
+	"github.com/cloudflare/cloudflare-go/v3/dns"
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
@@ -19,24 +19,24 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*DNSFirewallResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*DNSFirewallResource)(nil)
-var _ resource.ResourceWithImportState = (*DNSFirewallResource)(nil)
+var _ resource.ResourceWithConfigure = (*DNSZoneTransfersOutgoingResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*DNSZoneTransfersOutgoingResource)(nil)
+var _ resource.ResourceWithImportState = (*DNSZoneTransfersOutgoingResource)(nil)
 
 func NewResource() resource.Resource {
-	return &DNSFirewallResource{}
+	return &DNSZoneTransfersOutgoingResource{}
 }
 
-// DNSFirewallResource defines the resource implementation.
-type DNSFirewallResource struct {
+// DNSZoneTransfersOutgoingResource defines the resource implementation.
+type DNSZoneTransfersOutgoingResource struct {
 	client *cloudflare.Client
 }
 
-func (r *DNSFirewallResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_dns_firewall"
+func (r *DNSZoneTransfersOutgoingResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_dns_zone_transfers_outgoing"
 }
 
-func (r *DNSFirewallResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *DNSZoneTransfersOutgoingResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -55,8 +55,8 @@ func (r *DNSFirewallResource) Configure(ctx context.Context, req resource.Config
 	r.client = client
 }
 
-func (r *DNSFirewallResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *DNSFirewallModel
+func (r *DNSZoneTransfersOutgoingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *DNSZoneTransfersOutgoingModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -70,11 +70,11 @@ func (r *DNSFirewallResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 	res := new(http.Response)
-	env := DNSFirewallResultEnvelope{*data}
-	_, err = r.client.DNSFirewall.New(
+	env := DNSZoneTransfersOutgoingResultEnvelope{*data}
+	_, err = r.client.DNS.ZoneTransfers.Outgoing.New(
 		ctx,
-		dns_firewall.DNSFirewallNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		dns.ZoneTransferOutgoingNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -95,8 +95,8 @@ func (r *DNSFirewallResource) Create(ctx context.Context, req resource.CreateReq
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSFirewallResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *DNSFirewallModel
+func (r *DNSZoneTransfersOutgoingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *DNSZoneTransfersOutgoingModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -104,7 +104,7 @@ func (r *DNSFirewallResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	var state *DNSFirewallModel
+	var state *DNSZoneTransfersOutgoingModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -118,12 +118,11 @@ func (r *DNSFirewallResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 	res := new(http.Response)
-	env := DNSFirewallResultEnvelope{*data}
-	_, err = r.client.DNSFirewall.Edit(
+	env := DNSZoneTransfersOutgoingResultEnvelope{*data}
+	_, err = r.client.DNS.ZoneTransfers.Outgoing.Update(
 		ctx,
-		data.ID.ValueString(),
-		dns_firewall.DNSFirewallEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		dns.ZoneTransferOutgoingUpdateParams{
+			ZoneID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -144,8 +143,8 @@ func (r *DNSFirewallResource) Update(ctx context.Context, req resource.UpdateReq
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSFirewallResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *DNSFirewallModel
+func (r *DNSZoneTransfersOutgoingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *DNSZoneTransfersOutgoingModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -154,12 +153,11 @@ func (r *DNSFirewallResource) Read(ctx context.Context, req resource.ReadRequest
 	}
 
 	res := new(http.Response)
-	env := DNSFirewallResultEnvelope{*data}
-	_, err := r.client.DNSFirewall.Get(
+	env := DNSZoneTransfersOutgoingResultEnvelope{*data}
+	_, err := r.client.DNS.ZoneTransfers.Outgoing.Get(
 		ctx,
-		data.ID.ValueString(),
-		dns_firewall.DNSFirewallGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		dns.ZoneTransferOutgoingGetParams{
+			ZoneID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -179,8 +177,8 @@ func (r *DNSFirewallResource) Read(ctx context.Context, req resource.ReadRequest
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSFirewallResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *DNSFirewallModel
+func (r *DNSZoneTransfersOutgoingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *DNSZoneTransfersOutgoingModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -188,11 +186,10 @@ func (r *DNSFirewallResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
-	_, err := r.client.DNSFirewall.Delete(
+	_, err := r.client.DNS.ZoneTransfers.Outgoing.Delete(
 		ctx,
-		data.ID.ValueString(),
-		dns_firewall.DNSFirewallDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		dns.ZoneTransferOutgoingDeleteParams{
+			ZoneID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -204,32 +201,28 @@ func (r *DNSFirewallResource) Delete(ctx context.Context, req resource.DeleteReq
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSFirewallResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *DNSFirewallModel = new(DNSFirewallModel)
+func (r *DNSZoneTransfersOutgoingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *DNSZoneTransfersOutgoingModel = new(DNSZoneTransfersOutgoingModel)
 
-	path_account_id := ""
-	path_dns_firewall_id := ""
+	path := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<dns_firewall_id>",
-		&path_account_id,
-		&path_dns_firewall_id,
+		"<zone_id>",
+		&path,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.AccountID = types.StringValue(path_account_id)
-	data.ID = types.StringValue(path_dns_firewall_id)
+	data.ZoneID = types.StringValue(path)
 
 	res := new(http.Response)
-	env := DNSFirewallResultEnvelope{*data}
-	_, err := r.client.DNSFirewall.Get(
+	env := DNSZoneTransfersOutgoingResultEnvelope{*data}
+	_, err := r.client.DNS.ZoneTransfers.Outgoing.Get(
 		ctx,
-		path_dns_firewall_id,
-		dns_firewall.DNSFirewallGetParams{
-			AccountID: cloudflare.F(path_account_id),
+		dns.ZoneTransferOutgoingGetParams{
+			ZoneID: cloudflare.F(path),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -249,6 +242,6 @@ func (r *DNSFirewallResource) ImportState(ctx context.Context, req resource.Impo
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSFirewallResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *DNSZoneTransfersOutgoingResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }
