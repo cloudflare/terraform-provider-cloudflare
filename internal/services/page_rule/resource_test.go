@@ -83,7 +83,8 @@ func TestAccCloudflarePageRule_Basic(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflarePageRuleConfigBasic(zoneID, target, rnd),
+				// Config: testAccCheckCloudflarePageRuleConfigBasic(zoneID, target, rnd),
+				Config: buildPageRuleConfig(rnd, zoneID, `automatic_https_rewrites = "on"`, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					// testAccCheckCloudflarePageRuleAttributesBasic(&pageRule),
