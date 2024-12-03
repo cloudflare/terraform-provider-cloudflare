@@ -108,15 +108,17 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 						consts.IDSchemaKey: schema.StringAttribute{
 							Computed:            true,
 							MarkdownDescription: "Unique rule identifier.",
-						},
-						"version": schema.StringAttribute{
-							Computed:            true,
-							MarkdownDescription: "Version of the ruleset to deploy.",
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 						},
 						"ref": schema.StringAttribute{
 							Optional:            true,
 							Computed:            true,
 							MarkdownDescription: "Rule reference.",
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 						},
 						"enabled": schema.BoolAttribute{
 							Optional:            true,
@@ -144,10 +146,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 								stringvalidator.OneOfCaseInsensitive(cfv1.RulesetRuleActionValues()...),
 							},
 							Optional: true,
-						},
-						"last_updated": schema.StringAttribute{
-							Computed:            true,
-							MarkdownDescription: "The most recent update to this rule.",
 						},
 					},
 					Blocks: map[string]schema.Block{
