@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -208,7 +209,7 @@ func (r *ZeroTrustAccessCustomPageResource) Delete(ctx context.Context, req reso
 }
 
 func (r *ZeroTrustAccessCustomPageResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessCustomPageModel
+	var data *ZeroTrustAccessCustomPageModel = new(ZeroTrustAccessCustomPageModel)
 
 	path_account_id := ""
 	path_custom_page_id := ""
@@ -222,6 +223,9 @@ func (r *ZeroTrustAccessCustomPageResource) ImportState(ctx context.Context, req
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.UID = types.StringValue(path_custom_page_id)
 
 	res := new(http.Response)
 	env := ZeroTrustAccessCustomPageResultEnvelope{*data}
@@ -239,7 +243,7 @@ func (r *ZeroTrustAccessCustomPageResource) ImportState(ctx context.Context, req
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

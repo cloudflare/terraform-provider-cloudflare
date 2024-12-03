@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -208,7 +209,7 @@ func (r *WaitingRoomEventResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *WaitingRoomEventResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WaitingRoomEventModel
+	var data *WaitingRoomEventModel = new(WaitingRoomEventModel)
 
 	path_zone_id := ""
 	path_waiting_room_id := ""
@@ -224,6 +225,10 @@ func (r *WaitingRoomEventResource) ImportState(ctx context.Context, req resource
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.WaitingRoomID = types.StringValue(path_waiting_room_id)
+	data.ID = types.StringValue(path_event_id)
 
 	res := new(http.Response)
 	env := WaitingRoomEventResultEnvelope{*data}
@@ -242,7 +247,7 @@ func (r *WaitingRoomEventResource) ImportState(ctx context.Context, req resource
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

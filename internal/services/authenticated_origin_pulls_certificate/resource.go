@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -203,7 +204,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Delete(ctx context.Context
 }
 
 func (r *AuthenticatedOriginPullsCertificateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *AuthenticatedOriginPullsCertificateModel
+	var data *AuthenticatedOriginPullsCertificateModel = new(AuthenticatedOriginPullsCertificateModel)
 
 	path_zone_id := ""
 	path_certificate_id := ""
@@ -217,6 +218,9 @@ func (r *AuthenticatedOriginPullsCertificateResource) ImportState(ctx context.Co
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.ID = types.StringValue(path_certificate_id)
 
 	res := new(http.Response)
 	env := AuthenticatedOriginPullsCertificateResultEnvelope{*data}
@@ -234,7 +238,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) ImportState(ctx context.Co
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

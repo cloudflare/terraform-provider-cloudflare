@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -202,7 +203,7 @@ func (r *CloudforceOneRequestMessageResource) Delete(ctx context.Context, req re
 }
 
 func (r *CloudforceOneRequestMessageResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CloudforceOneRequestMessageModel
+	var data *CloudforceOneRequestMessageModel = new(CloudforceOneRequestMessageModel)
 
 	path_account_identifier := ""
 	path_request_identifier := ""
@@ -216,6 +217,9 @@ func (r *CloudforceOneRequestMessageResource) ImportState(ctx context.Context, r
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountIdentifier = types.StringValue(path_account_identifier)
+	data.RequestIdentifier = types.StringValue(path_request_identifier)
 
 	res := new(http.Response)
 	env := CloudforceOneRequestMessageResultEnvelope{*data}
@@ -232,7 +236,7 @@ func (r *CloudforceOneRequestMessageResource) ImportState(ctx context.Context, r
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
