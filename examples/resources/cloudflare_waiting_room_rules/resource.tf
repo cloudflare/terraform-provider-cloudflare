@@ -1,18 +1,10 @@
-resource "cloudflare_waiting_room_rules" "example" {
-  zone_id         = "0da42c8d2132a9ddaf714f9e7c920711"
-  waiting_room_id = "d41d8cd98f00b204e9800998ecf8427e"
-
+resource "cloudflare_waiting_room_rules" "example_waiting_room_rules" {
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  waiting_room_id = "699d98642c564d2e855e9661899b7252"
   rules = [{
-    description = "bypass ip list"
-    expression  = "src.ip in {192.0.2.0 192.0.2.1}"
-    action      = "bypass_waiting_room"
-    status      = "enabled"
-    },
-    {
-      description = "bypass query string"
-      expression  = "http.request.uri.query contains \"bypass=true\""
-      action      = "bypass_waiting_room"
-      status      = "enabled"
+    action = "bypass_waiting_room"
+    expression = "ip.src in {10.20.30.40}"
+    description = "allow all traffic from 10.20.30.40"
+    enabled = true
   }]
-
 }

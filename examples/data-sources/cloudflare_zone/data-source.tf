@@ -1,11 +1,3 @@
-data "cloudflare_zone" "example" {
-  name = "example.com"
-}
-
-resource "cloudflare_dns_record" "example" {
-  zone_id = data.cloudflare_zone.example.id
-  name    = "www"
-  value   = "203.0.113.1"
-  type    = "A"
-  proxied = true
+data "cloudflare_zone" "example_zone" {
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }

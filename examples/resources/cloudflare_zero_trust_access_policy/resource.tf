@@ -1,32 +1,20 @@
-# Allowing access to `test@example.com` email address only
-resource "cloudflare_zero_trust_access_policy" "test_policy" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "staging policy"
-  precedence = "1"
-  decision   = "allow"
-
+resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy" {
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  decision = "allow"
   include = [{
-    email = ["test@example.com"]
+    group = {
+      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    }
   }]
-
+  name = "Allow devs"
+  exclude = [{
+    group = {
+      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    }
+  }]
   require = [{
-    email = ["test@example.com"]
-  }]
-}
-
-# Allowing `test@example.com` to access but only when coming from a
-# specific IP.
-resource "cloudflare_zero_trust_access_policy" "test_policy" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "staging policy"
-  precedence = "1"
-  decision   = "allow"
-
-  include = [{
-    email = ["test@example.com"]
-  }]
-
-  require = [{
-    ip = [var.office_ip]
+    group = {
+      id = "aa0a4aab-672b-4bdb-bc33-a59f1130a11f"
+    }
   }]
 }

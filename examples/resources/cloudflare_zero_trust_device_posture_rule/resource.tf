@@ -1,21 +1,18 @@
-resource "cloudflare_zero_trust_device_posture_rule" "eaxmple" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "Corporate devices posture rule"
-  type        = "os_version"
-  description = "Device posture rule for corporate devices."
-  schedule    = "24h"
-  expiration  = "24h"
-
-  match = [{
-    platform = "linux"
-  }]
-
+resource "cloudflare_zero_trust_device_posture_rule" "example_zero_trust_device_posture_rule" {
+  account_id = "699d98642c564d2e855e9661899b7252"
+  name = "Admin Serial Numbers"
+  type = "file"
+  description = "The rule for admin serial numbers"
+  expiration = "1h"
   input = {
-    id                 = cloudflare_zero_trust_list.corporate_devices.id
-    version            = "1.0.0"
-    operator           = "<"
-    os_distro_name     = "ubuntu"
-    os_distro_revision = "1.0.0"
-    os_version_extra   = "(a)"
+    operating_system = "windows"
+    path = "/bin/cat"
+    exists = true
+    sha256 = "https://api.us-2.crowdstrike.com"
+    thumbprint = "0aabab210bdb998e9cf45da2c9ce352977ab531c681b74cf1e487be1bbe9fe6e"
   }
+  match = [{
+    platform = "windows"
+  }]
+  schedule = "1h"
 }

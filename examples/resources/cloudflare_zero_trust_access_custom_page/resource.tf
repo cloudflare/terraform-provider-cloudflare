@@ -1,6 +1,7 @@
-resource "cloudflare_zero_trust_access_custom_page" "example" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "example"
-  type        = "forbidden"
-  custom_html = "<html><body><h1>Forbidden</h1></body></html>"
+resource "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_custom_page" {
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  custom_html = "<html><body><h1>Access Denied</h1></body></html>"
+  name = "name"
+  type = "identity_denied"
+  app_count = 0
 }

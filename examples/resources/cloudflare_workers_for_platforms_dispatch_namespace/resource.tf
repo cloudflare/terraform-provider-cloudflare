@@ -1,12 +1,4 @@
-resource "cloudflare_workers_for_platforms_dispatch_namespace" "example" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "example-namespace"
-}
-
-resource "cloudflare_workers_script" "customer_worker_1" {
-  account_id         = "f037e56e89293a057740de681ac9abbe"
-  name               = "customer-worker-1"
-  content            = file("script.js")
-  dispatch_namespace = cloudflare_workers_for_platforms_dispatch_namespace.example.name
-  tags               = ["free"]
+resource "cloudflare_workers_for_platforms_dispatch_namespace" "example_workers_for_platforms_dispatch_namespace" {
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  name = "my-dispatch-namespace"
 }

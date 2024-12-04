@@ -1,12 +1,15 @@
-resource "cloudflare_hyperdrive_config" "no_defaults" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "my-hyperdrive-config"
+resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  name = "example-hyperdrive"
   origin = {
     database = "postgres"
-    password = "my-password"
-    host     = "my-database.example.com"
-    port     = 5432
-    scheme   = "postgres"
-    user     = "my-user"
+    host = "database.example.com"
+    password = "password"
+    port = 5432
+    scheme = "postgres"
+    user = "postgres"
+  }
+  caching = {
+    disabled = true
   }
 }

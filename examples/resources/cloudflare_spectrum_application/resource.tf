@@ -1,19 +1,24 @@
-resource "cloudflare_spectrum_application" "example" {
-  zone_id      = "0da42c8d2132a9ddaf714f9e7c920711"
-  protocol     = "tcp/22"
-  traffic_type = "direct"
-
+resource "cloudflare_spectrum_application" "example_spectrum_application" {
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   dns = {
-    type = "CNAME"
     name = "ssh.example.com"
+    type = "CNAME"
   }
-
-  origin_direct = [
-    "tcp://192.0.2.1:22"
-  ]
-
+  ip_firewall = true
+  protocol = "tcp/22"
+  proxy_protocol = "off"
+  tls = "off"
+  traffic_type = "direct"
+  argo_smart_routing = true
   edge_ips = {
-    type = "static"
-    ips  = ["203.0.113.1", "203.0.113.2"]
+    connectivity = "all"
+    type = "dynamic"
   }
+  origin_direct = ["tcp://127.0.0.1:8080"]
+  origin_dns = {
+    name = "origin.example.com"
+    ttl = 600
+    type = ""
+  }
+  origin_port = 22
 }

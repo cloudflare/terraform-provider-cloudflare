@@ -1,7 +1,5 @@
-resource "cloudflare_dns_record" "example" {
-  zone_id = var.cloudflare_zone_id
-  name    = "terraform"
-  value   = "192.0.2.1"
-  type    = "A"
-  ttl     = 3600
+resource "cloudflare_dns_record" "example_dns_record" {
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  content = "198.51.100.4"
+  type = "A"
 }

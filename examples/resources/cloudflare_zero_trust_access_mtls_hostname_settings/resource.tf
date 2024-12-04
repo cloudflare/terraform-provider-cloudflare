@@ -1,8 +1,8 @@
-resource "cloudflare_zero_trust_access_mtls_hostname_settings" "example" {
-  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+resource "cloudflare_zero_trust_access_mtls_hostname_settings" "example_zero_trust_access_mtls_hostname_settings" {
   settings = [{
-    hostname                      = "example.com"
+    china_network = false
     client_certificate_forwarding = true
-    china_network                 = false
+    hostname = "admin.example.com"
   }]
+  zone_id = "zone_id"
 }

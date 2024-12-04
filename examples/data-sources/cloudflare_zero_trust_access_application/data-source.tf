@@ -1,35 +1,5 @@
-# For account level applications
-resource "cloudflare_zero_trust_access_application" "example" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "example"
-  domain     = "example.com"
-}
-
-# You can use either `name` or `domain` to identify the application
-data "cloudflare_zero_trust_access_application" "example" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "example"
-}
-
-data "cloudflare_zero_trust_access_application" "example" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  domain     = "example.com"
-}
-
-# For zone level applications
-resource "cloudflare_zero_trust_access_application" "example" {
-  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
-  name    = "example"
-  domain  = "example.com"
-}
-
-# You can use either `name` or `domain` to identify the application
-data "cloudflare_zero_trust_access_application" "example" {
-  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
-  name    = "example"
-}
-
-data "cloudflare_zero_trust_access_application" "example" {
-  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
-  domain  = "example.com"
+data "cloudflare_zero_trust_access_application" "example_zero_trust_access_application" {
+  app_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  account_id = "account_id"
+  zone_id = "zone_id"
 }

@@ -1,5 +1,5 @@
-resource "cloudflare_pages_domain" "my-domain" {
-  account_id   = "f037e56e89293a057740de681ac9abbe"
-  project_name = "my-example-project"
-  domain       = "example.com"
+resource "cloudflare_pages_domain" "example_pages_domain" {
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  project_name = "this-is-my-project-01"
+  name = "example.com"
 }

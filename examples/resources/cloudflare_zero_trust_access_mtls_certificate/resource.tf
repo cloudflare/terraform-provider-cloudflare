@@ -1,6 +1,11 @@
-resource "cloudflare_zero_trust_access_mtls_certificate" "my_cert" {
-  zone_id              = "0da42c8d2132a9ddaf714f9e7c920711"
-  name                 = "My Root Cert"
-  certificate          = var.ca_pem
-  associated_hostnames = ["staging.example.com"]
+resource "cloudflare_zero_trust_access_mtls_certificate" "example_zero_trust_access_mtls_certificate" {
+  certificate = <<EOT
+  -----BEGIN CERTIFICATE-----
+  MIIGAjCCA+qgAwIBAgIJAI7kymlF7CWT...N4RI7KKB7nikiuUf8vhULKy5IX10
+  DrUtmu/B
+  -----END CERTIFICATE-----
+  EOT
+  name = "Allow devs"
+  zone_id = "zone_id"
+  associated_hostnames = ["admin.example.com"]
 }

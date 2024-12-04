@@ -1,4 +1,4 @@
-data "cloudflare_dns_record" "example" {
-  zone_id  = "0da42c8d2132a9ddaf714f9e7c920711"
-  hostname = "example.com"
+data "cloudflare_dns_record" "example_dns_record" {
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  dns_record_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }

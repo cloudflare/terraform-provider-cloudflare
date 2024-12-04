@@ -1,47 +1,59 @@
-resource "cloudflare_workers_kv_namespace" "my_namespace" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  title      = "example"
-}
-
-# Sets the script with the name "script_1"
-resource "cloudflare_workers_script" "my_script" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "script_1"
-  content    = file("script.js")
-
-  kv_namespace_binding = [{
-    name         = "MY_EXAMPLE_KV_NAMESPACE"
-    namespace_id = cloudflare_workers_kv_namespace.my_namespace.id
-  }]
-
-  plain_text_binding = [{
-    name = "MY_EXAMPLE_PLAIN_TEXT"
-    text = "foobar"
-  }]
-
-  secret_text_binding = [{
-    name = "MY_EXAMPLE_SECRET_TEXT"
-    text = var.secret_foo_value
-  }]
-
-  webassembly_binding = [{
-    name   = "MY_EXAMPLE_WASM"
-    module = filebase64("example.wasm")
-  }]
-
-  service_binding = [{
-    name        = "MY_SERVICE_BINDING"
-    service     = "MY_SERVICE"
-    environment = "production"
-  }]
-
-  r2_bucket_binding = [{
-    name        = "MY_BUCKET"
-    bucket_name = "MY_BUCKET_NAME"
-  }]
-
-  analytics_engine_binding = [{
-    name    = "MY_DATASET"
-    dataset = "dataset1"
-  }]
+resource "cloudflare_workers_script" "example_workers_script" {
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  script_name = "this-is_my_script-01"
+  any_part_name = ["file.txt"]
+  metadata = {
+    assets = {
+      config = {
+        html_handling = "auto-trailing-slash"
+        not_found_handling = "none"
+        serve_directly = true
+      }
+      jwt = "jwt"
+    }
+    bindings = [{
+      name = "MY_ENV_VAR"
+      type = "plain_text"
+    }]
+    body_part = "worker.js"
+    compatibility_date = "2023-07-25"
+    compatibility_flags = ["string"]
+    keep_assets = false
+    keep_bindings = ["string"]
+    logpush = false
+    main_module = "worker.js"
+    migrations = {
+      deleted_classes = ["string"]
+      new_classes = ["string"]
+      new_sqlite_classes = ["string"]
+      new_tag = "v2"
+      old_tag = "v1"
+      renamed_classes = [{
+        from = "from"
+        to = "to"
+      }]
+      transferred_classes = [{
+        from = "from"
+        from_script = "from_script"
+        to = "to"
+      }]
+    }
+    observability = {
+      enabled = true
+      head_sampling_rate = 0.1
+    }
+    placement = {
+      mode = "smart"
+    }
+    tags = ["string"]
+    tail_consumers = [{
+      service = "my-log-consumer"
+      environment = "production"
+      namespace = "my-namespace"
+    }]
+    usage_model = "bundled"
+    version_tags = {
+      foo = "string"
+    }
+  }
 }

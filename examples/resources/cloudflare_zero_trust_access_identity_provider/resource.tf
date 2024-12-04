@@ -1,44 +1,22 @@
-# one time pin
-resource "cloudflare_zero_trust_access_identity_provider" "pin_login" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "PIN login"
-  type       = "onetimepin"
-}
-
-# oauth
-resource "cloudflare_zero_trust_access_identity_provider" "github_oauth" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "GitHub OAuth"
-  type       = "github"
+resource "cloudflare_zero_trust_access_identity_provider" "example_zero_trust_access_identity_provider" {
   config = {
-    client_id     = "example"
-    client_secret = "secret_key"
+    claims = ["email_verified", "preferred_username", "custom_claim_name"]
+    client_id = "<your client id>"
+    client_secret = "<your client secret>"
+    conditional_access_enabled = true
+    directory_id = "<your azure directory uuid>"
+    email_claim_name = "custom_claim_name"
+    prompt = "login"
+    support_groups = true
   }
-}
-
-# saml
-resource "cloudflare_zero_trust_access_identity_provider" "jumpcloud_saml" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "JumpCloud SAML"
-  type       = "saml"
-  config = {
-    issuer_url      = "jumpcloud"
-    sso_target_url  = "https://sso.myexample.jumpcloud.com/saml2/cloudflareaccess"
-    attributes      = ["email", "username"]
-    sign_request    = false
-    idp_public_cert = "MIIDpDCCAoygAwIBAgIGAV2ka+55MA0GCSqGSIb3DQEBCwUAMIGSMQswCQ...GF/Q2/MHadws97cZg\nuTnQyuOqPuHbnN83d/2l1NSYKCbHt24o"
-  }
-}
-
-# okta
-resource "cloudflare_zero_trust_access_identity_provider" "okta" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "Okta"
-  type       = "okta"
-  config = {
-    client_id     = "example"
-    client_secret = "secret_key"
-    api_token     = "okta_api_token"
-    okta_account  = "https://example.com"
+  name = "Widget Corps IDP"
+  type = "onetimepin"
+  zone_id = "zone_id"
+  scim_config = {
+    enabled = true
+    identity_update_behavior = "automatic"
+    seat_deprovision = true
+    secret = "secret"
+    user_deprovision = true
   }
 }
