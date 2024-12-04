@@ -279,7 +279,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Observability settings for the Worker.",
 						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataObservabilityModel](ctx),
+						// CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataObservabilityModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Whether observability is enabled for the Worker.",

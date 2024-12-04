@@ -186,13 +186,15 @@ func (r *WaitingRoomRulesResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
-	_, err := r.client.WaitingRooms.Rules.Delete(
+	res := new(http.Response)
+	_, err := r.client.WaitingRooms.Rules.Update(
 		ctx,
 		data.WaitingRoomID.ValueString(),
-		data.RuleID.ValueString(),
-		waiting_rooms.RuleDeleteParams{
+		waiting_rooms.RuleUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
+		option.WithRequestBody("application/json", []byte(`[]`)),
+		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

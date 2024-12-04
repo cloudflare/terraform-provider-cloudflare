@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+if [ -z "$1" ]; then
+  echo "Error: You must define a version number to inject into the build"
+  exit 1
+fi
+
+VERSION=$1
+echo "==> Building provider version $VERSION"
+go build -ldflags="-s -w -X main.version=$VERSION" -o terraform-provider-cloudflare

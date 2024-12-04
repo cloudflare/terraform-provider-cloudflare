@@ -189,6 +189,8 @@ func (r *ZoneDNSSECResource) Delete(ctx context.Context, req resource.DeleteRequ
 		return
 	}
 
+	disableDNSSECRecord(ctx, r, data.ZoneID.ValueString(), resp)
+
 	_, err := r.client.DNS.DNSSEC.Delete(
 		ctx,
 		dns.DNSSECDeleteParams{
