@@ -20,7 +20,7 @@ jobs:
           body: |
             This functionality has been released in [${{ github.event.milestone.title }} of the Terraform Cloudflare Provider](https://github.com/${{ github.repository }}/releases/tag/${{ github.event.milestone.title }}).
 
-            Please see the [Terraform documentation on provider versioning](https://www.terraform.io/docs/configuration/providers.html#provider-versions) or reach out if you need any assistance upgrading.
+            Please see the [Terraform documentation on provider versioning](https://developer.hashicorp.com/terraform/language/providers/requirements#version-constraints) or reach out if you need any assistance upgrading.
 
             For further feature requests or bug reports with this functionality, please create a [new GitHub issue](https://github.com/${{ github.repository }}/issues/new/choose) following the template. Thank you!
             
