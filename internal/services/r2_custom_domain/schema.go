@@ -46,7 +46,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether to enable public bucket access at the custom domain. If undefined, the domain will be enabled.",
-				Optional:    true,
+				Required:    true,
 			},
 			"min_tls": schema.StringAttribute{
 				Description: "Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.",
