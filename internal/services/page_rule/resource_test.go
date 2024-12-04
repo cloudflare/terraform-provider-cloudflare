@@ -89,7 +89,7 @@ func TestAccCloudflarePageRule_Basic(t *testing.T) {
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					// testAccCheckCloudflarePageRuleAttributesBasic(&pageRule),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/", target)),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 				),
 			},
 		},
