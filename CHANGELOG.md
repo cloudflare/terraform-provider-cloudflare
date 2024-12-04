@@ -1,4 +1,25 @@
-## 4.47.0 (Unreleased)
+## 4.48.0 (Unreleased)
+
+## 4.47.0 (November 27th, 2024)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: support SCIM schema strictness setting for outbound provisioning ([#4419](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4419))
+* resource/cloudflare_access_identity_provider: Adds identity update behavior field in SCIM configuration ([#4602](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4602))
+* resource/cloudflare_notification_policy: Added support for D1 in the `cloudflare_notification_policy` resource and data source. ([#4615](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4615))
+* resource/cloudflare_notification_policy: add support for `image_resizing_notification` alert type ([#4588](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4588))
+* resource/cloudflare_r2_bucket: Added support for Oceania region in location hints. ([#4660](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4660))
+
+BUG FIXES:
+
+* resource/cloudflare_logpush_job: add dlp_forensic_copies to allowed dataset values ([#4598](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4598))
+* resource/cloudflare_zero_trust_access_policy: make gsuite  parameters required ([#4597](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4597))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.109.0 to 0.110.0 ([#4632](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4632))
+* provider: bump github.com/hashicorp/terraform-plugin-testing from 1.10.0 to 1.11.0 ([#4613](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4613))
+* provider: bump github.com/stretchr/testify from 1.9.0 to 1.10.0 ([#4663](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4663))
 
 ## 4.46.0 (November 13th, 2024)
 
