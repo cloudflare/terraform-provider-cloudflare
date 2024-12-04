@@ -88,7 +88,23 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 	}
 
 	if value, ok := d.GetOk("self_hosted_domains"); ok {
-		newAccessApplication.SelfHostedDomains = expandInterfaceToStringList(value.(*schema.Set).List())
+		selfHostedDomains := expandInterfaceToStringList(value.(*schema.Set).List())
+		destinations := make([]cloudflare.AccessDestination, len(selfHostedDomains))
+		for i, uri := range selfHostedDomains {
+			destinations[i] = cloudflare.AccessDestination{
+				Type: cloudflare.AccessDestinationPublic,
+				URI:  uri,
+			}
+		}
+		newAccessApplication.Destinations = destinations
+	}
+
+	if value, ok := d.GetOk("destinations"); ok {
+		destinations, err := convertDestinationsToStruct(value.([]interface{}))
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		newAccessApplication.Destinations = destinations
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {
@@ -258,7 +274,17 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	}
 
 	if _, ok := d.GetOk("self_hosted_domains"); ok {
-		d.Set("self_hosted_domains", accessApplication.SelfHostedDomains)
+		publicDomains := make([]string, 0, len(accessApplication.Destinations))
+		for _, dest := range accessApplication.Destinations {
+			if dest.Type == cloudflare.AccessDestinationPublic {
+				publicDomains = append(publicDomains, dest.URI)
+			}
+		}
+		d.Set("self_hosted_domains", publicDomains)
+	}
+
+	if _, ok := d.GetOk("destinations"); ok {
+		d.Set("destinations", convertDestinationsToSchema(accessApplication.Destinations))
 	}
 
 	scimConfig := convertScimConfigStructToSchema(accessApplication.SCIMConfig)
@@ -320,7 +346,23 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 	}
 
 	if value, ok := d.GetOk("self_hosted_domains"); ok {
-		updatedAccessApplication.SelfHostedDomains = expandInterfaceToStringList(value.(*schema.Set).List())
+		selfHostedDomains := expandInterfaceToStringList(value.(*schema.Set).List())
+		destinations := make([]cloudflare.AccessDestination, len(selfHostedDomains))
+		for i, uri := range selfHostedDomains {
+			destinations[i] = cloudflare.AccessDestination{
+				Type: cloudflare.AccessDestinationPublic,
+				URI:  uri,
+			}
+		}
+		updatedAccessApplication.Destinations = destinations
+	}
+
+	if value, ok := d.GetOk("destinations"); ok {
+		destinations, err := convertDestinationsToStruct(value.([]interface{}))
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		updatedAccessApplication.Destinations = destinations
 	}
 
 	if d.HasChange("policies") {
