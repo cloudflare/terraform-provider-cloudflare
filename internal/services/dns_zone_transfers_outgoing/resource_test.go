@@ -1,4 +1,4 @@
-package secondary_dns_outgoing_test
+package dns_zone_transfers_outgoing_test
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/secondary_dns"
+	"github.com/cloudflare/cloudflare-go/v3/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -17,8 +17,8 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("cloudflare_secondary_dns_outgoing", &resource.Sweeper{
-		Name: "cloudflare_secondary_dns_outgoing",
+	resource.AddTestSweepers("cloudflare_dns_zone_transfers_outgoing", &resource.Sweeper{
+		Name: "cloudflare_dns_zone_transfers_outgoing",
 		F:    testSweepCloudflareSecondaryDNSOutgoing,
 	})
 }
@@ -33,7 +33,7 @@ func testSweepCloudflareSecondaryDNSOutgoing(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-	outgoingZone, err := client.SecondaryDNS.Outgoing.Get(context.Background(), secondary_dns.OutgoingGetParams{ZoneID: cloudflare.F(zoneID)})
+	outgoingZone, err := client.DNS.ZoneTransfers.Outgoing.Get(context.Background(), dns.ZoneTransferOutgoingGetParams{ZoneID: cloudflare.F(zoneID)})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare outgoing secondary zones: %s", err))
 	}
@@ -43,7 +43,7 @@ func testSweepCloudflareSecondaryDNSOutgoing(r string) error {
 		return nil
 	}
 
-	_, err = client.SecondaryDNS.Outgoing.Update(context.Background(), secondary_dns.OutgoingUpdateParams{ZoneID: cloudflare.F(zoneID), Peers: cloudflare.F([]interface{}{})})
+	_, err = client.DNS.ZoneTransfers.Outgoing.Update(context.Background(), dns.ZoneTransferOutgoingUpdateParams{ZoneID: cloudflare.F(zoneID), Peers: cloudflare.F([]string{})})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to clear peers on outgoing zone: %s", err))
 	}
@@ -54,19 +54,13 @@ func testSweepCloudflareSecondaryDNSOutgoing(r string) error {
 func TestAccCloudflareSecondaryDNSOutgoing_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
-	name := "cloudflare_secondary_dns_outgoing." + rnd
+	name := "cloudflare_dns_zone_transfers_outgoing." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	client := acctest.SharedClient()
 
-	// Make a new peer that we can connect our zone to
-	peerObj := secondary_dns.PeerParam{
-		Port: cloudflare.F(float64(53)),
-		Name: cloudflare.F("terraform-peer"),
-		IP:   cloudflare.F("1.2.3.4"),
-	}
-	peer, err := client.SecondaryDNS.Peers.New(context.Background(), secondary_dns.PeerNewParams{AccountID: cloudflare.F(accountID), Body: peerObj})
+	peer, err := client.DNS.ZoneTransfers.Peers.New(context.Background(), dns.ZoneTransferPeerNewParams{AccountID: cloudflare.F(accountID), Name: cloudflare.F("terraform-peer")})
 	if err != nil {
 		tflog.Error(context.Background(), fmt.Sprintf("Failed to bootstrap Cloudflare DNS peer: %s", err))
 	}
@@ -85,7 +79,7 @@ func TestAccCloudflareSecondaryDNSOutgoing_Basic(t *testing.T) {
 		},
 	})
 	// Delete the original peer after we are done
-	_, err = client.SecondaryDNS.Peers.Delete(context.Background(), peer.ID, secondary_dns.PeerDeleteParams{AccountID: cloudflare.F(accountID)})
+	_, err = client.DNS.ZoneTransfers.Peers.Delete(context.Background(), peer.ID, dns.ZoneTransferPeerDeleteParams{AccountID: cloudflare.F(accountID)})
 	if err != nil {
 		tflog.Error(context.Background(), fmt.Sprintf("Failed to cleanup Cloudflare DNS peer in outgoing test: %s", err))
 	}
@@ -94,24 +88,18 @@ func TestAccCloudflareSecondaryDNSOutgoing_Basic(t *testing.T) {
 func TestAccCloudflareSecondaryDNSOutgoing_Update(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
-	name := "cloudflare_secondary_dns_outgoing." + rnd
+	name := "cloudflare_dns_zone_transfers_outgoing." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	client := acctest.SharedClient()
 
-	// Make a new peer that we can connect our zone to
-	peerObj := secondary_dns.PeerParam{
-		Port: cloudflare.F(float64(53)),
-		Name: cloudflare.F("terraform-peer"),
-		IP:   cloudflare.F("1.2.3.4"),
-	}
-	peer1, err := client.SecondaryDNS.Peers.New(context.Background(), secondary_dns.PeerNewParams{AccountID: cloudflare.F(accountID), Body: peerObj})
+	peer1, err := client.DNS.ZoneTransfers.Peers.New(context.Background(), dns.ZoneTransferPeerNewParams{AccountID: cloudflare.F(accountID), Name: cloudflare.F("terraform-peer")})
 	if err != nil {
 		tflog.Error(context.Background(), fmt.Sprintf("Failed to bootstrap Cloudflare DNS peer: %s", err))
 	}
-	peerObj.IP = cloudflare.F("1.2.3.6")
-	peer2, err := client.SecondaryDNS.Peers.New(context.Background(), secondary_dns.PeerNewParams{AccountID: cloudflare.F(accountID), Body: peerObj})
+
+	peer2, err := client.DNS.ZoneTransfers.Peers.New(context.Background(), dns.ZoneTransferPeerNewParams{AccountID: cloudflare.F(accountID), Name: cloudflare.F("terraform-peer")})
 	if err != nil {
 		tflog.Error(context.Background(), fmt.Sprintf("Failed to bootstrap Cloudflare DNS peer: %s", err))
 	}
@@ -134,7 +122,7 @@ func TestAccCloudflareSecondaryDNSOutgoing_Update(t *testing.T) {
 	})
 	// Delete the original peers after we are done
 	for _, id := range []string{peer1.ID, peer2.ID} {
-		_, err = client.SecondaryDNS.Peers.Delete(context.Background(), id, secondary_dns.PeerDeleteParams{AccountID: cloudflare.F(accountID)})
+		_, err = client.DNS.ZoneTransfers.Peers.Delete(context.Background(), id, dns.ZoneTransferPeerDeleteParams{AccountID: cloudflare.F(accountID)})
 		if err != nil {
 			tflog.Error(context.Background(), fmt.Sprintf("Failed to cleanup Cloudflare DNS peer in outgoing test: %s", err))
 		}
