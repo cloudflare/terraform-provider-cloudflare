@@ -1,4 +1,4 @@
-package secondary_dns_acl_test
+package dns_zone_transfers_acl_test
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/secondary_dns"
+	"github.com/cloudflare/cloudflare-go/v3/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -17,8 +17,8 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("cloudflare_secondary_dns_acl", &resource.Sweeper{
-		Name: "cloudflare_secondary_dns_acl",
+	resource.AddTestSweepers("cloudflare_dns_zone_transfers_acl", &resource.Sweeper{
+		Name: "cloudflare_dns_zone_transfers_acl",
 		F:    testSweepCloudflareSecondaryDNSACL,
 	})
 }
@@ -33,7 +33,7 @@ func testSweepCloudflareSecondaryDNSACL(r string) error {
 		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
 	}
 
-	acls, err := client.SecondaryDNS.ACLs.List(context.Background(), secondary_dns.ACLListParams{AccountID: cloudflare.F(accountID)})
+	acls, err := client.DNS.ZoneTransfers.ACLs.List(context.Background(), dns.ZoneTransferACLListParams{AccountID: cloudflare.F(accountID)})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare secondary DNS ACLs: %s", err))
 	}
@@ -46,7 +46,7 @@ func testSweepCloudflareSecondaryDNSACL(r string) error {
 	for _, acl := range acls.Result {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare ACL ID: %s", acl.ID))
 		//nolint:errcheck
-		client.SecondaryDNS.ACLs.Delete(context.TODO(), acl.ID, secondary_dns.ACLDeleteParams{AccountID: cloudflare.F(accountID)})
+		client.DNS.ZoneTransfers.ACLs.Delete(context.TODO(), acl.ID, dns.ZoneTransferACLDeleteParams{AccountID: cloudflare.F(accountID)})
 	}
 
 	return nil
@@ -54,7 +54,7 @@ func testSweepCloudflareSecondaryDNSACL(r string) error {
 
 func TestAccCloudflareSecondaryDNSACL_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_secondary_dns_acl." + rnd
+	name := "cloudflare_dns_zone_transfers_acl." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -74,7 +74,7 @@ func TestAccCloudflareSecondaryDNSACL_Basic(t *testing.T) {
 
 func TestAccCloudflareSecondaryDNSACL_Update(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_secondary_dns_acl." + rnd
+	name := "cloudflare_dns_zone_transfers_acl." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{

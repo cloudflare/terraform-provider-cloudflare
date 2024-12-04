@@ -1,4 +1,4 @@
-package secondary_dns_tsig_test
+package dns_zone_transfers_tsig_test
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/secondary_dns"
+	"github.com/cloudflare/cloudflare-go/v3/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -17,8 +17,8 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("cloudflare_secondary_dns_tsig", &resource.Sweeper{
-		Name: "cloudflare_secondary_dns_tsig",
+	resource.AddTestSweepers("cloudflare_dns_zone_transfers_tsig", &resource.Sweeper{
+		Name: "cloudflare_dns_zone_transfers_tsig",
 		F:    testSweepCloudflareSecondaryDNSTSIG,
 	})
 }
@@ -33,7 +33,7 @@ func testSweepCloudflareSecondaryDNSTSIG(r string) error {
 		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
 	}
 
-	tsigs, err := client.SecondaryDNS.TSIGs.List(context.Background(), secondary_dns.TSIGListParams{AccountID: cloudflare.F(accountID)})
+	tsigs, err := client.DNS.ZoneTransfers.TSIGs.List(context.Background(), dns.ZoneTransferTSIGListParams{AccountID: cloudflare.F(accountID)})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare tsigs: %s", err))
 	}
@@ -46,7 +46,7 @@ func testSweepCloudflareSecondaryDNSTSIG(r string) error {
 	for _, tsig := range tsigs.Result {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare tsig ID: %s", tsig.ID))
 		//nolint:errcheck
-		client.SecondaryDNS.TSIGs.Delete(context.TODO(), tsig.ID, secondary_dns.TSIGDeleteParams{AccountID: cloudflare.F(accountID)})
+		client.DNS.ZoneTransfers.TSIGs.Delete(context.TODO(), tsig.ID, dns.ZoneTransferTSIGDeleteParams{AccountID: cloudflare.F(accountID)})
 	}
 
 	return nil
@@ -54,7 +54,7 @@ func testSweepCloudflareSecondaryDNSTSIG(r string) error {
 
 func TestAccCloudflareSecondaryDNSTSIG_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_secondary_dns_tsig." + rnd
+	name := "cloudflare_dns_zone_transfers_tsig." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -75,7 +75,7 @@ func TestAccCloudflareSecondaryDNSTSIG_Basic(t *testing.T) {
 
 func TestAccCloudflareSecondaryDNSTSIG_Update(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_secondary_dns_tsig." + rnd
+	name := "cloudflare_dns_zone_transfers_tsig." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
