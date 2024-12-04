@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/dns"
+	"github.com/cloudflare/cloudflare-go/v3/dns_firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -22,7 +22,7 @@ func init() {
 
 			client := acctest.SharedClient()
 
-			clusters, err := client.DNS.Firewall.List(ctx, dns.FirewallListParams{
+			clusters, err := client.DNSFirewall.List(ctx, dns_firewall.DNSFirewallListParams{
 				AccountID: cloudflare.F(accountID),
 			})
 			if err != nil {
@@ -30,7 +30,7 @@ func init() {
 			}
 
 			for _, cluster := range clusters.Result {
-				_, err := client.DNS.Firewall.Delete(ctx, cluster.ID, dns.FirewallDeleteParams{
+				_, err := client.DNSFirewall.Delete(ctx, cluster.ID, dns_firewall.DNSFirewallDeleteParams{
 					AccountID: cloudflare.F(accountID),
 				})
 				if err != nil {
