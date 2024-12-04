@@ -18,7 +18,7 @@ type R2CustomDomainModel struct {
 	DomainName types.String                                        `tfsdk:"domain_name" path:"domain_name,optional"`
 	Domain     types.String                                        `tfsdk:"domain" json:"domain,required"`
 	ZoneID     types.String                                        `tfsdk:"zone_id" json:"zoneId,required"`
-	Enabled    types.Bool                                          `tfsdk:"enabled" json:"enabled,optional"`
+	Enabled    types.Bool                                          `tfsdk:"enabled" json:"enabled,required"`
 	MinTLS     types.String                                        `tfsdk:"min_tls" json:"minTLS,optional"`
 	ZoneName   types.String                                        `tfsdk:"zone_name" json:"zoneName,computed"`
 	Status     customfield.NestedObject[R2CustomDomainStatusModel] `tfsdk:"status" json:"status,computed"`
