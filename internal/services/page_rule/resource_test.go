@@ -83,12 +83,13 @@ func TestAccCloudflarePageRule_Basic(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflarePageRuleConfigBasic(zoneID, target, rnd),
+				// Config: testAccCheckCloudflarePageRuleConfigBasic(zoneID, target, rnd),
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_apps = true`, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					// testAccCheckCloudflarePageRuleAttributesBasic(&pageRule),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/", target)),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 				),
 			},
 		},
