@@ -1,0 +1,7 @@
+ ```release-note:new-resource
+cloudflare_snippet
+```
+
+```release-note:new-resource
+cloudflare_snippet_rules
+```
