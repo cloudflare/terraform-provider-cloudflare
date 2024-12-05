@@ -66,9 +66,9 @@ func (m PageRuleModel) marshalActions(b []byte) (data []byte, err error) {
 	}
 
 	T.Actions, err = m.Actions.Encode()
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
 	return json.Marshal(T)
 }
@@ -101,8 +101,8 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 	case !m.DisableApps.IsNull():
 		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDDisableApps, "value": m.DisableApps.ValueBool()})
 	default:
-    // TODO: Throw error for unknown page rule
-        return nil, errors.New("missing or unknown page rule")
+		// TODO: Throw error for unknown page rule
+		return nil, errors.New("missing or unknown page rule")
 	}
 
 	return
