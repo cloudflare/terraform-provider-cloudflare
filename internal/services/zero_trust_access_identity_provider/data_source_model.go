@@ -47,6 +47,10 @@ func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toReadParams(_ context.
 func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toListParams(_ context.Context) (params zero_trust.IdentityProviderListParams, diags diag.Diagnostics) {
 	params = zero_trust.IdentityProviderListParams{}
 
+	if !m.Filter.SCIMEnabled.IsNull() {
+		params.SCIMEnabled = cloudflare.F(m.Filter.SCIMEnabled.ValueString())
+	}
+
 	if !m.Filter.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
 	} else {
@@ -70,6 +74,7 @@ type ZeroTrustAccessIdentityProviderConfigDataSourceModel struct {
 	AppsDomain               types.String                                                                                       `tfsdk:"apps_domain" json:"apps_domain,computed"`
 	AuthURL                  types.String                                                                                       `tfsdk:"auth_url" json:"auth_url,computed"`
 	CERTsURL                 types.String                                                                                       `tfsdk:"certs_url" json:"certs_url,computed"`
+	PKCEEnabled              types.Bool                                                                                         `tfsdk:"pkce_enabled" json:"pkce_enabled,computed"`
 	Scopes                   customfield.List[types.String]                                                                     `tfsdk:"scopes" json:"scopes,computed"`
 	TokenURL                 types.String                                                                                       `tfsdk:"token_url" json:"token_url,computed"`
 	AuthorizationServerID    types.String                                                                                       `tfsdk:"authorization_server_id" json:"authorization_server_id,computed"`
@@ -100,6 +105,7 @@ type ZeroTrustAccessIdentityProviderSCIMConfigDataSourceModel struct {
 }
 
 type ZeroTrustAccessIdentityProviderFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	AccountID   types.String `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	SCIMEnabled types.String `tfsdk:"scim_enabled" query:"scim_enabled,optional"`
 }
