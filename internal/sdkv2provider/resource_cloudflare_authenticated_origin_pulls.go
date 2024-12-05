@@ -48,7 +48,7 @@ func resourceCloudflareAuthenticatedOriginPullsCreate(ctx context.Context, d *sc
 		conf := []cloudflare.PerHostnameAuthenticatedOriginPullsConfig{{
 			CertID:   aopCert,
 			Hostname: hostname,
-			Enabled:  isEnabled,
+			Enabled:  &isEnabled,
 		}}
 		_, err := client.EditPerHostnameAuthenticatedOriginPullsConfig(ctx, zoneID, conf)
 		if err != nil {
@@ -123,7 +123,7 @@ func resourceCloudflareAuthenticatedOriginPullsDelete(ctx context.Context, d *sc
 		conf := []cloudflare.PerHostnameAuthenticatedOriginPullsConfig{{
 			CertID:   aopCert,
 			Hostname: hostname,
-			Enabled:  false,
+			Enabled:  nil,
 		}}
 		_, err := client.EditPerHostnameAuthenticatedOriginPullsConfig(ctx, zoneID, conf)
 		if err != nil {
