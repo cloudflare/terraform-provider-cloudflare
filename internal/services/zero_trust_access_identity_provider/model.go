@@ -44,6 +44,7 @@ type ZeroTrustAccessIdentityProviderConfigModel struct {
 	AppsDomain               types.String                                                   `tfsdk:"apps_domain" json:"apps_domain,optional"`
 	AuthURL                  types.String                                                   `tfsdk:"auth_url" json:"auth_url,optional"`
 	CERTsURL                 types.String                                                   `tfsdk:"certs_url" json:"certs_url,optional"`
+	PKCEEnabled              types.Bool                                                     `tfsdk:"pkce_enabled" json:"pkce_enabled,optional"`
 	Scopes                   *[]types.String                                                `tfsdk:"scopes" json:"scopes,optional"`
 	TokenURL                 types.String                                                   `tfsdk:"token_url" json:"token_url,optional"`
 	AuthorizationServerID    types.String                                                   `tfsdk:"authorization_server_id" json:"authorization_server_id,optional"`
