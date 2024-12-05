@@ -60,13 +60,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"actions": schema.SingleNestedAttribute{
-				Required:   true,
+				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"automatic_https_rewrites": schema.StringAttribute{
 						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("on", "off"),
 						},
+					},
+					"disable_apps": schema.BoolAttribute{
+						Optional: true,
 					},
 				},
 			},

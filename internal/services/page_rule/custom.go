@@ -2,6 +2,7 @@ package page_rule
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/pagerules"
@@ -63,27 +64,46 @@ func (m PageRuleModel) marshalActions(b []byte) (data []byte, err error) {
 	if err = json.Unmarshal(b, &T); err != nil {
 		return nil, err
 	}
-	T.Actions = []map[string]any{
-		{"id": "disable_apps"},
-	}
+
+	T.Actions, err = m.Actions.Encode()
+    if err != nil {
+        return nil, err
+    }
+
 	return json.Marshal(T)
 }
 
 func (m PageRuleModel) PageruleNewParams() pagerules.PageruleNewParams {
 	return pagerules.PageruleNewParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-		// Targets: cloudflare.F([]pagerules.TargetParam{
-		// 	{
-		// 		Constraint: cloudflare.F(pagerules.TargetConstraintParam{
-		// 			Operator: cloudflare.F(pagerules.TargetConstraintOperatorMatches),
-		// 			Value:    cloudflare.F(m.Target.String()),
-		// 		}),
-		// 	},
-		// }),
-		// Actions: cloudflare.F([]pagerules.PageruleNewParamsActionUnion{}),
+		Targets: cloudflare.F([]pagerules.TargetParam{
+			{
+				Constraint: cloudflare.F(pagerules.TargetConstraintParam{
+					Operator: cloudflare.F(pagerules.TargetConstraintOperatorMatches),
+					Value:    cloudflare.F(m.Target.String()),
+				}),
+			},
+		}),
+		Actions: cloudflare.F([]pagerules.PageruleNewParamsActionUnion{}),
 	}
 }
 
 type PageRuleActionsModel struct {
 	AutomaticHTTPSRewrites types.String `tfsdk:"automatic_https_rewrites" json:"automatic_https_rewrites,optional"`
+	DisableApps            types.Bool   `tfsdk:"disable_apps" json:"disable_apps,optional"`
+}
+
+func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
+
+	switch {
+	case !m.AutomaticHTTPSRewrites.IsNull():
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDAutomaticHTTPSRewrites, "value": m.AutomaticHTTPSRewrites.String()})
+	case !m.DisableApps.IsNull():
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDDisableApps, "value": m.DisableApps.ValueBool()})
+	default:
+    // TODO: Throw error for unknown page rule
+        return nil, errors.New("missing or unknown page rule")
+	}
+
+	return
 }
