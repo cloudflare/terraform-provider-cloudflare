@@ -45,8 +45,8 @@ func testSweepCloudflareLCCRules(r string) error {
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Error deleting a user-defined detection patter for Leaked Credential Check: %s", err))
 		}
-
 	}
+	
 	return nil
 }
 
