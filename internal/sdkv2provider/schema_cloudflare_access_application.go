@@ -54,13 +54,53 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 				return oldValue == newValue
 			},
 		},
+		"domain_type": {
+			Type:         schema.TypeString,
+			Optional:     true,
+			Computed:     true,
+			ValidateFunc: validation.StringInSlice([]string{"public", "private"}, false),
+			Description:  fmt.Sprintf("The type of the primary domain. %s", renderAvailableDocumentationValuesStringSlice([]string{"public", "private"})),
+			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+				appType := d.Get("type").(string)
+				// Suppress the diff if it's an app type that doesn't need a `domain` value.
+				if appType == "infrastructure" {
+					return true
+				}
+
+				return oldValue == newValue
+			},
+		},
+		"destinations": {
+			Type:          schema.TypeList,
+			Optional:      true,
+			ConflictsWith: []string{"self_hosted_domains"},
+			Description:   "A destination secured by Access. Only present for self_hosted, vnc, and ssh applications. Always includes the value set as `domain`. Supersedes `self_hosted_domains` to allow for more flexibility in defining different types of destinations.",
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"type": {
+						Type:         schema.TypeString,
+						Default:      "public",
+						Optional:     true,
+						ValidateFunc: validation.StringInSlice([]string{"public", "private"}, false),
+						Description:  fmt.Sprintf("The destination type. %s", renderAvailableDocumentationValuesStringSlice([]string{"public", "private"})),
+					},
+					"uri": {
+						Type:        schema.TypeString,
+						Required:    true,
+						Description: "The URI of the destination. Public destinations can include a domain and path with wildcards. Private destinations are an early access feature and gated behind a feature flag. Private destinations support private IPv4, IPv6, and Server Name Indications (SNI) with optional port ranges.",
+					},
+				},
+			},
+		},
 		"self_hosted_domains": {
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:          schema.TypeSet,
+			Optional:      true,
+			ConflictsWith: []string{"destinations"},
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
-			Description: "List of domains that access will secure. Only present for self_hosted, vnc, and ssh applications. Always includes the value set as `domain`",
+			Description: "List of public domains secured by Access. Only present for self_hosted, vnc, and ssh applications. Always includes the value set as `domain`. Deprecated in favor of `destinations` and will be removed in the next major version.",
+			Deprecated:  "Use `destinations` instead",
 		},
 		"type": {
 			Type:         schema.TypeString,
@@ -997,6 +1037,30 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 	return &SaasConfig
 }
 
+func convertDestinationsToStruct(destinationPayloads []interface{}) ([]cloudflare.AccessDestination, error) {
+	destinations := make([]cloudflare.AccessDestination, len(destinationPayloads))
+	for i, dp := range destinationPayloads {
+		dpMap := dp.(map[string]interface{})
+
+		if dType, ok := dpMap["type"].(string); ok {
+			switch dType {
+			case "public":
+				destinations[i].Type = cloudflare.AccessDestinationPublic
+			case "private":
+				destinations[i].Type = cloudflare.AccessDestinationPrivate
+			default:
+				return nil, fmt.Errorf("failed to parse destination type: value must be one of public or private")
+			}
+		}
+
+		if uri, ok := dpMap["uri"].(string); ok {
+			destinations[i].URI = uri
+		}
+	}
+
+	return destinations, nil
+}
+
 func convertTargetContextsToStruct(d *schema.ResourceData) (*[]cloudflare.AccessInfrastructureTargetContext, error) {
 	TargetContexts := []cloudflare.AccessInfrastructureTargetContext{}
 	if value, ok := d.GetOk("target_criteria"); ok {
@@ -1446,4 +1510,15 @@ func convertScimConfigMappingsStructsToSchema(mappingsData []*cloudflare.AccessA
 	}
 
 	return mappings
+}
+
+func convertDestinationsToSchema(destinations []cloudflare.AccessDestination) []interface{} {
+	schemas := make([]interface{}, len(destinations))
+	for i, dest := range destinations {
+		schemas[i] = map[string]interface{}{
+			"type": string(dest.Type),
+			"uri":  dest.URI,
+		}
+	}
+	return schemas
 }
