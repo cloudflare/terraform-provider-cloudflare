@@ -27,12 +27,15 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/gateway_categories"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/hyperdrive_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/infrastructure_access_target_deprecated"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/leaked_credential_check"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/risk_behavior"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/snippet_rules"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms_dispatch_namespace"
@@ -368,6 +371,8 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		snippet_rules.NewResource,
+		snippets.NewResource,
 		cloud_connector_rules.NewResource,
 		d1.NewResource,
 		email_routing_address.NewResource,
@@ -387,6 +392,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_risk_score_integration.NewResource,
 		infrastructure_access_target_deprecated.NewResource,
 		zero_trust_infrastructure_access_target.NewResource,
+		leaked_credential_check.NewResource,
 	}
 }
 
