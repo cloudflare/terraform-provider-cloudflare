@@ -991,6 +991,7 @@ func TestAccCloudflareAccessPolicy_ConnectionRules(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "connection_rules.0.ssh.0.usernames.0", "tfgo-acc-test"),
+					resource.TestCheckResourceAttr(name, "connection_rules.0.ssh.0.allow_email_alias", "true"),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", "devuser@cloudflare.com"),
 				),
 			},
@@ -1024,6 +1025,7 @@ func testAccessPolicyConnectionRulesConfig(resourceID, zone, accountID string) s
 	  connection_rules {
 		ssh {
 		  usernames = ["tfgo-acc-test"]
+		  allow_email_alias = true
 		}
       }
       include {

@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_access_policy: adds support for Access infrastructure `allow_email_alias` connection rule flag
+```
+
+```release-note:enhancement
+resource/cloudflare_zero_trust_access_policy: adds support for Access infrastructure `allow_email_alias` connection rule flag
+```
