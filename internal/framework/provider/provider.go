@@ -389,11 +389,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_risk_score_integration.NewResource,
 		infrastructure_access_target_deprecated.NewResource,
 		zero_trust_infrastructure_access_target.NewResource,
-<<<<<<< HEAD
 		leaked_credential_check.NewResource,
-=======
 		leaked_credential_check_rules.NewResource,
->>>>>>> 9769fdf5b (Add new resource to provider)
 	}
 }
 
