@@ -10,7 +10,7 @@ import (
 
 func (r *LeakedCredentialCheckRuleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Provides a Cloudflare Leaked Credential Check Rules resource for managing user-defined Leaked Credential detection patterns within a specific zone.",
+		Description: "Provides a Cloudflare Leaked Credential Check Rule resource for managing user-defined Leaked Credential detection patterns within a specific zone.",
 		Attributes: map[string]schema.Attribute{
 			consts.IDSchemaKey: schema.StringAttribute{
 				Description: consts.IDSchemaDescription,

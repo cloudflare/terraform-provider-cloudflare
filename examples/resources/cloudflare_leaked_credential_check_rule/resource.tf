@@ -5,7 +5,7 @@ resource "cloudflare_leaked_credential_check" "example" {
 	enabled = true
 }
 
-resource "cloudflare_leaked_credential_check_rules" "example" {
+resource "cloudflare_leaked_credential_check_rule" "example" {
   zone_id = cloudflare_leaked_credential_check.example.zone_id
   username = "lookup_json_string(http.request.body.raw, \"user\")"
 	password = "lookup_json_string(http.request.body.raw, \"pass\")"
