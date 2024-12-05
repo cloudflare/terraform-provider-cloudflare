@@ -3,6 +3,7 @@ package leaked_credential_check_rule
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
@@ -146,6 +147,15 @@ func (r *LeakedCredentialCheckRuleResource) Delete(ctx context.Context, req reso
 }
 
 func (r *LeakedCredentialCheckRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
-	return
+	idparts := strings.Split(req.ID, "/")
+	if len(idparts) != 2 {
+		resp.Diagnostics.AddError("error importing leaked credential detection", "invalid ID specified. Please specify the ID as \"zone_id/resource_id\"")
+		return
+	}
+	resp.Diagnostics.Append(resp.State.SetAttribute(
+		ctx, path.Root("zone_id"), idparts[0],
+	)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(
+		ctx, path.Root("id"), idparts[1],
+	)...)
 }
