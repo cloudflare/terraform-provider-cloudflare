@@ -67,7 +67,7 @@ func (d *DNSFirewallsDataSource) Read(ctx context.Context, req datasource.ReadRe
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.DNS.Firewall.List(ctx, params)
+	page, err := d.client.DNSFirewall.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

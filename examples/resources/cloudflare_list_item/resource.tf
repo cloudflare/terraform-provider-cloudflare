@@ -1,69 +1,21 @@
-# IP List
-resource "cloudflare_list" "example_ip_list" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "example_list"
-  description = "example IPs for a list"
-  kind        = "ip"
-}
-
-# IP List Item
-resource "cloudflare_list_item" "example_ip_item" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  list_id    = cloudflare_list.example_ip_list.id
-  comment    = "List Item Comment"
-  ip         = "192.0.2.0"
-}
-
-# Redirect List
-resource "cloudflare_list" "example_redirect_list" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "example_list"
-  description = "example Redirects for a list"
-  kind        = "redirect"
-}
-
-# Redirect List Item
-resource "cloudflare_list_item" "example_redirect_item" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  list_id    = cloudflare_list.example_ip_list.id
-  redirect = {
-    source_url       = "https://source.tld/"
-    target_url       = "https://target.tld"
-    status_code      = 302
-    subpath_matching = true
-  }
-}
-
-# ASN List
-resource "cloudflare_list" "example_asn_list" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "example_asn_list"
-  description = "example ASNs for a list"
-  kind        = "asn"
-}
-
-# ASN List Item
-resource "cloudflare_list_item" "example_asn_item" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  list_id    = cloudflare_list.example_asn_list.id
-  comment    = "List Item Comment"
-  asn        = 6789
-}
-
-# Hostname List
-resource "cloudflare_list" "example_hostname_list" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "example_hostname_list"
-  description = "example Hostnames for a list"
-  kind        = "hostname"
-}
-
-# Hostname List Item
-resource "cloudflare_list_item" "example_hostname_item" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  list_id    = cloudflare_list.example_hostname_list.id
-  comment    = "List Item Comment"
-  hostname = {
-    url_hostname = "example.com"
-  }
+resource "cloudflare_list_item" "example_list_item" {
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  list_id = "2c0fc9fa937b11eaa1b71c4d701ab86e"
+  body = [{
+    asn = 5567
+    comment = "Private IP address"
+    hostname = {
+      url_hostname = "example.com"
+    }
+    ip = "10.0.0.1"
+    redirect = {
+      source_url = "example.com/arch"
+      target_url = "https://archlinux.org/"
+      include_subdomains = true
+      preserve_path_suffix = true
+      preserve_query_string = true
+      status_code = 301
+      subpath_matching = true
+    }
+  }]
 }

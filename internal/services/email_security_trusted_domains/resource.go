@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -204,26 +205,29 @@ func (r *EmailSecurityTrustedDomainsResource) Delete(ctx context.Context, req re
 }
 
 func (r *EmailSecurityTrustedDomainsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *EmailSecurityTrustedDomainsModel
+	var data *EmailSecurityTrustedDomainsModel = new(EmailSecurityTrustedDomainsModel)
 
 	path_account_id := ""
-	path_pattern_id := int64(0)
+	path_trusted_domain_id := int64(0)
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<pattern_id>",
+		"<account_id>/<trusted_domain_id>",
 		&path_account_id,
-		&path_pattern_id,
+		&path_trusted_domain_id,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
+	data.AccountID = types.StringValue(path_account_id)
+	data.ID = types.Int64Value(path_trusted_domain_id)
+
 	res := new(http.Response)
 	env := EmailSecurityTrustedDomainsResultEnvelope{data.Body}
 	_, err := r.client.EmailSecurity.Settings.TrustedDomains.Get(
 		ctx,
-		path_pattern_id,
+		path_trusted_domain_id,
 		email_security.SettingTrustedDomainGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
@@ -235,7 +239,7 @@ func (r *EmailSecurityTrustedDomainsResource) ImportState(ctx context.Context, r
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

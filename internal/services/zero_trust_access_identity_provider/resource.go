@@ -238,7 +238,7 @@ func (r *ZeroTrustAccessIdentityProviderResource) Delete(ctx context.Context, re
 }
 
 func (r *ZeroTrustAccessIdentityProviderResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessIdentityProviderModel
+	var data *ZeroTrustAccessIdentityProviderModel = new(ZeroTrustAccessIdentityProviderModel)
 	params := zero_trust.IdentityProviderGetParams{}
 
 	path_accounts_or_zones, path_account_id_or_zone_id := "", ""
@@ -254,14 +254,18 @@ func (r *ZeroTrustAccessIdentityProviderResource) ImportState(ctx context.Contex
 	switch path_accounts_or_zones {
 	case "accounts":
 		params.AccountID = cloudflare.F(path_account_id_or_zone_id)
+		data.AccountID = types.StringValue(path_account_id_or_zone_id)
 	case "zones":
 		params.ZoneID = cloudflare.F(path_account_id_or_zone_id)
+		data.ZoneID = types.StringValue(path_account_id_or_zone_id)
 	default:
 		resp.Diagnostics.AddError("invalid discriminator segment - <{accounts|zones}/{account_id|zone_id}>", "expected discriminator to be one of {accounts|zones}")
 	}
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ID = types.StringValue(path_identity_provider_id)
 
 	res := new(http.Response)
 	env := ZeroTrustAccessIdentityProviderResultEnvelope{*data}
@@ -277,7 +281,7 @@ func (r *ZeroTrustAccessIdentityProviderResource) ImportState(ctx context.Contex
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

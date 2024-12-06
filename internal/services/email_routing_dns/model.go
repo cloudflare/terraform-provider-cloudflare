@@ -35,7 +35,7 @@ func (m EmailRoutingDNSModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m EmailRoutingDNSModel) MarshalJSONForUpdate(state EmailRoutingDNSModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type EmailRoutingDNSErrorsModel struct {

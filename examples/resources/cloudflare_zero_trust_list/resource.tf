@@ -1,7 +1,11 @@
-resource "cloudflare_zero_trust_list" "example" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "Corporate devices"
-  type        = "SERIAL"
-  description = "Serial numbers for all corporate devices."
-  items       = ["8GE8721REF", "5RE8543EGG", "1YE2880LNP"]
+resource "cloudflare_zero_trust_list" "example_zero_trust_list" {
+  account_id = "699d98642c564d2e855e9661899b7252"
+  name = "Admin Serial Numbers"
+  type = "SERIAL"
+  description = "The serial numbers for administrators"
+  items = [{
+    created_at = "2014-01-01T05:20:00.12345Z"
+    description = "Austin office IP"
+    value = "8GE8721REF"
+  }]
 }

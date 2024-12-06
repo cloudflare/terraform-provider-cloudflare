@@ -31,7 +31,7 @@ func (m EmailSecurityTrustedDomainsModel) MarshalJSON() (data []byte, err error)
 }
 
 func (m EmailSecurityTrustedDomainsModel) MarshalJSONForUpdate(state EmailSecurityTrustedDomainsModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m.Body, state.Body)
+	return apijson.MarshalForPatch(m.Body, state.Body)
 }
 
 type EmailSecurityTrustedDomainsBodyModel struct {

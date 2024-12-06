@@ -26,5 +26,5 @@ func (m StreamAudioTrackModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m StreamAudioTrackModel) MarshalJSONForUpdate(state StreamAudioTrackModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -181,7 +182,7 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) Delete(ctx context.
 }
 
 func (r *APIShieldOperationSchemaValidationSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *APIShieldOperationSchemaValidationSettingsModel
+	var data *APIShieldOperationSchemaValidationSettingsModel = new(APIShieldOperationSchemaValidationSettingsModel)
 
 	path_zone_id := ""
 	path_operation_id := ""
@@ -195,6 +196,9 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) ImportState(ctx con
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.OperationID = types.StringValue(path_operation_id)
 
 	res := new(http.Response)
 	_, err := r.client.APIGateway.Operations.SchemaValidation.Get(
@@ -211,7 +215,7 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) ImportState(ctx con
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.Unmarshal(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

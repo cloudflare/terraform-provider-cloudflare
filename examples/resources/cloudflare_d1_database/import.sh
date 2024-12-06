@@ -1,1 +1,1 @@
-$ terraform import cloudflare_d1_database.example <account id>/<database id>
+$ terraform import cloudflare_d1_database.example '<account_id>/<database_id>'

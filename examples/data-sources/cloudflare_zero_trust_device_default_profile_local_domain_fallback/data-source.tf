@@ -1,0 +1,3 @@
+data "cloudflare_zero_trust_device_default_profile_local_domain_fallback" "example_zero_trust_device_default_profile_local_domain_fallback" {
+  account_id = "699d98642c564d2e855e9661899b7252"
+}

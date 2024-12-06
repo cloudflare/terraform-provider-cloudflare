@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -208,7 +209,7 @@ func (r *RegionalHostnameResource) Delete(ctx context.Context, req resource.Dele
 }
 
 func (r *RegionalHostnameResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *RegionalHostnameModel
+	var data *RegionalHostnameModel = new(RegionalHostnameModel)
 
 	path_zone_id := ""
 	path_hostname := ""
@@ -222,6 +223,9 @@ func (r *RegionalHostnameResource) ImportState(ctx context.Context, req resource
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.Hostname = types.StringValue(path_hostname)
 
 	res := new(http.Response)
 	env := RegionalHostnameResultEnvelope{*data}
@@ -239,7 +243,7 @@ func (r *RegionalHostnameResource) ImportState(ctx context.Context, req resource
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

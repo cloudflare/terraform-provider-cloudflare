@@ -20,13 +20,8 @@ type ListType[T attr.Value] struct {
 	basetypes.ListType
 }
 
-func newListType[T attr.Value](ctx context.Context) (ListType[T], diag.Diagnostics) {
-	return ListType[T]{ListType: basetypes.ListType{ElemType: elemType[T](ctx)}}, nil
-}
-
 func NewListType[T attr.Value](ctx context.Context) ListType[T] {
-	t, _ := newListType[T](ctx)
-	return t
+	return ListType[T]{ListType: basetypes.ListType{ElemType: elemType[T](ctx)}}
 }
 
 func (t ListType[T]) Equal(o attr.Type) bool {
@@ -87,7 +82,7 @@ func (t ListType[T]) ValueFromTerraform(ctx context.Context, in tftypes.Value) (
 }
 
 func (t ListType[T]) ValueType(ctx context.Context) attr.Value {
-	return List[T]{}
+	return UnknownList[T](ctx)
 }
 
 func (t ListType[T]) NullValue(ctx context.Context) (attr.Value, diag.Diagnostics) {
@@ -110,6 +105,14 @@ type List[T attr.Value] struct {
 	//lint:ignore U1000 the placeholder is for easy reflection-based-access
 	placeholder T
 	basetypes.ListValue
+}
+
+func (v List[T]) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+	tv := v.ListValue
+	if tv.ElementType(ctx) == nil {
+		tv = NullList[T](ctx).ListValue
+	}
+	return tv.ToTerraformValue(ctx)
 }
 
 func (v List[T]) NullValue(ctx context.Context) ListLike {

@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -184,7 +185,7 @@ func (r *WaitingRoomSettingsResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *WaitingRoomSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WaitingRoomSettingsModel
+	var data *WaitingRoomSettingsModel = new(WaitingRoomSettingsModel)
 
 	path := ""
 	diags := importpath.ParseImportID(
@@ -196,6 +197,8 @@ func (r *WaitingRoomSettingsResource) ImportState(ctx context.Context, req resou
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ZoneID = types.StringValue(path)
 
 	res := new(http.Response)
 	env := WaitingRoomSettingsResultEnvelope{*data}
@@ -212,7 +215,7 @@ func (r *WaitingRoomSettingsResource) ImportState(ctx context.Context, req resou
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

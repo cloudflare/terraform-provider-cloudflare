@@ -1,4 +1,7 @@
-resource "cloudflare_zone" "example" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  zone       = "example.com"
+resource "cloudflare_zone" "example_zone" {
+  account = {
+    id = "023e105f4ecef8ad9ca31a8372d0c353"
+  }
+  name = "example.com"
+  type = "full"
 }

@@ -9,12 +9,13 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/dns"
+	"github.com/cloudflare/cloudflare-go/v3/dns_firewall"
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -70,9 +71,9 @@ func (r *DNSFirewallResource) Create(ctx context.Context, req resource.CreateReq
 	}
 	res := new(http.Response)
 	env := DNSFirewallResultEnvelope{*data}
-	_, err = r.client.DNS.Firewall.New(
+	_, err = r.client.DNSFirewall.New(
 		ctx,
-		dns.FirewallNewParams{
+		dns_firewall.DNSFirewallNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -118,10 +119,10 @@ func (r *DNSFirewallResource) Update(ctx context.Context, req resource.UpdateReq
 	}
 	res := new(http.Response)
 	env := DNSFirewallResultEnvelope{*data}
-	_, err = r.client.DNS.Firewall.Edit(
+	_, err = r.client.DNSFirewall.Edit(
 		ctx,
 		data.ID.ValueString(),
-		dns.FirewallEditParams{
+		dns_firewall.DNSFirewallEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -154,10 +155,10 @@ func (r *DNSFirewallResource) Read(ctx context.Context, req resource.ReadRequest
 
 	res := new(http.Response)
 	env := DNSFirewallResultEnvelope{*data}
-	_, err := r.client.DNS.Firewall.Get(
+	_, err := r.client.DNSFirewall.Get(
 		ctx,
 		data.ID.ValueString(),
-		dns.FirewallGetParams{
+		dns_firewall.DNSFirewallGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -187,10 +188,10 @@ func (r *DNSFirewallResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
-	_, err := r.client.DNS.Firewall.Delete(
+	_, err := r.client.DNSFirewall.Delete(
 		ctx,
 		data.ID.ValueString(),
-		dns.FirewallDeleteParams{
+		dns_firewall.DNSFirewallDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -204,7 +205,7 @@ func (r *DNSFirewallResource) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func (r *DNSFirewallResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *DNSFirewallModel
+	var data *DNSFirewallModel = new(DNSFirewallModel)
 
 	path_account_id := ""
 	path_dns_firewall_id := ""
@@ -219,12 +220,15 @@ func (r *DNSFirewallResource) ImportState(ctx context.Context, req resource.Impo
 		return
 	}
 
+	data.AccountID = types.StringValue(path_account_id)
+	data.ID = types.StringValue(path_dns_firewall_id)
+
 	res := new(http.Response)
 	env := DNSFirewallResultEnvelope{*data}
-	_, err := r.client.DNS.Firewall.Get(
+	_, err := r.client.DNSFirewall.Get(
 		ctx,
 		path_dns_firewall_id,
-		dns.FirewallGetParams{
+		dns_firewall.DNSFirewallGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
 		option.WithResponseBodyInto(&res),
@@ -235,7 +239,7 @@ func (r *DNSFirewallResource) ImportState(ctx context.Context, req resource.Impo
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

@@ -1,5 +1,5 @@
-resource "cloudflare_total_tls" "example" {
-  zone_id               = "0da42c8d2132a9ddaf714f9e7c920711"
-  enabled               = true
-  certificate_authority = "lets_encrypt"
+resource "cloudflare_total_tls" "example_total_tls" {
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  enabled = true
+  certificate_authority = "google"
 }

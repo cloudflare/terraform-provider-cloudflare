@@ -33,20 +33,10 @@ func (m *ImagesDataSourceModel) toListParams(_ context.Context) (params images.V
 }
 
 type ImagesResultDataSourceModel struct {
-	Images customfield.NestedObjectList[ImagesResultImagesDataSourceModel] `tfsdk:"images" json:"images,computed"`
+	Images customfield.NestedObjectList[ImagesImagesDataSourceModel] `tfsdk:"images" json:"images,computed"`
 }
 
-type ImagesErrorsDataSourceModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
-	Message types.String `tfsdk:"message" json:"message,computed"`
-}
-
-type ImagesMessagesDataSourceModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
-	Message types.String `tfsdk:"message" json:"message,computed"`
-}
-
-type ImagesResultImagesDataSourceModel struct {
+type ImagesImagesDataSourceModel struct {
 	ID                types.String                   `tfsdk:"id" json:"id,computed"`
 	Filename          types.String                   `tfsdk:"filename" json:"filename,computed"`
 	Meta              jsontypes.Normalized           `tfsdk:"meta" json:"meta,computed"`

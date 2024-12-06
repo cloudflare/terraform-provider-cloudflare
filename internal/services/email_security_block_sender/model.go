@@ -30,7 +30,7 @@ func (m EmailSecurityBlockSenderModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m EmailSecurityBlockSenderModel) MarshalJSONForUpdate(state EmailSecurityBlockSenderModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m.Body, state.Body)
+	return apijson.MarshalForPatch(m.Body, state.Body)
 }
 
 type EmailSecurityBlockSenderBodyModel struct {

@@ -25,7 +25,7 @@ func (m ZeroTrustDevicePostureIntegrationModel) MarshalJSON() (data []byte, err 
 }
 
 func (m ZeroTrustDevicePostureIntegrationModel) MarshalJSONForUpdate(state ZeroTrustDevicePostureIntegrationModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type ZeroTrustDevicePostureIntegrationConfigModel struct {

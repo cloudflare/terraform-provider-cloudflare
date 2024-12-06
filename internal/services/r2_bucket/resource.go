@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -207,7 +208,7 @@ func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteReques
 }
 
 func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *R2BucketModel
+	var data *R2BucketModel = new(R2BucketModel)
 
 	path_account_id := ""
 	path_bucket_name := ""
@@ -221,6 +222,9 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.Name = types.StringValue(path_bucket_name)
 
 	res := new(http.Response)
 	env := R2BucketResultEnvelope{*data}
@@ -238,7 +242,7 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

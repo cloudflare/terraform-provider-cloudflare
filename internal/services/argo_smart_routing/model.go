@@ -22,5 +22,5 @@ func (m ArgoSmartRoutingModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m ArgoSmartRoutingModel) MarshalJSONForUpdate(state ArgoSmartRoutingModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

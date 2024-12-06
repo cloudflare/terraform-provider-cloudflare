@@ -1,5 +1,6 @@
-resource "cloudflare_web_analytics_site" "example" {
-  account_id   = "f037e56e89293a057740de681ac9abbe"
-  zone_tag     = "0da42c8d2132a9ddaf714f9e7c920711"
+resource "cloudflare_web_analytics_site" "example_web_analytics_site" {
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   auto_install = true
+  host = "example.com"
+  zone_tag = "023e105f4ecef8ad9ca31a8372d0c353"
 }

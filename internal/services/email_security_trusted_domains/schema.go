@@ -21,6 +21,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
+				Description:   "The unique identifier for the trusted domain.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 			},
@@ -36,13 +37,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"is_recent": schema.BoolAttribute{
-							Required: true,
+							Description: "Select to prevent recently registered domains from triggering a\nSuspicious or Malicious disposition.",
+							Required:    true,
 						},
 						"is_regex": schema.BoolAttribute{
 							Required: true,
 						},
 						"is_similarity": schema.BoolAttribute{
-							Required: true,
+							Description: "Select for partner or other approved domains that have similar\nspelling to your connected domains. Prevents listed domains from\ntriggering a Spoof disposition.",
+							Required:    true,
 						},
 						"pattern": schema.StringAttribute{
 							Required: true,
@@ -58,13 +61,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"is_recent": schema.BoolAttribute{
-				Optional: true,
+				Description: "Select to prevent recently registered domains from triggering a\nSuspicious or Malicious disposition.",
+				Optional:    true,
 			},
 			"is_regex": schema.BoolAttribute{
 				Optional: true,
 			},
 			"is_similarity": schema.BoolAttribute{
-				Optional: true,
+				Description: "Select for partner or other approved domains that have similar\nspelling to your connected domains. Prevents listed domains from\ntriggering a Spoof disposition.",
+				Optional:    true,
 			},
 			"pattern": schema.StringAttribute{
 				Optional: true,

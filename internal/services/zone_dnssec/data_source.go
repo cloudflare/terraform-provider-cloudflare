@@ -65,7 +65,7 @@ func (d *ZoneDNSSECDataSource) Read(ctx context.Context, req datasource.ReadRequ
 
 	res := new(http.Response)
 	env := ZoneDNSSECResultDataSourceEnvelope{*data}
-	_, err := d.client.DNSSEC.Get(
+	_, err := d.client.DNS.DNSSEC.Get(
 		ctx,
 		params,
 		option.WithResponseBodyInto(&res),

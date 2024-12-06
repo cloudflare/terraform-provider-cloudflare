@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -208,7 +209,7 @@ func (r *ZeroTrustAccessTagResource) Delete(ctx context.Context, req resource.De
 }
 
 func (r *ZeroTrustAccessTagResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustAccessTagModel
+	var data *ZeroTrustAccessTagModel = new(ZeroTrustAccessTagModel)
 
 	path_account_id := ""
 	path_tag_name := ""
@@ -222,6 +223,9 @@ func (r *ZeroTrustAccessTagResource) ImportState(ctx context.Context, req resour
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.Name = types.StringValue(path_tag_name)
 
 	res := new(http.Response)
 	env := ZeroTrustAccessTagResultEnvelope{*data}
@@ -239,7 +243,7 @@ func (r *ZeroTrustAccessTagResource) ImportState(ctx context.Context, req resour
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

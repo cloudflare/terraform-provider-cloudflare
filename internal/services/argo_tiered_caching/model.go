@@ -25,5 +25,5 @@ func (m ArgoTieredCachingModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m ArgoTieredCachingModel) MarshalJSONForUpdate(state ArgoTieredCachingModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

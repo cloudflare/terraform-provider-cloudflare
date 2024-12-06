@@ -66,7 +66,7 @@ func (d *DNSFirewallDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 		res := new(http.Response)
 		env := DNSFirewallResultDataSourceEnvelope{*data}
-		_, err := d.client.DNS.Firewall.Get(
+		_, err := d.client.DNSFirewall.Get(
 			ctx,
 			data.DNSFirewallID.ValueString(),
 			params,
@@ -92,7 +92,7 @@ func (d *DNSFirewallDataSource) Read(ctx context.Context, req datasource.ReadReq
 		}
 
 		env := DNSFirewallResultListDataSourceEnvelope{}
-		page, err := d.client.DNS.Firewall.List(ctx, params)
+		page, err := d.client.DNSFirewall.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

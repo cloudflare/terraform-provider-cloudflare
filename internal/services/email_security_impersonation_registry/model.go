@@ -34,7 +34,7 @@ func (m EmailSecurityImpersonationRegistryModel) MarshalJSON() (data []byte, err
 }
 
 func (m EmailSecurityImpersonationRegistryModel) MarshalJSONForUpdate(state EmailSecurityImpersonationRegistryModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m.Body, state.Body)
+	return apijson.MarshalForPatch(m.Body, state.Body)
 }
 
 type EmailSecurityImpersonationRegistryBodyModel struct {

@@ -9,12 +9,13 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/dnssec"
+	"github.com/cloudflare/cloudflare-go/v3/dns"
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -70,9 +71,9 @@ func (r *ZoneDNSSECResource) Create(ctx context.Context, req resource.CreateRequ
 	}
 	res := new(http.Response)
 	env := ZoneDNSSECResultEnvelope{*data}
-	_, err = r.client.DNSSEC.Edit(
+	_, err = r.client.DNS.DNSSEC.Edit(
 		ctx,
-		dnssec.DNSSECEditParams{
+		dns.DNSSECEditParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -119,9 +120,9 @@ func (r *ZoneDNSSECResource) Update(ctx context.Context, req resource.UpdateRequ
 	}
 	res := new(http.Response)
 	env := ZoneDNSSECResultEnvelope{*data}
-	_, err = r.client.DNSSEC.Edit(
+	_, err = r.client.DNS.DNSSEC.Edit(
 		ctx,
-		dnssec.DNSSECEditParams{
+		dns.DNSSECEditParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -155,9 +156,9 @@ func (r *ZoneDNSSECResource) Read(ctx context.Context, req resource.ReadRequest,
 
 	res := new(http.Response)
 	env := ZoneDNSSECResultEnvelope{*data}
-	_, err := r.client.DNSSEC.Get(
+	_, err := r.client.DNS.DNSSEC.Get(
 		ctx,
-		dnssec.DNSSECGetParams{
+		dns.DNSSECGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -190,9 +191,9 @@ func (r *ZoneDNSSECResource) Delete(ctx context.Context, req resource.DeleteRequ
 
 	disableDNSSECRecord(ctx, r, data.ZoneID.ValueString(), resp)
 
-	_, err := r.client.DNSSEC.Delete(
+	_, err := r.client.DNS.DNSSEC.Delete(
 		ctx,
-		dnssec.DNSSECDeleteParams{
+		dns.DNSSECDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -207,7 +208,7 @@ func (r *ZoneDNSSECResource) Delete(ctx context.Context, req resource.DeleteRequ
 }
 
 func (r *ZoneDNSSECResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZoneDNSSECModel
+	var data *ZoneDNSSECModel = new(ZoneDNSSECModel)
 
 	path := ""
 	diags := importpath.ParseImportID(
@@ -220,11 +221,13 @@ func (r *ZoneDNSSECResource) ImportState(ctx context.Context, req resource.Impor
 		return
 	}
 
+	data.ZoneID = types.StringValue(path)
+
 	res := new(http.Response)
 	env := ZoneDNSSECResultEnvelope{*data}
-	_, err := r.client.DNSSEC.Get(
+	_, err := r.client.DNS.DNSSEC.Get(
 		ctx,
-		dnssec.DNSSECGetParams{
+		dns.DNSSECGetParams{
 			ZoneID: cloudflare.F(path),
 		},
 		option.WithResponseBodyInto(&res),
@@ -235,7 +238,7 @@ func (r *ZoneDNSSECResource) ImportState(ctx context.Context, req resource.Impor
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

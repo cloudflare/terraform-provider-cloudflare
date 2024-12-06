@@ -67,6 +67,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							),
 						},
 					},
+					"cloudflare_branding": schema.BoolAttribute{
+						Description: "Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true",
+						Optional:    true,
+					},
 					"custom_certificate": schema.StringAttribute{
 						Description: "If a custom uploaded certificate is used.",
 						Optional:    true,

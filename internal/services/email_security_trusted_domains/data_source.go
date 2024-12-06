@@ -68,7 +68,7 @@ func (d *EmailSecurityTrustedDomainsDataSource) Read(ctx context.Context, req da
 		env := EmailSecurityTrustedDomainsResultDataSourceEnvelope{*data}
 		_, err := d.client.EmailSecurity.Settings.TrustedDomains.Get(
 			ctx,
-			data.PatternID.ValueInt64(),
+			data.TrustedDomainID.ValueInt64(),
 			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),

@@ -1,12 +1,18 @@
-resource "cloudflare_zero_trust_dex_test" "example" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "GET homepage"
-  description = "Send a HTTP GET request to the home endpoint every half hour."
-  interval    = "0h30m0s"
-  enabled     = true
+resource "cloudflare_zero_trust_dex_test" "example_zero_trust_dex_test" {
+  account_id = "699d98642c564d2e855e9661899b7252"
   data = {
-    host   = "https://example.com/home"
-    kind   = "http"
+    host = "https://dash.cloudflare.com"
+    kind = "http"
     method = "GET"
   }
+  enabled = true
+  interval = "30m"
+  name = "HTTP dash health check"
+  description = "Checks the dash endpoint every 30 minutes"
+  target_policies = [{
+    id = "id"
+    default = true
+    name = "name"
+  }]
+  targeted = true
 }

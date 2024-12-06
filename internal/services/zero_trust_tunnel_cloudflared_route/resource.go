@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -204,7 +205,7 @@ func (r *ZeroTrustTunnelCloudflaredRouteResource) Delete(ctx context.Context, re
 }
 
 func (r *ZeroTrustTunnelCloudflaredRouteResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustTunnelCloudflaredRouteModel
+	var data *ZeroTrustTunnelCloudflaredRouteModel = new(ZeroTrustTunnelCloudflaredRouteModel)
 
 	path_account_id := ""
 	path_route_id := ""
@@ -218,6 +219,9 @@ func (r *ZeroTrustTunnelCloudflaredRouteResource) ImportState(ctx context.Contex
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.ID = types.StringValue(path_route_id)
 
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredRouteResultEnvelope{*data}
@@ -235,7 +239,7 @@ func (r *ZeroTrustTunnelCloudflaredRouteResource) ImportState(ctx context.Contex
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

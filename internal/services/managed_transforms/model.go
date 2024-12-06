@@ -19,7 +19,7 @@ func (m ManagedTransformsModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m ManagedTransformsModel) MarshalJSONForUpdate(state ManagedTransformsModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type ManagedTransformsManagedRequestHeadersModel struct {

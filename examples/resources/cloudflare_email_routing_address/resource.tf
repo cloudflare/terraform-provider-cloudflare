@@ -1,4 +1,4 @@
-resource "cloudflare_email_routing_address" "example" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  email      = "user@example.com"
+resource "cloudflare_email_routing_address" "example_email_routing_address" {
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  email = "user@example.com"
 }

@@ -1,4 +1,4 @@
-resource "cloudflare_tiered_cache" "example" {
-  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
-  cache_type = "smart"
+resource "cloudflare_tiered_cache" "example_tiered_cache" {
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  value = "on"
 }

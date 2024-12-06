@@ -25,5 +25,5 @@ func (m ZoneCacheReserveModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m ZoneCacheReserveModel) MarshalJSONForUpdate(state ZoneCacheReserveModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

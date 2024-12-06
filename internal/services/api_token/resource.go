@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -194,7 +195,7 @@ func (r *APITokenResource) Delete(ctx context.Context, req resource.DeleteReques
 }
 
 func (r *APITokenResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *APITokenModel
+	var data *APITokenModel = new(APITokenModel)
 
 	path := ""
 	diags := importpath.ParseImportID(
@@ -206,6 +207,8 @@ func (r *APITokenResource) ImportState(ctx context.Context, req resource.ImportS
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ID = types.StringValue(path)
 
 	res := new(http.Response)
 	env := APITokenResultEnvelope{*data}
@@ -220,7 +223,7 @@ func (r *APITokenResource) ImportState(ctx context.Context, req resource.ImportS
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

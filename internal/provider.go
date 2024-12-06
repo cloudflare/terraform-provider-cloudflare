@@ -43,6 +43,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dcv_delegation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_acl"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_incoming"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_outgoing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_peer"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_tsig"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_catch_all"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_dns"
@@ -59,6 +64,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image_variant"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/keyless_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer"
@@ -102,11 +108,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_acl"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_incoming"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_outgoing"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_peer"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_tsig"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_audio_track"
@@ -359,9 +360,14 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		custom_ssl.NewResource,
 		custom_hostname.NewResource,
 		custom_hostname_fallback_origin.NewResource,
-		dns_record.NewResource,
 		dns_firewall.NewResource,
 		zone_dnssec.NewResource,
+		dns_record.NewResource,
+		dns_zone_transfers_incoming.NewResource,
+		dns_zone_transfers_outgoing.NewResource,
+		dns_zone_transfers_acl.NewResource,
+		dns_zone_transfers_peer.NewResource,
+		dns_zone_transfers_tsig.NewResource,
 		email_security_block_sender.NewResource,
 		email_security_impersonation_registry.NewResource,
 		email_security_trusted_domains.NewResource,
@@ -384,11 +390,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		authenticated_origin_pulls.NewResource,
 		page_rule.NewResource,
 		rate_limit.NewResource,
-		secondary_dns_incoming.NewResource,
-		secondary_dns_outgoing.NewResource,
-		secondary_dns_acl.NewResource,
-		secondary_dns_peer.NewResource,
-		secondary_dns_tsig.NewResource,
 		waiting_room.NewResource,
 		waiting_room_event.NewResource,
 		waiting_room_rules.NewResource,
@@ -496,6 +497,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_message.NewResource,
 		cloudforce_one_request_priority.NewResource,
 		cloudforce_one_request_asset.NewResource,
+		leaked_credential_check.NewResource,
 	}
 }
 
@@ -539,11 +541,19 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		custom_hostname.NewCustomHostnameDataSource,
 		custom_hostname.NewCustomHostnamesDataSource,
 		custom_hostname_fallback_origin.NewCustomHostnameFallbackOriginDataSource,
-		dns_record.NewDNSRecordDataSource,
-		dns_record.NewDNSRecordsDataSource,
 		dns_firewall.NewDNSFirewallDataSource,
 		dns_firewall.NewDNSFirewallsDataSource,
 		zone_dnssec.NewZoneDNSSECDataSource,
+		dns_record.NewDNSRecordDataSource,
+		dns_record.NewDNSRecordsDataSource,
+		dns_zone_transfers_incoming.NewDNSZoneTransfersIncomingDataSource,
+		dns_zone_transfers_outgoing.NewDNSZoneTransfersOutgoingDataSource,
+		dns_zone_transfers_acl.NewDNSZoneTransfersACLDataSource,
+		dns_zone_transfers_acl.NewDNSZoneTransfersACLsDataSource,
+		dns_zone_transfers_peer.NewDNSZoneTransfersPeerDataSource,
+		dns_zone_transfers_peer.NewDNSZoneTransfersPeersDataSource,
+		dns_zone_transfers_tsig.NewDNSZoneTransfersTSIGDataSource,
+		dns_zone_transfers_tsig.NewDNSZoneTransfersTSIGsDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSenderDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSendersDataSource,
 		email_security_impersonation_registry.NewEmailSecurityImpersonationRegistryDataSource,
@@ -582,14 +592,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		page_rule.NewPageRuleDataSource,
 		rate_limit.NewRateLimitDataSource,
 		rate_limit.NewRateLimitsDataSource,
-		secondary_dns_incoming.NewSecondaryDNSIncomingDataSource,
-		secondary_dns_outgoing.NewSecondaryDNSOutgoingDataSource,
-		secondary_dns_acl.NewSecondaryDNSACLDataSource,
-		secondary_dns_acl.NewSecondaryDNSACLsDataSource,
-		secondary_dns_peer.NewSecondaryDNSPeerDataSource,
-		secondary_dns_peer.NewSecondaryDNSPeersDataSource,
-		secondary_dns_tsig.NewSecondaryDNSTSIGDataSource,
-		secondary_dns_tsig.NewSecondaryDNSTSIGsDataSource,
 		waiting_room.NewWaitingRoomDataSource,
 		waiting_room.NewWaitingRoomsDataSource,
 		waiting_room_event.NewWaitingRoomEventDataSource,
@@ -771,6 +773,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		permission_group.NewPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
 		resource_group.NewResourceGroupsDataSource,
+		leaked_credential_check.NewLeakedCredentialCheckDataSource,
 	}
 }
 

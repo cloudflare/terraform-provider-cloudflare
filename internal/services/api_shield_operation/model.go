@@ -23,5 +23,5 @@ func (m APIShieldOperationModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m APIShieldOperationModel) MarshalJSONForUpdate(state APIShieldOperationModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

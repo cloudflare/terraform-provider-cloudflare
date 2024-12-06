@@ -129,6 +129,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "The jwks_uri endpoint of your IdP to allow the IdP keys to sign the tokens",
 						Computed:    true,
 					},
+					"pkce_enabled": schema.BoolAttribute{
+						Description: "Enable Proof Key for Code Exchange (PKCE)",
+						Computed:    true,
+					},
 					"scopes": schema.ListAttribute{
 						Description: "OAuth scopes",
 						Computed:    true,
@@ -215,10 +219,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"identity_update_behavior": schema.StringAttribute{
-						Description: "Indicates how a SCIM event updates an Access identity. Use \"automatic\" to automatically update a user's Access identity and augment it with fields from the SCIM user resource. Use \"reauth\" to force re-authentication on group membership updates. With \"reauth\" Access identities will not contain fields from the SCIM user resource.",
+						Description: "Indicates how a SCIM event updates a user identity used for policy evaluation. Use \"automatic\" to automatically update a user's identity and augment it with fields from the SCIM user resource. Use \"reauth\" to force re-authentication on group membership updates, user identity update will only occur after successful re-authentication. With \"reauth\" identities will not contain fields from the SCIM user resource. With \"no_action\" identities will not be changed by SCIM updates in any way and users will not be prompted to reauthenticate.",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("automatic", "reauth"),
+							stringvalidator.OneOfCaseInsensitive(
+								"automatic",
+								"reauth",
+								"no_action",
+							),
 						},
 					},
 					"seat_deprovision": schema.BoolAttribute{
@@ -247,6 +255,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"zone_id": schema.StringAttribute{
 						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+						Optional:    true,
+					},
+					"scim_enabled": schema.StringAttribute{
+						Description: "Indicates to Access to only retrieve identity providers that have the System for Cross-Domain Identity Management (SCIM) enabled.",
 						Optional:    true,
 					},
 				},

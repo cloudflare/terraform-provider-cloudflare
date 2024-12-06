@@ -5,7 +5,6 @@ package page_rule
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -49,111 +48,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("active", "disabled"),
-				},
-			},
-			"actions": schema.ListNestedAttribute{
-				Description: "The set of actions to perform if the targets of this rule match the\nrequest. Actions can redirect to another URL or override settings, but\nnot both.\n",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[PageRuleActionsDataSourceModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Description: "If enabled, any `http://`` URL is converted to `https://` through a\n301 redirect.\n",
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(
-									"always_use_https",
-									"automatic_https_rewrites",
-									"browser_cache_ttl",
-									"browser_check",
-									"bypass_cache_on_cookie",
-									"cache_by_device_type",
-									"cache_deception_armor",
-									"cache_key",
-									"cache_key_fields",
-									"cache_level",
-									"cache_on_cookie",
-									"cache_ttl_by_status",
-									"ddos_protection",
-									"development_mode",
-									"disable_apps",
-									"disable_performance",
-									"disable_security",
-									"disable_zaraz",
-									"edge_cache_ttl",
-									"email_obfuscation",
-									"explicit_cache_control",
-									"forwarding_url",
-									"host_header_override",
-									"hotlink_protection",
-									"ip_geolocation",
-									"minify",
-									"mirage",
-									"opportunistic_encryption",
-									"origin_error_page_pass_thru",
-									"polish",
-									"purge_by_page_rule",
-									"resolve_override",
-									"respect_strong_etag",
-									"response_buffering",
-									"rocket_loader",
-									"security_level",
-									"server_side_exclude",
-									"sort_query_string_for_cache",
-									"ssl",
-									"true_client_ip_header",
-									"waf",
-								),
-							},
-						},
-						"value": schema.StringAttribute{
-							Description: "The status of Automatic HTTPS Rewrites.\n",
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("on", "off"),
-							},
-						},
-					},
-				},
-			},
-			"targets": schema.ListNestedAttribute{
-				Description: "The rule targets to evaluate on each request.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[PageRuleTargetsDataSourceModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"constraint": schema.SingleNestedAttribute{
-							Description: "String constraint.",
-							Computed:    true,
-							CustomType:  customfield.NewNestedObjectType[PageRuleTargetsConstraintDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"operator": schema.StringAttribute{
-									Description: "The matches operator can use asterisks and pipes as wildcard and 'or' operators.",
-									Computed:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"matches",
-											"contains",
-											"equals",
-											"not_equal",
-											"not_contain",
-										),
-									},
-								},
-								"value": schema.StringAttribute{
-									Description: "The URL pattern to match against the current request. The pattern may contain up to four asterisks ('*') as placeholders.",
-									Computed:    true,
-								},
-							},
-						},
-						"target": schema.StringAttribute{
-							Description: "A target based on the URL of the request.",
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("url"),
-							},
-						},
-					},
 				},
 			},
 		},

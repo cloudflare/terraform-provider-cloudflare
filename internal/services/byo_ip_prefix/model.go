@@ -33,5 +33,5 @@ func (m ByoIPPrefixModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m ByoIPPrefixModel) MarshalJSONForUpdate(state ByoIPPrefixModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

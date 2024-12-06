@@ -6,7 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/dns"
+	"github.com/cloudflare/cloudflare-go/v3/dns_firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -23,8 +23,8 @@ type DNSFirewallsDataSourceModel struct {
 	Result    customfield.NestedObjectList[DNSFirewallsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *DNSFirewallsDataSourceModel) toListParams(_ context.Context) (params dns.FirewallListParams, diags diag.Diagnostics) {
-	params = dns.FirewallListParams{
+func (m *DNSFirewallsDataSourceModel) toListParams(_ context.Context) (params dns_firewall.DNSFirewallListParams, diags diag.Diagnostics) {
+	params = dns_firewall.DNSFirewallListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

@@ -31,110 +31,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"actions": schema.ListNestedAttribute{
-				Description: "The set of actions to perform if the targets of this rule match the\nrequest. Actions can redirect to another URL or override settings, but\nnot both.\n",
-				Required:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Description: "If enabled, any `http://`` URL is converted to `https://` through a\n301 redirect.\n",
-							Optional:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(
-									"always_use_https",
-									"automatic_https_rewrites",
-									"browser_cache_ttl",
-									"browser_check",
-									"bypass_cache_on_cookie",
-									"cache_by_device_type",
-									"cache_deception_armor",
-									"cache_key",
-									"cache_key_fields",
-									"cache_level",
-									"cache_on_cookie",
-									"cache_ttl_by_status",
-									"ddos_protection",
-									"development_mode",
-									"disable_apps",
-									"disable_performance",
-									"disable_security",
-									"disable_zaraz",
-									"edge_cache_ttl",
-									"email_obfuscation",
-									"explicit_cache_control",
-									"forwarding_url",
-									"host_header_override",
-									"hotlink_protection",
-									"ip_geolocation",
-									"minify",
-									"mirage",
-									"opportunistic_encryption",
-									"origin_error_page_pass_thru",
-									"polish",
-									"purge_by_page_rule",
-									"resolve_override",
-									"respect_strong_etag",
-									"response_buffering",
-									"rocket_loader",
-									"security_level",
-									"server_side_exclude",
-									"sort_query_string_for_cache",
-									"ssl",
-									"true_client_ip_header",
-									"waf",
-								),
-							},
-						},
-						"value": schema.StringAttribute{
-							Description: "The status of Automatic HTTPS Rewrites.\n",
-							Optional:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("on", "off"),
-							},
-						},
-					},
-				},
-			},
-			"targets": schema.ListNestedAttribute{
-				Description: "The rule targets to evaluate on each request.",
-				Required:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"constraint": schema.SingleNestedAttribute{
-							Description: "String constraint.",
-							Required:    true,
-							Attributes: map[string]schema.Attribute{
-								"operator": schema.StringAttribute{
-									Description: "The matches operator can use asterisks and pipes as wildcard and 'or' operators.",
-									Computed:    true,
-									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"matches",
-											"contains",
-											"equals",
-											"not_equal",
-											"not_contain",
-										),
-									},
-									Default: stringdefault.StaticString("contains"),
-								},
-								"value": schema.StringAttribute{
-									Description: "The URL pattern to match against the current request. The pattern may contain up to four asterisks ('*') as placeholders.",
-									Required:    true,
-								},
-							},
-						},
-						"target": schema.StringAttribute{
-							Description: "A target based on the URL of the request.",
-							Required:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("url"),
-							},
-						},
-					},
-				},
-			},
 			"priority": schema.Int64Attribute{
 				Description: "The priority of the rule, used to define which Page Rule is processed\nover another. A higher number indicates a higher priority. For example,\nif you have a catch-all Page Rule (rule A: `/images/*`) but want a more\nspecific Page Rule to take precedence (rule B: `/images/special/*`),\nspecify a higher priority for rule B so it overrides rule A.\n",
 				Computed:    true,
@@ -159,6 +55,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The timestamp of when the Page Rule was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"target": schema.StringAttribute{
+				Required: true,
+			},
+			"actions": schema.SingleNestedAttribute{
+				Required: true,
+				Attributes: map[string]schema.Attribute{
+					"automatic_https_rewrites": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"disable_apps": schema.BoolAttribute{
+						Optional: true,
+					},
+				},
 			},
 		},
 	}

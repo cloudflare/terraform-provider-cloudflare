@@ -37,7 +37,15 @@ func Marshal(value interface{}) ([]byte, error) {
 // Marshals the given plan data to a JSON string.
 // For null values, omits the property unless the corresponding state value was set.
 func MarshalForUpdate(plan interface{}, state interface{}) ([]byte, error) {
-	e := &encoder{dateFormat: time.RFC3339}
+	e := &encoder{root: true, dateFormat: time.RFC3339}
+	return e.marshal(plan, state)
+}
+
+// Marshals the given plan data to a JSON string.
+// Only serializes properties that changed from the state.
+// https://datatracker.ietf.org/doc/html/rfc7386
+func MarshalForPatch(plan interface{}, state interface{}) ([]byte, error) {
+	e := &encoder{root: true, dateFormat: time.RFC3339, patch: true}
 	return e.marshal(plan, state)
 }
 
@@ -49,6 +57,7 @@ func MarshalRoot(value interface{}) ([]byte, error) {
 type encoder struct {
 	dateFormat string
 	root       bool
+	patch      bool
 }
 
 type encoderFunc func(plan reflect.Value, state reflect.Value) ([]byte, error)
@@ -63,6 +72,7 @@ type encoderEntry struct {
 	reflect.Type
 	dateFormat string
 	root       bool
+	patch      bool
 }
 
 func errorFromDiagnostics(diags diag.Diagnostics) error {
@@ -96,6 +106,7 @@ func (e *encoder) typeEncoder(t reflect.Type) encoderFunc {
 		Type:       t,
 		dateFormat: e.dateFormat,
 		root:       e.root,
+		patch:      e.patch,
 	}
 
 	if fi, ok := encoders.Load(entry); ok {
@@ -138,9 +149,7 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 			return []byte(plan.Interface().(*big.Float).Text('g', 10)), nil
 		}
 	}
-	// if !e.root && t.Implements(reflect.TypeOf((*json.Marshaler)(nil)).Elem()) {
-	// 	return marshalerEncoder
-	// }
+
 	e.root = false
 	switch t.Kind() {
 	case reflect.Pointer:
@@ -148,10 +157,19 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 
 		innerEncoder := e.typeEncoder(inner)
 		return func(p reflect.Value, s reflect.Value) ([]byte, error) {
-			// if state and plan are both nil or invalid, then don't marshal the field
-			if !s.IsValid() || !p.IsValid() || (s.IsNil() && p.IsNil()) {
+			// if we end up accessing missing fields/properties, we might end up with an invalid
+			// reflect value. In that case, we just initialize it to a nil pointer of that type.
+			if !s.IsValid() {
+				s = reflect.Zero(reflect.PointerTo(inner))
+			}
+			if !p.IsValid() {
+				p = reflect.Zero(reflect.PointerTo(inner))
+			}
+			// if state and plan are both nil, then don't marshal the field
+			if s.IsNil() && p.IsNil() {
 				return nil, nil
 			}
+
 			// if plan is nil but state isn't, then marshal the field as an explicit null
 			if !s.IsNil() && p.IsNil() {
 				return explicitJsonNull, nil
@@ -159,7 +177,7 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 			// if state is nil, then there is no value to unset. we still have to pass
 			// some value in for state, so we pass in the plan value so it marshals as-is
 			if s.IsNil() {
-				s = p
+				s = reflect.New(p.Type().Elem())
 			}
 			return innerEncoder(p.Elem(), s.Elem())
 		}
@@ -188,10 +206,16 @@ func (e *encoder) newPrimitiveTypeEncoder(t reflect.Type) encoderFunc {
 	// code more and this current code shouldn't cause any issues
 	case reflect.String:
 		return func(p reflect.Value, s reflect.Value) ([]byte, error) {
+			if e.patch && s.IsValid() && p.String() == s.String() {
+				return nil, nil
+			}
 			return stdjson.Marshal(p.String())
 		}
 	case reflect.Bool:
 		return func(p reflect.Value, s reflect.Value) ([]byte, error) {
+			if e.patch && s.IsValid() && p.Bool() == s.Bool() {
+				return nil, nil
+			}
 			if p.Bool() {
 				return []byte("true"), nil
 			}
@@ -199,18 +223,30 @@ func (e *encoder) newPrimitiveTypeEncoder(t reflect.Type) encoderFunc {
 		}
 	case reflect.Int, reflect.Int16, reflect.Int32, reflect.Int64:
 		return func(p reflect.Value, s reflect.Value) ([]byte, error) {
+			if e.patch && s.IsValid() && p.Int() == s.Int() {
+				return nil, nil
+			}
 			return []byte(strconv.FormatInt(p.Int(), 10)), nil
 		}
 	case reflect.Uint, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		return func(p reflect.Value, s reflect.Value) ([]byte, error) {
+			if e.patch && s.IsValid() && p.Uint() == s.Uint() {
+				return nil, nil
+			}
 			return []byte(strconv.FormatUint(p.Uint(), 10)), nil
 		}
 	case reflect.Float32:
 		return func(p reflect.Value, s reflect.Value) ([]byte, error) {
+			if e.patch && s.IsValid() && p.Float() == s.Float() {
+				return nil, nil
+			}
 			return []byte(strconv.FormatFloat(p.Float(), 'f', -1, 32)), nil
 		}
 	case reflect.Float64:
 		return func(p reflect.Value, s reflect.Value) ([]byte, error) {
+			if e.patch && s.IsValid() && p.Float() == s.Float() {
+				return nil, nil
+			}
 			return []byte(strconv.FormatFloat(p.Float(), 'f', -1, 64)), nil
 		}
 	default:
@@ -221,13 +257,27 @@ func (e *encoder) newPrimitiveTypeEncoder(t reflect.Type) encoderFunc {
 }
 
 func (e *encoder) newArrayTypeEncoder(t reflect.Type) encoderFunc {
+	// patch behavior for arrays is that the whole thing gets encoded if there are any updates within it, so
+	// we set patch to false for the inner encoder.
+	arrayPatch := e.patch
+	e.patch = false
+	defer func() { e.patch = arrayPatch }()
+
 	itemEncoder := e.typeEncoder(t.Elem())
 
 	return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
-		if state.IsNil() && plan.IsNil() {
+		e.patch = false
+		defer func() { e.patch = arrayPatch }()
+
+		stateNil := !state.IsValid() || state.IsNil()
+		planNil := !plan.IsValid() || plan.IsNil()
+		if stateNil && planNil {
 			return nil, nil
-		} else if plan.IsNil() {
+		} else if planNil {
 			return explicitJsonNull, nil
+		} else if !stateNil && arrayPatch && reflect.DeepEqual(plan.Interface(), state.Interface()) {
+			// if they are equal, then omit the whole array from the output
+			return nil, nil
 		}
 
 		json := []byte("[]")
@@ -235,6 +285,7 @@ func (e *encoder) newArrayTypeEncoder(t reflect.Type) encoderFunc {
 			planItem := plan.Index(i)
 
 			var value, err = itemEncoder(planItem, planItem)
+
 			if err != nil {
 				return nil, err
 			}
@@ -243,7 +294,6 @@ func (e *encoder) newArrayTypeEncoder(t reflect.Type) encoderFunc {
 				// will be the same length as the input array
 				value = explicitJsonNull
 			}
-
 			json, err = sjson.SetRawBytes(json, "-1", value)
 			if err != nil {
 				return nil, err
@@ -258,35 +308,48 @@ type terraformUnwrappingFunc func(val attr.Value) (any, diag.Diagnostics)
 
 func (e *encoder) terraformUnwrappedEncoder(underlyingType reflect.Type, unwrap terraformUnwrappingFunc) encoderFunc {
 	enc := e.typeEncoder(underlyingType)
-	return handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
-		unwrappedPlan, diags := unwrap(plan)
-		if diags.HasError() {
-			return nil, errorFromDiagnostics(diags)
+	return e.handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
+		var unwrappedPlan, unwrappedState any
+		var diags diag.Diagnostics
+		if plan != nil {
+			unwrappedPlan, diags = unwrap(plan)
+			if diags.HasError() {
+				return nil, errorFromDiagnostics(diags)
+			}
 		}
-		unwrappedState, diags := unwrap(state)
-		if diags.HasError() {
-			return nil, errorFromDiagnostics(diags)
+
+		if state != nil {
+			unwrappedState, diags = unwrap(state)
+			if diags.HasError() {
+				return nil, errorFromDiagnostics(diags)
+			}
 		}
 		return enc(reflect.ValueOf(unwrappedPlan), reflect.ValueOf(unwrappedState))
 	})
 }
 
 func (e *encoder) terraformUnwrappedDynamicEncoder(unwrap terraformUnwrappingFunc) encoderFunc {
-	return handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
-		unwrappedPlan, diags := unwrap(plan)
-		if diags.HasError() {
-			return nil, errorFromDiagnostics(diags)
+	return e.handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
+		var unwrappedPlan, unwrappedState any
+		var diags diag.Diagnostics
+		if plan != nil {
+			unwrappedPlan, diags = unwrap(plan)
+			if diags.HasError() {
+				return nil, errorFromDiagnostics(diags)
+			}
 		}
-		unwrappedState, diags := unwrap(state)
-		if diags.HasError() {
-			return nil, errorFromDiagnostics(diags)
+		if state != nil {
+			unwrappedState, diags = unwrap(state)
+			if diags.HasError() {
+				return nil, errorFromDiagnostics(diags)
+			}
 		}
 		enc := e.typeEncoder(reflect.TypeOf(unwrappedPlan))
 		return enc(reflect.ValueOf(unwrappedPlan), reflect.ValueOf(unwrappedState))
 	})
 }
 
-func handleNullAndUndefined(innerFunc func(attr.Value, attr.Value) ([]byte, error)) encoderFunc {
+func (e encoder) handleNullAndUndefined(innerFunc func(attr.Value, attr.Value) ([]byte, error)) encoderFunc {
 	return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
 		var tfPlan attr.Value
 		var tfState attr.Value
@@ -307,10 +370,9 @@ func handleNullAndUndefined(innerFunc func(attr.Value, attr.Value) ([]byte, erro
 			return explicitJsonNull, nil
 		} else if planUnknown {
 			return nil, nil
+		} else if e.patch && !stateNull && !stateUnknown && tfPlan.Equal(tfState) {
+			return nil, nil
 		} else {
-			if stateNull || stateUnknown {
-				tfState = tfPlan
-			}
 			return innerFunc(tfPlan, tfState)
 		}
 	}
@@ -375,9 +437,6 @@ func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 			} else if tfPlan.IsUnknown() || tfPlan.IsUnderlyingValueUnknown() {
 				return nil, nil
 			} else {
-				if stateMissing {
-					tfState = tfPlan
-				}
 				unwrappedPlan := tfPlan.UnderlyingValue()
 				unwrappedState := tfState.UnderlyingValue()
 				enc := e.typeEncoder(reflect.TypeOf(unwrappedPlan))
@@ -406,7 +465,7 @@ func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 			return value.(customfield.MapLike).ValueAttr(context.TODO())
 		})
 	} else if t == reflect.TypeOf(jsontypes.Normalized{}) {
-		return handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
+		return e.handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
 			return []byte(plan.(jsontypes.Normalized).ValueString()), nil
 		})
 	}
@@ -482,6 +541,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 	return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
 		json = []byte("{}")
 
+		someFieldsSet := false
 		for _, ef := range encoderFields {
 			planField := plan.FieldByIndex(ef.idx)
 			stateField, err := state.FieldByIndexErr(ef.idx)
@@ -495,10 +555,15 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			if encoded == nil {
 				continue
 			}
+			someFieldsSet = true
 			json, err = sjson.SetRawBytes(json, ef.tag.name, encoded)
 			if err != nil {
 				return nil, err
 			}
+		}
+
+		if !someFieldsSet && e.patch {
+			return nil, nil
 		}
 
 		if extraEncoder != nil {
@@ -520,7 +585,7 @@ func (e *encoder) newTimeTypeEncoder() encoderFunc {
 
 func (e *encoder) newCustomTimeTypeEncoder() encoderFunc {
 	format := e.dateFormat
-	return handleNullAndUndefined(func(value attr.Value, state attr.Value) (json []byte, err error) {
+	return e.handleNullAndUndefined(func(value attr.Value, state attr.Value) (json []byte, err error) {
 		val, errs := value.(timetypes.RFC3339).ValueRFC3339Time()
 		if errs != nil {
 			return nil, errorFromDiagnostics(errs)
@@ -545,11 +610,17 @@ func (e encoder) newInterfaceEncoder() encoderFunc {
 
 // Given a []byte of json (may either be an empty object or an object that already contains entries)
 // encode all of the entries in the map to the json byte array.
-func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, state reflect.Value) ([]byte, error) {
+func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, _ reflect.Value) ([]byte, error) {
+	// We do not implement "patch" behavior for maps because it is conceptually treated as a single "value"
+	// that should get updated all at once (similar to how arrays work). Technically this is not specified
+	// in rfc7386, but it is the most intuitive behavior for maps.
+	prevPatch := e.patch
+	e.patch = false
+	defer func() { e.patch = prevPatch }()
+
 	type mapPair struct {
-		key   []byte
-		plan  reflect.Value
-		state reflect.Value
+		key  []byte
+		plan reflect.Value
 	}
 
 	pairs := []mapPair{}
@@ -569,8 +640,7 @@ func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, state reflec
 			}
 		}
 		encodedKey := []byte(sjsonReplacer.Replace(encodedKeyString))
-		stateValue := state.MapIndex(iter.Key())
-		pairs = append(pairs, mapPair{key: encodedKey, plan: iter.Value(), state: stateValue})
+		pairs = append(pairs, mapPair{key: encodedKey, plan: iter.Value()})
 	}
 
 	// Ensure deterministic output
@@ -580,7 +650,7 @@ func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, state reflec
 
 	elementEncoder := e.typeEncoder(plan.Type().Elem())
 	for _, pair := range pairs {
-		encodedValue, err := elementEncoder(pair.plan, pair.state)
+		encodedValue, err := elementEncoder(pair.plan, pair.plan)
 		if err != nil {
 			return nil, err
 		}
@@ -598,11 +668,14 @@ func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, state reflec
 }
 
 func (e *encoder) newMapEncoder(_ reflect.Type) encoderFunc {
+	patch := e.patch
 	return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
 		if state.IsNil() && plan.IsNil() {
 			return nil, nil
 		} else if plan.IsNil() {
 			return explicitJsonNull, nil
+		} else if patch && !state.IsNil() && reflect.DeepEqual(plan.Interface(), state.Interface()) {
+			return nil, nil
 		}
 
 		json := []byte("{}")

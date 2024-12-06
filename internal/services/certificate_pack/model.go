@@ -28,5 +28,5 @@ func (m CertificatePackModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m CertificatePackModel) MarshalJSONForUpdate(state CertificatePackModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

@@ -33,12 +33,13 @@ func (m CustomHostnameModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m CustomHostnameModel) MarshalJSONForUpdate(state CustomHostnameModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type CustomHostnameSSLModel struct {
 	BundleMethod         types.String                    `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
-	CertificateAuthority types.String                    `tfsdk:"certificate_authority" json:"certificate_authority,computed_optional"`
+  CertificateAuthority types.String                    `tfsdk:"certificate_authority" json:"certificate_authority,computed_optional"`
+	CloudflareBranding   types.Bool                      `tfsdk:"cloudflare_branding" json:"cloudflare_branding,optional"`
 	CustomCertificate    types.String                    `tfsdk:"custom_certificate" json:"custom_certificate,optional"`
 	CustomKey            types.String                    `tfsdk:"custom_key" json:"custom_key,optional"`
 	Method               types.String                    `tfsdk:"method" json:"method,optional"`

@@ -9,11 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -42,10 +40,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Indicates whether the image can be a accessed only using it's UID. If set to true, a signed token needs to be generated with a signing key to view the image.",
 				Computed:    true,
 			},
-			"success": schema.BoolAttribute{
-				Description: "Whether the API call was successful",
-				Computed:    true,
-			},
 			"uploaded": schema.StringAttribute{
 				Description: "When the media item was uploaded.",
 				Computed:    true,
@@ -57,78 +51,38 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
-			"errors": schema.ListNestedAttribute{
+			"images": schema.ListNestedAttribute{
 				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ImageErrorsDataSourceModel](ctx),
+				CustomType: customfield.NewNestedObjectListType[ImageImagesDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"code": schema.Int64Attribute{
-							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.AtLeast(1000),
-							},
+						"id": schema.StringAttribute{
+							Description: "Image unique identifier.",
+							Computed:    true,
 						},
-						"message": schema.StringAttribute{
-							Computed: true,
+						"filename": schema.StringAttribute{
+							Description: "Image file name.",
+							Computed:    true,
 						},
-					},
-				},
-			},
-			"messages": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ImageMessagesDataSourceModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"code": schema.Int64Attribute{
-							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.AtLeast(1000),
-							},
+						"meta": schema.StringAttribute{
+							Description: "User modifiable key-value store. Can be used for keeping references to another system of record for managing images. Metadata must not exceed 1024 bytes.",
+							Computed:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
-						"message": schema.StringAttribute{
-							Computed: true,
+						"require_signed_urls": schema.BoolAttribute{
+							Description: "Indicates whether the image can be a accessed only using it's UID. If set to true, a signed token needs to be generated with a signing key to view the image.",
+							Computed:    true,
 						},
-					},
-				},
-			},
-			"result": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[ImageResultDataSourceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"images": schema.ListNestedAttribute{
-						Computed:   true,
-						CustomType: customfield.NewNestedObjectListType[ImageResultImagesDataSourceModel](ctx),
-						NestedObject: schema.NestedAttributeObject{
-							Attributes: map[string]schema.Attribute{
-								"id": schema.StringAttribute{
-									Description: "Image unique identifier.",
-									Computed:    true,
-								},
-								"filename": schema.StringAttribute{
-									Description: "Image file name.",
-									Computed:    true,
-								},
-								"meta": schema.StringAttribute{
-									Description: "User modifiable key-value store. Can be used for keeping references to another system of record for managing images. Metadata must not exceed 1024 bytes.",
-									Computed:    true,
-									CustomType:  jsontypes.NormalizedType{},
-								},
-								"require_signed_urls": schema.BoolAttribute{
-									Description: "Indicates whether the image can be a accessed only using it's UID. If set to true, a signed token needs to be generated with a signing key to view the image.",
-									Computed:    true,
-								},
-								"uploaded": schema.StringAttribute{
-									Description: "When the media item was uploaded.",
-									Computed:    true,
-									CustomType:  timetypes.RFC3339Type{},
-								},
-								"variants": schema.ListAttribute{
-									Description: "Object specifying available variants for an image.",
-									Computed:    true,
-									CustomType:  customfield.NewListType[types.String](ctx),
-									ElementType: types.StringType,
-								},
-							},
+						"uploaded": schema.StringAttribute{
+							Description: "When the media item was uploaded.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"variants": schema.ListAttribute{
+							Description: "Object specifying available variants for an image.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
 						},
 					},
 				},

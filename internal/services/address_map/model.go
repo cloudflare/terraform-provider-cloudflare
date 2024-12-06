@@ -32,7 +32,7 @@ func (m AddressMapModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m AddressMapModel) MarshalJSONForUpdate(state AddressMapModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type AddressMapMembershipsModel struct {

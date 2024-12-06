@@ -37,7 +37,7 @@ func (m ZeroTrustTunnelCloudflaredModel) MarshalJSON() (data []byte, err error) 
 }
 
 func (m ZeroTrustTunnelCloudflaredModel) MarshalJSONForUpdate(state ZeroTrustTunnelCloudflaredModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type ZeroTrustTunnelCloudflaredConnectionsModel struct {

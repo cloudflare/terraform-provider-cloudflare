@@ -206,7 +206,7 @@ func (r *WorkersKVResource) Delete(ctx context.Context, req resource.DeleteReque
 }
 
 func (r *WorkersKVResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WorkersKVModel
+	var data *WorkersKVModel = new(WorkersKVModel)
 
 	path_account_id := ""
 	path_namespace_id := ""
@@ -222,6 +222,10 @@ func (r *WorkersKVResource) ImportState(ctx context.Context, req resource.Import
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.NamespaceID = types.StringValue(path_namespace_id)
+	data.KeyName = types.StringValue(path_key_name)
 
 	res := new(http.Response)
 	_, err := r.client.KV.Namespaces.Values.Get(
@@ -239,7 +243,7 @@ func (r *WorkersKVResource) ImportState(ctx context.Context, req resource.Import
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.Unmarshal(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
