@@ -77,6 +77,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("on", "off"),
 						},
 					},
+					"bypass_cache_on_cookie": schema.StringAttribute{
+						Optional: true,
+					},
 					"cache_by_device_type": schema.StringAttribute{
 						Optional: true,
 						Validators: []validator.String{
@@ -88,6 +91,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("on", "off"),
 						},
+					},
+					"cache_level": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("bypass", "basic", "simplified", "aggressive", "cache_everything"),
+						},
+					},
+					"cache_on_cookie": schema.StringAttribute{
+						Optional: true,
 					},
 					"disable_apps": schema.BoolAttribute{
 						Optional: true,
@@ -106,6 +118,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("on", "off"),
 						},
+					},
+					"host_header_override": schema.StringAttribute{
+						Optional: true,
 					},
 					"ip_geolocation": schema.StringAttribute{
 						Optional: true,
@@ -137,11 +152,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("on", "off"),
 						},
 					},
-					"sort_query_string_for_cache": schema.StringAttribute{
+					"polish": schema.StringAttribute{
 						Optional: true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("on", "off"),
+							stringvalidator.OneOfCaseInsensitive("off", "lossless", "lossy"),
 						},
+					},
+					"resolve_override": schema.StringAttribute{
+						Optional: true,
 					},
 					"respect_strong_etag": schema.StringAttribute{
 						Optional: true,
@@ -159,6 +177,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"security_level": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("off", "essentially_off", "low", "medium", "high", "under_attack"),
+						},
+					},
+					"sort_query_string_for_cache": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"ssl": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("off", "flexible", "full", "strict", "origin_pull"),
 						},
 					},
 					"true_client_ip_header": schema.StringAttribute{
