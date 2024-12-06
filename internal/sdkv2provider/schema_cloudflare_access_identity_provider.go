@@ -196,31 +196,37 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"enabled": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "A flag to enable or disable SCIM for the identity provider.",
 					},
 					"secret": {
-						Type:      schema.TypeString,
-						Optional:  true,
-						Computed:  true,
-						Sensitive: true,
+						Type:        schema.TypeString,
+						Optional:    true,
+						Computed:    true,
+						Sensitive:   true,
+						Description: "A read-only token generated when the SCIM integration is enabled for the first time.  It is redacted on subsequent requests.  If you lose this you will need to refresh it token at /access/identity_providers/:idpID/refresh_scim_secret.",
 					},
 					"user_deprovision": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "A flag to enable revoking a user's session in Access and Gateway when they have been deprovisioned in the Identity Provider.",
 					},
 					"seat_deprovision": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "A flag to remove a user's seat in Zero Trust when they have been deprovisioned in the Identity Provider.  This cannot be enabled unless user_deprovision is also enabled.",
 					},
 					"group_member_deprovision": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Deprecated. Use `identity_update_behavior`.",
 					},
 					"identity_update_behavior": {
-						Type:     schema.TypeString,
-						Optional: true,
-						Computed: true,
+						Type:        schema.TypeString,
+						Optional:    true,
+						Computed:    true,
+						Description: "Indicates how a SCIM event updates a user identity used for policy evaluation. Use \"automatic\" to automatically update a user's identity and augment it with fields from the SCIM user resource. Use \"reauth\" to force re-authentication on group membership updates, user identity update will only occur after successful re-authentication. With \"reauth\" identities will not contain fields from the SCIM user resource. With \"no_action\" identities will not be changed by SCIM updates in any way and users will not be prompted to reauthenticate.",
 						ValidateDiagFunc: func(val interface{}, path cty.Path) diag.Diagnostics {
 							s, ok := val.(string)
 
