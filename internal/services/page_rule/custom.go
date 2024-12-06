@@ -74,8 +74,8 @@ type PageRuleActionsModel struct {
 	DisableSecurity         types.Bool   `tfsdk:"disable_security" json:"disable_security,optional"`
 	DisableZaraz            types.Bool   `tfsdk:"disable_zaraz" json:"disable_zaraz,optional"`
 	EmailObfuscation        types.String `tfsdk:"email_obfuscation" json:"email_obfuscation,optional"`
-	ExplicitCaceControl     types.String `tfsdk:"explicit_cache_control" json:"explicit_cache_control,optional"`
-	IpGeolocation           types.String `tfsdk:"ip_geolocation" json:"ip_geolocation,optional"`
+	ExplicitCacheControl    types.String `tfsdk:"explicit_cache_control" json:"explicit_cache_control,optional"`
+	IPGeolocation           types.String `tfsdk:"ip_geolocation" json:"ip_geolocation,optional"`
 	Mirage                  types.String `tfsdk:"mirage" json:"mirage,optional"`
 	OpportunisticEncryption types.String `tfsdk:"opportunistic_encryption" json:"opportunistic_encryption,optional"`
 	OriginErrorPagePassThru types.String `tfsdk:"origin_error_page_pass_thru" json:"origin_error_page_pass_thru,optional"`
@@ -101,6 +101,9 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 	if !m.CacheByDeviceType.IsNull() {
 		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDCacheByDeviceType, "value": m.CacheByDeviceType.ValueString()})
 	}
+	if !m.CacheDeceptionArmor.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDCacheDeceptionArmor, "value": m.CacheDeceptionArmor.ValueString()})
+	}
 	if m.DisableApps.ValueBool() {
 		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDDisableApps, "value": m.DisableApps.ValueBool()})
 	}
@@ -112,6 +115,42 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 	}
 	if m.DisableZaraz.ValueBool() {
 		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDDisableZaraz})
+	}
+	if !m.EmailObfuscation.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDEmailObfuscation, "value": m.EmailObfuscation.ValueString()})
+	}
+	if !m.ExplicitCacheControl.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDExplicitCacheControl, "value": m.ExplicitCacheControl.ValueString()})
+	}
+	if !m.IPGeolocation.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDIPGeolocation, "value": m.IPGeolocation.ValueString()})
+	}
+	if !m.Mirage.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDMirage, "value": m.Mirage.ValueString()})
+	}
+	if !m.OpportunisticEncryption.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDOpportunisticEncryption, "value": m.OpportunisticEncryption.ValueString()})
+	}
+	if !m.OriginErrorPagePassThru.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDOriginErrorPagePassThru, "value": m.OriginErrorPagePassThru.ValueString()})
+	}
+	if !m.RespectStrongEtag.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDRespectStrongEtag, "value": m.RespectStrongEtag.ValueString()})
+	}
+	if !m.ResponseBuffering.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDResponseBuffering, "value": m.ResponseBuffering.ValueString()})
+	}
+	if !m.RocketLoader.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDRocketLoader, "value": m.RocketLoader.ValueString()})
+	}
+	if !m.SortQueryStringForCache.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDSortQueryStringForCache, "value": m.SortQueryStringForCache.ValueString()})
+	}
+	if !m.TrueClientIPHeader.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDTrueClientIPHeader, "value": m.TrueClientIPHeader.ValueString()})
+	}
+	if !m.WAF.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDWAF, "value": m.WAF.ValueString()})
 	}
 
 	return

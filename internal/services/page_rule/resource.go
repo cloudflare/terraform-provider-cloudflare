@@ -112,7 +112,7 @@ func (r *PageRuleResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
+	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
