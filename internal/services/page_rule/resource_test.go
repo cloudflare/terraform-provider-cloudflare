@@ -464,6 +464,76 @@ func TestAccCloudflarePageRule_MinifyAction(t *testing.T) {
 	})
 }
 
+func TestAccCloudflarePageRule_BrowserCheck(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_page_rule." + rnd
+	target := fmt.Sprintf("%s.%s", rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigOnOff(rnd, zoneID, target, "browser_check", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+                    resource.TestCheckResourceAttr(resourceName, "actions.browser_check", "on"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigOnOff(rnd, zoneID, target, "browser_check", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+                    resource.TestCheckResourceAttr(resourceName, "actions.browser_check", "off"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflarePageRule_CaceByDeviceType(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_page_rule." + rnd
+	target := fmt.Sprintf("%s.%s", rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigOnOff(rnd, zoneID, target, "cache_by_device_type", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+                    resource.TestCheckResourceAttr(resourceName, "actions.cache_by_device_type", "on"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigOnOff(rnd, zoneID, target, "cache_by_device_type", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+                    resource.TestCheckResourceAttr(resourceName, "actions.cache_by_device_type", "off"),
+				),
+			},
+		},
+	})
+}
+
 // func TestTranformForwardingURL(t *testing.T) {
 // 	key, val, err := transformFromCloudflarePageRuleAction(&cloudflare.PageRuleAction{
 // 		ID: "forwarding_url",
@@ -1138,6 +1208,10 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 		}
 		return nil
 	}
+}
+
+func testAccCheckCloudflarePageRuleConfigOnOff(zoneID, target, rnd, pagerule, value string) string {
+	return acctest.LoadTestCase("pageruleconfig-onoff.tf", zoneID, target, rnd, pagerule, value)
 }
 
 func testAccCheckCloudflarePageRuleConfigMinify(zoneID, target, rnd string) string {
