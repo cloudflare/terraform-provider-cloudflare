@@ -121,6 +121,164 @@ func TestAccCloudflarePageRule_FullySpecified(t *testing.T) {
 	})
 }
 
+func TestAccCloudflarePageRule_AlwaysUseHTTPS(t *testing.T) {
+	t.Skip("unable to set always_use_https")
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_page_rule." + rnd
+	target := fmt.Sprintf("%s.%s", rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `always_use_https = true`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.always_use_https", "true"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflarePageRule_DisableApps(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_page_rule." + rnd
+	target := fmt.Sprintf("%s.%s", rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_apps = true`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_apps", "true"),
+				),
+			},
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_apps = false`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_apps", "false"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflarePageRule_DisablePerformance(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_page_rule." + rnd
+	target := fmt.Sprintf("%s.%s", rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_performance = true`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_performance", "true"),
+				),
+			},
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_performance = false`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_performance", "false"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflarePageRule_DisableSecurity(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_page_rule." + rnd
+	target := fmt.Sprintf("%s.%s", rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_security = true`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_security", "true"),
+				),
+			},
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_security = false`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_security", "false"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflarePageRule_DisableZaraz(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_page_rule." + rnd
+	target := fmt.Sprintf("%s.%s", rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_zaraz = true`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_zaraz", "true"),
+				),
+			},
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_zaraz = false`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_zaraz", "false"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflarePageRule_ForwardingOnly(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -170,32 +328,6 @@ func TestAccCloudflarePageRule_ForwardingAndOthers(t *testing.T) {
 				),
 
 				ExpectError: regexp.MustCompile("\"forwarding_url\" cannot be set with any other actions"),
-			},
-		},
-	})
-}
-
-func TestAccCloudflarePageRule_DisableZaraz(t *testing.T) {
-	var pageRule cloudflare.PageRule
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_page_rule." + rnd
-	target := fmt.Sprintf("%s.%s", rnd, domain)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflarePageRuleConfigDisableZaraz(zoneID, target, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
-					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/", target)),
-					resource.TestCheckResourceAttr(resourceName, "actions.0.disable_zaraz", "true"),
-				),
 			},
 		},
 	})
@@ -1032,10 +1164,6 @@ func testAccCheckCloudflarePageRuleConfigForwardingAndOthers(zoneID, target, rnd
 	return acctest.LoadTestCase("pageruleconfigforwardingandothers.tf", zoneID, target, rnd)
 }
 
-func testAccCheckCloudflarePageRuleConfigDisableZaraz(zoneID, target, rnd string) string {
-	return acctest.LoadTestCase("pageruleconfigdisablezaraz.tf", zoneID, target, rnd)
-}
-
 func testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtl(zoneID, target, rnd string) string {
 	return acctest.LoadTestCase("pageruleconfigwithedgecachettl.tf", zoneID, target, rnd)
 }
@@ -1083,6 +1211,7 @@ func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIncludeMultipleValuesQuer
 func testAccCheckCloudflarePageRuleConfigCacheTTLByStatus(zoneID, target, rnd string) string {
 	return acctest.LoadTestCase("pageruleconfigcachettlbystatus.tf", zoneID, target, rnd)
 }
+
 func buildPageRuleConfig(rnd, zoneID, actions, target string) string {
 	return acctest.LoadTestCase("buildpageruleconfig.tf",
 		rnd,

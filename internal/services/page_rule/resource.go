@@ -73,7 +73,9 @@ func (r *PageRuleResource) Create(ctx context.Context, req resource.CreateReques
 	env := PageRuleResultEnvelope{*data}
 	_, err = r.client.Pagerules.New(
 		ctx,
-		data.PageruleNewParams(),
+		pagerules.PageruleNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

@@ -3,7 +3,6 @@
 package page_rule
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -29,5 +28,5 @@ func (m PageRuleModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m PageRuleModel) MarshalJSONForUpdate(state PageRuleModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return m.marshalCustomForUpdate(state)
 }
