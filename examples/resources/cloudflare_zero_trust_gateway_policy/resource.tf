@@ -8,6 +8,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
   expiration = {
     expires_at = "2014-01-01T05:20:20Z"
     duration = 10
+    expired = false
   }
   filters = ["http"]
   identity = "any(identity.groups.name[*] in {\"finance\"})"
