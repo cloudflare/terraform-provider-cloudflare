@@ -10,10 +10,11 @@ description: |-
 ## Example Usage
 
 ```terraform
-resource "cloudflare_r2_bucket" "example" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "terraform-bucket"
-  location   = "enam"
+resource "cloudflare_r2_bucket" "example_r2_bucket" {
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  name = "example-bucket"
+  location_hint = "apac"
+  storage_class = "Standard"
 }
 ```
 
@@ -42,5 +43,5 @@ resource "cloudflare_r2_bucket" "example" {
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_r2_bucket.default <account id>/<bucket name>
+$ terraform import cloudflare_r2_bucket.example '<account_id>/<bucket_name>'
 ```

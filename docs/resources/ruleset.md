@@ -12,411 +12,55 @@ description: |-
 ## Example Usage
 
 ```terraform
-# Magic Transit
-resource "cloudflare_ruleset" "magic_transit_example" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "account magic transit"
-  description = "example magic transit ruleset description"
-  kind        = "root"
-  phase       = "magic_transit"
-
+resource "cloudflare_ruleset" "example_ruleset" {
+  kind = "managed"
+  name = "My ruleset"
+  phase = "ddos_l4"
   rules = [{
-    action      = "allow"
-    expression  = "tcp.dstport in { 32768..65535 }"
-    description = "Allow TCP Ephemeral Ports"
-  }]
-}
-
-# Zone-level WAF Managed Ruleset
-resource "cloudflare_ruleset" "zone_level_managed_waf" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "managed WAF"
-  description = "managed WAF ruleset description"
-  kind        = "zone"
-  phase       = "http_request_firewall_managed"
-
-  rules = [{
-    action = "execute"
-    action_parameters = {
-    id = "efb7b8c949ac4650a09736fc376e9aee"
-  }
-    expression  = "(http.host eq \"example.host.com\")"
-    description = "Execute Cloudflare Managed Ruleset on my zone-level phase entry point ruleset"
-    enabled     = true
-  }]
-}
-
-# Zone-level WAF with tag-based overrides
-resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overrides" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "managed WAF with tag-based overrides"
-  description = "managed WAF with tag-based overrides ruleset description"
-  kind        = "zone"
-  phase       = "http_request_firewall_managed"
-
-  rules = [{
-    action = "execute"
-    action_parameters = {
-    id = "efb7b8c949ac4650a09736fc376e9aee"
-      overrides = { categories = [{
-          category = "wordpress"
-          action   = "block"
-          enabled  = true
-          },
-          {
-            category = "joomla"
-            action   = "block"
-            enabled  = true
-        }] }
-  }
-
-    expression  = "(http.host eq \"example.host.com\")"
-    description = "overrides to only enable wordpress rules to block"
-    enabled     = false
-  }]
-}
-
-# Rewrite the URI path component to a static path
-resource "cloudflare_ruleset" "transform_uri_rule_path" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "transform rule for URI path"
-  description = "change the URI path to a new static path"
-  kind        = "zone"
-  phase       = "http_request_transform"
-
-  rules = [{
-    action = "rewrite"
-    action_parameters = {
-    uri = {
-    path = {
-    value = "/my-new-route"
-  }
-  }
-  }
-
-    expression  = "(http.host eq \"example.com\" and http.request.uri.path eq \"/old-path\")"
-    description = "example URI path transform rule"
-    enabled     = true
-  }]
-}
-
-# Rewrite the URI query component to a static query
-resource "cloudflare_ruleset" "transform_uri_rule_query" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "transform rule for URI query parameter"
-  description = "change the URI query to a new static query"
-  kind        = "zone"
-  phase       = "http_request_transform"
-
-  rules = [{
-    action = "rewrite"
-    action_parameters = {
-    uri = {
-    query = {
-    value = "old=new_again"
-  }
-  }
-  }
-
-    expression  = "(http.host eq \"example.host.com\")"
-    description = "URI transformation query example"
-    enabled     = true
-  }]
-}
-
-# Rewrite HTTP headers to a modified values
-resource "cloudflare_ruleset" "transform_uri_http_headers" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "transform rule for HTTP headers"
-  description = "modify HTTP headers before reaching origin"
-  kind        = "zone"
-  phase       = "http_request_late_transform"
-
-  rules = [{
-    action = "rewrite"
-    action_parameters = {
-    headers = [{
-        name      = "example-http-header-1"
-        operation = "set"
-        value     = "my-http-header-value-1"
-        },
-        {
-          name       = "example-http-header-2"
-          operation  = "set"
-          expression = "cf.zone.name"
-        },
-        {
-          name      = "example-http-header-3-to-remove"
-          operation = "remove"
-      }]
-  }
-
-    expression  = "(http.host eq \"example.host.com\")"
-    description = "example request header transform rule"
-    enabled     = false
-  }]
-}
-
-# HTTP rate limit for an API route
-resource "cloudflare_ruleset" "rate_limiting_example" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "restrict API requests count"
-  description = "apply HTTP rate limiting for a route"
-  kind        = "zone"
-  phase       = "http_ratelimit"
-
-  rules = [{
+    last_updated = "2000-01-01T00:00:00.000000Z"
+    version = "1"
+    id = "3a03d665bac047339bb530ecb439a90d"
     action = "block"
-    ratelimit = {
-    characteristics = [
-        "cf.colo.id",
-        "ip.src"
-      ]
-      period              = 60
-      requests_per_period = 100
-      mitigation_timeout  = 600
-  }
-
-    expression  = "(http.request.uri.path matches \"^/api/\")"
-    description = "rate limit for API"
-    enabled     = true
-  }]
-}
-
-# Change origin for an API route
-resource "cloudflare_ruleset" "http_origin_example" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "Change to some origin"
-  description = "Change origin for a route"
-  kind        = "zone"
-  phase       = "http_request_origin"
-
-  rules = [{
-    action = "route"
     action_parameters = {
-    host_header = "some.host"
-      origin = {
-    host = "some.host"
-        port = 80
-  }
-  }
-    expression  = "(http.request.uri.path matches \"^/api/\")"
-    description = "change origin to some.host"
-    enabled     = true
-  }]
-}
-
-# Custom fields logging
-resource "cloudflare_ruleset" "custom_fields_logging_example" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "log custom fields"
-  description = "add custom fields to logging"
-  kind        = "zone"
-  phase       = "http_log_custom_fields"
-
-  rules = [{
-    action = "log_custom_field"
-    action_parameters = {
-    request_fields = [
-        "content-type",
-        "x-forwarded-for",
-        "host"
-      ]
-      response_fields = [
-        "server",
-        "content-type",
-        "allow"
-      ]
-      cookie_fields = [
-        "__ga",
-        "accountNumber",
-        "__cfruid"
-      ]
-  }
-
-    expression  = "(http.host eq \"example.host.com\")"
-    description = "log custom fields rule"
-    enabled     = true
-  }]
-}
-
-# Custom cache keys + settings
-resource "cloudflare_ruleset" "cache_settings_example" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "set cache settings"
-  description = "set cache settings for the request"
-  kind        = "zone"
-  phase       = "http_request_cache_settings"
-
-  rules = [{
-    action = "set_cache_settings"
-    action_parameters = {
-    edge_ttl = {
-    mode    = "override_origin"
-        default = 60
-        status_code_ttl = [{
-          status_code = 200
-          value       = 50
-          },
-          {
-            status_code_range = [{
-              from = 201
-              to   = 300
-            }]
-            value = 30
-        }]
-  }
-      browser_ttl = {
-    mode = "respect_origin"
-  }
-      serve_stale = {
-    disable_stale_while_updating = true
-  }
-      respect_strong_etags = true
-      cache_key = {
-    ignore_query_strings_order = false
-        cache_deception_armor      = true
-        custom_key = {
-    query_string = {
-    exclude = ["*"]
-  }
-          header = {
-    include        = ["habc", "hdef"]
-            check_presence = ["habc_t", "hdef_t"]
-            exclude_origin = true
-  }
-          cookie = {
-    include        = ["cabc", "cdef"]
-            check_presence = ["cabc_t", "cdef_t"]
-  }
-          user = {
-    device_type = true
-            geo         = false
-  }
-          host = {
-    resolved = true
-  }
-  }
-  }
-      origin_error_page_passthru = false
-  }
-    expression  = "(http.host eq \"example.host.com\")"
-    description = "set cache settings rule"
-    enabled     = true
-  }]
-}
-
-# Redirects based on a List resource
-resource "cloudflare_ruleset" "redirect_from_list_example" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "redirects"
-  description = "Redirect ruleset"
-  kind        = "root"
-  phase       = "http_request_redirect"
-
-  rules = [{
-    action = "redirect"
-    action_parameters = {
-    from_list = {
-    name = "redirect_list"
-        key  = "http.request.full_uri"
-  }
-  }
-    expression  = "http.request.full_uri in $redirect_list"
-    description = "Apply redirects from redirect_list"
-    enabled     = true
-  }]
-}
-
-# Dynamic Redirects from value resource
-resource "cloudflare_ruleset" "redirect_from_value_example" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "redirects"
-  description = "Redirect ruleset"
-  kind        = "zone"
-  phase       = "http_request_dynamic_redirect"
-
-  rules = [{
-    action = "redirect"
-    action_parameters = {
-    from_value = {
-    status_code = 301
-        target_url = {
-    value = "some_host.com"
-  }
-        preserve_query_string = true
-  }
-  }
-    expression  = "(http.request.uri.path matches \"^/api/\")"
-    description = "Apply redirect from value"
-    enabled     = true
-  }]
-}
-
-# Serve some custom error response
-resource "cloudflare_ruleset" "http_custom_error_example" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "Serve some error response"
-  description = "Serve some error response"
-  kind        = "zone"
-  phase       = "http_custom_errors"
-  rules = [{
-    action = "serve_error"
-    action_parameters = {
-    content      = "some error html"
-      content_type = "text/html"
-      status_code  = "530"
-  }
-    expression  = "(http.request.uri.path matches \"^/api/\")"
-    description = "serve some error response"
-    enabled     = true
-  }]
-}
-
-# Set Configuration Rules for an API route
-resource "cloudflare_ruleset" "http_config_rules_example" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "set config rules"
-  description = "set config rules for request"
-  kind        = "zone"
-  phase       = "http_config_settings"
-
-  rules = [{
-    action = "set_config"
-    action_parameters = {
-    email_obfuscation = true
-      bic               = true
-  }
-    expression  = "(http.request.uri.path matches \"^/api/\")"
-    description = "set config rules for matching request"
-    enabled     = true
-  }]
-}
-
-# Set compress algorithm for response.
-resource "cloudflare_ruleset" "response_compress_brotli_html" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "Brotli response compression for HTML"
-  description = "Response compression ruleset"
-  kind        = "zone"
-  phase       = "http_response_compression"
-
-  rules = [{
-    action = "compress_response"
-    action_parameters = {
-    algorithms = [{
-        name = "brotli"
-        },
+      response = {
+        content = <<EOT
         {
-          name = "auto"
-      }]
-  }
-    expression  = "http.response.content_type.media_type == \"text/html\""
-    description = "Prefer brotli compression for HTML"
-    enabled     = true
+          "success": false,
+          "error": "you have been blocked"
+        }
+        EOT
+        content_type = "application/json"
+        status_code = 400
+      }
+    }
+    categories = ["directory-traversal", "header"]
+    description = "Block when the IP address is not 1.1.1.1"
+    enabled = true
+    exposed_credential_check = {
+      password_expression = "url_decode(http.request.body.form[\\\"password\\\"][0])"
+      username_expression = "url_decode(http.request.body.form[\\\"username\\\"][0])"
+    }
+    expression = "ip.src ne 1.1.1.1"
+    logging = {
+      enabled = true
+    }
+    ratelimit = {
+      characteristics = ["ip.src"]
+      period = 10
+      counting_expression = "http.request.body.raw eq \"abcd\""
+      mitigation_timeout = 600
+      requests_per_period = 1000
+      requests_to_origin = true
+      score_per_period = 400
+      score_response_header_name = "my-score"
+    }
+    ref = "my_ref"
   }]
+  zone_id = "zone_id"
+  description = "My ruleset to execute managed rulesets"
 }
 ```
+
 <!-- schema generated by tfplugindocs -->
 ## Schema
 
@@ -560,18 +204,18 @@ Optional:
 - `ignore_query_strings_order` (Boolean) Treat requests with the same query parameters the same, regardless of the order those query parameters are in. A value of true ignores the query strings' order.
 
 <a id="nestedatt--rules--action_parameters--cache_key--custom_key"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order`
+### Nested Schema for `rules.action_parameters.cache_key.custom_key`
 
 Optional:
 
-- `cookie` (Attributes) The cookies to include in building the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--cookie))
-- `header` (Attributes) The header names and values to include in building the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--header))
-- `host` (Attributes) Whether to use the original host or the resolved host in the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--host))
-- `query_string` (Attributes) Use the presence or absence of parameters in the query string to build the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--query_string))
-- `user` (Attributes) Characteristics of the request user agent used in building the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--user))
+- `cookie` (Attributes) The cookies to include in building the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--cookie))
+- `header` (Attributes) The header names and values to include in building the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--header))
+- `host` (Attributes) Whether to use the original host or the resolved host in the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--host))
+- `query_string` (Attributes) Use the presence or absence of parameters in the query string to build the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string))
+- `user` (Attributes) Characteristics of the request user agent used in building the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--user))
 
-<a id="nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--cookie"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.cookie`
+<a id="nestedatt--rules--action_parameters--cache_key--custom_key--cookie"></a>
+### Nested Schema for `rules.action_parameters.cache_key.custom_key.cookie`
 
 Optional:
 
@@ -579,8 +223,8 @@ Optional:
 - `include` (List of String) Include these cookies' names and their values.
 
 
-<a id="nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--header"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.header`
+<a id="nestedatt--rules--action_parameters--cache_key--custom_key--header"></a>
+### Nested Schema for `rules.action_parameters.cache_key.custom_key.header`
 
 Optional:
 
@@ -590,24 +234,24 @@ Optional:
 - `include` (List of String) Include these headers' names and their values.
 
 
-<a id="nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--host"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.host`
+<a id="nestedatt--rules--action_parameters--cache_key--custom_key--host"></a>
+### Nested Schema for `rules.action_parameters.cache_key.custom_key.host`
 
 Optional:
 
 - `resolved` (Boolean) Use the resolved host in the cache key. A value of true will use the resolved host, while a value or false will use the original host.
 
 
-<a id="nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--query_string"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.query_string`
+<a id="nestedatt--rules--action_parameters--cache_key--custom_key--query_string"></a>
+### Nested Schema for `rules.action_parameters.cache_key.custom_key.query_string`
 
 Optional:
 
-- `exclude` (Attributes) build the cache key using all query string parameters EXCECPT these excluded parameters (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--query_string--exclude))
-- `include` (Attributes) build the cache key using a list of query string parameters that ARE in the request. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--query_string--include))
+- `exclude` (Attributes) build the cache key using all query string parameters EXCECPT these excluded parameters (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string--exclude))
+- `include` (Attributes) build the cache key using a list of query string parameters that ARE in the request. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string--include))
 
-<a id="nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--query_string--exclude"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.query_string.include`
+<a id="nestedatt--rules--action_parameters--cache_key--custom_key--query_string--exclude"></a>
+### Nested Schema for `rules.action_parameters.cache_key.custom_key.query_string.exclude`
 
 Optional:
 
@@ -615,8 +259,8 @@ Optional:
 - `list` (List of String) A list of query string parameters NOT used to build the cache key. All parameters present in the request but missing in this list will be used to build the cache key.
 
 
-<a id="nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--query_string--include"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.query_string.include`
+<a id="nestedatt--rules--action_parameters--cache_key--custom_key--query_string--include"></a>
+### Nested Schema for `rules.action_parameters.cache_key.custom_key.query_string.include`
 
 Optional:
 
@@ -625,8 +269,8 @@ Optional:
 
 
 
-<a id="nestedatt--rules--action_parameters--cache_key--ignore_query_strings_order--user"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.user`
+<a id="nestedatt--rules--action_parameters--cache_key--custom_key--user"></a>
+### Nested Schema for `rules.action_parameters.cache_key.custom_key.user`
 
 Optional:
 
@@ -759,7 +403,7 @@ Optional:
 - `sensitivity_level` (String) A sensitivity level to set for all rules. This option has lower precedence than rule and category overrides and is only applicable for DDoS phases.
 
 <a id="nestedatt--rules--action_parameters--overrides--categories"></a>
-### Nested Schema for `rules.action_parameters.overrides.sensitivity_level`
+### Nested Schema for `rules.action_parameters.overrides.categories`
 
 Required:
 
@@ -773,7 +417,7 @@ Optional:
 
 
 <a id="nestedatt--rules--action_parameters--overrides--rules"></a>
-### Nested Schema for `rules.action_parameters.overrides.sensitivity_level`
+### Nested Schema for `rules.action_parameters.overrides.rules`
 
 Required:
 
@@ -839,7 +483,7 @@ Optional:
 - `query` (Attributes) Query portion rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--uri--query))
 
 <a id="nestedatt--rules--action_parameters--uri--path"></a>
-### Nested Schema for `rules.action_parameters.uri.query`
+### Nested Schema for `rules.action_parameters.uri.path`
 
 Optional:
 
@@ -897,9 +541,5 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-# Import an account scoped Ruleset configuration.
-$ terraform import cloudflare_ruleset.example account/<account_id>/<ruleset_id>
-
-# Import a zone scoped Ruleset configuration.
-$ terraform import cloudflare_ruleset.example zone/<zone_id>/<ruleset_id>
+$ terraform import cloudflare_ruleset.example '<{accounts|zones}/{account_id|zone_id}>/<ruleset_id>'
 ```

@@ -9,7 +9,9 @@ description: Terraform Cloudflare Provider Version 5 Upgrade Guide
 Version 5 of the Cloudflare Terraform Provider is a ground-up rewrite of the
 provider, using code generation from our OpenAPI spec. While this introduces
 attribute and resource changes, it moves the provider to align more closely
-with the service endpoints and makes automatic support going forward possible.
+with the service endpoints. This allows automation the steps to get changes
+into the provider lowering the delay between new features and complete
+coverage.
 
 ## Provider Version Configuration
 
@@ -53,16 +55,19 @@ This will allow you to rewrite the parts of your Terraform configuration (not st
 that have changed automatically. Once you [install Grit], you can run the following
 command in the directory where your Terraform configuration is located.
 
+~> While all efforts have been made to ease the transition, some of the more complex
+resources that may contain difficult to reconcile resources have been intentionally
+skipped for the automatic migration and are only manually documented. If you are
+using modules or other dynamic features of HCL, the provided codemods may not be
+as effective. We recommend reviewing the migration notes below to verify all the
+changes.
+
 ```bash
 $ grit apply cloudflare_terraform_v5
 ```
 
 We recommend ensuring you are using version control for these changes or make a
 backup prior to initiating the change to enable reverting if needed.
-
-~> If you are using modules or other dynamic features of HCL, the provided
-codemods may not be as effective. We recommend reviewing the migration notes below
-to verify all the changes.
 
 <!-- This code block is only used for confirming grit patterns -->
 
