@@ -53,6 +53,7 @@ type ZeroTrustGatewayPoliciesResultDataSourceModel struct {
 type ZeroTrustGatewayPoliciesExpirationDataSourceModel struct {
 	ExpiresAt timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
 	Duration  types.Int64       `tfsdk:"duration" json:"duration,computed"`
+	Expired   types.Bool        `tfsdk:"expired" json:"expired,computed"`
 }
 
 type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {

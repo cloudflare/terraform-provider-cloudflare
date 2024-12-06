@@ -48,7 +48,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"override",
 						"l4_override",
 						"egress",
-						"audit_ssh",
 						"resolve",
 						"quarantine",
 					),
@@ -131,6 +130,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.Int64{
 							int64validator.AtLeast(5),
 						},
+					},
+					"expired": schema.BoolAttribute{
+						Description: "Whether the policy has expired.",
+						Computed:    true,
 					},
 				},
 			},
