@@ -17,6 +17,8 @@ description: |-
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `max_items` (Number) Max items to fetch, default: 1000
+- `name` (String) The name of the group.
+- `search` (String) Search for groups by other listed query parameters.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
@@ -42,15 +44,17 @@ Read-Only:
 
 Read-Only:
 
-- `any_valid_service_token` (String) An empty object which matches on all service tokens.
+- `any_valid_service_token` (Attributes) An empty object which matches on all service tokens. (see [below for nested schema](#nestedatt--result--exclude--any_valid_service_token))
+- `auth_context` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--auth_context))
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--azure_ad))
-- `certificate` (String)
+- `certificate` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--certificate))
+- `common_name` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--email))
 - `email_domain` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--email_domain))
 - `email_list` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--email_list))
-- `everyone` (String) An empty object which matches on all users.
+- `everyone` (Attributes) An empty object which matches on all users. (see [below for nested schema](#nestedatt--result--exclude--everyone))
 - `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--external_evaluation))
 - `geo` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--geo))
 - `github_organization` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--github_organization))
@@ -61,6 +65,20 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--service_token))
+
+<a id="nestedatt--result--exclude--any_valid_service_token"></a>
+### Nested Schema for `result.exclude.any_valid_service_token`
+
+
+<a id="nestedatt--result--exclude--auth_context"></a>
+### Nested Schema for `result.exclude.auth_context`
+
+Read-Only:
+
+- `ac_id` (String) The ACID of an Authentication context.
+- `id` (String) The ID of an Authentication context.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
 
 <a id="nestedatt--result--exclude--auth_method"></a>
 ### Nested Schema for `result.exclude.auth_method`
@@ -77,6 +95,18 @@ Read-Only:
 
 - `id` (String) The ID of an Azure group.
 - `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--result--exclude--certificate"></a>
+### Nested Schema for `result.exclude.certificate`
+
+
+<a id="nestedatt--result--exclude--common_name"></a>
+### Nested Schema for `result.exclude.common_name`
+
+Read-Only:
+
+- `common_name` (String) The common name to match.
 
 
 <a id="nestedatt--result--exclude--device_posture"></a>
@@ -111,6 +141,10 @@ Read-Only:
 - `id` (String) The ID of a previously created email list.
 
 
+<a id="nestedatt--result--exclude--everyone"></a>
+### Nested Schema for `result.exclude.everyone`
+
+
 <a id="nestedatt--result--exclude--external_evaluation"></a>
 ### Nested Schema for `result.exclude.external_evaluation`
 
@@ -135,6 +169,7 @@ Read-Only:
 
 - `identity_provider_id` (String) The ID of your Github identity provider.
 - `name` (String) The name of the organization.
+- `team` (String) The name of the team
 
 
 <a id="nestedatt--result--exclude--group"></a>
@@ -203,15 +238,17 @@ Read-Only:
 
 Read-Only:
 
-- `any_valid_service_token` (String) An empty object which matches on all service tokens.
+- `any_valid_service_token` (Attributes) An empty object which matches on all service tokens. (see [below for nested schema](#nestedatt--result--include--any_valid_service_token))
+- `auth_context` (Attributes) (see [below for nested schema](#nestedatt--result--include--auth_context))
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--result--include--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--result--include--azure_ad))
-- `certificate` (String)
+- `certificate` (Attributes) (see [below for nested schema](#nestedatt--result--include--certificate))
+- `common_name` (Attributes) (see [below for nested schema](#nestedatt--result--include--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--result--include--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--result--include--email))
 - `email_domain` (Attributes) (see [below for nested schema](#nestedatt--result--include--email_domain))
 - `email_list` (Attributes) (see [below for nested schema](#nestedatt--result--include--email_list))
-- `everyone` (String) An empty object which matches on all users.
+- `everyone` (Attributes) An empty object which matches on all users. (see [below for nested schema](#nestedatt--result--include--everyone))
 - `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--result--include--external_evaluation))
 - `geo` (Attributes) (see [below for nested schema](#nestedatt--result--include--geo))
 - `github_organization` (Attributes) (see [below for nested schema](#nestedatt--result--include--github_organization))
@@ -222,6 +259,20 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--include--service_token))
+
+<a id="nestedatt--result--include--any_valid_service_token"></a>
+### Nested Schema for `result.include.any_valid_service_token`
+
+
+<a id="nestedatt--result--include--auth_context"></a>
+### Nested Schema for `result.include.auth_context`
+
+Read-Only:
+
+- `ac_id` (String) The ACID of an Authentication context.
+- `id` (String) The ID of an Authentication context.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
 
 <a id="nestedatt--result--include--auth_method"></a>
 ### Nested Schema for `result.include.auth_method`
@@ -238,6 +289,18 @@ Read-Only:
 
 - `id` (String) The ID of an Azure group.
 - `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--result--include--certificate"></a>
+### Nested Schema for `result.include.certificate`
+
+
+<a id="nestedatt--result--include--common_name"></a>
+### Nested Schema for `result.include.common_name`
+
+Read-Only:
+
+- `common_name` (String) The common name to match.
 
 
 <a id="nestedatt--result--include--device_posture"></a>
@@ -272,6 +335,10 @@ Read-Only:
 - `id` (String) The ID of a previously created email list.
 
 
+<a id="nestedatt--result--include--everyone"></a>
+### Nested Schema for `result.include.everyone`
+
+
 <a id="nestedatt--result--include--external_evaluation"></a>
 ### Nested Schema for `result.include.external_evaluation`
 
@@ -296,6 +363,7 @@ Read-Only:
 
 - `identity_provider_id` (String) The ID of your Github identity provider.
 - `name` (String) The name of the organization.
+- `team` (String) The name of the team
 
 
 <a id="nestedatt--result--include--group"></a>
@@ -364,15 +432,17 @@ Read-Only:
 
 Read-Only:
 
-- `any_valid_service_token` (String) An empty object which matches on all service tokens.
+- `any_valid_service_token` (Attributes) An empty object which matches on all service tokens. (see [below for nested schema](#nestedatt--result--is_default--any_valid_service_token))
+- `auth_context` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--auth_context))
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--azure_ad))
-- `certificate` (String)
+- `certificate` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--certificate))
+- `common_name` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--email))
 - `email_domain` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--email_domain))
 - `email_list` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--email_list))
-- `everyone` (String) An empty object which matches on all users.
+- `everyone` (Attributes) An empty object which matches on all users. (see [below for nested schema](#nestedatt--result--is_default--everyone))
 - `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--external_evaluation))
 - `geo` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--geo))
 - `github_organization` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--github_organization))
@@ -383,6 +453,20 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--service_token))
+
+<a id="nestedatt--result--is_default--any_valid_service_token"></a>
+### Nested Schema for `result.is_default.any_valid_service_token`
+
+
+<a id="nestedatt--result--is_default--auth_context"></a>
+### Nested Schema for `result.is_default.auth_context`
+
+Read-Only:
+
+- `ac_id` (String) The ACID of an Authentication context.
+- `id` (String) The ID of an Authentication context.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
 
 <a id="nestedatt--result--is_default--auth_method"></a>
 ### Nested Schema for `result.is_default.auth_method`
@@ -399,6 +483,18 @@ Read-Only:
 
 - `id` (String) The ID of an Azure group.
 - `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--result--is_default--certificate"></a>
+### Nested Schema for `result.is_default.certificate`
+
+
+<a id="nestedatt--result--is_default--common_name"></a>
+### Nested Schema for `result.is_default.common_name`
+
+Read-Only:
+
+- `common_name` (String) The common name to match.
 
 
 <a id="nestedatt--result--is_default--device_posture"></a>
@@ -433,6 +529,10 @@ Read-Only:
 - `id` (String) The ID of a previously created email list.
 
 
+<a id="nestedatt--result--is_default--everyone"></a>
+### Nested Schema for `result.is_default.everyone`
+
+
 <a id="nestedatt--result--is_default--external_evaluation"></a>
 ### Nested Schema for `result.is_default.external_evaluation`
 
@@ -457,6 +557,7 @@ Read-Only:
 
 - `identity_provider_id` (String) The ID of your Github identity provider.
 - `name` (String) The name of the organization.
+- `team` (String) The name of the team
 
 
 <a id="nestedatt--result--is_default--group"></a>
@@ -525,15 +626,17 @@ Read-Only:
 
 Read-Only:
 
-- `any_valid_service_token` (String) An empty object which matches on all service tokens.
+- `any_valid_service_token` (Attributes) An empty object which matches on all service tokens. (see [below for nested schema](#nestedatt--result--require--any_valid_service_token))
+- `auth_context` (Attributes) (see [below for nested schema](#nestedatt--result--require--auth_context))
 - `auth_method` (Attributes) (see [below for nested schema](#nestedatt--result--require--auth_method))
 - `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--result--require--azure_ad))
-- `certificate` (String)
+- `certificate` (Attributes) (see [below for nested schema](#nestedatt--result--require--certificate))
+- `common_name` (Attributes) (see [below for nested schema](#nestedatt--result--require--common_name))
 - `device_posture` (Attributes) (see [below for nested schema](#nestedatt--result--require--device_posture))
 - `email` (Attributes) (see [below for nested schema](#nestedatt--result--require--email))
 - `email_domain` (Attributes) (see [below for nested schema](#nestedatt--result--require--email_domain))
 - `email_list` (Attributes) (see [below for nested schema](#nestedatt--result--require--email_list))
-- `everyone` (String) An empty object which matches on all users.
+- `everyone` (Attributes) An empty object which matches on all users. (see [below for nested schema](#nestedatt--result--require--everyone))
 - `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--result--require--external_evaluation))
 - `geo` (Attributes) (see [below for nested schema](#nestedatt--result--require--geo))
 - `github_organization` (Attributes) (see [below for nested schema](#nestedatt--result--require--github_organization))
@@ -544,6 +647,20 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--require--service_token))
+
+<a id="nestedatt--result--require--any_valid_service_token"></a>
+### Nested Schema for `result.require.any_valid_service_token`
+
+
+<a id="nestedatt--result--require--auth_context"></a>
+### Nested Schema for `result.require.auth_context`
+
+Read-Only:
+
+- `ac_id` (String) The ACID of an Authentication context.
+- `id` (String) The ID of an Authentication context.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
 
 <a id="nestedatt--result--require--auth_method"></a>
 ### Nested Schema for `result.require.auth_method`
@@ -560,6 +677,18 @@ Read-Only:
 
 - `id` (String) The ID of an Azure group.
 - `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--result--require--certificate"></a>
+### Nested Schema for `result.require.certificate`
+
+
+<a id="nestedatt--result--require--common_name"></a>
+### Nested Schema for `result.require.common_name`
+
+Read-Only:
+
+- `common_name` (String) The common name to match.
 
 
 <a id="nestedatt--result--require--device_posture"></a>
@@ -594,6 +723,10 @@ Read-Only:
 - `id` (String) The ID of a previously created email list.
 
 
+<a id="nestedatt--result--require--everyone"></a>
+### Nested Schema for `result.require.everyone`
+
+
 <a id="nestedatt--result--require--external_evaluation"></a>
 ### Nested Schema for `result.require.external_evaluation`
 
@@ -618,6 +751,7 @@ Read-Only:
 
 - `identity_provider_id` (String) The ID of your Github identity provider.
 - `name` (String) The name of the organization.
+- `team` (String) The name of the team
 
 
 <a id="nestedatt--result--require--group"></a>

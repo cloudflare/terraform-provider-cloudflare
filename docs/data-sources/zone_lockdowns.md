@@ -15,7 +15,7 @@ description: |-
 
 ### Required
 
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 ### Optional
 
@@ -39,7 +39,7 @@ description: |-
 
 Read-Only:
 
-- `configurations` (Attributes) A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations. (see [below for nested schema](#nestedatt--result--configurations))
+- `configurations` (Attributes List) A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations. (see [below for nested schema](#nestedatt--result--configurations))
 - `created_on` (String) The timestamp of when the rule was created.
 - `description` (String) An informative summary of the rule.
 - `id` (String) The unique identifier of the Zone Lockdown rule.

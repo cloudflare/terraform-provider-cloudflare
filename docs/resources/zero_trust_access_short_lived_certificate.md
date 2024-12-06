@@ -38,7 +38,9 @@ resource "cloudflare_zero_trust_access_short_lived_certificate" "another_example
 
 ### Read-Only
 
+- `aud` (String) The Application Audience (AUD) tag. Identifies the application associated with the CA.
 - `id` (String) UUID
+- `public_key` (String) The public key to add to your SSH server configuration.
 
 ## Import
 

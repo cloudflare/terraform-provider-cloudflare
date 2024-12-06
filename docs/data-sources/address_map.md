@@ -18,8 +18,6 @@ description: |-
 - `account_id` (String) Identifier
 - `address_map_id` (String) Identifier
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `ips` (Attributes List) The set of IPs on the Address Map. (see [below for nested schema](#nestedatt--ips))
-- `memberships` (Attributes List) Zones and Accounts which will be assigned IPs on this Address Map. A zone membership will take priority over an account membership. (see [below for nested schema](#nestedatt--memberships))
 
 ### Read-Only
 
@@ -30,6 +28,8 @@ description: |-
 - `description` (String) An optional description field which may be used to describe the types of IPs or zones on the map.
 - `enabled` (Boolean) Whether the Address Map is enabled or not. Cloudflare's DNS will not respond with IP addresses on an Address Map until the map is enabled.
 - `id` (String) Identifier
+- `ips` (Attributes List) The set of IPs on the Address Map. (see [below for nested schema](#nestedatt--ips))
+- `memberships` (Attributes List) Zones and Accounts which will be assigned IPs on this Address Map. A zone membership will take priority over an account membership. (see [below for nested schema](#nestedatt--memberships))
 - `modified_at` (String)
 
 <a id="nestedatt--filter"></a>

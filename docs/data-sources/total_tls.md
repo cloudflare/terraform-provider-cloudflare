@@ -17,7 +17,7 @@ description: |-
 
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `certificate_authority` (String) The Certificate Authority that Total TLS certificates will be issued through.
 - `enabled` (Boolean) If enabled, Total TLS will order a hostname specific TLS certificate for any proxied A, AAAA, or CNAME record in your zone.

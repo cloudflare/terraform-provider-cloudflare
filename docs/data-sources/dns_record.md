@@ -28,19 +28,11 @@ data "cloudflare_dns_record" "example" {
 
 ### Read-Only
 
-- `comment` (String) Comments or notes about the DNS record. This field has no effect on DNS responses.
-- `comment_modified_on` (String) When the record comment was last modified. Omitted if there is no comment.
-- `created_on` (String) When the record was created.
-- `id` (String) Identifier
-- `meta` (String) Extra Cloudflare-specific information about the record.
-- `modified_on` (String) When the record was last modified.
-- `name` (String) DNS record name (or @ for the zone apex) in Punycode.
-- `proxiable` (Boolean) Whether the record can be proxied by Cloudflare or not.
-- `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
-- `settings` (String) Settings for the DNS record.
-- `tags` (List of String) Custom tags for the DNS record. This field has no effect on DNS responses.
-- `tags_modified_on` (String) When the record tags were last modified. Omitted if there are no tags.
-- `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
+- `content` (String) A valid IPv4 address.
+- `data` (Attributes) Components of a CAA record. (see [below for nested schema](#nestedatt--data))
+- `priority` (Number) Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.
+- `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))
+- `type` (String) Record type.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -52,10 +44,10 @@ Required:
 Optional:
 
 - `comment` (Attributes) (see [below for nested schema](#nestedatt--filter--comment))
-- `content` (String) DNS record content.
+- `content` (Attributes) (see [below for nested schema](#nestedatt--filter--content))
 - `direction` (String) Direction to order DNS records in.
 - `match` (String) Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead. Note that the interaction between tag filters is controlled by the `tag-match` parameter instead.
-- `name` (String) DNS record name (or @ for the zone apex) in Punycode.
+- `name` (Attributes) (see [below for nested schema](#nestedatt--filter--name))
 - `order` (String) Field to order DNS records by.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `search` (String) Allows searching in multiple properties of a DNS record simultaneously. This parameter is intended for human users, not automation. Its exact behavior is intentionally left unspecified and is subject to change in the future. This parameter works independently of the `match` setting. For automated searches, please use the other available parameters.
@@ -76,6 +68,28 @@ Optional:
 - `startswith` (String) Prefix of the DNS record comment. Comment filters are case-insensitive.
 
 
+<a id="nestedatt--filter--content"></a>
+### Nested Schema for `filter.content`
+
+Optional:
+
+- `contains` (String) Substring of the DNS record content. Content filters are case-insensitive.
+- `endswith` (String) Suffix of the DNS record content. Content filters are case-insensitive.
+- `exact` (String) Exact value of the DNS record content. Content filters are case-insensitive.
+- `startswith` (String) Prefix of the DNS record content. Content filters are case-insensitive.
+
+
+<a id="nestedatt--filter--name"></a>
+### Nested Schema for `filter.name`
+
+Optional:
+
+- `contains` (String) Substring of the DNS record name. Name filters are case-insensitive.
+- `endswith` (String) Suffix of the DNS record name. Name filters are case-insensitive.
+- `exact` (String) Exact value of the DNS record name. Name filters are case-insensitive.
+- `startswith` (String) Prefix of the DNS record name. Name filters are case-insensitive.
+
+
 <a id="nestedatt--filter--tag"></a>
 ### Nested Schema for `filter.tag`
 
@@ -87,5 +101,57 @@ Optional:
 - `exact` (String) A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value is `<tag-value>`. Tag filters are case-insensitive.
 - `present` (String) Name of a tag which must be present on the DNS record. Tag filters are case-insensitive.
 - `startswith` (String) A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value starts with `<tag-value>`. Tag filters are case-insensitive.
+
+
+
+<a id="nestedatt--data"></a>
+### Nested Schema for `data`
+
+Read-Only:
+
+- `algorithm` (Number) Algorithm.
+- `altitude` (Number) Altitude of location in meters.
+- `certificate` (String) Certificate.
+- `digest` (String) Digest.
+- `digest_type` (Number) Digest Type.
+- `fingerprint` (String) fingerprint.
+- `flags` (Dynamic) Flags for the CAA record.
+- `key_tag` (Number) Key Tag.
+- `lat_degrees` (Number) Degrees of latitude.
+- `lat_direction` (String) Latitude direction.
+- `lat_minutes` (Number) Minutes of latitude.
+- `lat_seconds` (Number) Seconds of latitude.
+- `long_degrees` (Number) Degrees of longitude.
+- `long_direction` (String) Longitude direction.
+- `long_minutes` (Number) Minutes of longitude.
+- `long_seconds` (Number) Seconds of longitude.
+- `matching_type` (Number) Matching Type.
+- `order` (Number) Order.
+- `port` (Number) The port of the service.
+- `precision_horz` (Number) Horizontal precision of location.
+- `precision_vert` (Number) Vertical precision of location.
+- `preference` (Number) Preference.
+- `priority` (Number) priority.
+- `protocol` (Number) Protocol.
+- `public_key` (String) Public Key.
+- `regex` (String) Regex.
+- `replacement` (String) Replacement.
+- `selector` (Number) Selector.
+- `service` (String) Service.
+- `size` (Number) Size of location in meters.
+- `tag` (String) Name of the property controlled by this record (e.g.: issue, issuewild, iodef).
+- `target` (String) target.
+- `type` (Number) Type.
+- `usage` (Number) Usage.
+- `value` (String) Value of the record. This field's semantics depend on the chosen tag.
+- `weight` (Number) The record weight.
+
+
+<a id="nestedatt--settings"></a>
+### Nested Schema for `settings`
+
+Read-Only:
+
+- `flatten_cname` (Boolean) If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting has no effect on proxied records, which are always flattened.
 
 

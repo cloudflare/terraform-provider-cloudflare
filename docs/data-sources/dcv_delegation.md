@@ -17,7 +17,7 @@ description: |-
 
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `uuid` (String) The DCV Delegation unique identifier.
 

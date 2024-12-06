@@ -33,25 +33,19 @@ resource "cloudflare_workers_cron_trigger" "example_trigger" {
 ### Required
 
 - `account_id` (String) Identifier
+- `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 - `script_name` (String) Name of the script, used in URLs and route configuration.
-
-### Optional
-
-- `cron` (String)
 
 ### Read-Only
 
 - `id` (String) Name of the script, used in URLs and route configuration.
-- `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 
 <a id="nestedatt--schedules"></a>
 ### Nested Schema for `schedules`
 
-Read-Only:
+Required:
 
-- `created_on` (String)
 - `cron` (String)
-- `modified_on` (String)
 
 ## Import
 

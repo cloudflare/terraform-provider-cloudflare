@@ -16,14 +16,15 @@ description: |-
 ### Optional
 
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `id` (String) The unique identifier of the Zone Lockdown rule.
-- `zone_identifier` (String) Identifier
+- `lock_downs_id` (String) The unique identifier of the Zone Lockdown rule.
+- `zone_id` (String) Identifier
 
 ### Read-Only
 
-- `configurations` (Attributes) A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations. (see [below for nested schema](#nestedatt--configurations))
+- `configurations` (Attributes List) A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations. (see [below for nested schema](#nestedatt--configurations))
 - `created_on` (String) The timestamp of when the rule was created.
 - `description` (String) An informative summary of the rule.
+- `id` (String) The unique identifier of the Zone Lockdown rule.
 - `modified_on` (String) The timestamp of when the rule was last modified.
 - `paused` (Boolean) When true, indicates that the rule is currently paused.
 - `urls` (List of String) The URLs to include in the rule definition. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.
@@ -33,7 +34,7 @@ description: |-
 
 Required:
 
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 Optional:
 

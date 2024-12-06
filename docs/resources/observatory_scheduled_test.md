@@ -31,7 +31,6 @@ resource "cloudflare_observatory_scheduled_test" "example" {
 
 - `frequency` (String) The frequency of the test.
 - `id` (String) A URL.
-- `item_count` (Number) Number of items affected.
 - `region` (String) A test region.
 - `schedule` (Attributes) The test schedule. (see [below for nested schema](#nestedatt--schedule))
 - `test` (Attributes) (see [below for nested schema](#nestedatt--test))

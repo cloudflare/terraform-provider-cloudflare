@@ -16,14 +16,19 @@ description: |-
 ### Optional
 
 - `account_id` (String) Identifier
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+- `script_name` (String) Name of the script, used in URLs and route configuration.
+
+### Read-Only
+
 - `created_on` (String) When the script was created.
 - `etag` (String) Hashed script content, can be used in a If-None-Match header when updating.
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+- `has_assets` (Boolean) Whether a Worker contains assets.
+- `has_modules` (Boolean) Whether a Worker contains modules.
 - `id` (String) The id of the script in the Workers system. Usually the script name.
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `modified_on` (String) When the script was last modified.
 - `placement_mode` (String) Specifies the placement mode for the Worker (e.g. 'smart').
-- `script_name` (String) Name of the script, used in URLs and route configuration.
 - `tail_consumers` (Attributes List) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--tail_consumers))
 - `usage_model` (String) Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').
 

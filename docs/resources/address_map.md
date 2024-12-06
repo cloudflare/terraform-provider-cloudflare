@@ -53,12 +53,8 @@ resource "cloudflare_address_map" "example" {
 - `can_delete` (Boolean) If set to false, then the Address Map cannot be deleted via API. This is true for Cloudflare-managed maps.
 - `can_modify_ips` (Boolean) If set to false, then the IPs on the Address Map cannot be modified via the API. This is true for Cloudflare-managed maps.
 - `created_at` (String)
-- `errors` (Attributes List) (see [below for nested schema](#nestedatt--errors))
 - `id` (String) Identifier
-- `messages` (Attributes List) (see [below for nested schema](#nestedatt--messages))
 - `modified_at` (String)
-- `result_info` (Attributes) (see [below for nested schema](#nestedatt--result_info))
-- `success` (Boolean) Whether the API call was successful
 
 <a id="nestedatt--memberships"></a>
 ### Nested Schema for `memberships`
@@ -72,35 +68,6 @@ Read-Only:
 
 - `can_delete` (Boolean) Controls whether the membership can be deleted via the API or not.
 - `created_at` (String)
-
-
-<a id="nestedatt--errors"></a>
-### Nested Schema for `errors`
-
-Read-Only:
-
-- `code` (Number)
-- `message` (String)
-
-
-<a id="nestedatt--messages"></a>
-### Nested Schema for `messages`
-
-Read-Only:
-
-- `code` (Number)
-- `message` (String)
-
-
-<a id="nestedatt--result_info"></a>
-### Nested Schema for `result_info`
-
-Read-Only:
-
-- `count` (Number) Total number of results for the requested service
-- `page` (Number) Current page within paginated list of results
-- `per_page` (Number) Number of results per page of results
-- `total_count` (Number) Total results available without any search parameters
 
 ## Import
 

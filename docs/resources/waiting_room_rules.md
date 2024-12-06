@@ -36,16 +36,26 @@ resource "cloudflare_waiting_room_rules" "example" {
 
 ### Required
 
-- `action` (String) The action to take when the expression matches.
-- `expression` (String) Criteria defining when there is a match for the current rule.
+- `rules` (Attributes List) (see [below for nested schema](#nestedatt--rules))
 - `waiting_room_id` (String)
 - `zone_id` (String) Identifier
 
 ### Optional
 
+- `rule_id` (String) The ID of the rule.
+
+<a id="nestedatt--rules"></a>
+### Nested Schema for `rules`
+
+Required:
+
+- `action` (String) The action to take when the expression matches.
+- `expression` (String) Criteria defining when there is a match for the current rule.
+
+Optional:
+
 - `description` (String) The description of the rule.
 - `enabled` (Boolean) When set to true, the rule is enabled.
-- `rule_id` (String) The ID of the rule.
 
 ## Import
 

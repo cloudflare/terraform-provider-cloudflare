@@ -51,7 +51,6 @@ resource "cloudflare_origin_ca_certificate" "example" {
 - `certificate` (String) The Origin CA certificate. Will be newline-encoded.
 - `expires_on` (String) When the certificate will expire.
 - `id` (String) Identifier
-- `revoked_at` (String) When the certificate was revoked.
 
 ## Import
 

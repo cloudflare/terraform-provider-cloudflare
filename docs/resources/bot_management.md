@@ -47,6 +47,21 @@ Note: Static resource protection can also result in legitimate traffic being blo
 ### Read-Only
 
 - `id` (String) Identifier
+- `stale_zone_configuration` (Attributes) A read-only field that shows which unauthorized settings are currently active on the zone. These settings typically result from upgrades or downgrades. (see [below for nested schema](#nestedatt--stale_zone_configuration))
+- `using_latest_model` (Boolean) A read-only field that indicates whether the zone currently is running the latest ML model.
+
+<a id="nestedatt--stale_zone_configuration"></a>
+### Nested Schema for `stale_zone_configuration`
+
+Read-Only:
+
+- `fight_mode` (Boolean) Indicates that the zone's Bot Fight Mode is turned on.
+- `optimize_wordpress` (Boolean) Indicates that the zone's wordpress optimization for SBFM is turned on.
+- `sbfm_definitely_automated` (String) Indicates that the zone's definitely automated requests are being blocked or challenged.
+- `sbfm_likely_automated` (String) Indicates that the zone's likely automated requests are being blocked or challenged.
+- `sbfm_static_resource_protection` (String) Indicates that the zone's static resource protection is turned on.
+- `sbfm_verified_bots` (String) Indicates that the zone's verified bot requests are being blocked.
+- `suppress_session_score` (Boolean) Indicates that the zone's session score tracking is disabled.
 
 ## Import
 

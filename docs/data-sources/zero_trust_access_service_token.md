@@ -36,6 +36,8 @@ description: |-
 Optional:
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
+- `name` (String) The name of the service token.
+- `search` (String) Search for service tokens by other listed query parameters.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 

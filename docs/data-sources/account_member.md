@@ -115,8 +115,135 @@ Read-Only:
 
 - `description` (String) Description of role's permissions.
 - `id` (String) Role identifier tag.
-- `name` (String) Role Name.
-- `permissions` (List of String) Access permissions for this User.
+- `name` (String) Role name.
+- `permissions` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions))
+
+<a id="nestedatt--roles--permissions"></a>
+### Nested Schema for `roles.permissions`
+
+Read-Only:
+
+- `analytics` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions--analytics))
+- `billing` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions--billing))
+- `cache_purge` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions--cache_purge))
+- `dns` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions--dns))
+- `dns_records` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions--dns_records))
+- `lb` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions--lb))
+- `logs` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions--logs))
+- `organization` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions--organization))
+- `ssl` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions--ssl))
+- `waf` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions--waf))
+- `zone_settings` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions--zone_settings))
+- `zones` (Attributes) (see [below for nested schema](#nestedatt--roles--permissions--zones))
+
+<a id="nestedatt--roles--permissions--analytics"></a>
+### Nested Schema for `roles.permissions.analytics`
+
+Read-Only:
+
+- `read` (Boolean)
+- `write` (Boolean)
+
+
+<a id="nestedatt--roles--permissions--billing"></a>
+### Nested Schema for `roles.permissions.billing`
+
+Read-Only:
+
+- `read` (Boolean)
+- `write` (Boolean)
+
+
+<a id="nestedatt--roles--permissions--cache_purge"></a>
+### Nested Schema for `roles.permissions.cache_purge`
+
+Read-Only:
+
+- `read` (Boolean)
+- `write` (Boolean)
+
+
+<a id="nestedatt--roles--permissions--dns"></a>
+### Nested Schema for `roles.permissions.dns`
+
+Read-Only:
+
+- `read` (Boolean)
+- `write` (Boolean)
+
+
+<a id="nestedatt--roles--permissions--dns_records"></a>
+### Nested Schema for `roles.permissions.dns_records`
+
+Read-Only:
+
+- `read` (Boolean)
+- `write` (Boolean)
+
+
+<a id="nestedatt--roles--permissions--lb"></a>
+### Nested Schema for `roles.permissions.lb`
+
+Read-Only:
+
+- `read` (Boolean)
+- `write` (Boolean)
+
+
+<a id="nestedatt--roles--permissions--logs"></a>
+### Nested Schema for `roles.permissions.logs`
+
+Read-Only:
+
+- `read` (Boolean)
+- `write` (Boolean)
+
+
+<a id="nestedatt--roles--permissions--organization"></a>
+### Nested Schema for `roles.permissions.organization`
+
+Read-Only:
+
+- `read` (Boolean)
+- `write` (Boolean)
+
+
+<a id="nestedatt--roles--permissions--ssl"></a>
+### Nested Schema for `roles.permissions.ssl`
+
+Read-Only:
+
+- `read` (Boolean)
+- `write` (Boolean)
+
+
+<a id="nestedatt--roles--permissions--waf"></a>
+### Nested Schema for `roles.permissions.waf`
+
+Read-Only:
+
+- `read` (Boolean)
+- `write` (Boolean)
+
+
+<a id="nestedatt--roles--permissions--zone_settings"></a>
+### Nested Schema for `roles.permissions.zone_settings`
+
+Read-Only:
+
+- `read` (Boolean)
+- `write` (Boolean)
+
+
+<a id="nestedatt--roles--permissions--zones"></a>
+### Nested Schema for `roles.permissions.zones`
+
+Read-Only:
+
+- `read` (Boolean)
+- `write` (Boolean)
+
+
 
 
 <a id="nestedatt--user"></a>

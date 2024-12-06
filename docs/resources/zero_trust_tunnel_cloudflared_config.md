@@ -79,12 +79,12 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "example_config" {
 ### Optional
 
 - `config` (Attributes) The tunnel configuration and ingress rules. (see [below for nested schema](#nestedatt--config))
+- `source` (String) Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel's configuration on the Zero Trust dashboard.
 
 ### Read-Only
 
 - `created_at` (String)
 - `id` (String) UUID of the tunnel.
-- `source` (String) Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel's configuration on the Zero Trust dashboard.
 - `version` (Number) The version of the Tunnel Configuration.
 
 <a id="nestedatt--config"></a>
@@ -94,9 +94,6 @@ Optional:
 
 - `ingress` (Attributes List) List of public hostname definitions. At least one ingress rule needs to be defined for the tunnel. (see [below for nested schema](#nestedatt--config--ingress))
 - `origin_request` (Attributes) Configuration parameters for the public hostname specific connection settings between cloudflared and origin server. (see [below for nested schema](#nestedatt--config--origin_request))
-
-Read-Only:
-
 - `warp_routing` (Attributes) Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route. (see [below for nested schema](#nestedatt--config--warp_routing))
 
 <a id="nestedatt--config--ingress"></a>
@@ -104,11 +101,11 @@ Read-Only:
 
 Required:
 
-- `hostname` (String) Public hostname for this service.
 - `service` (String) Protocol and address of destination server. Supported protocols: http://, https://, unix://, tcp://, ssh://, rdp://, unix+tls://, smb://. Alternatively can return a HTTP status code http_status:[code] e.g. 'http_status:404'.
 
 Optional:
 
+- `hostname` (String) Public hostname for this service.
 - `origin_request` (Attributes) Configuration parameters for the public hostname specific connection settings between cloudflared and origin server. (see [below for nested schema](#nestedatt--config--ingress--origin_request))
 - `path` (String) Requests with this path route to this public hostname.
 

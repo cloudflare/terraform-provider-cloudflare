@@ -19,8 +19,11 @@ description: |-
 
 ### Optional
 
-- `auth_id_characteristics` (Attributes List) (see [below for nested schema](#nestedatt--auth_id_characteristics))
 - `properties` (List of String) Requests information about certain properties.
+
+### Read-Only
+
+- `auth_id_characteristics` (Attributes List) (see [below for nested schema](#nestedatt--auth_id_characteristics))
 
 <a id="nestedatt--auth_id_characteristics"></a>
 ### Nested Schema for `auth_id_characteristics`

@@ -15,9 +15,9 @@ description: |-
 
 ### Optional
 
-- `account_id` (String) Identifier.
+- `account_id` (String) A Resource identifier.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `queue_id` (String) Identifier.
+- `queue_id` (String) A Resource identifier.
 
 ### Read-Only
 
@@ -28,13 +28,14 @@ description: |-
 - `producers` (Attributes List) (see [below for nested schema](#nestedatt--producers))
 - `producers_total_count` (Number)
 - `queue_name` (String)
+- `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
 
 Required:
 
-- `account_id` (String) Identifier.
+- `account_id` (String) A Resource identifier.
 
 
 <a id="nestedatt--consumers"></a>
@@ -42,11 +43,13 @@ Required:
 
 Read-Only:
 
+- `consumer_id` (String) A Resource identifier.
 - `created_on` (String)
-- `environment` (String)
-- `queue_name` (String)
-- `service` (String)
+- `queue_id` (String) A Resource identifier.
+- `script` (String) Name of a Worker
+- `script_name` (String) Name of a Worker
 - `settings` (Attributes) (see [below for nested schema](#nestedatt--consumers--settings))
+- `type` (String)
 
 <a id="nestedatt--consumers--settings"></a>
 ### Nested Schema for `consumers.settings`
@@ -54,8 +57,11 @@ Read-Only:
 Read-Only:
 
 - `batch_size` (Number) The maximum number of messages to include in a batch.
+- `max_concurrency` (Number) Maximum number of concurrent consumers that may consume from this Queue. Set to `null` to automatically opt in to the platform's maximum (recommended).
 - `max_retries` (Number) The maximum number of retries
-- `max_wait_time_ms` (Number)
+- `max_wait_time_ms` (Number) The number of milliseconds to wait for a batch to fill up before attempting to deliver it
+- `retry_delay` (Number) The number of seconds to delay before making the message available for another attempt.
+- `visibility_timeout_ms` (Number) The number of milliseconds that a message is exclusively leased. After the timeout, the message becomes available for another attempt.
 
 
 
@@ -64,7 +70,17 @@ Read-Only:
 
 Read-Only:
 
-- `environment` (String)
-- `service` (String)
+- `bucket_name` (String)
+- `script` (String)
+- `type` (String)
+
+
+<a id="nestedatt--settings"></a>
+### Nested Schema for `settings`
+
+Read-Only:
+
+- `delivery_delay` (Number) Number of seconds to delay delivery of all messages to consumers.
+- `message_retention_period` (Number) Number of seconds after which an unconsumed message will be delayed.
 
 

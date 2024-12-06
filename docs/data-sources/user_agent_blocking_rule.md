@@ -15,13 +15,31 @@ description: |-
 
 ### Optional
 
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+- `ua_rule_id` (String) The unique identifier of the User Agent Blocking rule.
+- `zone_id` (String) Identifier
+
+### Read-Only
+
 - `configuration` (Attributes) The configuration object for the current rule. (see [below for nested schema](#nestedatt--configuration))
 - `description` (String) An informative summary of the rule.
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `id` (String) The unique identifier of the User Agent Blocking rule.
 - `mode` (String) The action to apply to a matched request.
 - `paused` (Boolean) When true, indicates that the rule is currently paused.
-- `zone_identifier` (String) Identifier
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Required:
+
+- `zone_id` (String) Identifier
+
+Optional:
+
+- `description` (String) A string to search for in the description of existing rules.
+- `description_search` (String) A string to search for in the description of existing rules.
+- `ua_search` (String) A string to search for in the user agent values of existing rules.
+
 
 <a id="nestedatt--configuration"></a>
 ### Nested Schema for `configuration`
@@ -30,19 +48,5 @@ Read-Only:
 
 - `target` (String) The configuration target for this rule. You must set the target to `ua` for User Agent Blocking rules.
 - `value` (String) The exact user agent string to match. This value will be compared to the received `User-Agent` HTTP header value.
-
-
-<a id="nestedatt--filter"></a>
-### Nested Schema for `filter`
-
-Required:
-
-- `zone_identifier` (String) Identifier
-
-Optional:
-
-- `description` (String) A string to search for in the description of existing rules.
-- `description_search` (String) A string to search for in the description of existing rules.
-- `ua_search` (String) A string to search for in the user agent values of existing rules.
 
 

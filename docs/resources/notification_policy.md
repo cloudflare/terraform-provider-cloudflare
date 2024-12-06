@@ -78,12 +78,8 @@ resource "cloudflare_notification_policy" "example" {
 ### Read-Only
 
 - `created` (String)
-- `errors` (Attributes List) (see [below for nested schema](#nestedatt--errors))
 - `id` (String) UUID
-- `messages` (Attributes List) (see [below for nested schema](#nestedatt--messages))
 - `modified` (String)
-- `result_info` (Attributes) (see [below for nested schema](#nestedatt--result_info))
-- `success` (Boolean) Whether the API call was successful
 
 <a id="nestedatt--filters"></a>
 ### Nested Schema for `filters`
@@ -131,35 +127,6 @@ Optional:
 - `tunnel_name` (List of String) Usage depends on specific alert type
 - `where` (List of String) Usage depends on specific alert type
 - `zones` (List of String) Usage depends on specific alert type
-
-
-<a id="nestedatt--errors"></a>
-### Nested Schema for `errors`
-
-Read-Only:
-
-- `code` (Number)
-- `message` (String)
-
-
-<a id="nestedatt--messages"></a>
-### Nested Schema for `messages`
-
-Read-Only:
-
-- `code` (Number)
-- `message` (String)
-
-
-<a id="nestedatt--result_info"></a>
-### Nested Schema for `result_info`
-
-Read-Only:
-
-- `count` (Number) Total number of results for the requested service
-- `page` (Number) Current page within paginated list of results
-- `per_page` (Number) Number of results per page of results
-- `total_count` (Number) Total results available without any search parameters
 
 ## Import
 

@@ -16,7 +16,7 @@ description: |-
 ### Optional
 
 - `account_id` (String)
-- `dex_test_id` (String) API UUID.
+- `dex_test_id` (String) The unique identifier for the test.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
@@ -28,6 +28,7 @@ description: |-
 - `name` (String) The name of the DEX test. Must be unique.
 - `target_policies` (Attributes List) Device settings profiles targeted by this test (see [below for nested schema](#nestedatt--target_policies))
 - `targeted` (Boolean)
+- `test_id` (String) The unique identifier for the test.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

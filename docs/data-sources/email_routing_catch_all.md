@@ -17,7 +17,7 @@ description: |-
 
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `actions` (Attributes List) List actions for the catch-all routing rule. (see [below for nested schema](#nestedatt--actions))
 - `enabled` (Boolean) Routing rule status.

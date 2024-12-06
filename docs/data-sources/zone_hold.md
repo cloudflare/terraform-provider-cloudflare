@@ -17,7 +17,7 @@ description: |-
 
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `hold` (Boolean)
 - `hold_after` (String)

@@ -17,7 +17,7 @@ description: |-
 
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `created_at` (String) This is the time the fallback origin was created.
 - `errors` (List of String) These are errors that were encountered while trying to activate a fallback origin.

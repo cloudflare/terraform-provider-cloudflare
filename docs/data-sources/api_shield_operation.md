@@ -15,9 +15,12 @@ description: |-
 
 ### Optional
 
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+
+### Read-Only
+
 - `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.
 - `features` (Attributes) (see [below for nested schema](#nestedatt--features))
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `host` (String) RFC3986-compliant host.
 - `id` (String) UUID
 - `last_updated` (String)
@@ -27,24 +30,6 @@ description: |-
   * `review` - Operation is not saved into API Shield Endpoint Management
   * `saved` - Operation is saved into API Shield Endpoint Management
   * `ignored` - Operation is marked as ignored
-
-<a id="nestedatt--features"></a>
-### Nested Schema for `features`
-
-Read-Only:
-
-- `traffic_stats` (Attributes) (see [below for nested schema](#nestedatt--features--traffic_stats))
-
-<a id="nestedatt--features--traffic_stats"></a>
-### Nested Schema for `features.traffic_stats`
-
-Read-Only:
-
-- `last_updated` (String)
-- `period_seconds` (Number) The period in seconds these statistics were computed over
-- `requests` (Number) The average number of requests seen during this period
-
-
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -68,5 +53,22 @@ Optional:
   * `review` - Discovered operations that are not saved into API Shield Endpoint Management
   * `saved` - Discovered operations that are already saved into API Shield Endpoint Management
   * `ignored` - Discovered operations that have been marked as ignored
+
+
+<a id="nestedatt--features"></a>
+### Nested Schema for `features`
+
+Read-Only:
+
+- `traffic_stats` (Attributes) (see [below for nested schema](#nestedatt--features--traffic_stats))
+
+<a id="nestedatt--features--traffic_stats"></a>
+### Nested Schema for `features.traffic_stats`
+
+Read-Only:
+
+- `last_updated` (String)
+- `period_seconds` (Number) The period in seconds these statistics were computed over
+- `requests` (Number) The average number of requests seen during this period
 
 

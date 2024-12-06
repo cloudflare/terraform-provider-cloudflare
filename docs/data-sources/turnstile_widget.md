@@ -17,7 +17,6 @@ description: |-
 
 - `account_id` (String) Identifier
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `secret` (String) Secret key for this widget.
 - `sitekey` (String) Widget item identifier tag.
 
 ### Read-Only
@@ -28,6 +27,7 @@ expensive challenges in response to malicious bots (ENT only).
 this setting can determine the clearance level to be set
 - `created_on` (String) When the widget was created.
 - `domains` (List of String)
+- `ephemeral_id` (Boolean) Return the Ephemeral ID in /siteverify (ENT only).
 - `mode` (String) Widget Mode
 - `modified_on` (String) When the widget was modified.
 - `name` (String) Human readable widget name. Not unique. Cloudflare suggests that you
@@ -35,6 +35,7 @@ set this to a meaningful string to make it easier to identify your
 widget, and where it is used.
 - `offlabel` (Boolean) Do not show any Cloudflare branding on the widget (ENT only).
 - `region` (String) Region where this widget can be used.
+- `secret` (String) Secret key for this widget.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

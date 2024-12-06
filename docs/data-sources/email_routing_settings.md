@@ -17,7 +17,7 @@ description: |-
 
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `created` (String) The date and time the settings have been created.
 - `enabled` (Boolean) State of the zone settings for Email Routing.

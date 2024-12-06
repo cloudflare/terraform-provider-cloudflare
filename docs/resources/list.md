@@ -134,11 +134,14 @@ resource "cloudflare_list" "example" {
 ### Optional
 
 - `description` (String) An informative summary of the list.
-- `list_id` (String) The unique ID of the list.
 
 ### Read-Only
 
-- `id` (String) The unique ID of the item in the List.
+- `created_on` (String) The RFC 3339 timestamp of when the list was created.
+- `id` (String) The unique ID of the list.
+- `modified_on` (String) The RFC 3339 timestamp of when the list was last modified.
+- `num_items` (Number) The number of items in the list.
+- `num_referencing_filters` (Number) The number of [filters](/operations/filters-list-filters) referencing the list.
 
 ## Import
 

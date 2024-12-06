@@ -16,6 +16,10 @@ description: |-
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
+- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
+
+### Read-Only
+
 - `allow_authenticate_via_warp` (Boolean) When set to true, users can authenticate via WARP for any application in your organization. Application settings will take precedence over this value.
 - `auth_domain` (String) The unique subdomain assigned to your Zero Trust organization.
 - `auto_redirect_to_identity` (Boolean) When set to `true`, users skip the identity provider selection step during login.
@@ -29,7 +33,6 @@ description: |-
 - `updated_at` (String)
 - `user_seat_expiration_inactive_time` (String) The amount of time a user seat is inactive before it expires. When the user seat exceeds the set time of inactivity, the user is removed as an active seat and no longer counts against your Teams seat count.  Minimum value for this setting is 1 month (730h). Must be in the format `300ms` or `2h45m`. Valid time units are: `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`.
 - `warp_auth_session_duration` (String) The amount of time that tokens issued for applications will be valid. Must be in the format `30m` or `2h45m`. Valid time units are: m, h.
-- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 <a id="nestedatt--custom_pages"></a>
 ### Nested Schema for `custom_pages`

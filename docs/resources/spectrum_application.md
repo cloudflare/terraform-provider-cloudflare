@@ -58,7 +58,9 @@ Notes: If specifying a port range, the number of ports in the range must match t
 
 ### Read-Only
 
+- `created_on` (String) When the Application was created.
 - `id` (String) App identifier.
+- `modified_on` (String) When the Application was last modified.
 
 <a id="nestedatt--dns"></a>
 ### Nested Schema for `dns`

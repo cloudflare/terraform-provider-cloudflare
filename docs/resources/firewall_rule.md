@@ -38,16 +38,16 @@ resource "cloudflare_firewall_rule" "wordpress" {
 
 - `action` (Attributes) The action to perform when the threshold of matched traffic within the configured period is exceeded. (see [below for nested schema](#nestedatt--action))
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 ### Optional
 
-- `id` (String) The unique identifier of the firewall rule.
-- `path_id` (String) The unique identifier of the firewall rule.
+- `rule_id` (String) The unique identifier of the firewall rule.
 
 ### Read-Only
 
 - `description` (String) An informative summary of the firewall rule.
+- `id` (String) The unique identifier of the firewall rule.
 - `paused` (Boolean) When true, indicates that the firewall rule is currently paused.
 - `priority` (Number) The priority of the rule. Optional value used to define the processing order. A lower number indicates a higher priority. If not provided, rules with a defined priority will be processed before rules without a priority.
 - `products` (List of String)

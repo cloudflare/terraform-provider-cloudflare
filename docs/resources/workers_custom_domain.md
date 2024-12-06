@@ -23,7 +23,7 @@ description: |-
 
 ### Read-Only
 
-- `id` (String) Hostname of the Worker Domain.
+- `id` (String) Identifer of the Worker Domain.
 - `zone_name` (String) Name of the zone.
 
 

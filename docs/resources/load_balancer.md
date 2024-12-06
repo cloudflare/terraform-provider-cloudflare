@@ -87,7 +87,7 @@ resource "cloudflare_load_balancer_pool" "example" {
 - `steering_policy="least_connections"`: Use pool weights to scale each pool's open connections. (see [below for nested schema](#nestedatt--random_steering))
 - `region_pools` (Map of List of String) A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.
 - `rules` (Attributes List) BETA Field Not General Access: A list of rules for this load balancer to execute. (see [below for nested schema](#nestedatt--rules))
-- `session_affinity` (String) Specifies the type of session affinity the load balancer should use unless specified as `"none"` or "" (default). The supported types are:
+- `session_affinity` (String) Specifies the type of session affinity the load balancer should use unless specified as `"none"`. The supported types are:
 - `"cookie"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.
 - `"ip_cookie"`: Behaves the same as `"cookie"` except the initial origin selection is stable and based on the client's ip address.
 - `"header"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.
@@ -141,16 +141,7 @@ Optional:
 Optional:
 
 - `default_weight` (Number) The default weight for pools in the load balancer that are not specified in the pool_weights map.
-- `pool_weights` (Attributes) A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer. (see [below for nested schema](#nestedatt--random_steering--pool_weights))
-
-<a id="nestedatt--random_steering--pool_weights"></a>
-### Nested Schema for `random_steering.pool_weights`
-
-Optional:
-
-- `key` (String) Pool ID
-- `value` (Number) Weight
-
+- `pool_weights` (Map of Number) A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.
 
 
 <a id="nestedatt--rules"></a>
@@ -193,7 +184,7 @@ Optional:
 - `steering_policy="least_outstanding_requests"`: Use pool weights to scale each pool's outstanding requests.
 - `steering_policy="least_connections"`: Use pool weights to scale each pool's open connections. (see [below for nested schema](#nestedatt--rules--overrides--random_steering))
 - `region_pools` (Map of List of String) A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.
-- `session_affinity` (String) Specifies the type of session affinity the load balancer should use unless specified as `"none"` or "" (default). The supported types are:
+- `session_affinity` (String) Specifies the type of session affinity the load balancer should use unless specified as `"none"`. The supported types are:
 - `"cookie"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.
 - `"ip_cookie"`: Behaves the same as `"cookie"` except the initial origin selection is stable and based on the client's ip address.
 - `"header"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.
@@ -241,16 +232,7 @@ Optional:
 Optional:
 
 - `default_weight` (Number) The default weight for pools in the load balancer that are not specified in the pool_weights map.
-- `pool_weights` (Attributes) A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer. (see [below for nested schema](#nestedatt--rules--overrides--random_steering--pool_weights))
-
-<a id="nestedatt--rules--overrides--random_steering--pool_weights"></a>
-### Nested Schema for `rules.overrides.random_steering.pool_weights`
-
-Optional:
-
-- `key` (String) Pool ID
-- `value` (Number) Weight
-
+- `pool_weights` (Map of Number) A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.
 
 
 <a id="nestedatt--rules--overrides--session_affinity_attributes"></a>

@@ -17,7 +17,7 @@ description: |-
 
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `editable` (Boolean) Whether the setting is editable
 - `id` (String) The identifier of the caching setting

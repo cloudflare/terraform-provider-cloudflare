@@ -32,6 +32,8 @@ Read-Only:
 
 - `created_on` (String) When the script was created.
 - `etag` (String) Hashed script content, can be used in a If-None-Match header when updating.
+- `has_assets` (Boolean) Whether a Worker contains assets.
+- `has_modules` (Boolean) Whether a Worker contains modules.
 - `id` (String) The id of the script in the Workers system. Usually the script name.
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `modified_on` (String) When the script was last modified.

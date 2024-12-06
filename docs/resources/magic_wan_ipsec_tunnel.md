@@ -47,8 +47,6 @@ resource "cloudflare_magic_wan_ipsec_tunnel" "example" {
 
 ### Read-Only
 
-- `deleted` (Boolean)
-- `deleted_ipsec_tunnel` (Attributes) (see [below for nested schema](#nestedatt--deleted_ipsec_tunnel))
 - `ipsec_tunnel` (Attributes) (see [below for nested schema](#nestedatt--ipsec_tunnel))
 - `ipsec_tunnels` (Attributes List) (see [below for nested schema](#nestedatt--ipsec_tunnels))
 - `modified` (Boolean)
@@ -59,48 +57,22 @@ resource "cloudflare_magic_wan_ipsec_tunnel" "example" {
 
 Optional:
 
-- `direction` (String) The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel. Note in the case of bidirecitonal healthchecks, the target field in health_check is ignored as the interface_address is used to send traffic into the tunnel.
+- `direction` (String) The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.
 - `enabled` (Boolean) Determines whether to run healthchecks for a tunnel.
 - `rate` (String) How frequent the health check is run. The default value is `mid`.
-- `target` (String) The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target.
+- `target` (Attributes) The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target. Must be in object form if the x-magic-new-hc-target header is set to true and string form if x-magic-new-hc-target is absent or set to false. (see [below for nested schema](#nestedatt--health_check--target))
 - `type` (String) The type of healthcheck to run, reply or request. The default value is `reply`.
 
+<a id="nestedatt--health_check--target"></a>
+### Nested Schema for `health_check.target`
 
-<a id="nestedatt--deleted_ipsec_tunnel"></a>
-### Nested Schema for `deleted_ipsec_tunnel`
+Optional:
 
-Read-Only:
-
-- `allow_null_cipher` (Boolean) When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).
-- `cloudflare_endpoint` (String) The IP address assigned to the Cloudflare side of the IPsec tunnel.
-- `created_on` (String) The date and time the tunnel was created.
-- `customer_endpoint` (String) The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.
-- `description` (String) An optional description forthe IPsec tunnel.
-- `id` (String) Tunnel identifier tag.
-- `interface_address` (String) A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.
-- `modified_on` (String) The date and time the tunnel was last modified.
-- `name` (String) The name of the IPsec tunnel. The name cannot share a name with other tunnels.
-- `psk_metadata` (Attributes) The PSK metadata that includes when the PSK was generated. (see [below for nested schema](#nestedatt--deleted_ipsec_tunnel--psk_metadata))
-- `replay_protection` (Boolean) If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.
-- `tunnel_health_check` (Attributes) (see [below for nested schema](#nestedatt--deleted_ipsec_tunnel--tunnel_health_check))
-
-<a id="nestedatt--deleted_ipsec_tunnel--psk_metadata"></a>
-### Nested Schema for `deleted_ipsec_tunnel.psk_metadata`
+- `saved` (String) The saved health check target. Setting the value to the empty string indicates that the calculated default value will be used.
 
 Read-Only:
 
-- `last_generated_on` (String) The date and time the tunnel was last modified.
-
-
-<a id="nestedatt--deleted_ipsec_tunnel--tunnel_health_check"></a>
-### Nested Schema for `deleted_ipsec_tunnel.tunnel_health_check`
-
-Read-Only:
-
-- `enabled` (Boolean) Determines whether to run healthchecks for a tunnel.
-- `rate` (String) How frequent the health check is run. The default value is `mid`.
-- `target` (String) The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.
-- `type` (String) The type of healthcheck to run, reply or request. The default value is `reply`.
+- `effective` (String) The effective health check target. If 'saved' is empty, then this field will be populated with the calculated default value on GET requests. Ignored in POST, PUT, and PATCH requests.
 
 
 
@@ -114,13 +86,34 @@ Read-Only:
 - `created_on` (String) The date and time the tunnel was created.
 - `customer_endpoint` (String) The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.
 - `description` (String) An optional description forthe IPsec tunnel.
+- `health_check` (Attributes) (see [below for nested schema](#nestedatt--ipsec_tunnel--health_check))
 - `id` (String) Tunnel identifier tag.
 - `interface_address` (String) A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.
 - `modified_on` (String) The date and time the tunnel was last modified.
 - `name` (String) The name of the IPsec tunnel. The name cannot share a name with other tunnels.
 - `psk_metadata` (Attributes) The PSK metadata that includes when the PSK was generated. (see [below for nested schema](#nestedatt--ipsec_tunnel--psk_metadata))
 - `replay_protection` (Boolean) If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.
-- `tunnel_health_check` (Attributes) (see [below for nested schema](#nestedatt--ipsec_tunnel--tunnel_health_check))
+
+<a id="nestedatt--ipsec_tunnel--health_check"></a>
+### Nested Schema for `ipsec_tunnel.health_check`
+
+Read-Only:
+
+- `direction` (String) The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.
+- `enabled` (Boolean) Determines whether to run healthchecks for a tunnel.
+- `rate` (String) How frequent the health check is run. The default value is `mid`.
+- `target` (Attributes) The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target. Must be in object form if the x-magic-new-hc-target header is set to true and string form if x-magic-new-hc-target is absent or set to false. (see [below for nested schema](#nestedatt--ipsec_tunnel--health_check--target))
+- `type` (String) The type of healthcheck to run, reply or request. The default value is `reply`.
+
+<a id="nestedatt--ipsec_tunnel--health_check--target"></a>
+### Nested Schema for `ipsec_tunnel.health_check.target`
+
+Read-Only:
+
+- `effective` (String) The effective health check target. If 'saved' is empty, then this field will be populated with the calculated default value on GET requests. Ignored in POST, PUT, and PATCH requests.
+- `saved` (String) The saved health check target. Setting the value to the empty string indicates that the calculated default value will be used.
+
+
 
 <a id="nestedatt--ipsec_tunnel--psk_metadata"></a>
 ### Nested Schema for `ipsec_tunnel.psk_metadata`
@@ -128,17 +121,6 @@ Read-Only:
 Read-Only:
 
 - `last_generated_on` (String) The date and time the tunnel was last modified.
-
-
-<a id="nestedatt--ipsec_tunnel--tunnel_health_check"></a>
-### Nested Schema for `ipsec_tunnel.tunnel_health_check`
-
-Read-Only:
-
-- `enabled` (Boolean) Determines whether to run healthchecks for a tunnel.
-- `rate` (String) How frequent the health check is run. The default value is `mid`.
-- `target` (String) The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.
-- `type` (String) The type of healthcheck to run, reply or request. The default value is `reply`.
 
 
 
@@ -152,13 +134,34 @@ Read-Only:
 - `created_on` (String) The date and time the tunnel was created.
 - `customer_endpoint` (String) The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.
 - `description` (String) An optional description forthe IPsec tunnel.
+- `health_check` (Attributes) (see [below for nested schema](#nestedatt--ipsec_tunnels--health_check))
 - `id` (String) Tunnel identifier tag.
 - `interface_address` (String) A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.
 - `modified_on` (String) The date and time the tunnel was last modified.
 - `name` (String) The name of the IPsec tunnel. The name cannot share a name with other tunnels.
 - `psk_metadata` (Attributes) The PSK metadata that includes when the PSK was generated. (see [below for nested schema](#nestedatt--ipsec_tunnels--psk_metadata))
 - `replay_protection` (Boolean) If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.
-- `tunnel_health_check` (Attributes) (see [below for nested schema](#nestedatt--ipsec_tunnels--tunnel_health_check))
+
+<a id="nestedatt--ipsec_tunnels--health_check"></a>
+### Nested Schema for `ipsec_tunnels.health_check`
+
+Read-Only:
+
+- `direction` (String) The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.
+- `enabled` (Boolean) Determines whether to run healthchecks for a tunnel.
+- `rate` (String) How frequent the health check is run. The default value is `mid`.
+- `target` (Attributes) The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target. Must be in object form if the x-magic-new-hc-target header is set to true and string form if x-magic-new-hc-target is absent or set to false. (see [below for nested schema](#nestedatt--ipsec_tunnels--health_check--target))
+- `type` (String) The type of healthcheck to run, reply or request. The default value is `reply`.
+
+<a id="nestedatt--ipsec_tunnels--health_check--target"></a>
+### Nested Schema for `ipsec_tunnels.health_check.target`
+
+Read-Only:
+
+- `effective` (String) The effective health check target. If 'saved' is empty, then this field will be populated with the calculated default value on GET requests. Ignored in POST, PUT, and PATCH requests.
+- `saved` (String) The saved health check target. Setting the value to the empty string indicates that the calculated default value will be used.
+
+
 
 <a id="nestedatt--ipsec_tunnels--psk_metadata"></a>
 ### Nested Schema for `ipsec_tunnels.psk_metadata`
@@ -166,17 +169,6 @@ Read-Only:
 Read-Only:
 
 - `last_generated_on` (String) The date and time the tunnel was last modified.
-
-
-<a id="nestedatt--ipsec_tunnels--tunnel_health_check"></a>
-### Nested Schema for `ipsec_tunnels.tunnel_health_check`
-
-Read-Only:
-
-- `enabled` (Boolean) Determines whether to run healthchecks for a tunnel.
-- `rate` (String) How frequent the health check is run. The default value is `mid`.
-- `target` (String) The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.
-- `type` (String) The type of healthcheck to run, reply or request. The default value is `reply`.
 
 
 
@@ -190,13 +182,34 @@ Read-Only:
 - `created_on` (String) The date and time the tunnel was created.
 - `customer_endpoint` (String) The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.
 - `description` (String) An optional description forthe IPsec tunnel.
+- `health_check` (Attributes) (see [below for nested schema](#nestedatt--modified_ipsec_tunnel--health_check))
 - `id` (String) Tunnel identifier tag.
 - `interface_address` (String) A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.
 - `modified_on` (String) The date and time the tunnel was last modified.
 - `name` (String) The name of the IPsec tunnel. The name cannot share a name with other tunnels.
 - `psk_metadata` (Attributes) The PSK metadata that includes when the PSK was generated. (see [below for nested schema](#nestedatt--modified_ipsec_tunnel--psk_metadata))
 - `replay_protection` (Boolean) If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.
-- `tunnel_health_check` (Attributes) (see [below for nested schema](#nestedatt--modified_ipsec_tunnel--tunnel_health_check))
+
+<a id="nestedatt--modified_ipsec_tunnel--health_check"></a>
+### Nested Schema for `modified_ipsec_tunnel.health_check`
+
+Read-Only:
+
+- `direction` (String) The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.
+- `enabled` (Boolean) Determines whether to run healthchecks for a tunnel.
+- `rate` (String) How frequent the health check is run. The default value is `mid`.
+- `target` (Attributes) The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target. Must be in object form if the x-magic-new-hc-target header is set to true and string form if x-magic-new-hc-target is absent or set to false. (see [below for nested schema](#nestedatt--modified_ipsec_tunnel--health_check--target))
+- `type` (String) The type of healthcheck to run, reply or request. The default value is `reply`.
+
+<a id="nestedatt--modified_ipsec_tunnel--health_check--target"></a>
+### Nested Schema for `modified_ipsec_tunnel.health_check.target`
+
+Read-Only:
+
+- `effective` (String) The effective health check target. If 'saved' is empty, then this field will be populated with the calculated default value on GET requests. Ignored in POST, PUT, and PATCH requests.
+- `saved` (String) The saved health check target. Setting the value to the empty string indicates that the calculated default value will be used.
+
+
 
 <a id="nestedatt--modified_ipsec_tunnel--psk_metadata"></a>
 ### Nested Schema for `modified_ipsec_tunnel.psk_metadata`
@@ -204,17 +217,6 @@ Read-Only:
 Read-Only:
 
 - `last_generated_on` (String) The date and time the tunnel was last modified.
-
-
-<a id="nestedatt--modified_ipsec_tunnel--tunnel_health_check"></a>
-### Nested Schema for `modified_ipsec_tunnel.tunnel_health_check`
-
-Read-Only:
-
-- `enabled` (Boolean) Determines whether to run healthchecks for a tunnel.
-- `rate` (String) How frequent the health check is run. The default value is `mid`.
-- `target` (String) The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.
-- `type` (String) The type of healthcheck to run, reply or request. The default value is `reply`.
 
 ## Import
 

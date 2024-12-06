@@ -63,13 +63,16 @@ resource "cloudflare_access_rule" "office_network" {
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `identifier` (String) The unique identifier of the resource.
 - `notes` (String) An informative summary of the rule, typically used as a reminder or explanation.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
 
-- `id` (String) Identifier
+- `allowed_modes` (List of String) The available actions that a rule can apply to a matched request.
+- `created_on` (String) The timestamp of when the rule was created.
+- `id` (String) The unique identifier of the IP Access rule.
+- `modified_on` (String) The timestamp of when the rule was last modified.
+- `scope` (Attributes) All zones owned by the user will have the rule applied. (see [below for nested schema](#nestedatt--scope))
 
 <a id="nestedatt--configuration"></a>
 ### Nested Schema for `configuration`
@@ -78,6 +81,16 @@ Optional:
 
 - `target` (String) The configuration target. You must set the target to `ip` when specifying an IP address in the rule.
 - `value` (String) The IP address to match. This address will be compared to the IP address of incoming requests.
+
+
+<a id="nestedatt--scope"></a>
+### Nested Schema for `scope`
+
+Read-Only:
+
+- `email` (String) The contact email address of the user.
+- `id` (String) Identifier
+- `type` (String) The scope of the rule.
 
 ## Import
 

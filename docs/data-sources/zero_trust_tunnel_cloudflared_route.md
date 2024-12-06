@@ -18,9 +18,6 @@ description: |-
 - `account_id` (String) Cloudflare account ID
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `route_id` (String) UUID of the route.
-- `tun_type` (String) The type of tunnel.
-- `tunnel_name` (String) A user-friendly name for a tunnel.
-- `virtual_network_name` (String) A user-friendly name for the virtual network.
 
 ### Read-Only
 
@@ -29,8 +26,11 @@ description: |-
 - `deleted_at` (String) Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.
 - `id` (String) UUID of the route.
 - `network` (String) The private IPv4 or IPv6 range connected by the route, in CIDR notation.
+- `tun_type` (String) The type of tunnel.
 - `tunnel_id` (String) UUID of the tunnel.
+- `tunnel_name` (String) A user-friendly name for a tunnel.
 - `virtual_network_id` (String) UUID of the virtual network.
+- `virtual_network_name` (String) A user-friendly name for the virtual network.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

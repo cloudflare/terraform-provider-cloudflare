@@ -17,7 +17,7 @@ description: |-
 
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
 - `validation_default_mitigation_action` (String) The default mitigation action used when there is no mitigation action defined on the operation
 

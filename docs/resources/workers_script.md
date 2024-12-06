@@ -78,6 +78,8 @@ resource "cloudflare_workers_script" "my_script" {
 
 - `created_on` (String) When the script was created.
 - `etag` (String) Hashed script content, can be used in a If-None-Match header when updating.
+- `has_assets` (Boolean) Whether a Worker contains assets.
+- `has_modules` (Boolean) Whether a Worker contains modules.
 - `id` (String) Name of the script, used in URLs and route configuration.
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `modified_on` (String) When the script was last modified.
@@ -91,19 +93,40 @@ resource "cloudflare_workers_script" "my_script" {
 
 Optional:
 
+- `assets` (Attributes) Configuration for assets within a Worker (see [below for nested schema](#nestedatt--metadata--assets))
 - `bindings` (Attributes List) List of bindings available to the worker. (see [below for nested schema](#nestedatt--metadata--bindings))
 - `body_part` (String) Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
 - `compatibility_flags` (List of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
+- `keep_assets` (Boolean) Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.
 - `keep_bindings` (List of String) List of binding types to keep from previous_upload.
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `main_module` (String) Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.
 - `migrations` (Attributes) Migrations to apply for Durable Objects associated with this Worker. (see [below for nested schema](#nestedatt--metadata--migrations))
+- `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--metadata--observability))
 - `placement` (Attributes) (see [below for nested schema](#nestedatt--metadata--placement))
-- `tags` (List of String) List of strings to use as tags for this Worker
+- `tags` (List of String) List of strings to use as tags for this Worker.
 - `tail_consumers` (Attributes List) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--metadata--tail_consumers))
 - `usage_model` (String) Usage model to apply to invocations.
-- `version_tags` (Map of String) Key-value pairs to use as tags for this version of this Worker
+- `version_tags` (Map of String) Key-value pairs to use as tags for this version of this Worker.
+
+<a id="nestedatt--metadata--assets"></a>
+### Nested Schema for `metadata.assets`
+
+Optional:
+
+- `config` (Attributes) Configuration for assets within a Worker. (see [below for nested schema](#nestedatt--metadata--assets--config))
+- `jwt` (String) Token provided upon successful upload of all files from a registered manifest.
+
+<a id="nestedatt--metadata--assets--config"></a>
+### Nested Schema for `metadata.assets.config`
+
+Optional:
+
+- `html_handling` (String) Determines the redirects and rewrites of requests for HTML content.
+- `not_found_handling` (String) Determines the response when a request does not match a static asset, and there is no Worker script.
+
+
 
 <a id="nestedatt--metadata--bindings"></a>
 ### Nested Schema for `metadata.bindings`
@@ -177,6 +200,18 @@ Optional:
 - `from_script` (String)
 - `to` (String)
 
+
+
+<a id="nestedatt--metadata--observability"></a>
+### Nested Schema for `metadata.observability`
+
+Required:
+
+- `enabled` (Boolean) Whether observability is enabled for the Worker.
+
+Optional:
+
+- `head_sampling_rate` (Number) The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
 
 
 <a id="nestedatt--metadata--placement"></a>
