@@ -12,8 +12,9 @@ description: |-
 {{ if .HasExample -}}
 ## Example Usage
 
-{{codefile "terraform" .ExampleFile}}
+{{tffile .ExampleFile}}
 {{- end }}
+
 {{ .SchemaMarkdown | trimspace }}
 
 {{ if .HasImport -}}
@@ -21,5 +22,5 @@ description: |-
 
 Import is supported using the following syntax:
 
-{{codefile "shell" .ImportFile}}
+{{ codefile "shell" .ImportFile }}
 {{- end }}
