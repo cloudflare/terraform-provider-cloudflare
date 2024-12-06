@@ -109,10 +109,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 							Computed:            true,
 							MarkdownDescription: "Unique rule identifier.",
 						},
-						"version": schema.StringAttribute{
-							Computed:            true,
-							MarkdownDescription: "Version of the ruleset to deploy.",
-						},
 						"ref": schema.StringAttribute{
 							Optional:            true,
 							Computed:            true,
@@ -144,10 +140,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 								stringvalidator.OneOfCaseInsensitive(cfv1.RulesetRuleActionValues()...),
 							},
 							Optional: true,
-						},
-						"last_updated": schema.StringAttribute{
-							Computed:            true,
-							MarkdownDescription: "The most recent update to this rule.",
 						},
 					},
 					Blocks: map[string]schema.Block{
@@ -310,11 +302,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 									"origin_error_page_passthru": schema.BoolAttribute{
 										Optional:            true,
 										MarkdownDescription: "Pass-through error page for origin.",
-									},
-									"version": schema.StringAttribute{
-										Computed:            true,
-										Optional:            true,
-										MarkdownDescription: "Version of the ruleset to deploy.",
 									},
 								},
 								Blocks: map[string]schema.Block{

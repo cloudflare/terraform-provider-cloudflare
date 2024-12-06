@@ -2,13 +2,11 @@ package rulesets
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
 	"sort"
 	"strings"
-	"time"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/expanders"
@@ -130,10 +128,9 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		Phase:       rulesetPhase,
 	}
 
-	rulesetData := data.toRuleset(ctx)
-
-	if len(rulesetData.Rules) > 0 {
-		rs.Rules = rulesetData.Rules
+	rulesetRules := data.toRulesetRules(ctx)
+	if len(rulesetRules) > 0 {
+		rs.Rules = rulesetRules
 	}
 
 	ruleset, rulesetCreateErr := r.client.V1.CreateRuleset(ctx, identifier, rs)
@@ -146,7 +143,7 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 	params := cfv1.UpdateEntrypointRulesetParams{
 		Phase:       rulesetPhase,
 		Description: rulesetDescription,
-		Rules:       rulesetData.Rules,
+		Rules:       rulesetRules,
 	}
 
 	var err error
@@ -225,12 +222,6 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 	accountID := plan.AccountID
 	zoneID := plan.ZoneID.ValueString()
 
-	remappedRules, e := remapPreservedRuleRefs(ctx, state, plan)
-	if e != nil {
-		resp.Diagnostics.AddError("failed to remap rule IDs from state", e.Error())
-		return
-	}
-
 	var identifier *cfv1.ResourceContainer
 	if accountID.ValueString() != "" {
 		identifier = cfv1.AccountIdentifier(accountID.ValueString())
@@ -241,7 +232,7 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 	params := cfv1.UpdateRulesetParams{
 		ID:          state.ID.ValueString(),
 		Description: plan.Description.ValueString(),
-		Rules:       remappedRules,
+		Rules:       plan.toRulesetRules(ctx),
 	}
 	rs, err := r.client.V1.UpdateRuleset(ctx, identifier, params)
 	if err != nil {
@@ -321,13 +312,6 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 			Expression:  flatteners.String(ruleResponse.Expression),
 			Description: types.StringValue(ruleResponse.Description),
 			Enabled:     flatteners.Bool(ruleResponse.Enabled),
-			Version:     flatteners.String(cfv1.String(ruleResponse.Version)),
-		}
-
-		if ruleResponse.LastUpdated != nil {
-			rule.LastUpdated = types.StringValue(ruleResponse.LastUpdated.String())
-		} else {
-			rule.LastUpdated = types.StringNull()
 		}
 
 		// action_parameters
@@ -359,7 +343,6 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				OriginErrorPagePassthru: flatteners.Bool(ruleResponse.ActionParameters.OriginErrorPagePassthru),
 				RespectStrongEtags:      flatteners.Bool(ruleResponse.ActionParameters.RespectStrongETags),
 				ReadTimeout:             flatteners.Int64(int64(cfv1.Uint(ruleResponse.ActionParameters.ReadTimeout))),
-				Version:                 flatteners.String(cfv1.String(ruleResponse.ActionParameters.Version)),
 			})
 
 			if !reflect.ValueOf(ruleResponse.ActionParameters.Polish).IsNil() {
@@ -790,18 +773,13 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 //
 // The reverse of this method is `toRulesetResourceModel` which handles building
 // a state representation using the API response.
-func (r *RulesetResourceModel) toRuleset(ctx context.Context) cfv1.Ruleset {
-	var rs cfv1.Ruleset
+func (r *RulesetResourceModel) toRulesetRules(ctx context.Context) []cfv1.RulesetRule {
 	var rules []cfv1.RulesetRule
-
-	rs.ID = r.ID.ValueString()
 	for _, rule := range r.Rules {
 		rules = append(rules, rule.toRulesetRule(ctx))
 	}
 
-	rs.Rules = rules
-
-	return rs
+	return rules
 }
 
 // toRulesetRule takes a state representation of a Ruleset Rule and transforms
@@ -810,7 +788,6 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 	rr := cfv1.RulesetRule{
 		ID:          r.ID.ValueString(),
 		Ref:         r.Ref.ValueString(),
-		Version:     r.Version.ValueStringPointer(),
 		Action:      r.Action.ValueString(),
 		Expression:  r.Expression.ValueString(),
 		Description: r.Description.ValueString(),
@@ -862,12 +839,6 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 
 		if !ap.Ruleset.IsNull() {
 			rr.ActionParameters.Ruleset = ap.Ruleset.ValueString()
-		}
-
-		if !ap.Version.IsNull() {
-			if ap.Version.ValueString() != "" {
-				rr.ActionParameters.Version = cfv1.StringPtr(ap.Version.ValueString())
-			}
 		}
 
 		if !ap.Increment.IsNull() {
@@ -1373,146 +1344,48 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 		}
 	}
 
-	if !r.LastUpdated.IsNull() {
-		if lastUpdated, err := time.Parse(
-			"2006-01-02 15:04:05.999999999 -0700 MST",
-			r.LastUpdated.ValueString(),
-		); err == nil {
-			rr.LastUpdated = &lastUpdated
-		}
-	}
-
 	return rr
 }
 
-// ruleRefs is a lookup table for rule IDs with two operations, add and pop.
+func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	var state *RulesetResourceModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-// We use add to populate the table from the old value of rules. We use pop to
-// look up the ref for the new value of a rule (and remove it from the table).
-//
-// Internally, both operations serialize the rule to JSON and use the resulting
-// string as the lookup key; the ref itself and other computed fields are
-// excluded from the JSON.
-//
-// If a ruleset has multiple copies of the same rule, the copies have a single
-// lookup key associated with multiple refs; we preserve order when adding and
-// popping the refs.
-type ruleRefs struct {
-	refs map[string][]string
-}
+	var plan *RulesetResourceModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-// newRuleRefs creates a new ruleRefs.
-func newRuleRefs(rulesetRules []cfv1.RulesetRule, explicitRefs map[string]struct{}) (ruleRefs, error) {
-	r := ruleRefs{make(map[string][]string)}
-	for _, rule := range rulesetRules {
-		if rule.Ref == "" {
-			// This is unexpected. We only invoke this function for the old
-			// values of rules, which have their refs populated.
-			return ruleRefs{}, errors.New("unable to determine ID or ref of existing rule")
+	// Do nothing if there is no state or no plan.
+	if state == nil || plan == nil {
+		return
+	}
+
+	ruleIDsByRef := make(map[string]types.String)
+	for _, rule := range state.Rules {
+		if ref := rule.Ref.ValueString(); ref != "" {
+			ruleIDsByRef[ref] = rule.ID
 		}
+	}
 
-		if _, ok := explicitRefs[rule.Ref]; ok {
-			// We should not add explicitly-set refs, to avoid them being
-			// "stolen" by other rules.
+	for _, rule := range plan.Rules {
+		// Do nothing if the rule's ID is a known planned value.
+		if !rule.ID.IsUnknown() {
 			continue
 		}
 
-		if err := r.add(rule); err != nil {
-			return ruleRefs{}, err
-		}
-	}
-
-	return r, nil
-}
-
-// add stores a ref for the given rule.
-func (r *ruleRefs) add(rule cfv1.RulesetRule) error {
-	key, err := ruleToKey(rule)
-	if err != nil {
-		return err
-	}
-
-	r.refs[key] = append(r.refs[key], rule.Ref)
-	return nil
-}
-
-// pop removes a ref for the given rule and returns it. If no ref was found for
-// the rule, pop returns an empty string.
-func (r *ruleRefs) pop(rule cfv1.RulesetRule) (string, error) {
-	key, err := ruleToKey(rule)
-	if err != nil {
-		return "", err
-	}
-
-	refs := r.refs[key]
-	if len(refs) == 0 {
-		return "", nil
-	}
-
-	ref, refs := refs[0], refs[1:]
-	r.refs[key] = refs
-
-	return ref, nil
-}
-
-// isEmpty returns true if the store does not contain any rule refs.
-func (r *ruleRefs) isEmpty() bool {
-	return len(r.refs) == 0
-}
-
-// ruleToKey converts a ruleset rule to a key that can be used to track
-// equivalent rules. Internally, it serializes the rule to JSON after removing
-// computed fields.
-func ruleToKey(rule cfv1.RulesetRule) (string, error) {
-	// For the purposes of preserving existing rule refs, we don't want to
-	// include computed fields as a part of the key value.
-	rule.ID = ""
-	rule.Ref = ""
-	rule.Version = nil
-	rule.LastUpdated = nil
-
-	data, err := json.Marshal(rule)
-	if err != nil {
-		return "", err
-	}
-
-	return string(data), nil
-}
-
-// remapPreservedRuleRefs tries to preserve the refs of rules that have not
-// changed in the ruleset, while also allowing users to explicitly set the ref
-// if they choose to.
-func remapPreservedRuleRefs(ctx context.Context, state, plan *RulesetResourceModel) ([]cfv1.RulesetRule, error) {
-	currentRuleset := state.toRuleset(ctx)
-	plannedRuleset := plan.toRuleset(ctx)
-
-	plannedExplicitRefs := make(map[string]struct{})
-	for _, rule := range plannedRuleset.Rules {
-		if rule.Ref != "" {
-			plannedExplicitRefs[rule.Ref] = struct{}{}
-		}
-	}
-
-	refs, err := newRuleRefs(currentRuleset.Rules, plannedExplicitRefs)
-	if err != nil {
-		return nil, err
-	}
-
-	if refs.isEmpty() {
-		// There are no rule refs when the ruleset is first created.
-		return plannedRuleset.Rules, nil
-	}
-
-	for i := range plannedRuleset.Rules {
-		rule := &plannedRuleset.Rules[i]
-
-		// We should not override refs that have been explicitly set.
-		if rule.Ref == "" {
-			if rule.Ref, err = refs.pop(*rule); err != nil {
-				return nil, err
+		// If the rule's ref matches a rule in the state, populate the planned
+		// value of its ID with the corresponding ID from the state.
+		if ref := rule.Ref.ValueString(); ref != "" {
+			if id, ok := ruleIDsByRef[ref]; ok {
+				rule.ID = id
 			}
 		}
 	}
 
-	return plannedRuleset.Rules, nil
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
 }
