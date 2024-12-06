@@ -62,6 +62,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"actions": schema.SingleNestedAttribute{
 				Required: true,
 				Attributes: map[string]schema.Attribute{
+					"always_use_https": schema.BoolAttribute{
+						Optional: true,
+					},
 					"automatic_https_rewrites": schema.StringAttribute{
 						Optional: true,
 						Validators: []validator.String{
@@ -69,6 +72,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"disable_apps": schema.BoolAttribute{
+						Optional: true,
+					},
+					"disable_performance": schema.BoolAttribute{
+						Optional: true,
+					},
+					"disable_security": schema.BoolAttribute{
+						Optional: true,
+					},
+					"disable_zaraz": schema.BoolAttribute{
 						Optional: true,
 					},
 				},
