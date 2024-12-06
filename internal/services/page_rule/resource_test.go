@@ -438,32 +438,6 @@ func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
 	})
 }
 
-func TestAccCloudflarePageRule_MinifyAction(t *testing.T) {
-	var pageRule cloudflare.PageRule
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_page_rule." + rnd
-	target := fmt.Sprintf("%s.%s", rnd, domain)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflarePageRuleConfigMinify(zoneID, target, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
-					resource.TestCheckResourceAttr(resourceName, "actions.0.minify.0.css", "on"),
-					resource.TestCheckResourceAttr(resourceName, "actions.0.minify.0.js", "off"),
-					resource.TestCheckResourceAttr(resourceName, "actions.0.minify.0.html", "on"),
-				),
-			},
-		},
-	})
-}
-
 // func TestTranformForwardingURL(t *testing.T) {
 // 	key, val, err := transformFromCloudflarePageRuleAction(&cloudflare.PageRuleAction{
 // 		ID: "forwarding_url",
@@ -1138,10 +1112,6 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 		}
 		return nil
 	}
-}
-
-func testAccCheckCloudflarePageRuleConfigMinify(zoneID, target, rnd string) string {
-	return acctest.LoadTestCase("pageruleconfigminify.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigBasic(zoneID, target, rnd string) string {
