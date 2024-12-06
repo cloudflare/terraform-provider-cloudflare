@@ -71,6 +71,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("on", "off"),
 						},
 					},
+					"browser_check": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"cache_by_device_type": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"cache_deception_armor": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
 					"disable_apps": schema.BoolAttribute{
 						Optional: true,
 					},
@@ -82,6 +100,78 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"disable_zaraz": schema.BoolAttribute{
 						Optional: true,
+					},
+					"email_obfuscation": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"ip_geolocation": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"mirage": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"opportunistic_encryption": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"explicit_cache_control": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"origin_error_page_pass_thru": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"sort_query_string_for_cache": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"respect_strong_etag": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"response_buffering": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"rocket_loader": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"true_client_ip_header": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"waf": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
 					},
 				},
 			},
