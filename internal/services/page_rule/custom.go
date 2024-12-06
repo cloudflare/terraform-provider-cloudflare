@@ -3,7 +3,6 @@ package page_rule
 import (
 	"encoding/json"
 
-	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/pagerules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -62,21 +61,6 @@ func (m PageRuleModel) marshalTargetsAndActions(b []byte) (data []byte, err erro
 	}
 
 	return json.Marshal(T)
-}
-
-func (m PageRuleModel) PageruleNewParams() pagerules.PageruleNewParams {
-	return pagerules.PageruleNewParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-		Targets: cloudflare.F([]pagerules.TargetParam{
-			{
-				Constraint: cloudflare.F(pagerules.TargetConstraintParam{
-					Operator: cloudflare.F(pagerules.TargetConstraintOperatorMatches),
-					Value:    cloudflare.F(m.Target.String()),
-				}),
-			},
-		}),
-		Actions: cloudflare.F([]pagerules.PageruleNewParamsActionUnion{}),
-	}
 }
 
 type PageRuleActionsModel struct {
