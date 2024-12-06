@@ -44,6 +44,7 @@ func (m ZeroTrustGatewayPolicyModel) MarshalJSONForUpdate(state ZeroTrustGateway
 type ZeroTrustGatewayPolicyExpirationModel struct {
 	ExpiresAt timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,required" format:"date-time"`
 	Duration  types.Int64       `tfsdk:"duration" json:"duration,optional"`
+	Expired   types.Bool        `tfsdk:"expired" json:"expired,optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsModel struct {
