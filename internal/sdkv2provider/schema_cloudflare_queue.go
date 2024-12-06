@@ -17,5 +17,56 @@ func resourceCloudflareQueueSchema() map[string]*schema.Schema {
 			Required:    true,
 			Description: "The name of the queue.",
 		},
+		"consumers": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "Array of consumers.",
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"environment": {
+						Description: "Environment",
+						Type:        schema.TypeString,
+						Optional:    true,
+					},
+					"queue_name": {
+						Description: "Queue name",
+						Type:        schema.TypeString,
+						Optional:    true,
+					},
+					"script_name": {
+						Description: "script_name",
+						Type:        schema.TypeString,
+						Required:    true,
+					},
+					"settings": {
+						Description: "Settings",
+						Type:        schema.TypeList,
+						Required:    true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"batch_size": {
+									Description: "Batch size",
+									Type:        schema.TypeInt,
+									Optional:    true,
+									Default:     1,
+								},
+								"max_retries": {
+									Description: "Max retries",
+									Type:        schema.TypeInt,
+									Optional:    true,
+									Default:     3,
+								},
+								"max_wait_time_ms": {
+									Description: "Max wait time in milliseconds",
+									Type:        schema.TypeInt,
+									Optional:    true,
+									Default:     1000,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 }
