@@ -196,6 +196,22 @@ func getTags(d *schema.ResourceData) []string {
 	return tags
 }
 
+func getTailConsumers(d *schema.ResourceData) []cloudflare.WorkersTailConsumer {
+	tailConsumers := make([]cloudflare.WorkersTailConsumer, 0)
+	for _, rawData := range d.Get("tail_consumers").(*schema.Set).List() {
+			data := rawData.(map[string]interface{})
+			environment := data["environment"].(string)
+			namespace := data["namespace"].(string)
+
+			tailConsumers = append(tailConsumers, cloudflare.WorkersTailConsumer{
+					Service:     data["service"].(string),
+					Environment: &environment,
+					Namespace:   &namespace,
+			})
+	}
+	return tailConsumers
+}
+
 func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
@@ -230,6 +246,8 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 	tags := getTags(d)
 
+	tailConsumers := getTailConsumers(d)
+
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
 		ScriptName:            scriptData.Params.ScriptName,
 		Script:                scriptBody,
@@ -241,6 +259,7 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 		Placement:             &placement,
 		DispatchNamespaceName: &dispatchNamespace,
 		Tags:                  tags,
+		TailConsumers:				 &tailConsumers,
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating worker script"))

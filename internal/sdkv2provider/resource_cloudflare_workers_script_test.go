@@ -209,9 +209,10 @@ resource "cloudflare_workers_script" "%[1]s-service" {
 }
 
 resource "cloudflare_workers_script" "%[1]s" {
-  account_id = "%[4]s"
-  name    = "%[1]s"
-  content = "%[2]s"
+  account_id     = "%[4]s"
+  name           = "%[1]s"
+  content        = "%[2]s"
+  tail_consumers = [{ "service" = "consumer" }]
 
   kv_namespace_binding {
     name         = "MY_KV_NAMESPACE"
