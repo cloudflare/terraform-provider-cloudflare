@@ -5,6 +5,7 @@ package page_rule
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -117,6 +118,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("on", "off"),
+						},
+					},
+					"forwarding_url": schema.SingleNestedAttribute{
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[PageRuleActionsForwardingURLModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"url": schema.StringAttribute{
+								Required: true,
+							},
+							"status_code": schema.Int64Attribute{
+								Required: true,
+							},
 						},
 					},
 					"host_header_override": schema.StringAttribute{

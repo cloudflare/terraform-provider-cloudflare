@@ -297,8 +297,8 @@ func TestAccCloudflarePageRule_ForwardingOnly(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/", target)),
-					resource.TestCheckResourceAttr(resourceName, "actions.0.forwarding_url.0.url", fmt.Sprintf("http://%s/forward", rnd+"."+domain)),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.forwarding_url.url", fmt.Sprintf("http://%s/forward", rnd+"."+domain)),
 				),
 			},
 		},
