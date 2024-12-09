@@ -136,6 +136,47 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplication_BasicAccount_Import(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_zero_trust_access_application." + rnd
+
+	checkFn := resource.ComposeTestCheckFunc(
+		resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+		resource.TestCheckResourceAttr(name, "name", rnd),
+		resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+		resource.TestCheckResourceAttr(name, "type", "self_hosted"),
+		resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+		resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
+		resource.TestCheckResourceAttr(name, "sass_app.#", "0"),
+		resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+		resource.TestCheckResourceAttr(name, "allow_authenticate_via_warp", "false"),
+		resource.TestCheckResourceAttr(name, "options_preflight_bypass", "false"),
+	)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigBasicImport(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				Check:  checkFn,
+			},
+			{
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				Check:               checkFn,
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
@@ -1170,6 +1211,22 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
   %[3]s_id                  = "%[4]s"
   name                      = "%[1]s"
   domain                    = "%[1]s.%[2]s"
+  type                      = "self_hosted"
+  session_duration          = "24h"
+  auto_redirect_to_identity = false
+}
+`, rnd, domain, identifier.Type, identifier.Identifier)
+}
+
+func testAccCloudflareAccessApplicationConfigBasicImport(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
+  %[3]s_id                  = "%[4]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[2]s"
+  destinations {
+		uri = "%[1]s.%[2]s"
+	}
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = false
