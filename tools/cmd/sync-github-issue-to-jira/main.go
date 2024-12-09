@@ -152,7 +152,7 @@ var (
 			owner:    "njones",
 		},
 		"service/pages": {
-			teamName: "Cloudflare Pages",
+			teamName: "Workers Builds & Automation",
 			owner:    "nrogers",
 		},
 		"service/bot_management": {
