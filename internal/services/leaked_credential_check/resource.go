@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/leaked_credential_checks"
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -69,7 +70,7 @@ func (r *LeakedCredentialCheckResource) Create(ctx context.Context, req resource
 	env := LeakedCredentialCheckResultEnvelope{*data}
 	_, err = r.client.LeakedCredentialChecks.New(
 		ctx,
-		cloudflare.LeakedCredentialCheckNewParams{
+		leaked_credential_checks.LeakedCredentialCheckNewParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -117,7 +118,7 @@ func (r *LeakedCredentialCheckResource) Update(ctx context.Context, req resource
 	env := LeakedCredentialCheckResultEnvelope{*data}
 	_, err = r.client.LeakedCredentialChecks.New(
 		ctx,
-		cloudflare.LeakedCredentialCheckNewParams{
+		leaked_credential_checks.LeakedCredentialCheckNewParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -152,7 +153,7 @@ func (r *LeakedCredentialCheckResource) Read(ctx context.Context, req resource.R
 	env := LeakedCredentialCheckResultEnvelope{*data}
 	_, err := r.client.LeakedCredentialChecks.Get(
 		ctx,
-		cloudflare.LeakedCredentialCheckGetParams{
+		leaked_credential_checks.LeakedCredentialCheckGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),

@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/leaked_credential_checks"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -19,8 +20,8 @@ type LeakedCredentialCheckDataSourceModel struct {
 	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 }
 
-func (m *LeakedCredentialCheckDataSourceModel) toReadParams(_ context.Context) (params cloudflare.LeakedCredentialCheckGetParams, diags diag.Diagnostics) {
-	params = cloudflare.LeakedCredentialCheckGetParams{
+func (m *LeakedCredentialCheckDataSourceModel) toReadParams(_ context.Context) (params leaked_credential_checks.LeakedCredentialCheckGetParams, diags diag.Diagnostics) {
+	params = leaked_credential_checks.LeakedCredentialCheckGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
