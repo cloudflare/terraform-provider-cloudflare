@@ -164,6 +164,11 @@ func (r *EmailSecurityImpersonationRegistryResource) Read(ctx context.Context, r
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
+	if res.StatusCode == 404 {
+		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be recreated.")
+		resp.State.RemoveResource(ctx)
+		return
+	}
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
