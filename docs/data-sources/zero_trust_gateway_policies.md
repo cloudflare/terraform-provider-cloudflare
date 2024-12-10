@@ -63,6 +63,7 @@ This does not apply to HTTP or network policies. (see [below for nested schema](
 Read-Only:
 
 - `duration` (Number) The default duration a policy will be active in minutes. Must be set in order to use the `reset_expiration` endpoint on this rule.
+- `expired` (Boolean) Whether the policy has expired.
 - `expires_at` (String) The time stamp at which the policy will expire and cease to be
 applied.
 

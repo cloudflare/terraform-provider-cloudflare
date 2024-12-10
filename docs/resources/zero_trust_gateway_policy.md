@@ -22,6 +22,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
   expiration = {
     expires_at = "2014-01-01T05:20:20Z"
     duration = 10
+    expired = false
   }
   filters = ["http"]
   identity = "any(identity.groups.name[*] in {\"finance\"})"
@@ -159,6 +160,7 @@ given by their `expires_at` value.
 Optional:
 
 - `duration` (Number) The default duration a policy will be active in minutes. Must be set in order to use the `reset_expiration` endpoint on this rule.
+- `expired` (Boolean) Whether the policy has expired.
 
 
 <a id="nestedatt--rule_settings"></a>
