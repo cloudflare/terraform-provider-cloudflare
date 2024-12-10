@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_ruleset: improve diffs when only some rules are changed
+```
+
+```release-note:note
+resource/cloudflare_ruleset: rules must now be given an explicit `ref` to avoid their IDs changing across ruleset updates, see https://developers.cloudflare.com/terraform/troubleshooting/rule-id-changes/
+```
