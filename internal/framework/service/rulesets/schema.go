@@ -109,10 +109,16 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 						consts.IDSchemaKey: schema.StringAttribute{
 							Computed:            true,
 							MarkdownDescription: "Unique rule identifier.",
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 						},
 						"ref": schema.StringAttribute{
-							Optional:            true,
-							Computed:            true,
+							Optional: true,
+							Computed: true,
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 							MarkdownDescription: "Rule reference.",
 						},
 						"enabled": schema.BoolAttribute{
