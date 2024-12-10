@@ -80,8 +80,6 @@ resource "cloudflare_ruleset" "example_ruleset" {
 ### Read-Only
 
 - `id` (String) The unique ID of the ruleset.
-- `last_updated` (String) The timestamp of when the ruleset was last modified.
-- `version` (String) The version of the ruleset.
 
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`
@@ -102,8 +100,6 @@ Read-Only:
 
 - `categories` (List of String) The categories of the rule.
 - `id` (String) The unique ID of the rule.
-- `last_updated` (String) The timestamp of when the rule was last modified.
-- `version` (String) The version of the rule.
 
 <a id="nestedatt--rules--action_parameters"></a>
 ### Nested Schema for `rules.action_parameters`
