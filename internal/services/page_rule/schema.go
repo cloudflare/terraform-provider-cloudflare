@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -113,6 +114,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"disable_zaraz": schema.BoolAttribute{
 						Optional: true,
+					},
+					"edge_cache_ttl": schema.Int64Attribute{
+						Optional: true,
+						Validators: []validator.Int64{
+							int64validator.AtLeast(7200),
+							int64validator.AtMost(2419200),
+						},
 					},
 					"email_obfuscation": schema.StringAttribute{
 						Optional: true,
