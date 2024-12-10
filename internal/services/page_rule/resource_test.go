@@ -319,15 +319,14 @@ func TestAccCloudflarePageRule_ForwardingAndOthers(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflarePageRuleConfigForwardingAndOthers(zoneID, target, rnd),
+				Config: testAccCheckCloudflarePageRuleConfigForwardingAndOthers(zoneID, target, rnd, rnd+"."+domain),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "target", target),
-					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/", target)),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 				),
-
-				ExpectError: regexp.MustCompile("\"forwarding_url\" cannot be set with any other actions"),
+				ExpectError: regexp.MustCompile(`\\"forwarding_url\\"\s+may not be used with \\"any setting\\"`),
 			},
 		},
 	})
@@ -2033,8 +2032,8 @@ func testAccCheckCloudflarePageRuleConfigForwardingOnly(zoneID, target, rnd, zon
 	return acctest.LoadTestCase("pageruleconfigforwardingonly.tf", zoneID, target, rnd, zoneName)
 }
 
-func testAccCheckCloudflarePageRuleConfigForwardingAndOthers(zoneID, target, rnd string) string {
-	return acctest.LoadTestCase("pageruleconfigforwardingandothers.tf", zoneID, target, rnd)
+func testAccCheckCloudflarePageRuleConfigForwardingAndOthers(zoneID, target, rnd, zoneName string) string {
+	return acctest.LoadTestCase("pageruleconfigforwardingandothers.tf", zoneID, target, rnd, zoneName)
 }
 
 func testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtl(zoneID, target, rnd string) string {
