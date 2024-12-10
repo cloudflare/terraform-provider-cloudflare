@@ -1422,7 +1422,7 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLIntegerValues(t *testing.T)
 			Check: resource.ComposeTestCheckFunc(
 				testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 				testAccCheckCloudflarePageRuleHasAction(&pageRule, "browser_cache_ttl", float64(1)),
-				resource.TestCheckResourceAttr(resourceName, "actions.0.browser_cache_ttl", "1"),
+				resource.TestCheckResourceAttr(resourceName, "actions.browser_cache_ttl", "1"),
 			),
 		},
 	})
@@ -1440,7 +1440,7 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLThatRespectsExistingHeaders
 			Config: buildPageRuleConfig(rnd, zoneID, "browser_cache_ttl = 0", target),
 			Check: resource.ComposeTestCheckFunc(
 				testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
-				resource.TestCheckResourceAttr(resourceName, "actions.0.browser_cache_ttl", "0"),
+				resource.TestCheckResourceAttr(resourceName, "actions.browser_cache_ttl", "0"),
 				testAccCheckCloudflarePageRuleHasAction(&pageRule, "browser_cache_ttl", float64(0)),
 			),
 		},
@@ -1464,7 +1464,7 @@ func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLToSameValue(t *testing.T) {
 			Check: resource.ComposeTestCheckFunc(
 				testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 				testAccCheckCloudflarePageRuleHasAction(&pageRule, "browser_cache_ttl", float64(1)),
-				resource.TestCheckResourceAttr(resourceName, "actions.0.browser_cache_ttl", "1"),
+				resource.TestCheckResourceAttr(resourceName, "actions.browser_cache_ttl", "1"),
 			),
 		},
 	})
@@ -1486,7 +1486,7 @@ func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLThatRespectsExistingHeaders
 			Check: resource.ComposeTestCheckFunc(
 				testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 				testAccCheckCloudflarePageRuleHasAction(&pageRule, "browser_cache_ttl", float64(0)),
-				resource.TestCheckResourceAttr(resourceName, "actions.0.browser_cache_ttl", "0"),
+				resource.TestCheckResourceAttr(resourceName, "actions.browser_cache_ttl", "0"),
 			),
 		},
 	})
@@ -1507,7 +1507,7 @@ func TestAccCloudflarePageRule_DeletesBrowserCacheTTLThatRespectsExistingHeaders
 			Config: buildPageRuleConfig(rnd, zoneID, `browser_check = "on"`, target),
 			Check: resource.ComposeTestCheckFunc(
 				testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
-				resource.TestCheckResourceAttr(resourceName, "actions.0.browser_cache_ttl", ""),
+				resource.TestCheckNoResourceAttr(resourceName, "actions.browser_cache_ttl"),
 			),
 		},
 	})

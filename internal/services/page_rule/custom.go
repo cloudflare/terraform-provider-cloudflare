@@ -74,6 +74,7 @@ type PageRuleActionsForwardingURLModel struct {
 type PageRuleActionsModel struct {
 	AlwaysUseHTTPS          types.Bool                                                  `tfsdk:"always_use_https" json:"always_use_https,optional"`
 	AutomaticHTTPSRewrites  types.String                                                `tfsdk:"automatic_https_rewrites" json:"automatic_https_rewrites,optional"`
+	BrowserCacheTTL         types.Int64                                                 `tfsdk:"browser_cache_ttl" json:"browser_cache_ttl,optional"`
 	BrowserCheck            types.String                                                `tfsdk:"browser_check" json:"browser_check,optional"`
 	BypassCacheOnCookie     types.String                                                `tfsdk:"bypass_cache_on_cookie" json:"bypass_cache_on_cookie,optional"`
 	CacheByDeviceType       types.String                                                `tfsdk:"cache_by_device_type" json:"cache_by_device_type,optional"`
@@ -111,6 +112,9 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 	}
 	if !m.AutomaticHTTPSRewrites.IsNull() {
 		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDAutomaticHTTPSRewrites, "value": m.AutomaticHTTPSRewrites.String()})
+	}
+	if !m.BrowserCacheTTL.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDBrowserCacheTTL, "value": m.BrowserCacheTTL.ValueInt64()})
 	}
 	if !m.BrowserCheck.IsNull() {
 		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDBrowserCheck, "value": m.BrowserCheck.ValueString()})
