@@ -46,7 +46,7 @@ func testSweepCloudflareLCCRules(r string) error {
 			tflog.Error(ctx, fmt.Sprintf("Error deleting a user-defined detection patter for Leaked Credential Check: %s", err))
 		}
 	}
-	
+
 	return nil
 }
 
@@ -73,6 +73,18 @@ func TestAccCloudflareLeakedCredentialCheckRule_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name+"_second", "password", "lookup_json_string(http.request.body.raw, \"secret\")"),
 				),
 			},
+			{
+				Config: testAccConfigAddHeader(rnd, zoneID, testAccLCCUpdateOneRule(rnd)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name+"_first", "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name+"_first", "username", "lookup_json_string(http.request.body.raw, \"username\")"),
+					resource.TestCheckResourceAttr(name+"_first", "password", "lookup_json_string(http.request.body.raw, \"password\")"),
+
+					resource.TestCheckResourceAttr(name+"_second", "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name+"_second", "username", "lookup_json_string(http.request.body.raw, \"id\")"),
+					resource.TestCheckResourceAttr(name+"_second", "password", "lookup_json_string(http.request.body.raw, \"secret\")"),
+				),
+			},
 		},
 	})
 }
@@ -92,6 +104,21 @@ func testAccLCCTwoSimpleRules(name string) string {
     zone_id = cloudflare_leaked_credential_check.%[1]s.zone_id
 		username = "lookup_json_string(http.request.body.raw, \"user\")"
 		password = "lookup_json_string(http.request.body.raw, \"pass\")"
+  }
+
+  resource "cloudflare_leaked_credential_check_rule" "%[1]s_second" {
+    zone_id = cloudflare_leaked_credential_check.%[1]s.zone_id
+    username = "lookup_json_string(http.request.body.raw, \"id\")"
+		password = "lookup_json_string(http.request.body.raw, \"secret\")"
+  }`, name)
+}
+
+func testAccLCCUpdateOneRule(name string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_leaked_credential_check_rule" "%[1]s_first" {
+    zone_id = cloudflare_leaked_credential_check.%[1]s.zone_id
+		username = "lookup_json_string(http.request.body.raw, \"username\")"
+		password = "lookup_json_string(http.request.body.raw, \"password\")"
   }
 
   resource "cloudflare_leaked_credential_check_rule" "%[1]s_second" {
