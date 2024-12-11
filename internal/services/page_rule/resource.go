@@ -10,7 +10,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/option"
-	"github.com/cloudflare/cloudflare-go/v3/pagerules"
+	"github.com/cloudflare/cloudflare-go/v3/page_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -71,9 +71,9 @@ func (r *PageRuleResource) Create(ctx context.Context, req resource.CreateReques
 	}
 	res := new(http.Response)
 	env := PageRuleResultEnvelope{*data}
-	_, err = r.client.Pagerules.New(
+	_, err = r.client.PageRules.New(
 		ctx,
-		pagerules.PageruleNewParams{
+		page_rules.PageRuleNewParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -119,10 +119,10 @@ func (r *PageRuleResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 	res := new(http.Response)
 	env := PageRuleResultEnvelope{*data}
-	_, err = r.client.Pagerules.Update(
+	_, err = r.client.PageRules.Update(
 		ctx,
 		data.ID.ValueString(),
-		pagerules.PageruleUpdateParams{
+		page_rules.PageRuleUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -155,10 +155,10 @@ func (r *PageRuleResource) Read(ctx context.Context, req resource.ReadRequest, r
 
 	res := new(http.Response)
 	env := PageRuleResultEnvelope{*data}
-	_, err := r.client.Pagerules.Get(
+	_, err := r.client.PageRules.Get(
 		ctx,
 		data.ID.ValueString(),
-		pagerules.PageruleGetParams{
+		page_rules.PageRuleGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -193,10 +193,10 @@ func (r *PageRuleResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	_, err := r.client.Pagerules.Delete(
+	_, err := r.client.PageRules.Delete(
 		ctx,
 		data.ID.ValueString(),
-		pagerules.PageruleDeleteParams{
+		page_rules.PageRuleDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -230,10 +230,10 @@ func (r *PageRuleResource) ImportState(ctx context.Context, req resource.ImportS
 
 	res := new(http.Response)
 	env := PageRuleResultEnvelope{*data}
-	_, err := r.client.Pagerules.Get(
+	_, err := r.client.PageRules.Get(
 		ctx,
 		path_pagerule_id,
-		pagerules.PageruleGetParams{
+		page_rules.PageRuleGetParams{
 			ZoneID: cloudflare.F(path_zone_id),
 		},
 		option.WithResponseBodyInto(&res),

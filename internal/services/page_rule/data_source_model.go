@@ -6,7 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/pagerules"
+	"github.com/cloudflare/cloudflare-go/v3/page_rules"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -26,8 +26,8 @@ type PageRuleDataSourceModel struct {
 	Status     types.String      `tfsdk:"status" json:"status,computed"`
 }
 
-func (m *PageRuleDataSourceModel) toReadParams(_ context.Context) (params pagerules.PageruleGetParams, diags diag.Diagnostics) {
-	params = pagerules.PageruleGetParams{
+func (m *PageRuleDataSourceModel) toReadParams(_ context.Context) (params page_rules.PageRuleGetParams, diags diag.Diagnostics) {
+	params = page_rules.PageRuleGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
