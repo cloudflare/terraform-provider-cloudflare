@@ -31,6 +31,8 @@ DEPENDENCIES:
 * provider: bump github.com/cloudflare/cloudflare-go from 0.110.0 to 0.111.0 ([#4709](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4709))
 * provider: bump golang.org/x/net from 0.31.0 to 0.32.0 ([#4718](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4718))
 
+* resource/cloudflare_workers_script: Adds support for tail_consumers
+
 ## 4.47.0 (November 27th, 2024)
 
 ENHANCEMENTS:

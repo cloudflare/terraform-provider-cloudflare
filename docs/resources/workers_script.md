@@ -19,9 +19,10 @@ resource "cloudflare_workers_kv_namespace" "my_namespace" {
 
 # Sets the script with the name "script_1"
 resource "cloudflare_workers_script" "my_script" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name       = "script_1"
-  content    = file("script.js")
+  account_id     = "f037e56e89293a057740de681ac9abbe"
+  name           = "script_1"
+  content        = file("script.js")
+  tail_consumers = [{ "service" = "consumer" }]
 
   kv_namespace_binding {
     name         = "MY_EXAMPLE_KV_NAMESPACE"
