@@ -2,6 +2,8 @@ module github.com/cloudflare/terraform-provider-cloudflare
 
 go 1.23.3
 
+godebug tlskyber=0
+
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/cloudflare/cloudflare-go v0.111.0
