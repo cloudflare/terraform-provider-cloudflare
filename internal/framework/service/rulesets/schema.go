@@ -26,6 +26,7 @@ import (
 
 func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Version: 1,
 		MarkdownDescription: heredoc.Doc(`
 			The [Cloudflare Ruleset Engine](https://developers.cloudflare.com/firewall/cf-rulesets)
 			allows you to create and deploy rules and rulesets.
