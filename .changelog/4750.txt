@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/cloudflare_snippet: document cloudflare_snippet with example and import syntax
+resource/cloudflare_snippet_rules: document cloudflare_snippet_rules with example
+```
