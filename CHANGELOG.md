@@ -1,4 +1,6 @@
-## 4.48.0 (Unreleased)
+## 4.49.0 (Unreleased)
+
+## 4.48.0 (December 11th, 2024)
 
 NOTES:
 
