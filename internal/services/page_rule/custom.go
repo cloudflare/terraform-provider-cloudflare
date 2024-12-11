@@ -85,6 +85,7 @@ type PageRuleActionsModel struct {
 	DisablePerformance      types.Bool                                                  `tfsdk:"disable_performance" json:"disable_performance,optional"`
 	DisableSecurity         types.Bool                                                  `tfsdk:"disable_security" json:"disable_security,optional"`
 	DisableZaraz            types.Bool                                                  `tfsdk:"disable_zaraz" json:"disable_zaraz,optional"`
+	EdgeCacheTTL            types.Int64                                                 `tfsdk:"edge_cache_ttl" json:"edge_cache_ttl,optional"`
 	EmailObfuscation        types.String                                                `tfsdk:"email_obfuscation" json:"email_obfuscation,optional"`
 	ExplicitCacheControl    types.String                                                `tfsdk:"explicit_cache_control" json:"explicit_cache_control,optional"`
 	ForwardingURL           customfield.NestedObject[PageRuleActionsForwardingURLModel] `tfsdk:"forwarding_url" json:"forwarding_url,optional"`
@@ -145,6 +146,9 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 	}
 	if m.DisableZaraz.ValueBool() {
 		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDDisableZaraz})
+	}
+	if !m.EdgeCacheTTL.IsNull() {
+		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDEdgeCacheTTL, "value": m.EdgeCacheTTL.ValueInt64()})
 	}
 	if !m.EmailObfuscation.IsNull() {
 		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDEmailObfuscation, "value": m.EmailObfuscation.ValueString()})

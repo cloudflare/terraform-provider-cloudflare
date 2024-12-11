@@ -122,6 +122,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"disable_zaraz": schema.BoolAttribute{
 						Optional: true,
 					},
+					"edge_cache_ttl": schema.Int64Attribute{
+						Optional: true,
+						Validators: []validator.Int64{
+							int64validator.AtLeast(0),
+							int64validator.AtMost(2419200),
+						},
+					},
 					"email_obfuscation": schema.StringAttribute{
 						Optional: true,
 						Validators: []validator.String{
