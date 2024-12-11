@@ -483,8 +483,6 @@ Optional:
 Read-Only:
 
 - `id` (String) Unique rule identifier.
-- `last_updated` (String) The most recent update to this rule.
-- `version` (String) Version of the ruleset to deploy.
 
 <a id="nestedblock--rules--action_parameters"></a>
 ### Nested Schema for `rules.action_parameters`
@@ -544,7 +542,6 @@ Optional:
 - `status_code` (Number) HTTP status code of the custom error response.
 - `sxg` (Boolean) Turn on or off the SXG feature.
 - `uri` (Block List) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations. (see [below for nested schema](#nestedblock--rules--action_parameters--uri))
-- `version` (String) Version of the ruleset to deploy.
 
 <a id="nestedblock--rules--action_parameters--algorithms"></a>
 ### Nested Schema for `rules.action_parameters.algorithms`
