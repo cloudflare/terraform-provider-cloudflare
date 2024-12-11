@@ -21,7 +21,7 @@ resource "cloudflare_snippet_rules" "example" {
 			description = "some description 1"
 			snippet_name = "example-snippet"
 		}
-		rules {
+	rules {
 			enabled = true
 			expression = "true"
 			description = "some description 2"
