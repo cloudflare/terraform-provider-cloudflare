@@ -118,7 +118,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"edge_cache_ttl": schema.Int64Attribute{
 						Optional: true,
 						Validators: []validator.Int64{
-							int64validator.AtLeast(7200),
+							int64validator.AtLeast(0),
 							int64validator.AtMost(2419200),
 						},
 					},
