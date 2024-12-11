@@ -65,7 +65,7 @@ func (d *PageRuleDataSource) Read(ctx context.Context, req datasource.ReadReques
 
 	res := new(http.Response)
 	env := PageRuleResultDataSourceEnvelope{*data}
-	_, err := d.client.Pagerules.Get(
+	_, err := d.client.PageRules.Get(
 		ctx,
 		data.PageruleID.ValueString(),
 		params,
