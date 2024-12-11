@@ -10,6 +10,7 @@ FEATURES:
 
 * **New Resource:** `cloudflare_leaked_credential_check` ([#4674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4674))
 * **New Resource:** `cloudflare_leaked_credential_check_rule` ([#4676](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4676))
+* **New Resource:** `cloudflare_snippet` ([#4565](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4565))
 * **New Resource:** `cloudflare_snippet_rules` ([#4565](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4565))
 
 ENHANCEMENTS:
