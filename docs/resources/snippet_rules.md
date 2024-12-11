@@ -14,7 +14,7 @@ The [Snippet Rules](https://developers.cloudflare.com/rules/snippets/) resource 
 ```terraform
 # Example for cloudflare snippet feature
 resource "cloudflare_snippet_rules" "example" {
-	zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   rules {
       enabled = true
       expression = "true"
