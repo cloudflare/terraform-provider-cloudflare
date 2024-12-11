@@ -4,7 +4,6 @@ package ruleset
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -15,10 +14,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -117,14 +114,6 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	remapPreservedRuleRefs, err := remapPreservedRuleRefs(state, data)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to remap preserved rule references", err.Error())
-		return
-	}
-
-	data.Rules = &remapPreservedRuleRefs
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -296,143 +285,45 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *RulesetResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-}
+func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	var state *RulesetModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-// ruleRefs is a lookup table for rule IDs with two operations, add and pop.
-//
-// We use add to populate the table from the old value of rules. We use pop to
-// look up the ref for the new value of a rule (and remove it from the table).
-//
-// Internally, both operations serialize the rule to JSON and use the resulting
-// string as the lookup key; the ref itself and other computed fields are
-// excluded from the JSON.
-//
-// If a ruleset has multiple copies of the same rule, the copies have a single
-// lookup key associated with multiple refs; we preserve order when adding and
-// popping the refs.
-type ruleRefs struct {
-	refs map[string][]string
-}
+	var plan *RulesetModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-// newRuleRefs creates a new ruleRefs.
-func newRuleRefs(rulesetRules *[]*RulesetRulesModel, explicitRefs map[string]struct{}) (ruleRefs, error) {
-	r := ruleRefs{make(map[string][]string)}
-	thing := rulesetRules
-	for _, rule := range *thing {
-		if rule.Ref.IsNull() {
-			// This is unexpected. We only invoke this function for the old
-			// values of rules, which have their refs populated.
-			return ruleRefs{}, errors.New("unable to determine ID or ref of existing rule")
+	// Do nothing if there is no state or no plan.
+	if state == nil || plan == nil {
+		return
+	}
+
+	ruleIDsByRef := make(map[string]types.String)
+	for _, rule := range *state.Rules {
+		if ref := rule.Ref.ValueString(); ref != "" {
+			ruleIDsByRef[ref] = rule.ID
 		}
+	}
 
-		if _, ok := explicitRefs[rule.Ref.ValueString()]; ok {
-			// We should not add explicitly-set refs, to avoid them being
-			// "stolen" by other rules.
+	for _, rule := range *plan.Rules {
+		// Do nothing if the rule's ID is a known planned value.
+		if !rule.ID.IsUnknown() {
 			continue
 		}
 
-		if err := r.add(rule, rule.Ref); err != nil {
-			return ruleRefs{}, err
-		}
-	}
-
-	return r, nil
-}
-
-// add stores a ref for the given rule.
-func (r *ruleRefs) add(rule *RulesetRulesModel, ruleRef basetypes.StringValue) error {
-	key, err := ruleToKey(rule)
-	if err != nil {
-		return err
-	}
-
-	r.refs[key.ValueString()] = append(r.refs[key.ValueString()], ruleRef.ValueString())
-	return nil
-}
-
-// pop removes a ref for the given rule and returns it. If no ref was found for
-// the rule, pop returns an `null` value.
-func (r *ruleRefs) pop(rule *RulesetRulesModel) (basetypes.StringValue, error) {
-	key, err := ruleToKey(rule)
-	if err != nil {
-		return types.StringNull(), err
-	}
-
-	refs := r.refs[key.ValueString()]
-	if len(refs) == 0 {
-		return types.StringNull(), nil
-	}
-
-	ref, refs := refs[0], refs[1:]
-
-	r.refs[key.ValueString()] = refs
-
-	return types.StringValue(ref), nil
-}
-
-// isEmpty returns true if the store does not contain any rule refs.
-func (r *ruleRefs) isEmpty() bool {
-	return len(r.refs) == 0
-}
-
-// ruleToKey converts a ruleset rule to a key that can be used to track
-// equivalent rules. Internally, it serializes the rule to JSON after removing
-// computed fields.
-func ruleToKey(rule *RulesetRulesModel) (basetypes.StringValue, error) {
-	// For the purposes of preserving existing rule refs, we don't want to
-	// include computed fields as a part of the key value.
-	rule.ID = types.StringNull()
-	rule.Ref = types.StringNull()
-	rule.Version = types.StringNull()
-	rule.LastUpdated = timetypes.RFC3339{}
-
-	data, err := apijson.Marshal(rule)
-	if err != nil {
-		return types.StringNull(), err
-	}
-
-	return types.StringValue(string(data)), nil
-}
-
-// remapPreservedRuleRefs tries to preserve the refs of rules that have not
-// changed in the ruleset, while also allowing users to explicitly set the ref
-// if they choose to.
-func remapPreservedRuleRefs(state, plan *RulesetModel) ([]*RulesetRulesModel, error) {
-	currentRuleset := state
-	plannedRuleset := plan
-
-	plannedExplicitRefs := make(map[string]struct{})
-	plannedRules := plannedRuleset.Rules
-
-	for _, rule := range *plannedRules {
-		if !rule.Ref.IsNull() {
-			plannedExplicitRefs[rule.Ref.ValueString()] = struct{}{}
-		}
-	}
-
-	refs, err := newRuleRefs(currentRuleset.Rules, plannedExplicitRefs)
-	if err != nil {
-		return nil, err
-	}
-
-	if refs.isEmpty() {
-		// There are no rule refs when the ruleset is first created.
-		return *plannedRuleset.Rules, nil
-	}
-
-	for i := range *plannedRules {
-		thing := *plannedRuleset.Rules
-		rule := thing[i]
-
-		// We should not override refs that have been explicitly set.
-		if rule.Ref.IsUnknown() {
-
-			if rule.Ref, err = refs.pop(rule); err != nil {
-				return nil, err
+		// If the rule's ref matches a rule in the state, populate the planned
+		// value of its ID with the corresponding ID from the state.
+		if ref := rule.Ref.ValueString(); ref != "" {
+			if id, ok := ruleIDsByRef[ref]; ok {
+				rule.ID = id
 			}
 		}
 	}
 
-	return *plannedRules, nil
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
 }
