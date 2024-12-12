@@ -189,9 +189,6 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 		var cookie PageRuleActionsCacheKeyFieldsCookieModel
 		ckf.Cookie.As(context.TODO(), &cookie, basetypes.ObjectAsOptions{})
 
-		// This page rule is also known as Cache Key in the schema documentation.
-		// However, the API expects the "id" to be "cache_key_fields". So we are
-		// hard coding it.
 		encoded = append(encoded, map[string]any{
 			"id": page_rules.PageRuleActionsIDCacheKeyFields,
 			"value": map[string]any{
