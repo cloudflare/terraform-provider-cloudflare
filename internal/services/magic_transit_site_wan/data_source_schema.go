@@ -7,9 +7,11 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*MagicTransitSiteWANDataSource)(nil)
@@ -29,6 +31,17 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Computed:    true,
 				Optional:    true,
+			},
+			"health_check_rate": schema.StringAttribute{
+				Description: "Magic WAN health check rate for tunnels created on this link. The default value is `mid`.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"low",
+						"mid",
+						"high",
+					),
+				},
 			},
 			"id": schema.StringAttribute{
 				Description: "Identifier",

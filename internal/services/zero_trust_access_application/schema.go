@@ -1382,6 +1382,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										"httpbasic",
 										"oauthbearertoken",
 										"oauth2",
+										"access_service_token",
 									),
 								},
 							},

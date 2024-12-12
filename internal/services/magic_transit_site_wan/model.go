@@ -21,6 +21,7 @@ type MagicTransitSiteWANModel struct {
 	Name             types.String                                                       `tfsdk:"name" json:"name,optional"`
 	Priority         types.Int64                                                        `tfsdk:"priority" json:"priority,optional"`
 	StaticAddressing customfield.NestedObject[MagicTransitSiteWANStaticAddressingModel] `tfsdk:"static_addressing" json:"static_addressing,computed_optional"`
+	HealthCheckRate  types.String                                                       `tfsdk:"health_check_rate" json:"health_check_rate,computed"`
 	ID               types.String                                                       `tfsdk:"id" json:"id,computed"`
 }
 
