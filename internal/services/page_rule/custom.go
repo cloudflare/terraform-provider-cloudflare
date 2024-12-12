@@ -66,12 +66,38 @@ func (m PageRuleModel) marshalTargetsAndActions(b []byte) (data []byte, err erro
 	return json.Marshal(T)
 }
 
+type PageRuleActionsCacheKeyFieldsQueryStringModel struct {
+	Include []types.String `tfsdk:"include" json:"include,optional,omitempty"`
+	Exclude []types.String `tfsdk:"exclude" json:"exclude,optional,omitempty"`
+}
+
+type PageRuleActionsCacheKeyFieldsHeaderModel struct {
+	CheckPresence []types.String `tfsdk:"check_presence" json:"check_presence,optional,omitempty"`
+	Include       []types.String `tfsdk:"include" json:"include,optional,omitempty"`
+	Exclude       []types.String `tfsdk:"exclude" json:"exclude,optional,omitempty"`
+}
+
+type PageRuleActionsCacheKeyFieldsHostModel struct {
+	Resolved types.Bool `tfsdk:"resolved" json:"resolved,optional"`
+}
+
+type PageRuleActionsCacheKeyFieldsCookieModel struct {
+	Include       []types.String `tfsdk:"include" json:"include,optional,omitempty"`
+	CheckPresence []types.String `tfsdk:"check_presence" json:"check_presence,optional,omitempty"`
+}
+
+type PageRuleActionsCacheKeyFieldsUserModel struct {
+	DeviceType types.Bool `tfsdk:"device_type" json:"device_type,optional"`
+	Geo        types.Bool `tfsdk:"geo" json:"geo,optional"`
+	Lang       types.Bool `tfsdk:"lang" json:"lang,optional"`
+}
+
 type PageRuleActionsCacheKeyFieldsModel struct {
-	QueryString types.String `tfsdk:"query_string" json:"query_string,optional"`
-	Header      types.String `tfsdk:"header" json:"header,optional"`
-	Host        types.String `tfsdk:"host" json:"host,optional"`
-	Cookie      types.String `tfsdk:"cookie" json:"cookie,optional"`
-	User        types.String `tfsdk:"user" json:"user,optional"`
+	QueryString customfield.NestedObject[PageRuleActionsCacheKeyFieldsQueryStringModel] `tfsdk:"query_string" json:"query_string,optional"`
+	Header      customfield.NestedObject[PageRuleActionsCacheKeyFieldsHeaderModel]      `tfsdk:"header" json:"header,optional"`
+	Host        customfield.NestedObject[PageRuleActionsCacheKeyFieldsHostModel]        `tfsdk:"host" json:"host,optional"`
+	Cookie      customfield.NestedObject[PageRuleActionsCacheKeyFieldsCookieModel]      `tfsdk:"cookie" json:"cookie,optional"`
+	User        customfield.NestedObject[PageRuleActionsCacheKeyFieldsUserModel]        `tfsdk:"user" json:"user,optional"`
 }
 
 type PageRuleActionsForwardingURLModel struct {
@@ -146,12 +172,50 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 	if !m.CacheKeyFields.IsNull() {
 		var ckf PageRuleActionsCacheKeyFieldsModel
 		m.CacheKeyFields.As(context.TODO(), &ckf, basetypes.ObjectAsOptions{})
+
+		var host PageRuleActionsCacheKeyFieldsHostModel
+		ckf.Host.As(context.TODO(), &host, basetypes.ObjectAsOptions{})
+
+		var user PageRuleActionsCacheKeyFieldsUserModel
+		ckf.User.As(context.TODO(), &user, basetypes.ObjectAsOptions{})
+
+		var qs PageRuleActionsCacheKeyFieldsQueryStringModel
+		ckf.QueryString.As(context.TODO(), &qs, basetypes.ObjectAsOptions{})
+
+		var header PageRuleActionsCacheKeyFieldsHeaderModel
+		ckf.Header.As(context.TODO(), &header, basetypes.ObjectAsOptions{})
+
+		var cookie PageRuleActionsCacheKeyFieldsCookieModel
+		ckf.Cookie.As(context.TODO(), &cookie, basetypes.ObjectAsOptions{})
+
+		// This page rule is also known as Cache Key in the schema documentation.
+		// However, the API expects the "id" to be "cache_key_fields". So we are
+		// hard coding it.
 		encoded = append(encoded, map[string]any{
-			"query_string": ckf.QueryString.ValueString(),
-			"header":       ckf.Header.ValueString(),
-			"host":         ckf.Header.ValueString(),
-			"cookie":       ckf.Cookie.ValueString(),
-			"user":         ckf.User.ValueString(),
+			"id": "cache_key_fields",
+			"value": map[string]any{
+				"cookie": map[string][]string{
+					"include":        convertToStringSlice(cookie.Include),
+					"check_presence": convertToStringSlice(cookie.CheckPresence),
+				},
+				"header": map[string][]string{
+					"include":        convertToStringSlice(header.Include),
+					"exclude":        convertToStringSlice(header.Exclude),
+					"check_presence": convertToStringSlice(header.CheckPresence),
+				},
+				"host": map[string]bool{
+					"resolved": host.Resolved.ValueBool(),
+				},
+				"query_string": map[string][]string{
+					"include": convertToStringSlice(qs.Include),
+					"exclude": convertToStringSlice(qs.Exclude),
+				},
+				"user": map[string]bool{
+					"geo":         user.Geo.ValueBool(),
+					"device_type": user.DeviceType.ValueBool(),
+					"lang":        user.Lang.ValueBool(),
+				},
+			},
 		})
 	}
 	if m.DisableApps.ValueBool() {
@@ -233,4 +297,12 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 	}
 
 	return
+}
+
+func convertToStringSlice(b []basetypes.StringValue) []string {
+	ss := []string{}
+	for _, v := range b {
+		ss = append(ss, v.ValueString())
+	}
+	return ss
 }

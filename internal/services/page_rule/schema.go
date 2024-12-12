@@ -9,9 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -106,15 +108,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:   true,
 						CustomType: customfield.NewNestedObjectType[PageRuleActionsCacheKeyFieldsModel](ctx),
 						Attributes: map[string]schema.Attribute{
-							"query_string": schema.SingleNestedAttribute{
+							"cookie": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
-									"include": schema.ListAttribute{
+									"check_presence": schema.ListAttribute{
 										Optional:    true,
+										Computed:    true,
+										Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 										ElementType: types.StringType,
 									},
-									"exclude": schema.ListAttribute{
+									"include": schema.ListAttribute{
 										Optional:    true,
+										Computed:    true,
+										Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 										ElementType: types.StringType,
 									},
 								},
@@ -124,14 +130,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Attributes: map[string]schema.Attribute{
 									"check_presence": schema.ListAttribute{
 										Optional:    true,
+										Computed:    true,
+										Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 										ElementType: types.StringType,
 									},
 									"include": schema.ListAttribute{
 										Optional:    true,
+										Computed:    true,
+										Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 										ElementType: types.StringType,
 									},
 									"exclude": schema.ListAttribute{
 										Optional:    true,
+										Computed:    true,
+										Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 										ElementType: types.StringType,
 									},
 								},
@@ -140,19 +152,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
 									"resolved": schema.BoolAttribute{
-										Required: true,
+										Optional: true,
 									},
 								},
 							},
-							"cookie": schema.SingleNestedAttribute{
+							"query_string": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
-									"check_presence": schema.ListAttribute{
-										Optional:    true,
-										ElementType: types.StringType,
-									},
 									"include": schema.ListAttribute{
 										Optional:    true,
+										Computed:    true,
+										Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
+										ElementType: types.StringType,
+									},
+									"exclude": schema.ListAttribute{
+										Optional:    true,
+										Computed:    true,
+										Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 										ElementType: types.StringType,
 									},
 								},
@@ -160,13 +176,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"user": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
-									"device_type": schema.StringAttribute{
+									"device_type": schema.BoolAttribute{
 										Optional: true,
 									},
-									"geo": schema.StringAttribute{
+									"geo": schema.BoolAttribute{
 										Optional: true,
 									},
-									"lang": schema.StringAttribute{
+									"lang": schema.BoolAttribute{
 										Optional: true,
 									},
 								},
