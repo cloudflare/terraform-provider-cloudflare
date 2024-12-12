@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/cloudflare/cloudflare-go/v3/pagerules"
+	"github.com/cloudflare/cloudflare-go/v3/page_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -120,6 +120,7 @@ type PageRuleActionsModel struct {
 	DisablePerformance      types.Bool                                                   `tfsdk:"disable_performance" json:"disable_performance,optional"`
 	DisableSecurity         types.Bool                                                   `tfsdk:"disable_security" json:"disable_security,optional"`
 	DisableZaraz            types.Bool                                                   `tfsdk:"disable_zaraz" json:"disable_zaraz,optional"`
+	EdgeCacheTTL            types.Int64                                                  `tfsdk:"edge_cache_ttl" json:"edge_cache_ttl,optional"`
 	EmailObfuscation        types.String                                                 `tfsdk:"email_obfuscation" json:"email_obfuscation,optional"`
 	ExplicitCacheControl    types.String                                                 `tfsdk:"explicit_cache_control" json:"explicit_cache_control,optional"`
 	ForwardingURL           customfield.NestedObject[PageRuleActionsForwardingURLModel]  `tfsdk:"forwarding_url" json:"forwarding_url,optional"`
@@ -143,31 +144,31 @@ type PageRuleActionsModel struct {
 func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 	encoded = []map[string]any{}
 	if m.AlwaysUseHTTPS.ValueBool() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDAlwaysUseHTTPS})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDAlwaysUseHTTPS})
 	}
 	if !m.AutomaticHTTPSRewrites.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDAutomaticHTTPSRewrites, "value": m.AutomaticHTTPSRewrites.String()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDAutomaticHTTPSRewrites, "value": m.AutomaticHTTPSRewrites.String()})
 	}
 	if !m.BrowserCacheTTL.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDBrowserCacheTTL, "value": m.BrowserCacheTTL.ValueInt64()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDBrowserCacheTTL, "value": m.BrowserCacheTTL.ValueInt64()})
 	}
 	if !m.BrowserCheck.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDBrowserCheck, "value": m.BrowserCheck.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDBrowserCheck, "value": m.BrowserCheck.ValueString()})
 	}
 	if !m.BypassCacheOnCookie.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDBypassCacheOnCookie, "value": m.BypassCacheOnCookie.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDBypassCacheOnCookie, "value": m.BypassCacheOnCookie.ValueString()})
 	}
 	if !m.CacheByDeviceType.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDCacheByDeviceType, "value": m.CacheByDeviceType.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDCacheByDeviceType, "value": m.CacheByDeviceType.ValueString()})
 	}
 	if !m.CacheDeceptionArmor.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDCacheDeceptionArmor, "value": m.CacheDeceptionArmor.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDCacheDeceptionArmor, "value": m.CacheDeceptionArmor.ValueString()})
 	}
 	if !m.CacheLevel.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDCacheLevel, "value": m.CacheLevel.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDCacheLevel, "value": m.CacheLevel.ValueString()})
 	}
 	if !m.CacheOnCookie.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDCacheOnCookie, "value": m.CacheOnCookie.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDCacheOnCookie, "value": m.CacheOnCookie.ValueString()})
 	}
 	if !m.CacheKeyFields.IsNull() {
 		var ckf PageRuleActionsCacheKeyFieldsModel
@@ -219,31 +220,31 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 		})
 	}
 	if m.DisableApps.ValueBool() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDDisableApps, "value": m.DisableApps.ValueBool()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDDisableApps, "value": m.DisableApps.ValueBool()})
 	}
 	if m.DisablePerformance.ValueBool() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDDisablePerformance})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDDisablePerformance})
 	}
 	if m.DisableSecurity.ValueBool() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDDisableSecurity})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDDisableSecurity})
 	}
 	if m.DisableZaraz.ValueBool() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDDisableZaraz})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDDisableZaraz})
 	}
 	if !m.EdgeCacheTTL.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDEdgeCacheTTL, "value": m.EdgeCacheTTL.ValueInt64()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDEdgeCacheTTL, "value": m.EdgeCacheTTL.ValueInt64()})
 	}
 	if !m.EmailObfuscation.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDEmailObfuscation, "value": m.EmailObfuscation.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDEmailObfuscation, "value": m.EmailObfuscation.ValueString()})
 	}
 	if !m.ExplicitCacheControl.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDExplicitCacheControl, "value": m.ExplicitCacheControl.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDExplicitCacheControl, "value": m.ExplicitCacheControl.ValueString()})
 	}
 	if !m.ForwardingURL.IsNull() {
 		var fw PageRuleActionsForwardingURLModel
 		m.ForwardingURL.As(context.TODO(), &fw, basetypes.ObjectAsOptions{})
 		encoded = append(encoded, map[string]any{
-			"id": pagerules.PageRuleActionsIDForwardingURL,
+			"id": page_rules.PageRuleActionsIDForwardingURL,
 			"value": map[string]any{
 				"url":         fw.URL.ValueString(),
 				"status_code": fw.StatusCode.ValueInt64(),
@@ -251,49 +252,49 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 		})
 	}
 	if !m.HostHeaderOverride.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDHostHeaderOverride, "value": m.HostHeaderOverride.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDHostHeaderOverride, "value": m.HostHeaderOverride.ValueString()})
 	}
 	if !m.IPGeolocation.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDIPGeolocation, "value": m.IPGeolocation.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDIPGeolocation, "value": m.IPGeolocation.ValueString()})
 	}
 	if !m.Mirage.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDMirage, "value": m.Mirage.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDMirage, "value": m.Mirage.ValueString()})
 	}
 	if !m.OpportunisticEncryption.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDOpportunisticEncryption, "value": m.OpportunisticEncryption.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDOpportunisticEncryption, "value": m.OpportunisticEncryption.ValueString()})
 	}
 	if !m.OriginErrorPagePassThru.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDOriginErrorPagePassThru, "value": m.OriginErrorPagePassThru.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDOriginErrorPagePassThru, "value": m.OriginErrorPagePassThru.ValueString()})
 	}
 	if !m.Polish.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDPolish, "value": m.Polish.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDPolish, "value": m.Polish.ValueString()})
 	}
 	if !m.ResolveOverride.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDResolveOverride, "value": m.ResolveOverride.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDResolveOverride, "value": m.ResolveOverride.ValueString()})
 	}
 	if !m.RespectStrongEtag.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDRespectStrongEtag, "value": m.RespectStrongEtag.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDRespectStrongEtag, "value": m.RespectStrongEtag.ValueString()})
 	}
 	if !m.ResponseBuffering.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDResponseBuffering, "value": m.ResponseBuffering.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDResponseBuffering, "value": m.ResponseBuffering.ValueString()})
 	}
 	if !m.RocketLoader.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDRocketLoader, "value": m.RocketLoader.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDRocketLoader, "value": m.RocketLoader.ValueString()})
 	}
 	if !m.SecurityLevel.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDSecurityLevel, "value": m.SecurityLevel.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDSecurityLevel, "value": m.SecurityLevel.ValueString()})
 	}
 	if !m.SortQueryStringForCache.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDSortQueryStringForCache, "value": m.SortQueryStringForCache.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDSortQueryStringForCache, "value": m.SortQueryStringForCache.ValueString()})
 	}
 	if !m.SSL.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDSSL, "value": m.SSL.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDSSL, "value": m.SSL.ValueString()})
 	}
 	if !m.TrueClientIPHeader.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDTrueClientIPHeader, "value": m.TrueClientIPHeader.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDTrueClientIPHeader, "value": m.TrueClientIPHeader.ValueString()})
 	}
 	if !m.WAF.IsNull() {
-		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDWAF, "value": m.WAF.ValueString()})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDWAF, "value": m.WAF.ValueString()})
 	}
 
 	return
