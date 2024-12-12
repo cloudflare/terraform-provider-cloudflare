@@ -66,44 +66,52 @@ func (m PageRuleModel) marshalTargetsAndActions(b []byte) (data []byte, err erro
 	return json.Marshal(T)
 }
 
+type PageRuleActionsCacheKeyFieldsModel struct {
+	QueryString types.String `tfsdk:"query_string" json:"query_string,optional"`
+	Header      types.String `tfsdk:"header" json:"header,optional"`
+	Host        types.String `tfsdk:"host" json:"host,optional"`
+	Cookie      types.String `tfsdk:"cookie" json:"cookie,optional"`
+	User        types.String `tfsdk:"user" json:"user,optional"`
+}
+
 type PageRuleActionsForwardingURLModel struct {
 	URL        types.String `tfsdk:"url" json:"url,required"`
 	StatusCode types.Int64  `tfsdk:"status_code" json:"status_code,required"`
 }
 
 type PageRuleActionsModel struct {
-	AlwaysUseHTTPS          types.Bool                                                  `tfsdk:"always_use_https" json:"always_use_https,optional"`
-	AutomaticHTTPSRewrites  types.String                                                `tfsdk:"automatic_https_rewrites" json:"automatic_https_rewrites,optional"`
-	BrowserCacheTTL         types.Int64                                                 `tfsdk:"browser_cache_ttl" json:"browser_cache_ttl,optional"`
-	BrowserCheck            types.String                                                `tfsdk:"browser_check" json:"browser_check,optional"`
-	BypassCacheOnCookie     types.String                                                `tfsdk:"bypass_cache_on_cookie" json:"bypass_cache_on_cookie,optional"`
-	CacheByDeviceType       types.String                                                `tfsdk:"cache_by_device_type" json:"cache_by_device_type,optional"`
-	CacheDeceptionArmor     types.String                                                `tfsdk:"cache_deception_armor" json:"cache_deception_armor,optional"`
-	CacheLevel              types.String                                                `tfsdk:"cache_level" json:"cache_level,optional"`
-	CacheOnCookie           types.String                                                `tfsdk:"cache_on_cookie" json:"cache_on_cookie,optional"`
-	DisableApps             types.Bool                                                  `tfsdk:"disable_apps" json:"disable_apps,optional"`
-	DisablePerformance      types.Bool                                                  `tfsdk:"disable_performance" json:"disable_performance,optional"`
-	DisableSecurity         types.Bool                                                  `tfsdk:"disable_security" json:"disable_security,optional"`
-	DisableZaraz            types.Bool                                                  `tfsdk:"disable_zaraz" json:"disable_zaraz,optional"`
-	EdgeCacheTTL            types.Int64                                                 `tfsdk:"edge_cache_ttl" json:"edge_cache_ttl,optional"`
-	EmailObfuscation        types.String                                                `tfsdk:"email_obfuscation" json:"email_obfuscation,optional"`
-	ExplicitCacheControl    types.String                                                `tfsdk:"explicit_cache_control" json:"explicit_cache_control,optional"`
-	ForwardingURL           customfield.NestedObject[PageRuleActionsForwardingURLModel] `tfsdk:"forwarding_url" json:"forwarding_url,optional"`
-	HostHeaderOverride      types.String                                                `tfsdk:"host_header_override" json:"host_header_override,optional"`
-	IPGeolocation           types.String                                                `tfsdk:"ip_geolocation" json:"ip_geolocation,optional"`
-	Mirage                  types.String                                                `tfsdk:"mirage" json:"mirage,optional"`
-	OpportunisticEncryption types.String                                                `tfsdk:"opportunistic_encryption" json:"opportunistic_encryption,optional"`
-	OriginErrorPagePassThru types.String                                                `tfsdk:"origin_error_page_pass_thru" json:"origin_error_page_pass_thru,optional"`
-	Polish                  types.String                                                `tfsdk:"polish" json:"polish,optional"`
-	ResolveOverride         types.String                                                `tfsdk:"resolve_override" json:"resolve_override,optional"`
-	RespectStrongEtag       types.String                                                `tfsdk:"respect_strong_etag" json:"respect_strong_etag,optional"`
-	ResponseBuffering       types.String                                                `tfsdk:"response_buffering" json:"response_buffering,optional"`
-	RocketLoader            types.String                                                `tfsdk:"rocket_loader" json:"rocket_loader,optional"`
-	SSL                     types.String                                                `tfsdk:"ssl" json:"ssl,optional"`
-	SecurityLevel           types.String                                                `tfsdk:"security_level" json:"security_level,optional"`
-	SortQueryStringForCache types.String                                                `tfsdk:"sort_query_string_for_cache" json:"sort_query_string_for_cache,optional"`
-	TrueClientIPHeader      types.String                                                `tfsdk:"true_client_ip_header" json:"true_client_ip_header,optional"`
-	WAF                     types.String                                                `tfsdk:"waf" json:"waf,optional"`
+	AlwaysUseHTTPS          types.Bool                                                   `tfsdk:"always_use_https" json:"always_use_https,optional"`
+	AutomaticHTTPSRewrites  types.String                                                 `tfsdk:"automatic_https_rewrites" json:"automatic_https_rewrites,optional"`
+	BrowserCacheTTL         types.Int64                                                  `tfsdk:"browser_cache_ttl" json:"browser_cache_ttl,optional"`
+	BrowserCheck            types.String                                                 `tfsdk:"browser_check" json:"browser_check,optional"`
+	BypassCacheOnCookie     types.String                                                 `tfsdk:"bypass_cache_on_cookie" json:"bypass_cache_on_cookie,optional"`
+	CacheByDeviceType       types.String                                                 `tfsdk:"cache_by_device_type" json:"cache_by_device_type,optional"`
+	CacheDeceptionArmor     types.String                                                 `tfsdk:"cache_deception_armor" json:"cache_deception_armor,optional"`
+	CacheLevel              types.String                                                 `tfsdk:"cache_level" json:"cache_level,optional"`
+	CacheOnCookie           types.String                                                 `tfsdk:"cache_on_cookie" json:"cache_on_cookie,optional"`
+	CacheKeyFields          customfield.NestedObject[PageRuleActionsCacheKeyFieldsModel] `tfsdk:"cache_key_fields" json:"cache_key_fields,optional"`
+	DisableApps             types.Bool                                                   `tfsdk:"disable_apps" json:"disable_apps,optional"`
+	DisablePerformance      types.Bool                                                   `tfsdk:"disable_performance" json:"disable_performance,optional"`
+	DisableSecurity         types.Bool                                                   `tfsdk:"disable_security" json:"disable_security,optional"`
+	DisableZaraz            types.Bool                                                   `tfsdk:"disable_zaraz" json:"disable_zaraz,optional"`
+	EmailObfuscation        types.String                                                 `tfsdk:"email_obfuscation" json:"email_obfuscation,optional"`
+	ExplicitCacheControl    types.String                                                 `tfsdk:"explicit_cache_control" json:"explicit_cache_control,optional"`
+	ForwardingURL           customfield.NestedObject[PageRuleActionsForwardingURLModel]  `tfsdk:"forwarding_url" json:"forwarding_url,optional"`
+	HostHeaderOverride      types.String                                                 `tfsdk:"host_header_override" json:"host_header_override,optional"`
+	IPGeolocation           types.String                                                 `tfsdk:"ip_geolocation" json:"ip_geolocation,optional"`
+	Mirage                  types.String                                                 `tfsdk:"mirage" json:"mirage,optional"`
+	OpportunisticEncryption types.String                                                 `tfsdk:"opportunistic_encryption" json:"opportunistic_encryption,optional"`
+	OriginErrorPagePassThru types.String                                                 `tfsdk:"origin_error_page_pass_thru" json:"origin_error_page_pass_thru,optional"`
+	Polish                  types.String                                                 `tfsdk:"polish" json:"polish,optional"`
+	ResolveOverride         types.String                                                 `tfsdk:"resolve_override" json:"resolve_override,optional"`
+	RespectStrongEtag       types.String                                                 `tfsdk:"respect_strong_etag" json:"respect_strong_etag,optional"`
+	ResponseBuffering       types.String                                                 `tfsdk:"response_buffering" json:"response_buffering,optional"`
+	RocketLoader            types.String                                                 `tfsdk:"rocket_loader" json:"rocket_loader,optional"`
+	SSL                     types.String                                                 `tfsdk:"ssl" json:"ssl,optional"`
+	SecurityLevel           types.String                                                 `tfsdk:"security_level" json:"security_level,optional"`
+	SortQueryStringForCache types.String                                                 `tfsdk:"sort_query_string_for_cache" json:"sort_query_string_for_cache,optional"`
+	TrueClientIPHeader      types.String                                                 `tfsdk:"true_client_ip_header" json:"true_client_ip_header,optional"`
+	WAF                     types.String                                                 `tfsdk:"waf" json:"waf,optional"`
 }
 
 func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
@@ -134,6 +142,17 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 	}
 	if !m.CacheOnCookie.IsNull() {
 		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDCacheOnCookie, "value": m.CacheOnCookie.ValueString()})
+	}
+	if !m.CacheKeyFields.IsNull() {
+		var ckf PageRuleActionsCacheKeyFieldsModel
+		m.CacheKeyFields.As(context.TODO(), &ckf, basetypes.ObjectAsOptions{})
+		encoded = append(encoded, map[string]any{
+			"query_string": ckf.QueryString.ValueString(),
+			"header":       ckf.Header.ValueString(),
+			"host":         ckf.Header.ValueString(),
+			"cookie":       ckf.Cookie.ValueString(),
+			"user":         ckf.User.ValueString(),
+		})
 	}
 	if m.DisableApps.ValueBool() {
 		encoded = append(encoded, map[string]any{"id": pagerules.PageRuleActionsIDDisableApps, "value": m.DisableApps.ValueBool()})
