@@ -1,0 +1,1 @@
+terraform import cloudflare_content_scanning.example <zone_id>
