@@ -54,7 +54,7 @@ type APITokenPoliciesPermissionGroupsMetaModel struct {
 }
 
 type APITokenConditionModel struct {
-	RequestIP customfield.NestedObject[APITokenConditionRequestIPModel] `tfsdk:"request_ip" json:"request.ip,computed_optional"`
+	RequestIP customfield.NestedObject[APITokenConditionRequestIPModel] `tfsdk:"request_ip" json:"request_ip,computed_optional"`
 }
 
 type APITokenConditionRequestIPModel struct {
