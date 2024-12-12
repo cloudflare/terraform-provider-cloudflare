@@ -16,7 +16,7 @@ resource "cloudflare_page_rule" "%[3]s" {
         resolved = true
       }
       query_string = {
-        ignore = true
+        exclude = ["*"] 
       }
       user = {}
     }

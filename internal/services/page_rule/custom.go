@@ -193,7 +193,7 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 		// However, the API expects the "id" to be "cache_key_fields". So we are
 		// hard coding it.
 		encoded = append(encoded, map[string]any{
-			"id": "cache_key_fields",
+			"id": page_rules.PageRuleActionsIDCacheKeyFields,
 			"value": map[string]any{
 				"cookie": map[string][]string{
 					"include":        convertToStringSlice(cookie.Include),
