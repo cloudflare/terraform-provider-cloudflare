@@ -173,12 +173,7 @@ type DNSRecordsTagDataSourceModel struct {
 }
 
 type DNSRecordsResultDataSourceModel struct {
-	Comment  types.String                                                `tfsdk:"comment" json:"comment,computed"`
 	Content  types.String                                                `tfsdk:"content" json:"content,computed"`
-	Name     types.String                                                `tfsdk:"name" json:"name,computed"`
-	Proxied  types.Bool                                                  `tfsdk:"proxied" json:"proxied,computed"`
-	Tags     customfield.List[types.String]                              `tfsdk:"tags" json:"tags,computed"`
-	TTL      types.Float64                                               `tfsdk:"ttl" json:"ttl,computed"`
 	Type     types.String                                                `tfsdk:"type" json:"type,computed"`
 	Data     customfield.NestedObject[DNSRecordsDataDataSourceModel]     `tfsdk:"data" json:"data,computed"`
 	Settings customfield.NestedObject[DNSRecordsSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
