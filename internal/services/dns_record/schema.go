@@ -41,6 +41,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"comment": schema.StringAttribute{
+				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
+				Optional:    true,
+			},
 			"content": schema.StringAttribute{
 				Description: "A valid IPv4 address.",
 				Optional:    true,
@@ -50,6 +54,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						stringvalidator.ConflictsWith(path.MatchRoot("data")),
 					),
 				},
+			},
+			"name": schema.StringAttribute{
+				Description: "DNS record name (or @ for the zone apex) in Punycode.",
+				Optional:    true,
 			},
 			"priority": schema.Float64Attribute{
 				Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
@@ -87,6 +95,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"proxied": schema.BoolAttribute{
+				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"ttl": schema.Float64Attribute{
+				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(30, 86400),
+				},
+			},
+			"tags": schema.ListAttribute{
+				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"data": schema.SingleNestedAttribute{
 				Description: "Components of a CAA record.",

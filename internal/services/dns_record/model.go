@@ -15,7 +15,7 @@ type DNSRecordResultEnvelope struct {
 }
 
 type DNSRecordModel struct {
-	ID                types.String                                     `tfsdk:"id" json:"id,computed"`
+	ID                types.String                                     `tfsdk:"id" json:"id,computed" path:"dns_record_id,optional"`
 	ZoneID            types.String                                     `tfsdk:"zone_id" path:"zone_id,required"`
 	Content           types.String                                     `tfsdk:"content" json:"content,computed_optional"`
 	Priority          types.Float64                                    `tfsdk:"priority" json:"priority,optional"`
