@@ -61,7 +61,6 @@ type WorkersScriptMetadataModel struct {
 	Logpush            types.Bool                                                            `tfsdk:"logpush" json:"logpush,optional"`
 	MainModule         types.String                                                          `tfsdk:"main_module" json:"main_module,optional"`
 	Migrations         customfield.NestedObject[WorkersScriptMetadataMigrationsModel]        `tfsdk:"migrations" json:"migrations,computed_optional"`
-	Observability      customfield.NestedObject[WorkersScriptMetadataObservabilityModel]     `tfsdk:"observability" json:"observability,computed_optional"`
 	Placement          customfield.NestedObject[WorkersScriptMetadataPlacementModel]         `tfsdk:"placement" json:"placement,computed_optional"`
 	Tags               *[]types.String                                                       `tfsdk:"tags" json:"tags,optional"`
 	TailConsumers      customfield.NestedObjectList[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
@@ -124,11 +123,6 @@ type WorkersScriptMetadataMigrationsStepsTransferredClassesModel struct {
 	From       types.String `tfsdk:"from" json:"from,optional"`
 	FromScript types.String `tfsdk:"from_script" json:"from_script,optional"`
 	To         types.String `tfsdk:"to" json:"to,optional"`
-}
-
-type WorkersScriptMetadataObservabilityModel struct {
-	Enabled          types.Bool    `tfsdk:"enabled" json:"enabled,required"`
-	HeadSamplingRate types.Float64 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
 }
 
 type WorkersScriptMetadataPlacementModel struct {
