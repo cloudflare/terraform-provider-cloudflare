@@ -120,9 +120,9 @@ func (r *ZoneHoldResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 	res := new(http.Response)
 	env := ZoneHoldResultEnvelope{*data}
-	_, err = r.client.Zones.Holds.Update(
+	_, err = r.client.Zones.Holds.Edit(
 		ctx,
-		zones.HoldUpdateParams{
+		zones.HoldEditParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
