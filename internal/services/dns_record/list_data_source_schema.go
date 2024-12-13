@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
@@ -214,9 +215,34 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[DNSRecordsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"comment": schema.StringAttribute{
+							Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
+							Computed:    true,
+						},
 						"content": schema.StringAttribute{
 							Description: "A valid IPv4 address.",
 							Computed:    true,
+						},
+						"name": schema.StringAttribute{
+							Description: "DNS record name (or @ for the zone apex) in Punycode.",
+							Computed:    true,
+						},
+						"proxied": schema.BoolAttribute{
+							Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
+							Computed:    true,
+						},
+						"tags": schema.ListAttribute{
+							Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"ttl": schema.Float64Attribute{
+							Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
+							Computed:    true,
+							Validators: []validator.Float64{
+								float64validator.Between(30, 86400),
+							},
 						},
 						"type": schema.StringAttribute{
 							Description: "Record type.",
