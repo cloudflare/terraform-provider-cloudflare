@@ -116,6 +116,7 @@ type PageRuleActionsModel struct {
 	CacheLevel              types.String                                                 `tfsdk:"cache_level" json:"cache_level,optional"`
 	CacheOnCookie           types.String                                                 `tfsdk:"cache_on_cookie" json:"cache_on_cookie,optional"`
 	CacheKeyFields          customfield.NestedObject[PageRuleActionsCacheKeyFieldsModel] `tfsdk:"cache_key_fields" json:"cache_key_fields,optional"`
+	CacheTTLByStatus        types.Dynamic                                                `tfsdk:"cache_ttl_by_status" json:"cache_ttl_by_status,optional"`
 	DisableApps             types.Bool                                                   `tfsdk:"disable_apps" json:"disable_apps,optional"`
 	DisablePerformance      types.Bool                                                   `tfsdk:"disable_performance" json:"disable_performance,optional"`
 	DisableSecurity         types.Bool                                                   `tfsdk:"disable_security" json:"disable_security,optional"`
@@ -215,6 +216,18 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 				},
 			},
 		})
+	}
+	if !m.CacheTTLByStatus.IsNull() {
+		stringVal := m.CacheTTLByStatus.String()
+		ttl := map[string]interface{}{}
+
+		json.Unmarshal([]byte(stringVal), &ttl)
+		value := map[string]any{}
+		for k, v := range ttl {
+			value[k] = v
+		}
+
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDCacheTTLByStatus, "value": value})
 	}
 	if m.DisableApps.ValueBool() {
 		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDDisableApps, "value": m.DisableApps.ValueBool()})

@@ -198,6 +198,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"cache_on_cookie": schema.StringAttribute{
 						Optional: true,
 					},
+					"cache_ttl_by_status": schema.DynamicAttribute{
+						Optional: true,
+					},
 					"disable_apps": schema.BoolAttribute{
 						Optional: true,
 					},
