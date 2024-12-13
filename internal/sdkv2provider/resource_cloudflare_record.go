@@ -246,8 +246,7 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	_, contentOk := d.GetOk("content")
-	_, datatOk := d.GetOk("data")
-	if contentOk || datatOk {
+	if contentOk {
 		d.Set("content", record.Content)
 	}
 
