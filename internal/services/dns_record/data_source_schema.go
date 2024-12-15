@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
@@ -30,8 +31,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Optional:    true,
 			},
+			"comment": schema.StringAttribute{
+				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
+				Computed:    true,
+			},
 			"content": schema.StringAttribute{
 				Description: "A valid IPv4 address.",
+				Computed:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "DNS record name (or @ for the zone apex) in Punycode.",
 				Computed:    true,
 			},
 			"priority": schema.Float64Attribute{
@@ -39,6 +48,17 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(0, 65535),
+				},
+			},
+			"proxied": schema.BoolAttribute{
+				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
+				Computed:    true,
+			},
+			"ttl": schema.Float64Attribute{
+				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
+				Computed:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(30, 86400),
 				},
 			},
 			"type": schema.StringAttribute{
@@ -69,6 +89,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"URI",
 					),
 				},
+			},
+			"tags": schema.ListAttribute{
+				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"data": schema.SingleNestedAttribute{
 				Description: "Components of a CAA record.",
