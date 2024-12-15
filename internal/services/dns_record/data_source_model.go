@@ -24,9 +24,14 @@ type DNSRecordResultListDataSourceEnvelope struct {
 type DNSRecordDataSourceModel struct {
 	DNSRecordID types.String                                               `tfsdk:"dns_record_id" path:"dns_record_id,optional"`
 	ZoneID      types.String                                               `tfsdk:"zone_id" path:"zone_id,optional"`
+	Comment     types.String                                               `tfsdk:"comment" json:"comment,computed"`
 	Content     types.String                                               `tfsdk:"content" json:"content,computed"`
+	Name        types.String                                               `tfsdk:"name" json:"name,computed"`
 	Priority    types.Float64                                              `tfsdk:"priority" json:"priority,computed"`
+	Proxied     types.Bool                                                 `tfsdk:"proxied" json:"proxied,computed"`
+	TTL         types.Float64                                              `tfsdk:"ttl" json:"ttl,computed"`
 	Type        types.String                                               `tfsdk:"type" json:"type,computed"`
+	Tags        customfield.List[types.String]                             `tfsdk:"tags" json:"tags,computed"`
 	Data        customfield.NestedObject[DNSRecordDataDataSourceModel]     `tfsdk:"data" json:"data,computed"`
 	Settings    customfield.NestedObject[DNSRecordSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
 	Filter      *DNSRecordFindOneByDataSourceModel                         `tfsdk:"filter"`
