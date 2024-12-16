@@ -5,6 +5,8 @@ package dns_record
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,18 +15,24 @@ type DNSRecordResultEnvelope struct {
 }
 
 type DNSRecordModel struct {
-	ZoneID      types.String                                     `tfsdk:"zone_id" path:"zone_id,required"`
-	DNSRecordID types.String                                     `tfsdk:"dns_record_id" path:"dns_record_id,optional"`
-	Comment     types.String                                     `tfsdk:"comment" json:"comment,optional"`
-	Content     types.String                                     `tfsdk:"content" json:"content,optional"`
-	Name        types.String                                     `tfsdk:"name" json:"name,optional"`
-	Priority    types.Float64                                    `tfsdk:"priority" json:"priority,optional"`
-	Type        types.String                                     `tfsdk:"type" json:"type,optional"`
-	Proxied     types.Bool                                       `tfsdk:"proxied" json:"proxied,computed_optional"`
-	TTL         types.Float64                                    `tfsdk:"ttl" json:"ttl,computed_optional"`
-	Tags        customfield.List[types.String]                   `tfsdk:"tags" json:"tags,computed_optional"`
-	Data        customfield.NestedObject[DNSRecordDataModel]     `tfsdk:"data" json:"data,computed_optional"`
-	Settings    customfield.NestedObject[DNSRecordSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
+	ID                types.String                                     `tfsdk:"id" json:"id,computed" path:"dns_record_id,optional"`
+	ZoneID            types.String                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	Content           types.String                                     `tfsdk:"content" json:"content,computed_optional"`
+	Priority          types.Float64                                    `tfsdk:"priority" json:"priority,optional"`
+	Type              types.String                                     `tfsdk:"type" json:"type,required"`
+	Data              customfield.NestedObject[DNSRecordDataModel]     `tfsdk:"data" json:"data,computed_optional"`
+	Settings          customfield.NestedObject[DNSRecordSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
+	Comment           types.String                                     `tfsdk:"comment" json:"comment,computed_optional"`
+	CommentModifiedOn timetypes.RFC3339                                `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
+	CreatedOn         timetypes.RFC3339                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn        timetypes.RFC3339                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name              types.String                                     `tfsdk:"name" json:"name,required"`
+	Proxiable         types.Bool                                       `tfsdk:"proxiable" json:"proxiable,computed"`
+	Proxied           types.Bool                                       `tfsdk:"proxied" json:"proxied,computed_optional"`
+	TagsModifiedOn    timetypes.RFC3339                                `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
+	TTL               types.Float64                                    `tfsdk:"ttl" json:"ttl,required"`
+	Tags              customfield.List[types.String]                   `tfsdk:"tags" json:"tags,computed_optional"`
+	Meta              jsontypes.Normalized                             `tfsdk:"meta" json:"meta,computed"`
 }
 
 func (m DNSRecordModel) MarshalJSON() (data []byte, err error) {
