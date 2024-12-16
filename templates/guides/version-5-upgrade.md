@@ -1242,6 +1242,66 @@ resource "cloudflare_api_token" "example" {
 - `colo_names` is now `scope.colo_names`
 - `colo_regions` is now `scope.colo_regions`
 
+## cloudflare_page_rule
+
+- ``
+
+Before
+
+```
+resource "cloudflare_page_rule" "example" {
+  actions = [
+    {
+      cache_ttl_by_status = [
+        {
+          codes = "200-299"
+          ttl   = 300
+        },
+        {
+          codes = "300-399"
+          ttl   = 60
+        },
+        {
+          codes = "400-403"
+          ttl   = -1
+        },
+        {
+          codes = "404"
+          ttl   = 30
+        },
+        {
+          codes = "405-499"
+          ttl   = -1
+        },
+        {
+          codes = "500-599"
+          ttl   = 0
+        }
+      ]
+    }
+  ]
+}
+```
+
+After
+
+```
+resource "cloudflare_page_rule" "example" {
+  actions = {
+    cache_ttl_by_status = {
+      "100-149" = "no-cache"
+      "150-199" = "no-store"
+      "200-299" = 300
+      "300-399" = 60
+      "400-403" = -1
+      "404" = 30
+      "405-499" = -1
+      "500-599" = 0
+    }
+  }
+}
+```
+
 [GritQL]: https://www.grit.io/
 [install Grit]: https://docs.grit.io/cli/quickstart
 [migrating renamed resources]: https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/migrating-renamed-resources

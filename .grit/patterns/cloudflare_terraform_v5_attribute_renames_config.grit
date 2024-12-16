@@ -49,13 +49,13 @@ pattern cloudflare_terraform_v5_attribute_renames_config() {
                             $ele <: contains `codes = $code` => . ,
                             $ele <: contains `ttl = $ttl` => .,
                             $ele => `$code => $ttl`,
-                        } 
-                    }, 
+                        }
+                    },
                     $cttl_ele <: contains `,` =>.
                 },
             },
         }
-    }
+    },
 
     // cloudflare_teams_list & cloudflare_zero_trust_list
     `items = [$items]` as $all_items where {
