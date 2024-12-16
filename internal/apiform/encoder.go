@@ -21,15 +21,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 var encoders sync.Map // map[encoderEntry]encoderFunc
-
-func Marshal(value interface{}, writer *multipart.Writer) error {
-	e := &encoder{dateFormat: time.RFC3339}
-	return e.marshal(value, writer)
-}
 
 func MarshalRoot(value interface{}, writer *multipart.Writer) error {
 	e := &encoder{root: true, dateFormat: time.RFC3339}
@@ -107,7 +103,10 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 	if t.ConvertibleTo(reflect.TypeOf((*io.Reader)(nil)).Elem()) {
 		return e.newReaderTypeEncoder()
 	}
+
+	isRoot := e.root
 	e.root = false
+
 	switch t.Kind() {
 	case reflect.Pointer:
 		inner := t.Elem()
@@ -124,7 +123,11 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 		if t.Implements(attrType) {
 			return e.newTerraformTypeEncoder(t)
 		}
-		return e.newStructTypeEncoder(t)
+		if isRoot {
+			return e.newStructTypeEncoder(t)
+		} else {
+			return encodePartAsJSON
+		}
 	case reflect.Slice, reflect.Array:
 		return e.newArrayTypeEncoder(t)
 	case reflect.Map:
@@ -203,27 +206,15 @@ func (e *encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 			return value.(basetypes.SetValue).Elements(), diag.Diagnostics{}
 		})
 	} else if t == reflect.TypeOf(basetypes.MapValue{}) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(basetypes.MapValue).Elements(), diag.Diagnostics{}
-		})
+		return encodePartAsJSON
 	} else if t == reflect.TypeOf(basetypes.ObjectValue{}) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(basetypes.ObjectValue).Attributes(), diag.Diagnostics{}
-		})
+		return encodePartAsJSON
 	} else if t == reflect.TypeOf(basetypes.DynamicValue{}) {
 		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
 			return value.(basetypes.DynamicValue).UnderlyingValue(), diag.Diagnostics{}
 		})
 	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectLike)(nil)).Elem()) {
-		structType := reflect.PointerTo(t.Field(0).Type)
-		return e.terraformUnwrappedEncoder(structType, func(value attr.Value) (any, diag.Diagnostics) {
-			converted := value.(customfield.NestedObjectLike)
-			structValue, diags := converted.ValueAny(context.TODO())
-			if diags.HasError() {
-				return nil, diags
-			}
-			return structValue, nil
-		})
+		return encodePartAsJSON
 	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectListLike)(nil)).Elem()) {
 		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
 			return value.(customfield.NestedObjectListLike).AsStructSlice(context.TODO())
@@ -233,17 +224,11 @@ func (e *encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 			return value.(customfield.ListLike).ValueAttr(context.TODO())
 		})
 	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectMapLike)(nil)).Elem()) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(customfield.NestedObjectMapLike).AsStructMap(context.TODO())
-		})
+		return encodePartAsJSON
 	} else if t.Implements(reflect.TypeOf((*customfield.MapLike)(nil)).Elem()) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(customfield.MapLike).ValueAttr(context.TODO())
-		})
+		return encodePartAsJSON
 	} else if t == reflect.TypeOf(jsontypes.Normalized{}) {
-		return e.terraformUnwrappedEncoder(reflect.TypeOf(""), func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(jsontypes.Normalized).ValueString(), diag.Diagnostics{}
-		})
+		return encodePartAsJSON
 	}
 
 	return func(key string, value reflect.Value, writer *multipart.Writer) error {
@@ -293,11 +278,8 @@ func (e *encoder) newArrayTypeEncoder(t reflect.Type) encoderFunc {
 	itemEncoder := e.typeEncoder(t.Elem())
 
 	return func(key string, v reflect.Value, writer *multipart.Writer) error {
-		if key != "" {
-			key = key + "."
-		}
 		for i := 0; i < v.Len(); i++ {
-			err := itemEncoder(key+strconv.Itoa(i), v.Index(i), writer)
+			err := itemEncoder(key, v.Index(i), writer)
 			if err != nil {
 				return err
 			}
@@ -369,7 +351,6 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 		if key != "" {
 			key = key + "."
 		}
-
 		for _, ef := range encoderFields {
 			field := value.FieldByIndex(ef.idx)
 			err := ef.fn(key+ef.tag.name, field, writer)
@@ -386,27 +367,6 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 		}
 
 		return nil
-	}
-}
-
-func (e *encoder) newFieldTypeEncoder(t reflect.Type) encoderFunc {
-	f, _ := t.FieldByName("Value")
-	enc := e.typeEncoder(f.Type)
-
-	return func(key string, value reflect.Value, writer *multipart.Writer) error {
-		present := value.FieldByName("Present")
-		if !present.Bool() {
-			return nil
-		}
-		null := value.FieldByName("Null")
-		if null.Bool() {
-			return nil
-		}
-		raw := value.FieldByName("Raw")
-		if !raw.IsNil() {
-			return e.typeEncoder(raw.Type())(key, raw, writer)
-		}
-		return enc(key, value.FieldByName("Value"), writer)
 	}
 }
 
@@ -501,6 +461,27 @@ func (e *encoder) newMapEncoder(t reflect.Type) encoderFunc {
 	return func(key string, value reflect.Value, writer *multipart.Writer) error {
 		return e.encodeMapEntries(key, value, writer)
 	}
+}
+
+func encodePartAsJSON(key string, value reflect.Value, writer *multipart.Writer) error {
+	var mimeHeader = textproto.MIMEHeader{}
+	mimeHeader.Add("Content-Disposition", "form-data; name=\""+key+"\"")
+	mimeHeader.Add("Content-Type", "application/json")
+
+	w, err := writer.CreatePart(mimeHeader)
+	if err != nil {
+		return err
+	}
+	bytes, err := apijson.MarshalRoot(value.Interface())
+	if err != nil {
+		return err
+	}
+	_, err = w.Write(bytes)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func errorFromDiagnostics(diags diag.Diagnostics) error {
