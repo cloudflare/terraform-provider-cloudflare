@@ -25,8 +25,8 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
       dhcp_pool_start = "192.0.2.1"
       dns_server = "192.0.2.1"
       reservations = {
-        00_11_22_33_44_55 = "192.0.2.100"
-        aa_bb_cc_dd_ee_ff = "192.168.1.101"
+        "00:11:22:33:44:55" = "192.0.2.100"
+        "AA:BB:CC:DD:EE:FF" = "192.168.1.101"
       }
     }
     secondary_address = "192.0.2.0/24"
