@@ -20,8 +20,8 @@ resource "cloudflare_account_token" "example_account_token" {
       name = "Magic Network Monitoring"
     }]
     resources = {
-      com_cloudflare_api_account_zone_22b1de5f1c0e4b3ea97bb1e963b06a43 = "*"
-      com_cloudflare_api_account_zone_eb78d65290b24279ba6f44721b3ea3c4 = "*"
+      "com.cloudflare.api.account.zone.22b1de5f1c0e4b3ea97bb1e963b06a43" = "*"
+      "com.cloudflare.api.account.zone.eb78d65290b24279ba6f44721b3ea3c4" = "*"
     }
   }]
   condition = {
