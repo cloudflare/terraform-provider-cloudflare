@@ -18,11 +18,11 @@ func (r *CertificateAuthoritiesHostnameAssociationsResource) Schema(ctx context.
 				Required:    true,
 			},
 			"mtls_certificate_id": schema.StringAttribute{
-				Description: "TODO",
+				Description: "The id of the mTLS certificate resource. If no mtls_certificate_id is given, the hostnames will be associated to your active Cloudflare Managed CA.",
 				Optional:    true,
 			},
 			"hostnames": schema.ListAttribute{
-				Description: "TODO",
+				Description: "The hostnames associated to the mTLS certificate resource.",
 				Required:    true,
 				ElementType: types.StringType,
 			},
