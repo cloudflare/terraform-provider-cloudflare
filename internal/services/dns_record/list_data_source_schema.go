@@ -231,6 +231,25 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
 							Computed:    true,
 						},
+						"settings": schema.SingleNestedAttribute{
+							Description: "Settings for the DNS record.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[DNSRecordsSettingsDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"ipv4_only": schema.BoolAttribute{
+									Description: "When enabled, only A records will be generated, and AAAA records will not be created. This setting is intended for exceptional cases. Note that this option only applies to proxied records and it has no effect on whether Cloudflare communicates with the origin using IPv4 or IPv6.",
+									Computed:    true,
+								},
+								"ipv6_only": schema.BoolAttribute{
+									Description: "When enabled, only AAAA records will be generated, and A records will not be created. This setting is intended for exceptional cases. Note that this option only applies to proxied records and it has no effect on whether Cloudflare communicates with the origin using IPv4 or IPv6.",
+									Computed:    true,
+								},
+								"flatten_cname": schema.BoolAttribute{
+									Description: "If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting has no effect on proxied records, which are always flattened.",
+									Computed:    true,
+								},
+							},
+						},
 						"tags": schema.ListAttribute{
 							Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
 							Computed:    true,
@@ -498,16 +517,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 								"fingerprint": schema.StringAttribute{
 									Description: "fingerprint.",
-									Computed:    true,
-								},
-							},
-						},
-						"settings": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[DNSRecordsSettingsDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"flatten_cname": schema.BoolAttribute{
-									Description: "If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting has no effect on proxied records, which are always flattened.",
 									Computed:    true,
 								},
 							},
