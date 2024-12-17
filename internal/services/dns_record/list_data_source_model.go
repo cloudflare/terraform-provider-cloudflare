@@ -177,12 +177,18 @@ type DNSRecordsResultDataSourceModel struct {
 	Content  types.String                                                `tfsdk:"content" json:"content,computed"`
 	Name     types.String                                                `tfsdk:"name" json:"name,computed"`
 	Proxied  types.Bool                                                  `tfsdk:"proxied" json:"proxied,computed"`
+	Settings customfield.NestedObject[DNSRecordsSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
 	Tags     customfield.List[types.String]                              `tfsdk:"tags" json:"tags,computed"`
 	TTL      types.Float64                                               `tfsdk:"ttl" json:"ttl,computed"`
 	Type     types.String                                                `tfsdk:"type" json:"type,computed"`
 	Data     customfield.NestedObject[DNSRecordsDataDataSourceModel]     `tfsdk:"data" json:"data,computed"`
-	Settings customfield.NestedObject[DNSRecordsSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
 	Priority types.Float64                                               `tfsdk:"priority" json:"priority,computed"`
+}
+
+type DNSRecordsSettingsDataSourceModel struct {
+	IPV4Only     types.Bool `tfsdk:"ipv4_only" json:"ipv4_only,computed"`
+	IPV6Only     types.Bool `tfsdk:"ipv6_only" json:"ipv6_only,computed"`
+	FlattenCNAME types.Bool `tfsdk:"flatten_cname" json:"flatten_cname,computed"`
 }
 
 type DNSRecordsDataDataSourceModel struct {
@@ -222,8 +228,4 @@ type DNSRecordsDataDataSourceModel struct {
 	Port          types.Float64 `tfsdk:"port" json:"port,computed"`
 	Weight        types.Float64 `tfsdk:"weight" json:"weight,computed"`
 	Fingerprint   types.String  `tfsdk:"fingerprint" json:"fingerprint,computed"`
-}
-
-type DNSRecordsSettingsDataSourceModel struct {
-	FlattenCNAME types.Bool `tfsdk:"flatten_cname" json:"flatten_cname,computed"`
 }

@@ -66,7 +66,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.Int64Attribute{
-							Computed: true,
+							Description: "The unique identifier for the allow policy.",
+							Computed:    true,
 						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
