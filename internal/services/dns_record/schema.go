@@ -41,10 +41,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"comment": schema.StringAttribute{
-				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
-				Optional:    true,
-			},
 			"content": schema.StringAttribute{
 				Description: "A valid IPv4 address.",
 				Optional:    true,
@@ -54,10 +50,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						stringvalidator.ConflictsWith(path.MatchRoot("data")),
 					),
 				},
-			},
-			"name": schema.StringAttribute{
-				Description: "DNS record name (or @ for the zone apex) in Punycode.",
-				Optional:    true,
 			},
 			"priority": schema.Float64Attribute{
 				Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
@@ -104,10 +96,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"ttl": schema.Float64Attribute{
 				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 				Validators: []validator.Float64{
-					float64validator.Between(30, 86400),
+					float64validator.Any(
+						float64validator.Between(1, 1),
+						float64validator.Between(30, 86400),
+					),
 				},
 			},
 			"tags": schema.ListAttribute{
@@ -116,6 +110,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
+				Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 			},
 			"data": schema.SingleNestedAttribute{
 				Description: "Components of a CAA record.",
@@ -410,34 +405,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether the record can be proxied by Cloudflare or not.",
 				Computed:    true,
 			},
-			"proxied": schema.BoolAttribute{
-				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
 			"tags_modified_on": schema.StringAttribute{
 				Description: "When the record tags were last modified. Omitted if there are no tags.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"ttl": schema.Float64Attribute{
-				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
-				Required:    true,
-				Validators: []validator.Float64{
-					float64validator.Any(
-						float64validator.Between(1, 1),
-						float64validator.Between(30, 86400),
-					),
-				},
-			},
-			"tags": schema.ListAttribute{
-				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
-				Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 			},
 			"meta": schema.StringAttribute{
 				Description: "Extra Cloudflare-specific information about the record.",
