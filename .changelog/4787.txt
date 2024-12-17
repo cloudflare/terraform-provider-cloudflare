@@ -1,0 +1,5 @@
+```release-note:enhancement
+resource/snippets-rules: make terraform consistent with the API and do not require "enabled" and "description" fields
+resource/snippets: use list instead of set
+resource/cloud_connector_rules: use list instead of set
+```

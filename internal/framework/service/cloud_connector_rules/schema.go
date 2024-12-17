@@ -7,7 +7,7 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -33,11 +33,11 @@ func (r *CloudConnectorRulesResource) Schema(ctx context.Context, req resource.S
 			},
 		},
 		Blocks: map[string]schema.Block{
-			"rules": schema.SetNestedBlock{
+			"rules": schema.ListNestedBlock{
 				MarkdownDescription: "List of Cloud Connector Rules",
-				Validators: []validator.Set{
-					setvalidator.SizeAtLeast(1),
-					setvalidator.IsRequired(),
+				Validators: []validator.List{
+					listvalidator.SizeAtLeast(1),
+					listvalidator.IsRequired(),
 				},
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{

@@ -64,7 +64,7 @@ func TestAccCloudflareSnippetRules(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.%", "4"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "some description 1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", ""),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.snippet_name", "test_snippet_0"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.1.%", "4"),
@@ -100,9 +100,7 @@ func testAccCheckCloudflareSnippetRules(rnd, zoneID string) string {
   resource "cloudflare_snippet_rules" "%[1]s" {
 		zone_id  = "%[2]s"
 		rules {
-			enabled = true
 			expression = "true"
-			description = "some description 1"
 			snippet_name = "test_snippet_0"
 		}
 
