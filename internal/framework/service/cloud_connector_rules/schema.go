@@ -19,7 +19,7 @@ import (
 func (r *CloudConnectorRulesResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: heredoc.Doc(`
-			The [Cloud Connector Rules](add link to doc) resource allows you to create and manage cloud connector rules for a zone.
+			The [Cloud Connector Rules](https://developers.cloudflare.com/rules/cloud-connector/) resource allows you to create and manage cloud connector rules for a zone.
 		`),
 		Version: 1,
 
