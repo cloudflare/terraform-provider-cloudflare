@@ -20,7 +20,7 @@ rule creation.
 Filter expressions needs to be created first before using Firewall
 Rule.
 
-~> `cloudflare_firewall_rule` is in a deprecation phase until January 15th, 2025.
+~> `cloudflare_firewall_rule` is in a deprecation phase until June 15th, 2025.
   During this time period, this resource is still
   fully supported but you are strongly advised  to move to the
   `cloudflare_ruleset` resource. Full details can be found in the
