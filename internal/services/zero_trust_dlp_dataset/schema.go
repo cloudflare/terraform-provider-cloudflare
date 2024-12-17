@@ -80,8 +80,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Description: "When the dataset was last updated.\n\nThis includes name or description changes as well as uploads.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"version": schema.Int64Attribute{
 				Description: "The version to use when uploading the dataset.",
@@ -184,8 +185,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"updated_at": schema.StringAttribute{
-						Computed:   true,
-						CustomType: timetypes.RFC3339Type{},
+						Description: "When the dataset was last updated.\n\nThis includes name or description changes as well as uploads.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"uploads": schema.ListNestedAttribute{
 						Computed:   true,
