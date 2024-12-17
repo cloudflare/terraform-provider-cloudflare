@@ -51,3 +51,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_observatory_scheduled_test.example <zone_id>:<url>:<region>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_observatory_scheduled_test.example
+    id = "<zone_id>:<url>:<region>"
+}
+```

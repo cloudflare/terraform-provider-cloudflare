@@ -100,3 +100,11 @@ Import is supported using the following syntax:
 # Split Tunnels for default device policies must use "default" as the policy ID.
 $ terraform import cloudflare_split_tunnel.example <account_id>/<policy_id>/<mode>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_split_tunnel.example
+    id = "<account_id>/<policy_id>/<mode>"
+}
+```

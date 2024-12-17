@@ -48,3 +48,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_tunnel.example <account_id>/<tunnel_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_tunnel.example
+    id = "<account_id>/<tunnel_id>"
+}
+```

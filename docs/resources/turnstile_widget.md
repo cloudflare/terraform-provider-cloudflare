@@ -49,3 +49,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_turnstile_widget.example <account_id>/<site_key>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_turnstile_widget.example
+    id = "<account_id>/<site_key>"
+}
+```

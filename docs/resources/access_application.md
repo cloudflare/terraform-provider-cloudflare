@@ -356,3 +356,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_access_application.example <account_id>/<application_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_access_application.example
+    id = "<account_id>/<application_id>"
+}
+```

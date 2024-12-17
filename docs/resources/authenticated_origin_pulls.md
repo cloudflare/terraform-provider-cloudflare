@@ -82,3 +82,11 @@ $ terraform import cloudflare_authenticated_origin_pulls.example <zone_id>/<cert
 # per hostname
 $ terraform import cloudflare_authenticated_origin_pulls.example <zone_id>/<certificate_id>/<hostname>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_authenticated_origin_pulls.example
+    id = "<zone_id>/<certificate_id>/<hostname>"
+}
+```

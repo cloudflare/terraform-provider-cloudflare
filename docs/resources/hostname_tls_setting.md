@@ -42,3 +42,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_hostname_tls_setting.example <zone_id>/<hostname>/<setting_name>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_hostname_tls_setting.example
+    id = "<zone_id>/<hostname>/<setting_name>"
+}
+```

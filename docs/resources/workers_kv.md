@@ -45,3 +45,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_workers_kv.example <account_id>/<namespace_id>/<key_name>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_workers_kv.example
+    id = "<account_id>/<namespace_id>/<key_name>"
+}
+```

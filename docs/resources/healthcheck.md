@@ -128,3 +128,11 @@ Import is supported using the following syntax:
 # Use the Zone ID and Healthcheck ID to import.
 $ terraform import cloudflare_healthcheck.example <zone_id>/<healthcheck_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_healthcheck.example
+    id = "<zone_id>/<healthcheck_id>"
+}
+```

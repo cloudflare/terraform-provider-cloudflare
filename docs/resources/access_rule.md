@@ -96,3 +96,11 @@ $ terraform import cloudflare_access_rule.default zone/<zone_id>/<rule_id>
 # Account level access rule import.
 $ terraform import cloudflare_access_rule.default account/<account_id>/<rule_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_access_rule.default
+    id = "account/<account_id>/<rule_id>"
+}
+```

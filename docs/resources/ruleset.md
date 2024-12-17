@@ -867,3 +867,11 @@ $ terraform import cloudflare_ruleset.example account/<account_id>/<ruleset_id>
 # Import a zone scoped Ruleset configuration.
 $ terraform import cloudflare_ruleset.example zone/<zone_id>/<ruleset_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_ruleset.example
+    id = "zone/<zone_id>/<ruleset_id>"
+}
+```

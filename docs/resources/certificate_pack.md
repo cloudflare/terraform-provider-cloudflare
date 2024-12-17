@@ -98,5 +98,13 @@ Import is supported using the following syntax:
 $ terraform import cloudflare_certificate_pack.example <zone_id>/<certificate_pack_id>
 ```
 
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_certificate_pack.example
+    id = "<zone_id>/<certificate_pack_id>"
+}
+```
+
 While supported, importing isn't recommended and it is advised to replace the
 certificate entirely instead.

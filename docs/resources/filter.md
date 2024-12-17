@@ -54,3 +54,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_filter.example <zone_id>/<filter_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_filter.example
+    id = "<zone_id>/<filter_id>"
+}
+```

@@ -65,3 +65,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_zero_trust_tunnel_route.example <account_id>/<network_cidr>/<virtual_network_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_zero_trust_tunnel_route.example
+    id = "<account_id>/<network_cidr>/<virtual_network_id>"
+}
+```

@@ -63,3 +63,11 @@ $ terraform import cloudflare_access_mutual_tls_certificate.example account/<acc
 # Zone level import.
 $ terraform import cloudflare_access_mutual_tls_certificate.example zone/<zone_id>/<mutual_tls_certificate_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_access_mutual_tls_certificate.example
+    id = "zone/<zone_id>/<mutual_tls_certificate_id>"
+}
+```

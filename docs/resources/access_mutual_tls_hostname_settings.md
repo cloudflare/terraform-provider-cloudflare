@@ -53,3 +53,17 @@ $ terraform import cloudflare_access_mutual_tls_hostname_settings.example accoun
 # Zone level mTLS hostname settings import.
 $ terraform import cloudflare_access_mutual_tls_hostname_settings.example zone/<zone_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+
+```terraform
+import {
+  to = cloudflare_access_mutual_tls_hostname_settings.example
+  id = "account/<account_id>"
+}
+
+import {
+  to = cloudflare_access_mutual_tls_hostname_settings.example
+  id = "zone/<zone_id>"
+}
+```

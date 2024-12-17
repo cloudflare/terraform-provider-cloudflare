@@ -62,3 +62,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_device_dex_test.example <account_id>/<device_dex_test_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_device_dex_test.example
+    id = "<account_id>/<device_dex_test_id>"
+}
+```
