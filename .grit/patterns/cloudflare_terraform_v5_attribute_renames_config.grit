@@ -38,22 +38,12 @@ pattern cloudflare_terraform_v5_attribute_renames_config() {
     `default_pool_ids = $v` as $attribute => `default_pools = $v` where { $attribute <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
 
     // cloudflare_page_rule
-    `ignore = true` as $attribute => `exclude = ["*"]` where and { $attribute <: within `resource "cloudflare_page_rule" $_ { $_ }`, $attribute <: within `cache_key_fields { $_ }`, $attribute <: within `query_string { $_ }` },
-    `ignore = false` as $attribute => `include = ["*"]` where and { $attribute <: within `resource "cloudflare_page_rule" $_ { $_ }`, $attribute <: within `cache_key_fields { $_ }`, $attribute <: within `query_string { $_ }` },
     `resource "cloudflare_page_rule" $_ { $body }` where {
-        $body <: contains `actions = [ $actions ]` where {
-            $actions <: contains `$cttl` where {
-                $cttl <: contains `cache_ttl_by_status = $cttl_ele` where {
-                    $cttl_ele <: contains `[ $old ]` where {
-                        $old <: some bubble `$ele` where {
-                            $ele <: contains `codes = $code` => . ,
-                            $ele <: contains `ttl = $ttl` => .,
-                            $ele => `$code => $ttl`,
-                        }
-                    },
-                    $cttl_ele <: contains `,` =>.
-                },
-            },
+        $body <: contains `cache_key_fields = $ckf` where {
+            $ckf <: contains `query_string = $qs` where and {
+                $qs <: contains `ignore = false` => `include = ["*"]`,
+                $qs <: contains `ignore = true` => `exclude = ["*"]`,
+            }
         }
     },
 

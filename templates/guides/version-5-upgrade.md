@@ -1244,40 +1244,23 @@ resource "cloudflare_api_token" "example" {
 
 ## cloudflare_page_rule
 
-- ``
+- `ignore = true` is now `exclude = ["*"]`
+- `ignore = false` is now `include = ["*"]`
+- `cache_ttl_by_status` is now a map (`cache_ttl_by_status = { ... }`) instead of a list of objects (`cache_ttl_by_status = [{ ... }]`)
 
 Before
 
 ```
 resource "cloudflare_page_rule" "example" {
+  target = "example.com"
   actions = [
     {
-      cache_ttl_by_status = [
-        {
-          codes = "200-299"
-          ttl   = 300
-        },
-        {
-          codes = "300-399"
-          ttl   = 60
-        },
-        {
-          codes = "400-403"
-          ttl   = -1
-        },
-        {
-          codes = "404"
-          ttl   = 30
-        },
-        {
-          codes = "405-499"
-          ttl   = -1
-        },
-        {
-          codes = "500-599"
-          ttl   = 0
+      cache_key_fields = {
+        query_string = {
+            ignore = true
+            ignore = false
         }
-      ]
+      }
     }
   ]
 }
@@ -1287,18 +1270,17 @@ After
 
 ```
 resource "cloudflare_page_rule" "example" {
-  actions = {
-    cache_ttl_by_status = {
-      "100-149" = "no-cache"
-      "150-199" = "no-store"
-      "200-299" = 300
-      "300-399" = 60
-      "400-403" = -1
-      "404" = 30
-      "405-499" = -1
-      "500-599" = 0
+  target = "example.com"
+  actions = [
+    {
+      cache_key_fields = {
+        query_string = {
+            exclude = ["*"]
+            include = ["*"]
+        }
+      }
     }
-  }
+  ]
 }
 ```
 
