@@ -70,6 +70,7 @@ func (r *URLNormalizationSettingsResource) Create(ctx context.Context, req resou
 		return
 	}
 	res := new(http.Response)
+	env := URLNormalizationSettingsResultEnvelope{*data}
 	_, err = r.client.URLNormalization.Update(
 		ctx,
 		url_normalization.URLNormalizationUpdateParams{
@@ -84,11 +85,12 @@ func (r *URLNormalizationSettingsResource) Create(ctx context.Context, req resou
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -117,6 +119,7 @@ func (r *URLNormalizationSettingsResource) Update(ctx context.Context, req resou
 		return
 	}
 	res := new(http.Response)
+	env := URLNormalizationSettingsResultEnvelope{*data}
 	_, err = r.client.URLNormalization.Update(
 		ctx,
 		url_normalization.URLNormalizationUpdateParams{
@@ -131,11 +134,12 @@ func (r *URLNormalizationSettingsResource) Update(ctx context.Context, req resou
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -151,6 +155,7 @@ func (r *URLNormalizationSettingsResource) Read(ctx context.Context, req resourc
 	}
 
 	res := new(http.Response)
+	env := URLNormalizationSettingsResultEnvelope{*data}
 	_, err := r.client.URLNormalization.Get(
 		ctx,
 		url_normalization.URLNormalizationGetParams{
@@ -169,11 +174,12 @@ func (r *URLNormalizationSettingsResource) Read(ctx context.Context, req resourc
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -200,6 +206,7 @@ func (r *URLNormalizationSettingsResource) ImportState(ctx context.Context, req 
 	data.ZoneID = types.StringValue(path)
 
 	res := new(http.Response)
+	env := URLNormalizationSettingsResultEnvelope{*data}
 	_, err := r.client.URLNormalization.Get(
 		ctx,
 		url_normalization.URLNormalizationGetParams{
@@ -213,11 +220,12 @@ func (r *URLNormalizationSettingsResource) ImportState(ctx context.Context, req 
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
