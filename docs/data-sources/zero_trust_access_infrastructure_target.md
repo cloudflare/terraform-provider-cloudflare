@@ -44,12 +44,18 @@ Required:
 
 Optional:
 
-- `created_after` (String) Date and time at which the target was created
+- `created_after` (String) Date and time at which the target was created after (inclusive)
+- `created_before` (String) Date and time at which the target was created before (inclusive)
+- `direction` (String) The sorting direction.
 - `hostname` (String) Hostname of a target
 - `hostname_contains` (String) Partial match to the hostname of a target
 - `ip_v4` (String) IPv4 address of the target
 - `ip_v6` (String) IPv6 address of the target
-- `modified_after` (String) Date and time at which the target was modified
+- `ips` (List of String) Filters for targets that have any of the following IP addresses. Specify
+`ips` multiple times in query parameter to build list of candidates.
+- `modified_after` (String) Date and time at which the target was modified after (inclusive)
+- `modified_before` (String) Date and time at which the target was modified before (inclusive)
+- `order` (String) The field to sort by.
 - `virtual_network_id` (String) Private virtual network identifier of the target
 
 

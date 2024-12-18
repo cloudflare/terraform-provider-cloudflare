@@ -50,7 +50,7 @@ Read-Only:
 
 - `comments` (String)
 - `created_at` (String)
-- `id` (Number)
+- `id` (Number) The unique identifier for the allow policy.
 - `is_regex` (Boolean)
 - `last_modified` (String)
 - `pattern` (String)

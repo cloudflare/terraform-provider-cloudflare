@@ -26,8 +26,8 @@ resource "cloudflare_healthcheck" "example_healthcheck" {
     expected_codes = ["2xx", "302"]
     follow_redirects = true
     header = {
-      host = ["example.com"]
-      x_app_id = ["abc123"]
+      Host = ["example.com"]
+      X-App-ID = ["abc123"]
     }
     method = "GET"
     path = "/health"

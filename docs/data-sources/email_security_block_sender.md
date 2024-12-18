@@ -25,13 +25,13 @@ data "cloudflare_email_security_block_sender" "example_email_security_block_send
 
 - `account_id` (String) Account Identifier
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `pattern_id` (Number)
+- `pattern_id` (Number) The unique identifier for the allow policy.
 
 ### Read-Only
 
 - `comments` (String)
 - `created_at` (String)
-- `id` (Number) The ID of this resource.
+- `id` (Number) The unique identifier for the allow policy.
 - `is_regex` (Boolean)
 - `last_modified` (String)
 - `pattern` (String)

@@ -126,10 +126,15 @@ Optional:
 
 Read-Only:
 
+- `comment` (String) Comments or notes about the DNS record. This field has no effect on DNS responses.
 - `content` (String) A valid IPv4 address.
 - `data` (Attributes) Components of a CAA record. (see [below for nested schema](#nestedatt--result--data))
+- `name` (String) DNS record name (or @ for the zone apex) in Punycode.
 - `priority` (Number) Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.
-- `settings` (Attributes) (see [below for nested schema](#nestedatt--result--settings))
+- `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
+- `settings` (Attributes) Settings for the DNS record. (see [below for nested schema](#nestedatt--result--settings))
+- `tags` (List of String) Custom tags for the DNS record. This field has no effect on DNS responses.
+- `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
 - `type` (String) Record type.
 
 <a id="nestedatt--result--data"></a>
@@ -181,5 +186,7 @@ Read-Only:
 Read-Only:
 
 - `flatten_cname` (Boolean) If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting has no effect on proxied records, which are always flattened.
+- `ipv4_only` (Boolean) When enabled, only A records will be generated, and AAAA records will not be created. This setting is intended for exceptional cases. Note that this option only applies to proxied records and it has no effect on whether Cloudflare communicates with the origin using IPv4 or IPv6.
+- `ipv6_only` (Boolean) When enabled, only AAAA records will be generated, and A records will not be created. This setting is intended for exceptional cases. Note that this option only applies to proxied records and it has no effect on whether Cloudflare communicates with the origin using IPv4 or IPv6.
 
 

@@ -71,7 +71,7 @@ Read-Only:
 - `effect` (String) Allow or deny operations against the resources.
 - `id` (String) Policy identifier.
 - `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
-- `resources` (Attributes) A list of resource names that the policy applies to. (see [below for nested schema](#nestedatt--policies--resources))
+- `resources` (Map of String) A list of resource names that the policy applies to.
 
 <a id="nestedatt--policies--permission_groups"></a>
 ### Nested Schema for `policies.permission_groups`
@@ -89,15 +89,5 @@ Read-Only:
 
 - `key` (String)
 - `value` (String)
-
-
-
-<a id="nestedatt--policies--resources"></a>
-### Nested Schema for `policies.resources`
-
-Read-Only:
-
-- `resource` (String)
-- `scope` (String)
 
 

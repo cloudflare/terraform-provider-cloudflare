@@ -15,11 +15,16 @@ description: |-
 data "cloudflare_zero_trust_access_infrastructure_targets" "example_zero_trust_access_infrastructure_targets" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   created_after = "2019-12-27T18:11:19.117Z"
+  created_before = "2019-12-27T18:11:19.117Z"
+  direction = "asc"
   hostname = "hostname"
   hostname_contains = "hostname_contains"
   ip_v4 = "ip_v4"
   ip_v6 = "ip_v6"
+  ips = ["string"]
   modified_after = "2019-12-27T18:11:19.117Z"
+  modified_before = "2019-12-27T18:11:19.117Z"
+  order = "hostname"
   virtual_network_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
 }
 ```
@@ -33,13 +38,19 @@ data "cloudflare_zero_trust_access_infrastructure_targets" "example_zero_trust_a
 
 ### Optional
 
-- `created_after` (String) Date and time at which the target was created
+- `created_after` (String) Date and time at which the target was created after (inclusive)
+- `created_before` (String) Date and time at which the target was created before (inclusive)
+- `direction` (String) The sorting direction.
 - `hostname` (String) Hostname of a target
 - `hostname_contains` (String) Partial match to the hostname of a target
 - `ip_v4` (String) IPv4 address of the target
 - `ip_v6` (String) IPv6 address of the target
+- `ips` (List of String) Filters for targets that have any of the following IP addresses. Specify
+`ips` multiple times in query parameter to build list of candidates.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `modified_after` (String) Date and time at which the target was modified
+- `modified_after` (String) Date and time at which the target was modified after (inclusive)
+- `modified_before` (String) Date and time at which the target was modified before (inclusive)
+- `order` (String) The field to sort by.
 - `virtual_network_id` (String) Private virtual network identifier of the target
 
 ### Read-Only

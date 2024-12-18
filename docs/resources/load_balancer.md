@@ -21,8 +21,8 @@ resource "cloudflare_load_balancer" "example_load_balancer" {
     failover_across_pools = true
   }
   country_pools = {
-    gb = ["abd90f38ced07c2e2f4df50b1f61d4194"]
-    us = ["de90f38ced07c2e2f4df50b1f61d4194", "00920f38ce07c2e2f4df50b1f61d4194"]
+    GB = ["abd90f38ced07c2e2f4df50b1f61d4194"]
+    US = ["de90f38ced07c2e2f4df50b1f61d4194", "00920f38ce07c2e2f4df50b1f61d4194"]
   }
   description = "Load Balancer for www.example.com"
   location_strategy = {
@@ -31,21 +31,21 @@ resource "cloudflare_load_balancer" "example_load_balancer" {
   }
   networks = ["string"]
   pop_pools = {
-    lax = ["de90f38ced07c2e2f4df50b1f61d4194", "9290f38c5d07c2e2f4df57b1f61d4196"]
-    lhr = ["abd90f38ced07c2e2f4df50b1f61d4194", "f9138c5d07c2e2f4df57b1f61d4196"]
-    sjc = ["00920f38ce07c2e2f4df50b1f61d4194"]
+    LAX = ["de90f38ced07c2e2f4df50b1f61d4194", "9290f38c5d07c2e2f4df57b1f61d4196"]
+    LHR = ["abd90f38ced07c2e2f4df50b1f61d4194", "f9138c5d07c2e2f4df57b1f61d4196"]
+    SJC = ["00920f38ce07c2e2f4df50b1f61d4194"]
   }
   proxied = true
   random_steering = {
     default_weight = 0.2
     pool_weights = {
-      9290f38c5d07c2e2f4df57b1f61d4196 = 0.5
+      "9290f38c5d07c2e2f4df57b1f61d4196" = 0.5
       de90f38ced07c2e2f4df50b1f61d4194 = 0.3
     }
   }
   region_pools = {
-    enam = ["00920f38ce07c2e2f4df50b1f61d4194"]
-    wnam = ["de90f38ced07c2e2f4df50b1f61d4194", "9290f38c5d07c2e2f4df57b1f61d4196"]
+    ENAM = ["00920f38ce07c2e2f4df50b1f61d4194"]
+    WNAM = ["de90f38ced07c2e2f4df50b1f61d4194", "9290f38c5d07c2e2f4df57b1f61d4196"]
   }
   rules = [{
     condition = "http.request.uri.path contains \"/testing\""
@@ -62,8 +62,8 @@ resource "cloudflare_load_balancer" "example_load_balancer" {
         failover_across_pools = true
       }
       country_pools = {
-        gb = ["abd90f38ced07c2e2f4df50b1f61d4194"]
-        us = ["de90f38ced07c2e2f4df50b1f61d4194", "00920f38ce07c2e2f4df50b1f61d4194"]
+        GB = ["abd90f38ced07c2e2f4df50b1f61d4194"]
+        US = ["de90f38ced07c2e2f4df50b1f61d4194", "00920f38ce07c2e2f4df50b1f61d4194"]
       }
       default_pools = ["17b5962d775c646f3f9725cbc7a53df4", "9290f38c5d07c2e2f4df57b1f61d4196", "00920f38ce07c2e2f4df50b1f61d4194"]
       fallback_pool = "fallback_pool"
@@ -72,20 +72,20 @@ resource "cloudflare_load_balancer" "example_load_balancer" {
         prefer_ecs = "always"
       }
       pop_pools = {
-        lax = ["de90f38ced07c2e2f4df50b1f61d4194", "9290f38c5d07c2e2f4df57b1f61d4196"]
-        lhr = ["abd90f38ced07c2e2f4df50b1f61d4194", "f9138c5d07c2e2f4df57b1f61d4196"]
-        sjc = ["00920f38ce07c2e2f4df50b1f61d4194"]
+        LAX = ["de90f38ced07c2e2f4df50b1f61d4194", "9290f38c5d07c2e2f4df57b1f61d4196"]
+        LHR = ["abd90f38ced07c2e2f4df50b1f61d4194", "f9138c5d07c2e2f4df57b1f61d4196"]
+        SJC = ["00920f38ce07c2e2f4df50b1f61d4194"]
       }
       random_steering = {
         default_weight = 0.2
         pool_weights = {
-          9290f38c5d07c2e2f4df57b1f61d4196 = 0.5
+          "9290f38c5d07c2e2f4df57b1f61d4196" = 0.5
           de90f38ced07c2e2f4df50b1f61d4194 = 0.3
         }
       }
       region_pools = {
-        enam = ["00920f38ce07c2e2f4df50b1f61d4194"]
-        wnam = ["de90f38ced07c2e2f4df50b1f61d4194", "9290f38c5d07c2e2f4df57b1f61d4196"]
+        ENAM = ["00920f38ce07c2e2f4df50b1f61d4194"]
+        WNAM = ["de90f38ced07c2e2f4df50b1f61d4194", "9290f38c5d07c2e2f4df57b1f61d4196"]
       }
       session_affinity = "none"
       session_affinity_attributes = {
