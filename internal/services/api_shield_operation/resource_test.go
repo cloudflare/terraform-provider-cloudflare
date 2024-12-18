@@ -8,10 +8,11 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	cfv3 "github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/api_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
@@ -40,6 +41,9 @@ func TestAccCloudflareAPIShieldOperation_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceID, "method", "GET"),
 					resource.TestCheckResourceAttr(resourceID, "host", domain),
 					resource.TestCheckResourceAttr(resourceID, "endpoint", "/example/path"),
+					resource.TestCheckResourceAttr(resourceID, "operations.0.method", "GET"),
+					resource.TestCheckResourceAttr(resourceID, "operations.0.host", domain),
+					resource.TestCheckResourceAttr(resourceID, "operations.0.endpoint", "/example/path"),
 				),
 			},
 		},
@@ -70,6 +74,9 @@ func TestAccCloudflareAPIShieldOperation_ForceNew(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceID, "method", "GET"),
 					resource.TestCheckResourceAttr(resourceID, "host", domain),
 					resource.TestCheckResourceAttr(resourceID, "endpoint", "/example/path"),
+					resource.TestCheckResourceAttr(resourceID, "operations.0.method", "GET"),
+					resource.TestCheckResourceAttr(resourceID, "operations.0.host", domain),
+					resource.TestCheckResourceAttr(resourceID, "operations.0.endpoint", "/example/path"),
 				),
 			},
 			{
@@ -79,6 +86,9 @@ func TestAccCloudflareAPIShieldOperation_ForceNew(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceID, "method", "POST"), // check that we've 'updated' the value
 					resource.TestCheckResourceAttr(resourceID, "host", domain),
 					resource.TestCheckResourceAttr(resourceID, "endpoint", "/example/path"),
+					resource.TestCheckResourceAttr(resourceID, "operations.0.method", "POST"), // check that we've 'updated' the value
+					resource.TestCheckResourceAttr(resourceID, "operations.0.host", domain),
+					resource.TestCheckResourceAttr(resourceID, "operations.0.endpoint", "/example/path"),
 				),
 			},
 		},
@@ -86,28 +96,25 @@ func TestAccCloudflareAPIShieldOperation_ForceNew(t *testing.T) {
 }
 
 func testAccCheckAPIShieldOperationDelete(s *terraform.State) error {
-	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-	}
+	client := acctest.SharedClient() // TODO(terraform): replace with SharedV2Clent
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_api_shield_operation" {
 			continue
 		}
 
-		_, err := client.GetAPIShieldOperation(
+		_, err := client.APIGateway.Operations.Get(
 			context.Background(),
-			cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]),
-			cloudflare.GetAPIShieldOperationParams{
-				OperationID: rs.Primary.Attributes["id"],
+			rs.Primary.Attributes["operation_id"],
+			api_gateway.OperationGetParams{
+				ZoneID: cfv3.F(rs.Primary.Attributes[consts.ZoneIDSchemaKey]),
 			},
 		)
 		if err == nil {
 			return fmt.Errorf("operation still exists")
 		}
 
-		var notFoundError *cloudflare.NotFoundError
+		var notFoundError *cfv3.Error
 		if !errors.As(err, &notFoundError) {
 			return fmt.Errorf("expected not found error but got: %w", err)
 		}
