@@ -70,6 +70,7 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 	res := new(http.Response)
+	env := ManagedTransformsResultEnvelope{*data}
 	_, err = r.client.ManagedTransforms.Edit(
 		ctx,
 		managed_transforms.ManagedTransformEditParams{
@@ -84,11 +85,12 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -117,6 +119,7 @@ func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 	res := new(http.Response)
+	env := ManagedTransformsResultEnvelope{*data}
 	_, err = r.client.ManagedTransforms.Edit(
 		ctx,
 		managed_transforms.ManagedTransformEditParams{
@@ -131,11 +134,12 @@ func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -151,6 +155,7 @@ func (r *ManagedTransformsResource) Read(ctx context.Context, req resource.ReadR
 	}
 
 	res := new(http.Response)
+	env := ManagedTransformsResultEnvelope{*data}
 	_, err := r.client.ManagedTransforms.List(
 		ctx,
 		managed_transforms.ManagedTransformListParams{
@@ -169,11 +174,12 @@ func (r *ManagedTransformsResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -200,6 +206,7 @@ func (r *ManagedTransformsResource) ImportState(ctx context.Context, req resourc
 	data.ZoneID = types.StringValue(path)
 
 	res := new(http.Response)
+	env := ManagedTransformsResultEnvelope{*data}
 	_, err := r.client.ManagedTransforms.List(
 		ctx,
 		managed_transforms.ManagedTransformListParams{
@@ -213,11 +220,12 @@ func (r *ManagedTransformsResource) ImportState(ctx context.Context, req resourc
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
