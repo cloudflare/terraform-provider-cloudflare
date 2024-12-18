@@ -67,11 +67,10 @@ func (r *APIShieldOperationResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	res := new(http.Response)
-	env := APIShieldOperationResultEnvelope{*data}
-	_, err = r.client.APIGateway.Discovery.Operations.Edit(
+	env := APIShieldOperationResultEnvelope{data.Operations}
+	_, err = r.client.APIGateway.Operations.New(
 		ctx,
-		data.OperationID.ValueString(),
-		api_gateway.DiscoveryOperationEditParams{
+		api_gateway.OperationNewParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -88,8 +87,7 @@ func (r *APIShieldOperationResource) Create(ctx context.Context, req resource.Cr
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
-	data.ID = data.OperationID
+	data.Operations = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -117,11 +115,10 @@ func (r *APIShieldOperationResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	res := new(http.Response)
-	env := APIShieldOperationResultEnvelope{*data}
-	_, err = r.client.APIGateway.Discovery.Operations.Edit(
+	env := APIShieldOperationResultEnvelope{data.Operations}
+	_, err = r.client.APIGateway.Operations.New(
 		ctx,
-		data.OperationID.ValueString(),
-		api_gateway.DiscoveryOperationEditParams{
+		api_gateway.OperationNewParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -138,34 +135,76 @@ func (r *APIShieldOperationResource) Update(ctx context.Context, req resource.Up
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
-	data.ID = data.OperationID
+	data.Operations = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *APIShieldOperationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *APIShieldOperationModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := APIShieldOperationResultEnvelope{data.Operations}
+	_, err := r.client.APIGateway.Operations.Get(
+		ctx,
+		data.OperationID.ValueString(),
+		api_gateway.OperationGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if res != nil && res.StatusCode == 404 {
+		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data.Operations = env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *APIShieldOperationResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *APIShieldOperationModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	_, err := r.client.APIGateway.Operations.Delete(
+		ctx,
+		data.OperationID.ValueString(),
+		api_gateway.OperationDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *APIShieldOperationResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	if req.State.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
-				"present in the API until manually deleted.",
-		)
-	}
-	if req.Plan.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"Applying this resource destruction will remove the resource from the Terraform state "+
-				"but will not change it in the API. If you would like to destroy or reset this resource "+
-				"in the API, refer to the documentation for how to do it manually.",
-		)
-	}
+func (r *APIShieldOperationResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }
