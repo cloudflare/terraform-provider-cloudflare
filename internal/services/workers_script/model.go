@@ -21,7 +21,6 @@ type WorkersScriptModel struct {
 	ScriptName    types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
 	AccountID     types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
 	Message       types.String                                                  `tfsdk:"message" json:"message,optional"`
-	AnyPartName   *[]types.String                                               `tfsdk:"any_part_name" json:"<any part name>,optional"`
 	Metadata      customfield.NestedObject[WorkersScriptMetadataModel]          `tfsdk:"metadata" json:"metadata,computed_optional"`
 	CreatedOn     timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Etag          types.String                                                  `tfsdk:"etag" json:"etag,computed"`

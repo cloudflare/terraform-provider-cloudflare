@@ -41,11 +41,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Rollback message to be associated with this deployment. Only parsed when query param `\"rollback_to\"` is present.",
 				Optional:    true,
 			},
-			"any_part_name": schema.ListAttribute{
-				Description: "A module comprising a Worker script, often a javascript file. Multiple modules may be provided as separate named parts, but at least one module must be present and referenced in the metadata as `main_module` or `body_part` by part name. Source maps may also be included using the `application/source-map` content type.",
-				Optional:    true,
-				ElementType: types.StringType,
-			},
 			"metadata": schema.SingleNestedAttribute{
 				Description: "JSON encoded metadata about the uploaded parts and Worker configuration.",
 				Computed:    true,
@@ -333,7 +328,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"usage_model": schema.StringAttribute{
-						Description: "Usage model to apply to invocations.",
+						Description: "Usage model for the Worker invocations.",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("bundled", "unbound"),
@@ -380,8 +375,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"usage_model": schema.StringAttribute{
-				Description: "Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').",
+				Description: "Usage model for the Worker invocations.",
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("bundled", "unbound"),
+				},
 			},
 			"tail_consumers": schema.ListNestedAttribute{
 				Description: "List of Workers that will consume logs from the attached Worker.",
