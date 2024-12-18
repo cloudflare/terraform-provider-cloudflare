@@ -116,7 +116,6 @@ Optional:
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `main_module` (String) Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.
 - `migrations` (Attributes) Migrations to apply for Durable Objects associated with this Worker. (see [below for nested schema](#nestedatt--metadata--migrations))
-- `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--metadata--observability))
 - `placement` (Attributes) (see [below for nested schema](#nestedatt--metadata--placement))
 - `tags` (List of String) List of strings to use as tags for this Worker.
 - `tail_consumers` (Attributes List) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--metadata--tail_consumers))
@@ -214,18 +213,6 @@ Optional:
 - `from_script` (String)
 - `to` (String)
 
-
-
-<a id="nestedatt--metadata--observability"></a>
-### Nested Schema for `metadata.observability`
-
-Required:
-
-- `enabled` (Boolean) Whether observability is enabled for the Worker.
-
-Optional:
-
-- `head_sampling_rate` (Number) The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
 
 
 <a id="nestedatt--metadata--placement"></a>

@@ -22,8 +22,8 @@ resource "cloudflare_load_balancer_monitor" "example_load_balancer_monitor" {
   expected_codes = "2xx"
   follow_redirects = true
   header = {
-    host = ["example.com"]
-    x_app_id = ["abc123"]
+    Host = ["example.com"]
+    X-App-ID = ["abc123"]
   }
   interval = 0
   method = "GET"

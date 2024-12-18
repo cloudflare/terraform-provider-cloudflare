@@ -27,33 +27,19 @@ resource "cloudflare_email_security_block_sender" "example_email_security_block_
 ### Required
 
 - `account_id` (String) Account Identifier
-
-### Optional
-
-- `body` (Attributes List) (see [below for nested schema](#nestedatt--body))
-- `comments` (String)
 - `is_regex` (Boolean)
 - `pattern` (String)
 - `pattern_type` (String)
+
+### Optional
+
+- `comments` (String)
 
 ### Read-Only
 
 - `created_at` (String)
-- `id` (Number) The ID of this resource.
+- `id` (Number) The unique identifier for the allow policy.
 - `last_modified` (String)
-
-<a id="nestedatt--body"></a>
-### Nested Schema for `body`
-
-Required:
-
-- `is_regex` (Boolean)
-- `pattern` (String)
-- `pattern_type` (String)
-
-Optional:
-
-- `comments` (String)
 
 ## Import
 

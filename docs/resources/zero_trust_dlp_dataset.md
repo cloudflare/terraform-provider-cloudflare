@@ -54,7 +54,9 @@ If false, the response has no secret and the dataset is uploaded in plaintext.
 - `max_cells` (Number)
 - `num_cells` (Number)
 - `status` (String)
-- `updated_at` (String)
+- `updated_at` (String) When the dataset was last updated.
+
+This includes name or description changes as well as uploads.
 - `uploads` (Attributes List) (see [below for nested schema](#nestedatt--uploads))
 - `version` (Number) The version to use when uploading the dataset.
 
@@ -83,7 +85,9 @@ Read-Only:
 - `num_cells` (Number)
 - `secret` (Boolean)
 - `status` (String)
-- `updated_at` (String)
+- `updated_at` (String) When the dataset was last updated.
+
+This includes name or description changes as well as uploads.
 - `uploads` (Attributes List) (see [below for nested schema](#nestedatt--dataset--uploads))
 
 <a id="nestedatt--dataset--columns"></a>
