@@ -5,6 +5,8 @@ package managed_transforms
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -17,41 +19,63 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "The unique ID of the zone.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "The unique ID of the zone.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"managed_request_headers": schema.ListNestedAttribute{
-				Required: true,
+				Description: "The list of Managed Request Transforms.",
+				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "Human-readable identifier of the Managed Transform.",
-							Optional:    true,
+							Description: "The human-readable identifier of the Managed Transform.",
+							Required:    true,
 						},
 						"enabled": schema.BoolAttribute{
-							Description: "When true, the Managed Transform is enabled.",
-							Optional:    true,
+							Description: "Whether the Managed Transform is enabled.",
+							Required:    true,
+						},
+						"has_conflict": schema.BoolAttribute{
+							Description: "Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.",
+							Computed:    true,
+						},
+						"conflicts_with": schema.ListAttribute{
+							Description: "The Managed Transforms that this Managed Transform conflicts with.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[jsontypes.Normalized](ctx),
+							ElementType: jsontypes.NormalizedType{},
 						},
 					},
 				},
 			},
 			"managed_response_headers": schema.ListNestedAttribute{
-				Required: true,
+				Description: "The list of Managed Response Transforms.",
+				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "Human-readable identifier of the Managed Transform.",
-							Optional:    true,
+							Description: "The human-readable identifier of the Managed Transform.",
+							Required:    true,
 						},
 						"enabled": schema.BoolAttribute{
-							Description: "When true, the Managed Transform is enabled.",
-							Optional:    true,
+							Description: "Whether the Managed Transform is enabled.",
+							Required:    true,
+						},
+						"has_conflict": schema.BoolAttribute{
+							Description: "Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.",
+							Computed:    true,
+						},
+						"conflicts_with": schema.ListAttribute{
+							Description: "The Managed Transforms that this Managed Transform conflicts with.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[jsontypes.Normalized](ctx),
+							ElementType: jsontypes.NormalizedType{},
 						},
 					},
 				},
