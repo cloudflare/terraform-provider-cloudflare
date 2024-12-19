@@ -98,6 +98,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"version": schema.Int64Attribute{
+				Description: "version number of the rule",
+				Computed:    true,
+			},
 			"filters": schema.ListAttribute{
 				Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
 				Computed:    true,

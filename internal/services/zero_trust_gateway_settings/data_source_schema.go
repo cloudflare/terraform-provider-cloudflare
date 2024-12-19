@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"settings": schema.SingleNestedAttribute{
-				Description: "account settings.",
+				Description: "Account settings",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{

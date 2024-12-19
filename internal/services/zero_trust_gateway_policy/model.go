@@ -31,6 +31,7 @@ type ZeroTrustGatewayPolicyModel struct {
 	CreatedAt     timetypes.RFC3339                                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt     timetypes.RFC3339                                                 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
 	UpdatedAt     timetypes.RFC3339                                                 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	Version       types.Int64                                                       `tfsdk:"version" json:"version,computed"`
 }
 
 func (m ZeroTrustGatewayPolicyModel) MarshalJSON() (data []byte, err error) {

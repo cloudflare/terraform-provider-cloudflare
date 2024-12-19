@@ -466,6 +466,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"version": schema.Int64Attribute{
+				Description: "version number of the rule",
+				Computed:    true,
+			},
 		},
 	}
 }

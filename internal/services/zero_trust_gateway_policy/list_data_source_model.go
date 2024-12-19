@@ -48,6 +48,7 @@ type ZeroTrustGatewayPoliciesResultDataSourceModel struct {
 	Schedule      customfield.NestedObject[ZeroTrustGatewayPoliciesScheduleDataSourceModel]     `tfsdk:"schedule" json:"schedule,computed"`
 	Traffic       types.String                                                                  `tfsdk:"traffic" json:"traffic,computed"`
 	UpdatedAt     timetypes.RFC3339                                                             `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	Version       types.Int64                                                                   `tfsdk:"version" json:"version,computed"`
 }
 
 type ZeroTrustGatewayPoliciesExpirationDataSourceModel struct {
