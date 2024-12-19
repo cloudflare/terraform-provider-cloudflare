@@ -7,7 +7,6 @@ import (
 	"math"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -58,11 +57,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"last_updated": schema.StringAttribute{
-				Description: "The timestamp of when the ruleset was last modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
 			"name": schema.StringAttribute{
 				Description: "The human-readable name of the ruleset.",
 				Computed:    true,
@@ -98,25 +92,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"version": schema.StringAttribute{
-				Description: "The version of the ruleset.",
-				Computed:    true,
-			},
 			"rules": schema.ListNestedAttribute{
 				Description: "The list of rules in the ruleset.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[RulesetRulesDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"last_updated": schema.StringAttribute{
-							Description: "The timestamp of when the rule was last modified.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
-						"version": schema.StringAttribute{
-							Description: "The version of the rule.",
-							Computed:    true,
-						},
 						"id": schema.StringAttribute{
 							Description: "The unique ID of the rule.",
 							Computed:    true,
