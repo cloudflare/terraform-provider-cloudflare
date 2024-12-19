@@ -2,23 +2,19 @@
 page_title: "cloudflare_ruleset Resource - Cloudflare"
 subcategory: ""
 description: |-
-  The Cloudflare Ruleset Engine https://developers.cloudflare.com/firewall/cf-rulesets
+  The Cloudflare Ruleset Engine (https://developers.cloudflare.com/ruleset-engine/about/)
   allows you to create and deploy rules and rulesets.
-  The engine syntax, inspired by the Wireshark Display Filter language, is the
-  same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
-  in different products, allowing you to configure several products using the same
-  basic syntax.
+  Cloudflare uses the Ruleset Engine in different products, allowing
+  you to configure several products using the same basic syntax.
 ---
 
 # cloudflare_ruleset (Resource)
 
-The [Cloudflare Ruleset Engine](https://developers.cloudflare.com/firewall/cf-rulesets)
+The Cloudflare Ruleset Engine (https://developers.cloudflare.com/ruleset-engine/about/)
 allows you to create and deploy rules and rulesets.
 
-The engine syntax, inspired by the Wireshark Display Filter language, is the
-same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
-in different products, allowing you to configure several products using the same
-basic syntax.
+Cloudflare uses the Ruleset Engine in different products, allowing
+you to configure several products using the same basic syntax.
 
 ## Example Usage
 
@@ -26,47 +22,51 @@ basic syntax.
 # Magic Transit
 resource "cloudflare_ruleset" "magic_transit_example" {
   account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "account magic transit"
-  description = "example magic transit ruleset description"
-  kind        = "root"
+  name        = "My example Magic Transit ruleset"
+  description = "My example Magic Transit ruleset description"
   phase       = "magic_transit"
+  kind        = "root"
 
   rules {
-    action      = "allow"
-    expression  = "tcp.dstport in { 32768..65535 }"
+    ref         = "allow_tcp_ephemeral_ports"
     description = "Allow TCP Ephemeral Ports"
+    expression  = "tcp.dstport in { 32768..65535 }"
+    action      = "allow"
   }
 }
 
 # Zone-level WAF Managed Ruleset
 resource "cloudflare_ruleset" "zone_level_managed_waf" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "managed WAF"
-  description = "managed WAF ruleset description"
-  kind        = "zone"
+  name        = "My example managed WAF ruleset"
+  description = "My example managed WAF ruleset description"
   phase       = "http_request_firewall_managed"
+  kind        = "zone"
 
   rules {
-    action = "execute"
+    ref         = "execute_managed_ruleset"
+    description = "Execute Cloudflare Managed Ruleset on my zone-level phase entry point ruleset"
+    expression  = "(http.host eq \"example.host.com\")"
+    action      = "execute"
     action_parameters {
       id = "efb7b8c949ac4650a09736fc376e9aee"
     }
-    expression  = "(http.host eq \"example.host.com\")"
-    description = "Execute Cloudflare Managed Ruleset on my zone-level phase entry point ruleset"
-    enabled     = true
   }
 }
 
 # Zone-level WAF with tag-based overrides
 resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overrides" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "managed WAF with tag-based overrides"
-  description = "managed WAF with tag-based overrides ruleset description"
-  kind        = "zone"
+  name        = "My example managed WAF ruleset with tag-based overrides"
+  description = "My example managed WAF ruleset with tag-based overrides ruleset description"
   phase       = "http_request_firewall_managed"
+  kind        = "zone"
 
   rules {
-    action = "execute"
+    ref         = "execute_managed_ruleset"
+    description = "Execute Cloudflare Managed Ruleset with overrides to change Wordpress rules to block"
+    expression  = "(http.host eq \"example.host.com\")"
+    action      = "execute"
     action_parameters {
       id = "efb7b8c949ac4650a09736fc376e9aee"
       overrides {
@@ -83,23 +83,23 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
         }
       }
     }
-
-    expression  = "(http.host eq \"example.host.com\")"
-    description = "overrides to only enable wordpress rules to block"
-    enabled     = false
+    enabled = false
   }
 }
 
 # Rewrite the URI path component to a static path
 resource "cloudflare_ruleset" "transform_uri_rule_path" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "transform rule for URI path"
-  description = "change the URI path to a new static path"
-  kind        = "zone"
+  name        = "My example transform ruleset"
+  description = "My example transform ruleset description"
   phase       = "http_request_transform"
+  kind        = "zone"
 
   rules {
-    action = "rewrite"
+    ref         = "transform_old_path"
+    description = "Transform old path"
+    expression  = "(http.host eq \"example.com\" and http.request.uri.path eq \"/old-path\")"
+    action      = "rewrite"
     action_parameters {
       uri {
         path {
@@ -107,23 +107,22 @@ resource "cloudflare_ruleset" "transform_uri_rule_path" {
         }
       }
     }
-
-    expression  = "(http.host eq \"example.com\" and http.request.uri.path eq \"/old-path\")"
-    description = "example URI path transform rule"
-    enabled     = true
   }
 }
 
 # Rewrite the URI query component to a static query
 resource "cloudflare_ruleset" "transform_uri_rule_query" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "transform rule for URI query parameter"
-  description = "change the URI query to a new static query"
-  kind        = "zone"
+  name        = "My example transform ruleset"
+  description = "My example transform ruleset description"
   phase       = "http_request_transform"
+  kind        = "zone"
 
   rules {
-    action = "rewrite"
+    ref         = "transform_uri_query_parameter"
+    description = "Transform URI query parameter"
+    expression  = "(http.host eq \"example.host.com\")"
+    action      = "rewrite"
     action_parameters {
       uri {
         query {
@@ -131,23 +130,22 @@ resource "cloudflare_ruleset" "transform_uri_rule_query" {
         }
       }
     }
-
-    expression  = "(http.host eq \"example.host.com\")"
-    description = "URI transformation query example"
-    enabled     = true
   }
 }
 
 # Rewrite HTTP headers to a modified values
 resource "cloudflare_ruleset" "transform_uri_http_headers" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "transform rule for HTTP headers"
-  description = "modify HTTP headers before reaching origin"
+  name        = "My example transform ruleset"
+  description = "My example transform ruleset description"
+  phase       = "http_request_transform"
   kind        = "zone"
-  phase       = "http_request_late_transform"
 
   rules {
-    action = "rewrite"
+    ref         = "transform_request_headers"
+    description = "Transform request headers"
+    expression  = "(http.host eq \"example.host.com\")"
+    action      = "rewrite"
     action_parameters {
       headers {
         name      = "example-http-header-1"
@@ -166,23 +164,22 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
         operation = "remove"
       }
     }
-
-    expression  = "(http.host eq \"example.host.com\")"
-    description = "example request header transform rule"
-    enabled     = false
   }
 }
 
 # HTTP rate limit for an API route
 resource "cloudflare_ruleset" "rate_limiting_example" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "restrict API requests count"
-  description = "apply HTTP rate limiting for a route"
-  kind        = "zone"
+  name        = "My example rate limit ruleset"
+  description = "My example rate limit ruleset description"
   phase       = "http_ratelimit"
+  kind        = "zone"
 
   rules {
-    action = "block"
+    ref         = "rate_limit_api_requests"
+    description = "Rate limit API requests"
+    expression  = "(http.request.uri.path matches \"^/api/\")"
+    action      = "block"
     ratelimit {
       characteristics = [
         "cf.colo.id",
@@ -192,23 +189,22 @@ resource "cloudflare_ruleset" "rate_limiting_example" {
       requests_per_period = 100
       mitigation_timeout  = 600
     }
-
-    expression  = "(http.request.uri.path matches \"^/api/\")"
-    description = "rate limit for API"
-    enabled     = true
   }
 }
 
 # Change origin for an API route
 resource "cloudflare_ruleset" "http_origin_example" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "Change to some origin"
-  description = "Change origin for a route"
-  kind        = "zone"
+  name        = "My example origin ruleset"
+  description = "My example origin ruleset description"
   phase       = "http_request_origin"
+  kind        = "zone"
 
   rules {
-    action = "route"
+    ref         = "change_origin"
+    description = "Change to some.host"
+    expression  = "(http.request.uri.path matches \"^/api/\")"
+    action      = "route"
     action_parameters {
       host_header = "some.host"
       origin {
@@ -216,22 +212,22 @@ resource "cloudflare_ruleset" "http_origin_example" {
         port = 80
       }
     }
-    expression  = "(http.request.uri.path matches \"^/api/\")"
-    description = "change origin to some.host"
-    enabled     = true
   }
 }
 
 # Custom fields logging
 resource "cloudflare_ruleset" "custom_fields_logging_example" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "log custom fields"
-  description = "add custom fields to logging"
-  kind        = "zone"
+  name        = "My example log custom field ruleset"
+  description = "My example log custom field ruleset description"
   phase       = "http_log_custom_fields"
+  kind        = "zone"
 
   rules {
-    action = "log_custom_field"
+    ref         = "log_custom_fields"
+    description = "Log custom fields"
+    expression  = "(http.host eq \"example.host.com\")"
+    action      = "log_custom_field"
     action_parameters {
       request_fields = [
         "content-type",
@@ -249,23 +245,22 @@ resource "cloudflare_ruleset" "custom_fields_logging_example" {
         "__cfruid"
       ]
     }
-
-    expression  = "(http.host eq \"example.host.com\")"
-    description = "log custom fields rule"
-    enabled     = true
   }
 }
 
-# Custom cache keys + settings
+# Custom cache keys and settings
 resource "cloudflare_ruleset" "cache_settings_example" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "set cache settings"
-  description = "set cache settings for the request"
-  kind        = "zone"
+  name        = "My example cache settings ruleset"
+  description = "My example cache settings ruleset description"
   phase       = "http_request_cache_settings"
+  kind        = "zone"
 
   rules {
-    action = "set_cache_settings"
+    ref         = "cache_settings"
+    description = "Set cache settings rule"
+    expression  = "(http.host eq \"example.host.com\")"
+    action      = "set_cache_settings"
     action_parameters {
       edge_ttl {
         mode    = "override_origin"
@@ -325,44 +320,44 @@ resource "cloudflare_ruleset" "cache_settings_example" {
       }
       origin_error_page_passthru = false
     }
-    expression  = "(http.host eq \"example.host.com\")"
-    description = "set cache settings rule"
-    enabled     = true
   }
 }
 
 # Redirects based on a List resource
 resource "cloudflare_ruleset" "redirect_from_list_example" {
   account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "redirects"
-  description = "Redirect ruleset"
-  kind        = "root"
+  name        = "My example redirect ruleset"
+  description = "My example redirect ruleset description"
   phase       = "http_request_redirect"
+  kind        = "root"
 
   rules {
-    action = "redirect"
+    ref         = "redirects_from_list"
+    description = "Apply redirects from redirect_list"
+    expression  = "http.request.full_uri in $redirect_list"
+    action      = "redirect"
     action_parameters {
       from_list {
         name = "redirect_list"
         key  = "http.request.full_uri"
       }
     }
-    expression  = "http.request.full_uri in $redirect_list"
-    description = "Apply redirects from redirect_list"
-    enabled     = true
   }
 }
 
 # Dynamic Redirects from value resource
 resource "cloudflare_ruleset" "redirect_from_value_example" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "redirects"
-  description = "Redirect ruleset"
-  kind        = "zone"
+  name        = "My example dynamic redirect ruleset"
+  description = "My example dynamic redirect ruleset description"
   phase       = "http_request_dynamic_redirect"
+  kind        = "zone"
 
   rules {
-    action = "redirect"
+    ref         = "redirect_from_value"
+    description = "Apply redirect from value"
+    expression  = "(http.request.uri.path matches \"^/api/\")"
+    action      = "redirect"
     action_parameters {
       from_value {
         status_code = 301
@@ -372,62 +367,63 @@ resource "cloudflare_ruleset" "redirect_from_value_example" {
         preserve_query_string = true
       }
     }
-    expression  = "(http.request.uri.path matches \"^/api/\")"
-    description = "Apply redirect from value"
-    enabled     = true
   }
 }
 
 # Serve some custom error response
 resource "cloudflare_ruleset" "http_custom_error_example" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "Serve some error response"
-  description = "Serve some error response"
-  kind        = "zone"
+  name        = "My example custom errors ruleset"
+  description = "My example custom errors ruleset description"
   phase       = "http_custom_errors"
+  kind        = "zone"
+
   rules {
-    action = "serve_error"
+    ref         = "serve_some_error_response"
+    description = "Serve some error response"
+    expression  = "(http.request.uri.path matches \"^/api/\")"
+    action      = "serve_error"
     action_parameters {
       content      = "some error html"
       content_type = "text/html"
       status_code  = "530"
     }
-    expression  = "(http.request.uri.path matches \"^/api/\")"
-    description = "serve some error response"
-    enabled     = true
   }
 }
 
 # Set Configuration Rules for an API route
 resource "cloudflare_ruleset" "http_config_rules_example" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "set config rules"
-  description = "set config rules for request"
-  kind        = "zone"
+  name        = "My example config settings ruleset"
+  description = "My example config settings ruleset description"
   phase       = "http_config_settings"
+  kind        = "zone"
 
   rules {
-    action = "set_config"
+    ref         = "set_config_settings"
+    description = "Set config settings"
+    expression  = "(http.request.uri.path matches \"^/api/\")"
+    action      = "set_config"
     action_parameters {
       email_obfuscation = true
       bic               = true
     }
-    expression  = "(http.request.uri.path matches \"^/api/\")"
-    description = "set config rules for matching request"
-    enabled     = true
   }
 }
 
-# Set compress algorithm for response.
+# Set compress algorithm for response
 resource "cloudflare_ruleset" "response_compress_brotli_html" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "Brotli response compression for HTML"
-  description = "Response compression ruleset"
-  kind        = "zone"
+  name        = "My example response compression ruleset"
+  description = "My example response compression description"
   phase       = "http_response_compression"
+  kind        = "zone"
 
   rules {
-    action = "compress_response"
+    ref         = "prefer_brotli_for_html"
+    description = "Prefer Brotli compression for HTML"
+    expression  = "http.response.content_type.media_type == \"text/html\""
+    action      = "compress_response"
     action_parameters {
       algorithms {
         name = "brotli"
@@ -436,9 +432,6 @@ resource "cloudflare_ruleset" "response_compress_brotli_html" {
         name = "auto"
       }
     }
-    expression  = "http.response.content_type.media_type == \"text/html\""
-    description = "Prefer brotli compression for HTML"
-    enabled     = true
   }
 }
 ```
@@ -483,8 +476,6 @@ Optional:
 Read-Only:
 
 - `id` (String) Unique rule identifier.
-- `last_updated` (String) The most recent update to this rule.
-- `version` (String) Version of the ruleset to deploy.
 
 <a id="nestedblock--rules--action_parameters"></a>
 ### Nested Schema for `rules.action_parameters`
@@ -544,7 +535,6 @@ Optional:
 - `status_code` (Number) HTTP status code of the custom error response.
 - `sxg` (Boolean) Turn on or off the SXG feature.
 - `uri` (Block List) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations. (see [below for nested schema](#nestedblock--rules--action_parameters--uri))
-- `version` (String) Version of the ruleset to deploy.
 
 <a id="nestedblock--rules--action_parameters--algorithms"></a>
 ### Nested Schema for `rules.action_parameters.algorithms`

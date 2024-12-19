@@ -26,14 +26,13 @@ import (
 
 func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Version: 1,
 		MarkdownDescription: heredoc.Doc(`
-			The [Cloudflare Ruleset Engine](https://developers.cloudflare.com/firewall/cf-rulesets)
+			The Cloudflare Ruleset Engine (https://developers.cloudflare.com/ruleset-engine/about/)
 			allows you to create and deploy rules and rulesets.
 
-			The engine syntax, inspired by the Wireshark Display Filter language, is the
-			same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
-			in different products, allowing you to configure several products using the same
-			basic syntax.
+			Cloudflare uses the Ruleset Engine in different products, allowing
+			you to configure several products using the same basic syntax.
 		`),
 		Attributes: map[string]schema.Attribute{
 			consts.IDSchemaKey: schema.StringAttribute{

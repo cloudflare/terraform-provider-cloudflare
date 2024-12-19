@@ -1,4 +1,4 @@
- ```release-note:new-resource
+```release-note:new-resource
 cloudflare_snippet
 ```
 
