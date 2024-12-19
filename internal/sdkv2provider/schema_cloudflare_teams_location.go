@@ -6,6 +6,19 @@ import (
 )
 
 func resourceCloudflareTeamsLocationSchema() map[string]*schema.Schema {
+	var networkSchema = schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"network": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "CIDR notation representation of the network IP.",
+			},
+		},
+	}
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
 			Description: consts.AccountIDSchemaDescription,
@@ -21,19 +34,7 @@ func resourceCloudflareTeamsLocationSchema() map[string]*schema.Schema {
 			Type:        schema.TypeSet,
 			Optional:    true,
 			Description: "The networks CIDRs that comprise the location.",
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"id": {
-						Type:     schema.TypeString,
-						Computed: true,
-					},
-					"network": {
-						Type:        schema.TypeString,
-						Required:    true,
-						Description: "CIDR notation representation of the network IP.",
-					},
-				},
-			},
+			Elem:        &networkSchema,
 		},
 		"client_default": {
 			Type:        schema.TypeBool,
@@ -44,11 +45,6 @@ func resourceCloudflareTeamsLocationSchema() map[string]*schema.Schema {
 			Type:        schema.TypeBool,
 			Optional:    true,
 			Description: "Indicator that this location needs to resolve EDNS queries.",
-		},
-		"policy_ids": {
-			Type:     schema.TypeList,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-			Computed: true,
 		},
 		"ip": {
 			Type:        schema.TypeString,
@@ -68,7 +64,109 @@ func resourceCloudflareTeamsLocationSchema() map[string]*schema.Schema {
 		"ipv4_destination": {
 			Type:        schema.TypeString,
 			Computed:    true,
-			Description: "IP to direct all IPv4 DNS queries to.",
+			Description: "IPv4 to direct all IPv4 DNS queries to.",
+		},
+		"ipv4_destination_backup": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Backup IPv4 to direct all IPv4 DNS queries to.",
+		},
+		"dns_destination_ips_id": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "IPv4 binding assigned to this location",
+		},
+		"dns_destination_ipv6_block_id": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "IPv6 block binding assigned to this location",
+		},
+		"endpoints": {
+			Type:        schema.TypeSet,
+			Computed:    true,
+			Description: "Endpoints assigned to this location",
+			Optional:    true,
+			ConfigMode:  schema.SchemaConfigModeBlock,
+			MaxItems:    1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"ipv4": {
+						Type:     schema.TypeSet,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"enabled": {
+									Type:     schema.TypeBool,
+									Required: true,
+								},
+							},
+						},
+					},
+					"ipv6": {
+						Type:     schema.TypeSet,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"enabled": {
+									Type:     schema.TypeBool,
+									Required: true,
+								},
+								"networks": {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem:     &networkSchema,
+								},
+							},
+						},
+					},
+					"doh": {
+						Type:     schema.TypeSet,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"require_token": {
+									Type:     schema.TypeBool,
+									Required: true,
+								},
+								"enabled": {
+									Type:     schema.TypeBool,
+									Required: true,
+								},
+								"networks": {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem:     &networkSchema,
+								},
+							},
+						},
+					},
+					"dot": {
+						Type:     schema.TypeSet,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"require_token": {
+									Type:     schema.TypeBool,
+									Required: true,
+								},
+								"enabled": {
+									Type:     schema.TypeBool,
+									Required: true,
+								},
+								"networks": {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem:     &networkSchema,
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 }

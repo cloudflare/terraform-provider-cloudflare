@@ -68,9 +68,7 @@ func resourceCloudflareTeamsLocationRead(ctx context.Context, d *schema.Resource
 	if err := d.Set("networks", flattenTeamsLocationNetworks(location.Networks)); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing Location networks"))
 	}
-	if err := d.Set("policy_ids", location.PolicyIDs); err != nil {
-		return diag.FromErr(fmt.Errorf("error parsing Location policy IDs"))
-	}
+
 	if err := d.Set("ip", location.Ip); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing Location IP"))
 	}
@@ -83,11 +81,25 @@ func resourceCloudflareTeamsLocationRead(ctx context.Context, d *schema.Resource
 	if err := d.Set("ipv4_destination", location.IPv4Destination); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing Location IPv4 destination"))
 	}
+	if err := d.Set("ipv4_destination_backup", location.IPv4DestinationBackup); err != nil {
+		return diag.FromErr(fmt.Errorf("error parsing Location IPv4 destination"))
+	}
 	if err := d.Set("client_default", location.ClientDefault); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing Location client default"))
 	}
 	if err := d.Set("ecs_support", location.ECSSupport); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing Location ecs support"))
+	}
+	if err := d.Set("dns_destination_ipv6_block_id", location.DNSDestinationIPv6BlockID); err != nil {
+		return diag.FromErr(fmt.Errorf("error parsing Location dns_destination_ipv6_block_id"))
+	}
+
+	if err := d.Set("dns_destination_ips_id", location.DNSDestinationIPsID); err != nil {
+		return diag.FromErr(fmt.Errorf("error parsing Location dns_destination_ipv6_block_id"))
+	}
+
+	if err := d.Set("endpoints", flattenTeamsEndpoints(location.Endpoints)); err != nil {
+		return diag.FromErr(fmt.Errorf("error parsing Location endpoints"))
 	}
 
 	return nil
@@ -100,12 +112,27 @@ func resourceCloudflareTeamsLocationCreate(ctx context.Context, d *schema.Resour
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Teams Location for account %q: %w, %v", accountID, err, networks))
 	}
-
 	newTeamLocation := cloudflare.TeamsLocation{
 		Name:          d.Get("name").(string),
 		Networks:      networks,
 		ClientDefault: d.Get("client_default").(bool),
 		ECSSupport:    cloudflare.BoolPtr(d.Get("ecs_support").(bool)),
+	}
+
+	endpoints, err := inflateTeamsLocationEndpoint(d.Get("endpoints"))
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("error creating Teams Location endpoints for account %q: %w, %v", accountID, err, networks))
+	} else if endpoints != nil {
+		newTeamLocation.Endpoints = endpoints
+	}
+
+	destinationIpId, ok := d.Get("dns_destination_ips_id").(string)
+	if ok {
+		newTeamLocation.DNSDestinationIPsID = destinationIpId
+	}
+	destinationIpv6Id, ok := d.Get("dns_destination_ipv6_block_id").(string)
+	if ok {
+		newTeamLocation.DNSDestinationIPv6BlockID = destinationIpv6Id
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Teams Location from struct: %+v", newTeamLocation))
@@ -199,6 +226,126 @@ func inflateTeamsLocationNetworks(networks interface{}) ([]cloudflare.TeamsLocat
 	return networkStructs, nil
 }
 
+func inflateTeamsLocationEndpoint(endpoint interface{}) (*cloudflare.TeamsLocationEndpoints, error) {
+	if endpoint == nil {
+		return nil, nil
+	}
+
+	epSet, ok := endpoint.(*schema.Set)
+	if !ok {
+		return nil, fmt.Errorf("error parsing endpoint list")
+	}
+	for _, i := range epSet.List() {
+		epItem, ok := i.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("error parsing endpoint")
+		}
+		ipv4Endpoint, err := inflateIpv4Endpoint(epItem["ipv4"])
+		if err != nil {
+			return nil, fmt.Errorf("error parsing ipv4 endpoint")
+		}
+
+		ipv6Endpoint, err := inflateIpv6Endpoint(epItem["ipv6"])
+		if err != nil {
+			return nil, fmt.Errorf("error parsing ipv6 endpoint")
+		}
+
+		dotEndpoint, err := inflateDoTEndpoint(epItem["dot"])
+		if err != nil {
+			return nil, fmt.Errorf("error parsing dot endpoint")
+		}
+
+		dohEndpoint, err := inflateDohEndpoint(epItem["doh"])
+		if err != nil {
+			return nil, fmt.Errorf("error parsing doh endpoint")
+		}
+
+		return &cloudflare.TeamsLocationEndpoints{
+			IPv4Endpoint: *ipv4Endpoint,
+			IPv6Endpoint: *ipv6Endpoint,
+			DotEndpoint:  *dotEndpoint,
+			DohEndpoint:  *dohEndpoint,
+		}, nil
+	}
+	return nil, fmt.Errorf("empty endpoint")
+}
+
+func inflateIpv4Endpoint(item interface{}) (*cloudflare.TeamsLocationIPv4EndpointFields, error) {
+	epItem, ok := item.(*schema.Set)
+	if !ok {
+		return nil, fmt.Errorf("error parsing endpoint item")
+	}
+
+	return &cloudflare.TeamsLocationIPv4EndpointFields{
+		Enabled: firstItemInSet(epItem)["enabled"].(bool),
+	}, nil
+}
+
+func firstItemInSet(l *schema.Set) map[string]interface{} {
+	return l.List()[0].(map[string]interface{})
+}
+
+func inflateIpv6Endpoint(item interface{}) (*cloudflare.TeamsLocationIPv6EndpointFields, error) {
+	epItems, ok := item.(*schema.Set)
+	if !ok {
+		return nil, fmt.Errorf("error parsing endpoint item")
+	}
+
+	epItem := firstItemInSet(epItems)
+
+	networks, err := inflateTeamsLocationNetworks(epItem["networks"])
+	if err != nil {
+		return nil, fmt.Errorf("error parsing endpoint ipv6 networks")
+	}
+	return &cloudflare.TeamsLocationIPv6EndpointFields{
+		TeamsLocationEndpointFields: cloudflare.TeamsLocationEndpointFields{
+			Enabled:  epItem["enabled"].(bool),
+			Networks: networks,
+		},
+	}, nil
+}
+
+func inflateDoTEndpoint(item interface{}) (*cloudflare.TeamsLocationDotEndpointFields, error) {
+	epItems, ok := item.(*schema.Set)
+	if !ok {
+		return nil, fmt.Errorf("error parsing endpoint item")
+	}
+
+	epItem := firstItemInSet(epItems)
+	networks, err := inflateTeamsLocationNetworks(epItem["networks"])
+	if err != nil {
+		return nil, fmt.Errorf("error parsing endpoint dot networks")
+	}
+	return &cloudflare.TeamsLocationDotEndpointFields{
+		RequireToken: epItem["require_token"].(bool),
+		TeamsLocationEndpointFields: cloudflare.TeamsLocationEndpointFields{
+			Enabled:  epItem["enabled"].(bool),
+			Networks: networks,
+		},
+	}, nil
+}
+
+func inflateDohEndpoint(item interface{}) (*cloudflare.TeamsLocationDohEndpointFields, error) {
+	epItems, ok := item.(*schema.Set)
+	if !ok {
+		return nil, fmt.Errorf("error parsing endpoint item")
+	}
+
+	epItem := firstItemInSet(epItems)
+
+	networks, err := inflateTeamsLocationNetworks(epItem["networks"])
+	if err != nil {
+		return nil, fmt.Errorf("error parsing endpoint dot networks")
+	}
+	return &cloudflare.TeamsLocationDohEndpointFields{
+		RequireToken: epItem["require_token"].(bool),
+		TeamsLocationEndpointFields: cloudflare.TeamsLocationEndpointFields{
+			Enabled:  epItem["enabled"].(bool),
+			Networks: networks,
+		},
+	}, nil
+}
+
 func flattenTeamsLocationNetworks(networks []cloudflare.TeamsLocationNetwork) []interface{} {
 	var flattenedNetworks []interface{}
 	for _, net := range networks {
@@ -208,4 +355,46 @@ func flattenTeamsLocationNetworks(networks []cloudflare.TeamsLocationNetwork) []
 		})
 	}
 	return flattenedNetworks
+}
+
+func flattenTeamsEndpoints(endpoint *cloudflare.TeamsLocationEndpoints) map[string]interface{} {
+	return map[string]interface{}{
+		"ipv4": flattenTeamsEndpointIpv4Field(endpoint.IPv4Endpoint),
+		"ipv6": flattenTeamsEndpointIpv6Field(endpoint.IPv6Endpoint),
+		"doh":  flattenTeamsEndpointDOHField(endpoint.DohEndpoint),
+		"dot":  flattenTeamsEndpointDOTField(endpoint.DotEndpoint),
+	}
+}
+
+func flattenTeamsEndpointIpv4Field(field cloudflare.TeamsLocationIPv4EndpointFields) map[string]interface{} {
+	return map[string]interface{}{
+		"enabled":                field.Enabled,
+		"authentication_enabled": field.AuthenticationEnabled,
+	}
+}
+
+func flattenTeamsEndpointIpv6Field(field cloudflare.TeamsLocationIPv6EndpointFields) map[string]interface{} {
+	return map[string]interface{}{
+		"enabled":                field.Enabled,
+		"authentication_enabled": field.AuthenticationEnabledUIHelper,
+		"networks":               flattenTeamsLocationNetworks(field.Networks),
+	}
+}
+
+func flattenTeamsEndpointDOTField(field cloudflare.TeamsLocationDotEndpointFields) map[string]interface{} {
+	return map[string]interface{}{
+		"require_token":          field.RequireToken,
+		"enabled":                field.Enabled,
+		"authentication_enabled": field.AuthenticationEnabledUIHelper,
+		"networks":               flattenTeamsLocationNetworks(field.Networks),
+	}
+}
+
+func flattenTeamsEndpointDOHField(field cloudflare.TeamsLocationDohEndpointFields) map[string]interface{} {
+	return map[string]interface{}{
+		"require_token":          field.RequireToken,
+		"enabled":                field.Enabled,
+		"authentication_enabled": field.AuthenticationEnabledUIHelper,
+		"networks":               flattenTeamsLocationNetworks(field.Networks),
+	}
 }
