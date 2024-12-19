@@ -22,6 +22,11 @@ func resourceCloudflareRegionalHostnameSchema() map[string]*schema.Schema {
 			Required:    true,
 			Description: "The region key. See [the full region list](https://developers.cloudflare.com/data-localization/regional-services/get-started/).",
 		},
+		"routing": {
+			Type:        schema.TypeString,
+			Required:    false,
+			Description: "Configure which routing method to use for the regional hostname.",
+		},
 		"created_on": {
 			Type:        schema.TypeString,
 			Computed:    true,
