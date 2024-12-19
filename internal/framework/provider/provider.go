@@ -18,6 +18,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/access_mutual_tls_hostname_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/cloud_connector_rules"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/content_scanning"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/dcv_delegation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/dlp_datasets"
@@ -395,6 +396,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_infrastructure_access_target.NewResource,
 		leaked_credential_check.NewResource,
 		leaked_credential_check_rule.NewResource,
+		content_scanning.NewResource,
 	}
 }
 
