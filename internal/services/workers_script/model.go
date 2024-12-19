@@ -6,10 +6,11 @@ import (
 	"bytes"
 	"mime/multipart"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/jinzhu/copier"
 )
 
 type WorkersScriptResultEnvelope struct {
@@ -17,35 +18,47 @@ type WorkersScriptResultEnvelope struct {
 }
 
 type WorkersScriptModel struct {
-	ID            types.String                                                  `tfsdk:"id" json:"-,computed"`
-	ScriptName    types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
-	AccountID     types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
-	Message       types.String                                                  `tfsdk:"message" json:"message,optional"`
-	Metadata      customfield.NestedObject[WorkersScriptMetadataModel]          `tfsdk:"metadata" json:"metadata,computed_optional"`
-	CreatedOn     timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Etag          types.String                                                  `tfsdk:"etag" json:"etag,computed"`
-	HasAssets     types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed"`
-	HasModules    types.Bool                                                    `tfsdk:"has_modules" json:"has_modules,computed"`
-	Logpush       types.Bool                                                    `tfsdk:"logpush" json:"logpush,computed"`
-	ModifiedOn    timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	PlacementMode types.String                                                  `tfsdk:"placement_mode" json:"placement_mode,computed"`
-	StartupTimeMs types.Int64                                                   `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
-	UsageModel    types.String                                                  `tfsdk:"usage_model" json:"usage_model,computed"`
-	TailConsumers customfield.NestedObjectList[WorkersScriptTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
+	ID            types.String      `tfsdk:"id" json:"-,computed"`
+	ScriptName    types.String      `tfsdk:"script_name" path:"script_name,required"`
+	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
+	Message       types.String      `tfsdk:"message" json:"message,optional"`
+	Content       types.String      `tfsdk:"content" json:"content,required"`
+	CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Etag          types.String      `tfsdk:"etag" json:"etag,computed"`
+	HasAssets     types.Bool        `tfsdk:"has_assets" json:"has_assets,computed"`
+	HasModules    types.Bool        `tfsdk:"has_modules" json:"has_modules,computed"`
+	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	StartupTimeMs types.Int64       `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+
+	WorkersScriptMetadataModel
 }
 
 func (r WorkersScriptModel) MarshalMultipart() (data []byte, contentType string, err error) {
 	buf := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(buf)
-	err = apiform.MarshalRoot(r, writer)
-	if err != nil {
-		writer.Close()
-		return nil, "", err
+	var metadata WorkersScriptMetadataModel
+	workerBody := bytes.NewReader([]byte(r.Content.ValueString()))
+
+	if r.MainModule.ValueString() != "" {
+		mainModuleName := r.MainModule.ValueString()
+		writeFileBytes(mainModuleName, mainModuleName, "application/javascript+module", workerBody, writer)
+	} else {
+		writeFileBytes("script", "script", "application/javascript", workerBody, writer)
+		r.BodyPart = types.StringValue("script")
 	}
+
+	topLevelMetadata := r.WorkersScriptMetadataModel
+	copier.Copy(&metadata, &topLevelMetadata)
+
+	payload, _ := apijson.Marshal(metadata)
+	metadataContent := bytes.NewReader(payload)
+	writeFileBytes("metadata", "", "application/json", metadataContent, writer)
+
 	err = writer.Close()
 	if err != nil {
 		return nil, "", err
 	}
+
 	return buf.Bytes(), writer.FormDataContentType(), nil
 }
 
