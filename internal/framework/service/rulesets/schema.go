@@ -26,14 +26,13 @@ import (
 
 func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Version: 1,
 		MarkdownDescription: heredoc.Doc(`
-			The [Cloudflare Ruleset Engine](https://developers.cloudflare.com/firewall/cf-rulesets)
+			The Cloudflare Ruleset Engine (https://developers.cloudflare.com/ruleset-engine/about/)
 			allows you to create and deploy rules and rulesets.
 
-			The engine syntax, inspired by the Wireshark Display Filter language, is the
-			same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
-			in different products, allowing you to configure several products using the same
-			basic syntax.
+			Cloudflare uses the Ruleset Engine in different products, allowing
+			you to configure several products using the same basic syntax.
 		`),
 		Attributes: map[string]schema.Attribute{
 			consts.IDSchemaKey: schema.StringAttribute{
@@ -109,10 +108,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 							Computed:            true,
 							MarkdownDescription: "Unique rule identifier.",
 						},
-						"version": schema.StringAttribute{
-							Computed:            true,
-							MarkdownDescription: "Version of the ruleset to deploy.",
-						},
 						"ref": schema.StringAttribute{
 							Optional:            true,
 							Computed:            true,
@@ -144,10 +139,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 								stringvalidator.OneOfCaseInsensitive(cfv1.RulesetRuleActionValues()...),
 							},
 							Optional: true,
-						},
-						"last_updated": schema.StringAttribute{
-							Computed:            true,
-							MarkdownDescription: "The most recent update to this rule.",
 						},
 					},
 					Blocks: map[string]schema.Block{
@@ -310,11 +301,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 									"origin_error_page_passthru": schema.BoolAttribute{
 										Optional:            true,
 										MarkdownDescription: "Pass-through error page for origin.",
-									},
-									"version": schema.StringAttribute{
-										Computed:            true,
-										Optional:            true,
-										MarkdownDescription: "Version of the ruleset to deploy.",
 									},
 								},
 								Blocks: map[string]schema.Block{

@@ -113,6 +113,14 @@ func (r *LeakedCredentialCheckRuleResource) Update(ctx context.Context, req reso
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	var state LeakedCredentialCheckRulesModel
+	diags = req.State.Get(ctx, &state)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	data.ID = state.ID
+
 	zoneID := cloudflare.ZoneIdentifier(data.ZoneID.ValueString())
 	_, err := r.client.V1.LeakedCredentialCheckUpdateDetection(ctx, zoneID, cloudflare.LeakedCredentialCheckUpdateDetectionParams{
 		LeakedCredentialCheckDetectionEntry: cloudflare.LeakedCredentialCheckDetectionEntry{

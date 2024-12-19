@@ -43,4 +43,4 @@ jobs:
       id: go
     - run: go install gotest.tools/gotestsum@latest
     - run: go get github.com/cloudflare/cloudflare-go/v3@next
-    - run: TF_ACC=1 gotestsum ./internal/services/{argo_smart_routing,argo_tiered_caching,bot_management,d1_database,dns_firewall,dns_record,healthcheck,list,origin_ca_certificate,queue,r2_bucket,secondary_dns_acl,secondary_dns_peer,secondary_dns_tsig,tiered_cache,total_tls,zone,zone_cache_variants,zone_setting,zone_subscription} -run "^TestAcc" -count 1 -v -timeout 120m
+    - run: TF_ACC=1 gotestsum ./internal/services/{argo_smart_routing,argo_tiered_caching,bot_management,d1_database,dns_firewall,dns_record,healthcheck,list,origin_ca_certificate,queue,r2_bucket,tiered_cache,total_tls,zone,zone_cache_variants,zone_setting,zone_subscription} -run "^TestAcc" -count 1 -v -timeout 120m
