@@ -48,6 +48,18 @@ func testAccCloudflareTeamsLocationConfigBasic(rnd, accountID string) string {
 resource "cloudflare_zero_trust_dns_location" "%[1]s" {
   name        = "%[1]s"
   account_id  = "%[2]s"
+  endpoints   {
+		ipv4  { enabled = true }
+		ipv6  { enabled = false }
+		dot   { 
+				require_token =true
+				enabled = true
+			  }
+		doh   { 
+				require_token =true
+				enabled = true 
+			}
+	}
 }
 `, rnd, accountID)
 }
