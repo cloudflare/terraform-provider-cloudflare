@@ -37,6 +37,16 @@ pattern cloudflare_terraform_v5_attribute_renames_config() {
     `fallback_pool_id = $v` as $attribute => `fallback_pool = $v` where { $attribute <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
     `default_pool_ids = $v` as $attribute => `default_pools = $v` where { $attribute <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
 
+    // cloudflare_page_rule
+    `resource "cloudflare_page_rule" $_ { $body }` where {
+        $body <: contains `cache_key_fields = $ckf` where {
+            $ckf <: contains `query_string = $qs` where and {
+                $qs <: contains `ignore = false` => `include = ["*"]`,
+                $qs <: contains `ignore = true` => `exclude = ["*"]`,
+            }
+        }
+    },
+
     // cloudflare_teams_list & cloudflare_zero_trust_list
     `items = [$items]` as $all_items where {
         $values = [],
