@@ -622,7 +622,7 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				rule.ActionParameters[0].EdgeTTL[0].StatusCodeTTL = statusCodeTTLs
 			}
 
-			if ruleResponse.ActionParameters.ServeStale != nil {
+			if ruleResponse.ActionParameters.ServeStale != nil && ruleResponse.ActionParameters.ServeStale.DisableStaleWhileUpdating != nil {
 				rule.ActionParameters[0].ServeStale = []*ActionParameterServeStaleModel{{
 					DisableStaleWhileUpdating: types.BoolValue(*ruleResponse.ActionParameters.ServeStale.DisableStaleWhileUpdating),
 				}}
