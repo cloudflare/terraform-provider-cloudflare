@@ -13,7 +13,7 @@ Provides a Cloudflare rate limit resource for a given zone. This can
 be used to limit the traffic you receive zone-wide, or matching more
 specific types of requests/responses.
 
-~> `cloudflare_rate_limit` is in a deprecation phase until January 15th, 2025.
+~> `cloudflare_rate_limit` is in a deprecation phase until June 15th, 2025.
   During this time period, this resource is still
   fully supported but you are strongly advised to move to the
   `cloudflare_ruleset` resource. Full details can be found in the

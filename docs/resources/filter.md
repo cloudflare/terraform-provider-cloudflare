@@ -13,7 +13,7 @@ Filter expressions that can be referenced across multiple features,
 e.g. Firewall Rules. See [what is a filter](https://developers.cloudflare.com/firewall/api/cf-filters/what-is-a-filter/)
 for more details and available fields and operators.
 
-~> `cloudflare_filter` is in a deprecation phase until January 15th, 2025.
+~> `cloudflare_filter` is in a deprecation phase until June 15th, 2025.
   During this time period, this resource is still fully
   supported but you are strongly advised to move to the
   `cloudflare_ruleset` resource. Full details can be found in the
