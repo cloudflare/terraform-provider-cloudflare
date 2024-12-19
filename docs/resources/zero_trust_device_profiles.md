@@ -73,3 +73,11 @@ Import is supported using the following syntax:
 # For default device settings policies you must use "default" as the policy ID.
 $ terraform import cloudflare_zero_trust_device_profiles.example <account_id>/<device_policy_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_zero_trust_device_profiles.example
+    id = "<account_id>/<device_policy_id>"
+}
+```

@@ -43,3 +43,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_zone_cache_reserve.example <zone_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_zone_cache_reserve.example
+    id = "<zone_id>"
+}
+```

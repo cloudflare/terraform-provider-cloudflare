@@ -63,3 +63,16 @@ $ terraform import cloudflare_access_ca_certificate.example account/<account_id>
 # Zone level CA certificate import.
 $ terraform import cloudflare_access_ca_certificate.example account/<zone_id>/<application_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_access_ca_certificate.example
+    id = "account/<account_id>/<application_id>"
+}
+
+import {
+    to = cloudflare_access_ca_certificate.example
+    id = "zone/<zone_id>/<application_id>"
+}
+```

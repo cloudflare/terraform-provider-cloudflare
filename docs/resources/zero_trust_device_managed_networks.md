@@ -51,3 +51,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_zero_trust_device_managed_networks.example <account_id>/<device_managed_networks_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_zero_trust_device_managed_networks.example
+    id = "<account_id>/<device_managed_networks_id>"
+}
+```
