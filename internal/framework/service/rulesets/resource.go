@@ -607,7 +607,6 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 					}
 
 					var sctValue basetypes.Int64Value
-
 					if sct.Value != nil {
 						sctValue = types.Int64Value(int64(cfv1.Int(sct.Value)))
 					} else {
