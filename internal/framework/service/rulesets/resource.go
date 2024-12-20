@@ -607,6 +607,7 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 					}
 
 					var sctValue basetypes.Int64Value
+
 					if sct.Value != nil {
 						sctValue = types.Int64Value(int64(cfv1.Int(sct.Value)))
 					} else {
@@ -622,9 +623,9 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				rule.ActionParameters[0].EdgeTTL[0].StatusCodeTTL = statusCodeTTLs
 			}
 
-			if ruleResponse.ActionParameters.ServeStale != nil && ruleResponse.ActionParameters.ServeStale.DisableStaleWhileUpdating != nil {
+			if ruleResponse.ActionParameters.ServeStale != nil {
 				rule.ActionParameters[0].ServeStale = []*ActionParameterServeStaleModel{{
-					DisableStaleWhileUpdating: types.BoolValue(*ruleResponse.ActionParameters.ServeStale.DisableStaleWhileUpdating),
+					DisableStaleWhileUpdating: flatteners.Bool(ruleResponse.ActionParameters.ServeStale.DisableStaleWhileUpdating),
 				}}
 			}
 
