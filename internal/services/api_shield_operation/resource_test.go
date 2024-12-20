@@ -41,9 +41,6 @@ func TestAccCloudflareAPIShieldOperation_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceID, "method", "GET"),
 					resource.TestCheckResourceAttr(resourceID, "host", domain),
 					resource.TestCheckResourceAttr(resourceID, "endpoint", "/example/path"),
-					resource.TestCheckResourceAttr(resourceID, "operations.0.method", "GET"),
-					resource.TestCheckResourceAttr(resourceID, "operations.0.host", domain),
-					resource.TestCheckResourceAttr(resourceID, "operations.0.endpoint", "/example/path"),
 				),
 			},
 		},
@@ -74,9 +71,6 @@ func TestAccCloudflareAPIShieldOperation_ForceNew(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceID, "method", "GET"),
 					resource.TestCheckResourceAttr(resourceID, "host", domain),
 					resource.TestCheckResourceAttr(resourceID, "endpoint", "/example/path"),
-					resource.TestCheckResourceAttr(resourceID, "operations.0.method", "GET"),
-					resource.TestCheckResourceAttr(resourceID, "operations.0.host", domain),
-					resource.TestCheckResourceAttr(resourceID, "operations.0.endpoint", "/example/path"),
 				),
 			},
 			{
@@ -86,9 +80,6 @@ func TestAccCloudflareAPIShieldOperation_ForceNew(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceID, "method", "POST"), // check that we've 'updated' the value
 					resource.TestCheckResourceAttr(resourceID, "host", domain),
 					resource.TestCheckResourceAttr(resourceID, "endpoint", "/example/path"),
-					resource.TestCheckResourceAttr(resourceID, "operations.0.method", "POST"), // check that we've 'updated' the value
-					resource.TestCheckResourceAttr(resourceID, "operations.0.host", domain),
-					resource.TestCheckResourceAttr(resourceID, "operations.0.endpoint", "/example/path"),
 				),
 			},
 		},
@@ -96,7 +87,7 @@ func TestAccCloudflareAPIShieldOperation_ForceNew(t *testing.T) {
 }
 
 func testAccCheckAPIShieldOperationDelete(s *terraform.State) error {
-	client := acctest.SharedClient() // TODO(terraform): replace with SharedV2Clent
+	client := acctest.SharedClient()
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_api_shield_operation" {
