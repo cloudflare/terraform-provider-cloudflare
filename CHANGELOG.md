@@ -9,6 +9,7 @@ NOTES:
 FEATURES:
 
 * **New Resource:** `cloudflare_content_scanning_expression` ([#4734](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4734))
+* **New Resource:** `cloudflare_content_scanning` ([#4719](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4719))
 
 ENHANCEMENTS:
 
