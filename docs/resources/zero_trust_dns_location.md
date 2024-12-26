@@ -50,7 +50,6 @@ resource "cloudflare_zero_trust_dns_location" "example" {
 - `id` (String) The ID of this resource.
 - `ip` (String) Client IP address.
 - `ipv4_destination` (String) IP to direct all IPv4 DNS queries to.
-- `policy_ids` (List of String)
 
 <a id="nestedblock--networks"></a>
 ### Nested Schema for `networks`
