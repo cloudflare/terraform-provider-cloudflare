@@ -68,9 +68,6 @@ func resourceCloudflareTeamsLocationRead(ctx context.Context, d *schema.Resource
 	if err := d.Set("networks", flattenTeamsLocationNetworks(location.Networks)); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing Location networks"))
 	}
-	if err := d.Set("policy_ids", location.PolicyIDs); err != nil {
-		return diag.FromErr(fmt.Errorf("error parsing Location policy IDs"))
-	}
 	if err := d.Set("ip", location.Ip); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing Location IP"))
 	}
