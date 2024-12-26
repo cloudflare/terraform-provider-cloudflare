@@ -129,7 +129,7 @@ func (r *ContentScanningResource) Update(ctx context.Context, req resource.Updat
 	resp.Diagnostics.Append(diags...)
 }
 
-// Delete disables the Content Scanning feature
+// Delete disables the Content Scanning feature.
 func (r *ContentScanningResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state ContentScanningModel
 	diags := req.State.Get(ctx, &state)
