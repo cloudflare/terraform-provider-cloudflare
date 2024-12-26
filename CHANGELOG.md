@@ -1,4 +1,6 @@
-## 4.49.0 (Unreleased)
+## 4.50.0 (Unreleased)
+
+## 4.49.0 (December 25th, 2025)
 
 NOTES:
 
