@@ -44,6 +44,7 @@ resource "cloudflare_access_policy" "infra-app-example-allow" {
   connection_rules {
     ssh {
       usernames = ["ec2-user"]
+      allow_email_alias = true
     }
   }
 }

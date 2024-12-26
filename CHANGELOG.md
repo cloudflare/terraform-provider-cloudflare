@@ -1,4 +1,62 @@
-## 4.48.0 (Unreleased)
+## 4.50.0 (Unreleased)
+
+## 4.49.0 (December 25th, 2025)
+
+NOTES:
+
+* resource/cloudflare_teams_location: remove unusable `policy_ids` attribute ([#4817](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4817))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_content_scanning_expression` ([#4734](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4734))
+
+ENHANCEMENTS:
+
+* resource/access_application: support multi-valued + Access service token authentication for SCIM provisioning to Access applications ([#4743](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4743))
+
+BUG FIXES:
+
+* resource/cloudflare_ruleset: handle when `disable_stale_while_updating` is an empty object but not nil ([#4814](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4814))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.111.0 to 0.112.0 ([#4803](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4803))
+* provider: bump github.com/hashicorp/terraform-plugin-framework-validators from 0.15.0 to 0.16.0 ([#4762](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4762))
+* provider: bump golang.org/x/crypto from 0.21.0 to 0.31.0 in /tools ([#4755](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4755))
+* provider: bump golang.org/x/crypto from 0.30.0 to 0.31.0 ([#4756](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4756))
+* provider: bump golang.org/x/net from 0.32.0 to 0.33.0 ([#4802](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4802))
+
+## 4.48.0 (December 11th, 2024)
+
+NOTES:
+
+* resource/cloudflare_ruleset: rules must now be given an explicit `ref` to avoid their IDs changing across ruleset updates, see https://developers.cloudflare.com/terraform/troubleshooting/rule-id-changes/ ([#4697](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4697))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_leaked_credential_check` ([#4674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4674))
+* **New Resource:** `cloudflare_leaked_credential_check_rule` ([#4676](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4676))
+* **New Resource:** `cloudflare_snippet` ([#4565](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4565))
+* **New Resource:** `cloudflare_snippet_rules` ([#4565](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4565))
+
+ENHANCEMENTS:
+
+* resource/access_application: add support for destinations and domain_type ([#4661](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4661))
+* resource/access_identity_provider: document scim_config fields ([#4721](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4721))
+* resource/cloudflare_access_policy: adds support for Access infrastructure `allow_email_alias` connection rule flag ([#4665](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4665))
+* resource/cloudflare_ruleset: improve diffs when only some rules are changed ([#4697](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4697))
+* resource/cloudflare_teams_list: use PUT call to update list items ([#4737](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4737))
+* resource/cloudflare_zero_trust_access_policy: adds support for Access infrastructure `allow_email_alias` connection rule flag ([#4665](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4665))
+
+BUG FIXES:
+
+* resource/cloudflare_authenticated_origin_pulls: Fix issue where resources are disabled instead of being destroyed on `tf destroy` ([#4649](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4649))
+* resource/cloudflare_leaked_credential_check_rule: Fix bug in update method ([#4741](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4741))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.110.0 to 0.111.0 ([#4709](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4709))
+* provider: bump golang.org/x/net from 0.31.0 to 0.32.0 ([#4718](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4718))
 
 ## 4.47.0 (November 27th, 2024)
 

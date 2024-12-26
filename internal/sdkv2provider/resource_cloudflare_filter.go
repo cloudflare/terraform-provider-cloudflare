@@ -30,7 +30,7 @@ func resourceCloudflareFilter() *schema.Resource {
 			for more details and available fields and operators.
 		`),
 		DeprecationMessage: heredoc.Doc(fmt.Sprintf(`
-			%s resource is in a deprecation phase until January 15th, 2025.
+			%s resource is in a deprecation phase until June 15th, 2025.
 			During this time period, this resource is still fully supported
 			but you are strongly advised to move to the %s resource.
 

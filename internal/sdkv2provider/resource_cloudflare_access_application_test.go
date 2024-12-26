@@ -296,24 +296,6 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigInvalidMappingSchema(t *te
 	})
 }
 
-func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasicMissingRequired(t *testing.T) {
-	rnd := generateRandomResourceName()
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config:      testAccCloudflareAccessApplicationSCIMConfigHttpBasicMissingRequired(rnd, accountID, domain),
-				ExpectError: regexp.MustCompile(`.*all of\s*` + "`scim_config.0.authentication.0.password,scim_config.0.authentication.0.user`" + `\s*must be specified.*`),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareAccessApplication_WithSCIMConfigOAuthBearerToken(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
@@ -341,6 +323,49 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuthBearerToken(t *testin
 					resource.TestCheckResourceAttr(name, "scim_config.0.deactivate_on_delete", "true"),
 					resource.TestCheckResourceAttr(name, "scim_config.0.authentication.0.scheme", "oauthbearertoken"),
 					resource.TestCheckResourceAttrSet(name, "scim_config.0.authentication.0.token"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.schema", "urn:ietf:params:scim:schemas:core:2.0:User"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.filter", "title pr or userType eq \"Intern\""),
+					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.transform_jsonata", "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.operations.0.create", "true"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.operations.0.update", "true"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.operations.0.delete", "true"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_WithSCIMConfigMultiAuth(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	idpName := fmt.Sprintf("cloudflare_zero_trust_access_identity_provider.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationSCIMConfigValidMulti(rnd, accountID, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "scim_config.#", "1"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.remote_uri", "scim.com"),
+					resource.TestCheckResourceAttrPair(name, "scim_config.0.idp_uid", idpName, "id"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.deactivate_on_delete", "true"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.authentication.0.scheme", "oauthbearertoken"),
+					resource.TestCheckResourceAttrSet(name, "scim_config.0.authentication.0.token"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.authentication.1.scheme", "access_service_token"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.authentication.1.client_id", "1234"),
+					resource.TestCheckResourceAttrSet(name, "scim_config.0.authentication.1.client_secret"),
 					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.schema", "urn:ietf:params:scim:schemas:core:2.0:User"),
 					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.enabled", "true"),
 					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.filter", "title pr or userType eq \"Intern\""),
@@ -394,42 +419,6 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.operations.0.update", "true"),
 					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.operations.0.delete", "true"),
 				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2MissingRequired(t *testing.T) {
-	rnd := generateRandomResourceName()
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config:      testAccCloudflareAccessApplicationSCIMConfigOAuth2MissingRequired(rnd, accountID, domain),
-				ExpectError: regexp.MustCompile(`.*all of\s*` + "`scim_config.0.authentication.0.authorization_url,scim_config.0.authentication.0.client_id,scim_config.0.authentication.0.client_secret,scim_config.0.authentication.0.token_url`" + `\s*must be specified.*`),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareAccessApplication_WithSCIMConfigAuthenticationInvalid(t *testing.T) {
-	rnd := generateRandomResourceName()
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config:      testAccCloudflareAccessApplicationSCIMConfigAuthenticationInvalid(rnd, accountID, domain),
-				ExpectError: regexp.MustCompile(`Error: Conflicting configuration arguments`),
 			},
 		},
 	})
@@ -2040,6 +2029,63 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 `, rnd, accountID, domain)
 }
 
+func testAccCloudflareAccessApplicationSCIMConfigValidMulti(rnd, accountID, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
+	account_id = "%[2]s"
+	name       = "%[1]s"
+	type       = "azureAD"
+	config {
+		client_id      = "test"
+		client_secret  = "test"
+		directory_id   = "directory"
+		support_groups = true
+	}
+	scim_config {
+		enabled                  = true
+		group_member_deprovision = true
+		seat_deprovision         = true
+		user_deprovision         = true
+	}
+}
+
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
+  account_id       = "%[2]s"
+  name             = "%[1]s"
+  type             = "self_hosted"
+  session_duration = "24h"
+  domain = "%[1]s.%[3]s"
+  scim_config {
+	enabled = true
+	remote_uri = "scim.com"
+	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
+	deactivate_on_delete = true
+	authentication {
+		scheme =  "oauthbearertoken"
+		token = "beepboop"
+	}
+	authentication {
+		scheme = "access_service_token"
+		client_id = "1234"
+		client_secret = "5678"
+	}
+	mappings {
+		schema = "urn:ietf:params:scim:schemas:core:2.0:User"
+		enabled = true
+		filter = "title pr or userType eq \"Intern\""
+		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
+		operations {
+			create = true
+			update = true
+			delete = true
+		}
+		strictness = "strict"
+	}
+  }
+}
+`, rnd, accountID, domain)
+}
+
 func testAccCloudflareAccessApplicationSCIMConfigValidOAuth2(rnd, accountID, domain string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
@@ -2093,168 +2139,6 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
   }
 }
 `, rnd, accountID, domain)
-}
-
-func testAccCloudflareAccessApplicationSCIMConfigOAuth2MissingRequired(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name       = "%[1]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = true
-		user_deprovision         = true
-	}
-}
-
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-  domain = "%[1]s.%[3]s"
-  scim_config {
-	enabled = true
-	remote_uri = "scim.com"
-	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
-	deactivate_on_delete = true
-	authentication {
-		scheme =  "oauth2"
-		client_id = "beepboop"
-		client_secret = "bop"
-		authorization_url = "https://www.authorization.com"
-		scopes = ["read"]
-	}
-	mappings {
-		schema = "urn:ietf:params:scim:schemas:core:2.0:User"
-		enabled = true
-		filter = "title pr or userType eq \"Intern\""
-		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
-		operations {
-			create = true
-			update = true
-			delete = true
-		}
-	}
-  }
-}
-`, rnd, accountID, domain)
-}
-
-func testAccCloudflareAccessApplicationSCIMConfigAuthenticationInvalid(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name       = "%[1]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = true
-		user_deprovision         = true
-	}
-}
-
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-  domain = "%[1]s.%[3]s"
-  scim_config {
-	enabled = true
-	remote_uri = "scim.com"
-	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
-	deactivate_on_delete = true
-	authentication {
-		scheme =  "oauth2"
-		client_id = "beepboop"
-		client_secret = "bop"
-		authorization_url = "https://www.authorization.com"
-		token_url = "https://www.token.com"
-		token = "1234"
-		user = "user"
-		password = "ahhh"
-		scopes = ["read"]
-	}
-	mappings {
-		schema = "urn:ietf:params:scim:schemas:core:2.0:User"
-		enabled = true
-		filter = "title pr or userType eq \"Intern\""
-		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
-		operations {
-			create = true
-			update = true
-			delete = true
-		}
-	}
-  }
-}
-`, rnd, accountID, domain)
-}
-
-func testAccCloudflareAccessApplicationSCIMConfigHttpBasicMissingRequired(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name       = "%[1]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = true
-		user_deprovision         = true
-	}
-}
-
-resource "cloudflare_zero_trust_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-  domain = "%[1]s.%[3]s"
-  scim_config {
-	enabled = true
-	remote_uri = "scim.com"
-	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
-	deactivate_on_delete = true
-	authentication {
-		scheme =  "httpbasic"
-		user = "test"
-	}
-	mappings {
-		schema = "urn:ietf:params:scim:schemas:core:2.0:User"
-		enabled = true
-		filter = "title pr or userType eq \"Intern\""
-		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
-		operations {
-			create = true
-			update = true
-			delete = true
-		}
-	}
-  }
-}`, rnd, accountID, domain)
 }
 
 func testAccCloudflareAccessApplicationSCIMConfigInvalidMappingSchema(rnd, accountID, domain string) string {

@@ -207,6 +207,10 @@ Required:
 
 - `usernames` (List of String) Contains the Unix usernames that may be used when connecting over SSH.
 
+Optional:
+
+- `allow_email_alias` (Boolean) Allows connecting to Unix username that matches the authenticating email prefix.
+
 
 
 <a id="nestedblock--exclude"></a>
