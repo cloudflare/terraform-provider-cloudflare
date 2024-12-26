@@ -5,34 +5,151 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
+	"text/template"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 func main() {
+	var dryrun = flag.Bool("dryrun", false, "preview list of files to be created")
+	flag.Parse()
+
 	service := flag.Arg(0)
-	err := Validate(service)
+	service = strings.ToLower(service)
+	err := validate(service)
 	if err != nil {
-		fmt.Printf("\nERROR:\n%s\n\n", err)
+		fmt.Printf("\nERROR: %s\n\n", err)
 		os.Exit(1)
 	}
-	PrintPreview(service)
-}
 
-// PrintPreview prints a list of paths that represent the files and directories
-// that would be created.
-func PrintPreview(service string) {
+	datasourcePath := fmt.Sprintf("internal/services/%s/data_source_test.go", service)
+	resourcePath := fmt.Sprintf("internal/services/%s/resource_test.go", service)
+	testdataDirPath := fmt.Sprintf("internal/services/%s/testdata/", service)
+	resourceDataPath := fmt.Sprintf("internal/services/%s/testdata/resourcebasicconfig.tf", service)
+	datasourceDataPath := fmt.Sprintf("internal/services/%s/testdata/datasourcebasicconfig.tf", service)
+
+	// print preview of files/directories
 	fmt.Println("To be created:")
-	fmt.Printf("- file: internal/services/%s/data_source_test.go\n", service)
-	fmt.Printf("- file: internal/services/%s/resource_test.go\n", service)
-	fmt.Printf("- dir: internal/services/%s/testdata/\n", service)
-	fmt.Printf("- file: internal/services/%s/testdata/config.tf\n", service)
+	fmt.Printf("- file: %s\n", datasourcePath)
+	fmt.Printf("- file: %s\n", resourcePath)
+	fmt.Printf("- dir: %s\n", testdataDirPath)
+	fmt.Printf("- file: %s\n", resourceDataPath)
+	fmt.Printf("- file: %s\n", datasourceDataPath)
+	fmt.Println()
+
+	if *dryrun {
+		fmt.Println("\nDry-run mode is enabled.\n")
+		fmt.Println("To create the files, run this again without the 'dryrun' flag\n")
+		fmt.Printf("Example: go run cmd/acctest/main.go %s\n", service)
+		os.Exit(0)
+	}
+
+	// get user confirmation before creating files
+	var input string
+	fmt.Print("Do you confirm that the file paths above are correct? [y|n]: ")
+	_, err = fmt.Scanln(&input)
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+	input = strings.ToLower(input)
+	if input != "y" && input != "yes" {
+		fmt.Println("\nFile creation aborted.\n")
+		os.Exit(0)
+	}
+
+	names := formattedServiceNames{
+		PascalCase: toPascalCase(service),
+		SnakeCase:  service,
+	}
+
+	// create test data directory
+	err = os.Mkdir(testdataDirPath, 0755)
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+
+	// write resource test data file
+	f, err := os.Create(resourceDataPath)
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+	tmpl, err := template.New("resourcebasicconfig.tf").Parse(resourceConfigTmpl())
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+	err = tmpl.Execute(f, names)
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+
+	// write data source test data file
+	f, err = os.Create(datasourceDataPath)
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+	tmpl, err = template.New("datasourcebasicconfig.tf").Parse(datasourceConfigTmpl())
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+	err = tmpl.Execute(f, names)
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+
+	// write resource acceptance test file
+	f, err = os.Create(resourcePath)
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+	tmpl, err = template.New("resource_test.go").Parse(resourceAccTestTmpl())
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+	err = tmpl.Execute(f, names)
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+
+	// write data source acceptance test file
+	f, err = os.Create(datasourcePath)
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+	tmpl, err = template.New("data_source_test.go").Parse(dataSourceAccTestTmpl())
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+	err = tmpl.Execute(f, names)
+	if err != nil {
+		fmt.Printf("\nERROR: %s\n\n", err)
+		os.Exit(1)
+	}
+
+	printNextStep(service)
 }
 
-// Validate checks that the service provided exists, and to prevent
-// overwriting existing test configurations and test cases, that
+// validate checks that the service provided exists, which implicitly
+// checks that the input is in snake case, since that is what Stainless generates.
+// To prevent overwriting existing test configurations and test cases, it also checks
 // none of the files and directories that would be generated already exist.
-func Validate(service string) error {
-	if service == "" {
-		return fmt.Errorf("a service name must be provided")
+func validate(service string) error {
+	if service == "" || len(service) > 128 {
+		return fmt.Errorf("a valid service name must be provided")
 	}
 
 	basePath := fmt.Sprintf("./internal/services/%s/", service)
@@ -53,4 +170,118 @@ func Validate(service string) error {
 	}
 
 	return errors.Join(errs...)
+}
+
+func printNextStep(service string) {
+	fmt.Println()
+	fmt.Println(`The files have been created. To run the acceptance tests, you will need to first
+set the necessary environment variables. See https://github.com/cloudflare/terraform-provider-cloudflare/blob/v4.39.0/contributing/environment-variable-dictionary.md
+for the list of variables. The values will vary depending on the account and zone being used for
+the tests. Once the environment variables are set, you can run the tests using the command:`)
+	fmt.Println()
+	fmt.Printf(`TF_ACC=1 go test ./internal/services/%s -run "^TestAccCloudflare" -v -count 1s`, service)
+	fmt.Println("\n")
+}
+
+type formattedServiceNames struct {
+	PascalCase string
+	SnakeCase  string
+}
+
+func toPascalCase(s string) string {
+	words := strings.Split(s, "_")
+	caser := cases.Title(language.English)
+	pascal := ""
+	for _, word := range words {
+		pascal += caser.String(word)
+	}
+	return pascal
+}
+
+func resourceConfigTmpl() string {
+	return `resource "cloudflare_{{.SnakeCase}}" "%[1]s" {}`
+}
+
+func datasourceConfigTmpl() string {
+	return `data "cloudflare_{{.SnakeCase}}" "%[1]s" {}`
+}
+
+func resourceAccTestTmpl() string {
+	return `package {{.SnakeCase}}_test
+
+import (
+	"errors"
+	"testing"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
+)
+
+func TestAccCloudflare{{.PascalCase}}_Basic(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_{{.SnakeCase}}." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: test{{.PascalCase}}Config(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					func(s *terraform.State) error {
+						return errors.New("test not implemented")
+					},
+					resource.TestCheckResourceAttr(name, "some_string_attribute", "string_value"),
+				),
+			},
+		},
+	})
+}
+
+func test{{.PascalCase}}Config(rnd string) string {
+	return acctest.LoadTestCase("resourcebasicconfig.tf", rnd)
+}
+`
+}
+
+func dataSourceAccTestTmpl() string {
+	return `package {{.SnakeCase}}_test
+
+import (
+	"errors"
+	"testing"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
+)
+
+func TestAccCloudflare{{.PascalCase}}DataSource_Basic(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_{{.SnakeCase}}." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: test{{.PascalCase}}Config(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					func(s *terraform.State) error {
+						return errors.New("test not implemented")
+					},
+					resource.TestCheckResourceAttr(name, "some_string_attribute", "string_value"),
+				),
+			},
+		},
+	})
+}
+
+func test{{.PascalCase}}DataSourceConfig(rnd string) string {
+	return acctest.LoadTestCase("datasourcebasicconfig.tf", rnd)
+}
+`
 }
