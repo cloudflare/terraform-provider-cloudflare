@@ -262,7 +262,7 @@ Required:
 
 Optional:
 
-- `authentication` (Block List, Max: 1) Attributes for configuring HTTP Basic, OAuth Bearer token, or OAuth 2 authentication schemes for SCIM provisioning to an application. (see [below for nested schema](#nestedblock--scim_config--authentication))
+- `authentication` (Block List) Attributes for configuring HTTP Basic, OAuth Bearer token, or OAuth 2 authentication schemes for SCIM provisioning to an application. (see [below for nested schema](#nestedblock--scim_config--authentication))
 - `deactivate_on_delete` (Boolean) If false, propagates DELETE requests to the target application for SCIM resources. If true, sets 'active' to false on the SCIM resource. Note: Some targets do not support DELETE operations.
 - `enabled` (Boolean) Whether SCIM provisioning is turned on for this application.
 - `mappings` (Block List) A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned. (see [below for nested schema](#nestedblock--scim_config--mappings))
@@ -276,14 +276,14 @@ Required:
 
 Optional:
 
-- `authorization_url` (String) URL used to generate the auth code used during token generation. Required when using `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.token_url`. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
-- `client_id` (String) Client ID used to authenticate when generating a token for authenticating with the remote SCIM service. Required when using `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
-- `client_secret` (String) Secret used to authenticate when generating a token for authenticating with the remove SCIM service. Required when using `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
-- `password` (String) Required when using `scim_config.0.authentication.0.user`. Conflicts with `scim_config.0.authentication.0.token`, `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`, `scim_config.0.authentication.0.scopes`.
-- `scopes` (Set of String) The authorization scopes to request when generating the token used to authenticate with the remove SCIM service. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
-- `token` (String) Token used to authenticate with the remote SCIM service. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`, `scim_config.0.authentication.0.scopes`.
-- `token_url` (String) URL used to generate the token used to authenticate with the remote SCIM service. Required when using `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.client_id`. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
-- `user` (String) User name used to authenticate with the remote SCIM service. Required when using `scim_config.0.authentication.0.password`. Conflicts with `scim_config.0.authentication.0.token`, `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`, `scim_config.0.authentication.0.scopes`.
+- `authorization_url` (String) URL used to generate the auth code used during token generation.
+- `client_id` (String) Client ID used to authenticate when generating a token for authenticating with the remote SCIM service.
+- `client_secret` (String) Secret used to authenticate when generating a token for authenticating with the remove SCIM service.
+- `password` (String)
+- `scopes` (Set of String) The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.
+- `token` (String) Token used to authenticate with the remote SCIM service.
+- `token_url` (String) URL used to generate the token used to authenticate with the remote SCIM service.
+- `user` (String) User name used to authenticate with the remote SCIM service.
 
 
 <a id="nestedblock--scim_config--mappings"></a>
