@@ -2,7 +2,7 @@
 page_title: "cloudflare_cloud_connector_rules Resource - Cloudflare"
 subcategory: ""
 description: |-
-  The Cloud Connector Rules resource allows you to create and manage cloud connector rules for a zone.
+  The Cloud Connector Rules https://developers.cloudflare.com/rules/cloud-connector/ resource allows you to create and manage cloud connector rules for a zone.
 ---
 
 # cloudflare_cloud_connector_rules (Resource)

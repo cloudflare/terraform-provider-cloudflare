@@ -623,9 +623,11 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 			}
 
 			if ruleResponse.ActionParameters.ServeStale != nil {
-				rule.ActionParameters[0].ServeStale = []*ActionParameterServeStaleModel{{
-					DisableStaleWhileUpdating: types.BoolValue(*ruleResponse.ActionParameters.ServeStale.DisableStaleWhileUpdating),
-				}}
+				if ruleResponse.ActionParameters.ServeStale.DisableStaleWhileUpdating != nil {
+					rule.ActionParameters[0].ServeStale = []*ActionParameterServeStaleModel{{
+						DisableStaleWhileUpdating: types.BoolValue(*ruleResponse.ActionParameters.ServeStale.DisableStaleWhileUpdating),
+					}}
+				}
 			}
 
 			if ruleResponse.ActionParameters.FromList != nil {

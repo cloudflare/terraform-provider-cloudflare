@@ -1,4 +1,31 @@
-## 4.49.0 (Unreleased)
+## 4.50.0 (Unreleased)
+
+## 4.49.0 (December 25th, 2025)
+
+NOTES:
+
+* resource/cloudflare_teams_location: remove unusable `policy_ids` attribute ([#4817](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4817))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_content_scanning_expression` ([#4734](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4734))
+* **New Resource:** `cloudflare_content_scanning` ([#4719](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4719))
+
+ENHANCEMENTS:
+
+* resource/access_application: support multi-valued + Access service token authentication for SCIM provisioning to Access applications ([#4743](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4743))
+
+BUG FIXES:
+
+* resource/cloudflare_ruleset: handle when `disable_stale_while_updating` is an empty object but not nil ([#4814](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4814))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.111.0 to 0.112.0 ([#4803](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4803))
+* provider: bump github.com/hashicorp/terraform-plugin-framework-validators from 0.15.0 to 0.16.0 ([#4762](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4762))
+* provider: bump golang.org/x/crypto from 0.21.0 to 0.31.0 in /tools ([#4755](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4755))
+* provider: bump golang.org/x/crypto from 0.30.0 to 0.31.0 ([#4756](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4756))
+* provider: bump golang.org/x/net from 0.32.0 to 0.33.0 ([#4802](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4802))
 
 ## 4.48.0 (December 11th, 2024)
 
