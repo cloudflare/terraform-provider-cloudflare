@@ -164,3 +164,11 @@ $ terraform import cloudflare_logpush_job.example account/<account_id>/<job_id>
 # Import a zone-scoped job.
 $ terraform import cloudflare_logpush_job.example zone/<zone_id>/<job_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_logpush_job.example
+    id = "zone/<zone_id>/<job_id>"
+}
+```

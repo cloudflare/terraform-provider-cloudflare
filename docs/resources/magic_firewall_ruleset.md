@@ -54,6 +54,14 @@ The **rules** block is a list of maps with the following attributes:
 
 An existing Magic Firewall Ruleset can be imported using the account ID and ruleset ID
 
-```
+```shell
 $ terraform import cloudflare_magic_firewall_ruleset.example d41d8cd98f00b204e9800998ecf8427e/cb029e245cfdd66dc8d2e570d5dd3322
+```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_magic_firewall_ruleset.example
+    id = "d41d8cd98f00b204e9800998ecf8427e/cb029e245cfdd66dc8d2e570d5dd3322"
+}
 ```

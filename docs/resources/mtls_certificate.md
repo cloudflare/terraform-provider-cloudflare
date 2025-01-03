@@ -50,3 +50,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_mtls_certificate.example <account_id>/<mtls_certificate_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_mtls_certificate.example
+    id = "<account_id>/<mtls_certificate_id>"
+}
+```

@@ -70,3 +70,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_authenticated_origin_pulls_certificate.example <zone_id>/<certificate_type>/<certificate_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_authenticated_origin_pulls_certificate.example
+    id = "<zone_id>/<certificate_type>/<certificate_id>"
+}
+```

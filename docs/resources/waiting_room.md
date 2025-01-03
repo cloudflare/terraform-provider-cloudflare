@@ -97,3 +97,11 @@ Import is supported using the following syntax:
 # Use the Zone ID and Waiting Room ID to import.
 $ terraform import cloudflare_waiting_room.default <zone_id>/<waiting_room_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_waiting_room.default
+    id = "<zone_id>/<waiting_room_id>"
+}
+```

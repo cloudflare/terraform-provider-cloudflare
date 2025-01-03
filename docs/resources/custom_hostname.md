@@ -103,3 +103,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_custom_hostname.example 1d5fdc9e88c8a8c4518b068cd94331fe/0d89c70d-ad9f-4843-b99f-6cc0252067e9
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_custom_hostname.example
+    id = "1d5fdc9e88c8a8c4518b068cd94331fe/0d89c70d-ad9f-4843-b99f-6cc0252067e9"
+}
+```

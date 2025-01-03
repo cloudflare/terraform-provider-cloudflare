@@ -44,3 +44,11 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_workers_domain.example <account_id>/<worker_domain_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_workers_domain.example
+    id = "<account_id>/<worker_domain_id>"
+}
+```

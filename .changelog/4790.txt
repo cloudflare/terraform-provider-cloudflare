@@ -1,0 +1,3 @@
+```release-note:dependency
+Improves documentation to include new import options for Terraform 1.5.0
+```

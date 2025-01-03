@@ -63,3 +63,11 @@ $ terraform import cloudflare_zero_trust_access_short_lived_certificate.example 
 # Zone level CA certificate import.
 $ terraform import cloudflare_zero_trust_access_short_lived_certificate.example account/<zone_id>/<application_id>
 ```
+
+For terraform 1.5 and later, you should use an [`import` block](https://developer.hashicorp.com/terraform/language/import):
+```terraform
+import {
+    to = cloudflare_zero_trust_access_short_lived_certificate.example
+    id = "account/<zone_id>/<application_id>"
+}
+```
