@@ -31,13 +31,13 @@ func main() {
 	datasourceDataPath := fmt.Sprintf("internal/services/%s/testdata/datasource_basic.tf", service)
 
 	// print preview of files/directories
-	fmt.Println("To be created:")
-	fmt.Printf("- file: %s\n", datasourcePath)
-	fmt.Printf("- file: %s\n", resourcePath)
-	fmt.Printf("- dir: %s\n", testdataDirPath)
-	fmt.Printf("- file: %s\n", resourceDataPath)
-	fmt.Printf("- file: %s\n", datasourceDataPath)
-	fmt.Println()
+	fmt.Println(fmt.Sprintf(`To be created:
+- file:       %[1]s
+- file:       %[2]s
+- directory:  %[3]s
+- file:       %[4]s
+- file:       %[5]s
+`, datasourcePath, resourcePath, testdataDirPath, resourceDataPath, datasourceDataPath)
 
 	if *dryrun {
 		fmt.Println("\nDry-run mode is enabled.\n")
