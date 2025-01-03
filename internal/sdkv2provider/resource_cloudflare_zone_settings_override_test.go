@@ -249,6 +249,8 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 }
 
 func TestAccCloudflareZoneSettingsOverride_Aegis(t *testing.T) {
+	skipForDefaultZone(t, "Requires dedicated Aegis setup.")
+
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone_settings_override." + rnd
