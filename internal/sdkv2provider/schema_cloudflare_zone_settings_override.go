@@ -582,6 +582,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 					Description: "Whether Aegis zone setting is enabled.",
 					Type:        schema.TypeBool,
 					Optional:    true,
+					Default:     true,
 				},
 				"pool_id": {
 					Description:  "Egress pool id which refers to a grouping of dedicated egress IPs through which Cloudflare will connect to origin.",
