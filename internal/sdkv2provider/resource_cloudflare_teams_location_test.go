@@ -37,6 +37,24 @@ func TestAccCloudflareTeamsLocationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "client_default", "false"),
 					resource.TestCheckResourceAttr(name, "ecs_support", "false"),
+					resource.TestCheckResourceAttr(name, "networks.#", "1"),
+					resource.TestCheckResourceAttr(name, "networks.0.network", "2.5.6.200/32"),
+					resource.TestCheckResourceAttr(name, "endpoints.#", "1"),
+					resource.TestCheckResourceAttr(name, "endpoints.0.ipv4.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "endpoints.0.ipv4.0.authentication_enabled", "true"),
+
+					resource.TestCheckResourceAttr(name, "endpoints.0.ipv6.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "endpoints.0.ipv6.0.authentication_enabled", "true"),
+					resource.TestCheckResourceAttr(name, "endpoints.0.ipv6.0.networks.0.network", "2a09:bac5:50c3:400::6b:57/128"),
+
+					resource.TestCheckResourceAttr(name, "endpoints.0.doh.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "endpoints.0.doh.0.authentication_enabled", "true"),
+					resource.TestCheckResourceAttr(name, "endpoints.0.doh.0.networks.0.network", "2.5.6.202/32"),
+					resource.TestCheckResourceAttr(name, "endpoints.0.doh.0.networks.1.network", "3.5.6.203/32"),
+
+					resource.TestCheckResourceAttr(name, "endpoints.0.dot.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "endpoints.0.dot.0.authentication_enabled", "true"),
+					resource.TestCheckResourceAttr(name, "endpoints.0.dot.0.networks.0.network", "2.5.6.201/32"),
 				),
 			},
 		},
@@ -48,6 +66,27 @@ func testAccCloudflareTeamsLocationConfigBasic(rnd, accountID string) string {
 resource "cloudflare_zero_trust_dns_location" "%[1]s" {
   name        = "%[1]s"
   account_id  = "%[2]s"
+  networks = [{ network = "2.5.6.200/32" }]
+
+  dns_destination_ips_id = "0e4a32c6-6fb8-4858-9296-98f51631e8e6"
+  
+  endpoints   {
+		ipv4   { 
+			enabled = true
+		}
+		ipv6   { 
+			enabled = true 
+			networks  = [ { network = "2a09:bac5:50c3:400::6b:57/128" } ]
+		}
+		dot   {
+			enabled = true
+			networks  = [ { network = "2.5.6.201/32" } ]
+		}
+		doh    {
+			enabled = true 
+			networks  = [ { network = "2.5.6.202/32" }, { network = "3.5.6.203/32" } ]
+		}
+	}
 }
 `, rnd, accountID)
 }
