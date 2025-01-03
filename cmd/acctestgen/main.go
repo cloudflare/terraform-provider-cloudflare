@@ -27,8 +27,8 @@ func main() {
 	datasourcePath := fmt.Sprintf("internal/services/%s/data_source_test.go", service)
 	resourcePath := fmt.Sprintf("internal/services/%s/resource_test.go", service)
 	testdataDirPath := fmt.Sprintf("internal/services/%s/testdata/", service)
-	resourceDataPath := fmt.Sprintf("internal/services/%s/testdata/resourcebasicconfig.tf", service)
-	datasourceDataPath := fmt.Sprintf("internal/services/%s/testdata/datasourcebasicconfig.tf", service)
+	resourceDataPath := fmt.Sprintf("internal/services/%s/testdata/basic.tf", service)
+	datasourceDataPath := fmt.Sprintf("internal/services/%s/testdata/datasource_basic.tf", service)
 
 	// print preview of files/directories
 	fmt.Println("To be created:")
