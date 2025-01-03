@@ -37,7 +37,7 @@ func main() {
 - directory:  %[3]s
 - file:       %[4]s
 - file:       %[5]s
-`, datasourcePath, resourcePath, testdataDirPath, resourceDataPath, datasourceDataPath)
+`, datasourcePath, resourcePath, testdataDirPath, resourceDataPath, datasourceDataPath))
 
 	if *dryrun {
 		fmt.Println("\nDry-run mode is enabled.\n")
@@ -78,7 +78,7 @@ func main() {
 		fmt.Printf("\nERROR: %s\n\n", err)
 		os.Exit(1)
 	}
-	tmpl, err := template.New("resourcebasicconfig.tf").Parse(resourceConfigTmpl())
+	tmpl, err := template.New("basic.tf").Parse(resourceConfigTmpl())
 	if err != nil {
 		fmt.Printf("\nERROR: %s\n\n", err)
 		os.Exit(1)
@@ -95,7 +95,7 @@ func main() {
 		fmt.Printf("\nERROR: %s\n\n", err)
 		os.Exit(1)
 	}
-	tmpl, err = template.New("datasourcebasicconfig.tf").Parse(datasourceConfigTmpl())
+	tmpl, err = template.New("datasource_basic.tf").Parse(datasourceConfigTmpl())
 	if err != nil {
 		fmt.Printf("\nERROR: %s\n\n", err)
 		os.Exit(1)
@@ -228,7 +228,7 @@ func TestAccCloudflare{{.PascalCase}}_Basic(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: test{{.PascalCase}}Config(rnd),
+				Config: testAcc{{.PascalCase}}Config(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					func(s *terraform.State) error {
 						return errors.New("test not implemented")
@@ -240,8 +240,8 @@ func TestAccCloudflare{{.PascalCase}}_Basic(t *testing.T) {
 	})
 }
 
-func test{{.PascalCase}}Config(rnd string) string {
-	return acctest.LoadTestCase("resourcebasicconfig.tf", rnd)
+func testAcc{{.PascalCase}}Config(rnd string) string {
+	return acctest.LoadTestCase("basic.tf", rnd)
 }
 `
 }
@@ -268,7 +268,7 @@ func TestAccCloudflare{{.PascalCase}}DataSource_Basic(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: test{{.PascalCase}}Config(rnd),
+				Config: testAcc{{.PascalCase}}DataSourceConfig(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					func(s *terraform.State) error {
 						return errors.New("test not implemented")
@@ -280,8 +280,8 @@ func TestAccCloudflare{{.PascalCase}}DataSource_Basic(t *testing.T) {
 	})
 }
 
-func test{{.PascalCase}}DataSourceConfig(rnd string) string {
-	return acctest.LoadTestCase("datasourcebasicconfig.tf", rnd)
+func testAcc{{.PascalCase}}DataSourceConfig(rnd string) string {
+	return acctest.LoadTestCase("datasource_basic.tf", rnd)
 }
 `
 }
