@@ -43,6 +43,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
     }
     placement = {
       mode = "smart"
+      status = "SUCCESS"
     }
     tags = ["string"]
     tail_consumers = [{
@@ -50,9 +51,6 @@ resource "cloudflare_workers_script" "example_workers_script" {
       environment = "production"
       namespace = "my-namespace"
     }]
-    usage_model = "bundled"
-    version_tags = {
-      foo = "string"
-    }
+    usage_model = "standard"
   }
 }
