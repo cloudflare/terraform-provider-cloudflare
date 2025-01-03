@@ -257,6 +257,10 @@ func flattenTeamsRuleSettings(settings *cloudflare.TeamsRuleSettings) []interfac
 		result["dns_resolvers"] = flattenTeamsDnsResolverSettings(settings.DnsResolverSettings)
 	}
 
+	if settings.ResolveDnsInternallySettings != nil {
+		result["resolve_dns_internally"] = flattenTeamsResolveDnsInternallySettings(settings.ResolveDnsInternallySettings)
+	}
+
 	return []interface{}{result}
 }
 
@@ -287,6 +291,7 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 	untrustedCertSettings := inflateTeamsUntrustedCertSettings(settingsMap["untrusted_cert"].([]interface{}))
 	notificationSettings := inflateTeamsNotificationSettings(settingsMap["notification_settings"])
 	dnsResolverSettings := inflateTeamsDnsResolverSettings(settingsMap["dns_resolvers"].([]interface{}))
+	internalDnsSettings := inflateTeamsResolveDnsInternallySettings(settingsMap["resolve_dns_internally"].([]interface{}))
 
 	ignoreCNAMECategoryMatches := readOptionalBooleanSettings(settingsMap, "ignore_cname_category_matches")
 	allowChildBypass := readOptionalBooleanSettings(settingsMap, "allow_child_bypass")
@@ -314,6 +319,7 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 		IgnoreCNAMECategoryMatches:      &ignoreCNAMECategoryMatches,
 		IPCategories:                    ipCategories,
 		AuditSSH:                        auditSSHSettings,
+		ResolveDnsInternallySettings:    internalDnsSettings,
 	}
 
 	// set optional settings if present, so api won't complain
@@ -607,6 +613,40 @@ func inflateTeamsDnsResolverAddressesV6(settings []interface{}) []cloudflare.Tea
 		ret = append(ret, newAddr)
 	}
 	return ret
+}
+
+func flattenTeamsResolveDnsInternallySettings(settings *cloudflare.TeamsResolveDnsInternallySettings) []interface{} {
+	if settings == nil {
+		return nil
+	}
+
+	var fallback cloudflare.TeamsResolveDnsInternallyFallbackStrategy
+	if settings.Fallback != "" {
+		fallback = settings.Fallback
+	} else {
+		fallback = cloudflare.None
+	}
+
+	return []interface{}{map[string]interface{}{
+		"view_id":  settings.ViewID,
+		"fallback": string(fallback),
+	}}
+}
+
+func inflateTeamsResolveDnsInternallySettings(settings interface{}) *cloudflare.TeamsResolveDnsInternallySettings {
+	settingsList := settings.([]interface{})
+	if len(settingsList) != 1 {
+		return nil
+	}
+
+	settingsMap := settingsList[0].(map[string]interface{})
+	viewId := settingsMap["view_id"].(string)
+	fallback := cloudflare.TeamsResolveDnsInternallyFallbackStrategy(settingsMap["fallback"].(string))
+
+	return &cloudflare.TeamsResolveDnsInternallySettings{
+		ViewID:   viewId,
+		Fallback: fallback,
+	}
 }
 
 func inflateTeamsDlpPayloadLogSettings(settings interface{}) *cloudflare.TeamsDlpPayloadLogSettings {

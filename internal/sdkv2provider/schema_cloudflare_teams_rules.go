@@ -224,6 +224,15 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		},
 		Description: "Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when resolve_dns_through_cloudflare is set. DNS queries will route to the address closest to their origin.",
 	},
+	"resolve_dns_internally": {
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: teamsResolveDnsInternallySettings,
+		},
+		Description: "Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action is set to 'resolve'.",
+	},
 }
 
 var payloadLogSettings = map[string]*schema.Schema{
@@ -388,5 +397,18 @@ var teamsDnsResolverAddress = map[string]*schema.Schema{
 		Type:        schema.TypeBool,
 		Optional:    true,
 		Description: "Whether to connect to this resolver over a private network. Must be set when `vnet_id` is set.",
+	},
+}
+
+var teamsResolveDnsInternallySettings = map[string]*schema.Schema{
+	"view_id": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "The internal DNS view identifier that's passed to the internal DNS service.",
+	},
+	"fallback": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "The fallback behavior to apply when the internal DNS response code is different from 'NOERROR' or when the response data only contains CNAME records for 'A' or 'AAAA' queries.",
 	},
 }

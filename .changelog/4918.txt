@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_zero_trust_gateway_policy: allow configuring resolver rules with internal DNS
+```
