@@ -13,8 +13,8 @@ type HyperdriveConfigResultEnvelope struct {
 }
 
 type HyperdriveConfigModel struct {
-	ID        types.String                                           `tfsdk:"id" json:"id,computed"`
 	AccountID types.String                                           `tfsdk:"account_id" path:"account_id,required"`
+	ID        types.String                                           `tfsdk:"id" json:"id,computed"`
 	Name      types.String                                           `tfsdk:"name" json:"name,required"`
 	Origin    *HyperdriveConfigOriginModel                           `tfsdk:"origin" json:"origin,required"`
 	Caching   customfield.NestedObject[HyperdriveConfigCachingModel] `tfsdk:"caching" json:"caching,computed_optional"`

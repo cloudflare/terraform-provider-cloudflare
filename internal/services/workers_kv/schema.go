@@ -38,7 +38,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"metadata": schema.StringAttribute{
 				Description: "Arbitrary JSON to be associated with a key/value pair.",
-				Required:    true,
+				Optional:    true,
 			},
 			"value": schema.StringAttribute{
 				Description: "A byte sequence to be stored, up to 25 MiB in length.",

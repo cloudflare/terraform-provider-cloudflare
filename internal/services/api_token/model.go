@@ -43,7 +43,7 @@ type APITokenPoliciesModel struct {
 }
 
 type APITokenPoliciesPermissionGroupsModel struct {
-	ID   types.String                               `tfsdk:"id" json:"id,computed"`
+	ID   types.String                               `tfsdk:"id" json:"id,required"`
 	Meta *APITokenPoliciesPermissionGroupsMetaModel `tfsdk:"meta" json:"meta,optional"`
 	Name types.String                               `tfsdk:"name" json:"name,computed"`
 }

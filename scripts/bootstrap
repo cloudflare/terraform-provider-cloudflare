@@ -13,4 +13,7 @@ fi
 
 echo "==> Installing Go dependencies…"
 
+# pull in cloudflare-go@next until we cut a fresh release
+go get github.com/cloudflare/cloudflare-go/v3@next
+
 go mod tidy

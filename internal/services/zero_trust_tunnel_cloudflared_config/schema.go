@@ -54,7 +54,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"hostname": schema.StringAttribute{
 									Description: "Public hostname for this service.",
-									Required:    true,
+									Optional:    true,
 								},
 								"service": schema.StringAttribute{
 									Description: "Protocol and address of destination server. Supported protocols: http://, https://, unix://, tcp://, ssh://, rdp://, unix+tls://, smb://. Alternatively can return a HTTP status code http_status:[code] e.g. 'http_status:404'.\n",
@@ -279,6 +279,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"warp_routing": schema.SingleNestedAttribute{
 						Description: "Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route.",
+						Optional:    true,
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel](ctx),
 						Attributes: map[string]schema.Attribute{
@@ -298,6 +299,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"source": schema.StringAttribute{
 				Description: "Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel's configuration on the Zero Trust dashboard.",
 				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("local", "cloudflare"),
 				},

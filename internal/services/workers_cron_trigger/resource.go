@@ -70,7 +70,7 @@ func (r *WorkersCronTriggerResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	res := new(http.Response)
-	env := WorkersCronTriggerResultEnvelope{data.Body}
+	env := WorkersCronTriggerResultEnvelope{data.Schedules}
 	_, err = r.client.Workers.Scripts.Schedules.Update(
 		ctx,
 		data.ScriptName.ValueString(),
@@ -91,7 +91,7 @@ func (r *WorkersCronTriggerResource) Create(ctx context.Context, req resource.Cr
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Schedules = env.Result
 	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -120,7 +120,7 @@ func (r *WorkersCronTriggerResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	res := new(http.Response)
-	env := WorkersCronTriggerResultEnvelope{data.Body}
+	env := WorkersCronTriggerResultEnvelope{data.Schedules}
 	_, err = r.client.Workers.Scripts.Schedules.Update(
 		ctx,
 		data.ScriptName.ValueString(),
@@ -141,7 +141,7 @@ func (r *WorkersCronTriggerResource) Update(ctx context.Context, req resource.Up
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Schedules = env.Result
 	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -157,7 +157,7 @@ func (r *WorkersCronTriggerResource) Read(ctx context.Context, req resource.Read
 	}
 
 	res := new(http.Response)
-	env := WorkersCronTriggerResultEnvelope{data.Body}
+	env := WorkersCronTriggerResultEnvelope{data.Schedules}
 	_, err := r.client.Workers.Scripts.Schedules.Get(
 		ctx,
 		data.ScriptName.ValueString(),
@@ -182,7 +182,7 @@ func (r *WorkersCronTriggerResource) Read(ctx context.Context, req resource.Read
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Schedules = env.Result
 	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -212,7 +212,7 @@ func (r *WorkersCronTriggerResource) ImportState(ctx context.Context, req resour
 	data.ScriptName = types.StringValue(path_script_name)
 
 	res := new(http.Response)
-	env := WorkersCronTriggerResultEnvelope{data.Body}
+	env := WorkersCronTriggerResultEnvelope{data.Schedules}
 	_, err := r.client.Workers.Scripts.Schedules.Get(
 		ctx,
 		path_script_name,
@@ -232,7 +232,7 @@ func (r *WorkersCronTriggerResource) ImportState(ctx context.Context, req resour
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Schedules = env.Result
 	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
