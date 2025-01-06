@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	var dryrun = flag.Bool("dryrun", false, "preview list of files to be created")
+	var dryRun = flag.Bool("dry-run", false, "preview list of files to be created")
 	flag.Parse()
 
 	service := flag.Arg(0)
@@ -39,10 +39,14 @@ func main() {
 - file:       %[5]s
 `, datasourcePath, resourcePath, testdataDirPath, resourceDataPath, datasourceDataPath))
 
-	if *dryrun {
-		fmt.Println("\nDry-run mode is enabled.\n")
-		fmt.Println("To create the files, run this again without the 'dryrun' flag\n")
-		fmt.Printf("Example: go run cmd/acctest/main.go %s\n", service)
+	if *dryRun {
+		fmt.Println(fmt.Sprintf(`
+Dry-run mode is enabled.
+
+To create the files, run this again without the 'dry-run' flag.
+
+Example: go run cmd/acctest/main.go %s
+`, service))
 		os.Exit(0)
 	}
 
@@ -174,13 +178,14 @@ func validate(service string) error {
 
 func printNextStep(service string) {
 	fmt.Println()
-	fmt.Println(`The files have been created. To run the acceptance tests, you will need to first
+	fmt.Println(fmt.Sprintf(`
+The files have been created. To run the acceptance tests, you will need to first
 set the necessary environment variables. See https://github.com/cloudflare/terraform-provider-cloudflare/blob/v4.39.0/contributing/environment-variable-dictionary.md
-for the list of variables. The values will vary depending on the account and zone being used for
-the tests. Once the environment variables are set, you can run the tests using the command:`)
-	fmt.Println()
-	fmt.Printf(`TF_ACC=1 go test ./internal/services/%s -run "^TestAccCloudflare" -v -count 1s`, service)
-	fmt.Println("\n")
+for the list of variables. The values will vary depending on the account and zone
+being used for the tests. Once the environment variables are set, you can run the
+tests using the command:
+
+TF_ACC=1 go test ./internal/services/%s -run "^TestAccCloudflare" -v -count 1s`, service))
 }
 
 type formattedServiceNames struct {
