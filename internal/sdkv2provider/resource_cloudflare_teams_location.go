@@ -393,7 +393,6 @@ func flattenTeamsEndpoints(endpoint *cloudflare.TeamsLocationEndpoints) []interf
 		"dot":  flattenTeamsEndpointDOTField(endpoint.DotEndpoint),
 	}
 	return []interface{}{flattenedEndpoints}
-
 }
 
 func flattenTeamsEndpointIpv4Field(field cloudflare.TeamsLocationIPv4EndpointFields) []map[string]interface{} {
