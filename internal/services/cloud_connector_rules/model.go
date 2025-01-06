@@ -8,31 +8,31 @@ import (
 )
 
 type CloudConnectorRulesResultEnvelope struct {
-	Result *[]*CloudConnectorRulesBodyModel `json:"result"`
+	Result *[]*CloudConnectorRulesRulesModel `json:"result"`
 }
 
 type CloudConnectorRulesModel struct {
-	ZoneID types.String                     `tfsdk:"zone_id" path:"zone_id,required"`
-	Body   *[]*CloudConnectorRulesBodyModel `tfsdk:"body" json:"body,required"`
+	ZoneID types.String                      `tfsdk:"zone_id" path:"zone_id,required"`
+	Rules  *[]*CloudConnectorRulesRulesModel `tfsdk:"rules" json:"rules,required"`
 }
 
 func (m CloudConnectorRulesModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m.Body)
+	return apijson.MarshalRoot(m.Rules)
 }
 
 func (m CloudConnectorRulesModel) MarshalJSONForUpdate(state CloudConnectorRulesModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m.Body, state.Body)
+	return apijson.MarshalForUpdate(m.Rules, state.Rules)
 }
 
-type CloudConnectorRulesBodyModel struct {
-	ID          types.String                            `tfsdk:"id" json:"id,optional"`
-	Description types.String                            `tfsdk:"description" json:"description,optional"`
-	Enabled     types.Bool                              `tfsdk:"enabled" json:"enabled,optional"`
-	Expression  types.String                            `tfsdk:"expression" json:"expression,optional"`
-	Parameters  *CloudConnectorRulesBodyParametersModel `tfsdk:"parameters" json:"parameters,optional"`
-	Provider    types.String                            `tfsdk:"provider" json:"provider,optional"`
+type CloudConnectorRulesRulesModel struct {
+	ID          types.String                             `tfsdk:"id" json:"id,optional"`
+	Description types.String                             `tfsdk:"description" json:"description,optional"`
+	Enabled     types.Bool                               `tfsdk:"enabled" json:"enabled,optional"`
+	Expression  types.String                             `tfsdk:"expression" json:"expression,optional"`
+	Parameters  *CloudConnectorRulesRulesParametersModel `tfsdk:"parameters" json:"parameters,optional"`
+	Provider    types.String                             `tfsdk:"provider" json:"provider,optional"`
 }
 
-type CloudConnectorRulesBodyParametersModel struct {
+type CloudConnectorRulesRulesParametersModel struct {
 	Host types.String `tfsdk:"host" json:"host,optional"`
 }

@@ -24,7 +24,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"body": schema.ListNestedAttribute{
+			"rules": schema.ListNestedAttribute{
 				Description: "List of Cloud Connector rules",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
