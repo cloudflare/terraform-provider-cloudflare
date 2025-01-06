@@ -32,6 +32,8 @@ type WaitingRoomModel struct {
 	QueueingStatusCode         types.Int64                                                    `tfsdk:"queueing_status_code" json:"queueing_status_code,computed_optional"`
 	SessionDuration            types.Int64                                                    `tfsdk:"session_duration" json:"session_duration,computed_optional"`
 	Suspended                  types.Bool                                                     `tfsdk:"suspended" json:"suspended,computed_optional"`
+	TurnstileAction            types.String                                                   `tfsdk:"turnstile_action" json:"turnstile_action,computed_optional"`
+	TurnstileMode              types.String                                                   `tfsdk:"turnstile_mode" json:"turnstile_mode,computed_optional"`
 	EnabledOriginCommands      customfield.List[types.String]                                 `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed_optional"`
 	AdditionalRoutes           customfield.NestedObjectList[WaitingRoomAdditionalRoutesModel] `tfsdk:"additional_routes" json:"additional_routes,computed_optional"`
 	CookieAttributes           customfield.NestedObject[WaitingRoomCookieAttributesModel]     `tfsdk:"cookie_attributes" json:"cookie_attributes,computed_optional"`
