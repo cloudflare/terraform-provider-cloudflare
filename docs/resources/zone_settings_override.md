@@ -128,6 +128,7 @@ Optional:
 - `sort_query_string_for_cache` (String)
 - `speed_brain` (String)
 - `ssl` (String)
+- `ssl_automatic_mode` (String)
 - `tls_1_2_only` (String, Deprecated)
 - `tls_1_3` (String)
 - `tls_client_auth` (String)
@@ -144,7 +145,7 @@ Optional:
 
 Optional:
 
-- `enabled` (Boolean) Whether Aegis zone setting is enabled.
+- `enabled` (Boolean) Whether Aegis zone setting is enabled. Defaults to `true`.
 - `pool_id` (String) Egress pool id which refers to a grouping of dedicated egress IPs through which Cloudflare will connect to origin.
 
 
@@ -244,6 +245,7 @@ Read-Only:
 - `sort_query_string_for_cache` (String)
 - `speed_brain` (String)
 - `ssl` (String)
+- `ssl_automatic_mode` (String)
 - `tls_1_2_only` (String)
 - `tls_1_3` (String)
 - `tls_client_auth` (String)

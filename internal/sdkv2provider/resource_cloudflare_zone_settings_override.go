@@ -51,6 +51,7 @@ var fetchAsSingleSetting = []string{
 	"nel",
 	"replace_insecure_js",
 	"speed_brain",
+	"ssl_automatic_mode",
 	"aegis",
 }
 
