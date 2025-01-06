@@ -153,10 +153,37 @@ func TestAccCloudflareR2Bucket_Minimum(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareR2Bucket_Jurisdiction(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_r2_bucket." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareR2BucketJurisdiction(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "id", rnd),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareR2BucketMinimum(rnd, accountID string) string {
 	return acctest.LoadTestCase("r2bucketminimum.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareR2BucketBasic(rnd, accountID string) string {
 	return acctest.LoadTestCase("r2bucketbasic.tf", rnd, accountID)
+}
+
+func testAccCheckCloudflareR2BucketJurisdiction(rnd, accountID string) string {
+	return acctest.LoadTestCase("jurisdiction.tf", rnd, accountID)
 }
