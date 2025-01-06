@@ -67,7 +67,7 @@ func (r *CloudConnectorRulesResource) Create(ctx context.Context, req resource.C
 		return
 	}
 	res := new(http.Response)
-	env := CloudConnectorRulesResultEnvelope{data.Body}
+	env := CloudConnectorRulesResultEnvelope{data.Rules}
 	_, err = r.client.CloudConnector.Rules.Update(
 		ctx,
 		cloud_connector.RuleUpdateParams{
@@ -87,7 +87,7 @@ func (r *CloudConnectorRulesResource) Create(ctx context.Context, req resource.C
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Rules = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -115,7 +115,7 @@ func (r *CloudConnectorRulesResource) Update(ctx context.Context, req resource.U
 		return
 	}
 	res := new(http.Response)
-	env := CloudConnectorRulesResultEnvelope{data.Body}
+	env := CloudConnectorRulesResultEnvelope{data.Rules}
 	_, err = r.client.CloudConnector.Rules.Update(
 		ctx,
 		cloud_connector.RuleUpdateParams{
@@ -135,7 +135,7 @@ func (r *CloudConnectorRulesResource) Update(ctx context.Context, req resource.U
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Rules = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
