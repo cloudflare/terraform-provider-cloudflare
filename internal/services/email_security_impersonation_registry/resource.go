@@ -70,7 +70,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Create(ctx context.Context,
 		return
 	}
 	res := new(http.Response)
-	env := EmailSecurityImpersonationRegistryResultEnvelope{data.Body}
+	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err = r.client.EmailSecurity.Settings.ImpersonationRegistry.New(
 		ctx,
 		email_security.SettingImpersonationRegistryNewParams{
@@ -90,7 +90,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Create(ctx context.Context,
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -118,7 +118,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Update(ctx context.Context,
 		return
 	}
 	res := new(http.Response)
-	env := EmailSecurityImpersonationRegistryResultEnvelope{data.Body}
+	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err = r.client.EmailSecurity.Settings.ImpersonationRegistry.Edit(
 		ctx,
 		data.ID.ValueInt64(),
@@ -139,7 +139,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Update(ctx context.Context,
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -154,7 +154,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Read(ctx context.Context, r
 	}
 
 	res := new(http.Response)
-	env := EmailSecurityImpersonationRegistryResultEnvelope{data.Body}
+	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Get(
 		ctx,
 		data.ID.ValueInt64(),
@@ -179,7 +179,7 @@ func (r *EmailSecurityImpersonationRegistryResource) Read(ctx context.Context, r
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -229,7 +229,7 @@ func (r *EmailSecurityImpersonationRegistryResource) ImportState(ctx context.Con
 	data.ID = types.Int64Value(path_display_name_id)
 
 	res := new(http.Response)
-	env := EmailSecurityImpersonationRegistryResultEnvelope{data.Body}
+	env := EmailSecurityImpersonationRegistryResultEnvelope{*data}
 	_, err := r.client.EmailSecurity.Settings.ImpersonationRegistry.Get(
 		ctx,
 		path_display_name_id,
@@ -249,7 +249,7 @@ func (r *EmailSecurityImpersonationRegistryResource) ImportState(ctx context.Con
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
