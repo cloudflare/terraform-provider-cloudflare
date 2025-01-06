@@ -51,7 +51,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"provider": schema.StringAttribute{
+						"cloud_provider": schema.StringAttribute{
 							Description: "Cloud Provider type",
 							Optional:    true,
 							Validators: []validator.String{

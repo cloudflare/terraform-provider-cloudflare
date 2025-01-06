@@ -17,6 +17,18 @@ var _ datasource.DataSourceWithConfigValidators = (*CloudConnectorRulesDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"cloud_provider": schema.StringAttribute{
+				Description: "Cloud Provider type",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"aws_s3",
+						"r2",
+						"gcp_storage",
+						"azure_storage",
+					),
+				},
+			},
 			"description": schema.StringAttribute{
 				Computed: true,
 			},
@@ -28,18 +40,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"id": schema.StringAttribute{
 				Computed: true,
-			},
-			"provider": schema.StringAttribute{
-				Description: "Cloud Provider type",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"aws_s3",
-						"r2",
-						"gcp_storage",
-						"azure_storage",
-					),
-				},
 			},
 			"parameters": schema.SingleNestedAttribute{
 				Description: "Parameters of Cloud Connector Rule",
