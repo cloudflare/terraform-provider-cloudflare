@@ -14,7 +14,6 @@ type RulesetResourceModel struct {
 }
 
 type RulesModel struct {
-	Version                types.String                   `tfsdk:"version"`
 	Action                 types.String                   `tfsdk:"action"`
 	ActionParameters       []*ActionParametersModel       `tfsdk:"action_parameters"`
 	Description            types.String                   `tfsdk:"description"`
@@ -22,14 +21,12 @@ type RulesModel struct {
 	ExposedCredentialCheck []*ExposedCredentialCheckModel `tfsdk:"exposed_credential_check"`
 	Expression             types.String                   `tfsdk:"expression"`
 	ID                     types.String                   `tfsdk:"id"`
-	LastUpdated            types.String                   `tfsdk:"last_updated"`
 	Logging                []*LoggingModel                `tfsdk:"logging"`
 	Ratelimit              []*RatelimitModel              `tfsdk:"ratelimit"`
 	Ref                    types.String                   `tfsdk:"ref"`
 }
 
 type ActionParametersModel struct {
-	Version                  types.String                                 `tfsdk:"version"`
 	AdditionalCacheablePorts types.Set                                    `tfsdk:"additional_cacheable_ports"`
 	AutomaticHTTPSRewrites   types.Bool                                   `tfsdk:"automatic_https_rewrites"`
 	AutoMinify               []*ActionParameterAutoMinifyModel            `tfsdk:"autominify"`

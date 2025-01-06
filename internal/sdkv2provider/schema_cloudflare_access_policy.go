@@ -125,6 +125,11 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 										Type: schema.TypeString,
 									},
 								},
+								"allow_email_alias": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Allows connecting to Unix username that matches the authenticating email prefix.",
+								},
 							},
 						},
 					},

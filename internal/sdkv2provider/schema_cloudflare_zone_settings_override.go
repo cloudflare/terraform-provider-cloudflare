@@ -1,6 +1,8 @@
 package sdkv2provider
 
 import (
+	"regexp"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -570,6 +572,30 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 				"enabled": {
 					Type:     schema.TypeBool,
 					Required: true,
+				},
+			},
+		},
+	},
+
+	"aegis": {
+		Type:     schema.TypeList,
+		Optional: true,
+		Computed: true,
+		MinItems: 1,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"enabled": {
+					Description: "Whether Aegis zone setting is enabled.",
+					Type:        schema.TypeBool,
+					Optional:    true,
+					Default:     true,
+				},
+				"pool_id": {
+					Description:  "Egress pool id which refers to a grouping of dedicated egress IPs through which Cloudflare will connect to origin.",
+					Type:         schema.TypeString,
+					Optional:     true,
+					ValidateFunc: validation.StringMatch(regexp.MustCompile("[-_a-zA-Z0-9]+"), "Only alphanumeric characters, hyphens and underscores are allowed."),
 				},
 			},
 		},

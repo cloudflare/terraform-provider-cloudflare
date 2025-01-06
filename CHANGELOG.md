@@ -1,4 +1,132 @@
-## 4.45.0 (Unreleased)
+## 4.50.0 (Unreleased)
+
+## 4.49.0 (December 25th, 2025)
+
+NOTES:
+
+* resource/cloudflare_teams_location: remove unusable `policy_ids` attribute ([#4817](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4817))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_content_scanning_expression` ([#4734](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4734))
+* **New Resource:** `cloudflare_content_scanning` ([#4719](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4719))
+
+ENHANCEMENTS:
+
+* resource/access_application: support multi-valued + Access service token authentication for SCIM provisioning to Access applications ([#4743](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4743))
+
+BUG FIXES:
+
+* resource/cloudflare_ruleset: handle when `disable_stale_while_updating` is an empty object but not nil ([#4814](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4814))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.111.0 to 0.112.0 ([#4803](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4803))
+* provider: bump github.com/hashicorp/terraform-plugin-framework-validators from 0.15.0 to 0.16.0 ([#4762](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4762))
+* provider: bump golang.org/x/crypto from 0.21.0 to 0.31.0 in /tools ([#4755](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4755))
+* provider: bump golang.org/x/crypto from 0.30.0 to 0.31.0 ([#4756](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4756))
+* provider: bump golang.org/x/net from 0.32.0 to 0.33.0 ([#4802](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4802))
+
+## 4.48.0 (December 11th, 2024)
+
+NOTES:
+
+* resource/cloudflare_ruleset: rules must now be given an explicit `ref` to avoid their IDs changing across ruleset updates, see https://developers.cloudflare.com/terraform/troubleshooting/rule-id-changes/ ([#4697](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4697))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_leaked_credential_check` ([#4674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4674))
+* **New Resource:** `cloudflare_leaked_credential_check_rule` ([#4676](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4676))
+* **New Resource:** `cloudflare_snippet` ([#4565](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4565))
+* **New Resource:** `cloudflare_snippet_rules` ([#4565](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4565))
+
+ENHANCEMENTS:
+
+* resource/access_application: add support for destinations and domain_type ([#4661](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4661))
+* resource/access_identity_provider: document scim_config fields ([#4721](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4721))
+* resource/cloudflare_access_policy: adds support for Access infrastructure `allow_email_alias` connection rule flag ([#4665](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4665))
+* resource/cloudflare_ruleset: improve diffs when only some rules are changed ([#4697](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4697))
+* resource/cloudflare_teams_list: use PUT call to update list items ([#4737](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4737))
+* resource/cloudflare_zero_trust_access_policy: adds support for Access infrastructure `allow_email_alias` connection rule flag ([#4665](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4665))
+
+BUG FIXES:
+
+* resource/cloudflare_authenticated_origin_pulls: Fix issue where resources are disabled instead of being destroyed on `tf destroy` ([#4649](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4649))
+* resource/cloudflare_leaked_credential_check_rule: Fix bug in update method ([#4741](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4741))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.110.0 to 0.111.0 ([#4709](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4709))
+* provider: bump golang.org/x/net from 0.31.0 to 0.32.0 ([#4718](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4718))
+
+## 4.47.0 (November 27th, 2024)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: support SCIM schema strictness setting for outbound provisioning ([#4419](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4419))
+* resource/cloudflare_access_identity_provider: Adds identity update behavior field in SCIM configuration ([#4602](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4602))
+* resource/cloudflare_notification_policy: Added support for D1 in the `cloudflare_notification_policy` resource and data source. ([#4615](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4615))
+* resource/cloudflare_notification_policy: add support for `image_resizing_notification` alert type ([#4588](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4588))
+* resource/cloudflare_r2_bucket: Added support for Oceania region in location hints. ([#4660](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4660))
+
+BUG FIXES:
+
+* resource/cloudflare_logpush_job: add dlp_forensic_copies to allowed dataset values ([#4598](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4598))
+* resource/cloudflare_zero_trust_access_policy: make gsuite  parameters required ([#4597](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4597))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.109.0 to 0.110.0 ([#4632](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4632))
+* provider: bump github.com/hashicorp/terraform-plugin-testing from 1.10.0 to 1.11.0 ([#4613](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4613))
+* provider: bump github.com/stretchr/testify from 1.9.0 to 1.10.0 ([#4663](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4663))
+
+## 4.46.0 (November 13th, 2024)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_waiting_room: add "bg-BG", "hr-HR", "cs-CZ", "da-DK", "fi-FI", "lt-LT", "ms-MY", "nb-NO", "ro-RO", "el-GR", "he-IL" "hi-IN", "hu-HU", "sr-BA", "sk-SK", "sl-SI", "sv-SE", "tl-PH", "th-TH", "uk-UA", and "vi-VN" to default_template_language field ([#4509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4509))
+
+BUG FIXES:
+
+* resource/cloudflare_certificate_pack: Fix importing existing resources issue due to 3 ignored required fields in importer ([#4544](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4544))
+* resource/cloudflare_list: Don't read list items if there are none configured ([#4511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4511))
+* resource/cloudflare_zero_trust_list: Consider `items_with_description` when updating a ZT list ([#4477](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4477))
+* resource/turnstile: Force recreate on region update ([#4496](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4496))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.108.0 to 0.109.0 ([#4523](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4523))
+* provider: bump github.com/hashicorp/terraform-plugin-framework-validators from 0.14.0 to 0.15.0 ([#4492](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4492))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.24.0 to 0.25.0 ([#4483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4483))
+* provider: bump github.com/hashicorp/terraform-plugin-mux from 0.16.0 to 0.17.0 ([#4484](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4484))
+* provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.34.0 to 2.35.0 ([#4491](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4491))
+* provider: bump golang.org/x/net from 0.30.0 to 0.31.0 ([#4541](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4541))
+* provider: bump goreleaser/goreleaser-action from 6.0.0 to 6.1.0 ([#4531](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4531))
+
+## 4.45.0 (October 30th, 2024)
+
+NOTES:
+
+* datasource/cloudflare_infrastructure_access_targets: deprecated in favour of `cloudflare_zero_trust_infrastructure_access_targets` and will be removed in the next major version. ([#4403](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4403))
+* resource/cloudflare_infrastructure_access_target: deprecated in favour of `cloudflare_zero_trust_infrastructure_access_target` and will be removed in the next major version. ([#4403](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4403))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_zero_trust_infrastructure_access_target` ([#4403](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4403))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add support for `zstd` compression in the `compress_response` action ([#4300](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4300))
+
+BUG FIXES:
+
+* resource/cloudflare_workers_cron_trigger: fix incorrectly reported deprecated resource ([#4295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4295))
+* resource/cloudflare_zero_trust_dlp_profile: Include more fields in `entry` set hash function ([#4464](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4464))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.107.0 to 0.108.0 ([#4394](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4394))
+* provider: bump github.com/hashicorp/terraform-plugin-framework-validators from 0.13.0 to 0.14.0 ([#4313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4313))
 
 ## 4.44.0 (October 16th, 2024)
 

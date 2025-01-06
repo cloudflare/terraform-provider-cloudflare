@@ -1,0 +1,3 @@
+```release-note:note
+resource/cloudflare_teams_location: remove unusable `policy_ids` attribute
+```

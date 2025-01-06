@@ -70,6 +70,7 @@ resource "cloudflare_access_policy" "infra-app-example-allow" {
   connection_rules {
     ssh {
       usernames = ["ec2-user"]
+      allow_email_alias = true
     }
   }
 }
@@ -192,7 +193,7 @@ Optional:
 <a id="nestedblock--include--gsuite"></a>
 ### Nested Schema for `include.gsuite`
 
-Optional:
+Required:
 
 - `email` (List of String) The email of the Google Workspace group.
 - `identity_provider_id` (String) The ID of your Google Workspace identity provider.
@@ -244,6 +245,10 @@ Required:
 Required:
 
 - `usernames` (List of String) Contains the Unix usernames that may be used when connecting over SSH.
+
+Optional:
+
+- `allow_email_alias` (Boolean) Allows connecting to Unix username that matches the authenticating email prefix.
 
 
 
@@ -317,7 +322,7 @@ Optional:
 <a id="nestedblock--exclude--gsuite"></a>
 ### Nested Schema for `exclude.gsuite`
 
-Optional:
+Required:
 
 - `email` (List of String) The email of the Google Workspace group.
 - `identity_provider_id` (String) The ID of your Google Workspace identity provider.
@@ -413,7 +418,7 @@ Optional:
 <a id="nestedblock--require--gsuite"></a>
 ### Nested Schema for `require.gsuite`
 
-Optional:
+Required:
 
 - `email` (List of String) The email of the Google Workspace group.
 - `identity_provider_id` (String) The ID of your Google Workspace identity provider.

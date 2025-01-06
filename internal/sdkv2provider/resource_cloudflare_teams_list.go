@@ -64,8 +64,8 @@ func resourceCloudflareTeamsListCreate(ctx context.Context, d *schema.ResourceDa
 
 	itemsWithoutDescription := d.Get("items").(*schema.Set).List()
 	itemsWithDescriptionValues := d.Get("items_with_description").(*schema.Set).List()
-	allItems := append([]interface{}{}, itemsWithoutDescription...)
-	allItems = append(allItems, itemsWithDescriptionValues...)
+	allItems := append([]interface{}{}, itemsWithDescriptionValues...)
+	allItems = append(allItems, itemsWithoutDescription...)
 	for _, v := range allItems {
 		item, err := convertItemCFTeamsListItems(v)
 		if err != nil {
@@ -135,11 +135,24 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 		Name:        d.Get("name").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
+		Items:       []cloudflare.TeamsListItem{},
+	}
+
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+
+	itemsWithDescriptionValues := d.Get("items_with_description").(*schema.Set).List()
+	itemsWithoutDescription := d.Get("items").(*schema.Set).List()
+	allItems := append([]interface{}{}, itemsWithDescriptionValues...)
+	allItems = append(allItems, itemsWithoutDescription...)
+	for _, v := range allItems {
+		item, err := convertItemCFTeamsListItems(v)
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("error creating Teams List for account %q: %w", accountID, err))
+		}
+		updatedTeamsList.Items = append(updatedTeamsList.Items, *item)
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Teams List from struct: %+v", updatedTeamsList))
-
-	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	identifier := cloudflare.AccountIdentifier(accountID)
 	teamsList, err := client.UpdateTeamsList(ctx, identifier, updatedTeamsList)
@@ -148,22 +161,6 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 	if teamsList.ID == "" {
 		return diag.FromErr(fmt.Errorf("failed to find Teams List ID in update response; resource was empty"))
-	}
-
-	if d.HasChange("items") {
-		oldItemsIface, newItemsIface := d.GetChange("items")
-		oldItems := oldItemsIface.(*schema.Set).List()
-		newItems := newItemsIface.(*schema.Set).List()
-		patchTeamsList := cloudflare.PatchTeamsListParams{ID: d.Id()}
-		setListItemDiff(&patchTeamsList, oldItems, newItems)
-
-		l, err := client.PatchTeamsList(ctx, identifier, patchTeamsList)
-
-		if err != nil {
-			return diag.FromErr(fmt.Errorf("error updating Teams List for account %q: %w", accountID, err))
-		}
-
-		teamsList.Items = l.Items
 	}
 
 	return resourceCloudflareTeamsListRead(ctx, d, meta)
@@ -204,25 +201,6 @@ func resourceCloudflareTeamsListImport(ctx context.Context, d *schema.ResourceDa
 	resourceCloudflareTeamsListRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
-}
-
-func setListItemDiff(patchList *cloudflare.PatchTeamsListParams, oldItems, newItems []interface{}) {
-	counts := make(map[string]int)
-	for _, val := range newItems {
-		counts[val.(string)] += 1
-	}
-	for _, val := range oldItems {
-		counts[val.(string)] -= 1
-	}
-
-	for key, val := range counts {
-		if val > 0 {
-			patchList.Append = append(patchList.Append, cloudflare.TeamsListItem{Value: key})
-		}
-		if val < 0 {
-			patchList.Remove = append(patchList.Remove, key)
-		}
-	}
 }
 
 func convertItemCFTeamsListItems(item any) (*cloudflare.TeamsListItem, error) {

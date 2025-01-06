@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_waiting_room: add "bg-BG", "hr-HR", "cs-CZ", "da-DK", "fi-FI", "lt-LT", "ms-MY", "nb-NO", "ro-RO", "el-GR", "he-IL" "hi-IN", "hu-HU", "sr-BA", "sk-SK", "sl-SI", "sv-SE", "tl-PH", "th-TH", "uk-UA", and "vi-VN" to default_template_language field
+```

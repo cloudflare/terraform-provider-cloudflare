@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/cloudflare/cloudflare-go"
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/expanders"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/flatteners"
@@ -121,12 +122,11 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 
 	updatedWidget, err := r.client.V1.UpdateTurnstileWidget(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), cfv1.UpdateTurnstileWidgetParams{
 		SiteKey:      widget.SiteKey,
-		OffLabel:     widget.OffLabel,
-		Name:         widget.Name,
-		Domains:      widget.Domains,
-		Mode:         widget.Mode,
-		BotFightMode: widget.BotFightMode,
-		Region:       widget.Region,
+		OffLabel:     cloudflare.BoolPtr(widget.OffLabel),
+		Name:         cloudflare.StringPtr(widget.Name),
+		Domains:      &widget.Domains,
+		Mode:         cloudflare.StringPtr(widget.Mode),
+		BotFightMode: cloudflare.BoolPtr(widget.BotFightMode),
 	})
 
 	if err != nil {

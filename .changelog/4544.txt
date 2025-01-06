@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_certificate_pack: Fix importing existing resources issue due to 3 ignored required fields in importer
+```

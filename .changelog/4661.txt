@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/access_application: add support for destinations and domain_type
+```

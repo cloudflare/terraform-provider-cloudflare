@@ -99,15 +99,17 @@ func (r *ListResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	state.Description = types.StringValue(list.Description)
 	state.Kind = types.StringValue(list.Kind)
 
-	items, err := r.client.V1.ListListItems(ctx, cloudflare.AccountIdentifier(state.AccountID.ValueString()), cloudflare.ListListItemsParams{
-		ID: state.ID.ValueString(),
-	})
-	if err != nil {
-		resp.Diagnostics.AddError("Error reading List Items", err.Error())
-		return
-	}
+	if len(state.Items) > 0 {
+		items, err := r.client.V1.ListListItems(ctx, cloudflare.AccountIdentifier(state.AccountID.ValueString()), cloudflare.ListListItemsParams{
+			ID: state.ID.ValueString(),
+		})
+		if err != nil {
+			resp.Diagnostics.AddError("Error reading List Items", err.Error())
+			return
+		}
 
-	state.Items = buildListItemModels(items)
+		state.Items = buildListItemModels(items)
+	}
 
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)

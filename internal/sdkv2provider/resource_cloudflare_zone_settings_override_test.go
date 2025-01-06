@@ -248,6 +248,79 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 }`, rnd, zoneID)
 }
 
+func TestAccCloudflareZoneSettingsOverride_Aegis(t *testing.T) {
+	skipForDefaultZone(t, "Requires dedicated Aegis setup.")
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_zone_settings_override." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareZoneSettingsOverrideAegisEnable(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "settings.0.aegis.0.pool_id", "cache-team-trakal-pool"),
+					resource.TestCheckResourceAttr(name, "settings.0.aegis.0.enabled", "true"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareZoneSettingsOverrideAegisDisable(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "settings.0.aegis.0.pool_id", ""),
+					resource.TestCheckResourceAttr(name, "settings.0.aegis.0.enabled", "false"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareZoneSettingsOverrideAegisEnableNoExplicitEnabled(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "settings.0.aegis.0.pool_id", "cache-team-trakal-pool"),
+					resource.TestCheckResourceAttr(name, "settings.0.aegis.0.enabled", "true"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareZoneSettingsOverrideAegisEnable(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zone_settings_override" "%[1]s" {
+  zone_id = "%[2]s"
+  settings {
+    aegis {
+	  enabled = true
+      pool_id = "cache-team-trakal-pool"
+	}
+  }
+}`, rnd, zoneID)
+}
+
+func testAccCheckCloudflareZoneSettingsOverrideAegisEnableNoExplicitEnabled(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zone_settings_override" "%[1]s" {
+  zone_id = "%[2]s"
+  settings {
+    aegis {
+      pool_id = "cache-team-trakal-pool"
+	}
+  }
+}`, rnd, zoneID)
+}
+
+func testAccCheckCloudflareZoneSettingsOverrideAegisDisable(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zone_settings_override" "%[1]s" {
+  zone_id = "%[2]s"
+  settings {
+    aegis {
+      enabled = false
+	}
+  }
+}`, rnd, zoneID)
+}
+
 func TestAccCloudflareZoneSettingsOverride_SpeedBrain(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()

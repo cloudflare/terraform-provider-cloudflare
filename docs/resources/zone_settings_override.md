@@ -78,6 +78,7 @@ resource "cloudflare_zone_settings_override" "test" {
 
 Optional:
 
+- `aegis` (Block List, Max: 1) (see [below for nested schema](#nestedblock--settings--aegis))
 - `always_online` (String)
 - `always_use_https` (String)
 - `automatic_https_rewrites` (String)
@@ -138,6 +139,15 @@ Optional:
 - `websockets` (String)
 - `zero_rtt` (String)
 
+<a id="nestedblock--settings--aegis"></a>
+### Nested Schema for `settings.aegis`
+
+Optional:
+
+- `enabled` (Boolean) Whether Aegis zone setting is enabled.
+- `pool_id` (String) Egress pool id which refers to a grouping of dedicated egress IPs through which Cloudflare will connect to origin.
+
+
 <a id="nestedblock--settings--minify"></a>
 ### Nested Schema for `settings.minify`
 
@@ -184,6 +194,7 @@ Optional:
 
 Read-Only:
 
+- `aegis` (List of Object) (see [below for nested schema](#nestedobjatt--initial_settings--aegis))
 - `always_online` (String)
 - `always_use_https` (String)
 - `automatic_https_rewrites` (String)
@@ -243,6 +254,15 @@ Read-Only:
 - `webp` (String)
 - `websockets` (String)
 - `zero_rtt` (String)
+
+<a id="nestedobjatt--initial_settings--aegis"></a>
+### Nested Schema for `initial_settings.aegis`
+
+Read-Only:
+
+- `enabled` (Boolean)
+- `pool_id` (String)
+
 
 <a id="nestedobjatt--initial_settings--minify"></a>
 ### Nested Schema for `initial_settings.minify`

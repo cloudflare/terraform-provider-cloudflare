@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_list: Don't read list items if there are none configured
+```

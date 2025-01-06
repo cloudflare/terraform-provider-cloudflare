@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/access_identity_provider: document scim_config fields
+```

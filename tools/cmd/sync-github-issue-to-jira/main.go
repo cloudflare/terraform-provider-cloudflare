@@ -128,7 +128,7 @@ var (
 			owner:    "opayne",
 		},
 		"service/workers": {
-			teamName: "Workers Core Platform",
+			teamName: "Workers Deploy & Config",
 			owner:    "laszlo",
 		},
 		"service/tunnel": {
@@ -152,8 +152,8 @@ var (
 			owner:    "njones",
 		},
 		"service/pages": {
-			teamName: "Cloudflare Pages",
-			owner:    "nrogers",
+			teamName: "Workers Deploy & Config",
+			owner:    "laszlo",
 		},
 		"service/bot_management": {
 			teamName: "Bot Management",
