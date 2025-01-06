@@ -58,7 +58,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"provider": schema.StringAttribute{
+						"cloud_provider": schema.StringAttribute{
 							Description: "Cloud Provider type",
 							Computed:    true,
 							Validators: []validator.String{

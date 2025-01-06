@@ -17,13 +17,13 @@ type CloudConnectorRulesResultListDataSourceEnvelope struct {
 }
 
 type CloudConnectorRulesDataSourceModel struct {
-	Description types.String                                                           `tfsdk:"description" json:"description,computed"`
-	Enabled     types.Bool                                                             `tfsdk:"enabled" json:"enabled,computed"`
-	Expression  types.String                                                           `tfsdk:"expression" json:"expression,computed"`
-	ID          types.String                                                           `tfsdk:"id" json:"id,computed"`
-	Provider    types.String                                                           `tfsdk:"provider" json:"provider,computed"`
-	Parameters  customfield.NestedObject[CloudConnectorRulesParametersDataSourceModel] `tfsdk:"parameters" json:"parameters,computed"`
-	Filter      *CloudConnectorRulesFindOneByDataSourceModel                           `tfsdk:"filter"`
+	CloudProvider types.String                                                           `tfsdk:"cloud_provider" json:"provider,computed"`
+	Description   types.String                                                           `tfsdk:"description" json:"description,computed"`
+	Enabled       types.Bool                                                             `tfsdk:"enabled" json:"enabled,computed"`
+	Expression    types.String                                                           `tfsdk:"expression" json:"expression,computed"`
+	ID            types.String                                                           `tfsdk:"id" json:"id,computed"`
+	Parameters    customfield.NestedObject[CloudConnectorRulesParametersDataSourceModel] `tfsdk:"parameters" json:"parameters,computed"`
+	Filter        *CloudConnectorRulesFindOneByDataSourceModel                           `tfsdk:"filter"`
 }
 
 func (m *CloudConnectorRulesDataSourceModel) toListParams(_ context.Context) (params cloud_connector.RuleListParams, diags diag.Diagnostics) {
