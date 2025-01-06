@@ -59,14 +59,59 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"placement_mode": schema.StringAttribute{
-				Description: "Specifies the placement mode for the Worker (e.g. 'smart').",
+				Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("smart"),
+				},
+			},
+			"placement_status": schema.StringAttribute{
+				Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"SUCCESS",
+						"NO_VALID_HOSTS",
+						"NO_VALID_BINDINGS",
+						"UNSUPPORTED_APPLICATION",
+						"INSUFFICIENT_INVOCATIONS",
+						"INSUFFICIENT_SUBREQUESTS",
+					),
+				},
 			},
 			"usage_model": schema.StringAttribute{
 				Description: "Usage model for the Worker invocations.",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("bundled", "unbound"),
+					stringvalidator.OneOfCaseInsensitive("standard"),
+				},
+			},
+			"placement": schema.SingleNestedAttribute{
+				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkersScriptPlacementDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"mode": schema.StringAttribute{
+						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("smart"),
+						},
+					},
+					"status": schema.StringAttribute{
+						Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"SUCCESS",
+								"NO_VALID_HOSTS",
+								"NO_VALID_BINDINGS",
+								"UNSUPPORTED_APPLICATION",
+								"INSUFFICIENT_INVOCATIONS",
+								"INSUFFICIENT_SUBREQUESTS",
+							),
+						},
+					},
 				},
 			},
 			"tail_consumers": schema.ListNestedAttribute{
