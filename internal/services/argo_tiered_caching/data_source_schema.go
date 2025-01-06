@@ -26,16 +26,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "The identifier of the caching setting",
+				Description: "ID of the zone setting.",
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("tiered_caching"),
+				},
 			},
 			"modified_on": schema.StringAttribute{
-				Description: "The time when the setting was last modified",
+				Description: "Last time this setting was modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"value": schema.StringAttribute{
-				Description: "The status of the feature being on / off",
+				Description: "The value of the feature",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),
