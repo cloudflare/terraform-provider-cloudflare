@@ -43,7 +43,7 @@ type WaitingRoomsResultDataSourceModel struct {
 	DisableSessionRenewal      types.Bool                                                                `tfsdk:"disable_session_renewal" json:"disable_session_renewal,computed"`
 	EnabledOriginCommands      customfield.List[types.String]                                            `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed"`
 	Host                       types.String                                                              `tfsdk:"host" json:"host,computed"`
-	JSONResponseEnabled        types.Bool                                                                `tfsdk:"json_response_enabled" json:"json_response_enabled,computed"`
+	JsonResponseEnabled        types.Bool                                                                `tfsdk:"json_response_enabled" json:"json_response_enabled,computed"`
 	ModifiedOn                 timetypes.RFC3339                                                         `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                       types.String                                                              `tfsdk:"name" json:"name,computed"`
 	NewUsersPerMinute          types.Int64                                                               `tfsdk:"new_users_per_minute" json:"new_users_per_minute,computed"`
