@@ -52,7 +52,7 @@ type ObservatoryScheduledTestTestDesktopReportModel struct {
 	DeviceType       types.String                                                                  `tfsdk:"device_type" json:"deviceType,computed"`
 	Error            customfield.NestedObject[ObservatoryScheduledTestTestDesktopReportErrorModel] `tfsdk:"error" json:"error,computed"`
 	FCP              types.Float64                                                                 `tfsdk:"fcp" json:"fcp,computed"`
-	JSONReportURL    types.String                                                                  `tfsdk:"json_report_url" json:"jsonReportUrl,computed"`
+	JsonReportURL    types.String                                                                  `tfsdk:"json_report_url" json:"jsonReportUrl,computed"`
 	LCP              types.Float64                                                                 `tfsdk:"lcp" json:"lcp,computed"`
 	PerformanceScore types.Float64                                                                 `tfsdk:"performance_score" json:"performanceScore,computed"`
 	Si               types.Float64                                                                 `tfsdk:"si" json:"si,computed"`
@@ -73,7 +73,7 @@ type ObservatoryScheduledTestTestMobileReportModel struct {
 	DeviceType       types.String                                                                 `tfsdk:"device_type" json:"deviceType,computed"`
 	Error            customfield.NestedObject[ObservatoryScheduledTestTestMobileReportErrorModel] `tfsdk:"error" json:"error,computed"`
 	FCP              types.Float64                                                                `tfsdk:"fcp" json:"fcp,computed"`
-	JSONReportURL    types.String                                                                 `tfsdk:"json_report_url" json:"jsonReportUrl,computed"`
+	JsonReportURL    types.String                                                                 `tfsdk:"json_report_url" json:"jsonReportUrl,computed"`
 	LCP              types.Float64                                                                `tfsdk:"lcp" json:"lcp,computed"`
 	PerformanceScore types.Float64                                                                `tfsdk:"performance_score" json:"performanceScore,computed"`
 	Si               types.Float64                                                                `tfsdk:"si" json:"si,computed"`

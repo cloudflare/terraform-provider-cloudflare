@@ -25,7 +25,7 @@ type WaitingRoomModel struct {
 	DefaultTemplateLanguage    types.String                                                   `tfsdk:"default_template_language" json:"default_template_language,computed_optional"`
 	Description                types.String                                                   `tfsdk:"description" json:"description,computed_optional"`
 	DisableSessionRenewal      types.Bool                                                     `tfsdk:"disable_session_renewal" json:"disable_session_renewal,computed_optional"`
-	JSONResponseEnabled        types.Bool                                                     `tfsdk:"json_response_enabled" json:"json_response_enabled,computed_optional"`
+	JsonResponseEnabled        types.Bool                                                     `tfsdk:"json_response_enabled" json:"json_response_enabled,computed_optional"`
 	Path                       types.String                                                   `tfsdk:"path" json:"path,computed_optional"`
 	QueueAll                   types.Bool                                                     `tfsdk:"queue_all" json:"queue_all,computed_optional"`
 	QueueingMethod             types.String                                                   `tfsdk:"queueing_method" json:"queueing_method,computed_optional"`
