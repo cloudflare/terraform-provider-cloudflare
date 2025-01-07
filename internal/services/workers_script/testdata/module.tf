@@ -1,18 +1,12 @@
-# resource "cloudflare_r2_bucket" "%[1]s" {
-#   account_id =  "%[3]s"
-#   name = "%[1]s"
-#   location = "apac"
-#   storage_class = "Standard"
-# }
+resource "cloudflare_workers_kv_namespace" "%[1]s" {
+	account_id = "%[3]s"
+	title = "%[1]s"
+}
 
-# resource "cloudflare_logpush_job" "%[1]s" {
-# 	enabled          = true
-# 	account_id       = "%[3]s"
-# 	name             = "%[1]s"
-# 	logpull_options  = "fields=Event,EventTimestampMs,Outcome,Exceptions,Logs,ScriptName"
-# 	destination_conf = "r2://${cloudflare_r2_bucket.%[1]s.name}/date={DATE}?account-id=%[3]s&access-key-id=%[6]s&secret-access-key=%[7]s"
-# 	dataset          = "workers_trace_events"
-# }
+resource "cloudflare_queue" "%[1]s" {
+	account_id = "%[3]s"
+	queue_name = "%[1]s"
+}
 
 resource "cloudflare_workers_script" "%[1]s" {
   account_id = "%[3]s"
@@ -24,4 +18,16 @@ resource "cloudflare_workers_script" "%[1]s" {
   placement = {
     mode = "smart"
   }
+  bindings = [
+    {
+      name = "MY_KV_NAMESPACE"
+      type = "kv_namespace"
+      namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
+    },
+    {
+      name = "MY_QUEUE"
+      type = "queue"
+      queue_name = cloudflare_queue.%[1]s.queue_name
+    }
+  ]
 }
