@@ -90,7 +90,7 @@ type WorkersScriptMetadataBindingsModel struct {
 	Environment   types.String                                `tfsdk:"environment" json:"environment,optional"`
 	NamespaceID   types.String                                `tfsdk:"namespace_id" json:"namespace_id,optional"`
 	ScriptName    types.String                                `tfsdk:"script_name" json:"script_name,optional"`
-	JSON          types.String                                `tfsdk:"json" json:"json,optional"`
+	Json          types.String                                `tfsdk:"json" json:"json,optional"`
 	CertificateID types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
 	Text          types.String                                `tfsdk:"text" json:"text,optional"`
 	QueueName     types.String                                `tfsdk:"queue_name" json:"queue_name,optional"`
