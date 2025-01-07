@@ -48,18 +48,18 @@ type ObservatoryScheduledTestTestModel struct {
 }
 
 type ObservatoryScheduledTestTestDesktopReportModel struct {
-	Cls              types.Float64                                                                 `tfsdk:"cls" json:"cls,computed"`
+	CLS              types.Float64                                                                 `tfsdk:"cls" json:"cls,computed"`
 	DeviceType       types.String                                                                  `tfsdk:"device_type" json:"deviceType,computed"`
 	Error            customfield.NestedObject[ObservatoryScheduledTestTestDesktopReportErrorModel] `tfsdk:"error" json:"error,computed"`
-	Fcp              types.Float64                                                                 `tfsdk:"fcp" json:"fcp,computed"`
+	FCP              types.Float64                                                                 `tfsdk:"fcp" json:"fcp,computed"`
 	JSONReportURL    types.String                                                                  `tfsdk:"json_report_url" json:"jsonReportUrl,computed"`
-	Lcp              types.Float64                                                                 `tfsdk:"lcp" json:"lcp,computed"`
+	LCP              types.Float64                                                                 `tfsdk:"lcp" json:"lcp,computed"`
 	PerformanceScore types.Float64                                                                 `tfsdk:"performance_score" json:"performanceScore,computed"`
 	Si               types.Float64                                                                 `tfsdk:"si" json:"si,computed"`
 	State            types.String                                                                  `tfsdk:"state" json:"state,computed"`
-	Tbt              types.Float64                                                                 `tfsdk:"tbt" json:"tbt,computed"`
-	Ttfb             types.Float64                                                                 `tfsdk:"ttfb" json:"ttfb,computed"`
-	Tti              types.Float64                                                                 `tfsdk:"tti" json:"tti,computed"`
+	TBT              types.Float64                                                                 `tfsdk:"tbt" json:"tbt,computed"`
+	TTFB             types.Float64                                                                 `tfsdk:"ttfb" json:"ttfb,computed"`
+	TTI              types.Float64                                                                 `tfsdk:"tti" json:"tti,computed"`
 }
 
 type ObservatoryScheduledTestTestDesktopReportErrorModel struct {
@@ -69,18 +69,18 @@ type ObservatoryScheduledTestTestDesktopReportErrorModel struct {
 }
 
 type ObservatoryScheduledTestTestMobileReportModel struct {
-	Cls              types.Float64                                                                `tfsdk:"cls" json:"cls,computed"`
+	CLS              types.Float64                                                                `tfsdk:"cls" json:"cls,computed"`
 	DeviceType       types.String                                                                 `tfsdk:"device_type" json:"deviceType,computed"`
 	Error            customfield.NestedObject[ObservatoryScheduledTestTestMobileReportErrorModel] `tfsdk:"error" json:"error,computed"`
-	Fcp              types.Float64                                                                `tfsdk:"fcp" json:"fcp,computed"`
+	FCP              types.Float64                                                                `tfsdk:"fcp" json:"fcp,computed"`
 	JSONReportURL    types.String                                                                 `tfsdk:"json_report_url" json:"jsonReportUrl,computed"`
-	Lcp              types.Float64                                                                `tfsdk:"lcp" json:"lcp,computed"`
+	LCP              types.Float64                                                                `tfsdk:"lcp" json:"lcp,computed"`
 	PerformanceScore types.Float64                                                                `tfsdk:"performance_score" json:"performanceScore,computed"`
 	Si               types.Float64                                                                `tfsdk:"si" json:"si,computed"`
 	State            types.String                                                                 `tfsdk:"state" json:"state,computed"`
-	Tbt              types.Float64                                                                `tfsdk:"tbt" json:"tbt,computed"`
-	Ttfb             types.Float64                                                                `tfsdk:"ttfb" json:"ttfb,computed"`
-	Tti              types.Float64                                                                `tfsdk:"tti" json:"tti,computed"`
+	TBT              types.Float64                                                                `tfsdk:"tbt" json:"tbt,computed"`
+	TTFB             types.Float64                                                                `tfsdk:"ttfb" json:"ttfb,computed"`
+	TTI              types.Float64                                                                `tfsdk:"tti" json:"tti,computed"`
 }
 
 type ObservatoryScheduledTestTestMobileReportErrorModel struct {
