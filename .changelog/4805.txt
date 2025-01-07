@@ -1,0 +1,3 @@
+```release-note:enhancement
+cloudflare_teams_location: support endpoints + BYOIPv6 + DNS IPv4 destinations
+```

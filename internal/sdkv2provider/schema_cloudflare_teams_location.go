@@ -5,7 +5,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+var TeamsLocationNetworkSchema = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"network": {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "CIDR notation representation of the network IP.",
+		},
+	},
+}
+
 func resourceCloudflareTeamsLocationSchema() map[string]*schema.Schema {
+
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
 			Description: consts.AccountIDSchemaDescription,
@@ -21,19 +32,8 @@ func resourceCloudflareTeamsLocationSchema() map[string]*schema.Schema {
 			Type:        schema.TypeSet,
 			Optional:    true,
 			Description: "The networks CIDRs that comprise the location.",
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"id": {
-						Type:     schema.TypeString,
-						Computed: true,
-					},
-					"network": {
-						Type:        schema.TypeString,
-						Required:    true,
-						Description: "CIDR notation representation of the network IP.",
-					},
-				},
-			},
+			ConfigMode:  schema.SchemaConfigModeAttr,
+			Elem:        TeamsLocationNetworkSchema,
 		},
 		"client_default": {
 			Type:        schema.TypeBool,
@@ -63,7 +63,133 @@ func resourceCloudflareTeamsLocationSchema() map[string]*schema.Schema {
 		"ipv4_destination": {
 			Type:        schema.TypeString,
 			Computed:    true,
-			Description: "IP to direct all IPv4 DNS queries to.",
+			Description: "IPv4 to direct all IPv4 DNS queries to.",
+		},
+		"ipv4_destination_backup": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Backup IPv4 to direct all IPv4 DNS queries to.",
+		},
+		"dns_destination_ips_id": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			Description: "IPv4 binding assigned to this location",
+		},
+		"dns_destination_ipv6_block_id": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			Description: "IPv6 block binding assigned to this location",
+		},
+		"endpoints": {
+			Type:        schema.TypeList,
+			Description: "Endpoints assigned to this location",
+			Optional:    true,
+			MaxItems:    1,
+			Elem:        TeamsLocationEndpointSchema,
 		},
 	}
+}
+
+var TeamsLocationEndpointSchema = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"ipv4": {
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"enabled": {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					"authentication_enabled": {
+						Type:     schema.TypeBool,
+						Computed: true,
+					},
+				},
+			},
+		},
+		"ipv6": {
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"enabled": {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					"authentication_enabled": {
+						Type:     schema.TypeBool,
+						Computed: true,
+					},
+					"networks": {
+						Type:       schema.TypeList,
+						ConfigMode: schema.SchemaConfigModeAttr,
+						MinItems:   1,
+						Optional:   true,
+						Elem:       TeamsLocationNetworkSchema,
+					},
+				},
+			},
+		},
+		"doh": {
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"require_token": {
+						Type:     schema.TypeBool,
+						Computed: true,
+					},
+					"enabled": {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					"authentication_enabled": {
+						Type:     schema.TypeBool,
+						Computed: true,
+					},
+					"networks": {
+						Type:       schema.TypeList,
+						MinItems:   1,
+						Optional:   true,
+						Elem:       TeamsLocationNetworkSchema,
+						ConfigMode: schema.SchemaConfigModeAttr,
+					},
+				},
+			},
+		},
+		"dot": {
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"require_token": {
+						Type:     schema.TypeBool,
+						Computed: true,
+					},
+					"enabled": {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					"authentication_enabled": {
+						Type:     schema.TypeBool,
+						Computed: true,
+					},
+					"networks": {
+						Type:       schema.TypeList,
+						Optional:   true,
+						MinItems:   1,
+						Elem:       TeamsLocationNetworkSchema,
+						ConfigMode: schema.SchemaConfigModeAttr,
+					},
+				},
+			},
+		},
+	},
 }

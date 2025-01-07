@@ -40,8 +40,11 @@ resource "cloudflare_teams_location" "example" {
 ### Optional
 
 - `client_default` (Boolean) Indicator that this is the default location.
+- `dns_destination_ips_id` (String) IPv4 binding assigned to this location.
+- `dns_destination_ipv6_block_id` (String) IPv6 block binding assigned to this location.
 - `ecs_support` (Boolean) Indicator that this location needs to resolve EDNS queries.
-- `networks` (Block Set) The networks CIDRs that comprise the location. (see [below for nested schema](#nestedblock--networks))
+- `endpoints` (Block List, Max: 1) Endpoints assigned to this location. (see [below for nested schema](#nestedblock--endpoints))
+- `networks` (Set of Object) The networks CIDRs that comprise the location. (see [below for nested schema](#nestedatt--networks))
 
 ### Read-Only
 
@@ -49,18 +52,112 @@ resource "cloudflare_teams_location" "example" {
 - `doh_subdomain` (String) The FQDN that DoH clients should be pointed at.
 - `id` (String) The ID of this resource.
 - `ip` (String) Client IP address.
-- `ipv4_destination` (String) IP to direct all IPv4 DNS queries to.
+- `ipv4_destination` (String) IPv4 to direct all IPv4 DNS queries to.
+- `ipv4_destination_backup` (String) Backup IPv4 to direct all IPv4 DNS queries to.
 
-<a id="nestedblock--networks"></a>
-### Nested Schema for `networks`
+<a id="nestedblock--endpoints"></a>
+### Nested Schema for `endpoints`
+
+Optional:
+
+- `doh` (Block List, Max: 1) (see [below for nested schema](#nestedblock--endpoints--doh))
+- `dot` (Block List, Max: 1) (see [below for nested schema](#nestedblock--endpoints--dot))
+- `ipv4` (Block List, Max: 1) (see [below for nested schema](#nestedblock--endpoints--ipv4))
+- `ipv6` (Block List, Max: 1) (see [below for nested schema](#nestedblock--endpoints--ipv6))
+
+<a id="nestedblock--endpoints--doh"></a>
+### Nested Schema for `endpoints.doh`
 
 Required:
 
-- `network` (String) CIDR notation representation of the network IP.
+- `enabled` (Boolean)
+
+Optional:
+
+- `networks` (List of Object) (see [below for nested schema](#nestedatt--endpoints--doh--networks))
 
 Read-Only:
 
-- `id` (String) The ID of this resource.
+- `authentication_enabled` (Boolean)
+- `require_token` (Boolean)
+
+<a id="nestedatt--endpoints--doh--networks"></a>
+### Nested Schema for `endpoints.doh.networks`
+
+Optional:
+
+- `network` (String)
+
+
+
+<a id="nestedblock--endpoints--dot"></a>
+### Nested Schema for `endpoints.dot`
+
+Required:
+
+- `enabled` (Boolean)
+
+Optional:
+
+- `networks` (List of Object) (see [below for nested schema](#nestedatt--endpoints--dot--networks))
+
+Read-Only:
+
+- `authentication_enabled` (Boolean)
+- `require_token` (Boolean)
+
+<a id="nestedatt--endpoints--dot--networks"></a>
+### Nested Schema for `endpoints.dot.networks`
+
+Optional:
+
+- `network` (String)
+
+
+
+<a id="nestedblock--endpoints--ipv4"></a>
+### Nested Schema for `endpoints.ipv4`
+
+Required:
+
+- `enabled` (Boolean)
+
+Read-Only:
+
+- `authentication_enabled` (Boolean)
+
+
+<a id="nestedblock--endpoints--ipv6"></a>
+### Nested Schema for `endpoints.ipv6`
+
+Required:
+
+- `enabled` (Boolean)
+
+Optional:
+
+- `networks` (List of Object) (see [below for nested schema](#nestedatt--endpoints--ipv6--networks))
+
+Read-Only:
+
+- `authentication_enabled` (Boolean)
+
+<a id="nestedatt--endpoints--ipv6--networks"></a>
+### Nested Schema for `endpoints.ipv6.networks`
+
+Optional:
+
+- `network` (String)
+
+
+
+
+<a id="nestedatt--networks"></a>
+### Nested Schema for `networks`
+
+Optional:
+
+- `network` (String)
 
 ## Import
 
