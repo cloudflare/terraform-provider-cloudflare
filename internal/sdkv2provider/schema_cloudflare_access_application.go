@@ -12,6 +12,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	saasAuthTypeOIDC = "oidc"
+	saasAuthTypeSAML = "saml"
+)
+
 func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
@@ -959,67 +964,70 @@ func convertOIDCClaimSchemaToStruct(data map[string]interface{}) cloudflare.OIDC
 	return cfg
 }
 
-func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplication {
-	SaasConfig := cloudflare.SaasApplication{}
-	if _, ok := d.GetOk("saas_app"); ok {
-		authType := "saml"
-		if rawAuthType, ok := d.GetOk("saas_app.0.auth_type"); ok {
-			authType = rawAuthType.(string)
-		}
-		SaasConfig.AuthType = authType
-		if authType == "oidc" {
-			SaasConfig.ClientID = d.Get("saas_app.0.client_id").(string)
-			SaasConfig.AppLauncherURL = d.Get("saas_app.0.app_launcher_url").(string)
-			SaasConfig.RedirectURIs = expandInterfaceToStringList(d.Get("saas_app.0.redirect_uris").(*schema.Set).List())
-			SaasConfig.GrantTypes = expandInterfaceToStringList(d.Get("saas_app.0.grant_types").(*schema.Set).List())
-			SaasConfig.Scopes = expandInterfaceToStringList(d.Get("saas_app.0.scopes").(*schema.Set).List())
-			SaasConfig.GroupFilterRegex = d.Get("saas_app.0.group_filter_regex").(string)
-			SaasConfig.AccessTokenLifetime = d.Get("saas_app.0.access_token_lifetime").(string)
-			SaasConfig.AllowPKCEWithoutClientSecret = cloudflare.BoolPtr(d.Get("saas_app.0.allow_pkce_without_client_secret").(bool))
-			if _, ok := d.GetOk("saas_app.0.refresh_token_options"); ok {
-				SaasConfig.RefreshTokenOptions = &cloudflare.RefreshTokenOptions{
-					Lifetime: d.Get("saas_app.0.refresh_token_options.0.lifetime").(string),
-				}
-			}
-
-			if d.HasChange("saas_app.0.custom_claim") {
-				SaasConfig.CustomClaims = &[]cloudflare.OIDCClaimConfig{}
-			}
-
-			customClaims, _ := d.Get("saas_app.0.custom_claim").([]interface{})
-			for _, customClaims := range customClaims {
-				claimAsMap := customClaims.(map[string]interface{})
-				claim := convertOIDCClaimSchemaToStruct(claimAsMap)
-				*SaasConfig.CustomClaims = append(*SaasConfig.CustomClaims, claim)
-			}
-
-			if _, ok := d.GetOk("saas_app.0.hybrid_and_implicit_options"); ok {
-				SaasConfig.HybridAndImplicitOptions = &cloudflare.AccessApplicationHybridAndImplicitOptions{
-					ReturnAccessTokenFromAuthorizationEndpoint: cloudflare.BoolPtr(d.Get("saas_app.0.hybrid_and_implicit_options.0.return_access_token_from_authorization_endpoint").(bool)),
-					ReturnIDTokenFromAuthorizationEndpoint:     cloudflare.BoolPtr(d.Get("saas_app.0.hybrid_and_implicit_options.0.return_id_token_from_authorization_endpoint").(bool)),
-				}
-			}
-		} else {
-			SaasConfig.SPEntityID = d.Get("saas_app.0.sp_entity_id").(string)
-			SaasConfig.ConsumerServiceUrl = d.Get("saas_app.0.consumer_service_url").(string)
-			SaasConfig.NameIDFormat = d.Get("saas_app.0.name_id_format").(string)
-			SaasConfig.DefaultRelayState = d.Get("saas_app.0.default_relay_state").(string)
-			SaasConfig.NameIDTransformJsonata = d.Get("saas_app.0.name_id_transform_jsonata").(string)
-			SaasConfig.SamlAttributeTransformJsonata = d.Get("saas_app.0.saml_attribute_transform_jsonata").(string)
-
-			if d.HasChanges("saas_app.0.custom_attribute") {
-				SaasConfig.CustomAttributes = &[]cloudflare.SAMLAttributeConfig{}
-			}
-
-			customAttributes, _ := d.Get("saas_app.0.custom_attribute").([]interface{})
-			for _, customAttributes := range customAttributes {
-				attributeAsMap := customAttributes.(map[string]interface{})
-				attribute := convertSAMLAttributeSchemaToStruct(attributeAsMap)
-				*SaasConfig.CustomAttributes = append(*SaasConfig.CustomAttributes, attribute)
-			}
+func convertSaasOIDCSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplication {
+	var oidcConfig cloudflare.SaasApplication
+	oidcConfig.AuthType = saasAuthTypeOIDC
+	oidcConfig.ClientID = d.Get("saas_app.0.client_id").(string)
+	oidcConfig.AppLauncherURL = d.Get("saas_app.0.app_launcher_url").(string)
+	oidcConfig.RedirectURIs = expandInterfaceToStringList(d.Get("saas_app.0.redirect_uris").(*schema.Set).List())
+	oidcConfig.GrantTypes = expandInterfaceToStringList(d.Get("saas_app.0.grant_types").(*schema.Set).List())
+	oidcConfig.Scopes = expandInterfaceToStringList(d.Get("saas_app.0.scopes").(*schema.Set).List())
+	oidcConfig.GroupFilterRegex = d.Get("saas_app.0.group_filter_regex").(string)
+	oidcConfig.AccessTokenLifetime = d.Get("saas_app.0.access_token_lifetime").(string)
+	oidcConfig.AllowPKCEWithoutClientSecret = cloudflare.BoolPtr(d.Get("saas_app.0.allow_pkce_without_client_secret").(bool))
+	if _, ok := d.GetOk("saas_app.0.refresh_token_options"); ok {
+		oidcConfig.RefreshTokenOptions = &cloudflare.RefreshTokenOptions{
+			Lifetime: d.Get("saas_app.0.refresh_token_options.0.lifetime").(string),
 		}
 	}
-	return &SaasConfig
+
+	customClaims, _ := d.Get("saas_app.0.custom_claim").([]interface{})
+	if len(customClaims) != 0 {
+		oidcConfig.CustomClaims = &[]cloudflare.OIDCClaimConfig{}
+		for _, customClaims := range customClaims {
+			claimAsMap := customClaims.(map[string]interface{})
+			claim := convertOIDCClaimSchemaToStruct(claimAsMap)
+			*oidcConfig.CustomClaims = append(*oidcConfig.CustomClaims, claim)
+		}
+	}
+
+	if _, ok := d.GetOk("saas_app.0.hybrid_and_implicit_options"); ok {
+		oidcConfig.HybridAndImplicitOptions = &cloudflare.AccessApplicationHybridAndImplicitOptions{
+			ReturnAccessTokenFromAuthorizationEndpoint: cloudflare.BoolPtr(d.Get("saas_app.0.hybrid_and_implicit_options.0.return_access_token_from_authorization_endpoint").(bool)),
+			ReturnIDTokenFromAuthorizationEndpoint:     cloudflare.BoolPtr(d.Get("saas_app.0.hybrid_and_implicit_options.0.return_id_token_from_authorization_endpoint").(bool)),
+		}
+	}
+	return &oidcConfig
+}
+
+func convertSaasSAMLSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplication {
+	var samlConfig cloudflare.SaasApplication
+	samlConfig.AuthType = saasAuthTypeSAML
+	samlConfig.SPEntityID = d.Get("saas_app.0.sp_entity_id").(string)
+	samlConfig.ConsumerServiceUrl = d.Get("saas_app.0.consumer_service_url").(string)
+	samlConfig.NameIDFormat = d.Get("saas_app.0.name_id_format").(string)
+	samlConfig.DefaultRelayState = d.Get("saas_app.0.default_relay_state").(string)
+	samlConfig.NameIDTransformJsonata = d.Get("saas_app.0.name_id_transform_jsonata").(string)
+	samlConfig.SamlAttributeTransformJsonata = d.Get("saas_app.0.saml_attribute_transform_jsonata").(string)
+
+	customAttributes, _ := d.Get("saas_app.0.custom_attribute").([]interface{})
+	if len(customAttributes) != 0 {
+		samlConfig.CustomAttributes = &[]cloudflare.SAMLAttributeConfig{}
+		for _, customAttributes := range customAttributes {
+			attributeAsMap := customAttributes.(map[string]interface{})
+			attribute := convertSAMLAttributeSchemaToStruct(attributeAsMap)
+			*samlConfig.CustomAttributes = append(*samlConfig.CustomAttributes, attribute)
+		}
+	}
+	return &samlConfig
+}
+
+func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplication {
+	if authType, _ := d.GetOk("saas_app.0.auth_type"); authType == "oidc" {
+		return convertSaasOIDCSchemaToStruct(d)
+	} else {
+		return convertSaasSAMLSchemaToStruct(d)
+	}
 }
 
 func convertDestinationsToStruct(destinationPayloads []interface{}) ([]cloudflare.AccessDestination, error) {
