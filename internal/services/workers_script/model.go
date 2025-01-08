@@ -6,10 +6,10 @@ import (
 	"bytes"
 	"mime/multipart"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/jinzhu/copier"
 )
 
 type WorkersScriptResultEnvelope struct {
@@ -17,55 +17,66 @@ type WorkersScriptResultEnvelope struct {
 }
 
 type WorkersScriptModel struct {
-	ID              types.String                                                  `tfsdk:"id" json:"-,computed"`
-	ScriptName      types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
-	AccountID       types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
-	Metadata        *WorkersScriptMetadataModel                                   `tfsdk:"metadata" json:"metadata,required"`
-	CreatedOn       timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Etag            types.String                                                  `tfsdk:"etag" json:"etag,computed"`
-	HasAssets       types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed"`
-	HasModules      types.Bool                                                    `tfsdk:"has_modules" json:"has_modules,computed"`
-	Logpush         types.Bool                                                    `tfsdk:"logpush" json:"logpush,computed"`
-	ModifiedOn      timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	PlacementMode   types.String                                                  `tfsdk:"placement_mode" json:"placement_mode,computed"`
-	PlacementStatus types.String                                                  `tfsdk:"placement_status" json:"placement_status,computed"`
-	StartupTimeMs   types.Int64                                                   `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
-	UsageModel      types.String                                                  `tfsdk:"usage_model" json:"usage_model,computed"`
-	Placement       customfield.NestedObject[WorkersScriptPlacementModel]         `tfsdk:"placement" json:"placement,computed"`
-	TailConsumers   customfield.NestedObjectList[WorkersScriptTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
+	ID         types.String `tfsdk:"id" json:"-,computed"`
+	ScriptName types.String `tfsdk:"script_name" path:"script_name,required"`
+	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
+	// Message    types.String `tfsdk:"message" json:"message,optional"`
+	Content types.String `tfsdk:"content" json:"content,required"`
+	// CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	// Etag          types.String      `tfsdk:"etag" json:"etag,computed"`
+	// HasAssets     types.Bool        `tfsdk:"has_assets" json:"has_assets,computed"`
+	// HasModules    types.Bool        `tfsdk:"has_modules" json:"has_modules,computed"`
+	// ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	// StartupTimeMs types.Int64       `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+
+	WorkersScriptMetadataModel
 }
 
 func (r WorkersScriptModel) MarshalMultipart() (data []byte, contentType string, err error) {
 	buf := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(buf)
-	err = apiform.MarshalRoot(r, writer)
-	if err != nil {
-		writer.Close()
-		return nil, "", err
+	var metadata WorkersScriptMetadataModel
+	workerBody := bytes.NewReader([]byte(r.Content.ValueString()))
+
+	if r.MainModule.ValueString() != "" {
+		mainModuleName := r.MainModule.ValueString()
+		writeFileBytes(mainModuleName, mainModuleName, "application/javascript+module", workerBody, writer)
+	} else {
+		writeFileBytes("script", "script", "application/javascript", workerBody, writer)
+		r.BodyPart = types.StringValue("script")
 	}
+
+	topLevelMetadata := r.WorkersScriptMetadataModel
+	copier.Copy(&metadata, &topLevelMetadata)
+
+	payload, _ := apijson.Marshal(metadata)
+	metadataContent := bytes.NewReader(payload)
+	writeFileBytes("metadata", "", "application/json", metadataContent, writer)
+
 	err = writer.Close()
 	if err != nil {
 		return nil, "", err
 	}
+
 	return buf.Bytes(), writer.FormDataContentType(), nil
 }
 
 type WorkersScriptMetadataModel struct {
-	Assets             *WorkersScriptMetadataAssetsModel           `tfsdk:"assets" json:"assets,optional"`
-	Bindings           *[]*WorkersScriptMetadataBindingsModel      `tfsdk:"bindings" json:"bindings,optional"`
-	BodyPart           types.String                                `tfsdk:"body_part" json:"body_part,optional"`
-	CompatibilityDate  types.String                                `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
-	CompatibilityFlags *[]types.String                             `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
-	KeepAssets         types.Bool                                  `tfsdk:"keep_assets" json:"keep_assets,optional"`
-	KeepBindings       *[]types.String                             `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
-	Logpush            types.Bool                                  `tfsdk:"logpush" json:"logpush,optional"`
-	MainModule         types.String                                `tfsdk:"main_module" json:"main_module,optional"`
-	Migrations         *WorkersScriptMetadataMigrationsModel       `tfsdk:"migrations" json:"migrations,optional"`
-	Observability      *WorkersScriptMetadataObservabilityModel    `tfsdk:"observability" json:"observability,optional"`
-	Placement          *WorkersScriptMetadataPlacementModel        `tfsdk:"placement" json:"placement,optional"`
-	Tags               *[]types.String                             `tfsdk:"tags" json:"tags,optional"`
-	TailConsumers      *[]*WorkersScriptMetadataTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers,optional"`
-	UsageModel         types.String                                `tfsdk:"usage_model" json:"usage_model,optional"`
+	Assets             customfield.NestedObject[WorkersScriptMetadataAssetsModel]        `tfsdk:"assets" json:"assets,computed_optional"`
+	Bindings           customfield.NestedObjectList[WorkersScriptMetadataBindingsModel]  `tfsdk:"bindings" json:"bindings,computed_optional"`
+	BodyPart           types.String                                                      `tfsdk:"body_part" json:"body_part,optional"`
+	CompatibilityDate  types.String                                                      `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
+	CompatibilityFlags *[]types.String                                                   `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
+	KeepAssets         types.Bool                                                        `tfsdk:"keep_assets" json:"keep_assets,optional"`
+	KeepBindings       *[]types.String                                                   `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
+	Logpush            types.Bool                                                        `tfsdk:"logpush" json:"logpush,optional"`
+	MainModule         types.String                                                      `tfsdk:"main_module" json:"main_module,optional"`
+	Migrations         customfield.NestedObject[WorkersScriptMetadataMigrationsModel]    `tfsdk:"migrations" json:"migrations,computed_optional"`
+	Observability      customfield.NestedObject[WorkersScriptMetadataObservabilityModel] `tfsdk:"observability" json:"observability,computed_optional"`
+	Placement          customfield.NestedObject[WorkersScriptMetadataPlacementModel]     `tfsdk:"placement" json:"placement,computed_optional"`
+	// Tags               *[]types.String                                                       `tfsdk:"tags" json:"tags,optional"`
+	TailConsumers customfield.NestedObjectList[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
+	UsageModel    types.String                                                          `tfsdk:"usage_model" json:"usage_model,optional"`
 }
 
 type WorkersScriptMetadataAssetsModel struct {
