@@ -26,10 +26,6 @@ resource "cloudflare_email_security_impersonation_registry" "example_email_secur
 ### Required
 
 - `account_id` (String) Account Identifier
-
-### Optional
-
-- `body` (Attributes List) (see [below for nested schema](#nestedatt--body))
 - `email` (String)
 - `is_email_regex` (Boolean)
 - `name` (String)
@@ -44,15 +40,6 @@ resource "cloudflare_email_security_impersonation_registry" "example_email_secur
 - `id` (Number) The ID of this resource.
 - `last_modified` (String)
 - `provenance` (String)
-
-<a id="nestedatt--body"></a>
-### Nested Schema for `body`
-
-Required:
-
-- `email` (String)
-- `is_email_regex` (Boolean)
-- `name` (String)
 
 ## Import
 

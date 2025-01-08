@@ -139,6 +139,7 @@ This does not apply to HTTP or network policies. (see [below for nested schema](
 - `deleted_at` (String) Date of deletion, if any.
 - `id` (String) The API resource UUID.
 - `updated_at` (String)
+- `version` (Number) version number of the rule
 
 <a id="nestedatt--expiration"></a>
 ### Nested Schema for `expiration`

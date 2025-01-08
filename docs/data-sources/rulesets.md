@@ -39,9 +39,7 @@ Read-Only:
 - `description` (String) An informative description of the ruleset.
 - `id` (String) The unique ID of the ruleset.
 - `kind` (String) The kind of the ruleset.
-- `last_updated` (String) The timestamp of when the ruleset was last modified.
 - `name` (String) The human-readable name of the ruleset.
 - `phase` (String) The phase of the ruleset.
-- `version` (String) The version of the ruleset.
 
 

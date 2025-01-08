@@ -31,8 +31,9 @@ resource "cloudflare_zone_cache_reserve" "example_zone_cache_reserve" {
 
 ### Read-Only
 
+- `editable` (Boolean) Whether the setting is editable
 - `id` (String) Identifier
-- `modified_on` (String) last time this setting was modified.
+- `modified_on` (String) Last time this setting was modified.
 - `zone_setting_id` (String) ID of the zone setting.
 
 ## Import

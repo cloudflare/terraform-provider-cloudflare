@@ -27,8 +27,8 @@ data "cloudflare_tiered_cache" "example_tiered_cache" {
 ### Read-Only
 
 - `editable` (Boolean) Whether the setting is editable
-- `id` (String) The identifier of the caching setting
-- `modified_on` (String) The time when the setting was last modified
-- `value` (String) The status of the feature being on / off
+- `id` (String) ID of the zone setting.
+- `modified_on` (String) Last time this setting was modified.
+- `value` (String) The value of the feature
 
 

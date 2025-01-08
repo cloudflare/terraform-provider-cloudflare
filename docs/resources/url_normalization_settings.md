@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 resource "cloudflare_url_normalization_settings" "example_url_normalization_settings" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  zone_id = "9f1839b6152d298aca64c4e906b6d074"
   scope = "incoming"
   type = "cloudflare"
 }
@@ -24,16 +24,13 @@ resource "cloudflare_url_normalization_settings" "example_url_normalization_sett
 
 ### Required
 
-- `zone_id` (String) Identifier
-
-### Optional
-
 - `scope` (String) The scope of the URL normalization.
 - `type` (String) The type of URL normalization performed by Cloudflare.
+- `zone_id` (String) The unique ID of the zone.
 
 ### Read-Only
 
-- `id` (String) Identifier
+- `id` (String) The unique ID of the zone.
 
 ## Import
 

@@ -40,8 +40,9 @@ resource "cloudflare_zone_cache_variants" "example_zone_cache_variants" {
 
 ### Read-Only
 
+- `editable` (Boolean) Whether the setting is editable
 - `id` (String) Identifier
-- `modified_on` (String) last time this setting was modified.
+- `modified_on` (String) Last time this setting was modified.
 
 <a id="nestedatt--value"></a>
 ### Nested Schema for `value`

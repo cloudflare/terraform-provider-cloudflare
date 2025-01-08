@@ -161,6 +161,16 @@ If `json_response_enabled` is **true** and the request hits the waiting room, an
 - `session_duration` (Number) Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the route. If a user is not seen by Cloudflare again in that time period, they will be treated as a new user that visits the route.
 - `suspended` (Boolean) Suspends or allows traffic going to the waiting room. If set to `true`, the traffic will not go to the waiting room.
 - `total_active_users` (Number) Sets the total number of active user sessions on the route at a point in time. A route is a combination of host and path on which a waiting room is available. This value is used as a baseline for the total number of active user sessions on the route. It is possible to have a situation where there are more or less active users sessions on the route based on the traffic patterns at that time around the world.
+- `turnstile_action` (String) Which action to take when a bot is detected using Turnstile. `log` will
+have no impact on queueing behavior, simply keeping track of how many
+bots are detected in Waiting Room Analytics. `infinite_queue` will send
+bots to a false queueing state, where they will never reach your
+origin. `infinite_queue` requires Advanced Waiting Room.
+- `turnstile_mode` (String) Which Turnstile widget type to use for detecting bot traffic. See
+[the Turnstile documentation](https://developers.cloudflare.com/turnstile/concepts/widget/#widget-types)
+for the definitions of these widget types. Set to `off` to disable the
+Turnstile integration entirely. Setting this to anything other than
+`off` or `invisible` requires Advanced Waiting Room.
 
 <a id="nestedatt--result--additional_routes"></a>
 ### Nested Schema for `result.additional_routes`
