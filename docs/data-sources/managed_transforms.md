@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_managed_transforms" "example_managed_transforms" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  zone_id = "9f1839b6152d298aca64c4e906b6d074"
 }
 ```
 
@@ -22,20 +22,22 @@ data "cloudflare_managed_transforms" "example_managed_transforms" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) The unique ID of the zone.
 
 ### Read-Only
 
-- `managed_request_headers` (Attributes List) (see [below for nested schema](#nestedatt--managed_request_headers))
-- `managed_response_headers` (Attributes List) (see [below for nested schema](#nestedatt--managed_response_headers))
+- `managed_request_headers` (Attributes List) The list of Managed Request Transforms. (see [below for nested schema](#nestedatt--managed_request_headers))
+- `managed_response_headers` (Attributes List) The list of Managed Response Transforms. (see [below for nested schema](#nestedatt--managed_response_headers))
 
 <a id="nestedatt--managed_request_headers"></a>
 ### Nested Schema for `managed_request_headers`
 
 Read-Only:
 
-- `enabled` (Boolean) When true, the Managed Transform is enabled.
-- `id` (String) Human-readable identifier of the Managed Transform.
+- `conflicts_with` (List of String) The Managed Transforms that this Managed Transform conflicts with.
+- `enabled` (Boolean) Whether the Managed Transform is enabled.
+- `has_conflict` (Boolean) Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.
+- `id` (String) The human-readable identifier of the Managed Transform.
 
 
 <a id="nestedatt--managed_response_headers"></a>
@@ -43,7 +45,9 @@ Read-Only:
 
 Read-Only:
 
-- `enabled` (Boolean) When true, the Managed Transform is enabled.
-- `id` (String) Human-readable identifier of the Managed Transform.
+- `conflicts_with` (List of String) The Managed Transforms that this Managed Transform conflicts with.
+- `enabled` (Boolean) Whether the Managed Transform is enabled.
+- `has_conflict` (Boolean) Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.
+- `id` (String) The human-readable identifier of the Managed Transform.
 
 

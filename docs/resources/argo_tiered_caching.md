@@ -30,7 +30,7 @@ resource "cloudflare_argo_tiered_caching" "example_argo_tiered_caching" {
 
 - `editable` (Boolean) Whether the setting is editable
 - `id` (String) Identifier
-- `modified_on` (String) The time when the setting was last modified
+- `modified_on` (String) Last time this setting was modified.
 
 ## Import
 

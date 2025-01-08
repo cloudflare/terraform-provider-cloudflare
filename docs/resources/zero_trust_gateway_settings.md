@@ -84,7 +84,7 @@ resource "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_se
 
 ### Optional
 
-- `settings` (Attributes) account settings. (see [below for nested schema](#nestedatt--settings))
+- `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--settings))
 
 ### Read-Only
 

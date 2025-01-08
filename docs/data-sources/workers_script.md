@@ -36,9 +36,11 @@ data "cloudflare_workers_script" "example_workers_script" {
 - `id` (String) The id of the script in the Workers system. Usually the script name.
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `modified_on` (String) When the script was last modified.
-- `placement_mode` (String) Specifies the placement mode for the Worker (e.g. 'smart').
+- `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). (see [below for nested schema](#nestedatt--placement))
+- `placement_mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+- `placement_status` (String) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 - `tail_consumers` (Attributes List) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--tail_consumers))
-- `usage_model` (String) Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').
+- `usage_model` (String) Usage model for the Worker invocations.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -46,6 +48,15 @@ data "cloudflare_workers_script" "example_workers_script" {
 Required:
 
 - `account_id` (String) Identifier
+
+
+<a id="nestedatt--placement"></a>
+### Nested Schema for `placement`
+
+Read-Only:
+
+- `mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+- `status` (String) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 
 
 <a id="nestedatt--tail_consumers"></a>

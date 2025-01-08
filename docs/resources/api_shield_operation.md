@@ -14,8 +14,11 @@ description: |-
 ```terraform
 resource "cloudflare_api_shield_operation" "example_api_shield_operation" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  operation_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
-  state = "review"
+  operations = [{
+    endpoint = "/api/v1/users/{var1}"
+    host = "www.example.com"
+    method = "GET"
+  }]
 }
 ```
 
@@ -24,17 +27,158 @@ resource "cloudflare_api_shield_operation" "example_api_shield_operation" {
 
 ### Required
 
-- `operation_id` (String) UUID
+- `operations` (Attributes List) (see [below for nested schema](#nestedatt--operations))
 - `zone_id` (String) Identifier
 
 ### Optional
 
-- `state` (String) Mark state of operation in API Discovery
-  * `review` - Mark operation as for review
-  * `ignored` - Mark operation as ignored
+- `operation_id` (String) UUID
 
 ### Read-Only
 
+- `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.
+- `features` (Attributes) (see [below for nested schema](#nestedatt--features))
+- `host` (String) RFC3986-compliant host.
+- `last_updated` (String)
+- `method` (String) The HTTP method used to access the endpoint.
+
+<a id="nestedatt--operations"></a>
+### Nested Schema for `operations`
+
+Required:
+
+- `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.
+- `host` (String) RFC3986-compliant host.
+- `method` (String) The HTTP method used to access the endpoint.
+
+
+<a id="nestedatt--features"></a>
+### Nested Schema for `features`
+
+Read-Only:
+
+- `api_routing` (Attributes) API Routing settings on endpoint. (see [below for nested schema](#nestedatt--features--api_routing))
+- `confidence_intervals` (Attributes) (see [below for nested schema](#nestedatt--features--confidence_intervals))
+- `parameter_schemas` (Attributes) (see [below for nested schema](#nestedatt--features--parameter_schemas))
+- `schema_info` (Attributes) (see [below for nested schema](#nestedatt--features--schema_info))
+- `thresholds` (Attributes) (see [below for nested schema](#nestedatt--features--thresholds))
+
+<a id="nestedatt--features--api_routing"></a>
+### Nested Schema for `features.api_routing`
+
+Read-Only:
+
+- `last_updated` (String)
+- `route` (String) Target route.
+
+
+<a id="nestedatt--features--confidence_intervals"></a>
+### Nested Schema for `features.confidence_intervals`
+
+Read-Only:
+
+- `last_updated` (String)
+- `suggested_threshold` (Attributes) (see [below for nested schema](#nestedatt--features--confidence_intervals--suggested_threshold))
+
+<a id="nestedatt--features--confidence_intervals--suggested_threshold"></a>
+### Nested Schema for `features.confidence_intervals.suggested_threshold`
+
+Read-Only:
+
+- `confidence_intervals` (Attributes) (see [below for nested schema](#nestedatt--features--confidence_intervals--suggested_threshold--confidence_intervals))
+- `mean` (Number) Suggested threshold.
+
+<a id="nestedatt--features--confidence_intervals--suggested_threshold--confidence_intervals"></a>
+### Nested Schema for `features.confidence_intervals.suggested_threshold.confidence_intervals`
+
+Read-Only:
+
+- `p90` (Attributes) Upper and lower bound for percentile estimate (see [below for nested schema](#nestedatt--features--confidence_intervals--suggested_threshold--confidence_intervals--p90))
+- `p95` (Attributes) Upper and lower bound for percentile estimate (see [below for nested schema](#nestedatt--features--confidence_intervals--suggested_threshold--confidence_intervals--p95))
+- `p99` (Attributes) Upper and lower bound for percentile estimate (see [below for nested schema](#nestedatt--features--confidence_intervals--suggested_threshold--confidence_intervals--p99))
+
+<a id="nestedatt--features--confidence_intervals--suggested_threshold--confidence_intervals--p90"></a>
+### Nested Schema for `features.confidence_intervals.suggested_threshold.confidence_intervals.p90`
+
+Read-Only:
+
+- `lower` (Number) Lower bound for percentile estimate
+- `upper` (Number) Upper bound for percentile estimate
+
+
+<a id="nestedatt--features--confidence_intervals--suggested_threshold--confidence_intervals--p95"></a>
+### Nested Schema for `features.confidence_intervals.suggested_threshold.confidence_intervals.p95`
+
+Read-Only:
+
+- `lower` (Number) Lower bound for percentile estimate
+- `upper` (Number) Upper bound for percentile estimate
+
+
+<a id="nestedatt--features--confidence_intervals--suggested_threshold--confidence_intervals--p99"></a>
+### Nested Schema for `features.confidence_intervals.suggested_threshold.confidence_intervals.p99`
+
+Read-Only:
+
+- `lower` (Number) Lower bound for percentile estimate
+- `upper` (Number) Upper bound for percentile estimate
+
+
+
+
+
+<a id="nestedatt--features--parameter_schemas"></a>
+### Nested Schema for `features.parameter_schemas`
+
+Read-Only:
+
+- `last_updated` (String)
+- `parameter_schemas` (Attributes) An operation schema object containing a response. (see [below for nested schema](#nestedatt--features--parameter_schemas--parameter_schemas))
+
+<a id="nestedatt--features--parameter_schemas--parameter_schemas"></a>
+### Nested Schema for `features.parameter_schemas.parameter_schemas`
+
+Read-Only:
+
+- `parameters` (List of String) An array containing the learned parameter schemas.
+- `responses` (String) An empty response object. This field is required to yield a valid operation schema.
+
+
+
+<a id="nestedatt--features--schema_info"></a>
+### Nested Schema for `features.schema_info`
+
+Read-Only:
+
+- `active_schema` (Attributes) Schema active on endpoint. (see [below for nested schema](#nestedatt--features--schema_info--active_schema))
+- `learned_available` (Boolean) True if a Cloudflare-provided learned schema is available for this endpoint.
+- `mitigation_action` (String) Action taken on requests failing validation.
+
+<a id="nestedatt--features--schema_info--active_schema"></a>
+### Nested Schema for `features.schema_info.active_schema`
+
+Read-Only:
+
+- `created_at` (String)
 - `id` (String) UUID
+- `is_learned` (Boolean) True if schema is Cloudflare-provided.
+- `name` (String) Schema file name.
+
+
+
+<a id="nestedatt--features--thresholds"></a>
+### Nested Schema for `features.thresholds`
+
+Read-Only:
+
+- `auth_id_tokens` (Number) The total number of auth-ids seen across this calculation.
+- `data_points` (Number) The number of data points used for the threshold suggestion calculation.
+- `last_updated` (String)
+- `p50` (Number) The p50 quantile of requests (in period_seconds).
+- `p90` (Number) The p90 quantile of requests (in period_seconds).
+- `p99` (Number) The p99 quantile of requests (in period_seconds).
+- `period_seconds` (Number) The period over which this threshold is suggested.
+- `requests` (Number) The estimated number of requests covered by these calculations.
+- `suggested_threshold` (Number) The suggested threshold in requests done by the same auth_id or period_seconds.
 
 

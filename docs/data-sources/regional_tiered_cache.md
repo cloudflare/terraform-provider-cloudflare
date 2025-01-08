@@ -26,16 +26,9 @@ data "cloudflare_regional_tiered_cache" "example_regional_tiered_cache" {
 
 ### Read-Only
 
+- `editable` (Boolean) Whether the setting is editable
 - `id` (String) ID of the zone setting.
-- `modified_on` (String) last time this setting was modified.
-- `value` (Attributes) Instructs Cloudflare to check a regional hub data center on the way to your upper tier. This can help improve performance for smart and custom tiered cache topologies. (see [below for nested schema](#nestedatt--value))
-
-<a id="nestedatt--value"></a>
-### Nested Schema for `value`
-
-Read-Only:
-
-- `id` (String) ID of the zone setting.
-- `modified_on` (String) last time this setting was modified.
+- `modified_on` (String) Last time this setting was modified.
+- `value` (String) The value of the feature
 
 

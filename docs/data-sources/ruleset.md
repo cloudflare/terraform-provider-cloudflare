@@ -34,11 +34,9 @@ data "cloudflare_ruleset" "example_ruleset" {
 - `description` (String) An informative description of the ruleset.
 - `id` (String) The unique ID of the ruleset.
 - `kind` (String) The kind of the ruleset.
-- `last_updated` (String) The timestamp of when the ruleset was last modified.
 - `name` (String) The human-readable name of the ruleset.
 - `phase` (String) The phase of the ruleset.
 - `rules` (Attributes List) The list of rules in the ruleset. (see [below for nested schema](#nestedatt--rules))
-- `version` (String) The version of the ruleset.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -62,11 +60,9 @@ Read-Only:
 - `exposed_credential_check` (Attributes) Configure checks for exposed credentials. (see [below for nested schema](#nestedatt--rules--exposed_credential_check))
 - `expression` (String) The expression defining which traffic will match the rule.
 - `id` (String) The unique ID of the rule.
-- `last_updated` (String) The timestamp of when the rule was last modified.
 - `logging` (Attributes) An object configuring the rule's logging behavior. (see [below for nested schema](#nestedatt--rules--logging))
 - `ratelimit` (Attributes) An object configuring the rule's ratelimit behavior. (see [below for nested schema](#nestedatt--rules--ratelimit))
 - `ref` (String) The reference of the rule (the rule ID by default).
-- `version` (String) The version of the rule.
 
 <a id="nestedatt--rules--action_parameters"></a>
 ### Nested Schema for `rules.action_parameters`

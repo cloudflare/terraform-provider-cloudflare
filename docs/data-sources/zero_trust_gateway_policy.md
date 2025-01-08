@@ -48,6 +48,7 @@ This does not apply to HTTP or network policies. (see [below for nested schema](
 - `schedule` (Attributes) The schedule for activating DNS policies. This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--schedule))
 - `traffic` (String) The wirefilter expression used for traffic matching.
 - `updated_at` (String)
+- `version` (Number) version number of the rule
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

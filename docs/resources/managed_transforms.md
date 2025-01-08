@@ -13,14 +13,22 @@ description: |-
 
 ```terraform
 resource "cloudflare_managed_transforms" "example_managed_transforms" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  zone_id = "9f1839b6152d298aca64c4e906b6d074"
   managed_request_headers = [{
-    id = "add_cf-bot-score_header"
+    id = "add_bot_protection_headers"
     enabled = true
+    has_conflict = false
+    conflicts_with = [{
+
+    }]
   }]
   managed_response_headers = [{
-    id = "add_cf-bot-score_header"
+    id = "add_security_headers"
     enabled = true
+    has_conflict = false
+    conflicts_with = [{
+
+    }]
   }]
 }
 ```
@@ -30,30 +38,40 @@ resource "cloudflare_managed_transforms" "example_managed_transforms" {
 
 ### Required
 
-- `managed_request_headers` (Attributes List) (see [below for nested schema](#nestedatt--managed_request_headers))
-- `managed_response_headers` (Attributes List) (see [below for nested schema](#nestedatt--managed_response_headers))
-- `zone_id` (String) Identifier
+- `managed_request_headers` (Attributes List) The list of Managed Request Transforms. (see [below for nested schema](#nestedatt--managed_request_headers))
+- `managed_response_headers` (Attributes List) The list of Managed Response Transforms. (see [below for nested schema](#nestedatt--managed_response_headers))
+- `zone_id` (String) The unique ID of the zone.
 
 ### Read-Only
 
-- `id` (String) Identifier
+- `id` (String) The unique ID of the zone.
 
 <a id="nestedatt--managed_request_headers"></a>
 ### Nested Schema for `managed_request_headers`
 
-Optional:
+Required:
 
-- `enabled` (Boolean) When true, the Managed Transform is enabled.
-- `id` (String) Human-readable identifier of the Managed Transform.
+- `enabled` (Boolean) Whether the Managed Transform is enabled.
+- `id` (String) The human-readable identifier of the Managed Transform.
+
+Read-Only:
+
+- `conflicts_with` (List of String) The Managed Transforms that this Managed Transform conflicts with.
+- `has_conflict` (Boolean) Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.
 
 
 <a id="nestedatt--managed_response_headers"></a>
 ### Nested Schema for `managed_response_headers`
 
-Optional:
+Required:
 
-- `enabled` (Boolean) When true, the Managed Transform is enabled.
-- `id` (String) Human-readable identifier of the Managed Transform.
+- `enabled` (Boolean) Whether the Managed Transform is enabled.
+- `id` (String) The human-readable identifier of the Managed Transform.
+
+Read-Only:
+
+- `conflicts_with` (List of String) The Managed Transforms that this Managed Transform conflicts with.
+- `has_conflict` (Boolean) Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.
 
 ## Import
 

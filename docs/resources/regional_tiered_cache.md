@@ -31,8 +31,9 @@ resource "cloudflare_regional_tiered_cache" "example_regional_tiered_cache" {
 
 ### Read-Only
 
+- `editable` (Boolean) Whether the setting is editable
 - `id` (String) Identifier
-- `modified_on` (String) last time this setting was modified.
+- `modified_on` (String) Last time this setting was modified.
 
 ## Import
 
