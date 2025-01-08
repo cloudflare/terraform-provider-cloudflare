@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_zero_trust_device_posture_rule: Fix 'last_seen' not being written to the state file
+```

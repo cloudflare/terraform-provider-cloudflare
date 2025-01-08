@@ -383,6 +383,8 @@ func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]
 		"overall":            input.Overall,
 		"sensor_config":      input.SensorConfig,
 		"version_operator":   input.VersionOperator,
+		"state":              input.State,
+		"last_seen":          input.LastSeen,
 		"count_operator":     input.CountOperator,
 		"issue_count":        input.IssueCount,
 		"certificate_id":     input.CertificateID,
