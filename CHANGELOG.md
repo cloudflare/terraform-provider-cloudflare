@@ -1,5 +1,24 @@
 ## 4.50.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* cloudflare_teams_location: support endpoints + BYOIPv6 + DNS IPv4 destinations ([#4805](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4805))
+* resource/cloudflare_zone_settings_override: Add support for `aegis` ([#4820](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4820))
+* resource/cloudflare_zone_settings_override: add support for `ssl_automatic_mode` ([#4465](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4465))
+
+BUG FIXES:
+
+* resource/cloudflare_access_application: Fix access application saas apps attributes crashing provider when no changes were made to those ([#4843](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4843))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.112.0 to 0.113.0 ([#4826](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4826))
+* provider: bump golang.org/x/net from 0.33.0 to 0.34.0 ([#4837](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4837))
+
+## 4.49.1 (December 25th, 2025)
+
+No functional differences to v4.49.0. Republished to fix a bad cached asset in the Terraform Registry.
+
 ## 4.49.0 (December 25th, 2025)
 
 NOTES:
