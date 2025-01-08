@@ -1,4 +1,6 @@
-## 4.50.0 (Unreleased)
+## 4.51.0 (Unreleased)
+
+## 4.50.0 (January 8th, 2025)
 
 ENHANCEMENTS:
 
