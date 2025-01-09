@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3/api_gateway"
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*APIShieldOperationResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*APIShieldOperationResource)(nil)
+var _ resource.ResourceWithImportState = (*APIShieldOperationResource)(nil)
 
 func NewResource() resource.Resource {
 	return &APIShieldOperationResource{}
@@ -67,7 +70,7 @@ func (r *APIShieldOperationResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	res := new(http.Response)
-	env := APIShieldOperationResultEnvelope{data.Operations}
+	env := APIShieldOperationResultEnvelope{*data}
 	_, err = r.client.APIGateway.Operations.New(
 		ctx,
 		api_gateway.OperationNewParams{
@@ -87,7 +90,8 @@ func (r *APIShieldOperationResource) Create(ctx context.Context, req resource.Cr
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Operations = env.Result
+	data = &env.Result
+	data.ID = data.OperationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -115,11 +119,11 @@ func (r *APIShieldOperationResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	res := new(http.Response)
-	env := APIShieldOperationResultEnvelope{data.Operations}
+	env := APIShieldOperationResultEnvelope{*data}
 	_, err = r.client.APIGateway.Operations.New(
 		ctx,
 		api_gateway.OperationNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.OperationID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -135,7 +139,8 @@ func (r *APIShieldOperationResource) Update(ctx context.Context, req resource.Up
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Operations = env.Result
+	data = &env.Result
+	data.ID = data.OperationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -150,7 +155,7 @@ func (r *APIShieldOperationResource) Read(ctx context.Context, req resource.Read
 	}
 
 	res := new(http.Response)
-	env := APIShieldOperationResultEnvelope{data.Operations}
+	env := APIShieldOperationResultEnvelope{*data}
 	_, err := r.client.APIGateway.Operations.Get(
 		ctx,
 		data.OperationID.ValueString(),
@@ -175,7 +180,8 @@ func (r *APIShieldOperationResource) Read(ctx context.Context, req resource.Read
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Operations = env.Result
+	data = &env.Result
+	data.ID = data.OperationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -201,6 +207,53 @@ func (r *APIShieldOperationResource) Delete(ctx context.Context, req resource.De
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.OperationID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *APIShieldOperationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *APIShieldOperationModel = new(APIShieldOperationModel)
+
+	path_zone_id := ""
+	path_operation_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<operation_id>",
+		&path_zone_id,
+		&path_operation_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.OperationID = types.StringValue(path_operation_id)
+
+	res := new(http.Response)
+	env := APIShieldOperationResultEnvelope{*data}
+	_, err := r.client.APIGateway.Operations.Get(
+		ctx,
+		path_operation_id,
+		api_gateway.OperationGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.OperationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
