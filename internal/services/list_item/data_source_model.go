@@ -21,26 +21,18 @@ type ListItemResultListDataSourceEnvelope struct {
 }
 
 type ListItemDataSourceModel struct {
-	AccountIdentifier   types.String                                              `tfsdk:"account_identifier" path:"account_identifier,optional"`
-	ItemID              types.String                                              `tfsdk:"item_id" path:"item_id,optional"`
-	ListID              types.String                                              `tfsdk:"list_id" path:"list_id,optional"`
-	ASN                 types.Int64                                               `tfsdk:"asn" json:"asn,computed"`
-	Comment             types.String                                              `tfsdk:"comment" json:"comment,computed"`
-	CreatedOn           types.String                                              `tfsdk:"created_on" json:"created_on,computed"`
-	ID                  types.String                                              `tfsdk:"id" json:"id,computed"`
-	IncludeSubdomains   types.Bool                                                `tfsdk:"include_subdomains" json:"include_subdomains,computed"`
-	IP                  types.String                                              `tfsdk:"ip" json:"ip,computed"`
-	ModifiedOn          types.String                                              `tfsdk:"modified_on" json:"modified_on,computed"`
-	PreservePathSuffix  types.Bool                                                `tfsdk:"preserve_path_suffix" json:"preserve_path_suffix,computed"`
-	PreserveQueryString types.Bool                                                `tfsdk:"preserve_query_string" json:"preserve_query_string,computed"`
-	SourceURL           types.String                                              `tfsdk:"source_url" json:"source_url,computed"`
-	StatusCode          types.Int64                                               `tfsdk:"status_code" json:"status_code,computed"`
-	SubpathMatching     types.Bool                                                `tfsdk:"subpath_matching" json:"subpath_matching,computed"`
-	TargetURL           types.String                                              `tfsdk:"target_url" json:"target_url,computed"`
-	URLHostname         types.String                                              `tfsdk:"url_hostname" json:"url_hostname,computed"`
-	Hostname            customfield.NestedObject[ListItemHostnameDataSourceModel] `tfsdk:"hostname" json:"hostname,computed"`
-	Redirect            customfield.NestedObject[ListItemRedirectDataSourceModel] `tfsdk:"redirect" json:"redirect,computed"`
-	Filter              *ListItemFindOneByDataSourceModel                         `tfsdk:"filter"`
+	AccountIdentifier types.String                                              `tfsdk:"account_identifier" path:"account_identifier,optional"`
+	ItemID            types.String                                              `tfsdk:"item_id" path:"item_id,optional"`
+	ListID            types.String                                              `tfsdk:"list_id" path:"list_id,optional"`
+	ASN               types.Int64                                               `tfsdk:"asn" json:"asn,computed"`
+	Comment           types.String                                              `tfsdk:"comment" json:"comment,computed"`
+	CreatedOn         types.String                                              `tfsdk:"created_on" json:"created_on,computed"`
+	ID                types.String                                              `tfsdk:"id" json:"id,computed"`
+	IP                types.String                                              `tfsdk:"ip" json:"ip,computed"`
+	ModifiedOn        types.String                                              `tfsdk:"modified_on" json:"modified_on,computed"`
+	Hostname          customfield.NestedObject[ListItemHostnameDataSourceModel] `tfsdk:"hostname" json:"hostname,computed"`
+	Redirect          customfield.NestedObject[ListItemRedirectDataSourceModel] `tfsdk:"redirect" json:"redirect,computed"`
+	Filter            *ListItemFindOneByDataSourceModel                         `tfsdk:"filter"`
 }
 
 func (m *ListItemDataSourceModel) toListParams(_ context.Context) (params rules.ListItemListParams, diags diag.Diagnostics) {
