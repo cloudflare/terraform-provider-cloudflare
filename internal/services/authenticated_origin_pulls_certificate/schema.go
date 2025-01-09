@@ -19,14 +19,14 @@ var _ resource.ResourceWithConfigValidators = (*AuthenticatedOriginPullsCertific
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description:   "Identifier",
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
-			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"certificate_id": schema.StringAttribute{
+				Description:   "Identifier",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"certificate": schema.StringAttribute{
@@ -39,10 +39,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"enabled": schema.BoolAttribute{
+				Description: "Indicates whether zone-level authenticated origin pulls is enabled.",
+				Computed:    true,
+			},
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate from the authority expires.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",

@@ -7,12 +7,16 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessPolicyResource)(nil)
@@ -266,6 +270,60 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Required:    true,
 								},
 							},
+						},
+					},
+				},
+			},
+			"purpose_justification_prompt": schema.StringAttribute{
+				Description: "A custom message that will appear on the purpose justification screen.",
+				Optional:    true,
+			},
+			"approval_required": schema.BoolAttribute{
+				Description: "Requires the user to request access from an administrator at the start of each session.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"isolation_required": schema.BoolAttribute{
+				Description: "Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"purpose_justification_required": schema.BoolAttribute{
+				Description: "Require users to enter a justification when they log in to the application.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"session_duration": schema.StringAttribute{
+				Description: "The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString("24h"),
+			},
+			"approval_groups": schema.ListNestedAttribute{
+				Description: "Administrators who can approve a temporary authentication request.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessPolicyApprovalGroupsModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"approvals_needed": schema.Float64Attribute{
+							Description: "The number of approvals needed to obtain access.",
+							Required:    true,
+							Validators: []validator.Float64{
+								float64validator.AtLeast(0),
+							},
+						},
+						"email_addresses": schema.ListAttribute{
+							Description: "A list of emails that can approve the access request.",
+							Optional:    true,
+							ElementType: types.StringType,
+						},
+						"email_list_uuid": schema.StringAttribute{
+							Description: "The UUID of an re-usable email list.",
+							Optional:    true,
 						},
 					},
 				},
@@ -794,9 +852,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"app_count": schema.Int64Attribute{
+				Description: "Number of access applications currently using this policy.",
+				Computed:    true,
+			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"reusable": schema.BoolAttribute{
+				Computed: true,
 			},
 			"updated_at": schema.StringAttribute{
 				Computed:   true,

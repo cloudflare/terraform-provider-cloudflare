@@ -25,9 +25,11 @@ type AuthenticatedOriginPullsCertificateDataSourceModel struct {
 	CertificateID types.String                                                 `tfsdk:"certificate_id" path:"certificate_id,optional"`
 	ZoneID        types.String                                                 `tfsdk:"zone_id" path:"zone_id,optional"`
 	Certificate   types.String                                                 `tfsdk:"certificate" json:"certificate,computed"`
+	Enabled       types.Bool                                                   `tfsdk:"enabled" json:"enabled,computed"`
 	ExpiresOn     timetypes.RFC3339                                            `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	ID            types.String                                                 `tfsdk:"id" json:"id,computed"`
 	Issuer        types.String                                                 `tfsdk:"issuer" json:"issuer,computed"`
+	PrivateKey    types.String                                                 `tfsdk:"private_key" json:"private_key,computed"`
 	Signature     types.String                                                 `tfsdk:"signature" json:"signature,computed"`
 	Status        types.String                                                 `tfsdk:"status" json:"status,computed"`
 	UploadedOn    timetypes.RFC3339                                            `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`

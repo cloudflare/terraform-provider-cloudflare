@@ -22,17 +22,25 @@ type ZeroTrustAccessPolicyResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessPolicyDataSourceModel struct {
-	AccountID types.String                                                              `tfsdk:"account_id" path:"account_id,optional"`
-	PolicyID  types.String                                                              `tfsdk:"policy_id" path:"policy_id,optional"`
-	CreatedAt timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Decision  types.String                                                              `tfsdk:"decision" json:"decision,computed"`
-	ID        types.String                                                              `tfsdk:"id" json:"id,computed"`
-	Name      types.String                                                              `tfsdk:"name" json:"name,computed"`
-	UpdatedAt timetypes.RFC3339                                                         `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	Exclude   customfield.NestedObjectList[ZeroTrustAccessPolicyExcludeDataSourceModel] `tfsdk:"exclude" json:"exclude,computed"`
-	Include   customfield.NestedObjectList[ZeroTrustAccessPolicyIncludeDataSourceModel] `tfsdk:"include" json:"include,computed"`
-	Require   customfield.NestedObjectList[ZeroTrustAccessPolicyRequireDataSourceModel] `tfsdk:"require" json:"require,computed"`
-	Filter    *ZeroTrustAccessPolicyFindOneByDataSourceModel                            `tfsdk:"filter"`
+	AccountID                    types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	PolicyID                     types.String                                                                     `tfsdk:"policy_id" path:"policy_id,optional"`
+	AppCount                     types.Int64                                                                      `tfsdk:"app_count" json:"app_count,computed"`
+	ApprovalRequired             types.Bool                                                                       `tfsdk:"approval_required" json:"approval_required,computed"`
+	CreatedAt                    timetypes.RFC3339                                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Decision                     types.String                                                                     `tfsdk:"decision" json:"decision,computed"`
+	ID                           types.String                                                                     `tfsdk:"id" json:"id,computed"`
+	IsolationRequired            types.Bool                                                                       `tfsdk:"isolation_required" json:"isolation_required,computed"`
+	Name                         types.String                                                                     `tfsdk:"name" json:"name,computed"`
+	PurposeJustificationPrompt   types.String                                                                     `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
+	PurposeJustificationRequired types.Bool                                                                       `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
+	Reusable                     types.Bool                                                                       `tfsdk:"reusable" json:"reusable,computed"`
+	SessionDuration              types.String                                                                     `tfsdk:"session_duration" json:"session_duration,computed"`
+	UpdatedAt                    timetypes.RFC3339                                                                `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	ApprovalGroups               customfield.NestedObjectList[ZeroTrustAccessPolicyApprovalGroupsDataSourceModel] `tfsdk:"approval_groups" json:"approval_groups,computed"`
+	Exclude                      customfield.NestedObjectList[ZeroTrustAccessPolicyExcludeDataSourceModel]        `tfsdk:"exclude" json:"exclude,computed"`
+	Include                      customfield.NestedObjectList[ZeroTrustAccessPolicyIncludeDataSourceModel]        `tfsdk:"include" json:"include,computed"`
+	Require                      customfield.NestedObjectList[ZeroTrustAccessPolicyRequireDataSourceModel]        `tfsdk:"require" json:"require,computed"`
+	Filter                       *ZeroTrustAccessPolicyFindOneByDataSourceModel                                   `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustAccessPolicyDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessPolicyGetParams, diags diag.Diagnostics) {
@@ -49,6 +57,12 @@ func (m *ZeroTrustAccessPolicyDataSourceModel) toListParams(_ context.Context) (
 	}
 
 	return
+}
+
+type ZeroTrustAccessPolicyApprovalGroupsDataSourceModel struct {
+	ApprovalsNeeded types.Float64                  `tfsdk:"approvals_needed" json:"approvals_needed,computed"`
+	EmailAddresses  customfield.List[types.String] `tfsdk:"email_addresses" json:"email_addresses,computed"`
+	EmailListUUID   types.String                   `tfsdk:"email_list_uuid" json:"email_list_uuid,computed"`
 }
 
 type ZeroTrustAccessPolicyExcludeDataSourceModel struct {

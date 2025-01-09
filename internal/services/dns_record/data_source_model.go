@@ -9,6 +9,8 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3/dns"
 	"github.com/cloudflare/cloudflare-go/v3/shared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,19 +24,26 @@ type DNSRecordResultListDataSourceEnvelope struct {
 }
 
 type DNSRecordDataSourceModel struct {
-	DNSRecordID types.String                                               `tfsdk:"dns_record_id" path:"dns_record_id,optional"`
-	ZoneID      types.String                                               `tfsdk:"zone_id" path:"zone_id,optional"`
-	Comment     types.String                                               `tfsdk:"comment" json:"comment,computed"`
-	Content     types.String                                               `tfsdk:"content" json:"content,computed"`
-	Name        types.String                                               `tfsdk:"name" json:"name,computed"`
-	Priority    types.Float64                                              `tfsdk:"priority" json:"priority,computed"`
-	Proxied     types.Bool                                                 `tfsdk:"proxied" json:"proxied,computed"`
-	TTL         types.Float64                                              `tfsdk:"ttl" json:"ttl,computed"`
-	Type        types.String                                               `tfsdk:"type" json:"type,computed"`
-	Tags        customfield.List[types.String]                             `tfsdk:"tags" json:"tags,computed"`
-	Data        customfield.NestedObject[DNSRecordDataDataSourceModel]     `tfsdk:"data" json:"data,computed"`
-	Settings    customfield.NestedObject[DNSRecordSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
-	Filter      *DNSRecordFindOneByDataSourceModel                         `tfsdk:"filter"`
+	DNSRecordID       types.String                                               `tfsdk:"dns_record_id" path:"dns_record_id,optional"`
+	ZoneID            types.String                                               `tfsdk:"zone_id" path:"zone_id,optional"`
+	Comment           types.String                                               `tfsdk:"comment" json:"comment,computed"`
+	CommentModifiedOn timetypes.RFC3339                                          `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
+	Content           types.String                                               `tfsdk:"content" json:"content,computed"`
+	CreatedOn         timetypes.RFC3339                                          `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ID                types.String                                               `tfsdk:"id" json:"id,computed"`
+	ModifiedOn        timetypes.RFC3339                                          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name              types.String                                               `tfsdk:"name" json:"name,computed"`
+	Priority          types.Float64                                              `tfsdk:"priority" json:"priority,computed"`
+	Proxiable         types.Bool                                                 `tfsdk:"proxiable" json:"proxiable,computed"`
+	Proxied           types.Bool                                                 `tfsdk:"proxied" json:"proxied,computed"`
+	TagsModifiedOn    timetypes.RFC3339                                          `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
+	TTL               types.Float64                                              `tfsdk:"ttl" json:"ttl,computed"`
+	Type              types.String                                               `tfsdk:"type" json:"type,computed"`
+	Tags              customfield.List[types.String]                             `tfsdk:"tags" json:"tags,computed"`
+	Data              customfield.NestedObject[DNSRecordDataDataSourceModel]     `tfsdk:"data" json:"data,computed"`
+	Settings          customfield.NestedObject[DNSRecordSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
+	Meta              jsontypes.Normalized                                       `tfsdk:"meta" json:"meta,computed"`
+	Filter            *DNSRecordFindOneByDataSourceModel                         `tfsdk:"filter"`
 }
 
 func (m *DNSRecordDataSourceModel) toReadParams(_ context.Context) (params dns.RecordGetParams, diags diag.Diagnostics) {
