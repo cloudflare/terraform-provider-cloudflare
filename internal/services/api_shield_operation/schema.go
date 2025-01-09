@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -22,64 +21,34 @@ var _ resource.ResourceWithConfigValidators = (*APIShieldOperationResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "UUID",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"operation_id": schema.StringAttribute{
+				Description:   "UUID",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"operation_id": schema.StringAttribute{
-				Description:   "UUID",
-				Optional:      true,
+			"endpoint": schema.StringAttribute{
+				Description:   "The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"operations": schema.ListNestedAttribute{
-				Required: true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"endpoint": schema.StringAttribute{
-							Description: "The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.",
-							Required:    true,
-						},
-						"host": schema.StringAttribute{
-							Description: "RFC3986-compliant host.",
-							Required:    true,
-						},
-						"method": schema.StringAttribute{
-							Description: "The HTTP method used to access the endpoint.",
-							Required:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(
-									"GET",
-									"POST",
-									"HEAD",
-									"OPTIONS",
-									"PUT",
-									"DELETE",
-									"CONNECT",
-									"PATCH",
-									"TRACE",
-								),
-							},
-						},
-					},
-				},
-				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
-			},
-			"endpoint": schema.StringAttribute{
-				Description: "The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.",
-				Computed:    true,
-			},
 			"host": schema.StringAttribute{
-				Description: "RFC3986-compliant host.",
-				Computed:    true,
-			},
-			"last_updated": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Description:   "RFC3986-compliant host.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"method": schema.StringAttribute{
 				Description: "The HTTP method used to access the endpoint.",
-				Computed:    true,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"GET",
@@ -93,6 +62,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"TRACE",
 					),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"last_updated": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"features": schema.SingleNestedAttribute{
 				Computed:   true,
