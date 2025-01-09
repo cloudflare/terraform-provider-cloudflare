@@ -71,8 +71,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"SUCCESS",
+						"NO_VALID_HOSTS",
+						"NO_VALID_BINDINGS",
 						"UNSUPPORTED_APPLICATION",
 						"INSUFFICIENT_INVOCATIONS",
+						"INSUFFICIENT_SUBREQUESTS",
 					),
 				},
 			},
@@ -101,8 +104,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"SUCCESS",
+								"NO_VALID_HOSTS",
+								"NO_VALID_BINDINGS",
 								"UNSUPPORTED_APPLICATION",
 								"INSUFFICIENT_INVOCATIONS",
+								"INSUFFICIENT_SUBREQUESTS",
 							),
 						},
 					},
