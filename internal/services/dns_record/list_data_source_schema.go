@@ -247,7 +247,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"flatten_cname": schema.BoolAttribute{
-									Description: "If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting has no effect on proxied records, which are always flattened.",
+									Description: "If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting is unavailable for proxied records, since they are always flattened.",
 									Computed:    true,
 								},
 							},
