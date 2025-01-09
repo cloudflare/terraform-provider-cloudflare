@@ -583,6 +583,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The name of the Access policy.",
 							Optional:    true,
 						},
+						"connection_rules": schema.SingleNestedAttribute{
+							Description: "The rules that define how users may connect to the targets secured by your application.",
+							Computed:    true,
+							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesConnectionRulesModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"ssh": schema.SingleNestedAttribute{
+									Description: "The SSH-specific rules that define how users may connect to the targets secured by your application.",
+									Computed:    true,
+									Optional:    true,
+									CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesConnectionRulesSSHModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"usernames": schema.ListAttribute{
+											Description: "Contains the Unix usernames that may be used when connecting over SSH.",
+											Required:    true,
+											ElementType: types.StringType,
+										},
+										"allow_email_alias": schema.BoolAttribute{
+											Description: "Enables using Identity Provider email alias as SSH username.",
+											Optional:    true,
+										},
+									},
+								},
+							},
+						},
 						"exclude": schema.ListNestedAttribute{
 							Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 							Computed:    true,

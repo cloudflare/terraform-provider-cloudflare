@@ -17,8 +17,8 @@ type ZeroTrustDLPEntryResultEnvelope struct {
 type ZeroTrustDLPEntryModel struct {
 	ID         types.String                                               `tfsdk:"id" json:"id,computed"`
 	AccountID  types.String                                               `tfsdk:"account_id" path:"account_id,required"`
-	Enabled    types.Bool                                                 `tfsdk:"enabled" json:"enabled,required"`
 	ProfileID  types.String                                               `tfsdk:"profile_id" json:"profile_id,required"`
+	Enabled    types.Bool                                                 `tfsdk:"enabled" json:"enabled,required"`
 	Name       types.String                                               `tfsdk:"name" json:"name,required"`
 	Pattern    *ZeroTrustDLPEntryPatternModel                             `tfsdk:"pattern" json:"pattern,required"`
 	Type       types.String                                               `tfsdk:"type" json:"type,optional"`

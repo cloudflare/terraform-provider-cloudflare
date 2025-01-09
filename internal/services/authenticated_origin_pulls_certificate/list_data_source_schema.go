@@ -77,6 +77,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
+						"enabled": schema.BoolAttribute{
+							Description: "Indicates whether zone-level authenticated origin pulls is enabled.",
+							Computed:    true,
+						},
+						"private_key": schema.StringAttribute{
+							Description: "The zone's private key.",
+							Computed:    true,
+						},
 					},
 				},
 			},

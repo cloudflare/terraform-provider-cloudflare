@@ -7,6 +7,8 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -291,6 +293,39 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"URI",
 								),
 							},
+						},
+						"id": schema.StringAttribute{
+							Description: "Identifier",
+							Computed:    true,
+						},
+						"created_on": schema.StringAttribute{
+							Description: "When the record was created.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"meta": schema.StringAttribute{
+							Description: "Extra Cloudflare-specific information about the record.",
+							Computed:    true,
+							CustomType:  jsontypes.NormalizedType{},
+						},
+						"modified_on": schema.StringAttribute{
+							Description: "When the record was last modified.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"proxiable": schema.BoolAttribute{
+							Description: "Whether the record can be proxied by Cloudflare or not.",
+							Computed:    true,
+						},
+						"comment_modified_on": schema.StringAttribute{
+							Description: "When the record comment was last modified. Omitted if there is no comment.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"tags_modified_on": schema.StringAttribute{
+							Description: "When the record tags were last modified. Omitted if there are no tags.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"data": schema.SingleNestedAttribute{
 							Description: "Components of a CAA record.",

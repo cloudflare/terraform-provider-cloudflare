@@ -39,4 +39,6 @@ type AuthenticatedOriginPullsCertificatesResultDataSourceModel struct {
 	Signature   types.String      `tfsdk:"signature" json:"signature,computed"`
 	Status      types.String      `tfsdk:"status" json:"status,computed"`
 	UploadedOn  timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
+	Enabled     types.Bool        `tfsdk:"enabled" json:"enabled,computed"`
+	PrivateKey  types.String      `tfsdk:"private_key" json:"private_key,computed"`
 }

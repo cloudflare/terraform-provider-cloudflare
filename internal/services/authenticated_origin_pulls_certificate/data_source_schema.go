@@ -31,6 +31,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The zone's leaf certificate.",
 				Computed:    true,
 			},
+			"enabled": schema.BoolAttribute{
+				Description: "Indicates whether zone-level authenticated origin pulls is enabled.",
+				Computed:    true,
+			},
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate from the authority expires.",
 				Computed:    true,
@@ -42,6 +46,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",
+				Computed:    true,
+			},
+			"private_key": schema.StringAttribute{
+				Description: "The zone's private key.",
 				Computed:    true,
 			},
 			"signature": schema.StringAttribute{
