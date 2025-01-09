@@ -90,7 +90,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Required: true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(cfv1.RulesetPhaseValues()...),
-					sbfmDeprecationWarningValidator{},
 				},
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
