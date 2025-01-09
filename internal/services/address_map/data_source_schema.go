@@ -21,11 +21,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier of a Cloudflare account.",
 				Optional:    true,
 			},
 			"address_map_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier of an Address Map.",
 				Optional:    true,
 			},
 			"can_delete": schema.BoolAttribute{
@@ -53,7 +53,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier of an Address Map.",
 				Computed:    true,
 			},
 			"modified_at": schema.StringAttribute{
@@ -109,7 +109,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
+						Description: "Identifier of a Cloudflare account.",
 						Required:    true,
 					},
 				},
