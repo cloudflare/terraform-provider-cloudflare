@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_application: Fix access application saas apps attributes crashing provider when no changes were made to those
+```
