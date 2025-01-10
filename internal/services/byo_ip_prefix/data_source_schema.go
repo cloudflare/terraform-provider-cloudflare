@@ -18,11 +18,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"prefix_id": schema.StringAttribute{
-				Description: "Identifier of an IP Prefix.",
+				Description: "Identifier",
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Identifier of a Cloudflare account.",
+				Description: "Identifier",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -56,7 +56,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "Identifier of an IP Prefix.",
+				Description: "Identifier",
 				Computed:    true,
 			},
 			"loa_document_id": schema.StringAttribute{
@@ -79,7 +79,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
-						Description: "Identifier of a Cloudflare account.",
+						Description: "Identifier",
 						Required:    true,
 					},
 				},

@@ -208,10 +208,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
-			"logpush": schema.BoolAttribute{
-				Description: "Whether Logpush is turned on for the Worker.",
-				Optional:    true,
-			},
 			"main_module": schema.StringAttribute{
 				Description: "Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
 				Optional:    true,
@@ -382,8 +378,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"SUCCESS",
+						"NO_VALID_HOSTS",
+						"NO_VALID_BINDINGS",
 						"UNSUPPORTED_APPLICATION",
 						"INSUFFICIENT_INVOCATIONS",
+						"INSUFFICIENT_SUBREQUESTS",
 					),
 				},
 			},
@@ -418,8 +417,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"SUCCESS",
+								"NO_VALID_HOSTS",
+								"NO_VALID_BINDINGS",
 								"UNSUPPORTED_APPLICATION",
 								"INSUFFICIENT_INVOCATIONS",
+								"INSUFFICIENT_SUBREQUESTS",
 							),
 						},
 					},
