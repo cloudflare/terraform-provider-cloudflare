@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -347,6 +348,55 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"etag": schema.StringAttribute{
+				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
+				Computed:    true,
+			},
+			"has_assets": schema.BoolAttribute{
+				Description: "Whether a Worker contains assets.",
+				Computed:    true,
+			},
+			"has_modules": schema.BoolAttribute{
+				Description: "Whether a Worker contains modules.",
+				Computed:    true,
+			},
+			"logpush": schema.BoolAttribute{
+				Description: "Whether Logpush is turned on for the Worker.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the script was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"placement_mode": schema.StringAttribute{
+				Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("smart"),
+				},
+			},
+			"placement_status": schema.StringAttribute{
+				Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"SUCCESS",
+						"UNSUPPORTED_APPLICATION",
+						"INSUFFICIENT_INVOCATIONS",
+					),
+				},
+			},
+			"startup_time_ms": schema.Int64Attribute{
+				Computed: true,
+			},
+			"usage_model": schema.StringAttribute{
+				Description: "Usage model for the Worker invocations.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("standard"),
+				},
+			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
 				Optional:    true,
@@ -368,11 +418,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"SUCCESS",
-								"NO_VALID_HOSTS",
-								"NO_VALID_BINDINGS",
 								"UNSUPPORTED_APPLICATION",
 								"INSUFFICIENT_INVOCATIONS",
-								"INSUFFICIENT_SUBREQUESTS",
 							),
 						},
 					},
@@ -398,13 +445,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 					},
-				},
-			},
-			"usage_model": schema.StringAttribute{
-				Description: "Usage model for the Worker invocations.",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("standard"),
 				},
 			},
 		},
