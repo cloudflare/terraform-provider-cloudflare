@@ -167,7 +167,6 @@ func (r *RulesetResource) UpgradeState(ctx context.Context) map[int64]resource.S
 						Required: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(cfv1.RulesetPhaseValues()...),
-							sbfmDeprecationWarningValidator{},
 						},
 						PlanModifiers: []planmodifier.String{
 							stringplanmodifier.RequiresReplace(),
