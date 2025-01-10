@@ -5,7 +5,7 @@ package cloudforce_one_request_message
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3/cloudforce_one"
+	"github.com/cloudflare/cloudflare-go/v4/cloudforce_one"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )

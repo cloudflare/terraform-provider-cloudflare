@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
