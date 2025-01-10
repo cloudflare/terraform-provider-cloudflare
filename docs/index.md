@@ -5,19 +5,6 @@ description: |-
   The Cloudflare provider provides resources to interact with the Cloudflare API.
 ---
 
-!> v5 of the provider is a ground-up rewrite using code generation from our OpenAPI spec
-  and migrating internals to use terraform-plugin-framework.
-  <br><br>These are alpha releases that include support for many of the foundational Cloudflare
-  products however, is not recommended for existing configurations, critical workloads
-  or production usage. There are known bugs that will be addressed as the stability
-  increases and we get closer to general availability.
-  <br><br>Resources that are expected to work relate to account memberships, zone management,
-  DNS records, rulesets and some TLS related products. The failure modes of the resources
-  that are not currently supported will vary from diagnostic warnings to potential state
-  corruption. At this time, please do not report bugs relating to broken resources as they are
-  likely already being worked on to release in upcoming versions. All other feedback can be
-  submitted in the GitHub discussion.
-
 # Cloudflare Provider
 
 The Cloudflare provider is used to interact with resources supported by
