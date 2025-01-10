@@ -19,7 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier of a Cloudflare account.",
+				Description: "Identifier",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -36,7 +36,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "Identifier of an Address Map.",
+							Description: "Identifier",
 							Computed:    true,
 						},
 						"can_delete": schema.BoolAttribute{
