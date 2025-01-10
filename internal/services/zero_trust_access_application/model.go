@@ -94,13 +94,14 @@ type ZeroTrustAccessApplicationLandingPageDesignModel struct {
 }
 
 type ZeroTrustAccessApplicationPoliciesModel struct {
-	ID         types.String                                                                 `tfsdk:"id" json:"id,optional"`
-	Precedence types.Int64                                                                  `tfsdk:"precedence" json:"precedence,optional"`
-	Decision   types.String                                                                 `tfsdk:"decision" json:"decision,optional"`
-	Include    customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesIncludeModel] `tfsdk:"include" json:"include,computed_optional"`
-	Name       types.String                                                                 `tfsdk:"name" json:"name,optional"`
-	Exclude    customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesExcludeModel] `tfsdk:"exclude" json:"exclude,computed_optional"`
-	Require    customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesRequireModel] `tfsdk:"require" json:"require,computed_optional"`
+	ID              types.String                                                                     `tfsdk:"id" json:"id,optional"`
+	Precedence      types.Int64                                                                      `tfsdk:"precedence" json:"precedence,optional"`
+	Decision        types.String                                                                     `tfsdk:"decision" json:"decision,optional"`
+	Include         customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesIncludeModel]     `tfsdk:"include" json:"include,computed_optional"`
+	Name            types.String                                                                     `tfsdk:"name" json:"name,optional"`
+	ConnectionRules customfield.NestedObject[ZeroTrustAccessApplicationPoliciesConnectionRulesModel] `tfsdk:"connection_rules" json:"connection_rules,computed_optional"`
+	Exclude         customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesExcludeModel]     `tfsdk:"exclude" json:"exclude,computed_optional"`
+	Require         customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesRequireModel]     `tfsdk:"require" json:"require,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesIncludeModel struct {
@@ -216,6 +217,15 @@ type ZeroTrustAccessApplicationPoliciesIncludeSAMLModel struct {
 
 type ZeroTrustAccessApplicationPoliciesIncludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
+}
+
+type ZeroTrustAccessApplicationPoliciesConnectionRulesModel struct {
+	SSH customfield.NestedObject[ZeroTrustAccessApplicationPoliciesConnectionRulesSSHModel] `tfsdk:"ssh" json:"ssh,computed_optional"`
+}
+
+type ZeroTrustAccessApplicationPoliciesConnectionRulesSSHModel struct {
+	Usernames       *[]types.String `tfsdk:"usernames" json:"usernames,required"`
+	AllowEmailAlias types.Bool      `tfsdk:"allow_email_alias" json:"allow_email_alias,optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesExcludeModel struct {

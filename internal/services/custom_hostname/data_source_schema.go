@@ -125,9 +125,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"ssl": schema.SingleNestedAttribute{
-				Description: "SSL properties for the custom hostname.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[CustomHostnameSSLDataSourceModel](ctx),
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[CustomHostnameSSLDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Custom hostname SSL identifier tag.",
@@ -199,9 +198,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"settings": schema.SingleNestedAttribute{
-						Description: "SSL specific settings.",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[CustomHostnameSSLSettingsDataSourceModel](ctx),
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[CustomHostnameSSLSettingsDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ciphers": schema.ListAttribute{
 								Description: "An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.",

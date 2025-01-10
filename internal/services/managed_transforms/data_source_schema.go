@@ -6,9 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ManagedTransformsDataSource)(nil)
@@ -41,8 +41,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"conflicts_with": schema.ListAttribute{
 							Description: "The Managed Transforms that this Managed Transform conflicts with.",
 							Computed:    true,
-							CustomType:  customfield.NewListType[jsontypes.Normalized](ctx),
-							ElementType: jsontypes.NormalizedType{},
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
 						},
 					},
 				},
@@ -68,8 +68,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"conflicts_with": schema.ListAttribute{
 							Description: "The Managed Transforms that this Managed Transform conflicts with.",
 							Computed:    true,
-							CustomType:  customfield.NewListType[jsontypes.Normalized](ctx),
-							ElementType: jsontypes.NormalizedType{},
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
 						},
 					},
 				},

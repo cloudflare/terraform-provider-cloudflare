@@ -13,15 +13,17 @@ type AuthenticatedOriginPullsCertificateResultEnvelope struct {
 }
 
 type AuthenticatedOriginPullsCertificateModel struct {
-	ID          types.String      `tfsdk:"id" json:"id,computed"`
-	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id,required"`
-	Certificate types.String      `tfsdk:"certificate" json:"certificate,required"`
-	PrivateKey  types.String      `tfsdk:"private_key" json:"private_key,required"`
-	ExpiresOn   timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
-	Issuer      types.String      `tfsdk:"issuer" json:"issuer,computed"`
-	Signature   types.String      `tfsdk:"signature" json:"signature,computed"`
-	Status      types.String      `tfsdk:"status" json:"status,computed"`
-	UploadedOn  timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
+	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	CertificateID types.String      `tfsdk:"certificate_id" path:"certificate_id,optional"`
+	Certificate   types.String      `tfsdk:"certificate" json:"certificate,required"`
+	PrivateKey    types.String      `tfsdk:"private_key" json:"private_key,required"`
+	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled,computed"`
+	ExpiresOn     timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	ID            types.String      `tfsdk:"id" json:"id,computed"`
+	Issuer        types.String      `tfsdk:"issuer" json:"issuer,computed"`
+	Signature     types.String      `tfsdk:"signature" json:"signature,computed"`
+	Status        types.String      `tfsdk:"status" json:"status,computed"`
+	UploadedOn    timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
 }
 
 func (m AuthenticatedOriginPullsCertificateModel) MarshalJSON() (data []byte, err error) {

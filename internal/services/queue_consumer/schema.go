@@ -34,6 +34,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"dead_letter_queue": schema.StringAttribute{
+				Optional: true,
+			},
 			"script_name": schema.StringAttribute{
 				Description: "Name of a Worker",
 				Optional:    true,

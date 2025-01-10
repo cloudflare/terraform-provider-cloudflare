@@ -12,16 +12,13 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/cloudflare-go/v3/origin_tls_client_auth"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*AuthenticatedOriginPullsCertificateResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*AuthenticatedOriginPullsCertificateResource)(nil)
-var _ resource.ResourceWithImportState = (*AuthenticatedOriginPullsCertificateResource)(nil)
 
 func NewResource() resource.Resource {
 	return &AuthenticatedOriginPullsCertificateResource{}
@@ -122,7 +119,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Update(ctx context.Context
 	_, err = r.client.OriginTLSClientAuth.New(
 		ctx,
 		origin_tls_client_auth.OriginTLSClientAuthNewParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -156,7 +153,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Read(ctx context.Context, 
 	env := AuthenticatedOriginPullsCertificateResultEnvelope{*data}
 	_, err := r.client.OriginTLSClientAuth.Get(
 		ctx,
-		data.ID.ValueString(),
+		data.CertificateID.ValueString(),
 		origin_tls_client_auth.OriginTLSClientAuthGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -194,7 +191,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Delete(ctx context.Context
 
 	_, err := r.client.OriginTLSClientAuth.Delete(
 		ctx,
-		data.ID.ValueString(),
+		data.CertificateID.ValueString(),
 		origin_tls_client_auth.OriginTLSClientAuthDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -204,51 +201,6 @@ func (r *AuthenticatedOriginPullsCertificateResource) Delete(ctx context.Context
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *AuthenticatedOriginPullsCertificateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *AuthenticatedOriginPullsCertificateModel = new(AuthenticatedOriginPullsCertificateModel)
-
-	path_zone_id := ""
-	path_certificate_id := ""
-	diags := importpath.ParseImportID(
-		req.ID,
-		"<zone_id>/<certificate_id>",
-		&path_zone_id,
-		&path_certificate_id,
-	)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	data.ZoneID = types.StringValue(path_zone_id)
-	data.ID = types.StringValue(path_certificate_id)
-
-	res := new(http.Response)
-	env := AuthenticatedOriginPullsCertificateResultEnvelope{*data}
-	_, err := r.client.OriginTLSClientAuth.Get(
-		ctx,
-		path_certificate_id,
-		origin_tls_client_auth.OriginTLSClientAuthGetParams{
-			ZoneID: cloudflare.F(path_zone_id),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
