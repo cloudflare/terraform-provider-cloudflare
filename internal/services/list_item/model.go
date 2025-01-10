@@ -13,16 +13,17 @@ type ListItemResultEnvelope struct {
 }
 
 type ListItemModel struct {
-	ListID            types.String                                    `tfsdk:"list_id" path:"list_id,required"`
-	AccountID         types.String                                    `tfsdk:"account_id" path:"account_id,optional"`
-	AccountIdentifier types.String                                    `tfsdk:"account_identifier" path:"account_identifier,optional"`
-	ItemID            types.String                                    `tfsdk:"item_id" path:"item_id,computed"`
-	ASN               types.Int64                                     `tfsdk:"asn" json:"asn,optional"`
-	Comment           types.String                                    `tfsdk:"comment" json:"comment,optional"`
-	IP                types.String                                    `tfsdk:"ip" json:"ip,optional"`
-	Hostname          customfield.NestedObject[ListItemHostnameModel] `tfsdk:"hostname" json:"hostname,computed_optional"`
-	Redirect          customfield.NestedObject[ListItemRedirectModel] `tfsdk:"redirect" json:"redirect,computed_optional"`
-	OperationID       types.String                                    `tfsdk:"operation_id" json:"operation_id,computed"`
+	ListID      types.String                                    `tfsdk:"list_id" path:"list_id,required"`
+	AccountID   types.String                                    `tfsdk:"account_id" path:"account_id,optional"`
+	ItemID      types.String                                    `tfsdk:"item_id" path:"item_id,computed"`
+	ASN         types.Int64                                     `tfsdk:"asn" json:"asn,optional"`
+	Comment     types.String                                    `tfsdk:"comment" json:"comment,optional"`
+	IP          types.String                                    `tfsdk:"ip" json:"ip,optional"`
+	Hostname    customfield.NestedObject[ListItemHostnameModel] `tfsdk:"hostname" json:"hostname,computed_optional"`
+	Redirect    customfield.NestedObject[ListItemRedirectModel] `tfsdk:"redirect" json:"redirect,computed_optional"`
+	OperationID types.String                                    `tfsdk:"operation_id" json:"operation_id,computed"`
+	ModifiedOn  types.String                                    `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn   types.String                                    `tfsdk:"created_on" json:"created_on,computed"`
 }
 
 func (m ListItemModel) MarshalJSON() (data []byte, err error) {
