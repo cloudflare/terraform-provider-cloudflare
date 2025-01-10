@@ -14,11 +14,9 @@ description: |-
 ```terraform
 resource "cloudflare_api_shield_operation" "example_api_shield_operation" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  operations = [{
-    endpoint = "/api/v1/users/{var1}"
-    host = "www.example.com"
-    method = "GET"
-  }]
+  endpoint = "/api/v1/users/{var1}"
+  host = "www.example.com"
+  method = "GET"
 }
 ```
 
@@ -27,30 +25,17 @@ resource "cloudflare_api_shield_operation" "example_api_shield_operation" {
 
 ### Required
 
-- `operations` (Attributes List) (see [below for nested schema](#nestedatt--operations))
+- `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.
+- `host` (String) RFC3986-compliant host.
+- `method` (String) The HTTP method used to access the endpoint.
 - `zone_id` (String) Identifier
-
-### Optional
-
-- `operation_id` (String) UUID
 
 ### Read-Only
 
-- `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.
 - `features` (Attributes) (see [below for nested schema](#nestedatt--features))
-- `host` (String) RFC3986-compliant host.
+- `id` (String) UUID
 - `last_updated` (String)
-- `method` (String) The HTTP method used to access the endpoint.
-
-<a id="nestedatt--operations"></a>
-### Nested Schema for `operations`
-
-Required:
-
-- `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.
-- `host` (String) RFC3986-compliant host.
-- `method` (String) The HTTP method used to access the endpoint.
-
+- `operation_id` (String) UUID
 
 <a id="nestedatt--features"></a>
 ### Nested Schema for `features`
@@ -181,4 +166,10 @@ Read-Only:
 - `requests` (Number) The estimated number of requests covered by these calculations.
 - `suggested_threshold` (Number) The suggested threshold in requests done by the same auth_id or period_seconds.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_api_shield_operation.example '<zone_id>/<operation_id>'
+```

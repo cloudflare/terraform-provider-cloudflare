@@ -54,16 +54,11 @@ resource "cloudflare_list_item" "example_list_item" {
 
 ### Read-Only
 
-- `include_subdomains` (Boolean)
+- `created_on` (String) The RFC 3339 timestamp of when the item was created.
+- `id` (String) The unique ID of the list.
 - `item_id` (String) The unique ID of the item in the List.
+- `modified_on` (String) The RFC 3339 timestamp of when the item was last modified.
 - `operation_id` (String) The unique operation ID of the asynchronous action.
-- `preserve_path_suffix` (Boolean)
-- `preserve_query_string` (Boolean)
-- `source_url` (String)
-- `status_code` (Number)
-- `subpath_matching` (Boolean)
-- `target_url` (String)
-- `url_hostname` (String)
 
 <a id="nestedatt--hostname"></a>
 ### Nested Schema for `hostname`

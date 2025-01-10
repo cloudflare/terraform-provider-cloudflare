@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_byo_ip_prefixes" "example_byo_ip_prefixes" {
-  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  account_id = "258def64c72dae45f3e4c8516e2111f2"
 }
 ```
 
@@ -22,7 +22,7 @@ data "cloudflare_byo_ip_prefixes" "example_byo_ip_prefixes" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier of a Cloudflare account.
 
 ### Optional
 
@@ -37,7 +37,7 @@ data "cloudflare_byo_ip_prefixes" "example_byo_ip_prefixes" {
 
 Read-Only:
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier of a Cloudflare account.
 - `advertised` (Boolean) Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.
 - `advertised_modified_at` (String) Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.
 - `approved` (String) Approval state of the prefix (P = pending, V = active).
@@ -45,7 +45,7 @@ Read-Only:
 - `cidr` (String) IP Prefix in Classless Inter-Domain Routing format.
 - `created_at` (String)
 - `description` (String) Description of the prefix.
-- `id` (String) Identifier
+- `id` (String) Identifier of an IP Prefix.
 - `loa_document_id` (String) Identifier for the uploaded LOA document.
 - `modified_at` (String)
 - `on_demand_enabled` (Boolean) Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.

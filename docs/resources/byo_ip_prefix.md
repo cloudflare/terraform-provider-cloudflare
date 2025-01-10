@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 resource "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
-  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  account_id = "258def64c72dae45f3e4c8516e2111f2"
   asn = 209242
   cidr = "192.0.2.0/24"
   loa_document_id = "d933b1530bc56c9953cf8ce166da8004"
@@ -25,7 +25,7 @@ resource "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier of a Cloudflare account.
 - `asn` (Number) Autonomous System Number (ASN) the prefix will be advertised under.
 - `cidr` (String) IP Prefix in Classless Inter-Domain Routing format.
 - `loa_document_id` (String) Identifier for the uploaded LOA document.
@@ -40,7 +40,7 @@ resource "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 - `advertised_modified_at` (String) Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.
 - `approved` (String) Approval state of the prefix (P = pending, V = active).
 - `created_at` (String)
-- `id` (String) Identifier
+- `id` (String) Identifier of an IP Prefix.
 - `modified_at` (String)
 - `on_demand_enabled` (Boolean) Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.
 - `on_demand_locked` (Boolean) Whether advertisement status of the prefix is locked, meaning it cannot be changed.

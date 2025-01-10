@@ -29,13 +29,21 @@ data "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy" {
 
 ### Read-Only
 
+- `app_count` (Number) Number of access applications currently using this policy.
+- `approval_groups` (Attributes List) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--approval_groups))
+- `approval_required` (Boolean) Requires the user to request access from an administrator at the start of each session.
 - `created_at` (String)
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
 - `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--exclude))
 - `id` (String) The UUID of the policy
 - `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--include))
+- `isolation_required` (Boolean) Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.
 - `name` (String) The name of the Access policy.
+- `purpose_justification_prompt` (String) A custom message that will appear on the purpose justification screen.
+- `purpose_justification_required` (Boolean) Require users to enter a justification when they log in to the application.
 - `require` (Attributes List) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--require))
+- `reusable` (Boolean)
+- `session_duration` (String) The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
 - `updated_at` (String)
 
 <a id="nestedatt--filter"></a>
@@ -44,6 +52,16 @@ data "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy" {
 Required:
 
 - `account_id` (String) Identifier
+
+
+<a id="nestedatt--approval_groups"></a>
+### Nested Schema for `approval_groups`
+
+Read-Only:
+
+- `approvals_needed` (Number) The number of approvals needed to obtain access.
+- `email_addresses` (List of String) A list of emails that can approve the access request.
+- `email_list_uuid` (String) The UUID of an re-usable email list.
 
 
 <a id="nestedatt--exclude"></a>

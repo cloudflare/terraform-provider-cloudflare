@@ -31,14 +31,14 @@ data "cloudflare_list_item" "example_list_item" {
 
 ### Read-Only
 
-- `include_subdomains` (Boolean)
-- `preserve_path_suffix` (Boolean)
-- `preserve_query_string` (Boolean)
-- `source_url` (String)
-- `status_code` (Number)
-- `subpath_matching` (Boolean)
-- `target_url` (String)
-- `url_hostname` (String)
+- `asn` (Number) A non-negative 32 bit integer
+- `comment` (String) An informative summary of the list item.
+- `created_on` (String) The RFC 3339 timestamp of when the item was created.
+- `hostname` (Attributes) Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-). (see [below for nested schema](#nestedatt--hostname))
+- `id` (String) The unique ID of the list.
+- `ip` (String) An IPv4 address, an IPv4 CIDR, or an IPv6 CIDR. IPv6 CIDRs are limited to a maximum of /64.
+- `modified_on` (String) The RFC 3339 timestamp of when the item was last modified.
+- `redirect` (Attributes) The definition of the redirect. (see [below for nested schema](#nestedatt--redirect))
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -51,5 +51,27 @@ Required:
 Optional:
 
 - `search` (String) A search query to filter returned items. Its meaning depends on the list type: IP addresses must start with the provided string, hostnames and bulk redirects must contain the string, and ASNs must match the string exactly.
+
+
+<a id="nestedatt--hostname"></a>
+### Nested Schema for `hostname`
+
+Read-Only:
+
+- `url_hostname` (String)
+
+
+<a id="nestedatt--redirect"></a>
+### Nested Schema for `redirect`
+
+Read-Only:
+
+- `include_subdomains` (Boolean)
+- `preserve_path_suffix` (Boolean)
+- `preserve_query_string` (Boolean)
+- `source_url` (String)
+- `status_code` (Number)
+- `subpath_matching` (Boolean)
+- `target_url` (String)
 
 

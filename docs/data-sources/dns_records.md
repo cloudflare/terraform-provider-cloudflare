@@ -127,13 +127,20 @@ Optional:
 Read-Only:
 
 - `comment` (String) Comments or notes about the DNS record. This field has no effect on DNS responses.
+- `comment_modified_on` (String) When the record comment was last modified. Omitted if there is no comment.
 - `content` (String) A valid IPv4 address.
+- `created_on` (String) When the record was created.
 - `data` (Attributes) Components of a CAA record. (see [below for nested schema](#nestedatt--result--data))
+- `id` (String) Identifier
+- `meta` (String) Extra Cloudflare-specific information about the record.
+- `modified_on` (String) When the record was last modified.
 - `name` (String) DNS record name (or @ for the zone apex) in Punycode.
 - `priority` (Number) Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.
+- `proxiable` (Boolean) Whether the record can be proxied by Cloudflare or not.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `settings` (Attributes) Settings for the DNS record. (see [below for nested schema](#nestedatt--result--settings))
 - `tags` (List of String) Custom tags for the DNS record. This field has no effect on DNS responses.
+- `tags_modified_on` (String) When the record tags were last modified. Omitted if there are no tags.
 - `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
 - `type` (String) Record type.
 
@@ -185,7 +192,7 @@ Read-Only:
 
 Read-Only:
 
-- `flatten_cname` (Boolean) If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting has no effect on proxied records, which are always flattened.
+- `flatten_cname` (Boolean) If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting is unavailable for proxied records, since they are always flattened.
 - `ipv4_only` (Boolean) When enabled, only A records will be generated, and AAAA records will not be created. This setting is intended for exceptional cases. Note that this option only applies to proxied records and it has no effect on whether Cloudflare communicates with the origin using IPv4 or IPv6.
 - `ipv6_only` (Boolean) When enabled, only AAAA records will be generated, and A records will not be created. This setting is intended for exceptional cases. Note that this option only applies to proxied records and it has no effect on whether Cloudflare communicates with the origin using IPv4 or IPv6.
 
