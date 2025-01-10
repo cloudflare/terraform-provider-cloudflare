@@ -13,8 +13,8 @@ description: |-
 
 ```terraform
 data "cloudflare_address_map" "example_address_map" {
-  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  address_map_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  account_id = "258def64c72dae45f3e4c8516e2111f2"
+  address_map_id = "055817b111884e0227e1be16a0be6ee0"
 }
 ```
 
@@ -23,8 +23,8 @@ data "cloudflare_address_map" "example_address_map" {
 
 ### Optional
 
-- `account_id` (String) Identifier
-- `address_map_id` (String) Identifier
+- `account_id` (String) Identifier of a Cloudflare account.
+- `address_map_id` (String) Identifier of an Address Map.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
@@ -35,7 +35,7 @@ data "cloudflare_address_map" "example_address_map" {
 - `default_sni` (String) If you have legacy TLS clients which do not send the TLS server name indicator, then you can specify one default SNI on the map. If Cloudflare receives a TLS handshake from a client without an SNI, it will respond with the default SNI on those IPs. The default SNI can be any valid zone or subdomain owned by the account.
 - `description` (String) An optional description field which may be used to describe the types of IPs or zones on the map.
 - `enabled` (Boolean) Whether the Address Map is enabled or not. Cloudflare's DNS will not respond with IP addresses on an Address Map until the map is enabled.
-- `id` (String) Identifier
+- `id` (String) Identifier of an Address Map.
 - `ips` (Attributes List) The set of IPs on the Address Map. (see [below for nested schema](#nestedatt--ips))
 - `memberships` (Attributes List) Zones and Accounts which will be assigned IPs on this Address Map. A zone membership will take priority over an account membership. (see [below for nested schema](#nestedatt--memberships))
 - `modified_at` (String)
@@ -45,7 +45,7 @@ data "cloudflare_address_map" "example_address_map" {
 
 Required:
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier of a Cloudflare account.
 
 
 <a id="nestedatt--ips"></a>

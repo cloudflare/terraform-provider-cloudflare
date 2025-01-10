@@ -54,7 +54,7 @@ Read-Only:
 - `id` (String) Identifier
 - `ownership_verification` (Attributes) This is a record which can be placed to activate a hostname. (see [below for nested schema](#nestedatt--result--ownership_verification))
 - `ownership_verification_http` (Attributes) This presents the token to be served by the given http url to activate a hostname. (see [below for nested schema](#nestedatt--result--ownership_verification_http))
-- `ssl` (Attributes) SSL properties for the custom hostname. (see [below for nested schema](#nestedatt--result--ssl))
+- `ssl` (Attributes) (see [below for nested schema](#nestedatt--result--ssl))
 - `status` (String) Status of the hostname's activation.
 - `verification_errors` (List of String) These are errors that were encountered while trying to activate a hostname.
 
@@ -93,7 +93,7 @@ Read-Only:
 - `issuer` (String) The issuer on a custom uploaded certificate.
 - `method` (String) Domain control validation (DCV) method used for this hostname.
 - `serial_number` (String) The serial number on a custom uploaded certificate.
-- `settings` (Attributes) SSL specific settings. (see [below for nested schema](#nestedatt--result--ssl--settings))
+- `settings` (Attributes) (see [below for nested schema](#nestedatt--result--ssl--settings))
 - `signature` (String) The signature on a custom uploaded certificate.
 - `status` (String) Status of the hostname's SSL certificates.
 - `type` (String) Level of validation to be used for this hostname. Domain validation (dv) must be used.

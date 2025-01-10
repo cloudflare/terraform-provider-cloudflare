@@ -191,6 +191,7 @@ Optional:
 
 Optional:
 
+- `connection_rules` (Attributes) The rules that define how users may connect to the targets secured by your application. (see [below for nested schema](#nestedatt--policies--connection_rules))
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
 - `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--policies--exclude))
 - `id` (String) The UUID of the policy
@@ -198,6 +199,26 @@ Optional:
 - `name` (String) The name of the Access policy.
 - `precedence` (Number) The order of execution for this policy. Must be unique for each policy within an app.
 - `require` (Attributes List) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--policies--require))
+
+<a id="nestedatt--policies--connection_rules"></a>
+### Nested Schema for `policies.connection_rules`
+
+Optional:
+
+- `ssh` (Attributes) The SSH-specific rules that define how users may connect to the targets secured by your application. (see [below for nested schema](#nestedatt--policies--connection_rules--ssh))
+
+<a id="nestedatt--policies--connection_rules--ssh"></a>
+### Nested Schema for `policies.connection_rules.ssh`
+
+Required:
+
+- `usernames` (List of String) Contains the Unix usernames that may be used when connecting over SSH.
+
+Optional:
+
+- `allow_email_alias` (Boolean) Enables using Identity Provider email alias as SSH username.
+
+
 
 <a id="nestedatt--policies--exclude"></a>
 ### Nested Schema for `policies.exclude`

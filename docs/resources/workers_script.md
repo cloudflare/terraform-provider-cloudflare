@@ -88,17 +88,24 @@ resource "cloudflare_workers_script" "example_workers_script" {
 - `compatibility_flags` (List of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
 - `keep_assets` (Boolean) Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.
 - `keep_bindings` (List of String) List of binding types to keep from previous_upload.
-- `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `main_module` (String) Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.
 - `migrations` (Attributes) Migrations to apply for Durable Objects associated with this Worker. (see [below for nested schema](#nestedatt--migrations))
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--observability))
 - `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). (see [below for nested schema](#nestedatt--placement))
 - `tail_consumers` (Attributes List) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--tail_consumers))
-- `usage_model` (String) Usage model for the Worker invocations.
 
 ### Read-Only
 
+- `etag` (String) Hashed script content, can be used in a If-None-Match header when updating.
+- `has_assets` (Boolean) Whether a Worker contains assets.
+- `has_modules` (Boolean) Whether a Worker contains modules.
 - `id` (String) Name of the script, used in URLs and route configuration.
+- `logpush` (Boolean) Whether Logpush is turned on for the Worker.
+- `modified_on` (String) When the script was last modified.
+- `placement_mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+- `placement_status` (String) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+- `startup_time_ms` (Number)
+- `usage_model` (String) Usage model for the Worker invocations.
 
 <a id="nestedatt--assets"></a>
 ### Nested Schema for `assets`

@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_address_maps" "example_address_maps" {
-  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  account_id = "258def64c72dae45f3e4c8516e2111f2"
 }
 ```
 
@@ -22,7 +22,7 @@ data "cloudflare_address_maps" "example_address_maps" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier of a Cloudflare account.
 
 ### Optional
 
@@ -43,7 +43,7 @@ Read-Only:
 - `default_sni` (String) If you have legacy TLS clients which do not send the TLS server name indicator, then you can specify one default SNI on the map. If Cloudflare receives a TLS handshake from a client without an SNI, it will respond with the default SNI on those IPs. The default SNI can be any valid zone or subdomain owned by the account.
 - `description` (String) An optional description field which may be used to describe the types of IPs or zones on the map.
 - `enabled` (Boolean) Whether the Address Map is enabled or not. Cloudflare's DNS will not respond with IP addresses on an Address Map until the map is enabled.
-- `id` (String) Identifier
+- `id` (String) Identifier of an Address Map.
 - `modified_at` (String)
 
 

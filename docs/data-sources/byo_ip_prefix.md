@@ -13,8 +13,8 @@ description: |-
 
 ```terraform
 data "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
-  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  prefix_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  account_id = "258def64c72dae45f3e4c8516e2111f2"
+  prefix_id = "2af39739cc4e3b5910c918468bb89828"
 }
 ```
 
@@ -23,9 +23,9 @@ data "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 
 ### Optional
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier of a Cloudflare account.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `prefix_id` (String) Identifier
+- `prefix_id` (String) Identifier of an IP Prefix.
 
 ### Read-Only
 
@@ -36,7 +36,7 @@ data "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 - `cidr` (String) IP Prefix in Classless Inter-Domain Routing format.
 - `created_at` (String)
 - `description` (String) Description of the prefix.
-- `id` (String) Identifier
+- `id` (String) Identifier of an IP Prefix.
 - `loa_document_id` (String) Identifier for the uploaded LOA document.
 - `modified_at` (String)
 - `on_demand_enabled` (Boolean) Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.
@@ -47,6 +47,6 @@ data "cloudflare_byo_ip_prefix" "example_byo_ip_prefix" {
 
 Required:
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier of a Cloudflare account.
 
 
