@@ -1,0 +1,12 @@
+```release-note:note
+resource/cloudflare_api_shield_operation: migrated to the `terraform-plugin-framework`.
+```
+
+```release-note:bug
+resource/cloudflare_api_shield_operation: fixed a bug when using variable names other than `var1 ... varN` in endpoint definitions causing these resources to be recreated when nothing has changed.
+If this affects you, after upgrading to this version, the resource has to be recreated once more to fix the state, after which the bug is fixed.
+```
+
+```release-note:internal
+resource/cloudflare_api_shield_operation: migrate from SDKv2 to `terraform-plugin-framework`
+```
