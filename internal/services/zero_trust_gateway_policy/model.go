@@ -69,6 +69,7 @@ type ZeroTrustGatewayPolicyRuleSettingsModel struct {
 	OverrideIPs                     *[]types.String                                                                       `tfsdk:"override_ips" json:"override_ips,optional"`
 	PayloadLog                      customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsPayloadLogModel]           `tfsdk:"payload_log" json:"payload_log,computed_optional"`
 	Quarantine                      customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsQuarantineModel]           `tfsdk:"quarantine" json:"quarantine,computed_optional"`
+	ResolveDNSInternally            customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsResolveDNSInternallyModel] `tfsdk:"resolve_dns_internally" json:"resolve_dns_internally,computed_optional"`
 	ResolveDNSThroughCloudflare     types.Bool                                                                            `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,optional"`
 	UntrustedCERT                   customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTModel]        `tfsdk:"untrusted_cert" json:"untrusted_cert,computed_optional"`
 }
@@ -132,6 +133,11 @@ type ZeroTrustGatewayPolicyRuleSettingsPayloadLogModel struct {
 
 type ZeroTrustGatewayPolicyRuleSettingsQuarantineModel struct {
 	FileTypes *[]types.String `tfsdk:"file_types" json:"file_types,optional"`
+}
+
+type ZeroTrustGatewayPolicyRuleSettingsResolveDNSInternallyModel struct {
+	Fallback types.String `tfsdk:"fallback" json:"fallback,optional"`
+	ViewID   types.String `tfsdk:"view_id" json:"view_id,optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTModel struct {
