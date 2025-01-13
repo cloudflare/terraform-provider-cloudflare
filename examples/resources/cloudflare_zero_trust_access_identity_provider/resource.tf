@@ -15,6 +15,7 @@ resource "cloudflare_zero_trust_access_identity_provider" "example_zero_trust_ac
   scim_config = {
     enabled = true
     identity_update_behavior = "automatic"
+    scim_base_url = "scim_base_url"
     seat_deprovision = true
     secret = "secret"
     user_deprovision = true
