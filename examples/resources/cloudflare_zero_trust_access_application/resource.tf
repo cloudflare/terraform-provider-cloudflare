@@ -27,26 +27,14 @@ resource "cloudflare_zero_trust_access_application" "example_zero_trust_access_a
     type = "public"
     uri = "test.anotherexample.com/staff"
   }, {
-    cidr = "10.5.0.0/24"
-    hostname = "hostname"
-    l4_protocol = "tcp"
-    port_range = "80-90"
-    type = "private"
-    vnet_id = "vnet_id"
+    type = "public"
+    uri = "10.5.0.2"
   }, {
-    cidr = "10.5.0.3/32"
-    hostname = "hostname"
-    l4_protocol = "tcp"
-    port_range = "80"
-    type = "private"
-    vnet_id = "vnet_id"
+    type = "public"
+    uri = "10.5.0.3/32:1234-4321"
   }, {
-    cidr = "cidr"
-    hostname = "hostname"
-    l4_protocol = "tcp"
-    port_range = "port_range"
-    type = "private"
-    vnet_id = "vnet_id"
+    type = "public"
+    uri = "private-sni.example.com"
   }]
   enable_binding_cookie = true
   http_only_cookie_attribute = true
