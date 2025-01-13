@@ -107,8 +107,13 @@ type ZeroTrustAccessApplicationsCORSHeadersDataSourceModel struct {
 }
 
 type ZeroTrustAccessApplicationsDestinationsDataSourceModel struct {
-	Type types.String `tfsdk:"type" json:"type,computed"`
-	URI  types.String `tfsdk:"uri" json:"uri,computed"`
+	Type       types.String `tfsdk:"type" json:"type,computed"`
+	URI        types.String `tfsdk:"uri" json:"uri,computed"`
+	CIDR       types.String `tfsdk:"cidr" json:"cidr,computed"`
+	Hostname   types.String `tfsdk:"hostname" json:"hostname,computed"`
+	L4Protocol types.String `tfsdk:"l4_protocol" json:"l4_protocol,computed"`
+	PortRange  types.String `tfsdk:"port_range" json:"port_range,computed"`
+	VnetID     types.String `tfsdk:"vnet_id" json:"vnet_id,computed"`
 }
 
 type ZeroTrustAccessApplicationsSCIMConfigDataSourceModel struct {
