@@ -76,13 +76,8 @@ type ZeroTrustAccessApplicationCORSHeadersModel struct {
 }
 
 type ZeroTrustAccessApplicationDestinationsModel struct {
-	Type       types.String `tfsdk:"type" json:"type,optional"`
-	URI        types.String `tfsdk:"uri" json:"uri,optional"`
-	CIDR       types.String `tfsdk:"cidr" json:"cidr,optional"`
-	Hostname   types.String `tfsdk:"hostname" json:"hostname,optional"`
-	L4Protocol types.String `tfsdk:"l4_protocol" json:"l4_protocol,optional"`
-	PortRange  types.String `tfsdk:"port_range" json:"port_range,optional"`
-	VnetID     types.String `tfsdk:"vnet_id" json:"vnet_id,optional"`
+	Type types.String `tfsdk:"type" json:"type,optional"`
+	URI  types.String `tfsdk:"uri" json:"uri,optional"`
 }
 
 type ZeroTrustAccessApplicationFooterLinksModel struct {
