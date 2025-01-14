@@ -19,7 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Zone identifier.",
+				Description: "Identifier",
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
