@@ -226,18 +226,18 @@ type RulesetRulesActionParametersCacheKeyCustomKeyHostModel struct {
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringModel struct {
-	Exclude *RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel `tfsdk:"exclude" json:"exclude,optional"`
 	Include *RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel `tfsdk:"include" json:"include,optional"`
-}
-
-type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel struct {
-	All  types.Bool      `tfsdk:"all" json:"all,optional"`
-	List *[]types.String `tfsdk:"list" json:"list,optional"`
+	Exclude *RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel `tfsdk:"exclude" json:"exclude,optional"`
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel struct {
-	All  types.Bool      `tfsdk:"all" json:"all,optional"`
 	List *[]types.String `tfsdk:"list" json:"list,optional"`
+	All  types.Bool      `tfsdk:"all" json:"all,optional"`
+}
+
+type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel struct {
+	List *[]types.String `tfsdk:"list" json:"list,optional"`
+	All  types.Bool      `tfsdk:"all" json:"all,optional"`
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyUserModel struct {

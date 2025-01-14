@@ -252,18 +252,18 @@ type RulesetRulesActionParametersCacheKeyCustomKeyHostDataSourceModel struct {
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringDataSourceModel struct {
-	Exclude customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeDataSourceModel] `tfsdk:"exclude" json:"exclude,computed"`
 	Include customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeDataSourceModel] `tfsdk:"include" json:"include,computed"`
-}
-
-type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeDataSourceModel struct {
-	All  types.Bool                     `tfsdk:"all" json:"all,computed"`
-	List customfield.List[types.String] `tfsdk:"list" json:"list,computed"`
+	Exclude customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeDataSourceModel] `tfsdk:"exclude" json:"exclude,computed"`
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeDataSourceModel struct {
-	All  types.Bool                     `tfsdk:"all" json:"all,computed"`
 	List customfield.List[types.String] `tfsdk:"list" json:"list,computed"`
+	All  types.Bool                     `tfsdk:"all" json:"all,computed"`
+}
+
+type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeDataSourceModel struct {
+	List customfield.List[types.String] `tfsdk:"list" json:"list,computed"`
+	All  types.Bool                     `tfsdk:"all" json:"all,computed"`
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyUserDataSourceModel struct {
