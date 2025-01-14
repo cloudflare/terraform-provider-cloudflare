@@ -14,7 +14,7 @@ type SpectrumApplicationResultEnvelope struct {
 }
 
 type SpectrumApplicationModel struct {
-	ID               types.String                                                `tfsdk:"id" json:"id,computed"`
+	ID               types.String                                                `tfsdk:"id" json:"id,required"`
 	ZoneID           types.String                                                `tfsdk:"zone_id" path:"zone_id,required"`
 	Protocol         types.String                                                `tfsdk:"protocol" json:"protocol,required"`
 	DNS              *SpectrumApplicationDNSModel                                `tfsdk:"dns" json:"dns,required"`

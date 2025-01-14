@@ -23,7 +23,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"expression_id": schema.StringAttribute{
-				Description:   "The unique ID for this custom scan expression",
+				Description:   "Identifier",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
