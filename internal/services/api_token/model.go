@@ -39,7 +39,7 @@ type APITokenPoliciesModel struct {
 	ID               types.String                              `tfsdk:"id" json:"id,computed"`
 	Effect           types.String                              `tfsdk:"effect" json:"effect,required"`
 	PermissionGroups *[]*APITokenPoliciesPermissionGroupsModel `tfsdk:"permission_groups" json:"permission_groups,required"`
-	Resources        *APITokenPoliciesResourcesModel           `tfsdk:"resources" json:"resources,required"`
+	Resources        *map[string]types.String                  `tfsdk:"resources" json:"resources,required"`
 }
 
 type APITokenPoliciesPermissionGroupsModel struct {
@@ -53,13 +53,8 @@ type APITokenPoliciesPermissionGroupsMetaModel struct {
 	Value types.String `tfsdk:"value" json:"value,optional"`
 }
 
-type APITokenPoliciesResourcesModel struct {
-	Resource types.String `tfsdk:"resource" json:"resource,optional"`
-	Scope    types.String `tfsdk:"scope" json:"scope,optional"`
-}
-
 type APITokenConditionModel struct {
-	RequestIP customfield.NestedObject[APITokenConditionRequestIPModel] `tfsdk:"request_ip" json:"request.ip,computed_optional"`
+	RequestIP customfield.NestedObject[APITokenConditionRequestIPModel] `tfsdk:"request_ip" json:"request_ip,computed_optional"`
 }
 
 type APITokenConditionRequestIPModel struct {

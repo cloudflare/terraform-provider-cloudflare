@@ -5,8 +5,8 @@ package waiting_room
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/waiting_rooms"
+	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/waiting_rooms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -56,6 +56,8 @@ type WaitingRoomsResultDataSourceModel struct {
 	SessionDuration            types.Int64                                                               `tfsdk:"session_duration" json:"session_duration,computed"`
 	Suspended                  types.Bool                                                                `tfsdk:"suspended" json:"suspended,computed"`
 	TotalActiveUsers           types.Int64                                                               `tfsdk:"total_active_users" json:"total_active_users,computed"`
+	TurnstileAction            types.String                                                              `tfsdk:"turnstile_action" json:"turnstile_action,computed"`
+	TurnstileMode              types.String                                                              `tfsdk:"turnstile_mode" json:"turnstile_mode,computed"`
 }
 
 type WaitingRoomsAdditionalRoutesDataSourceModel struct {

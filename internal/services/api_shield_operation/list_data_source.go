@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -67,7 +67,7 @@ func (d *APIShieldOperationsDataSource) Read(ctx context.Context, req datasource
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.APIGateway.Discovery.Operations.List(ctx, params)
+	page, err := d.client.APIGateway.Operations.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

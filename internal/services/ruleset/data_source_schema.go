@@ -7,7 +7,6 @@ import (
 	"math"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -58,11 +57,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"last_updated": schema.StringAttribute{
-				Description: "The timestamp of when the ruleset was last modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
 			"name": schema.StringAttribute{
 				Description: "The human-readable name of the ruleset.",
 				Computed:    true,
@@ -98,25 +92,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"version": schema.StringAttribute{
-				Description: "The version of the ruleset.",
-				Computed:    true,
-			},
 			"rules": schema.ListNestedAttribute{
 				Description: "The list of rules in the ruleset.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[RulesetRulesDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"last_updated": schema.StringAttribute{
-							Description: "The timestamp of when the rule was last modified.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
-						"version": schema.StringAttribute{
-							Description: "The version of the rule.",
-							Computed:    true,
-						},
 						"id": schema.StringAttribute{
 							Description: "The unique ID of the rule.",
 							Computed:    true,
@@ -778,41 +759,39 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 													},
 												},
 												"query_string": schema.SingleNestedAttribute{
-													Description: "Use the presence or absence of parameters in the query string to build the cache key.",
+													Description: "Use the presence of parameters in the query string to build the cache key.",
 													Computed:    true,
 													CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringDataSourceModel](ctx),
 													Attributes: map[string]schema.Attribute{
-														"exclude": schema.SingleNestedAttribute{
-															Description: "build the cache key using all query string parameters EXCECPT these excluded parameters",
-															Computed:    true,
-															CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeDataSourceModel](ctx),
-															Attributes: map[string]schema.Attribute{
-																"all": schema.BoolAttribute{
-																	Description: "Exclude all query string parameters from use in building the cache key.",
-																	Computed:    true,
-																},
-																"list": schema.ListAttribute{
-																	Description: "A list of query string parameters NOT used to build the cache key. All parameters present in the request but missing in this list will be used to build the cache key.",
-																	Computed:    true,
-																	CustomType:  customfield.NewListType[types.String](ctx),
-																	ElementType: types.StringType,
-																},
-															},
-														},
 														"include": schema.SingleNestedAttribute{
-															Description: "build the cache key using a list of query string parameters that ARE in the request.",
+															Description: "A list of query string parameters used to build the cache key.",
 															Computed:    true,
 															CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeDataSourceModel](ctx),
 															Attributes: map[string]schema.Attribute{
-																"all": schema.BoolAttribute{
-																	Description: "Use all query string parameters in the cache key.",
-																	Computed:    true,
-																},
 																"list": schema.ListAttribute{
-																	Description: "A list of query string parameters used to build the cache key.",
 																	Computed:    true,
 																	CustomType:  customfield.NewListType[types.String](ctx),
 																	ElementType: types.StringType,
+																},
+																"all": schema.BoolAttribute{
+																	Description: "Determines whether to include all query string parameters in the cache key.",
+																	Computed:    true,
+																},
+															},
+														},
+														"exclude": schema.SingleNestedAttribute{
+															Description: "A list of query string parameters NOT used to build the cache key. All parameters present in the request but missing in this list will be used to build the cache key.",
+															Computed:    true,
+															CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeDataSourceModel](ctx),
+															Attributes: map[string]schema.Attribute{
+																"list": schema.ListAttribute{
+																	Computed:    true,
+																	CustomType:  customfield.NewListType[types.String](ctx),
+																	ElementType: types.StringType,
+																},
+																"all": schema.BoolAttribute{
+																	Description: "Determines whether to exclude all query string parameters from the cache key.",
+																	Computed:    true,
 																},
 															},
 														},
@@ -846,7 +825,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"cache_reserve": schema.SingleNestedAttribute{
-									Description: "Mark whether the request's response from origin is eligible for  Cache Reserve (requires a Cache Reserve add-on plan).",
+									Description: "Mark whether the request's response from origin is eligible for Cache Reserve (requires a Cache Reserve add-on plan).",
 									Computed:    true,
 									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheReserveDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
