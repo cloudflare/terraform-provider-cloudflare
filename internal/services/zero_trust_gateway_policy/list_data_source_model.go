@@ -5,8 +5,8 @@ package zero_trust_gateway_policy
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -48,7 +48,6 @@ type ZeroTrustGatewayPoliciesResultDataSourceModel struct {
 	Schedule      customfield.NestedObject[ZeroTrustGatewayPoliciesScheduleDataSourceModel]     `tfsdk:"schedule" json:"schedule,computed"`
 	Traffic       types.String                                                                  `tfsdk:"traffic" json:"traffic,computed"`
 	UpdatedAt     timetypes.RFC3339                                                             `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	Version       types.Int64                                                                   `tfsdk:"version" json:"version,computed"`
 }
 
 type ZeroTrustGatewayPoliciesExpirationDataSourceModel struct {
@@ -78,7 +77,6 @@ type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {
 	OverrideIPs                     customfield.List[types.String]                                                                    `tfsdk:"override_ips" json:"override_ips,computed"`
 	PayloadLog                      customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsPayloadLogDataSourceModel]           `tfsdk:"payload_log" json:"payload_log,computed"`
 	Quarantine                      customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsQuarantineDataSourceModel]           `tfsdk:"quarantine" json:"quarantine,computed"`
-	ResolveDNSInternally            customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsResolveDNSInternallyDataSourceModel] `tfsdk:"resolve_dns_internally" json:"resolve_dns_internally,computed"`
 	ResolveDNSThroughCloudflare     types.Bool                                                                                        `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,computed"`
 	UntrustedCERT                   customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsUntrustedCERTDataSourceModel]        `tfsdk:"untrusted_cert" json:"untrusted_cert,computed"`
 }
@@ -142,11 +140,6 @@ type ZeroTrustGatewayPoliciesRuleSettingsPayloadLogDataSourceModel struct {
 
 type ZeroTrustGatewayPoliciesRuleSettingsQuarantineDataSourceModel struct {
 	FileTypes customfield.List[types.String] `tfsdk:"file_types" json:"file_types,computed"`
-}
-
-type ZeroTrustGatewayPoliciesRuleSettingsResolveDNSInternallyDataSourceModel struct {
-	Fallback types.String `tfsdk:"fallback" json:"fallback,computed"`
-	ViewID   types.String `tfsdk:"view_id" json:"view_id,computed"`
 }
 
 type ZeroTrustGatewayPoliciesRuleSettingsUntrustedCERTDataSourceModel struct {

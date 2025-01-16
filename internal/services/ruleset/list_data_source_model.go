@@ -5,9 +5,10 @@ package ruleset
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/rulesets"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -36,9 +37,11 @@ func (m *RulesetsDataSourceModel) toListParams(_ context.Context) (params rulese
 }
 
 type RulesetsResultDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Kind        types.String `tfsdk:"kind" json:"kind,computed"`
-	Name        types.String `tfsdk:"name" json:"name,computed"`
-	Phase       types.String `tfsdk:"phase" json:"phase,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
+	ID          types.String      `tfsdk:"id" json:"id,computed"`
+	Kind        types.String      `tfsdk:"kind" json:"kind,computed"`
+	LastUpdated timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	Name        types.String      `tfsdk:"name" json:"name,computed"`
+	Phase       types.String      `tfsdk:"phase" json:"phase,computed"`
+	Version     types.String      `tfsdk:"version" json:"version,computed"`
+	Description types.String      `tfsdk:"description" json:"description,computed"`
 }

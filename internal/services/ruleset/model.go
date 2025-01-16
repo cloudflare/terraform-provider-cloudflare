@@ -5,6 +5,7 @@ package ruleset
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,6 +22,8 @@ type RulesetModel struct {
 	Phase       types.String          `tfsdk:"phase" json:"phase,required"`
 	Rules       *[]*RulesetRulesModel `tfsdk:"rules" json:"rules,required"`
 	Description types.String          `tfsdk:"description" json:"description,computed_optional"`
+	LastUpdated timetypes.RFC3339     `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	Version     types.String          `tfsdk:"version" json:"version,computed"`
 }
 
 func (m RulesetModel) MarshalJSON() (data []byte, err error) {
@@ -32,6 +35,8 @@ func (m RulesetModel) MarshalJSONForUpdate(state RulesetModel) (data []byte, err
 }
 
 type RulesetRulesModel struct {
+	LastUpdated            timetypes.RFC3339                        `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	Version                types.String                             `tfsdk:"version" json:"version,computed"`
 	ID                     types.String                             `tfsdk:"id" json:"id,optional"`
 	Action                 types.String                             `tfsdk:"action" json:"action,optional"`
 	ActionParameters       *RulesetRulesActionParametersModel       `tfsdk:"action_parameters" json:"action_parameters,optional"`
@@ -226,18 +231,18 @@ type RulesetRulesActionParametersCacheKeyCustomKeyHostModel struct {
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringModel struct {
-	Include *RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel `tfsdk:"include" json:"include,optional"`
 	Exclude *RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel `tfsdk:"exclude" json:"exclude,optional"`
-}
-
-type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel struct {
-	List *[]types.String `tfsdk:"list" json:"list,optional"`
-	All  types.Bool      `tfsdk:"all" json:"all,optional"`
+	Include *RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel `tfsdk:"include" json:"include,optional"`
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel struct {
-	List *[]types.String `tfsdk:"list" json:"list,optional"`
 	All  types.Bool      `tfsdk:"all" json:"all,optional"`
+	List *[]types.String `tfsdk:"list" json:"list,optional"`
+}
+
+type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel struct {
+	All  types.Bool      `tfsdk:"all" json:"all,optional"`
+	List *[]types.String `tfsdk:"list" json:"list,optional"`
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyUserModel struct {

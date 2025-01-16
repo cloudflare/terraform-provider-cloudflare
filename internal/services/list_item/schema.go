@@ -130,6 +130,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The unique ID of the list.",
 				Computed:    true,
 			},
+			"include_subdomains": schema.BoolAttribute{
+				Computed: true,
+				Default:  booldefault.StaticBool(false),
+			},
 			"ip": schema.StringAttribute{
 				Description: "An IPv4 address, an IPv4 CIDR, or an IPv6 CIDR. IPv6 CIDRs are limited to a maximum of /64.",
 				Computed:    true,
@@ -141,6 +145,39 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"operation_id": schema.StringAttribute{
 				Description: "The unique operation ID of the asynchronous action.",
 				Computed:    true,
+			},
+			"preserve_path_suffix": schema.BoolAttribute{
+				Computed: true,
+				Default:  booldefault.StaticBool(false),
+			},
+			"preserve_query_string": schema.BoolAttribute{
+				Computed: true,
+				Default:  booldefault.StaticBool(false),
+			},
+			"source_url": schema.StringAttribute{
+				Computed: true,
+			},
+			"status_code": schema.Int64Attribute{
+				Computed: true,
+				Validators: []validator.Int64{
+					int64validator.OneOf(
+						301,
+						302,
+						307,
+						308,
+					),
+				},
+				Default: int64default.StaticInt64(301),
+			},
+			"subpath_matching": schema.BoolAttribute{
+				Computed: true,
+				Default:  booldefault.StaticBool(false),
+			},
+			"target_url": schema.StringAttribute{
+				Computed: true,
+			},
+			"url_hostname": schema.StringAttribute{
+				Computed: true,
 			},
 			"hostname": schema.SingleNestedAttribute{
 				Description: "Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-).",

@@ -47,6 +47,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The unique ID of the list.",
 				Computed:    true,
 			},
+			"include_subdomains": schema.BoolAttribute{
+				Computed: true,
+			},
 			"ip": schema.StringAttribute{
 				Description: "An IPv4 address, an IPv4 CIDR, or an IPv6 CIDR. IPv6 CIDRs are limited to a maximum of /64.",
 				Computed:    true,
@@ -54,6 +57,35 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"modified_on": schema.StringAttribute{
 				Description: "The RFC 3339 timestamp of when the item was last modified.",
 				Computed:    true,
+			},
+			"preserve_path_suffix": schema.BoolAttribute{
+				Computed: true,
+			},
+			"preserve_query_string": schema.BoolAttribute{
+				Computed: true,
+			},
+			"source_url": schema.StringAttribute{
+				Computed: true,
+			},
+			"status_code": schema.Int64Attribute{
+				Computed: true,
+				Validators: []validator.Int64{
+					int64validator.OneOf(
+						301,
+						302,
+						307,
+						308,
+					),
+				},
+			},
+			"subpath_matching": schema.BoolAttribute{
+				Computed: true,
+			},
+			"target_url": schema.StringAttribute{
+				Computed: true,
+			},
+			"url_hostname": schema.StringAttribute{
+				Computed: true,
 			},
 			"hostname": schema.SingleNestedAttribute{
 				Description: "Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-).",

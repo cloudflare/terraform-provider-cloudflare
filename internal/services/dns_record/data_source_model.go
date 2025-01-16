@@ -5,9 +5,9 @@ package dns_record
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/dns"
-	"github.com/cloudflare/cloudflare-go/v4/shared"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/dns"
+	"github.com/cloudflare/cloudflare-go/v3/shared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -200,8 +200,6 @@ type DNSRecordDataDataSourceModel struct {
 }
 
 type DNSRecordSettingsDataSourceModel struct {
-	IPV4Only     types.Bool `tfsdk:"ipv4_only" json:"ipv4_only,computed"`
-	IPV6Only     types.Bool `tfsdk:"ipv6_only" json:"ipv6_only,computed"`
 	FlattenCNAME types.Bool `tfsdk:"flatten_cname" json:"flatten_cname,computed"`
 }
 

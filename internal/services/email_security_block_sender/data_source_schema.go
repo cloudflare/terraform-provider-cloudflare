@@ -24,8 +24,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"pattern_id": schema.Int64Attribute{
-				Description: "The unique identifier for the allow policy.",
-				Optional:    true,
+				Optional: true,
 			},
 			"comments": schema.StringAttribute{
 				Computed: true,
@@ -35,8 +34,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"id": schema.Int64Attribute{
-				Description: "The unique identifier for the allow policy.",
-				Computed:    true,
+				Computed: true,
 			},
 			"is_regex": schema.BoolAttribute{
 				Computed: true,

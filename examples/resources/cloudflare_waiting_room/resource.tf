@@ -25,6 +25,4 @@ resource "cloudflare_waiting_room" "example_waiting_room" {
   queueing_status_code = 200
   session_duration = 1
   suspended = true
-  turnstile_action = "log"
-  turnstile_mode = "off"
 }

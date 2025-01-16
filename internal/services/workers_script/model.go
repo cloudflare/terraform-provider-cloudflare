@@ -17,22 +17,22 @@ type WorkersScriptResultEnvelope struct {
 }
 
 type WorkersScriptModel struct {
-	ID              types.String                                                  `tfsdk:"id" json:"-,computed"`
-	ScriptName      types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
-	AccountID       types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
-	Metadata        *WorkersScriptMetadataModel                                   `tfsdk:"metadata" json:"metadata,required"`
-	CreatedOn       timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Etag            types.String                                                  `tfsdk:"etag" json:"etag,computed"`
-	HasAssets       types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed"`
-	HasModules      types.Bool                                                    `tfsdk:"has_modules" json:"has_modules,computed"`
-	Logpush         types.Bool                                                    `tfsdk:"logpush" json:"logpush,computed"`
-	ModifiedOn      timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	PlacementMode   types.String                                                  `tfsdk:"placement_mode" json:"placement_mode,computed"`
-	PlacementStatus types.String                                                  `tfsdk:"placement_status" json:"placement_status,computed"`
-	StartupTimeMs   types.Int64                                                   `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
-	UsageModel      types.String                                                  `tfsdk:"usage_model" json:"usage_model,computed"`
-	Placement       customfield.NestedObject[WorkersScriptPlacementModel]         `tfsdk:"placement" json:"placement,computed"`
-	TailConsumers   customfield.NestedObjectList[WorkersScriptTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
+	ID            types.String                                                  `tfsdk:"id" json:"-,computed"`
+	ScriptName    types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
+	AccountID     types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
+	Message       types.String                                                  `tfsdk:"message" json:"message,optional"`
+	AnyPartName   *[]types.String                                               `tfsdk:"any_part_name" json:"<any part name>,optional"`
+	Metadata      customfield.NestedObject[WorkersScriptMetadataModel]          `tfsdk:"metadata" json:"metadata,computed_optional"`
+	CreatedOn     timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Etag          types.String                                                  `tfsdk:"etag" json:"etag,computed"`
+	HasAssets     types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed"`
+	HasModules    types.Bool                                                    `tfsdk:"has_modules" json:"has_modules,computed"`
+	Logpush       types.Bool                                                    `tfsdk:"logpush" json:"logpush,computed"`
+	ModifiedOn    timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	PlacementMode types.String                                                  `tfsdk:"placement_mode" json:"placement_mode,computed"`
+	StartupTimeMs types.Int64                                                   `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+	UsageModel    types.String                                                  `tfsdk:"usage_model" json:"usage_model,computed"`
+	TailConsumers customfield.NestedObjectList[WorkersScriptTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
 }
 
 func (r WorkersScriptModel) MarshalMultipart() (data []byte, contentType string, err error) {
@@ -51,26 +51,27 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, contentType string,
 }
 
 type WorkersScriptMetadataModel struct {
-	Assets             *WorkersScriptMetadataAssetsModel           `tfsdk:"assets" json:"assets,optional"`
-	Bindings           *[]*WorkersScriptMetadataBindingsModel      `tfsdk:"bindings" json:"bindings,optional"`
-	BodyPart           types.String                                `tfsdk:"body_part" json:"body_part,optional"`
-	CompatibilityDate  types.String                                `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
-	CompatibilityFlags *[]types.String                             `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
-	KeepAssets         types.Bool                                  `tfsdk:"keep_assets" json:"keep_assets,optional"`
-	KeepBindings       *[]types.String                             `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
-	Logpush            types.Bool                                  `tfsdk:"logpush" json:"logpush,optional"`
-	MainModule         types.String                                `tfsdk:"main_module" json:"main_module,optional"`
-	Migrations         *WorkersScriptMetadataMigrationsModel       `tfsdk:"migrations" json:"migrations,optional"`
-	Observability      *WorkersScriptMetadataObservabilityModel    `tfsdk:"observability" json:"observability,optional"`
-	Placement          *WorkersScriptMetadataPlacementModel        `tfsdk:"placement" json:"placement,optional"`
-	Tags               *[]types.String                             `tfsdk:"tags" json:"tags,optional"`
-	TailConsumers      *[]*WorkersScriptMetadataTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers,optional"`
-	UsageModel         types.String                                `tfsdk:"usage_model" json:"usage_model,optional"`
+	Assets             customfield.NestedObject[WorkersScriptMetadataAssetsModel]            `tfsdk:"assets" json:"assets,computed_optional"`
+	Bindings           customfield.NestedObjectList[WorkersScriptMetadataBindingsModel]      `tfsdk:"bindings" json:"bindings,computed_optional"`
+	BodyPart           types.String                                                          `tfsdk:"body_part" json:"body_part,optional"`
+	CompatibilityDate  types.String                                                          `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
+	CompatibilityFlags *[]types.String                                                       `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
+	KeepAssets         types.Bool                                                            `tfsdk:"keep_assets" json:"keep_assets,optional"`
+	KeepBindings       *[]types.String                                                       `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
+	Logpush            types.Bool                                                            `tfsdk:"logpush" json:"logpush,optional"`
+	MainModule         types.String                                                          `tfsdk:"main_module" json:"main_module,optional"`
+	Migrations         customfield.NestedObject[WorkersScriptMetadataMigrationsModel]        `tfsdk:"migrations" json:"migrations,computed_optional"`
+	Observability      customfield.NestedObject[WorkersScriptMetadataObservabilityModel]     `tfsdk:"observability" json:"observability,computed_optional"`
+	Placement          customfield.NestedObject[WorkersScriptMetadataPlacementModel]         `tfsdk:"placement" json:"placement,computed_optional"`
+	Tags               *[]types.String                                                       `tfsdk:"tags" json:"tags,optional"`
+	TailConsumers      customfield.NestedObjectList[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
+	UsageModel         types.String                                                          `tfsdk:"usage_model" json:"usage_model,optional"`
+	VersionTags        *map[string]types.String                                              `tfsdk:"version_tags" json:"version_tags,optional"`
 }
 
 type WorkersScriptMetadataAssetsModel struct {
-	Config *WorkersScriptMetadataAssetsConfigModel `tfsdk:"config" json:"config,optional"`
-	JWT    types.String                            `tfsdk:"jwt" json:"jwt,optional"`
+	Config customfield.NestedObject[WorkersScriptMetadataAssetsConfigModel] `tfsdk:"config" json:"config,computed_optional"`
+	JWT    types.String                                                     `tfsdk:"jwt" json:"jwt,optional"`
 }
 
 type WorkersScriptMetadataAssetsConfigModel struct {
@@ -80,44 +81,19 @@ type WorkersScriptMetadataAssetsConfigModel struct {
 }
 
 type WorkersScriptMetadataBindingsModel struct {
-	Name          types.String                                `tfsdk:"name" json:"name,required"`
-	Type          types.String                                `tfsdk:"type" json:"type,required"`
-	Dataset       types.String                                `tfsdk:"dataset" json:"dataset,optional"`
-	ID            types.String                                `tfsdk:"id" json:"id,optional"`
-	Namespace     types.String                                `tfsdk:"namespace" json:"namespace,optional"`
-	Outbound      *WorkersScriptMetadataBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
-	ClassName     types.String                                `tfsdk:"class_name" json:"class_name,optional"`
-	Environment   types.String                                `tfsdk:"environment" json:"environment,optional"`
-	NamespaceID   types.String                                `tfsdk:"namespace_id" json:"namespace_id,optional"`
-	ScriptName    types.String                                `tfsdk:"script_name" json:"script_name,optional"`
-	Json          types.String                                `tfsdk:"json" json:"json,optional"`
-	CertificateID types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
-	Text          types.String                                `tfsdk:"text" json:"text,optional"`
-	QueueName     types.String                                `tfsdk:"queue_name" json:"queue_name,optional"`
-	BucketName    types.String                                `tfsdk:"bucket_name" json:"bucket_name,optional"`
-	Service       types.String                                `tfsdk:"service" json:"service,optional"`
-	IndexName     types.String                                `tfsdk:"index_name" json:"index_name,optional"`
-}
-
-type WorkersScriptMetadataBindingsOutboundModel struct {
-	Params *[]types.String                                   `tfsdk:"params" json:"params,optional"`
-	Worker *WorkersScriptMetadataBindingsOutboundWorkerModel `tfsdk:"worker" json:"worker,optional"`
-}
-
-type WorkersScriptMetadataBindingsOutboundWorkerModel struct {
-	Environment types.String `tfsdk:"environment" json:"environment,optional"`
-	Service     types.String `tfsdk:"service" json:"service,optional"`
+	Name types.String `tfsdk:"name" json:"name,optional"`
+	Type types.String `tfsdk:"type" json:"type,optional"`
 }
 
 type WorkersScriptMetadataMigrationsModel struct {
-	DeletedClasses     *[]types.String                                            `tfsdk:"deleted_classes" json:"deleted_classes,optional"`
-	NewClasses         *[]types.String                                            `tfsdk:"new_classes" json:"new_classes,optional"`
-	NewSqliteClasses   *[]types.String                                            `tfsdk:"new_sqlite_classes" json:"new_sqlite_classes,optional"`
-	NewTag             types.String                                               `tfsdk:"new_tag" json:"new_tag,optional"`
-	OldTag             types.String                                               `tfsdk:"old_tag" json:"old_tag,optional"`
-	RenamedClasses     *[]*WorkersScriptMetadataMigrationsRenamedClassesModel     `tfsdk:"renamed_classes" json:"renamed_classes,optional"`
-	TransferredClasses *[]*WorkersScriptMetadataMigrationsTransferredClassesModel `tfsdk:"transferred_classes" json:"transferred_classes,optional"`
-	Steps              *[]*WorkersScriptMetadataMigrationsStepsModel              `tfsdk:"steps" json:"steps,optional"`
+	DeletedClasses     *[]types.String                                                                      `tfsdk:"deleted_classes" json:"deleted_classes,optional"`
+	NewClasses         *[]types.String                                                                      `tfsdk:"new_classes" json:"new_classes,optional"`
+	NewSqliteClasses   *[]types.String                                                                      `tfsdk:"new_sqlite_classes" json:"new_sqlite_classes,optional"`
+	NewTag             types.String                                                                         `tfsdk:"new_tag" json:"new_tag,optional"`
+	OldTag             types.String                                                                         `tfsdk:"old_tag" json:"old_tag,optional"`
+	RenamedClasses     customfield.NestedObjectList[WorkersScriptMetadataMigrationsRenamedClassesModel]     `tfsdk:"renamed_classes" json:"renamed_classes,computed_optional"`
+	TransferredClasses customfield.NestedObjectList[WorkersScriptMetadataMigrationsTransferredClassesModel] `tfsdk:"transferred_classes" json:"transferred_classes,computed_optional"`
+	Steps              customfield.NestedObjectList[WorkersScriptMetadataMigrationsStepsModel]              `tfsdk:"steps" json:"steps,computed_optional"`
 }
 
 type WorkersScriptMetadataMigrationsRenamedClassesModel struct {
@@ -132,11 +108,11 @@ type WorkersScriptMetadataMigrationsTransferredClassesModel struct {
 }
 
 type WorkersScriptMetadataMigrationsStepsModel struct {
-	DeletedClasses     *[]types.String                                                 `tfsdk:"deleted_classes" json:"deleted_classes,optional"`
-	NewClasses         *[]types.String                                                 `tfsdk:"new_classes" json:"new_classes,optional"`
-	NewSqliteClasses   *[]types.String                                                 `tfsdk:"new_sqlite_classes" json:"new_sqlite_classes,optional"`
-	RenamedClasses     *[]*WorkersScriptMetadataMigrationsStepsRenamedClassesModel     `tfsdk:"renamed_classes" json:"renamed_classes,optional"`
-	TransferredClasses *[]*WorkersScriptMetadataMigrationsStepsTransferredClassesModel `tfsdk:"transferred_classes" json:"transferred_classes,optional"`
+	DeletedClasses     *[]types.String                                                                           `tfsdk:"deleted_classes" json:"deleted_classes,optional"`
+	NewClasses         *[]types.String                                                                           `tfsdk:"new_classes" json:"new_classes,optional"`
+	NewSqliteClasses   *[]types.String                                                                           `tfsdk:"new_sqlite_classes" json:"new_sqlite_classes,optional"`
+	RenamedClasses     customfield.NestedObjectList[WorkersScriptMetadataMigrationsStepsRenamedClassesModel]     `tfsdk:"renamed_classes" json:"renamed_classes,computed_optional"`
+	TransferredClasses customfield.NestedObjectList[WorkersScriptMetadataMigrationsStepsTransferredClassesModel] `tfsdk:"transferred_classes" json:"transferred_classes,computed_optional"`
 }
 
 type WorkersScriptMetadataMigrationsStepsRenamedClassesModel struct {
@@ -156,19 +132,13 @@ type WorkersScriptMetadataObservabilityModel struct {
 }
 
 type WorkersScriptMetadataPlacementModel struct {
-	Mode   types.String `tfsdk:"mode" json:"mode,optional"`
-	Status types.String `tfsdk:"status" json:"status,computed"`
+	Mode types.String `tfsdk:"mode" json:"mode,optional"`
 }
 
 type WorkersScriptMetadataTailConsumersModel struct {
 	Service     types.String `tfsdk:"service" json:"service,required"`
 	Environment types.String `tfsdk:"environment" json:"environment,optional"`
 	Namespace   types.String `tfsdk:"namespace" json:"namespace,optional"`
-}
-
-type WorkersScriptPlacementModel struct {
-	Mode   types.String `tfsdk:"mode" json:"mode,computed"`
-	Status types.String `tfsdk:"status" json:"status,computed"`
 }
 
 type WorkersScriptTailConsumersModel struct {
