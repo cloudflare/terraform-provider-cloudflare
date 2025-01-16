@@ -37,32 +37,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"message": schema.StringAttribute{
-				Description: "Rollback message to be associated with this deployment. Only parsed when query param `\"rollback_to\"` is present.",
-				Optional:    true,
-			},
-			"any_part_name": schema.ListAttribute{
-				Description: "A module comprising a Worker script, often a javascript file. Multiple modules may be provided as separate named parts, but at least one module must be present and referenced in the metadata as `main_module` or `body_part` by part name. Source maps may also be included using the `application/source-map` content type.",
-				Optional:    true,
-				ElementType: types.StringType,
-			},
 			"metadata": schema.SingleNestedAttribute{
 				Description: "JSON encoded metadata about the uploaded parts and Worker configuration.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataModel](ctx),
+				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"assets": schema.SingleNestedAttribute{
 						Description: "Configuration for assets within a Worker",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataAssetsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"config": schema.SingleNestedAttribute{
 								Description: "Configuration for assets within a Worker.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataAssetsConfigModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"html_handling": schema.StringAttribute{
 										Description: "Determines the redirects and rewrites of requests for HTML content.",
@@ -102,18 +87,97 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"bindings": schema.ListNestedAttribute{
-						Description: "List of bindings available to the worker.",
-						Computed:    true,
+						Description: "List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.",
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataBindingsModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"name": schema.StringAttribute{
-									Description: "Name of the binding variable.",
-									Optional:    true,
+									Description: "A JavaScript variable name for the binding.",
+									Required:    true,
 								},
 								"type": schema.StringAttribute{
-									Description: "Type of binding. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.",
+									Description: "The kind of resource that the binding provides.",
+									Required:    true,
+								},
+								"dataset": schema.StringAttribute{
+									Description: "The dataset name to bind to.",
+									Optional:    true,
+								},
+								"id": schema.StringAttribute{
+									Description: "Identifier of the D1 database to bind to.",
+									Optional:    true,
+								},
+								"namespace": schema.StringAttribute{
+									Description: "Namespace to bind to.",
+									Optional:    true,
+								},
+								"outbound": schema.SingleNestedAttribute{
+									Description: "Outbound worker.",
+									Optional:    true,
+									Attributes: map[string]schema.Attribute{
+										"params": schema.ListAttribute{
+											Description: "Pass information from the Dispatch Worker to the Outbound Worker through the parameters.",
+											Optional:    true,
+											ElementType: types.StringType,
+										},
+										"worker": schema.SingleNestedAttribute{
+											Description: "Outbound worker.",
+											Optional:    true,
+											Attributes: map[string]schema.Attribute{
+												"environment": schema.StringAttribute{
+													Description: "Environment of the outbound worker.",
+													Optional:    true,
+												},
+												"service": schema.StringAttribute{
+													Description: "Name of the outbound worker.",
+													Optional:    true,
+												},
+											},
+										},
+									},
+								},
+								"class_name": schema.StringAttribute{
+									Description: "The exported class name of the Durable Object.",
+									Optional:    true,
+								},
+								"environment": schema.StringAttribute{
+									Description: "The environment of the script_name to bind to.",
+									Optional:    true,
+								},
+								"namespace_id": schema.StringAttribute{
+									Description: "Namespace identifier tag.",
+									Optional:    true,
+								},
+								"script_name": schema.StringAttribute{
+									Description: "The script where the Durable Object is defined, if it is external to this Worker.",
+									Optional:    true,
+								},
+								"json": schema.StringAttribute{
+									Description: "JSON data to use.",
+									Optional:    true,
+								},
+								"certificate_id": schema.StringAttribute{
+									Description: "Identifier of the certificate to bind to.",
+									Optional:    true,
+								},
+								"text": schema.StringAttribute{
+									Description: "The text value to use.",
+									Optional:    true,
+								},
+								"queue_name": schema.StringAttribute{
+									Description: "Name of the Queue to bind to.",
+									Optional:    true,
+								},
+								"bucket_name": schema.StringAttribute{
+									Description: "R2 bucket to bind to.",
+									Optional:    true,
+								},
+								"service": schema.StringAttribute{
+									Description: "Name of Worker to bind to.",
+									Optional:    true,
+								},
+								"index_name": schema.StringAttribute{
+									Description: "Name of the Vectorize index to bind to.",
 									Optional:    true,
 								},
 							},
@@ -151,9 +215,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"migrations": schema.SingleNestedAttribute{
 						Description: "Migrations to apply for Durable Objects associated with this Worker.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataMigrationsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"deleted_classes": schema.ListAttribute{
 								Description: "A list of classes to delete Durable Object namespaces from.",
@@ -180,9 +242,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"renamed_classes": schema.ListNestedAttribute{
 								Description: "A list of classes with Durable Object namespaces that were renamed.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataMigrationsRenamedClassesModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"from": schema.StringAttribute{
@@ -196,9 +256,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"transferred_classes": schema.ListNestedAttribute{
 								Description: "A list of transfers for Durable Object namespaces from a different Worker and class to a class defined in this Worker.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataMigrationsTransferredClassesModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"from": schema.StringAttribute{
@@ -215,9 +273,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"steps": schema.ListNestedAttribute{
 								Description: "Migrations to apply in order.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataMigrationsStepsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"deleted_classes": schema.ListAttribute{
@@ -237,9 +293,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"renamed_classes": schema.ListNestedAttribute{
 											Description: "A list of classes with Durable Object namespaces that were renamed.",
-											Computed:    true,
 											Optional:    true,
-											CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataMigrationsStepsRenamedClassesModel](ctx),
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
 													"from": schema.StringAttribute{
@@ -253,9 +307,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"transferred_classes": schema.ListNestedAttribute{
 											Description: "A list of transfers for Durable Object namespaces from a different Worker and class to a class defined in this Worker.",
-											Computed:    true,
 											Optional:    true,
-											CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataMigrationsStepsTransferredClassesModel](ctx),
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
 													"from": schema.StringAttribute{
@@ -277,9 +329,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"observability": schema.SingleNestedAttribute{
 						Description: "Observability settings for the Worker.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataObservabilityModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Whether observability is enabled for the Worker.",
@@ -292,15 +342,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"placement": schema.SingleNestedAttribute{
-						Computed:   true,
-						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[WorkersScriptMetadataPlacementModel](ctx),
+						Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"mode": schema.StringAttribute{
-								Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Only `\"smart\"` is currently supported",
+								Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("smart"),
+								},
+							},
+							"status": schema.StringAttribute{
+								Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"SUCCESS",
+										"UNSUPPORTED_APPLICATION",
+										"INSUFFICIENT_INVOCATIONS",
+									),
 								},
 							},
 						},
@@ -312,9 +372,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"tail_consumers": schema.ListNestedAttribute{
 						Description: "List of Workers that will consume logs from the attached Worker.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataTailConsumersModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"service": schema.StringAttribute{
@@ -333,16 +391,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"usage_model": schema.StringAttribute{
-						Description: "Usage model to apply to invocations.",
+						Description: "Usage model for the Worker invocations.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("bundled", "unbound"),
+							stringvalidator.OneOfCaseInsensitive("standard"),
 						},
-					},
-					"version_tags": schema.MapAttribute{
-						Description: "Key-value pairs to use as tags for this version of this Worker.",
-						Optional:    true,
-						ElementType: types.StringType,
 					},
 				},
 			},
@@ -373,15 +426,57 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"placement_mode": schema.StringAttribute{
-				Description: "Specifies the placement mode for the Worker (e.g. 'smart').",
+				Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("smart"),
+				},
+			},
+			"placement_status": schema.StringAttribute{
+				Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"SUCCESS",
+						"UNSUPPORTED_APPLICATION",
+						"INSUFFICIENT_INVOCATIONS",
+					),
+				},
 			},
 			"startup_time_ms": schema.Int64Attribute{
 				Computed: true,
 			},
 			"usage_model": schema.StringAttribute{
-				Description: "Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').",
+				Description: "Usage model for the Worker invocations.",
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("standard"),
+				},
+			},
+			"placement": schema.SingleNestedAttribute{
+				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkersScriptPlacementModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"mode": schema.StringAttribute{
+						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("smart"),
+						},
+					},
+					"status": schema.StringAttribute{
+						Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"SUCCESS",
+								"UNSUPPORTED_APPLICATION",
+								"INSUFFICIENT_INVOCATIONS",
+							),
+						},
+					},
+				},
 			},
 			"tail_consumers": schema.ListNestedAttribute{
 				Description: "List of Workers that will consume logs from the attached Worker.",

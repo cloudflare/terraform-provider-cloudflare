@@ -5,8 +5,8 @@ package zero_trust_access_infrastructure_target
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,28 +20,48 @@ type ZeroTrustAccessInfrastructureTargetsResultListDataSourceEnvelope struct {
 type ZeroTrustAccessInfrastructureTargetsDataSourceModel struct {
 	AccountID        types.String                                                                            `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAfter     timetypes.RFC3339                                                                       `tfsdk:"created_after" query:"created_after,optional" format:"date-time"`
+	CreatedBefore    timetypes.RFC3339                                                                       `tfsdk:"created_before" query:"created_before,optional" format:"date-time"`
+	Direction        types.String                                                                            `tfsdk:"direction" query:"direction,optional"`
 	Hostname         types.String                                                                            `tfsdk:"hostname" query:"hostname,optional"`
 	HostnameContains types.String                                                                            `tfsdk:"hostname_contains" query:"hostname_contains,optional"`
 	IPV4             types.String                                                                            `tfsdk:"ip_v4" query:"ip_v4,optional"`
 	IPV6             types.String                                                                            `tfsdk:"ip_v6" query:"ip_v6,optional"`
 	ModifiedAfter    timetypes.RFC3339                                                                       `tfsdk:"modified_after" query:"modified_after,optional" format:"date-time"`
+	ModifiedBefore   timetypes.RFC3339                                                                       `tfsdk:"modified_before" query:"modified_before,optional" format:"date-time"`
+	Order            types.String                                                                            `tfsdk:"order" query:"order,optional"`
 	VirtualNetworkID types.String                                                                            `tfsdk:"virtual_network_id" query:"virtual_network_id,optional"`
+	IPs              *[]types.String                                                                         `tfsdk:"ips" query:"ips,optional"`
 	MaxItems         types.Int64                                                                             `tfsdk:"max_items"`
 	Result           customfield.NestedObjectList[ZeroTrustAccessInfrastructureTargetsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustAccessInfrastructureTargetsDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessInfrastructureTargetListParams, diags diag.Diagnostics) {
+	mIPs := []string{}
+	for _, item := range *m.IPs {
+		mIPs = append(mIPs, item.ValueString())
+	}
 	mCreatedAfter, errs := m.CreatedAfter.ValueRFC3339Time()
 	diags.Append(errs...)
+	mCreatedBefore, errs := m.CreatedBefore.ValueRFC3339Time()
+	diags.Append(errs...)
 	mModifiedAfter, errs := m.ModifiedAfter.ValueRFC3339Time()
+	diags.Append(errs...)
+	mModifiedBefore, errs := m.ModifiedBefore.ValueRFC3339Time()
 	diags.Append(errs...)
 
 	params = zero_trust.AccessInfrastructureTargetListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+		IPs:       cloudflare.F(mIPs),
 	}
 
 	if !m.CreatedAfter.IsNull() {
 		params.CreatedAfter = cloudflare.F(mCreatedAfter)
+	}
+	if !m.CreatedBefore.IsNull() {
+		params.CreatedBefore = cloudflare.F(mCreatedBefore)
+	}
+	if !m.Direction.IsNull() {
+		params.Direction = cloudflare.F(zero_trust.AccessInfrastructureTargetListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Hostname.IsNull() {
 		params.Hostname = cloudflare.F(m.Hostname.ValueString())
@@ -57,6 +77,12 @@ func (m *ZeroTrustAccessInfrastructureTargetsDataSourceModel) toListParams(_ con
 	}
 	if !m.ModifiedAfter.IsNull() {
 		params.ModifiedAfter = cloudflare.F(mModifiedAfter)
+	}
+	if !m.ModifiedBefore.IsNull() {
+		params.ModifiedBefore = cloudflare.F(mModifiedBefore)
+	}
+	if !m.Order.IsNull() {
+		params.Order = cloudflare.F(zero_trust.AccessInfrastructureTargetListParamsOrder(m.Order.ValueString()))
 	}
 	if !m.VirtualNetworkID.IsNull() {
 		params.VirtualNetworkID = cloudflare.F(m.VirtualNetworkID.ValueString())

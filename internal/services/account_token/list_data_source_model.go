@@ -5,8 +5,8 @@ package account_token
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/accounts"
+	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -50,7 +50,7 @@ type AccountTokensResultDataSourceModel struct {
 }
 
 type AccountTokensConditionDataSourceModel struct {
-	RequestIP customfield.NestedObject[AccountTokensConditionRequestIPDataSourceModel] `tfsdk:"request_ip" json:"request.ip,computed"`
+	RequestIP customfield.NestedObject[AccountTokensConditionRequestIPDataSourceModel] `tfsdk:"request_ip" json:"request_ip,computed"`
 }
 
 type AccountTokensConditionRequestIPDataSourceModel struct {
@@ -62,7 +62,7 @@ type AccountTokensPoliciesDataSourceModel struct {
 	ID               types.String                                                                       `tfsdk:"id" json:"id,computed"`
 	Effect           types.String                                                                       `tfsdk:"effect" json:"effect,computed"`
 	PermissionGroups customfield.NestedObjectList[AccountTokensPoliciesPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
-	Resources        customfield.NestedObject[AccountTokensPoliciesResourcesDataSourceModel]            `tfsdk:"resources" json:"resources,computed"`
+	Resources        customfield.Map[types.String]                                                      `tfsdk:"resources" json:"resources,computed"`
 }
 
 type AccountTokensPoliciesPermissionGroupsDataSourceModel struct {
@@ -74,9 +74,4 @@ type AccountTokensPoliciesPermissionGroupsDataSourceModel struct {
 type AccountTokensPoliciesPermissionGroupsMetaDataSourceModel struct {
 	Key   types.String `tfsdk:"key" json:"key,computed"`
 	Value types.String `tfsdk:"value" json:"value,computed"`
-}
-
-type AccountTokensPoliciesResourcesDataSourceModel struct {
-	Resource types.String `tfsdk:"resource" json:"resource,computed"`
-	Scope    types.String `tfsdk:"scope" json:"scope,computed"`
 }

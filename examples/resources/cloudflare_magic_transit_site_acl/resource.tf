@@ -17,4 +17,5 @@ resource "cloudflare_magic_transit_site_acl" "example_magic_transit_site_acl" {
   description = "Allows local traffic between PIN pads and cash register."
   forward_locally = true
   protocols = ["tcp"]
+  unidirectional = true
 }
