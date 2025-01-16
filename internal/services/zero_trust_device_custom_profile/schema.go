@@ -67,7 +67,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"auto_connect": schema.Float64Attribute{
-				Description: "The amount of time in minutes to reconnect after having been disabled.",
+				Description: "The amount of time in seconds to reconnect after having been disabled.",
 				Optional:    true,
 			},
 			"captive_portal": schema.Float64Attribute{
