@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -19,14 +20,14 @@ var _ resource.ResourceWithConfigValidators = (*HyperdriveConfigResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description:   "Identifier",
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"hyperdrive_id": schema.StringAttribute{
+				Description:   "Identifier",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
@@ -63,7 +64,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required:    true,
 					},
 					"access_client_id": schema.StringAttribute{
-						Description: "The Client ID of the Access token to use when connecting to the origin database",
+						Description: "The Client ID of the Access token to use when connecting to the origin database.",
 						Optional:    true,
 					},
 					"access_client_secret": schema.StringAttribute{
@@ -90,6 +91,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the Hyperdrive configuration was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the Hyperdrive configuration was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}
