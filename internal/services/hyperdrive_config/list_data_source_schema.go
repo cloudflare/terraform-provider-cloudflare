@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -74,7 +75,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"access_client_id": schema.StringAttribute{
-									Description: "The Client ID of the Access token to use when connecting to the origin database",
+									Description: "The Client ID of the Access token to use when connecting to the origin database.",
 									Computed:    true,
 								},
 								"access_client_secret": schema.StringAttribute{
@@ -100,6 +101,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 							},
+						},
+						"created_on": schema.StringAttribute{
+							Description: "When the Hyperdrive configuration was created.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"modified_on": schema.StringAttribute{
+							Description: "When the Hyperdrive configuration was last modified.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 					},
 				},
