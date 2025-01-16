@@ -5,8 +5,8 @@ package zero_trust_access_identity_provider
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -99,7 +99,6 @@ type ZeroTrustAccessIdentityProviderConfigHeaderAttributesDataSourceModel struct
 type ZeroTrustAccessIdentityProviderSCIMConfigDataSourceModel struct {
 	Enabled                types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 	IdentityUpdateBehavior types.String `tfsdk:"identity_update_behavior" json:"identity_update_behavior,computed"`
-	SCIMBaseURL            types.String `tfsdk:"scim_base_url" json:"scim_base_url,computed"`
 	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision,computed"`
 	Secret                 types.String `tfsdk:"secret" json:"secret,computed"`
 	UserDeprovision        types.Bool   `tfsdk:"user_deprovision" json:"user_deprovision,computed"`

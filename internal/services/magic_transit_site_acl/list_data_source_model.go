@@ -5,8 +5,8 @@ package magic_transit_site_acl
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -39,7 +39,6 @@ type MagicTransitSiteACLsResultDataSourceModel struct {
 	LAN2           customfield.NestedObject[MagicTransitSiteACLsLAN2DataSourceModel] `tfsdk:"lan_2" json:"lan_2,computed"`
 	Name           types.String                                                      `tfsdk:"name" json:"name,computed"`
 	Protocols      customfield.List[types.String]                                    `tfsdk:"protocols" json:"protocols,computed"`
-	Unidirectional types.Bool                                                        `tfsdk:"unidirectional" json:"unidirectional,computed"`
 }
 
 type MagicTransitSiteACLsLAN1DataSourceModel struct {

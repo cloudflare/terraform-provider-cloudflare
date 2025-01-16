@@ -149,11 +149,18 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"resources": schema.MapAttribute{
+									"resources": schema.SingleNestedAttribute{
 										Description: "A list of resource names that the policy applies to.",
 										Computed:    true,
-										CustomType:  customfield.NewMapType[types.String](ctx),
-										ElementType: types.StringType,
+										CustomType:  customfield.NewNestedObjectType[AccountTokensPoliciesResourcesDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"resource": schema.StringAttribute{
+												Computed: true,
+											},
+											"scope": schema.StringAttribute{
+												Computed: true,
+											},
+										},
 									},
 								},
 							},

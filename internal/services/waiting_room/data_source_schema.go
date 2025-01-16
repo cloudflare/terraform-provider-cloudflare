@@ -179,25 +179,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					int64validator.Between(200, 2147483647),
 				},
 			},
-			"turnstile_action": schema.StringAttribute{
-				Description: "Which action to take when a bot is detected using Turnstile. `log` will\nhave no impact on queueing behavior, simply keeping track of how many\nbots are detected in Waiting Room Analytics. `infinite_queue` will send\nbots to a false queueing state, where they will never reach your\norigin. `infinite_queue` requires Advanced Waiting Room.\n",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("log", "infinite_queue"),
-				},
-			},
-			"turnstile_mode": schema.StringAttribute{
-				Description: "Which Turnstile widget type to use for detecting bot traffic. See\n[the Turnstile documentation](https://developers.cloudflare.com/turnstile/concepts/widget/#widget-types)\nfor the definitions of these widget types. Set to `off` to disable the\nTurnstile integration entirely. Setting this to anything other than\n`off` or `invisible` requires Advanced Waiting Room.\n",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"off",
-						"invisible",
-						"visible_non_interactive",
-						"visible_managed",
-					),
-				},
-			},
 			"enabled_origin_commands": schema.ListAttribute{
 				Description: "A list of enabled origin commands.",
 				Computed:    true,

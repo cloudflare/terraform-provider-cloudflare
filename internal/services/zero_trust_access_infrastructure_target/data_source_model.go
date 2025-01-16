@@ -5,8 +5,8 @@ package zero_trust_access_infrastructure_target
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -41,32 +41,17 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toReadParams(_ cont
 }
 
 func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessInfrastructureTargetListParams, diags diag.Diagnostics) {
-	mFilterIPs := []string{}
-	for _, item := range *m.Filter.IPs {
-		mFilterIPs = append(mFilterIPs, item.ValueString())
-	}
 	mFilterCreatedAfter, errs := m.Filter.CreatedAfter.ValueRFC3339Time()
 	diags.Append(errs...)
-	mFilterCreatedBefore, errs := m.Filter.CreatedBefore.ValueRFC3339Time()
-	diags.Append(errs...)
 	mFilterModifiedAfter, errs := m.Filter.ModifiedAfter.ValueRFC3339Time()
-	diags.Append(errs...)
-	mFilterModifiedBefore, errs := m.Filter.ModifiedBefore.ValueRFC3339Time()
 	diags.Append(errs...)
 
 	params = zero_trust.AccessInfrastructureTargetListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
-		IPs:       cloudflare.F(mFilterIPs),
 	}
 
 	if !m.Filter.CreatedAfter.IsNull() {
 		params.CreatedAfter = cloudflare.F(mFilterCreatedAfter)
-	}
-	if !m.Filter.CreatedBefore.IsNull() {
-		params.CreatedBefore = cloudflare.F(mFilterCreatedBefore)
-	}
-	if !m.Filter.Direction.IsNull() {
-		params.Direction = cloudflare.F(zero_trust.AccessInfrastructureTargetListParamsDirection(m.Filter.Direction.ValueString()))
 	}
 	if !m.Filter.Hostname.IsNull() {
 		params.Hostname = cloudflare.F(m.Filter.Hostname.ValueString())
@@ -82,12 +67,6 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ cont
 	}
 	if !m.Filter.ModifiedAfter.IsNull() {
 		params.ModifiedAfter = cloudflare.F(mFilterModifiedAfter)
-	}
-	if !m.Filter.ModifiedBefore.IsNull() {
-		params.ModifiedBefore = cloudflare.F(mFilterModifiedBefore)
-	}
-	if !m.Filter.Order.IsNull() {
-		params.Order = cloudflare.F(zero_trust.AccessInfrastructureTargetListParamsOrder(m.Filter.Order.ValueString()))
 	}
 	if !m.Filter.VirtualNetworkID.IsNull() {
 		params.VirtualNetworkID = cloudflare.F(m.Filter.VirtualNetworkID.ValueString())
@@ -114,15 +93,10 @@ type ZeroTrustAccessInfrastructureTargetIPIPV6DataSourceModel struct {
 type ZeroTrustAccessInfrastructureTargetFindOneByDataSourceModel struct {
 	AccountID        types.String      `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAfter     timetypes.RFC3339 `tfsdk:"created_after" query:"created_after,optional" format:"date-time"`
-	CreatedBefore    timetypes.RFC3339 `tfsdk:"created_before" query:"created_before,optional" format:"date-time"`
-	Direction        types.String      `tfsdk:"direction" query:"direction,optional"`
 	Hostname         types.String      `tfsdk:"hostname" query:"hostname,optional"`
 	HostnameContains types.String      `tfsdk:"hostname_contains" query:"hostname_contains,optional"`
 	IPV4             types.String      `tfsdk:"ip_v4" query:"ip_v4,optional"`
 	IPV6             types.String      `tfsdk:"ip_v6" query:"ip_v6,optional"`
-	IPs              *[]types.String   `tfsdk:"ips" query:"ips,optional"`
 	ModifiedAfter    timetypes.RFC3339 `tfsdk:"modified_after" query:"modified_after,optional" format:"date-time"`
-	ModifiedBefore   timetypes.RFC3339 `tfsdk:"modified_before" query:"modified_before,optional" format:"date-time"`
-	Order            types.String      `tfsdk:"order" query:"order,optional"`
 	VirtualNetworkID types.String      `tfsdk:"virtual_network_id" query:"virtual_network_id,optional"`
 }

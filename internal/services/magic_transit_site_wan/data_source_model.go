@@ -5,8 +5,8 @@ package magic_transit_site_wan
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -24,7 +24,6 @@ type MagicTransitSiteWANDataSourceModel struct {
 	AccountID        types.String                                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	WANID            types.String                                                                 `tfsdk:"wan_id" path:"wan_id,optional"`
 	SiteID           types.String                                                                 `tfsdk:"site_id" path:"site_id,computed_optional"`
-	HealthCheckRate  types.String                                                                 `tfsdk:"health_check_rate" json:"health_check_rate,computed"`
 	ID               types.String                                                                 `tfsdk:"id" json:"id,computed"`
 	Name             types.String                                                                 `tfsdk:"name" json:"name,computed"`
 	Physport         types.Int64                                                                  `tfsdk:"physport" json:"physport,computed"`

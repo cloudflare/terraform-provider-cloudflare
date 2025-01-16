@@ -217,7 +217,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"dns_resolvers": schema.SingleNestedAttribute{
-									Description: "Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when 'resolve_dns_through_cloudflare' or 'resolve_dns_internally' are set. DNS queries will route to the address closest to their origin. Only valid when a rule's action is set to 'resolve'.",
+									Description: "Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when resolve_dns_through_cloudflare is set. DNS queries will route to the address closest to their origin. Only valid when a rule's action is set to 'resolve'.",
 									Computed:    true,
 									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsDNSResolversDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
@@ -393,26 +393,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-								"resolve_dns_internally": schema.SingleNestedAttribute{
-									Description: "Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action is set to 'resolve'.",
-									Computed:    true,
-									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsResolveDNSInternallyDataSourceModel](ctx),
-									Attributes: map[string]schema.Attribute{
-										"fallback": schema.StringAttribute{
-											Description: "The fallback behavior to apply when the internal DNS response code is different from 'NOERROR' or when the response data only contains CNAME records for 'A' or 'AAAA' queries.",
-											Computed:    true,
-											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive("none", "public_dns"),
-											},
-										},
-										"view_id": schema.StringAttribute{
-											Description: "The internal DNS view identifier that's passed to the internal DNS service.",
-											Computed:    true,
-										},
-									},
-								},
 								"resolve_dns_through_cloudflare": schema.BoolAttribute{
-									Description: "Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_internally' is set. Only valid when a rule's action is set to 'resolve'.",
+									Description: "Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when dns_resolvers are specified. Only valid when a rule's action is set to 'resolve'.",
 									Computed:    true,
 								},
 								"untrusted_cert": schema.SingleNestedAttribute{
@@ -481,10 +463,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"updated_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
-						},
-						"version": schema.Int64Attribute{
-							Description: "version number of the rule",
-							Computed:    true,
 						},
 					},
 				},

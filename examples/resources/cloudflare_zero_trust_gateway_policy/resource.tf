@@ -75,10 +75,6 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
     quarantine = {
       file_types = ["exe"]
     }
-    resolve_dns_internally = {
-      fallback = "none"
-      view_id = "view_id"
-    }
     resolve_dns_through_cloudflare = true
     untrusted_cert = {
       action = "pass_through"

@@ -5,8 +5,8 @@ package account_token
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/accounts"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -58,7 +58,7 @@ func (m *AccountTokenDataSourceModel) toListParams(_ context.Context) (params ac
 }
 
 type AccountTokenConditionDataSourceModel struct {
-	RequestIP customfield.NestedObject[AccountTokenConditionRequestIPDataSourceModel] `tfsdk:"request_ip" json:"request_ip,computed"`
+	RequestIP customfield.NestedObject[AccountTokenConditionRequestIPDataSourceModel] `tfsdk:"request_ip" json:"request.ip,computed"`
 }
 
 type AccountTokenConditionRequestIPDataSourceModel struct {
@@ -70,7 +70,7 @@ type AccountTokenPoliciesDataSourceModel struct {
 	ID               types.String                                                                      `tfsdk:"id" json:"id,computed"`
 	Effect           types.String                                                                      `tfsdk:"effect" json:"effect,computed"`
 	PermissionGroups customfield.NestedObjectList[AccountTokenPoliciesPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
-	Resources        customfield.Map[types.String]                                                     `tfsdk:"resources" json:"resources,computed"`
+	Resources        customfield.NestedObject[AccountTokenPoliciesResourcesDataSourceModel]            `tfsdk:"resources" json:"resources,computed"`
 }
 
 type AccountTokenPoliciesPermissionGroupsDataSourceModel struct {
@@ -82,6 +82,11 @@ type AccountTokenPoliciesPermissionGroupsDataSourceModel struct {
 type AccountTokenPoliciesPermissionGroupsMetaDataSourceModel struct {
 	Key   types.String `tfsdk:"key" json:"key,computed"`
 	Value types.String `tfsdk:"value" json:"value,computed"`
+}
+
+type AccountTokenPoliciesResourcesDataSourceModel struct {
+	Resource types.String `tfsdk:"resource" json:"resource,computed"`
+	Scope    types.String `tfsdk:"scope" json:"scope,computed"`
 }
 
 type AccountTokenFindOneByDataSourceModel struct {

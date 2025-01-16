@@ -41,7 +41,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
-				Description: "Last time this setting was modified.",
+				Description: "The time when the setting was last modified",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

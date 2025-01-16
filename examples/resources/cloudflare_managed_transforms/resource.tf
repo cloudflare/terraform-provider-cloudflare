@@ -1,15 +1,11 @@
 resource "cloudflare_managed_transforms" "example_managed_transforms" {
-  zone_id = "9f1839b6152d298aca64c4e906b6d074"
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   managed_request_headers = [{
-    id = "add_bot_protection_headers"
+    id = "add_cf-bot-score_header"
     enabled = true
-    has_conflict = false
-    conflicts_with = ["add_true_client_ip_headers"]
   }]
   managed_response_headers = [{
-    id = "add_security_headers"
+    id = "add_cf-bot-score_header"
     enabled = true
-    has_conflict = false
-    conflicts_with = ["add_true_client_ip_headers"]
   }]
 }

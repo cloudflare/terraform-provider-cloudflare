@@ -356,20 +356,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"settings": schema.SingleNestedAttribute{
-				Description: "Settings for the DNS record.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[DNSRecordSettingsDataSourceModel](ctx),
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[DNSRecordSettingsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
-					"ipv4_only": schema.BoolAttribute{
-						Description: "When enabled, only A records will be generated, and AAAA records will not be created. This setting is intended for exceptional cases. Note that this option only applies to proxied records and it has no effect on whether Cloudflare communicates with the origin using IPv4 or IPv6.",
-						Computed:    true,
-					},
-					"ipv6_only": schema.BoolAttribute{
-						Description: "When enabled, only AAAA records will be generated, and A records will not be created. This setting is intended for exceptional cases. Note that this option only applies to proxied records and it has no effect on whether Cloudflare communicates with the origin using IPv4 or IPv6.",
-						Computed:    true,
-					},
 					"flatten_cname": schema.BoolAttribute{
-						Description: "If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting is unavailable for proxied records, since they are always flattened.",
+						Description: "If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting has no effect on proxied records, which are always flattened.",
 						Computed:    true,
 					},
 				},

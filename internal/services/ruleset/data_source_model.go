@@ -5,9 +5,10 @@ package ruleset
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/rulesets"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -27,8 +28,10 @@ type RulesetDataSourceModel struct {
 	Description types.String                                              `tfsdk:"description" json:"description,computed"`
 	ID          types.String                                              `tfsdk:"id" json:"id,computed"`
 	Kind        types.String                                              `tfsdk:"kind" json:"kind,computed"`
+	LastUpdated timetypes.RFC3339                                         `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Name        types.String                                              `tfsdk:"name" json:"name,computed"`
 	Phase       types.String                                              `tfsdk:"phase" json:"phase,computed"`
+	Version     types.String                                              `tfsdk:"version" json:"version,computed"`
 	Rules       customfield.NestedObjectList[RulesetRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
 	Filter      *RulesetFindOneByDataSourceModel                          `tfsdk:"filter"`
 }
@@ -58,6 +61,8 @@ func (m *RulesetDataSourceModel) toListParams(_ context.Context) (params ruleset
 }
 
 type RulesetRulesDataSourceModel struct {
+	LastUpdated            timetypes.RFC3339                                                           `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	Version                types.String                                                                `tfsdk:"version" json:"version,computed"`
 	ID                     types.String                                                                `tfsdk:"id" json:"id,computed"`
 	Action                 types.String                                                                `tfsdk:"action" json:"action,computed"`
 	ActionParameters       customfield.NestedObject[RulesetRulesActionParametersDataSourceModel]       `tfsdk:"action_parameters" json:"action_parameters,computed"`
@@ -252,18 +257,18 @@ type RulesetRulesActionParametersCacheKeyCustomKeyHostDataSourceModel struct {
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringDataSourceModel struct {
-	Include customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeDataSourceModel] `tfsdk:"include" json:"include,computed"`
 	Exclude customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeDataSourceModel] `tfsdk:"exclude" json:"exclude,computed"`
-}
-
-type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeDataSourceModel struct {
-	List customfield.List[types.String] `tfsdk:"list" json:"list,computed"`
-	All  types.Bool                     `tfsdk:"all" json:"all,computed"`
+	Include customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeDataSourceModel] `tfsdk:"include" json:"include,computed"`
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeDataSourceModel struct {
-	List customfield.List[types.String] `tfsdk:"list" json:"list,computed"`
 	All  types.Bool                     `tfsdk:"all" json:"all,computed"`
+	List customfield.List[types.String] `tfsdk:"list" json:"list,computed"`
+}
+
+type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeDataSourceModel struct {
+	All  types.Bool                     `tfsdk:"all" json:"all,computed"`
+	List customfield.List[types.String] `tfsdk:"list" json:"list,computed"`
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyUserDataSourceModel struct {

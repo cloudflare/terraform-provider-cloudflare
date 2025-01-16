@@ -14,9 +14,9 @@ type ZoneHoldResultEnvelope struct {
 type ZoneHoldModel struct {
 	ID                types.String `tfsdk:"id" json:"-,computed"`
 	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id,required"`
-	HoldAfter         types.String `tfsdk:"hold_after" json:"hold_after,computed_optional"`
-	IncludeSubdomains types.Bool   `tfsdk:"include_subdomains" json:"include_subdomains,computed_optional"`
 	Hold              types.Bool   `tfsdk:"hold" json:"hold,computed"`
+	HoldAfter         types.String `tfsdk:"hold_after" json:"hold_after,computed"`
+	IncludeSubdomains types.String `tfsdk:"include_subdomains" json:"include_subdomains,computed"`
 }
 
 func (m ZoneHoldModel) MarshalJSON() (data []byte, err error) {
@@ -24,5 +24,5 @@ func (m ZoneHoldModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m ZoneHoldModel) MarshalJSONForUpdate(state ZoneHoldModel) (data []byte, err error) {
-	return apijson.MarshalForPatch(m, state)
+	return apijson.MarshalForUpdate(m, state)
 }

@@ -8,12 +8,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessInfrastructureTargetDataSource)(nil)
@@ -92,21 +89,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Required:    true,
 					},
 					"created_after": schema.StringAttribute{
-						Description: "Date and time at which the target was created after (inclusive)",
+						Description: "Date and time at which the target was created",
 						Optional:    true,
 						CustomType:  timetypes.RFC3339Type{},
-					},
-					"created_before": schema.StringAttribute{
-						Description: "Date and time at which the target was created before (inclusive)",
-						Optional:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"direction": schema.StringAttribute{
-						Description: "The sorting direction.",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
-						},
 					},
 					"hostname": schema.StringAttribute{
 						Description: "Hostname of a target",
@@ -124,27 +109,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "IPv6 address of the target",
 						Optional:    true,
 					},
-					"ips": schema.ListAttribute{
-						Description: "Filters for targets that have any of the following IP addresses. Specify\n`ips` multiple times in query parameter to build list of candidates.",
-						Optional:    true,
-						ElementType: types.StringType,
-					},
 					"modified_after": schema.StringAttribute{
-						Description: "Date and time at which the target was modified after (inclusive)",
+						Description: "Date and time at which the target was modified",
 						Optional:    true,
 						CustomType:  timetypes.RFC3339Type{},
-					},
-					"modified_before": schema.StringAttribute{
-						Description: "Date and time at which the target was modified before (inclusive)",
-						Optional:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"order": schema.StringAttribute{
-						Description: "The field to sort by.",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("hostname", "created_at"),
-						},
 					},
 					"virtual_network_id": schema.StringAttribute{
 						Description: "Private virtual network identifier of the target",

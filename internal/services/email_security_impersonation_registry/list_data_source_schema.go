@@ -76,9 +76,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
 						},
-						"email": schema.StringAttribute{
-							Computed: true,
-						},
 						"is_email_regex": schema.BoolAttribute{
 							Computed: true,
 						},
@@ -96,6 +93,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"directory_node_id": schema.Int64Attribute{
+							Computed: true,
+						},
+						"email": schema.StringAttribute{
 							Computed: true,
 						},
 						"external_directory_node_id": schema.StringAttribute{
