@@ -47,7 +47,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"auto_connect": schema.Float64Attribute{
-							Description: "The amount of time in minutes to reconnect after having been disabled.",
+							Description: "The amount of time in seconds to reconnect after having been disabled.",
 							Computed:    true,
 						},
 						"captive_portal": schema.Float64Attribute{
