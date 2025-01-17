@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"fmt"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -63,7 +64,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Computed:     true,
-			ValidateFunc: validation.StringInSlice([]string{"public", "private"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"public"}, false),
 			Description:  fmt.Sprintf("The type of the primary domain. %s", renderAvailableDocumentationValuesStringSlice([]string{"public", "private"})),
 			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
 				appType := d.Get("type").(string)
@@ -91,8 +92,57 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 					},
 					"uri": {
 						Type:        schema.TypeString,
-						Required:    true,
-						Description: "The URI of the destination. Public destinations can include a domain and path with wildcards. Private destinations are an early access feature and gated behind a feature flag. Private destinations support private IPv4, IPv6, and Server Name Indications (SNI) with optional port ranges.",
+						Optional:    true,
+						Description: "The public URI of the destination. Can include a domain and path with wildcards. Only valid when type=public",
+					},
+					"hostname": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The private hostname of the destination. Only valid when type=private. Private hostnames currently match only Server Name Indications (SNI). Private destinations are an early access feature and gated behind a feature flag.",
+					},
+					"cidr": {
+						Type:                  schema.TypeString,
+						Optional:              true,
+						Computed:              true,
+						DiffSuppressOnRefresh: true,
+						DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+							// /32 is the same as ommiting the mask for an IPV4
+							// And /128 for an ipv6
+							oldIsIpv4 := strings.Count(oldValue, ".") == 3
+							newIsIpv4 := strings.Count(newValue, ".") == 3
+
+							if oldIsIpv4 && newIsIpv4 {
+								return (strings.HasSuffix(oldValue, "/32") && !strings.Contains(newValue, "/")) ||
+									(strings.HasSuffix(newValue, "/32") && !strings.Contains(oldValue, "/"))
+							}
+
+							return (strings.HasSuffix(oldValue, "/128") && !strings.Contains(newValue, "/")) ||
+								(strings.HasSuffix(newValue, "/128") && !strings.Contains(oldValue, "/"))
+						},
+						Description: "The private CIDR of the destination. Only valid when type=private. IPs are computed as /32 cidr. Private destinations are an early access feature and gated behind a feature flag.",
+					},
+					"port_range": {
+						Type:                  schema.TypeString,
+						Optional:              true,
+						Computed:              true,
+						DiffSuppressOnRefresh: true,
+						DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+							// Passing a number is the same a range of length 1
+							// E.g., "443" == "443-443"
+							return newValue == fmt.Sprintf("%s-%s", oldValue, oldValue) || oldValue == fmt.Sprintf("%s-%s", newValue, newValue)
+						},
+						Description: "The port range of the destination. Only valid when type=private. Single ports are supported. Private destinations are an early access feature and gated behind a feature flag.",
+					},
+					"vnet_id": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The VNet ID of the destination. Only valid when type=private. Private destinations are an early access feature and gated behind a feature flag.",
+					},
+					"l4_protocol": {
+						Type:         schema.TypeString,
+						ValidateFunc: validation.StringInSlice([]string{"tcp", "udp"}, false),
+						Optional:     true,
+						Description:  "The l4 protocol that matches this destination. Only valid when type=private. Private destinations are an early access feature and gated behind a feature flag.",
 					},
 				},
 			},
@@ -1030,6 +1080,38 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 	}
 }
 
+func convertPublicDestinationStruct(payload map[string]any) cloudflare.AccessDestination {
+	dest := cloudflare.AccessDestination{
+		Type: cloudflare.AccessDestinationPublic,
+	}
+	if uri, ok := payload["uri"].(string); ok {
+		dest.URI = uri
+	}
+	return dest
+}
+
+func convertPrivateDestinationStruct(payload map[string]any) cloudflare.AccessDestination {
+	dest := cloudflare.AccessDestination{
+		Type: cloudflare.AccessDestinationPrivate,
+	}
+	if hostname, ok := payload["hostname"].(string); ok {
+		dest.Hostname = hostname
+	}
+	if ip, ok := payload["cidr"].(string); ok {
+		dest.CIDR = ip
+	}
+	if portRange, ok := payload["port_range"].(string); ok {
+		dest.PortRange = portRange
+	}
+	if l4Protocol, ok := payload["l4_protocol"].(string); ok {
+		dest.L4Protocol = l4Protocol
+	}
+	if vnetID, ok := payload["vnet_id"].(string); ok {
+		dest.VnetID = vnetID
+	}
+	return dest
+}
+
 func convertDestinationsToStruct(destinationPayloads []interface{}) ([]cloudflare.AccessDestination, error) {
 	destinations := make([]cloudflare.AccessDestination, len(destinationPayloads))
 	for i, dp := range destinationPayloads {
@@ -1038,16 +1120,12 @@ func convertDestinationsToStruct(destinationPayloads []interface{}) ([]cloudflar
 		if dType, ok := dpMap["type"].(string); ok {
 			switch dType {
 			case "public":
-				destinations[i].Type = cloudflare.AccessDestinationPublic
+				destinations[i] = convertPublicDestinationStruct(dpMap)
 			case "private":
-				destinations[i].Type = cloudflare.AccessDestinationPrivate
+				destinations[i] = convertPrivateDestinationStruct(dpMap)
 			default:
 				return nil, fmt.Errorf("failed to parse destination type: value must be one of public or private")
 			}
-		}
-
-		if uri, ok := dpMap["uri"].(string); ok {
-			destinations[i].URI = uri
 		}
 	}
 
@@ -1558,10 +1636,27 @@ func convertScimConfigMappingsStructsToSchema(mappingsData []*cloudflare.AccessA
 func convertDestinationsToSchema(destinations []cloudflare.AccessDestination) []interface{} {
 	schemas := make([]interface{}, len(destinations))
 	for i, dest := range destinations {
-		schemas[i] = map[string]interface{}{
-			"type": string(dest.Type),
-			"uri":  dest.URI,
+		resultDest := make(map[string]interface{})
+		resultDest["type"] = string(dest.Type)
+		if dest.URI != "" {
+			resultDest["uri"] = dest.URI
 		}
+		if dest.Hostname != "" {
+			resultDest["hostname"] = dest.Hostname
+		}
+		if dest.CIDR != "" {
+			resultDest["cidr"] = dest.CIDR
+		}
+		if dest.PortRange != "" {
+			resultDest["port_range"] = dest.PortRange
+		}
+		if dest.L4Protocol != "" {
+			resultDest["l4_protocol"] = dest.L4Protocol
+		}
+		if dest.VnetID != "" {
+			resultDest["vnet_id"] = dest.VnetID
+		}
+		schemas[i] = resultDest
 	}
 	return schemas
 }
