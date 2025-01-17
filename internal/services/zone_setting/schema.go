@@ -38,6 +38,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive(
 						"0rtt",
 						"advanced_ddos",
+						"aegis",
 						"always_online",
 						"always_use_https",
 						"automatic_https_rewrites",
@@ -67,6 +68,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"opportunistic_onion",
 						"orange_to_orange",
 						"origin_error_page_pass_thru",
+						"origin_h2_max_streams",
+						"origin_max_http_version",
 						"polish",
 						"prefetch_preload",
 						"proxy_read_timeout",
