@@ -30,6 +30,7 @@ type ZeroTrustAccessServiceTokenDataSourceModel struct {
 	Duration       types.String                                         `tfsdk:"duration" json:"duration,computed"`
 	ExpiresAt      timetypes.RFC3339                                    `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
 	ID             types.String                                         `tfsdk:"id" json:"id,computed"`
+	LastSeenAt     timetypes.RFC3339                                    `tfsdk:"last_seen_at" json:"last_seen_at,computed" format:"date-time"`
 	Name           types.String                                         `tfsdk:"name" json:"name,computed"`
 	UpdatedAt      timetypes.RFC3339                                    `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Filter         *ZeroTrustAccessServiceTokenFindOneByDataSourceModel `tfsdk:"filter"`

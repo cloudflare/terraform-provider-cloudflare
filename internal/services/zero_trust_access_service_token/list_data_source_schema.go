@@ -69,6 +69,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
 						},
+						"last_seen_at": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
+						},
 						"name": schema.StringAttribute{
 							Description: "The name of the service token.",
 							Computed:    true,
