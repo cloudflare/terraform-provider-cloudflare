@@ -8,6 +8,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/jinzhu/copier"
 )
@@ -17,17 +18,16 @@ type WorkersScriptResultEnvelope struct {
 }
 
 type WorkersScriptModel struct {
-	ID         types.String `tfsdk:"id" json:"-,computed"`
-	ScriptName types.String `tfsdk:"script_name" path:"script_name,required"`
-	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
-	// Message    types.String `tfsdk:"message" json:"message,optional"`
-	Content types.String `tfsdk:"content" json:"content,required"`
-	// CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	// Etag          types.String      `tfsdk:"etag" json:"etag,computed"`
-	// HasAssets     types.Bool        `tfsdk:"has_assets" json:"has_assets,computed"`
-	// HasModules    types.Bool        `tfsdk:"has_modules" json:"has_modules,computed"`
-	// ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	// StartupTimeMs types.Int64       `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+	ID            types.String      `tfsdk:"id" json:"-,computed"`
+	ScriptName    types.String      `tfsdk:"script_name" path:"script_name,required"`
+	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
+	Content       types.String      `tfsdk:"content" json:"content,required"`
+	CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Etag          types.String      `tfsdk:"etag" json:"etag,computed"`
+	HasAssets     types.Bool        `tfsdk:"has_assets" json:"has_assets,computed"`
+	HasModules    types.Bool        `tfsdk:"has_modules" json:"has_modules,computed"`
+	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	StartupTimeMs types.Int64       `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
 
 	WorkersScriptMetadataModel
 }
@@ -69,14 +69,14 @@ type WorkersScriptMetadataModel struct {
 	CompatibilityFlags *[]types.String                                                   `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
 	KeepAssets         types.Bool                                                        `tfsdk:"keep_assets" json:"keep_assets,optional"`
 	KeepBindings       *[]types.String                                                   `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
-	Logpush            types.Bool                                                        `tfsdk:"logpush" json:"logpush,optional"`
+	Logpush            types.Bool                                                        `tfsdk:"logpush" json:"logpush,computed_optional"`
 	MainModule         types.String                                                      `tfsdk:"main_module" json:"main_module,optional"`
 	Migrations         customfield.NestedObject[WorkersScriptMetadataMigrationsModel]    `tfsdk:"migrations" json:"migrations,computed_optional"`
 	Observability      customfield.NestedObject[WorkersScriptMetadataObservabilityModel] `tfsdk:"observability" json:"observability,computed_optional"`
 	Placement          customfield.NestedObject[WorkersScriptMetadataPlacementModel]     `tfsdk:"placement" json:"placement,computed_optional"`
 	// Tags               *[]types.String                                                       `tfsdk:"tags" json:"tags,optional"`
 	TailConsumers customfield.NestedObjectList[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
-	UsageModel    types.String                                                          `tfsdk:"usage_model" json:"usage_model,optional"`
+	UsageModel    types.String                                                          `tfsdk:"usage_model" json:"usage_model,computed_optional"`
 }
 
 type WorkersScriptMetadataAssetsModel struct {
