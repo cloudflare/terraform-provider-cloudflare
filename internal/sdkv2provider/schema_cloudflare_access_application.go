@@ -106,7 +106,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Computed:              true,
 						DiffSuppressOnRefresh: true,
 						DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
-							// /32 is the same as ommiting the mask for an IPV4
+							// /32 is the same as omitting the mask for an IPV4
 							// And /128 for an ipv6
 							oldIsIpv4 := strings.Count(oldValue, ".") == 3
 							newIsIpv4 := strings.Count(newValue, ".") == 3
