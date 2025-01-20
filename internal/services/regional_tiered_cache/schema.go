@@ -39,8 +39,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Default: stringdefault.StaticString("off"),
 			},
+			"editable": schema.BoolAttribute{
+				Description: "Whether the setting is editable",
+				Computed:    true,
+			},
 			"modified_on": schema.StringAttribute{
-				Description: "last time this setting was modified.",
+				Description: "Last time this setting was modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

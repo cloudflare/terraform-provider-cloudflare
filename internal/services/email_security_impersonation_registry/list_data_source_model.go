@@ -51,13 +51,13 @@ func (m *EmailSecurityImpersonationRegistriesDataSourceModel) toListParams(_ con
 type EmailSecurityImpersonationRegistriesResultDataSourceModel struct {
 	ID                      types.Int64       `tfsdk:"id" json:"id,computed"`
 	CreatedAt               timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Email                   types.String      `tfsdk:"email" json:"email,computed"`
 	IsEmailRegex            types.Bool        `tfsdk:"is_email_regex" json:"is_email_regex,computed"`
 	LastModified            timetypes.RFC3339 `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
 	Name                    types.String      `tfsdk:"name" json:"name,computed"`
 	Comments                types.String      `tfsdk:"comments" json:"comments,computed"`
 	DirectoryID             types.Int64       `tfsdk:"directory_id" json:"directory_id,computed"`
 	DirectoryNodeID         types.Int64       `tfsdk:"directory_node_id" json:"directory_node_id,computed"`
-	Email                   types.String      `tfsdk:"email" json:"email,computed"`
 	ExternalDirectoryNodeID types.String      `tfsdk:"external_directory_node_id" json:"external_directory_node_id,computed"`
 	Provenance              types.String      `tfsdk:"provenance" json:"provenance,computed"`
 }

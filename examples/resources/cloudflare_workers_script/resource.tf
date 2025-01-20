@@ -1,7 +1,6 @@
 resource "cloudflare_workers_script" "example_workers_script" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   script_name = "this-is_my_script-01"
-  any_part_name = ["file.txt"]
   metadata = {
     assets = {
       config = {
@@ -16,8 +15,8 @@ resource "cloudflare_workers_script" "example_workers_script" {
       type = "plain_text"
     }]
     body_part = "worker.js"
-    compatibility_date = "2023-07-25"
-    compatibility_flags = ["string"]
+    compatibility_date = "2021-01-01"
+    compatibility_flags = ["nodejs_compat"]
     keep_assets = false
     keep_bindings = ["string"]
     logpush = false
@@ -44,6 +43,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
     }
     placement = {
       mode = "smart"
+      status = "SUCCESS"
     }
     tags = ["string"]
     tail_consumers = [{
@@ -51,9 +51,6 @@ resource "cloudflare_workers_script" "example_workers_script" {
       environment = "production"
       namespace = "my-namespace"
     }]
-    usage_model = "bundled"
-    version_tags = {
-      foo = "string"
-    }
+    usage_model = "standard"
   }
 }

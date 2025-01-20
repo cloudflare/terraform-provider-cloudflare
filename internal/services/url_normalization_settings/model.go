@@ -7,11 +7,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+type URLNormalizationSettingsResultEnvelope struct {
+	Result URLNormalizationSettingsModel `json:"result"`
+}
+
 type URLNormalizationSettingsModel struct {
 	ID     types.String `tfsdk:"id" json:"-,computed"`
 	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
-	Scope  types.String `tfsdk:"scope" json:"scope,optional"`
-	Type   types.String `tfsdk:"type" json:"type,optional"`
+	Scope  types.String `tfsdk:"scope" json:"scope,required"`
+	Type   types.String `tfsdk:"type" json:"type,required"`
 }
 
 func (m URLNormalizationSettingsModel) MarshalJSON() (data []byte, err error) {

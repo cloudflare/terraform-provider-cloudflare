@@ -29,7 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"settings": schema.SingleNestedAttribute{
-				Description: "account settings.",
+				Description: "Account settings",
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsModel](ctx),

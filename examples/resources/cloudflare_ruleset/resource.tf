@@ -3,8 +3,6 @@ resource "cloudflare_ruleset" "example_ruleset" {
   name = "My ruleset"
   phase = "ddos_l4"
   rules = [{
-    last_updated = "2000-01-01T00:00:00.000000Z"
-    version = "1"
     id = "3a03d665bac047339bb530ecb439a90d"
     action = "block"
     action_parameters = {

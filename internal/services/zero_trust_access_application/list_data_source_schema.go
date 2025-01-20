@@ -193,7 +193,30 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"uri": schema.StringAttribute{
-										Description: "The URI of the destination. Public destinations can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/). Private destinations are an early access feature and gated behind a feature flag. Private destinations support private IPv4, IPv6, and Server Name Indications (SNI) with optional port ranges.\n",
+										Description: "The URI of the destination. Public destinations' URIs can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/).\n",
+										Computed:    true,
+									},
+									"cidr": schema.StringAttribute{
+										Description: "The CIDR range of the destination. Single IPs will be computed as /32.",
+										Computed:    true,
+									},
+									"hostname": schema.StringAttribute{
+										Description: "The hostname of the destination. Matches a valid SNI served by an HTTPS origin.",
+										Computed:    true,
+									},
+									"l4_protocol": schema.StringAttribute{
+										Description: "The L4 protocol of the destination. When omitted, both UDP and TCP traffic will match.",
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive("tcp", "udp"),
+										},
+									},
+									"port_range": schema.StringAttribute{
+										Description: "The port range of the destination. Can be a single port or a range of ports. When omitted, all ports will match.\n",
+										Computed:    true,
+									},
+									"vnet_id": schema.StringAttribute{
+										Description: "The VNET ID to match the destination. When omitted, all VNETs will match.",
 										Computed:    true,
 									},
 								},
@@ -262,6 +285,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 													"httpbasic",
 													"oauthbearertoken",
 													"oauth2",
+													"access_service_token",
 												),
 											},
 										},

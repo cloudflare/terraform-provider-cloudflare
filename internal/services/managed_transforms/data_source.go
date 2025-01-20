@@ -64,6 +64,7 @@ func (d *ManagedTransformsDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	res := new(http.Response)
+	env := ManagedTransformsResultDataSourceEnvelope{*data}
 	_, err := d.client.ManagedTransforms.List(
 		ctx,
 		params,
@@ -75,11 +76,12 @@ func (d *ManagedTransformsDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

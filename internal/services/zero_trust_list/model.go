@@ -17,9 +17,9 @@ type ZeroTrustListModel struct {
 	ID          types.String                                          `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String                                          `tfsdk:"account_id" path:"account_id,required"`
 	Type        types.String                                          `tfsdk:"type" json:"type,required"`
-	Items       customfield.NestedObjectList[ZeroTrustListItemsModel] `tfsdk:"items" json:"items,computed_optional"`
 	Name        types.String                                          `tfsdk:"name" json:"name,required"`
 	Description types.String                                          `tfsdk:"description" json:"description,optional"`
+	Items       customfield.NestedObjectList[ZeroTrustListItemsModel] `tfsdk:"items" json:"items,computed_optional"`
 	CreatedAt   timetypes.RFC3339                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ListCount   types.Float64                                         `tfsdk:"list_count" json:"count,computed"`
 	UpdatedAt   timetypes.RFC3339                                     `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
