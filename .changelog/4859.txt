@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_teams_location: Fix import failures on teams locations
+```

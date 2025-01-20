@@ -386,6 +386,9 @@ func flattenTeamsLocationNetworksIntoList(networks []cloudflare.TeamsLocationNet
 }
 
 func flattenTeamsEndpoints(endpoint *cloudflare.TeamsLocationEndpoints) []interface{} {
+	if endpoint == nil {
+		return nil
+	}
 	flattenedEndpoints := map[string]interface{}{
 		"ipv4": flattenTeamsEndpointIpv4Field(endpoint.IPv4Endpoint),
 		"ipv6": flattenTeamsEndpointIpv6Field(endpoint.IPv6Endpoint),
