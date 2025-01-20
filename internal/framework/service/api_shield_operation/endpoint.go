@@ -16,7 +16,7 @@ var varMatch = regexp.MustCompile(`{([\w\d-_]+)}`)
 
 // EndpointType implemented based on https://developer.hashicorp.com/terraform/plugin/framework/handling-data/types/custom
 
-// Ensure the implementation satisfies the expected interfaces
+// Ensure the implementation satisfies the expected interfaces.
 var _ basetypes.StringTypable = EndpointType{}
 var _ basetypes.StringValuableWithSemanticEquals = EndpointValue{}
 
