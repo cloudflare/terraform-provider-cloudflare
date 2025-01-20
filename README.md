@@ -1,15 +1,15 @@
 # Cloudflare Terraform Provider
 
-The Cloudflare Terraform provider
+## Requirements
 
-The [Cloudflare Terraform provider](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs) provides convenient access to
-[the Cloudflare REST API](https://developers.cloudflare.com/api) from Terraform.
+Terraform 1.2 or newer. We recommend running the [latest version](https://developer.hashicorp.com/terraform/downloads?product_intent=terraform) for optimal compatibility with the Cloudflare provider. Terraform versions older than 1.2 have known issues with newer features and internals.
 
-It is generated with [Stainless](https://www.stainlessapi.com/).
+## Documentation
 
-## Installation
+Full, comprehensive documentation is available on the [Terraform Registry](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs). [API documentation](https://api.cloudflare.com) and [Developer documentation](https://developers.cloudflare.com) is also available
+for non-Terraform or service specific information.
 
-<!-- x-release-please-start-version -->
+## Usage
 
 ```
 terraform {
@@ -26,18 +26,9 @@ terraform {
 
 And initialize your project by running `terraform init`.
 
-## Requirements
+## Migrating to Terraform from using the Dashboard
 
-This library requires Terraform CLI 1.0 or later. You can [install it for your system](https://developer.hashicorp.com/terraform/install)
-on Hashicorp's website.
-
-## Semantic versioning
-
-This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions, though certain backwards-incompatible changes may be released as minor versions:
-
-1. Changes to library internals which are technically public but not intended or documented for external use. _(Please open a GitHub issue to let us know if you are relying on such internals.)_
-2. Changes that we do not expect to impact the vast majority of users in practice.
-
-We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
-
-We are keen for your feedback; please open an [issue](https://www.github.com/cloudflare/terraform-provider-cloudflare/issues) with questions, bugs, or suggestions.
+Do you have an existing Cloudflare account (or many!) that you'd like to transition
+to be managed via Terraform? Check out [cf-terraforming](https://github.com/cloudflare/cf-terraforming)
+which is a tool Cloudflare has built to help dump the existing resources and
+import them into Terraform.
