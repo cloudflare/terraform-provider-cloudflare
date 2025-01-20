@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -155,25 +156,84 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel](ctx),
 						Attributes: map[string]schema.Attribute{
+							"copy": schema.StringAttribute{
+								Description: "Configure whether copy is enabled or not. When set with \"remote_only\", copying isolated content from the remote browser to the user's local clipboard is disabled. When absent, copy is enabled. Only applies when `version == \"v2\"`.",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"enabled",
+										"disabled",
+										"remote_only",
+									),
+								},
+							},
 							"dcp": schema.BoolAttribute{
-								Description: "Set to false to enable copy-pasting.",
+								Description: "Set to false to enable copy-pasting. Only applies when `version == \"v1\"`.",
 								Optional:    true,
 							},
 							"dd": schema.BoolAttribute{
-								Description: "Set to false to enable downloading.",
+								Description: "Set to false to enable downloading. Only applies when `version == \"v1\"`.",
 								Optional:    true,
 							},
 							"dk": schema.BoolAttribute{
-								Description: "Set to false to enable keyboard usage.",
+								Description: "Set to false to enable keyboard usage. Only applies when `version == \"v1\"`.",
 								Optional:    true,
 							},
+							"download": schema.StringAttribute{
+								Description: "Configure whether downloading enabled or not. When absent, downloading is enabled. Only applies when `version == \"v2\"`.",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
+								},
+							},
 							"dp": schema.BoolAttribute{
-								Description: "Set to false to enable printing.",
+								Description: "Set to false to enable printing. Only applies when `version == \"v1\"`.",
 								Optional:    true,
 							},
 							"du": schema.BoolAttribute{
-								Description: "Set to false to enable uploading.",
+								Description: "Set to false to enable uploading. Only applies when `version == \"v1\"`.",
 								Optional:    true,
+							},
+							"keyboard": schema.StringAttribute{
+								Description: "Configure whether keyboard usage is enabled or not. When absent, keyboard usage is enabled. Only applies when `version == \"v2\"`.",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
+								},
+							},
+							"paste": schema.StringAttribute{
+								Description: "Configure whether pasting is enabled or not. When set with \"remote_only\", pasting content from the user's local clipboard into isolated pages is disabled. When absent, paste is enabled. Only applies when `version == \"v2\"`.",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"enabled",
+										"disabled",
+										"remote_only",
+									),
+								},
+							},
+							"printing": schema.StringAttribute{
+								Description: "Configure whether printing is enabled or not. When absent, printing is enabled. Only applies when `version == \"v2\"`.",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
+								},
+							},
+							"upload": schema.StringAttribute{
+								Description: "Configure whether uploading is enabled or not. When absent, uploading is enabled. Only applies when `version == \"v2\"`.",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
+								},
+							},
+							"version": schema.StringAttribute{
+								Description: "Indicates which version of the browser isolation controls should apply.",
+								Computed:    true,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("v1", "v2"),
+								},
+								Default: stringdefault.StaticString("v1"),
 							},
 						},
 					},

@@ -22,11 +22,18 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       command_logging = false
     }
     biso_admin_controls = {
+      copy = "enabled"
       dcp = false
       dd = false
       dk = false
+      download = "enabled"
       dp = false
       du = false
+      keyboard = "enabled"
+      paste = "enabled"
+      printing = "enabled"
+      upload = "enabled"
+      version = "v1"
     }
     block_page_enabled = true
     block_reason = "This website is a security risk"

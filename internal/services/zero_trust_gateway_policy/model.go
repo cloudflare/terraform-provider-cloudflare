@@ -79,11 +79,18 @@ type ZeroTrustGatewayPolicyRuleSettingsAuditSSHModel struct {
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel struct {
-	DCP types.Bool `tfsdk:"dcp" json:"dcp,optional"`
-	DD  types.Bool `tfsdk:"dd" json:"dd,optional"`
-	DK  types.Bool `tfsdk:"dk" json:"dk,optional"`
-	DP  types.Bool `tfsdk:"dp" json:"dp,optional"`
-	DU  types.Bool `tfsdk:"du" json:"du,optional"`
+	Copy     types.String `tfsdk:"copy" json:"copy,optional"`
+	DCP      types.Bool   `tfsdk:"dcp" json:"dcp,optional"`
+	DD       types.Bool   `tfsdk:"dd" json:"dd,optional"`
+	DK       types.Bool   `tfsdk:"dk" json:"dk,optional"`
+	Download types.String `tfsdk:"download" json:"download,optional"`
+	DP       types.Bool   `tfsdk:"dp" json:"dp,optional"`
+	DU       types.Bool   `tfsdk:"du" json:"du,optional"`
+	Keyboard types.String `tfsdk:"keyboard" json:"keyboard,optional"`
+	Paste    types.String `tfsdk:"paste" json:"paste,optional"`
+	Printing types.String `tfsdk:"printing" json:"printing,optional"`
+	Upload   types.String `tfsdk:"upload" json:"upload,optional"`
+	Version  types.String `tfsdk:"version" json:"version,computed_optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsCheckSessionModel struct {

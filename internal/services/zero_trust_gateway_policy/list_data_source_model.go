@@ -88,11 +88,18 @@ type ZeroTrustGatewayPoliciesRuleSettingsAuditSSHDataSourceModel struct {
 }
 
 type ZeroTrustGatewayPoliciesRuleSettingsBISOAdminControlsDataSourceModel struct {
-	DCP types.Bool `tfsdk:"dcp" json:"dcp,computed"`
-	DD  types.Bool `tfsdk:"dd" json:"dd,computed"`
-	DK  types.Bool `tfsdk:"dk" json:"dk,computed"`
-	DP  types.Bool `tfsdk:"dp" json:"dp,computed"`
-	DU  types.Bool `tfsdk:"du" json:"du,computed"`
+	Copy     types.String `tfsdk:"copy" json:"copy,computed"`
+	DCP      types.Bool   `tfsdk:"dcp" json:"dcp,computed"`
+	DD       types.Bool   `tfsdk:"dd" json:"dd,computed"`
+	DK       types.Bool   `tfsdk:"dk" json:"dk,computed"`
+	Download types.String `tfsdk:"download" json:"download,computed"`
+	DP       types.Bool   `tfsdk:"dp" json:"dp,computed"`
+	DU       types.Bool   `tfsdk:"du" json:"du,computed"`
+	Keyboard types.String `tfsdk:"keyboard" json:"keyboard,computed"`
+	Paste    types.String `tfsdk:"paste" json:"paste,computed"`
+	Printing types.String `tfsdk:"printing" json:"printing,computed"`
+	Upload   types.String `tfsdk:"upload" json:"upload,computed"`
+	Version  types.String `tfsdk:"version" json:"version,computed"`
 }
 
 type ZeroTrustGatewayPoliciesRuleSettingsCheckSessionDataSourceModel struct {
