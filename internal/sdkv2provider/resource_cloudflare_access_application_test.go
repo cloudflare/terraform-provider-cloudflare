@@ -3,9 +3,11 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"log"
 	"os"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -954,11 +956,18 @@ func TestAccCloudflareAccessApplication_WithDestinations(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "destinations.#", "2"),
+					resource.TestCheckResourceAttr(name, "destinations.#", "4"),
 					resource.TestCheckResourceAttr(name, "destinations.0.type", "public"),
 					resource.TestCheckResourceAttr(name, "destinations.0.uri", fmt.Sprintf("d1.%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "destinations.1.type", "public"),
 					resource.TestCheckResourceAttr(name, "destinations.1.uri", fmt.Sprintf("d2.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "destinations.2.type", "private"),
+					resource.TestCheckResourceAttr(name, "destinations.2.hostname", fmt.Sprintf("d1.%s.%s.privatenetwork", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "destinations.2.port_range", "443"),
+					resource.TestCheckResourceAttr(name, "destinations.2.l4_protocol", "udp"),
+					resource.TestCheckResourceAttr(name, "destinations.3.type", "private"),
+					resource.TestCheckResourceAttr(name, "destinations.3.cidr", "127.0.0.2/32"),
+					resource.TestCheckResourceAttrWith(name, "destinations.3.vnet_id", uuid.Validate),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
@@ -1248,7 +1257,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 			name = "rank"
 		}
 	}
-	
+
 	hybrid_and_implicit_options {
 		return_id_token_from_authorization_endpoint = true
 		return_access_token_from_authorization_endpoint = true
@@ -1485,6 +1494,10 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 }
 
 func testAccCloudflareAccessApplicationWithDestinations(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
+	// make sure the seed string has at least 16 bytes to fill the UUID
+	vnetSeed := strings.Repeat(rnd, 16)
+	vnetID, _ := uuid.FromBytes([]byte(vnetSeed[:16]))
+
 	return fmt.Sprintf(`
 resource "cloudflare_zero_trust_access_application" "%[1]s" {
   %[3]s_id                  = "%[4]s"
@@ -1498,8 +1511,19 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 	destinations {
 	  uri = "d2.%[1]s.%[2]s"
 	}
+	destinations {
+      type = "private"
+	  hostname = "d1.%[1]s.%[2]s.privatenetwork"
+      port_range = "443"
+      l4_protocol = "udp"
+	}
+	destinations {
+      type = "private"
+	  cidr = "127.0.0.2"
+      vnet_id = "%[5]s"
+	}
 }
-`, rnd, domain, identifier.Type, identifier.Identifier)
+`, rnd, domain, identifier.Type, identifier.Identifier, vnetID)
 }
 
 func testAccCloudflareAccessApplicationWithDestinations2(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {

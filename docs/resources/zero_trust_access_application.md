@@ -119,13 +119,15 @@ Optional:
 <a id="nestedblock--destinations"></a>
 ### Nested Schema for `destinations`
 
-Required:
-
-- `uri` (String) The URI of the destination. Public destinations can include a domain and path with wildcards. Private destinations are an early access feature and gated behind a feature flag. Private destinations support private IPv4, IPv6, and Server Name Indications (SNI) with optional port ranges.
-
 Optional:
 
+- `cidr` (String) The private CIDR of the destination. Only valid when type=private. IPs are computed as /32 cidr. Private destinations are an early access feature and gated behind a feature flag.
+- `hostname` (String) The private hostname of the destination. Only valid when type=private. Private hostnames currently match only Server Name Indications (SNI). Private destinations are an early access feature and gated behind a feature flag.
+- `l4_protocol` (String) The l4 protocol that matches this destination. Only valid when type=private. Private destinations are an early access feature and gated behind a feature flag.
+- `port_range` (String) The port range of the destination. Only valid when type=private. Single ports are supported. Private destinations are an early access feature and gated behind a feature flag.
 - `type` (String) The destination type. Available values: `public`, `private`. Defaults to `public`.
+- `uri` (String) The public URI of the destination. Can include a domain and path with wildcards. Only valid when type=public.
+- `vnet_id` (String) The VNet ID of the destination. Only valid when type=private. Private destinations are an early access feature and gated behind a feature flag.
 
 
 <a id="nestedblock--footer_links"></a>
