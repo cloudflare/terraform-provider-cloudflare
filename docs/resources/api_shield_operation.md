@@ -2,12 +2,12 @@
 page_title: "cloudflare_api_shield_operation Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a resource to manage an operation in API Shield Endpoint Management.
+  Api shield operation
 ---
 
 # cloudflare_api_shield_operation (Resource)
 
-Provides a resource to manage an operation in API Shield Endpoint Management.
+Api shield operation
 
 ## Example Usage
 
@@ -24,13 +24,13 @@ resource "cloudflare_api_shield_operation" "example" {
 
 ### Required
 
-- `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with `{varN}`, starting with `{var1}`. This will then be [Cloudflare-normalized](https://developers.cloudflare.com/rules/normalization/how-it-works/). **Modifying this attribute will force creation of a new resource.**
-- `host` (String) RFC3986-compliant host. **Modifying this attribute will force creation of a new resource.**
-- `method` (String) The HTTP method used to access the endpoint. **Modifying this attribute will force creation of a new resource.**
-- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
+- `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with `{varN}`, starting with `{var1}`. This will then be [Cloudflare-normalized](https://developers.cloudflare.com/rules/normalization/how-it-works/)
+- `host` (String) RFC3986-compliant host
+- `method` (String) The HTTP method used to access the endpoint
+- `zone_id` (String) The zone identifier to target for the resource.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The identifier of this resource.
 
 
