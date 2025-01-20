@@ -1,4 +1,4 @@
-```release-note:note
+```release-note:internal
 resource/cloudflare_api_shield_operation: migrated to the `terraform-plugin-framework`.
 ```
 
