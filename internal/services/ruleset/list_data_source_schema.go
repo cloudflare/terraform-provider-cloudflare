@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -57,6 +58,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
+						"last_updated": schema.StringAttribute{
+							Description: "The timestamp of when the ruleset was last modified.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
 						"name": schema.StringAttribute{
 							Description: "The human-readable name of the ruleset.",
 							Computed:    true,
@@ -91,6 +97,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"magic_transit_ratelimit",
 								),
 							},
+						},
+						"version": schema.StringAttribute{
+							Description: "The version of the ruleset.",
+							Computed:    true,
 						},
 						"description": schema.StringAttribute{
 							Description: "An informative description of the ruleset.",

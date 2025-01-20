@@ -49,10 +49,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the ACL.",
 				Computed:    true,
 			},
-			"unidirectional": schema.BoolAttribute{
-				Description: "The desired traffic direction for this ACL policy. If set to \"false\", the policy will allow bidirectional traffic. If set to \"true\", the policy will only allow traffic in one direction. If not included in request, will default to false.",
-				Computed:    true,
-			},
 			"protocols": schema.ListAttribute{
 				Computed: true,
 				Validators: []validator.List{

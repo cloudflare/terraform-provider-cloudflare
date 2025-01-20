@@ -20,7 +20,6 @@ type MagicTransitSiteACLModel struct {
 	LAN2           *MagicTransitSiteACLLAN2Model `tfsdk:"lan_2" json:"lan_2,required"`
 	Description    types.String                  `tfsdk:"description" json:"description,optional"`
 	ForwardLocally types.Bool                    `tfsdk:"forward_locally" json:"forward_locally,optional"`
-	Unidirectional types.Bool                    `tfsdk:"unidirectional" json:"unidirectional,optional"`
 	Protocols      *[]types.String               `tfsdk:"protocols" json:"protocols,optional"`
 }
 

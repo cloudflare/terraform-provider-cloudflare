@@ -21,17 +21,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Required:    true,
 			},
-			"editable": schema.BoolAttribute{
-				Description: "Whether the setting is editable",
-				Computed:    true,
-			},
 			"modified_on": schema.StringAttribute{
-				Description: "Last time this setting was modified.",
+				Description: "last time this setting was modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"value": schema.StringAttribute{
-				Description: "The value of the feature",
+				Description: "Value of the Cache Reserve zone setting.",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),

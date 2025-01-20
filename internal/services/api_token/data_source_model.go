@@ -47,7 +47,7 @@ func (m *APITokenDataSourceModel) toListParams(_ context.Context) (params user.T
 }
 
 type APITokenConditionDataSourceModel struct {
-	RequestIP customfield.NestedObject[APITokenConditionRequestIPDataSourceModel] `tfsdk:"request_ip" json:"request_ip,computed"`
+	RequestIP customfield.NestedObject[APITokenConditionRequestIPDataSourceModel] `tfsdk:"request_ip" json:"request.ip,computed"`
 }
 
 type APITokenConditionRequestIPDataSourceModel struct {
@@ -59,7 +59,7 @@ type APITokenPoliciesDataSourceModel struct {
 	ID               types.String                                                                  `tfsdk:"id" json:"id,computed"`
 	Effect           types.String                                                                  `tfsdk:"effect" json:"effect,computed"`
 	PermissionGroups customfield.NestedObjectList[APITokenPoliciesPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
-	Resources        customfield.Map[types.String]                                                 `tfsdk:"resources" json:"resources,computed"`
+	Resources        customfield.NestedObject[APITokenPoliciesResourcesDataSourceModel]            `tfsdk:"resources" json:"resources,computed"`
 }
 
 type APITokenPoliciesPermissionGroupsDataSourceModel struct {
@@ -71,6 +71,11 @@ type APITokenPoliciesPermissionGroupsDataSourceModel struct {
 type APITokenPoliciesPermissionGroupsMetaDataSourceModel struct {
 	Key   types.String `tfsdk:"key" json:"key,computed"`
 	Value types.String `tfsdk:"value" json:"value,computed"`
+}
+
+type APITokenPoliciesResourcesDataSourceModel struct {
+	Resource types.String `tfsdk:"resource" json:"resource,computed"`
+	Scope    types.String `tfsdk:"scope" json:"scope,computed"`
 }
 
 type APITokenFindOneByDataSourceModel struct {

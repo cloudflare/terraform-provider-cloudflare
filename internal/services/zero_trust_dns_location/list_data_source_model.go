@@ -32,20 +32,19 @@ func (m *ZeroTrustDNSLocationsDataSourceModel) toListParams(_ context.Context) (
 }
 
 type ZeroTrustDNSLocationsResultDataSourceModel struct {
-	ID                        types.String                                                               `tfsdk:"id" json:"id,computed"`
-	ClientDefault             types.Bool                                                                 `tfsdk:"client_default" json:"client_default,computed"`
-	CreatedAt                 timetypes.RFC3339                                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	DNSDestinationIPsID       types.String                                                               `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id,computed"`
-	DNSDestinationIPV6BlockID types.String                                                               `tfsdk:"dns_destination_ipv6_block_id" json:"dns_destination_ipv6_block_id,computed"`
-	DOHSubdomain              types.String                                                               `tfsdk:"doh_subdomain" json:"doh_subdomain,computed"`
-	ECSSupport                types.Bool                                                                 `tfsdk:"ecs_support" json:"ecs_support,computed"`
-	Endpoints                 customfield.NestedObject[ZeroTrustDNSLocationsEndpointsDataSourceModel]    `tfsdk:"endpoints" json:"endpoints,computed"`
-	IP                        types.String                                                               `tfsdk:"ip" json:"ip,computed"`
-	IPV4Destination           types.String                                                               `tfsdk:"ipv4_destination" json:"ipv4_destination,computed"`
-	IPV4DestinationBackup     types.String                                                               `tfsdk:"ipv4_destination_backup" json:"ipv4_destination_backup,computed"`
-	Name                      types.String                                                               `tfsdk:"name" json:"name,computed"`
-	Networks                  customfield.NestedObjectList[ZeroTrustDNSLocationsNetworksDataSourceModel] `tfsdk:"networks" json:"networks,computed"`
-	UpdatedAt                 timetypes.RFC3339                                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	ID                    types.String                                                               `tfsdk:"id" json:"id,computed"`
+	ClientDefault         types.Bool                                                                 `tfsdk:"client_default" json:"client_default,computed"`
+	CreatedAt             timetypes.RFC3339                                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	DNSDestinationIPsID   types.String                                                               `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id,computed"`
+	DOHSubdomain          types.String                                                               `tfsdk:"doh_subdomain" json:"doh_subdomain,computed"`
+	ECSSupport            types.Bool                                                                 `tfsdk:"ecs_support" json:"ecs_support,computed"`
+	Endpoints             customfield.NestedObject[ZeroTrustDNSLocationsEndpointsDataSourceModel]    `tfsdk:"endpoints" json:"endpoints,computed"`
+	IP                    types.String                                                               `tfsdk:"ip" json:"ip,computed"`
+	IPV4Destination       types.String                                                               `tfsdk:"ipv4_destination" json:"ipv4_destination,computed"`
+	IPV4DestinationBackup types.String                                                               `tfsdk:"ipv4_destination_backup" json:"ipv4_destination_backup,computed"`
+	Name                  types.String                                                               `tfsdk:"name" json:"name,computed"`
+	Networks              customfield.NestedObjectList[ZeroTrustDNSLocationsNetworksDataSourceModel] `tfsdk:"networks" json:"networks,computed"`
+	UpdatedAt             timetypes.RFC3339                                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustDNSLocationsEndpointsDataSourceModel struct {

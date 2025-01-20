@@ -31,11 +31,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"account_identifier": schema.StringAttribute{
-				Description:   "Identifier",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"item_id": schema.StringAttribute{
 				Description:   "The unique ID of the item in the List.",
 				Computed:      true,
@@ -47,7 +42,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"comment": schema.StringAttribute{
 				Description: "An informative summary of the list item.",
-				Optional:    true,
+				Computed:    true,
+			},
+			"created_on": schema.StringAttribute{
+				Description: "The RFC 3339 timestamp of when the item was created.",
+				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The unique ID of the list.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "The RFC 3339 timestamp of when the item was last modified.",
+				Computed:    true,
+			},
+			"operation_id": schema.StringAttribute{
+				Description: "The unique operation ID of the asynchronous action.",
+				Computed:    true,
 			},
 			"hostname": schema.SingleNestedAttribute{
 				Description: "Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-).",
@@ -108,22 +119,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:  booldefault.StaticBool(false),
 					},
 				},
-			},
-			"created_on": schema.StringAttribute{
-				Description: "The RFC 3339 timestamp of when the item was created.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The unique ID of the list.",
-				Computed:    true,
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "The RFC 3339 timestamp of when the item was last modified.",
-				Computed:    true,
-			},
-			"operation_id": schema.StringAttribute{
-				Description: "The unique operation ID of the asynchronous action.",
-				Computed:    true,
 			},
 		},
 	}

@@ -7,6 +7,7 @@ import (
 	"math"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -93,6 +94,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"last_updated": schema.StringAttribute{
+							Description: "The timestamp of when the rule was last modified.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"version": schema.StringAttribute{
+							Description: "The version of the rule.",
+							Computed:    true,
+						},
 						"id": schema.StringAttribute{
 							Description: "The unique ID of the rule.",
 							Computed:    true,
@@ -723,34 +733,36 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 													},
 												},
 												"query_string": schema.SingleNestedAttribute{
-													Description: "Use the presence of parameters in the query string to build the cache key.",
+													Description: "Use the presence or absence of parameters in the query string to build the cache key.",
 													Optional:    true,
 													Attributes: map[string]schema.Attribute{
-														"include": schema.SingleNestedAttribute{
-															Description: "A list of query string parameters used to build the cache key.",
+														"exclude": schema.SingleNestedAttribute{
+															Description: "build the cache key using all query string parameters EXCECPT these excluded parameters",
 															Optional:    true,
 															Attributes: map[string]schema.Attribute{
+																"all": schema.BoolAttribute{
+																	Description: "Exclude all query string parameters from use in building the cache key.",
+																	Optional:    true,
+																},
 																"list": schema.ListAttribute{
+																	Description: "A list of query string parameters NOT used to build the cache key. All parameters present in the request but missing in this list will be used to build the cache key.",
 																	Optional:    true,
 																	ElementType: types.StringType,
-																},
-																"all": schema.BoolAttribute{
-																	Description: "Determines whether to include all query string parameters in the cache key.",
-																	Optional:    true,
 																},
 															},
 														},
-														"exclude": schema.SingleNestedAttribute{
-															Description: "A list of query string parameters NOT used to build the cache key. All parameters present in the request but missing in this list will be used to build the cache key.",
+														"include": schema.SingleNestedAttribute{
+															Description: "build the cache key using a list of query string parameters that ARE in the request.",
 															Optional:    true,
 															Attributes: map[string]schema.Attribute{
+																"all": schema.BoolAttribute{
+																	Description: "Use all query string parameters in the cache key.",
+																	Optional:    true,
+																},
 																"list": schema.ListAttribute{
+																	Description: "A list of query string parameters used to build the cache key.",
 																	Optional:    true,
 																	ElementType: types.StringType,
-																},
-																"all": schema.BoolAttribute{
-																	Description: "Determines whether to exclude all query string parameters from the cache key.",
-																	Optional:    true,
 																},
 															},
 														},
@@ -783,7 +795,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"cache_reserve": schema.SingleNestedAttribute{
-									Description: "Mark whether the request's response from origin is eligible for Cache Reserve (requires a Cache Reserve add-on plan).",
+									Description: "Mark whether the request's response from origin is eligible for  Cache Reserve (requires a Cache Reserve add-on plan).",
 									Optional:    true,
 									Attributes: map[string]schema.Attribute{
 										"eligible": schema.BoolAttribute{
@@ -1020,6 +1032,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),
+			},
+			"last_updated": schema.StringAttribute{
+				Description: "The timestamp of when the ruleset was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"version": schema.StringAttribute{
+				Description: "The version of the ruleset.",
+				Computed:    true,
 			},
 		},
 	}

@@ -11,10 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type URLNormalizationSettingsResultDataSourceEnvelope struct {
-	Result URLNormalizationSettingsDataSourceModel `json:"result,computed"`
-}
-
 type URLNormalizationSettingsDataSourceModel struct {
 	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Scope  types.String `tfsdk:"scope" json:"scope,computed"`

@@ -33,7 +33,6 @@ func (m *MagicTransitSiteWANsDataSourceModel) toListParams(_ context.Context) (p
 
 type MagicTransitSiteWANsResultDataSourceModel struct {
 	ID               types.String                                                                  `tfsdk:"id" json:"id,computed"`
-	HealthCheckRate  types.String                                                                  `tfsdk:"health_check_rate" json:"health_check_rate,computed"`
 	Name             types.String                                                                  `tfsdk:"name" json:"name,computed"`
 	Physport         types.Int64                                                                   `tfsdk:"physport" json:"physport,computed"`
 	Priority         types.Int64                                                                   `tfsdk:"priority" json:"priority,computed"`

@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/api_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -20,21 +19,19 @@ type APIShieldOperationsResultListDataSourceEnvelope struct {
 
 type APIShieldOperationsDataSourceModel struct {
 	ZoneID    types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
+	Diff      types.Bool                                                             `tfsdk:"diff" query:"diff,optional"`
 	Direction types.String                                                           `tfsdk:"direction" query:"direction,optional"`
 	Endpoint  types.String                                                           `tfsdk:"endpoint" query:"endpoint,optional"`
 	Order     types.String                                                           `tfsdk:"order" query:"order,optional"`
-	Feature   *[]types.String                                                        `tfsdk:"feature" query:"feature,optional"`
+	Origin    types.String                                                           `tfsdk:"origin" query:"origin,optional"`
+	State     types.String                                                           `tfsdk:"state" query:"state,optional"`
 	Host      *[]types.String                                                        `tfsdk:"host" query:"host,optional"`
 	Method    *[]types.String                                                        `tfsdk:"method" query:"method,optional"`
 	MaxItems  types.Int64                                                            `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[APIShieldOperationsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *APIShieldOperationsDataSourceModel) toListParams(_ context.Context) (params api_gateway.OperationListParams, diags diag.Diagnostics) {
-	mFeature := []api_gateway.OperationListParamsFeature{}
-	for _, item := range *m.Feature {
-		mFeature = append(mFeature, api_gateway.OperationListParamsFeature(item.ValueString()))
-	}
+func (m *APIShieldOperationsDataSourceModel) toListParams(_ context.Context) (params api_gateway.DiscoveryOperationListParams, diags diag.Diagnostics) {
 	mHost := []string{}
 	for _, item := range *m.Host {
 		mHost = append(mHost, item.ValueString())
@@ -44,110 +41,51 @@ func (m *APIShieldOperationsDataSourceModel) toListParams(_ context.Context) (pa
 		mMethod = append(mMethod, item.ValueString())
 	}
 
-	params = api_gateway.OperationListParams{
-		ZoneID:  cloudflare.F(m.ZoneID.ValueString()),
-		Feature: cloudflare.F(mFeature),
-		Host:    cloudflare.F(mHost),
-		Method:  cloudflare.F(mMethod),
+	params = api_gateway.DiscoveryOperationListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+		Host:   cloudflare.F(mHost),
+		Method: cloudflare.F(mMethod),
 	}
 
+	if !m.Diff.IsNull() {
+		params.Diff = cloudflare.F(m.Diff.ValueBool())
+	}
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(api_gateway.OperationListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(api_gateway.DiscoveryOperationListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Endpoint.IsNull() {
 		params.Endpoint = cloudflare.F(m.Endpoint.ValueString())
 	}
 	if !m.Order.IsNull() {
-		params.Order = cloudflare.F(api_gateway.OperationListParamsOrder(m.Order.ValueString()))
+		params.Order = cloudflare.F(api_gateway.DiscoveryOperationListParamsOrder(m.Order.ValueString()))
+	}
+	if !m.Origin.IsNull() {
+		params.Origin = cloudflare.F(api_gateway.DiscoveryOperationListParamsOrigin(m.Origin.ValueString()))
+	}
+	if !m.State.IsNull() {
+		params.State = cloudflare.F(api_gateway.DiscoveryOperationListParamsState(m.State.ValueString()))
 	}
 
 	return
 }
 
 type APIShieldOperationsResultDataSourceModel struct {
+	ID          types.String                                                         `tfsdk:"id" json:"id,computed"`
 	Endpoint    types.String                                                         `tfsdk:"endpoint" json:"endpoint,computed"`
 	Host        types.String                                                         `tfsdk:"host" json:"host,computed"`
 	LastUpdated timetypes.RFC3339                                                    `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Method      types.String                                                         `tfsdk:"method" json:"method,computed"`
-	OperationID types.String                                                         `tfsdk:"operation_id" json:"operation_id,computed"`
+	Origin      customfield.List[types.String]                                       `tfsdk:"origin" json:"origin,computed"`
+	State       types.String                                                         `tfsdk:"state" json:"state,computed"`
 	Features    customfield.NestedObject[APIShieldOperationsFeaturesDataSourceModel] `tfsdk:"features" json:"features,computed"`
 }
 
 type APIShieldOperationsFeaturesDataSourceModel struct {
-	Thresholds          customfield.NestedObject[APIShieldOperationsFeaturesThresholdsDataSourceModel]          `tfsdk:"thresholds" json:"thresholds,computed"`
-	ParameterSchemas    customfield.NestedObject[APIShieldOperationsFeaturesParameterSchemasDataSourceModel]    `tfsdk:"parameter_schemas" json:"parameter_schemas,computed"`
-	APIRouting          customfield.NestedObject[APIShieldOperationsFeaturesAPIRoutingDataSourceModel]          `tfsdk:"api_routing" json:"api_routing,computed"`
-	ConfidenceIntervals customfield.NestedObject[APIShieldOperationsFeaturesConfidenceIntervalsDataSourceModel] `tfsdk:"confidence_intervals" json:"confidence_intervals,computed"`
-	SchemaInfo          customfield.NestedObject[APIShieldOperationsFeaturesSchemaInfoDataSourceModel]          `tfsdk:"schema_info" json:"schema_info,computed"`
+	TrafficStats customfield.NestedObject[APIShieldOperationsFeaturesTrafficStatsDataSourceModel] `tfsdk:"traffic_stats" json:"traffic_stats,computed"`
 }
 
-type APIShieldOperationsFeaturesThresholdsDataSourceModel struct {
-	AuthIDTokens       types.Int64       `tfsdk:"auth_id_tokens" json:"auth_id_tokens,computed"`
-	DataPoints         types.Int64       `tfsdk:"data_points" json:"data_points,computed"`
-	LastUpdated        timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	P50                types.Int64       `tfsdk:"p50" json:"p50,computed"`
-	P90                types.Int64       `tfsdk:"p90" json:"p90,computed"`
-	P99                types.Int64       `tfsdk:"p99" json:"p99,computed"`
-	PeriodSeconds      types.Int64       `tfsdk:"period_seconds" json:"period_seconds,computed"`
-	Requests           types.Int64       `tfsdk:"requests" json:"requests,computed"`
-	SuggestedThreshold types.Int64       `tfsdk:"suggested_threshold" json:"suggested_threshold,computed"`
-}
-
-type APIShieldOperationsFeaturesParameterSchemasDataSourceModel struct {
-	LastUpdated      timetypes.RFC3339                                                                                    `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	ParameterSchemas customfield.NestedObject[APIShieldOperationsFeaturesParameterSchemasParameterSchemasDataSourceModel] `tfsdk:"parameter_schemas" json:"parameter_schemas,computed"`
-}
-
-type APIShieldOperationsFeaturesParameterSchemasParameterSchemasDataSourceModel struct {
-	Parameters customfield.List[jsontypes.Normalized] `tfsdk:"parameters" json:"parameters,computed"`
-	Responses  jsontypes.Normalized                   `tfsdk:"responses" json:"responses,computed"`
-}
-
-type APIShieldOperationsFeaturesAPIRoutingDataSourceModel struct {
-	LastUpdated timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	Route       types.String      `tfsdk:"route" json:"route,computed"`
-}
-
-type APIShieldOperationsFeaturesConfidenceIntervalsDataSourceModel struct {
-	LastUpdated        timetypes.RFC3339                                                                                         `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	SuggestedThreshold customfield.NestedObject[APIShieldOperationsFeaturesConfidenceIntervalsSuggestedThresholdDataSourceModel] `tfsdk:"suggested_threshold" json:"suggested_threshold,computed"`
-}
-
-type APIShieldOperationsFeaturesConfidenceIntervalsSuggestedThresholdDataSourceModel struct {
-	ConfidenceIntervals customfield.NestedObject[APIShieldOperationsFeaturesConfidenceIntervalsSuggestedThresholdConfidenceIntervalsDataSourceModel] `tfsdk:"confidence_intervals" json:"confidence_intervals,computed"`
-	Mean                types.Float64                                                                                                                `tfsdk:"mean" json:"mean,computed"`
-}
-
-type APIShieldOperationsFeaturesConfidenceIntervalsSuggestedThresholdConfidenceIntervalsDataSourceModel struct {
-	P90 customfield.NestedObject[APIShieldOperationsFeaturesConfidenceIntervalsSuggestedThresholdConfidenceIntervalsP90DataSourceModel] `tfsdk:"p90" json:"p90,computed"`
-	P95 customfield.NestedObject[APIShieldOperationsFeaturesConfidenceIntervalsSuggestedThresholdConfidenceIntervalsP95DataSourceModel] `tfsdk:"p95" json:"p95,computed"`
-	P99 customfield.NestedObject[APIShieldOperationsFeaturesConfidenceIntervalsSuggestedThresholdConfidenceIntervalsP99DataSourceModel] `tfsdk:"p99" json:"p99,computed"`
-}
-
-type APIShieldOperationsFeaturesConfidenceIntervalsSuggestedThresholdConfidenceIntervalsP90DataSourceModel struct {
-	Lower types.Float64 `tfsdk:"lower" json:"lower,computed"`
-	Upper types.Float64 `tfsdk:"upper" json:"upper,computed"`
-}
-
-type APIShieldOperationsFeaturesConfidenceIntervalsSuggestedThresholdConfidenceIntervalsP95DataSourceModel struct {
-	Lower types.Float64 `tfsdk:"lower" json:"lower,computed"`
-	Upper types.Float64 `tfsdk:"upper" json:"upper,computed"`
-}
-
-type APIShieldOperationsFeaturesConfidenceIntervalsSuggestedThresholdConfidenceIntervalsP99DataSourceModel struct {
-	Lower types.Float64 `tfsdk:"lower" json:"lower,computed"`
-	Upper types.Float64 `tfsdk:"upper" json:"upper,computed"`
-}
-
-type APIShieldOperationsFeaturesSchemaInfoDataSourceModel struct {
-	ActiveSchema     customfield.NestedObject[APIShieldOperationsFeaturesSchemaInfoActiveSchemaDataSourceModel] `tfsdk:"active_schema" json:"active_schema,computed"`
-	LearnedAvailable types.Bool                                                                                 `tfsdk:"learned_available" json:"learned_available,computed"`
-	MitigationAction types.String                                                                               `tfsdk:"mitigation_action" json:"mitigation_action,computed"`
-}
-
-type APIShieldOperationsFeaturesSchemaInfoActiveSchemaDataSourceModel struct {
-	ID        types.String      `tfsdk:"id" json:"id,computed"`
-	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	IsLearned types.Bool        `tfsdk:"is_learned" json:"is_learned,computed"`
-	Name      types.String      `tfsdk:"name" json:"name,computed"`
+type APIShieldOperationsFeaturesTrafficStatsDataSourceModel struct {
+	LastUpdated   timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	PeriodSeconds types.Int64       `tfsdk:"period_seconds" json:"period_seconds,computed"`
+	Requests      types.Float64     `tfsdk:"requests" json:"requests,computed"`
 }

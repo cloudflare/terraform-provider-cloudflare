@@ -39,7 +39,6 @@ type MagicTransitSiteACLsResultDataSourceModel struct {
 	LAN2           customfield.NestedObject[MagicTransitSiteACLsLAN2DataSourceModel] `tfsdk:"lan_2" json:"lan_2,computed"`
 	Name           types.String                                                      `tfsdk:"name" json:"name,computed"`
 	Protocols      customfield.List[types.String]                                    `tfsdk:"protocols" json:"protocols,computed"`
-	Unidirectional types.Bool                                                        `tfsdk:"unidirectional" json:"unidirectional,computed"`
 }
 
 type MagicTransitSiteACLsLAN1DataSourceModel struct {

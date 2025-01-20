@@ -70,7 +70,7 @@ func (r *EmailSecurityBlockSenderResource) Create(ctx context.Context, req resou
 		return
 	}
 	res := new(http.Response)
-	env := EmailSecurityBlockSenderResultEnvelope{*data}
+	env := EmailSecurityBlockSenderResultEnvelope{data.Body}
 	_, err = r.client.EmailSecurity.Settings.BlockSenders.New(
 		ctx,
 		email_security.SettingBlockSenderNewParams{
@@ -90,7 +90,7 @@ func (r *EmailSecurityBlockSenderResource) Create(ctx context.Context, req resou
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -118,7 +118,7 @@ func (r *EmailSecurityBlockSenderResource) Update(ctx context.Context, req resou
 		return
 	}
 	res := new(http.Response)
-	env := EmailSecurityBlockSenderResultEnvelope{*data}
+	env := EmailSecurityBlockSenderResultEnvelope{data.Body}
 	_, err = r.client.EmailSecurity.Settings.BlockSenders.Edit(
 		ctx,
 		data.ID.ValueInt64(),
@@ -139,7 +139,7 @@ func (r *EmailSecurityBlockSenderResource) Update(ctx context.Context, req resou
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -154,7 +154,7 @@ func (r *EmailSecurityBlockSenderResource) Read(ctx context.Context, req resourc
 	}
 
 	res := new(http.Response)
-	env := EmailSecurityBlockSenderResultEnvelope{*data}
+	env := EmailSecurityBlockSenderResultEnvelope{data.Body}
 	_, err := r.client.EmailSecurity.Settings.BlockSenders.Get(
 		ctx,
 		data.ID.ValueInt64(),
@@ -179,7 +179,7 @@ func (r *EmailSecurityBlockSenderResource) Read(ctx context.Context, req resourc
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -229,7 +229,7 @@ func (r *EmailSecurityBlockSenderResource) ImportState(ctx context.Context, req 
 	data.ID = types.Int64Value(path_pattern_id)
 
 	res := new(http.Response)
-	env := EmailSecurityBlockSenderResultEnvelope{*data}
+	env := EmailSecurityBlockSenderResultEnvelope{data.Body}
 	_, err := r.client.EmailSecurity.Settings.BlockSenders.Get(
 		ctx,
 		path_pattern_id,
@@ -249,7 +249,7 @@ func (r *EmailSecurityBlockSenderResource) ImportState(ctx context.Context, req 
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
