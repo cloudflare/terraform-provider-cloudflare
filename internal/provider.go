@@ -5,6 +5,7 @@ package internal
 import (
 	"context"
 	"fmt"
+	"os"
 	"regexp"
 
 	"github.com/cloudflare/cloudflare-go/v4"
@@ -288,8 +289,6 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 
 func (p *CloudflareProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 
-	// TODO(terraform): apiKey := os.Getenv("API_KEY")
-
 	var data CloudflareProviderModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -298,6 +297,18 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 	if !data.BaseURL.IsNull() {
 		opts = append(opts, option.WithBaseURL(data.BaseURL.ValueString()))
+	}
+	if o, ok := os.LookupEnv("CLOUDFLARE_API_TOKEN"); ok {
+		opts = append(opts, option.WithAPIToken(o))
+	}
+	if o, ok := os.LookupEnv("CLOUDFLARE_API_KEY"); ok {
+		opts = append(opts, option.WithAPIKey(o))
+	}
+	if o, ok := os.LookupEnv("CLOUDFLARE_EMAIL"); ok {
+		opts = append(opts, option.WithAPIEmail(o))
+	}
+	if o, ok := os.LookupEnv("CLOUDFLARE_API_USER_SERVICE_KEY"); ok {
+		opts = append(opts, option.WithUserServiceKey(o))
 	}
 	if !data.APIToken.IsNull() {
 		opts = append(opts, option.WithAPIToken(data.APIToken.ValueString()))
