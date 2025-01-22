@@ -74,6 +74,7 @@ Optional:
 - `override_host` (String) The host to override matching DNS queries with.
 - `override_ips` (List of String) The IPs to override matching DNS queries with.
 - `payload_log` (Block List, Max: 1) Configure DLP Payload Logging settings for this rule. (see [below for nested schema](#nestedblock--rule_settings--payload_log))
+- `resolve_dns_internally` (Block List, Max: 1) Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action is set to 'resolve'. (see [below for nested schema](#nestedblock--rule_settings--resolve_dns_internally))
 - `resolve_dns_through_cloudflare` (Boolean) Enable sending queries that match the resolver policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when `dns_resolvers` are specified.
 - `untrusted_cert` (Block List, Max: 1) Configure untrusted certificate settings for this rule. (see [below for nested schema](#nestedblock--rule_settings--untrusted_cert))
 
@@ -182,6 +183,15 @@ Optional:
 Required:
 
 - `enabled` (Boolean) Enable or disable DLP Payload Logging for this rule.
+
+
+<a id="nestedblock--rule_settings--resolve_dns_internally"></a>
+### Nested Schema for `rule_settings.resolve_dns_internally`
+
+Optional:
+
+- `fallback` (String) The fallback behavior to apply when the internal DNS response code is different from 'NOERROR' or when the response data only contains CNAME records for 'A' or 'AAAA' queries.
+- `view_id` (String) The internal DNS view identifier that's passed to the internal DNS service.
 
 
 <a id="nestedblock--rule_settings--untrusted_cert"></a>
