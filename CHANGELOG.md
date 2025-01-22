@@ -1,4 +1,6 @@
-## 4.51.0 (Unreleased)
+## 4.52.0 (Unreleased)
+
+## 4.51.0 (January 22nd, 2025)
 
 NOTES:
 
@@ -42,11 +44,11 @@ DEPENDENCIES:
 * provider: bump github.com/cloudflare/cloudflare-go from 0.112.0 to 0.113.0 ([#4826](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4826))
 * provider: bump golang.org/x/net from 0.33.0 to 0.34.0 ([#4837](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4837))
 
-## 4.49.1 (December 25th, 2025)
+## 4.49.1 (December 25th, 2024)
 
 No functional differences to v4.49.0. Republished to fix a bad cached asset in the Terraform Registry.
 
-## 4.49.0 (December 25th, 2025)
+## 4.49.0 (December 25th, 2024)
 
 NOTES:
 
