@@ -1,5 +1,30 @@
 ## 4.51.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_ruleset: remove deprecated `http_request_sbfm` phase ([#4860](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4860))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application:  add private destination fields to access application ([#4892](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4892))
+* resource/cloudflare_zero_trust_gateway_policy: allow configuring resolver rules with internal DNS ([#4918](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4918))
+
+BUG FIXES:
+
+* resource/cloudflare_api_shield_operation: fixed a bug when using variable names other than `var1 ... varN` in endpoint definitions causing these resources to be recreated when nothing has changed.
+If this affects you, after upgrading to this version, the resource has to be recreated once more to fix the state, after which the bug is fixed. ([#4894](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4894))
+* resource/cloudflare_teams_location: Fix import failures on teams locations ([#4859](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4859))
+* resource/cloudflare_zero_trust_device_posture_rule: Fix 'last_seen' not being written to the state file ([#4855](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4855))
+
+INTERNAL:
+
+* resource/cloudflare_api_shield_operation: migrated to the `terraform-plugin-framework`. ([#4894](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4894))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.113.0 to 0.114.0 ([#4893](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4893))
+* provider: bump github.com/go-git/go-git/v5 from 5.11.0 to 5.13.0 in /tools ([#4903](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4903))
+
 ## 4.50.0 (January 8th, 2025)
 
 ENHANCEMENTS:
