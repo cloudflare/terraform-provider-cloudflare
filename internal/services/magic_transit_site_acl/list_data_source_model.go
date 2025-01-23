@@ -43,15 +43,17 @@ type MagicTransitSiteACLsResultDataSourceModel struct {
 }
 
 type MagicTransitSiteACLsLAN1DataSourceModel struct {
-	LANID   types.String                   `tfsdk:"lan_id" json:"lan_id,computed"`
-	LANName types.String                   `tfsdk:"lan_name" json:"lan_name,computed"`
-	Ports   customfield.List[types.Int64]  `tfsdk:"ports" json:"ports,computed"`
-	Subnets customfield.List[types.String] `tfsdk:"subnets" json:"subnets,computed"`
+	LANID      types.String                   `tfsdk:"lan_id" json:"lan_id,computed"`
+	LANName    types.String                   `tfsdk:"lan_name" json:"lan_name,computed"`
+	PortRanges customfield.List[types.String] `tfsdk:"port_ranges" json:"port_ranges,computed"`
+	Ports      customfield.List[types.Int64]  `tfsdk:"ports" json:"ports,computed"`
+	Subnets    customfield.List[types.String] `tfsdk:"subnets" json:"subnets,computed"`
 }
 
 type MagicTransitSiteACLsLAN2DataSourceModel struct {
-	LANID   types.String                   `tfsdk:"lan_id" json:"lan_id,computed"`
-	LANName types.String                   `tfsdk:"lan_name" json:"lan_name,computed"`
-	Ports   customfield.List[types.Int64]  `tfsdk:"ports" json:"ports,computed"`
-	Subnets customfield.List[types.String] `tfsdk:"subnets" json:"subnets,computed"`
+	LANID      types.String                   `tfsdk:"lan_id" json:"lan_id,computed"`
+	LANName    types.String                   `tfsdk:"lan_name" json:"lan_name,computed"`
+	PortRanges customfield.List[types.String] `tfsdk:"port_ranges" json:"port_ranges,computed"`
+	Ports      customfield.List[types.Int64]  `tfsdk:"ports" json:"ports,computed"`
+	Subnets    customfield.List[types.String] `tfsdk:"subnets" json:"subnets,computed"`
 }
