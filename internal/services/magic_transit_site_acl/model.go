@@ -33,15 +33,17 @@ func (m MagicTransitSiteACLModel) MarshalJSONForUpdate(state MagicTransitSiteACL
 }
 
 type MagicTransitSiteACLLAN1Model struct {
-	LANID   types.String    `tfsdk:"lan_id" json:"lan_id,required"`
-	LANName types.String    `tfsdk:"lan_name" json:"lan_name,optional"`
-	Ports   *[]types.Int64  `tfsdk:"ports" json:"ports,optional"`
-	Subnets *[]types.String `tfsdk:"subnets" json:"subnets,optional"`
+	LANID      types.String    `tfsdk:"lan_id" json:"lan_id,required"`
+	LANName    types.String    `tfsdk:"lan_name" json:"lan_name,optional"`
+	PortRanges *[]types.String `tfsdk:"port_ranges" json:"port_ranges,optional"`
+	Ports      *[]types.Int64  `tfsdk:"ports" json:"ports,optional"`
+	Subnets    *[]types.String `tfsdk:"subnets" json:"subnets,optional"`
 }
 
 type MagicTransitSiteACLLAN2Model struct {
-	LANID   types.String    `tfsdk:"lan_id" json:"lan_id,required"`
-	LANName types.String    `tfsdk:"lan_name" json:"lan_name,optional"`
-	Ports   *[]types.Int64  `tfsdk:"ports" json:"ports,optional"`
-	Subnets *[]types.String `tfsdk:"subnets" json:"subnets,optional"`
+	LANID      types.String    `tfsdk:"lan_id" json:"lan_id,required"`
+	LANName    types.String    `tfsdk:"lan_name" json:"lan_name,optional"`
+	PortRanges *[]types.String `tfsdk:"port_ranges" json:"port_ranges,optional"`
+	Ports      *[]types.Int64  `tfsdk:"ports" json:"ports,optional"`
+	Subnets    *[]types.String `tfsdk:"subnets" json:"subnets,optional"`
 }

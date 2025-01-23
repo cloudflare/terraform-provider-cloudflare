@@ -50,8 +50,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The name of the LAN based on the provided lan_id.",
 						Optional:    true,
 					},
+					"port_ranges": schema.ListAttribute{
+						Description: "Array of port ranges on the provided LAN that will be included in the ACL. If no ports or port rangess are provided, communication on any port on this LAN is allowed.",
+						Optional:    true,
+						ElementType: types.StringType,
+					},
 					"ports": schema.ListAttribute{
-						Description: "Array of ports on the provided LAN that will be included in the ACL. If no ports are provided, communication on any port on this LAN is allowed.",
+						Description: "Array of ports on the provided LAN that will be included in the ACL. If no ports or port ranges are provided, communication on any port on this LAN is allowed.",
 						Optional:    true,
 						ElementType: types.Int64Type,
 					},
@@ -73,8 +78,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The name of the LAN based on the provided lan_id.",
 						Optional:    true,
 					},
+					"port_ranges": schema.ListAttribute{
+						Description: "Array of port ranges on the provided LAN that will be included in the ACL. If no ports or port rangess are provided, communication on any port on this LAN is allowed.",
+						Optional:    true,
+						ElementType: types.StringType,
+					},
 					"ports": schema.ListAttribute{
-						Description: "Array of ports on the provided LAN that will be included in the ACL. If no ports are provided, communication on any port on this LAN is allowed.",
+						Description: "Array of ports on the provided LAN that will be included in the ACL. If no ports or port ranges are provided, communication on any port on this LAN is allowed.",
 						Optional:    true,
 						ElementType: types.Int64Type,
 					},
