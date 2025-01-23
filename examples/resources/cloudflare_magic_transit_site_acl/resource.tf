@@ -4,12 +4,14 @@ resource "cloudflare_magic_transit_site_acl" "example_magic_transit_site_acl" {
   lan_1 = {
     lan_id = "lan_id"
     lan_name = "lan_name"
+    port_ranges = ["8080-9000"]
     ports = [1]
     subnets = ["192.0.2.1"]
   }
   lan_2 = {
     lan_id = "lan_id"
     lan_name = "lan_name"
+    port_ranges = ["8080-9000"]
     ports = [1]
     subnets = ["192.0.2.1"]
   }
