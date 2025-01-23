@@ -72,6 +72,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											),
 										},
 									},
+									"run_worker_first": schema.BoolAttribute{
+										Description: "When true, requests will always invoke the Worker script. Otherwise, attempt to serve an asset matching the request, falling back to the Worker script.",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(false),
+									},
 									"serve_directly": schema.BoolAttribute{
 										Description: "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
 										Computed:    true,
