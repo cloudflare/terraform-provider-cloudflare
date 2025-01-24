@@ -7,11 +7,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustTunnelCloudflaredRouteDataSource)(nil)
@@ -19,13 +17,17 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustTunnelCloudflaredRo
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Cloudflare account ID",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "UUID of the route.",
+				Computed:    true,
 			},
 			"route_id": schema.StringAttribute{
 				Description: "UUID of the route.",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Cloudflare account ID",
+				Required:    true,
 			},
 			"comment": schema.StringAttribute{
 				Description: "Optional remark describing the route.",
@@ -41,50 +43,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"id": schema.StringAttribute{
-				Description: "UUID of the route.",
-				Computed:    true,
-			},
 			"network": schema.StringAttribute{
 				Description: "The private IPv4 or IPv6 range connected by the route, in CIDR notation.",
 				Computed:    true,
 			},
-			"tun_type": schema.StringAttribute{
-				Description: "The type of tunnel.",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"cfd_tunnel",
-						"warp_connector",
-						"ip_sec",
-						"gre",
-						"cni",
-					),
-				},
-			},
 			"tunnel_id": schema.StringAttribute{
 				Description: "UUID of the tunnel.",
-				Computed:    true,
-			},
-			"tunnel_name": schema.StringAttribute{
-				Description: "A user-friendly name for a tunnel.",
 				Computed:    true,
 			},
 			"virtual_network_id": schema.StringAttribute{
 				Description: "UUID of the virtual network.",
 				Computed:    true,
 			},
-			"virtual_network_name": schema.StringAttribute{
-				Description: "A user-friendly name for the virtual network.",
-				Computed:    true,
-			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Cloudflare account ID",
-						Required:    true,
-					},
 					"comment": schema.StringAttribute{
 						Description: "Optional remark describing the route.",
 						Optional:    true,
@@ -134,8 +107,6 @@ func (d *ZeroTrustTunnelCloudflaredRouteDataSource) Schema(ctx context.Context, 
 
 func (d *ZeroTrustTunnelCloudflaredRouteDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("route_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("route_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("route_id"), path.MatchRoot("filter")),
 	}
 }

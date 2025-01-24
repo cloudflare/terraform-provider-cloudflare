@@ -6,10 +6,8 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*AccountRoleDataSource)(nil)
@@ -19,11 +17,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"role_id": schema.StringAttribute{
 				Description: "Role identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "Description of role's permissions.",
@@ -187,15 +185,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Account identifier tag.",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -205,9 +194,5 @@ func (d *AccountRoleDataSource) Schema(ctx context.Context, req datasource.Schem
 }
 
 func (d *AccountRoleDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("role_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("role_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

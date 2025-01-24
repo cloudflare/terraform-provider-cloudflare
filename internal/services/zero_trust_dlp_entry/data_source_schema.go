@@ -8,11 +8,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -21,20 +19,20 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDLPEntryDataSource)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Optional: true,
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"entry_id": schema.StringAttribute{
 				Optional: true,
+			},
+			"account_id": schema.StringAttribute{
+				Required: true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"enabled": schema.BoolAttribute{
-				Computed: true,
-			},
-			"id": schema.StringAttribute{
 				Computed: true,
 			},
 			"name": schema.StringAttribute{
@@ -91,14 +89,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: jsontypes.NormalizedType{},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Required: true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -108,9 +98,5 @@ func (d *ZeroTrustDLPEntryDataSource) Schema(ctx context.Context, req datasource
 }
 
 func (d *ZeroTrustDLPEntryDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("entry_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("entry_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

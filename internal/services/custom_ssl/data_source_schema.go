@@ -21,6 +21,10 @@ var _ datasource.DataSourceWithConfigValidators = (*CustomSSLDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 			"custom_certificate_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
@@ -28,7 +32,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Computed:    true,
-				Optional:    true,
 			},
 			"bundle_method": schema.StringAttribute{
 				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
@@ -45,10 +48,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the certificate from the authority expires.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",
@@ -178,10 +177,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
 					"match": schema.StringAttribute{
 						Description: "Whether to match all search requirements or at least one (any).",
 						Computed:    true,
@@ -215,8 +210,6 @@ func (d *CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaR
 
 func (d *CustomSSLDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("custom_certificate_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("custom_certificate_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("custom_certificate_id"), path.MatchRoot("filter")),
 	}
 }

@@ -8,12 +8,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -26,11 +24,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"app_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"argo_smart_routing": schema.BoolAttribute{
 				Description: "Enables Argo Smart Routing for this application.\nNotes: Only available for TCP applications with traffic_type set to \"direct\".",
@@ -185,37 +183,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					customvalidator.AllowedSubtypes(basetypes.Int64Type{}, basetypes.StringType{}),
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-					"direction": schema.StringAttribute{
-						Description: "Sets the direction by which results are ordered.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
-						},
-					},
-					"order": schema.StringAttribute{
-						Description: "Application field by which results are ordered.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"protocol",
-								"app_id",
-								"created_on",
-								"modified_on",
-								"dns",
-							),
-						},
-					},
-				},
-			},
 		},
 	}
 }
@@ -225,9 +192,5 @@ func (d *SpectrumApplicationDataSource) Schema(ctx context.Context, req datasour
 }
 
 func (d *SpectrumApplicationDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("app_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("app_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

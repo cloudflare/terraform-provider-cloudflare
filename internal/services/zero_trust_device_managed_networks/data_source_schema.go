@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -19,13 +17,17 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDeviceManagedNetwor
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Optional: true,
+			"id": schema.StringAttribute{
+				Description: "API UUID.",
+				Computed:    true,
 			},
 			"network_id": schema.StringAttribute{
 				Description: "API UUID.",
 				Computed:    true,
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Required: true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the device managed network. This name must be unique.",
@@ -53,14 +55,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Required: true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -70,9 +64,5 @@ func (d *ZeroTrustDeviceManagedNetworksDataSource) Schema(ctx context.Context, r
 }
 
 func (d *ZeroTrustDeviceManagedNetworksDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("network_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("network_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

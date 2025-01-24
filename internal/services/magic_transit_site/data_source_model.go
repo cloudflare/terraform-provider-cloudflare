@@ -21,12 +21,12 @@ type MagicTransitSiteResultListDataSourceEnvelope struct {
 }
 
 type MagicTransitSiteDataSourceModel struct {
-	AccountID            types.String                                                      `tfsdk:"account_id" path:"account_id,optional"`
+	ID                   types.String                                                      `tfsdk:"id" json:"-,computed"`
 	SiteID               types.String                                                      `tfsdk:"site_id" path:"site_id,optional"`
+	AccountID            types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	ConnectorID          types.String                                                      `tfsdk:"connector_id" json:"connector_id,computed"`
 	Description          types.String                                                      `tfsdk:"description" json:"description,computed"`
 	HaMode               types.Bool                                                        `tfsdk:"ha_mode" json:"ha_mode,computed"`
-	ID                   types.String                                                      `tfsdk:"id" json:"id,computed"`
 	Name                 types.String                                                      `tfsdk:"name" json:"name,computed"`
 	SecondaryConnectorID types.String                                                      `tfsdk:"secondary_connector_id" json:"secondary_connector_id,computed"`
 	Location             customfield.NestedObject[MagicTransitSiteLocationDataSourceModel] `tfsdk:"location" json:"location,computed"`
@@ -43,7 +43,7 @@ func (m *MagicTransitSiteDataSourceModel) toReadParams(_ context.Context) (param
 
 func (m *MagicTransitSiteDataSourceModel) toListParams(_ context.Context) (params magic_transit.SiteListParams, diags diag.Diagnostics) {
 	params = magic_transit.SiteListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.ConnectorIdentifier.IsNull() {
@@ -59,6 +59,5 @@ type MagicTransitSiteLocationDataSourceModel struct {
 }
 
 type MagicTransitSiteFindOneByDataSourceModel struct {
-	AccountID           types.String `tfsdk:"account_id" path:"account_id,required"`
 	ConnectorIdentifier types.String `tfsdk:"connector_identifier" query:"connector_identifier,optional"`
 }

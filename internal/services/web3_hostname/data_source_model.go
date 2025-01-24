@@ -22,17 +22,16 @@ type Web3HostnameResultListDataSourceEnvelope struct {
 }
 
 type Web3HostnameDataSourceModel struct {
-	Identifier  types.String                          `tfsdk:"identifier" path:"identifier,optional"`
-	ZoneID      types.String                          `tfsdk:"zone_id" path:"zone_id,optional"`
-	CreatedOn   timetypes.RFC3339                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description types.String                          `tfsdk:"description" json:"description,computed"`
-	Dnslink     types.String                          `tfsdk:"dnslink" json:"dnslink,computed"`
-	ID          types.String                          `tfsdk:"id" json:"id,computed"`
-	ModifiedOn  timetypes.RFC3339                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name        types.String                          `tfsdk:"name" json:"name,computed"`
-	Status      types.String                          `tfsdk:"status" json:"status,computed"`
-	Target      types.String                          `tfsdk:"target" json:"target,computed"`
-	Filter      *Web3HostnameFindOneByDataSourceModel `tfsdk:"filter"`
+	ID          types.String      `tfsdk:"id" json:"-,computed"`
+	Identifier  types.String      `tfsdk:"identifier" path:"identifier,optional"`
+	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	CreatedOn   timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description types.String      `tfsdk:"description" json:"description,computed"`
+	Dnslink     types.String      `tfsdk:"dnslink" json:"dnslink,computed"`
+	ModifiedOn  timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name        types.String      `tfsdk:"name" json:"name,computed"`
+	Status      types.String      `tfsdk:"status" json:"status,computed"`
+	Target      types.String      `tfsdk:"target" json:"target,computed"`
 }
 
 func (m *Web3HostnameDataSourceModel) toReadParams(_ context.Context) (params web3.HostnameGetParams, diags diag.Diagnostics) {
@@ -45,12 +44,8 @@ func (m *Web3HostnameDataSourceModel) toReadParams(_ context.Context) (params we
 
 func (m *Web3HostnameDataSourceModel) toListParams(_ context.Context) (params web3.HostnameListParams, diags diag.Diagnostics) {
 	params = web3.HostnameListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
-}
-
-type Web3HostnameFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }

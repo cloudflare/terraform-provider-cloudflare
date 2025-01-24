@@ -22,8 +22,9 @@ type TurnstileWidgetResultListDataSourceEnvelope struct {
 }
 
 type TurnstileWidgetDataSourceModel struct {
-	AccountID      types.String                             `tfsdk:"account_id" path:"account_id,optional"`
+	ID             types.String                             `tfsdk:"id" json:"-,computed"`
 	Sitekey        types.String                             `tfsdk:"sitekey" path:"sitekey,computed_optional"`
+	AccountID      types.String                             `tfsdk:"account_id" path:"account_id,required"`
 	BotFightMode   types.Bool                               `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
 	ClearanceLevel types.String                             `tfsdk:"clearance_level" json:"clearance_level,computed"`
 	CreatedOn      timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -48,7 +49,7 @@ func (m *TurnstileWidgetDataSourceModel) toReadParams(_ context.Context) (params
 
 func (m *TurnstileWidgetDataSourceModel) toListParams(_ context.Context) (params turnstile.WidgetListParams, diags diag.Diagnostics) {
 	params = turnstile.WidgetListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.Direction.IsNull() {
@@ -62,7 +63,6 @@ func (m *TurnstileWidgetDataSourceModel) toListParams(_ context.Context) (params
 }
 
 type TurnstileWidgetFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	Direction types.String `tfsdk:"direction" query:"direction,optional"`
 	Order     types.String `tfsdk:"order" query:"order,optional"`
 }

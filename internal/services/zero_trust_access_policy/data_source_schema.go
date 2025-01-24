@@ -7,12 +7,10 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,13 +20,17 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessPolicyDataSou
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "The UUID of the policy",
+				Computed:    true,
 			},
 			"policy_id": schema.StringAttribute{
 				Description: "The UUID of the policy",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 			"app_count": schema.Int64Attribute{
 				Description: "Number of access applications currently using this policy.",
@@ -53,10 +55,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"bypass",
 					),
 				},
-			},
-			"id": schema.StringAttribute{
-				Description: "The UUID of the policy",
-				Computed:    true,
 			},
 			"isolation_required": schema.BoolAttribute{
 				Description: "Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.",
@@ -849,15 +847,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -867,9 +856,5 @@ func (d *ZeroTrustAccessPolicyDataSource) Schema(ctx context.Context, req dataso
 }
 
 func (d *ZeroTrustAccessPolicyDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("policy_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("policy_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

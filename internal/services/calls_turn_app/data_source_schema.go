@@ -6,10 +6,8 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*CallsTURNAppDataSource)(nil)
@@ -19,11 +17,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The account identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"key_id": schema.StringAttribute{
 				Description: "A Cloudflare-generated unique identifier for a item.",
-				Optional:    true,
+				Required:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the item was created.",
@@ -43,15 +41,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "A Cloudflare-generated unique identifier for a item.",
 				Computed:    true,
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "The account identifier tag.",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -61,9 +50,5 @@ func (d *CallsTURNAppDataSource) Schema(ctx context.Context, req datasource.Sche
 }
 
 func (d *CallsTURNAppDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("key_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("key_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

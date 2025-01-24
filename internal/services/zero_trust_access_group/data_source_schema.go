@@ -8,11 +8,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessGroupDataSource)(nil)
@@ -20,12 +18,16 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessGroupDataSour
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "UUID",
+				Computed:    true,
 			},
 			"group_id": schema.StringAttribute{
 				Description: "UUID",
+				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
@@ -35,10 +37,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "UUID",
-				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the Access group.",
@@ -1034,18 +1032,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
-				Validators: []validator.Object{
-					objectvalidator.ExactlyOneOf(path.MatchRelative().AtName("account_id"), path.MatchRelative().AtName("zone_id")),
-				},
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-						Optional:    true,
-					},
-					"zone_id": schema.StringAttribute{
-						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-						Optional:    true,
-					},
 					"name": schema.StringAttribute{
 						Description: "The name of the group.",
 						Optional:    true,
@@ -1066,9 +1053,7 @@ func (d *ZeroTrustAccessGroupDataSource) Schema(ctx context.Context, req datasou
 
 func (d *ZeroTrustAccessGroupDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("group_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("group_id"), path.MatchRoot("filter")),
 		datasourcevalidator.Conflicting(path.MatchRoot("account_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
 	}
 }

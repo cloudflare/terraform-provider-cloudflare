@@ -21,8 +21,9 @@ type QueueResultListDataSourceEnvelope struct {
 }
 
 type QueueDataSourceModel struct {
-	AccountID           types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
+	ID                  types.String                                                `tfsdk:"id" json:"-,computed"`
 	QueueID             types.String                                                `tfsdk:"queue_id" path:"queue_id,computed_optional"`
+	AccountID           types.String                                                `tfsdk:"account_id" path:"account_id,required"`
 	ConsumersTotalCount types.Float64                                               `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
 	CreatedOn           types.String                                                `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn          types.String                                                `tfsdk:"modified_on" json:"modified_on,computed"`
@@ -31,7 +32,6 @@ type QueueDataSourceModel struct {
 	Consumers           customfield.NestedObjectList[QueueConsumersDataSourceModel] `tfsdk:"consumers" json:"consumers,computed"`
 	Producers           customfield.NestedObjectList[QueueProducersDataSourceModel] `tfsdk:"producers" json:"producers,computed"`
 	Settings            customfield.NestedObject[QueueSettingsDataSourceModel]      `tfsdk:"settings" json:"settings,computed"`
-	Filter              *QueueFindOneByDataSourceModel                              `tfsdk:"filter"`
 }
 
 func (m *QueueDataSourceModel) toReadParams(_ context.Context) (params queues.QueueGetParams, diags diag.Diagnostics) {
@@ -44,7 +44,7 @@ func (m *QueueDataSourceModel) toReadParams(_ context.Context) (params queues.Qu
 
 func (m *QueueDataSourceModel) toListParams(_ context.Context) (params queues.QueueListParams, diags diag.Diagnostics) {
 	params = queues.QueueListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -78,8 +78,4 @@ type QueueProducersDataSourceModel struct {
 type QueueSettingsDataSourceModel struct {
 	DeliveryDelay          types.Float64 `tfsdk:"delivery_delay" json:"delivery_delay,computed"`
 	MessageRetentionPeriod types.Float64 `tfsdk:"message_retention_period" json:"message_retention_period,computed"`
-}
-
-type QueueFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

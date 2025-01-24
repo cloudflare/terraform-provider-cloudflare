@@ -6,13 +6,11 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,11 +20,14 @@ var _ datasource.DataSourceWithConfigValidators = (*LoadBalancerDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed: true,
+			},
 			"load_balancer_id": schema.StringAttribute{
 				Optional: true,
 			},
 			"zone_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"created_on": schema.StringAttribute{
 				Computed: true,
@@ -42,9 +43,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"fallback_pool": schema.StringAttribute{
 				Description: "The pool ID to use when all other pools are detected as unhealthy.",
 				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Computed: true,
 			},
 			"modified_on": schema.StringAttribute{
 				Computed: true,
@@ -499,14 +497,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
-						Required: true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -516,9 +506,5 @@ func (d *LoadBalancerDataSource) Schema(ctx context.Context, req datasource.Sche
 }
 
 func (d *LoadBalancerDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("load_balancer_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("load_balancer_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

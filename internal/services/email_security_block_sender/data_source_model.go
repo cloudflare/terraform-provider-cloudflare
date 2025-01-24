@@ -22,11 +22,11 @@ type EmailSecurityBlockSenderResultListDataSourceEnvelope struct {
 }
 
 type EmailSecurityBlockSenderDataSourceModel struct {
-	AccountID    types.String                                      `tfsdk:"account_id" path:"account_id,optional"`
+	ID           types.Int64                                       `tfsdk:"id" json:"-,computed"`
 	PatternID    types.Int64                                       `tfsdk:"pattern_id" path:"pattern_id,optional"`
+	AccountID    types.String                                      `tfsdk:"account_id" path:"account_id,required"`
 	Comments     types.String                                      `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt    timetypes.RFC3339                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	ID           types.Int64                                       `tfsdk:"id" json:"id,computed"`
 	IsRegex      types.Bool                                        `tfsdk:"is_regex" json:"is_regex,computed"`
 	LastModified timetypes.RFC3339                                 `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
 	Pattern      types.String                                      `tfsdk:"pattern" json:"pattern,computed"`
@@ -44,7 +44,7 @@ func (m *EmailSecurityBlockSenderDataSourceModel) toReadParams(_ context.Context
 
 func (m *EmailSecurityBlockSenderDataSourceModel) toListParams(_ context.Context) (params email_security.SettingBlockSenderListParams, diags diag.Diagnostics) {
 	params = email_security.SettingBlockSenderListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.Direction.IsNull() {
@@ -64,7 +64,6 @@ func (m *EmailSecurityBlockSenderDataSourceModel) toListParams(_ context.Context
 }
 
 type EmailSecurityBlockSenderFindOneByDataSourceModel struct {
-	AccountID   types.String `tfsdk:"account_id" path:"account_id,required"`
 	Direction   types.String `tfsdk:"direction" query:"direction,optional"`
 	Order       types.String `tfsdk:"order" query:"order,optional"`
 	PatternType types.String `tfsdk:"pattern_type" query:"pattern_type,optional"`

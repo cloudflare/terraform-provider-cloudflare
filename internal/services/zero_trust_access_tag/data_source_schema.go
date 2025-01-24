@@ -6,10 +6,8 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessTagDataSource)(nil)
@@ -17,13 +15,17 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessTagDataSource
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "The name of the tag",
+				Computed:    true,
 			},
 			"tag_name": schema.StringAttribute{
 				Description: "The name of the tag",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 			"app_count": schema.Int64Attribute{
 				Description: "The number of applications that have this tag",
@@ -41,15 +43,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -59,9 +52,5 @@ func (d *ZeroTrustAccessTagDataSource) Schema(ctx context.Context, req datasourc
 }
 
 func (d *ZeroTrustAccessTagDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("tag_name")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("tag_name")),
-	}
+	return []datasource.ConfigValidator{}
 }

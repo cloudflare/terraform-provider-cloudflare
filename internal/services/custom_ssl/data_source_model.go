@@ -22,11 +22,11 @@ type CustomSSLResultListDataSourceEnvelope struct {
 }
 
 type CustomSSLDataSourceModel struct {
+	ID                  types.String                                                      `tfsdk:"id" json:"-,computed"`
 	CustomCertificateID types.String                                                      `tfsdk:"custom_certificate_id" path:"custom_certificate_id,optional"`
-	ZoneID              types.String                                                      `tfsdk:"zone_id" path:"zone_id,computed_optional"`
+	ZoneID              types.String                                                      `tfsdk:"zone_id" path:"zone_id,computed"`
 	BundleMethod        types.String                                                      `tfsdk:"bundle_method" json:"bundle_method,computed"`
 	ExpiresOn           timetypes.RFC3339                                                 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
-	ID                  types.String                                                      `tfsdk:"id" json:"id,computed"`
 	Issuer              types.String                                                      `tfsdk:"issuer" json:"issuer,computed"`
 	ModifiedOn          timetypes.RFC3339                                                 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Policy              types.String                                                      `tfsdk:"policy" json:"policy,computed"`
@@ -50,7 +50,7 @@ func (m *CustomSSLDataSourceModel) toReadParams(_ context.Context) (params custo
 
 func (m *CustomSSLDataSourceModel) toListParams(_ context.Context) (params custom_certificates.CustomCertificateListParams, diags diag.Diagnostics) {
 	params = custom_certificates.CustomCertificateListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	if !m.Filter.Match.IsNull() {
@@ -86,7 +86,6 @@ type CustomSSLKeylessServerTunnelDataSourceModel struct {
 }
 
 type CustomSSLFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Match  types.String `tfsdk:"match" query:"match,computed_optional"`
 	Status types.String `tfsdk:"status" query:"status,optional"`
 }

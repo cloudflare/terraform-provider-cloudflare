@@ -22,11 +22,11 @@ type EmailRoutingAddressResultListDataSourceEnvelope struct {
 }
 
 type EmailRoutingAddressDataSourceModel struct {
-	AccountID                    types.String                                 `tfsdk:"account_id" path:"account_id,optional"`
+	ID                           types.String                                 `tfsdk:"id" json:"-,computed"`
 	DestinationAddressIdentifier types.String                                 `tfsdk:"destination_address_identifier" path:"destination_address_identifier,optional"`
+	AccountID                    types.String                                 `tfsdk:"account_id" path:"account_id,required"`
 	Created                      timetypes.RFC3339                            `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Email                        types.String                                 `tfsdk:"email" json:"email,computed"`
-	ID                           types.String                                 `tfsdk:"id" json:"id,computed"`
 	Modified                     timetypes.RFC3339                            `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Tag                          types.String                                 `tfsdk:"tag" json:"tag,computed"`
 	Verified                     timetypes.RFC3339                            `tfsdk:"verified" json:"verified,computed" format:"date-time"`
@@ -43,7 +43,7 @@ func (m *EmailRoutingAddressDataSourceModel) toReadParams(_ context.Context) (pa
 
 func (m *EmailRoutingAddressDataSourceModel) toListParams(_ context.Context) (params email_routing.AddressListParams, diags diag.Diagnostics) {
 	params = email_routing.AddressListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.Direction.IsNull() {
@@ -57,7 +57,6 @@ func (m *EmailRoutingAddressDataSourceModel) toListParams(_ context.Context) (pa
 }
 
 type EmailRoutingAddressFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	Direction types.String `tfsdk:"direction" query:"direction,computed_optional"`
 	Verified  types.Bool   `tfsdk:"verified" query:"verified,computed_optional"`
 }

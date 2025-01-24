@@ -6,10 +6,8 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,13 +16,17 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDeviceCustomProfile
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Optional: true,
+			"id": schema.StringAttribute{
+				Description: "Device ID.",
+				Computed:    true,
 			},
 			"policy_id": schema.StringAttribute{
 				Description: "Device ID.",
 				Computed:    true,
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Required: true,
 			},
 			"allow_mode_switch": schema.BoolAttribute{
 				Description: "Whether to allow the user to switch WARP between modes.",
@@ -193,14 +195,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Required: true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -210,9 +204,5 @@ func (d *ZeroTrustDeviceCustomProfileDataSource) Schema(ctx context.Context, req
 }
 
 func (d *ZeroTrustDeviceCustomProfileDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("policy_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("policy_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

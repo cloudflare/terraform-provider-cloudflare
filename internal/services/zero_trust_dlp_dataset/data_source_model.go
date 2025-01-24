@@ -17,13 +17,9 @@ type ZeroTrustDLPDatasetResultDataSourceEnvelope struct {
 	Result ZeroTrustDLPDatasetDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustDLPDatasetResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustDLPDatasetDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustDLPDatasetDataSourceModel struct {
-	AccountID       types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
-	DatasetID       types.String                                                            `tfsdk:"dataset_id" path:"dataset_id,optional"`
+	AccountID       types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
+	DatasetID       types.String                                                            `tfsdk:"dataset_id" path:"dataset_id,required"`
 	CreatedAt       timetypes.RFC3339                                                       `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description     types.String                                                            `tfsdk:"description" json:"description,computed"`
 	EncodingVersion types.Int64                                                             `tfsdk:"encoding_version" json:"encoding_version,computed"`
@@ -35,20 +31,11 @@ type ZeroTrustDLPDatasetDataSourceModel struct {
 	UpdatedAt       timetypes.RFC3339                                                       `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Columns         customfield.NestedObjectList[ZeroTrustDLPDatasetColumnsDataSourceModel] `tfsdk:"columns" json:"columns,computed"`
 	Uploads         customfield.NestedObjectList[ZeroTrustDLPDatasetUploadsDataSourceModel] `tfsdk:"uploads" json:"uploads,computed"`
-	Filter          *ZeroTrustDLPDatasetFindOneByDataSourceModel                            `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustDLPDatasetDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DLPDatasetGetParams, diags diag.Diagnostics) {
 	params = zero_trust.DLPDatasetGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *ZeroTrustDLPDatasetDataSourceModel) toListParams(_ context.Context) (params zero_trust.DLPDatasetListParams, diags diag.Diagnostics) {
-	params = zero_trust.DLPDatasetListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}
 
 	return
@@ -65,8 +52,4 @@ type ZeroTrustDLPDatasetUploadsDataSourceModel struct {
 	NumCells types.Int64  `tfsdk:"num_cells" json:"num_cells,computed"`
 	Status   types.String `tfsdk:"status" json:"status,computed"`
 	Version  types.Int64  `tfsdk:"version" json:"version,computed"`
-}
-
-type ZeroTrustDLPDatasetFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

@@ -17,49 +17,25 @@ type PagesProjectResultDataSourceEnvelope struct {
 	Result PagesProjectDataSourceModel `json:"result,computed"`
 }
 
-type PagesProjectResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[PagesProjectDataSourceModel] `json:"result,computed"`
-}
-
 type PagesProjectDataSourceModel struct {
-	AccountID           types.String                                                             `tfsdk:"account_id" path:"account_id,optional"`
-	ProjectName         types.String                                                             `tfsdk:"project_name" path:"project_name,computed_optional"`
+	AccountID           types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
+	ProjectName         types.String                                                             `tfsdk:"project_name" path:"project_name,required"`
 	CreatedOn           timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Environment         types.String                                                             `tfsdk:"environment" json:"environment,computed"`
 	ID                  types.String                                                             `tfsdk:"id" json:"id,computed"`
-	IsSkipped           types.Bool                                                               `tfsdk:"is_skipped" json:"is_skipped,computed"`
-	ModifiedOn          timetypes.RFC3339                                                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                types.String                                                             `tfsdk:"name" json:"name,computed"`
 	ProductionBranch    types.String                                                             `tfsdk:"production_branch" json:"production_branch,computed"`
-	ProjectID           types.String                                                             `tfsdk:"project_id" json:"project_id,computed"`
-	ShortID             types.String                                                             `tfsdk:"short_id" json:"short_id,computed"`
 	Subdomain           types.String                                                             `tfsdk:"subdomain" json:"subdomain,computed"`
-	URL                 types.String                                                             `tfsdk:"url" json:"url,computed"`
-	Aliases             customfield.List[types.String]                                           `tfsdk:"aliases" json:"aliases,computed"`
 	Domains             customfield.List[types.String]                                           `tfsdk:"domains" json:"domains,computed"`
 	BuildConfig         customfield.NestedObject[PagesProjectBuildConfigDataSourceModel]         `tfsdk:"build_config" json:"build_config,computed"`
 	CanonicalDeployment customfield.NestedObject[PagesProjectCanonicalDeploymentDataSourceModel] `tfsdk:"canonical_deployment" json:"canonical_deployment,computed"`
 	DeploymentConfigs   customfield.NestedObject[PagesProjectDeploymentConfigsDataSourceModel]   `tfsdk:"deployment_configs" json:"deployment_configs,computed"`
-	DeploymentTrigger   customfield.NestedObject[PagesProjectDeploymentTriggerDataSourceModel]   `tfsdk:"deployment_trigger" json:"deployment_trigger,computed"`
-	EnvVars             customfield.NestedObjectMap[PagesProjectEnvVarsDataSourceModel]          `tfsdk:"env_vars" json:"env_vars,computed"`
 	LatestDeployment    customfield.NestedObject[PagesProjectLatestDeploymentDataSourceModel]    `tfsdk:"latest_deployment" json:"latest_deployment,computed"`
-	LatestStage         customfield.NestedObject[PagesProjectLatestStageDataSourceModel]         `tfsdk:"latest_stage" json:"latest_stage,computed"`
 	Source              customfield.NestedObject[PagesProjectSourceDataSourceModel]              `tfsdk:"source" json:"source,computed"`
-	Stages              customfield.NestedObjectList[PagesProjectStagesDataSourceModel]          `tfsdk:"stages" json:"stages,computed"`
-	Filter              *PagesProjectFindOneByDataSourceModel                                    `tfsdk:"filter"`
 }
 
 func (m *PagesProjectDataSourceModel) toReadParams(_ context.Context) (params pages.ProjectGetParams, diags diag.Diagnostics) {
 	params = pages.ProjectGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *PagesProjectDataSourceModel) toListParams(_ context.Context) (params pages.ProjectListParams, diags diag.Diagnostics) {
-	params = pages.ProjectListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}
 
 	return
@@ -312,22 +288,6 @@ type PagesProjectDeploymentConfigsProductionVectorizeBindingsDataSourceModel str
 	IndexName types.String `tfsdk:"index_name" json:"index_name,computed"`
 }
 
-type PagesProjectDeploymentTriggerDataSourceModel struct {
-	Metadata customfield.NestedObject[PagesProjectDeploymentTriggerMetadataDataSourceModel] `tfsdk:"metadata" json:"metadata,computed"`
-	Type     types.String                                                                   `tfsdk:"type" json:"type,computed"`
-}
-
-type PagesProjectDeploymentTriggerMetadataDataSourceModel struct {
-	Branch        types.String `tfsdk:"branch" json:"branch,computed"`
-	CommitHash    types.String `tfsdk:"commit_hash" json:"commit_hash,computed"`
-	CommitMessage types.String `tfsdk:"commit_message" json:"commit_message,computed"`
-}
-
-type PagesProjectEnvVarsDataSourceModel struct {
-	Value types.String `tfsdk:"value" json:"value,computed"`
-	Type  types.String `tfsdk:"type" json:"type,computed"`
-}
-
 type PagesProjectLatestDeploymentDataSourceModel struct {
 	ID                types.String                                                                           `tfsdk:"id" json:"id,computed"`
 	Aliases           customfield.List[types.String]                                                         `tfsdk:"aliases" json:"aliases,computed"`
@@ -405,13 +365,6 @@ type PagesProjectLatestDeploymentStagesDataSourceModel struct {
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
 }
 
-type PagesProjectLatestStageDataSourceModel struct {
-	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed" format:"date-time"`
-	Name      types.String      `tfsdk:"name" json:"name,computed"`
-	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed" format:"date-time"`
-	Status    types.String      `tfsdk:"status" json:"status,computed"`
-}
-
 type PagesProjectSourceDataSourceModel struct {
 	Config customfield.NestedObject[PagesProjectSourceConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
 	Type   types.String                                                      `tfsdk:"type" json:"type,computed"`
@@ -429,15 +382,4 @@ type PagesProjectSourceConfigDataSourceModel struct {
 	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
 	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed"`
 	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
-}
-
-type PagesProjectStagesDataSourceModel struct {
-	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed" format:"date-time"`
-	Name      types.String      `tfsdk:"name" json:"name,computed"`
-	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed" format:"date-time"`
-	Status    types.String      `tfsdk:"status" json:"status,computed"`
-}
-
-type PagesProjectFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

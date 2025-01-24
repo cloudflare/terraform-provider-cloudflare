@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -20,12 +18,15 @@ var _ datasource.DataSourceWithConfigValidators = (*LoadBalancerMonitorDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"monitor_id": schema.StringAttribute{
 				Optional: true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 			"allow_insecure": schema.BoolAttribute{
 				Description: "Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS monitors.",
@@ -57,9 +58,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"follow_redirects": schema.BoolAttribute{
 				Description: "Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.",
 				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Computed: true,
 			},
 			"interval": schema.Int64Attribute{
 				Description: "The interval between each health check. Shorter intervals may improve failover time, but will increase load on the origins as we check from multiple locations.",
@@ -114,15 +112,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					ElemType: types.StringType,
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -132,9 +121,5 @@ func (d *LoadBalancerMonitorDataSource) Schema(ctx context.Context, req datasour
 }
 
 func (d *LoadBalancerMonitorDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("monitor_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("monitor_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

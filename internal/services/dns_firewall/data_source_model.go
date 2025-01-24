@@ -22,11 +22,11 @@ type DNSFirewallResultListDataSourceEnvelope struct {
 }
 
 type DNSFirewallDataSourceModel struct {
-	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
+	ID                   types.String                                                         `tfsdk:"id" json:"-,computed"`
 	DNSFirewallID        types.String                                                         `tfsdk:"dns_firewall_id" path:"dns_firewall_id,optional"`
+	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	DeprecateAnyRequests types.Bool                                                           `tfsdk:"deprecate_any_requests" json:"deprecate_any_requests,computed"`
 	ECSFallback          types.Bool                                                           `tfsdk:"ecs_fallback" json:"ecs_fallback,computed"`
-	ID                   types.String                                                         `tfsdk:"id" json:"id,computed"`
 	MaximumCacheTTL      types.Float64                                                        `tfsdk:"maximum_cache_ttl" json:"maximum_cache_ttl,computed"`
 	MinimumCacheTTL      types.Float64                                                        `tfsdk:"minimum_cache_ttl" json:"minimum_cache_ttl,computed"`
 	ModifiedOn           timetypes.RFC3339                                                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
@@ -37,7 +37,6 @@ type DNSFirewallDataSourceModel struct {
 	DNSFirewallIPs       customfield.List[types.String]                                       `tfsdk:"dns_firewall_ips" json:"dns_firewall_ips,computed"`
 	UpstreamIPs          customfield.List[types.String]                                       `tfsdk:"upstream_ips" json:"upstream_ips,computed"`
 	AttackMitigation     customfield.NestedObject[DNSFirewallAttackMitigationDataSourceModel] `tfsdk:"attack_mitigation" json:"attack_mitigation,computed"`
-	Filter               *DNSFirewallFindOneByDataSourceModel                                 `tfsdk:"filter"`
 }
 
 func (m *DNSFirewallDataSourceModel) toReadParams(_ context.Context) (params dns_firewall.DNSFirewallGetParams, diags diag.Diagnostics) {
@@ -50,7 +49,7 @@ func (m *DNSFirewallDataSourceModel) toReadParams(_ context.Context) (params dns
 
 func (m *DNSFirewallDataSourceModel) toListParams(_ context.Context) (params dns_firewall.DNSFirewallListParams, diags diag.Diagnostics) {
 	params = dns_firewall.DNSFirewallListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -59,8 +58,4 @@ func (m *DNSFirewallDataSourceModel) toListParams(_ context.Context) (params dns
 type DNSFirewallAttackMitigationDataSourceModel struct {
 	Enabled                   types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 	OnlyWhenUpstreamUnhealthy types.Bool `tfsdk:"only_when_upstream_unhealthy" json:"only_when_upstream_unhealthy,computed"`
-}
-
-type DNSFirewallFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

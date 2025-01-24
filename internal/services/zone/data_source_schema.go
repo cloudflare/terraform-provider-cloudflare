@@ -21,6 +21,10 @@ var _ datasource.DataSourceWithConfigValidators = (*ZoneDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
@@ -37,10 +41,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"development_mode": schema.Float64Attribute{
 				Description: "The interval (in seconds) from when development mode expires\n(positive integer) or last expired (negative integer) for the\ndomain. If development mode has never been enabled, this value is 0.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
 				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
@@ -244,6 +244,6 @@ func (d *ZoneDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 
 func (d *ZoneDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("zone_id"), path.MatchRoot("filter")),
 	}
 }

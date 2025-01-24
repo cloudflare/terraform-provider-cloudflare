@@ -22,19 +22,18 @@ type AddressMapResultListDataSourceEnvelope struct {
 }
 
 type AddressMapDataSourceModel struct {
-	AccountID    types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	ID           types.String                                                       `tfsdk:"id" json:"-,computed"`
 	AddressMapID types.String                                                       `tfsdk:"address_map_id" path:"address_map_id,optional"`
+	AccountID    types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
 	CanDelete    types.Bool                                                         `tfsdk:"can_delete" json:"can_delete,computed"`
 	CanModifyIPs types.Bool                                                         `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
 	CreatedAt    timetypes.RFC3339                                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DefaultSNI   types.String                                                       `tfsdk:"default_sni" json:"default_sni,computed"`
 	Description  types.String                                                       `tfsdk:"description" json:"description,computed"`
 	Enabled      types.Bool                                                         `tfsdk:"enabled" json:"enabled,computed"`
-	ID           types.String                                                       `tfsdk:"id" json:"id,computed"`
 	ModifiedAt   timetypes.RFC3339                                                  `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	IPs          customfield.NestedObjectList[AddressMapIPsDataSourceModel]         `tfsdk:"ips" json:"ips,computed"`
 	Memberships  customfield.NestedObjectList[AddressMapMembershipsDataSourceModel] `tfsdk:"memberships" json:"memberships,computed"`
-	Filter       *AddressMapFindOneByDataSourceModel                                `tfsdk:"filter"`
 }
 
 func (m *AddressMapDataSourceModel) toReadParams(_ context.Context) (params addressing.AddressMapGetParams, diags diag.Diagnostics) {
@@ -47,7 +46,7 @@ func (m *AddressMapDataSourceModel) toReadParams(_ context.Context) (params addr
 
 func (m *AddressMapDataSourceModel) toListParams(_ context.Context) (params addressing.AddressMapListParams, diags diag.Diagnostics) {
 	params = addressing.AddressMapListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -63,8 +62,4 @@ type AddressMapMembershipsDataSourceModel struct {
 	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Identifier types.String      `tfsdk:"identifier" json:"identifier,computed"`
 	Kind       types.String      `tfsdk:"kind" json:"kind,computed"`
-}
-
-type AddressMapFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

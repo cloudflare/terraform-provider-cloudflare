@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -21,14 +19,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"schema_id": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"omit_source": schema.BoolAttribute{
 				Description: "Omit the source-files of schemas and only retrieve their meta-data.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
@@ -54,24 +52,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Flag whether schema is enabled for validation.",
 				Computed:    true,
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-					"omit_source": schema.BoolAttribute{
-						Description: "Omit the source-files of schemas and only retrieve their meta-data.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"validation_enabled": schema.BoolAttribute{
-						Description: "Flag whether schema is enabled for validation.",
-						Optional:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -81,9 +61,5 @@ func (d *APIShieldSchemaDataSource) Schema(ctx context.Context, req datasource.S
 }
 
 func (d *APIShieldSchemaDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("schema_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("schema_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

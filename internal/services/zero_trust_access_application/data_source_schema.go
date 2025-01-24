@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -24,12 +23,16 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessApplicationDa
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
 			},
 			"app_id": schema.StringAttribute{
 				Description: "Identifier",
+				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
@@ -90,10 +93,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"http_only_cookie_attribute": schema.BoolAttribute{
 				Description: "Enables the HttpOnly cookie attribute, which increases security against XSS attacks.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "UUID",
 				Computed:    true,
 			},
 			"logo_url": schema.StringAttribute{
@@ -1554,18 +1553,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
-				Validators: []validator.Object{
-					objectvalidator.ExactlyOneOf(path.MatchRelative().AtName("account_id"), path.MatchRelative().AtName("zone_id")),
-				},
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-						Optional:    true,
-					},
-					"zone_id": schema.StringAttribute{
-						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-						Optional:    true,
-					},
 					"aud": schema.StringAttribute{
 						Description: "The aud of the app.",
 						Optional:    true,
@@ -1594,9 +1582,7 @@ func (d *ZeroTrustAccessApplicationDataSource) Schema(ctx context.Context, req d
 
 func (d *ZeroTrustAccessApplicationDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("app_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("app_id"), path.MatchRoot("filter")),
 		datasourcevalidator.Conflicting(path.MatchRoot("account_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
 	}
 }

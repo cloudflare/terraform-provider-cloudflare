@@ -21,17 +21,16 @@ type ZeroTrustDevicePostureRuleResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDevicePostureRuleDataSourceModel struct {
-	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,optional"`
+	ID          types.String                                                                 `tfsdk:"id" json:"-,computed"`
 	RuleID      types.String                                                                 `tfsdk:"rule_id" path:"rule_id,optional"`
+	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
 	Description types.String                                                                 `tfsdk:"description" json:"description,computed"`
 	Expiration  types.String                                                                 `tfsdk:"expiration" json:"expiration,computed"`
-	ID          types.String                                                                 `tfsdk:"id" json:"id,computed"`
 	Name        types.String                                                                 `tfsdk:"name" json:"name,computed"`
 	Schedule    types.String                                                                 `tfsdk:"schedule" json:"schedule,computed"`
 	Type        types.String                                                                 `tfsdk:"type" json:"type,computed"`
 	Input       customfield.NestedObject[ZeroTrustDevicePostureRuleInputDataSourceModel]     `tfsdk:"input" json:"input,computed"`
 	Match       customfield.NestedObjectList[ZeroTrustDevicePostureRuleMatchDataSourceModel] `tfsdk:"match" json:"match,computed"`
-	Filter      *ZeroTrustDevicePostureRuleFindOneByDataSourceModel                          `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustDevicePostureRuleDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePostureGetParams, diags diag.Diagnostics) {
@@ -44,7 +43,7 @@ func (m *ZeroTrustDevicePostureRuleDataSourceModel) toReadParams(_ context.Conte
 
 func (m *ZeroTrustDevicePostureRuleDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePostureListParams, diags diag.Diagnostics) {
 	params = zero_trust.DevicePostureListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -100,8 +99,4 @@ type ZeroTrustDevicePostureRuleInputLocationsDataSourceModel struct {
 
 type ZeroTrustDevicePostureRuleMatchDataSourceModel struct {
 	Platform types.String `tfsdk:"platform" json:"platform,computed"`
-}
-
-type ZeroTrustDevicePostureRuleFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

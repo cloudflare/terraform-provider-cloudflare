@@ -21,13 +21,12 @@ type DNSZoneTransfersTSIGResultListDataSourceEnvelope struct {
 }
 
 type DNSZoneTransfersTSIGDataSourceModel struct {
-	AccountID types.String                                  `tfsdk:"account_id" path:"account_id,optional"`
-	TSIGID    types.String                                  `tfsdk:"tsig_id" path:"tsig_id,optional"`
-	Algo      types.String                                  `tfsdk:"algo" json:"algo,computed"`
-	ID        types.String                                  `tfsdk:"id" json:"id,computed"`
-	Name      types.String                                  `tfsdk:"name" json:"name,computed"`
-	Secret    types.String                                  `tfsdk:"secret" json:"secret,computed"`
-	Filter    *DNSZoneTransfersTSIGFindOneByDataSourceModel `tfsdk:"filter"`
+	ID        types.String `tfsdk:"id" json:"-,computed"`
+	TSIGID    types.String `tfsdk:"tsig_id" path:"tsig_id,optional"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	Algo      types.String `tfsdk:"algo" json:"algo,computed"`
+	Name      types.String `tfsdk:"name" json:"name,computed"`
+	Secret    types.String `tfsdk:"secret" json:"secret,computed"`
 }
 
 func (m *DNSZoneTransfersTSIGDataSourceModel) toReadParams(_ context.Context) (params dns.ZoneTransferTSIGGetParams, diags diag.Diagnostics) {
@@ -40,12 +39,8 @@ func (m *DNSZoneTransfersTSIGDataSourceModel) toReadParams(_ context.Context) (p
 
 func (m *DNSZoneTransfersTSIGDataSourceModel) toListParams(_ context.Context) (params dns.ZoneTransferTSIGListParams, diags diag.Diagnostics) {
 	params = dns.ZoneTransferTSIGListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
-}
-
-type DNSZoneTransfersTSIGFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

@@ -21,8 +21,9 @@ type ZeroTrustDeviceCustomProfileResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDeviceCustomProfileDataSourceModel struct {
-	AccountID           types.String                                                                             `tfsdk:"account_id" path:"account_id,optional"`
+	ID                  types.String                                                                             `tfsdk:"id" json:"-,computed"`
 	PolicyID            types.String                                                                             `tfsdk:"policy_id" path:"policy_id,computed_optional"`
+	AccountID           types.String                                                                             `tfsdk:"account_id" path:"account_id,required"`
 	AllowModeSwitch     types.Bool                                                                               `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed"`
 	AllowUpdates        types.Bool                                                                               `tfsdk:"allow_updates" json:"allow_updates,computed"`
 	AllowedToLeave      types.Bool                                                                               `tfsdk:"allowed_to_leave" json:"allowed_to_leave,computed"`
@@ -47,7 +48,6 @@ type ZeroTrustDeviceCustomProfileDataSourceModel struct {
 	Include             customfield.NestedObjectList[ZeroTrustDeviceCustomProfileIncludeDataSourceModel]         `tfsdk:"include" json:"include,computed"`
 	ServiceModeV2       customfield.NestedObject[ZeroTrustDeviceCustomProfileServiceModeV2DataSourceModel]       `tfsdk:"service_mode_v2" json:"service_mode_v2,computed"`
 	TargetTests         customfield.NestedObjectList[ZeroTrustDeviceCustomProfileTargetTestsDataSourceModel]     `tfsdk:"target_tests" json:"target_tests,computed"`
-	Filter              *ZeroTrustDeviceCustomProfileFindOneByDataSourceModel                                    `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustDeviceCustomProfileDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePolicyCustomGetParams, diags diag.Diagnostics) {
@@ -60,7 +60,7 @@ func (m *ZeroTrustDeviceCustomProfileDataSourceModel) toReadParams(_ context.Con
 
 func (m *ZeroTrustDeviceCustomProfileDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePolicyCustomListParams, diags diag.Diagnostics) {
 	params = zero_trust.DevicePolicyCustomListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -92,8 +92,4 @@ type ZeroTrustDeviceCustomProfileServiceModeV2DataSourceModel struct {
 type ZeroTrustDeviceCustomProfileTargetTestsDataSourceModel struct {
 	ID   types.String `tfsdk:"id" json:"id,computed"`
 	Name types.String `tfsdk:"name" json:"name,computed"`
-}
-
-type ZeroTrustDeviceCustomProfileFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

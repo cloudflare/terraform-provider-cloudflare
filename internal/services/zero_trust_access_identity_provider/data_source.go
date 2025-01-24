@@ -57,34 +57,7 @@ func (d *ZeroTrustAccessIdentityProviderDataSource) Read(ctx context.Context, re
 		return
 	}
 
-	if data.Filter == nil {
-		params, diags := data.toReadParams(ctx)
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		res := new(http.Response)
-		env := ZeroTrustAccessIdentityProviderResultDataSourceEnvelope{*data}
-		_, err := d.client.ZeroTrust.IdentityProviders.Get(
-			ctx,
-			data.IdentityProviderID.ValueString(),
-			params,
-			option.WithResponseBodyInto(&res),
-			option.WithMiddleware(logging.Middleware(ctx)),
-		)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to make http request", err.Error())
-			return
-		}
-		bytes, _ := io.ReadAll(res.Body)
-		err = apijson.UnmarshalComputed(bytes, &env)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-			return
-		}
-		data = &env.Result
-	} else {
+	if data.Filter != nil {
 		params, diags := data.toListParams(ctx)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
@@ -111,8 +84,35 @@ func (d *ZeroTrustAccessIdentityProviderDataSource) Read(ctx context.Context, re
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data = &ts[0]
+		data.IdentityProviderID = ts[0].IdentityProviderID
 	}
+
+	params, diags := data.toReadParams(ctx)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustAccessIdentityProviderResultDataSourceEnvelope{*data}
+	_, err := d.client.ZeroTrust.IdentityProviders.Get(
+		ctx,
+		data.IdentityProviderID.ValueString(),
+		params,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

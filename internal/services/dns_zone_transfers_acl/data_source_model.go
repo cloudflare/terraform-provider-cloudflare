@@ -21,12 +21,11 @@ type DNSZoneTransfersACLResultListDataSourceEnvelope struct {
 }
 
 type DNSZoneTransfersACLDataSourceModel struct {
-	AccountID types.String                                 `tfsdk:"account_id" path:"account_id,optional"`
-	ACLID     types.String                                 `tfsdk:"acl_id" path:"acl_id,optional"`
-	ID        types.String                                 `tfsdk:"id" json:"id,computed"`
-	IPRange   types.String                                 `tfsdk:"ip_range" json:"ip_range,computed"`
-	Name      types.String                                 `tfsdk:"name" json:"name,computed"`
-	Filter    *DNSZoneTransfersACLFindOneByDataSourceModel `tfsdk:"filter"`
+	ID        types.String `tfsdk:"id" json:"-,computed"`
+	ACLID     types.String `tfsdk:"acl_id" path:"acl_id,optional"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	IPRange   types.String `tfsdk:"ip_range" json:"ip_range,computed"`
+	Name      types.String `tfsdk:"name" json:"name,computed"`
 }
 
 func (m *DNSZoneTransfersACLDataSourceModel) toReadParams(_ context.Context) (params dns.ZoneTransferACLGetParams, diags diag.Diagnostics) {
@@ -39,12 +38,8 @@ func (m *DNSZoneTransfersACLDataSourceModel) toReadParams(_ context.Context) (pa
 
 func (m *DNSZoneTransfersACLDataSourceModel) toListParams(_ context.Context) (params dns.ZoneTransferACLListParams, diags diag.Diagnostics) {
 	params = dns.ZoneTransferACLListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
-}
-
-type DNSZoneTransfersACLFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

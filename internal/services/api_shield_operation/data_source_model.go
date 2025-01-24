@@ -23,8 +23,9 @@ type APIShieldOperationResultListDataSourceEnvelope struct {
 }
 
 type APIShieldOperationDataSourceModel struct {
-	ZoneID      types.String                                                        `tfsdk:"zone_id" path:"zone_id,optional"`
+	ID          types.String                                                        `tfsdk:"id" json:"-,computed"`
 	OperationID types.String                                                        `tfsdk:"operation_id" path:"operation_id,computed_optional"`
+	ZoneID      types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
 	Feature     *[]types.String                                                     `tfsdk:"feature" query:"feature,optional"`
 	Endpoint    types.String                                                        `tfsdk:"endpoint" json:"endpoint,computed"`
 	Host        types.String                                                        `tfsdk:"host" json:"host,computed"`
@@ -57,7 +58,7 @@ func (m *APIShieldOperationDataSourceModel) toListParams(_ context.Context) (par
 	}
 
 	params = api_gateway.OperationListParams{
-		ZoneID:  cloudflare.F(m.Filter.ZoneID.ValueString()),
+		ZoneID:  cloudflare.F(m.ZoneID.ValueString()),
 		Feature: cloudflare.F(mFilterFeature),
 		Host:    cloudflare.F(mFilterHost),
 		Method:  cloudflare.F(mFilterMethod),
@@ -156,7 +157,6 @@ type APIShieldOperationFeaturesSchemaInfoActiveSchemaDataSourceModel struct {
 }
 
 type APIShieldOperationFindOneByDataSourceModel struct {
-	ZoneID    types.String    `tfsdk:"zone_id" path:"zone_id,required"`
 	Direction types.String    `tfsdk:"direction" query:"direction,optional"`
 	Endpoint  types.String    `tfsdk:"endpoint" query:"endpoint,optional"`
 	Feature   *[]types.String `tfsdk:"feature" query:"feature,optional"`

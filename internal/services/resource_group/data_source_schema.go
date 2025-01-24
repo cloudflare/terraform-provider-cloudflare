@@ -6,10 +6,8 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ResourceGroupDataSource)(nil)
@@ -19,11 +17,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"resource_group_id": schema.StringAttribute{
 				Description: "Resource Group identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "Identifier of the group.",
@@ -72,23 +70,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Account identifier tag.",
-						Required:    true,
-					},
-					"id": schema.StringAttribute{
-						Description: "ID of the resource group to be fetched.",
-						Optional:    true,
-					},
-					"name": schema.StringAttribute{
-						Description: "Name of the resource group to be fetched.",
-						Optional:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -98,9 +79,5 @@ func (d *ResourceGroupDataSource) Schema(ctx context.Context, req datasource.Sch
 }
 
 func (d *ResourceGroupDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("resource_group_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("resource_group_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

@@ -22,13 +22,13 @@ type LoadBalancerPoolResultListDataSourceEnvelope struct {
 }
 
 type LoadBalancerPoolDataSourceModel struct {
-	AccountID          types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
+	ID                 types.String                                                                `tfsdk:"id" json:"-,computed"`
 	PoolID             types.String                                                                `tfsdk:"pool_id" path:"pool_id,optional"`
+	AccountID          types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
 	CreatedOn          types.String                                                                `tfsdk:"created_on" json:"created_on,computed"`
 	Description        types.String                                                                `tfsdk:"description" json:"description,computed"`
 	DisabledAt         timetypes.RFC3339                                                           `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	Enabled            types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed"`
-	ID                 types.String                                                                `tfsdk:"id" json:"id,computed"`
 	Latitude           types.Float64                                                               `tfsdk:"latitude" json:"latitude,computed"`
 	Longitude          types.Float64                                                               `tfsdk:"longitude" json:"longitude,computed"`
 	MinimumOrigins     types.Int64                                                                 `tfsdk:"minimum_origins" json:"minimum_origins,computed"`
@@ -55,7 +55,7 @@ func (m *LoadBalancerPoolDataSourceModel) toReadParams(_ context.Context) (param
 
 func (m *LoadBalancerPoolDataSourceModel) toListParams(_ context.Context) (params load_balancers.PoolListParams, diags diag.Diagnostics) {
 	params = load_balancers.PoolListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.Monitor.IsNull() {
@@ -106,6 +106,5 @@ type LoadBalancerPoolOriginsHeaderDataSourceModel struct {
 }
 
 type LoadBalancerPoolFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
-	Monitor   types.String `tfsdk:"monitor" query:"monitor,optional"`
+	Monitor types.String `tfsdk:"monitor" query:"monitor,optional"`
 }

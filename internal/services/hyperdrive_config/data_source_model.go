@@ -17,33 +17,20 @@ type HyperdriveConfigResultDataSourceEnvelope struct {
 	Result HyperdriveConfigDataSourceModel `json:"result,computed"`
 }
 
-type HyperdriveConfigResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[HyperdriveConfigDataSourceModel] `json:"result,computed"`
-}
-
 type HyperdriveConfigDataSourceModel struct {
-	AccountID    types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
-	HyperdriveID types.String                                                     `tfsdk:"hyperdrive_id" path:"hyperdrive_id,optional"`
+	AccountID    types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
+	HyperdriveID types.String                                                     `tfsdk:"hyperdrive_id" path:"hyperdrive_id,required"`
 	CreatedOn    timetypes.RFC3339                                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ID           types.String                                                     `tfsdk:"id" json:"id,computed"`
 	ModifiedOn   timetypes.RFC3339                                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name         types.String                                                     `tfsdk:"name" json:"name,computed"`
 	Caching      customfield.NestedObject[HyperdriveConfigCachingDataSourceModel] `tfsdk:"caching" json:"caching,computed"`
 	Origin       customfield.NestedObject[HyperdriveConfigOriginDataSourceModel]  `tfsdk:"origin" json:"origin,computed"`
-	Filter       *HyperdriveConfigFindOneByDataSourceModel                        `tfsdk:"filter"`
 }
 
 func (m *HyperdriveConfigDataSourceModel) toReadParams(_ context.Context) (params hyperdrive.ConfigGetParams, diags diag.Diagnostics) {
 	params = hyperdrive.ConfigGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *HyperdriveConfigDataSourceModel) toListParams(_ context.Context) (params hyperdrive.ConfigListParams, diags diag.Diagnostics) {
-	params = hyperdrive.ConfigListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}
 
 	return
@@ -64,8 +51,4 @@ type HyperdriveConfigOriginDataSourceModel struct {
 	User               types.String `tfsdk:"user" json:"user,computed"`
 	AccessClientID     types.String `tfsdk:"access_client_id" json:"access_client_id,computed"`
 	AccessClientSecret types.String `tfsdk:"access_client_secret" json:"access_client_secret,computed"`
-}
-
-type HyperdriveConfigFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

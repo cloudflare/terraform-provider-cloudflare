@@ -57,34 +57,7 @@ func (d *ZeroTrustAccessApplicationDataSource) Read(ctx context.Context, req dat
 		return
 	}
 
-	if data.Filter == nil {
-		params, diags := data.toReadParams(ctx)
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		res := new(http.Response)
-		env := ZeroTrustAccessApplicationResultDataSourceEnvelope{*data}
-		_, err := d.client.ZeroTrust.Access.Applications.Get(
-			ctx,
-			data.AppID.ValueString(),
-			params,
-			option.WithResponseBodyInto(&res),
-			option.WithMiddleware(logging.Middleware(ctx)),
-		)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to make http request", err.Error())
-			return
-		}
-		bytes, _ := io.ReadAll(res.Body)
-		err = apijson.UnmarshalComputed(bytes, &env)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-			return
-		}
-		data = &env.Result
-	} else {
+	if data.Filter != nil {
 		params, diags := data.toListParams(ctx)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
@@ -111,8 +84,35 @@ func (d *ZeroTrustAccessApplicationDataSource) Read(ctx context.Context, req dat
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data = &ts[0]
+		data.AppID = ts[0].AppID
 	}
+
+	params, diags := data.toReadParams(ctx)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustAccessApplicationResultDataSourceEnvelope{*data}
+	_, err := d.client.ZeroTrust.Access.Applications.Get(
+		ctx,
+		data.AppID.ValueString(),
+		params,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

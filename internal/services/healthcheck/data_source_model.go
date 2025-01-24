@@ -22,15 +22,15 @@ type HealthcheckResultListDataSourceEnvelope struct {
 }
 
 type HealthcheckDataSourceModel struct {
+	ID                   types.String                                                   `tfsdk:"id" json:"-,computed"`
 	HealthcheckID        types.String                                                   `tfsdk:"healthcheck_id" path:"healthcheck_id,optional"`
-	ZoneID               types.String                                                   `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID               types.String                                                   `tfsdk:"zone_id" path:"zone_id,required"`
 	Address              types.String                                                   `tfsdk:"address" json:"address,computed"`
 	ConsecutiveFails     types.Int64                                                    `tfsdk:"consecutive_fails" json:"consecutive_fails,computed"`
 	ConsecutiveSuccesses types.Int64                                                    `tfsdk:"consecutive_successes" json:"consecutive_successes,computed"`
 	CreatedOn            timetypes.RFC3339                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description          types.String                                                   `tfsdk:"description" json:"description,computed"`
 	FailureReason        types.String                                                   `tfsdk:"failure_reason" json:"failure_reason,computed"`
-	ID                   types.String                                                   `tfsdk:"id" json:"id,computed"`
 	Interval             types.Int64                                                    `tfsdk:"interval" json:"interval,computed"`
 	ModifiedOn           timetypes.RFC3339                                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                 types.String                                                   `tfsdk:"name" json:"name,computed"`
@@ -42,7 +42,6 @@ type HealthcheckDataSourceModel struct {
 	CheckRegions         customfield.List[types.String]                                 `tfsdk:"check_regions" json:"check_regions,computed"`
 	HTTPConfig           customfield.NestedObject[HealthcheckHTTPConfigDataSourceModel] `tfsdk:"http_config" json:"http_config,computed"`
 	TCPConfig            customfield.NestedObject[HealthcheckTCPConfigDataSourceModel]  `tfsdk:"tcp_config" json:"tcp_config,computed"`
-	Filter               *HealthcheckFindOneByDataSourceModel                           `tfsdk:"filter"`
 }
 
 func (m *HealthcheckDataSourceModel) toReadParams(_ context.Context) (params healthchecks.HealthcheckGetParams, diags diag.Diagnostics) {
@@ -55,7 +54,7 @@ func (m *HealthcheckDataSourceModel) toReadParams(_ context.Context) (params hea
 
 func (m *HealthcheckDataSourceModel) toListParams(_ context.Context) (params healthchecks.HealthcheckListParams, diags diag.Diagnostics) {
 	params = healthchecks.HealthcheckListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
@@ -75,8 +74,4 @@ type HealthcheckHTTPConfigDataSourceModel struct {
 type HealthcheckTCPConfigDataSourceModel struct {
 	Method types.String `tfsdk:"method" json:"method,computed"`
 	Port   types.Int64  `tfsdk:"port" json:"port,computed"`
-}
-
-type HealthcheckFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }

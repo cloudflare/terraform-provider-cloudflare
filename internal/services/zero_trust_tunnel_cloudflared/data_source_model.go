@@ -23,14 +23,14 @@ type ZeroTrustTunnelCloudflaredResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredDataSourceModel struct {
-	AccountID       types.String                                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	ID              types.String                                                                       `tfsdk:"id" json:"-,computed"`
 	TunnelID        types.String                                                                       `tfsdk:"tunnel_id" path:"tunnel_id,optional"`
+	AccountID       types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
 	AccountTag      types.String                                                                       `tfsdk:"account_tag" json:"account_tag,computed"`
 	ConnsActiveAt   timetypes.RFC3339                                                                  `tfsdk:"conns_active_at" json:"conns_active_at,computed" format:"date-time"`
 	ConnsInactiveAt timetypes.RFC3339                                                                  `tfsdk:"conns_inactive_at" json:"conns_inactive_at,computed" format:"date-time"`
 	CreatedAt       timetypes.RFC3339                                                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt       timetypes.RFC3339                                                                  `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
-	ID              types.String                                                                       `tfsdk:"id" json:"id,computed"`
 	Name            types.String                                                                       `tfsdk:"name" json:"name,computed"`
 	RemoteConfig    types.Bool                                                                         `tfsdk:"remote_config" json:"remote_config,computed"`
 	Status          types.String                                                                       `tfsdk:"status" json:"status,computed"`
@@ -57,7 +57,7 @@ func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Conte
 	diags.Append(errs...)
 
 	params = zero_trust.TunnelListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.ExcludePrefix.IsNull() {
@@ -103,7 +103,6 @@ type ZeroTrustTunnelCloudflaredConnectionsDataSourceModel struct {
 }
 
 type ZeroTrustTunnelCloudflaredFindOneByDataSourceModel struct {
-	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
 	ExcludePrefix types.String      `tfsdk:"exclude_prefix" query:"exclude_prefix,optional"`
 	ExistedAt     timetypes.RFC3339 `tfsdk:"existed_at" query:"existed_at,optional" format:"date-time"`
 	IncludePrefix types.String      `tfsdk:"include_prefix" query:"include_prefix,optional"`

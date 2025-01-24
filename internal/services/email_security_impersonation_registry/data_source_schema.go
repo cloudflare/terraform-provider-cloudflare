@@ -19,12 +19,15 @@ var _ datasource.DataSourceWithConfigValidators = (*EmailSecurityImpersonationRe
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Account Identifier",
-				Optional:    true,
+			"id": schema.Int64Attribute{
+				Computed: true,
 			},
 			"display_name_id": schema.Int64Attribute{
 				Optional: true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Account Identifier",
+				Required:    true,
 			},
 			"comments": schema.StringAttribute{
 				Computed: true,
@@ -45,9 +48,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"external_directory_node_id": schema.StringAttribute{
 				Computed: true,
 			},
-			"id": schema.Int64Attribute{
-				Computed: true,
-			},
 			"is_email_regex": schema.BoolAttribute{
 				Computed: true,
 			},
@@ -64,10 +64,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Account Identifier",
-						Required:    true,
-					},
 					"direction": schema.StringAttribute{
 						Description: "The sorting direction.",
 						Optional:    true,
@@ -113,8 +109,6 @@ func (d *EmailSecurityImpersonationRegistryDataSource) Schema(ctx context.Contex
 
 func (d *EmailSecurityImpersonationRegistryDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("display_name_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("display_name_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("display_name_id"), path.MatchRoot("filter")),
 	}
 }

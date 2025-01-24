@@ -22,11 +22,11 @@ type ZeroTrustListResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustListDataSourceModel struct {
-	AccountID   types.String                           `tfsdk:"account_id" path:"account_id,optional"`
+	ID          types.String                           `tfsdk:"id" json:"-,computed"`
 	ListID      types.String                           `tfsdk:"list_id" path:"list_id,optional"`
+	AccountID   types.String                           `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAt   timetypes.RFC3339                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description types.String                           `tfsdk:"description" json:"description,computed"`
-	ID          types.String                           `tfsdk:"id" json:"id,computed"`
 	ListCount   types.Float64                          `tfsdk:"list_count" json:"count,computed"`
 	Name        types.String                           `tfsdk:"name" json:"name,computed"`
 	Type        types.String                           `tfsdk:"type" json:"type,computed"`
@@ -44,7 +44,7 @@ func (m *ZeroTrustListDataSourceModel) toReadParams(_ context.Context) (params z
 
 func (m *ZeroTrustListDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayListListParams, diags diag.Diagnostics) {
 	params = zero_trust.GatewayListListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.Type.IsNull() {
@@ -55,6 +55,5 @@ func (m *ZeroTrustListDataSourceModel) toListParams(_ context.Context) (params z
 }
 
 type ZeroTrustListFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
-	Type      types.String `tfsdk:"type" query:"type,optional"`
+	Type types.String `tfsdk:"type" query:"type,optional"`
 }

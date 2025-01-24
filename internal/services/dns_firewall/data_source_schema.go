@@ -7,11 +7,9 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,13 +19,17 @@ var _ datasource.DataSourceWithConfigValidators = (*DNSFirewallDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Computed:    true,
 			},
 			"dns_firewall_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 			"deprecate_any_requests": schema.BoolAttribute{
 				Description: "Whether to refuse to answer queries for the ANY type",
@@ -35,10 +37,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"ecs_fallback": schema.BoolAttribute{
 				Description: "Whether to forward client IP (resolver) subnet if no EDNS Client Subnet is sent",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
 				Computed:    true,
 			},
 			"maximum_cache_ttl": schema.Float64Attribute{
@@ -110,15 +108,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -128,9 +117,5 @@ func (d *DNSFirewallDataSource) Schema(ctx context.Context, req datasource.Schem
 }
 
 func (d *DNSFirewallDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("dns_firewall_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("dns_firewall_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

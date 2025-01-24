@@ -22,11 +22,11 @@ type ZeroTrustAccessGroupResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessGroupDataSourceModel struct {
-	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,optional"`
+	ID        types.String                                                               `tfsdk:"id" json:"-,computed"`
 	GroupID   types.String                                                               `tfsdk:"group_id" path:"group_id,optional"`
+	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID    types.String                                                               `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedAt timetypes.RFC3339                                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	ID        types.String                                                               `tfsdk:"id" json:"id,computed"`
 	Name      types.String                                                               `tfsdk:"name" json:"name,computed"`
 	UpdatedAt timetypes.RFC3339                                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Exclude   customfield.NestedObjectList[ZeroTrustAccessGroupExcludeDataSourceModel]   `tfsdk:"exclude" json:"exclude,computed"`
@@ -39,10 +39,10 @@ type ZeroTrustAccessGroupDataSourceModel struct {
 func (m *ZeroTrustAccessGroupDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessGroupGetParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessGroupGetParams{}
 
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -58,10 +58,10 @@ func (m *ZeroTrustAccessGroupDataSourceModel) toListParams(_ context.Context) (p
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
 
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -528,8 +528,6 @@ type ZeroTrustAccessGroupRequireServiceTokenDataSourceModel struct {
 }
 
 type ZeroTrustAccessGroupFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
-	Name      types.String `tfsdk:"name" query:"name,optional"`
-	Search    types.String `tfsdk:"search" query:"search,optional"`
+	Name   types.String `tfsdk:"name" query:"name,optional"`
+	Search types.String `tfsdk:"search" query:"search,optional"`
 }
