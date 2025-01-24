@@ -87,6 +87,7 @@ type WorkersScriptMetadataAssetsModel struct {
 type WorkersScriptMetadataAssetsConfigModel struct {
 	HTMLHandling     types.String `tfsdk:"html_handling" json:"html_handling,optional"`
 	NotFoundHandling types.String `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
+	RunWorkerFirst   types.Bool   `tfsdk:"run_worker_first" json:"run_worker_first,computed_optional"`
 	ServeDirectly    types.Bool   `tfsdk:"serve_directly" json:"serve_directly,computed_optional"`
 }
 
