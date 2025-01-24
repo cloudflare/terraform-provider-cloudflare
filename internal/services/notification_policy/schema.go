@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -110,15 +109,42 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Name of the policy.",
 				Required:    true,
 			},
-			"mechanisms": schema.MapAttribute{
+			"mechanisms": schema.SingleNestedAttribute{
 				Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
 				Required:    true,
-				ElementType: types.ListType{
-					ElemType: types.ObjectType{
-						AttrTypes: map[string]attr.Type{"id": schema.StringAttribute{
-							Description: "UUID",
-							Optional:    true,
-						}.GetType()},
+				Attributes: map[string]schema.Attribute{
+					"email": schema.ListNestedAttribute{
+						Optional: true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "The email address",
+									Optional:    true,
+								},
+							},
+						},
+					},
+					"pagerduty": schema.ListNestedAttribute{
+						Optional: true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "UUID",
+									Computed:    true,
+								},
+							},
+						},
+					},
+					"webhooks": schema.ListNestedAttribute{
+						Optional: true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "UUID",
+									Computed:    true,
+								},
+							},
+						},
 					},
 				},
 			},
