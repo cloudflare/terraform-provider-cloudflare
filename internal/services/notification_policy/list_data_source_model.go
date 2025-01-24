@@ -32,16 +32,16 @@ func (m *NotificationPoliciesDataSourceModel) toListParams(_ context.Context) (p
 }
 
 type NotificationPoliciesResultDataSourceModel struct {
-	ID            types.String                                                                                 `tfsdk:"id" json:"id,computed"`
-	AlertInterval types.String                                                                                 `tfsdk:"alert_interval" json:"alert_interval,computed"`
-	AlertType     types.String                                                                                 `tfsdk:"alert_type" json:"alert_type,computed"`
-	Created       timetypes.RFC3339                                                                            `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Description   types.String                                                                                 `tfsdk:"description" json:"description,computed"`
-	Enabled       types.Bool                                                                                   `tfsdk:"enabled" json:"enabled,computed"`
-	Filters       customfield.NestedObject[NotificationPoliciesFiltersDataSourceModel]                         `tfsdk:"filters" json:"filters,computed"`
-	Mechanisms    customfield.Map[customfield.NestedObjectList[NotificationPoliciesMechanismsDataSourceModel]] `tfsdk:"mechanisms" json:"mechanisms,computed"`
-	Modified      timetypes.RFC3339                                                                            `tfsdk:"modified" json:"modified,computed" format:"date-time"`
-	Name          types.String                                                                                 `tfsdk:"name" json:"name,computed"`
+	ID            types.String                                                            `tfsdk:"id" json:"id,computed"`
+	AlertInterval types.String                                                            `tfsdk:"alert_interval" json:"alert_interval,computed"`
+	AlertType     types.String                                                            `tfsdk:"alert_type" json:"alert_type,computed"`
+	Created       timetypes.RFC3339                                                       `tfsdk:"created" json:"created,computed" format:"date-time"`
+	Description   types.String                                                            `tfsdk:"description" json:"description,computed"`
+	Enabled       types.Bool                                                              `tfsdk:"enabled" json:"enabled,computed"`
+	Filters       customfield.NestedObject[NotificationPoliciesFiltersDataSourceModel]    `tfsdk:"filters" json:"filters,computed"`
+	Mechanisms    customfield.NestedObject[NotificationPoliciesMechanismsDataSourceModel] `tfsdk:"mechanisms" json:"mechanisms,computed"`
+	Modified      timetypes.RFC3339                                                       `tfsdk:"modified" json:"modified,computed" format:"date-time"`
+	Name          types.String                                                            `tfsdk:"name" json:"name,computed"`
 }
 
 type NotificationPoliciesFiltersDataSourceModel struct {
@@ -89,5 +89,19 @@ type NotificationPoliciesFiltersDataSourceModel struct {
 }
 
 type NotificationPoliciesMechanismsDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id,optional"`
+	Email     customfield.NestedObjectList[NotificationPoliciesMechanismsEmailDataSourceModel]     `tfsdk:"email" json:"email,computed"`
+	Pagerduty customfield.NestedObjectList[NotificationPoliciesMechanismsPagerdutyDataSourceModel] `tfsdk:"pagerduty" json:"pagerduty,computed"`
+	Webhooks  customfield.NestedObjectList[NotificationPoliciesMechanismsWebhooksDataSourceModel]  `tfsdk:"webhooks" json:"webhooks,computed"`
+}
+
+type NotificationPoliciesMechanismsEmailDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
+}
+
+type NotificationPoliciesMechanismsPagerdutyDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
+}
+
+type NotificationPoliciesMechanismsWebhooksDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }

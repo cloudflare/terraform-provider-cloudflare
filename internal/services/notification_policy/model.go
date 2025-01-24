@@ -18,7 +18,7 @@ type NotificationPolicyModel struct {
 	AccountID     types.String                                             `tfsdk:"account_id" path:"account_id,required"`
 	AlertType     types.String                                             `tfsdk:"alert_type" json:"alert_type,required"`
 	Name          types.String                                             `tfsdk:"name" json:"name,required"`
-	Mechanisms    *map[string]*[]*NotificationPolicyMechanismsModel        `tfsdk:"mechanisms" json:"mechanisms,required"`
+	Mechanisms    *NotificationPolicyMechanismsModel                       `tfsdk:"mechanisms" json:"mechanisms,required"`
 	AlertInterval types.String                                             `tfsdk:"alert_interval" json:"alert_interval,optional"`
 	Description   types.String                                             `tfsdk:"description" json:"description,optional"`
 	Enabled       types.Bool                                               `tfsdk:"enabled" json:"enabled,computed_optional"`
@@ -36,7 +36,21 @@ func (m NotificationPolicyModel) MarshalJSONForUpdate(state NotificationPolicyMo
 }
 
 type NotificationPolicyMechanismsModel struct {
+	Email     *[]*NotificationPolicyMechanismsEmailModel     `tfsdk:"email" json:"email,optional"`
+	Pagerduty *[]*NotificationPolicyMechanismsPagerdutyModel `tfsdk:"pagerduty" json:"pagerduty,optional"`
+	Webhooks  *[]*NotificationPolicyMechanismsWebhooksModel  `tfsdk:"webhooks" json:"webhooks,optional"`
+}
+
+type NotificationPolicyMechanismsEmailModel struct {
 	ID types.String `tfsdk:"id" json:"id,optional"`
+}
+
+type NotificationPolicyMechanismsPagerdutyModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
+}
+
+type NotificationPolicyMechanismsWebhooksModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type NotificationPolicyFiltersModel struct {
