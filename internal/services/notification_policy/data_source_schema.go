@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -130,19 +129,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"name": schema.StringAttribute{
 				Description: "Name of the policy.",
 				Computed:    true,
-			},
-			"mechanisms": schema.MapAttribute{
-				Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
-				Computed:    true,
-				CustomType:  customfield.NewMapType[customfield.NestedObjectList[NotificationPolicyMechanismsDataSourceModel]](ctx),
-				ElementType: types.ListType{
-					ElemType: types.ObjectType{
-						AttrTypes: map[string]attr.Type{"id": schema.StringAttribute{
-							Description: "UUID",
-							Optional:    true,
-						}.GetType()},
-					},
-				},
 			},
 			"filters": schema.SingleNestedAttribute{
 				Description: "Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details.",
@@ -409,6 +395,49 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
+					},
+				},
+			},
+			"mechanisms": schema.SingleNestedAttribute{
+				Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[NotificationPolicyMechanismsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"email": schema.ListNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectListType[NotificationPolicyMechanismsEmailDataSourceModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "The email address",
+									Computed:    true,
+								},
+							},
+						},
+					},
+					"pagerduty": schema.ListNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectListType[NotificationPolicyMechanismsPagerdutyDataSourceModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "UUID",
+									Computed:    true,
+								},
+							},
+						},
+					},
+					"webhooks": schema.ListNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectListType[NotificationPolicyMechanismsWebhooksDataSourceModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "UUID",
+									Computed:    true,
+								},
+							},
+						},
 					},
 				},
 			},
