@@ -18,17 +18,17 @@ var _ datasource.DataSourceWithConfigValidators = (*WorkersKVNamespaceDataSource
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "Namespace identifier tag.",
+				Computed:    true,
 			},
 			"namespace_id": schema.StringAttribute{
 				Description: "Namespace identifier tag.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "Namespace identifier tag.",
-				Computed:    true,
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 			"supports_url_encoding": schema.BoolAttribute{
 				Description: "True if keys written on the URL will be URL-decoded before storing. For example, if set to \"true\", a key written on the URL as \"%3F\" will be stored as \"?\".",
@@ -41,10 +41,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
 					"direction": schema.StringAttribute{
 						Description: "Direction to order namespaces.",
 						Optional:    true,
@@ -71,8 +67,6 @@ func (d *WorkersKVNamespaceDataSource) Schema(ctx context.Context, req datasourc
 
 func (d *WorkersKVNamespaceDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("namespace_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("namespace_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("namespace_id"), path.MatchRoot("filter")),
 	}
 }

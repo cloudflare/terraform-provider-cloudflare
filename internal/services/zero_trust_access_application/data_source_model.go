@@ -22,8 +22,9 @@ type ZeroTrustAccessApplicationResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessApplicationDataSourceModel struct {
-	AccountID                types.String                                                                          `tfsdk:"account_id" path:"account_id,optional"`
+	ID                       types.String                                                                          `tfsdk:"id" json:"-,computed"`
 	AppID                    types.String                                                                          `tfsdk:"app_id" path:"app_id,optional"`
+	AccountID                types.String                                                                          `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID                   types.String                                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
 	AllowAuthenticateViaWARP types.Bool                                                                            `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed"`
 	AppLauncherLogoURL       types.String                                                                          `tfsdk:"app_launcher_logo_url" json:"app_launcher_logo_url,computed"`
@@ -39,7 +40,6 @@ type ZeroTrustAccessApplicationDataSourceModel struct {
 	EnableBindingCookie      types.Bool                                                                            `tfsdk:"enable_binding_cookie" json:"enable_binding_cookie,computed"`
 	HeaderBgColor            types.String                                                                          `tfsdk:"header_bg_color" json:"header_bg_color,computed"`
 	HTTPOnlyCookieAttribute  types.Bool                                                                            `tfsdk:"http_only_cookie_attribute" json:"http_only_cookie_attribute,computed"`
-	ID                       types.String                                                                          `tfsdk:"id" json:"id,computed"`
 	LogoURL                  types.String                                                                          `tfsdk:"logo_url" json:"logo_url,computed"`
 	Name                     types.String                                                                          `tfsdk:"name" json:"name,computed"`
 	OptionsPreflightBypass   types.Bool                                                                            `tfsdk:"options_preflight_bypass" json:"options_preflight_bypass,computed"`
@@ -69,10 +69,10 @@ type ZeroTrustAccessApplicationDataSourceModel struct {
 func (m *ZeroTrustAccessApplicationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessApplicationGetParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessApplicationGetParams{}
 
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -94,10 +94,10 @@ func (m *ZeroTrustAccessApplicationDataSourceModel) toListParams(_ context.Conte
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
 
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -621,10 +621,8 @@ type ZeroTrustAccessApplicationTargetCriteriaDataSourceModel struct {
 }
 
 type ZeroTrustAccessApplicationFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
-	AUD       types.String `tfsdk:"aud" query:"aud,optional"`
-	Domain    types.String `tfsdk:"domain" query:"domain,optional"`
-	Name      types.String `tfsdk:"name" query:"name,optional"`
-	Search    types.String `tfsdk:"search" query:"search,optional"`
+	AUD    types.String `tfsdk:"aud" query:"aud,optional"`
+	Domain types.String `tfsdk:"domain" query:"domain,optional"`
+	Name   types.String `tfsdk:"name" query:"name,optional"`
+	Search types.String `tfsdk:"search" query:"search,optional"`
 }

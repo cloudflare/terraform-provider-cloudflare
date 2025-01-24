@@ -7,13 +7,11 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -23,12 +21,16 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustGatewayPolicyDataSo
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Optional: true,
+			"id": schema.StringAttribute{
+				Description: "The API resource UUID.",
+				Computed:    true,
 			},
 			"rule_id": schema.StringAttribute{
 				Description: "The API resource UUID.",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Required: true,
 			},
 			"action": schema.StringAttribute{
 				Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.",
@@ -72,10 +74,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "True if the rule is enabled.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The API resource UUID.",
 				Computed:    true,
 			},
 			"identity": schema.StringAttribute{
@@ -536,14 +534,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Required: true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -553,9 +543,5 @@ func (d *ZeroTrustGatewayPolicyDataSource) Schema(ctx context.Context, req datas
 }
 
 func (d *ZeroTrustGatewayPolicyDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("rule_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("rule_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

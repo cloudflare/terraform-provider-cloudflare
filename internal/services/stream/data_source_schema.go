@@ -8,13 +8,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -26,11 +24,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The account identifier tag.",
-				Optional:    true,
+				Required:    true,
 			},
 			"identifier": schema.StringAttribute{
 				Description: "A Cloudflare-generated unique identifier for a media item.",
-				Optional:    true,
+				Required:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the media item was created.",
@@ -244,61 +242,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  jsontypes.NormalizedType{},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "The account identifier tag.",
-						Required:    true,
-					},
-					"asc": schema.BoolAttribute{
-						Description: "Lists videos in ascending order of creation.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"creator": schema.StringAttribute{
-						Description: "A user-defined identifier for the media creator.",
-						Optional:    true,
-					},
-					"end": schema.StringAttribute{
-						Description: "Lists videos created before the specified date.",
-						Optional:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"include_counts": schema.BoolAttribute{
-						Description: "Includes the total number of videos associated with the submitted query parameters.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"search": schema.StringAttribute{
-						Description: "Searches over the `name` key in the `meta` field. This field can be set with or after the upload request.",
-						Optional:    true,
-					},
-					"start": schema.StringAttribute{
-						Description: "Lists videos created after the specified date.",
-						Optional:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"status": schema.StringAttribute{
-						Description: "Specifies the processing status for all quality levels for a video.",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"pendingupload",
-								"downloading",
-								"queued",
-								"inprogress",
-								"ready",
-								"error",
-							),
-						},
-					},
-					"type": schema.StringAttribute{
-						Description: "Specifies whether the video is `vod` or `live`.",
-						Optional:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -308,9 +251,5 @@ func (d *StreamDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 }
 
 func (d *StreamDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("identifier")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("identifier")),
-	}
+	return []datasource.ConfigValidator{}
 }

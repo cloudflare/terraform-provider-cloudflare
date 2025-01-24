@@ -21,13 +21,17 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessInfrastructur
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Account identifier",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "Target identifier",
+				Computed:    true,
 			},
 			"target_id": schema.StringAttribute{
 				Description: "Target identifier",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Account identifier",
+				Required:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "Date and time at which the target was created",
@@ -36,10 +40,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hostname": schema.StringAttribute{
 				Description: "A non-unique field that refers to a target",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Target identifier",
 				Computed:    true,
 			},
 			"modified_at": schema.StringAttribute{
@@ -87,10 +87,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Account identifier",
-						Required:    true,
-					},
 					"created_after": schema.StringAttribute{
 						Description: "Date and time at which the target was created after (inclusive)",
 						Optional:    true,
@@ -162,8 +158,6 @@ func (d *ZeroTrustAccessInfrastructureTargetDataSource) Schema(ctx context.Conte
 
 func (d *ZeroTrustAccessInfrastructureTargetDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("target_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("target_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("target_id"), path.MatchRoot("filter")),
 	}
 }

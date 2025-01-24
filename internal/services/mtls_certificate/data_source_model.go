@@ -22,18 +22,17 @@ type MTLSCertificateResultListDataSourceEnvelope struct {
 }
 
 type MTLSCertificateDataSourceModel struct {
-	AccountID         types.String                             `tfsdk:"account_id" path:"account_id,optional"`
-	MTLSCertificateID types.String                             `tfsdk:"mtls_certificate_id" path:"mtls_certificate_id,optional"`
-	CA                types.Bool                               `tfsdk:"ca" json:"ca,computed"`
-	Certificates      types.String                             `tfsdk:"certificates" json:"certificates,computed"`
-	ExpiresOn         timetypes.RFC3339                        `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
-	ID                types.String                             `tfsdk:"id" json:"id,computed"`
-	Issuer            types.String                             `tfsdk:"issuer" json:"issuer,computed"`
-	Name              types.String                             `tfsdk:"name" json:"name,computed"`
-	SerialNumber      types.String                             `tfsdk:"serial_number" json:"serial_number,computed"`
-	Signature         types.String                             `tfsdk:"signature" json:"signature,computed"`
-	UploadedOn        timetypes.RFC3339                        `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
-	Filter            *MTLSCertificateFindOneByDataSourceModel `tfsdk:"filter"`
+	ID                types.String      `tfsdk:"id" json:"-,computed"`
+	MTLSCertificateID types.String      `tfsdk:"mtls_certificate_id" path:"mtls_certificate_id,optional"`
+	AccountID         types.String      `tfsdk:"account_id" path:"account_id,required"`
+	CA                types.Bool        `tfsdk:"ca" json:"ca,computed"`
+	Certificates      types.String      `tfsdk:"certificates" json:"certificates,computed"`
+	ExpiresOn         timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	Issuer            types.String      `tfsdk:"issuer" json:"issuer,computed"`
+	Name              types.String      `tfsdk:"name" json:"name,computed"`
+	SerialNumber      types.String      `tfsdk:"serial_number" json:"serial_number,computed"`
+	Signature         types.String      `tfsdk:"signature" json:"signature,computed"`
+	UploadedOn        timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
 }
 
 func (m *MTLSCertificateDataSourceModel) toReadParams(_ context.Context) (params mtls_certificates.MTLSCertificateGetParams, diags diag.Diagnostics) {
@@ -46,12 +45,8 @@ func (m *MTLSCertificateDataSourceModel) toReadParams(_ context.Context) (params
 
 func (m *MTLSCertificateDataSourceModel) toListParams(_ context.Context) (params mtls_certificates.MTLSCertificateListParams, diags diag.Diagnostics) {
 	params = mtls_certificates.MTLSCertificateListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
-}
-
-type MTLSCertificateFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

@@ -22,13 +22,13 @@ type ZeroTrustAccessPolicyResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessPolicyDataSourceModel struct {
-	AccountID                    types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	ID                           types.String                                                                     `tfsdk:"id" json:"-,computed"`
 	PolicyID                     types.String                                                                     `tfsdk:"policy_id" path:"policy_id,optional"`
+	AccountID                    types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
 	AppCount                     types.Int64                                                                      `tfsdk:"app_count" json:"app_count,computed"`
 	ApprovalRequired             types.Bool                                                                       `tfsdk:"approval_required" json:"approval_required,computed"`
 	CreatedAt                    timetypes.RFC3339                                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Decision                     types.String                                                                     `tfsdk:"decision" json:"decision,computed"`
-	ID                           types.String                                                                     `tfsdk:"id" json:"id,computed"`
 	IsolationRequired            types.Bool                                                                       `tfsdk:"isolation_required" json:"isolation_required,computed"`
 	Name                         types.String                                                                     `tfsdk:"name" json:"name,computed"`
 	PurposeJustificationPrompt   types.String                                                                     `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
@@ -40,7 +40,6 @@ type ZeroTrustAccessPolicyDataSourceModel struct {
 	Exclude                      customfield.NestedObjectList[ZeroTrustAccessPolicyExcludeDataSourceModel]        `tfsdk:"exclude" json:"exclude,computed"`
 	Include                      customfield.NestedObjectList[ZeroTrustAccessPolicyIncludeDataSourceModel]        `tfsdk:"include" json:"include,computed"`
 	Require                      customfield.NestedObjectList[ZeroTrustAccessPolicyRequireDataSourceModel]        `tfsdk:"require" json:"require,computed"`
-	Filter                       *ZeroTrustAccessPolicyFindOneByDataSourceModel                                   `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustAccessPolicyDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessPolicyGetParams, diags diag.Diagnostics) {
@@ -53,7 +52,7 @@ func (m *ZeroTrustAccessPolicyDataSourceModel) toReadParams(_ context.Context) (
 
 func (m *ZeroTrustAccessPolicyDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessPolicyListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessPolicyListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -408,8 +407,4 @@ type ZeroTrustAccessPolicyRequireSAMLDataSourceModel struct {
 
 type ZeroTrustAccessPolicyRequireServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
-}
-
-type ZeroTrustAccessPolicyFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

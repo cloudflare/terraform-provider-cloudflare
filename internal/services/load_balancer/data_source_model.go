@@ -21,13 +21,13 @@ type LoadBalancerResultListDataSourceEnvelope struct {
 }
 
 type LoadBalancerDataSourceModel struct {
+	ID                        types.String                                                                   `tfsdk:"id" json:"-,computed"`
 	LoadBalancerID            types.String                                                                   `tfsdk:"load_balancer_id" path:"load_balancer_id,optional"`
-	ZoneID                    types.String                                                                   `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID                    types.String                                                                   `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedOn                 types.String                                                                   `tfsdk:"created_on" json:"created_on,computed"`
 	Description               types.String                                                                   `tfsdk:"description" json:"description,computed"`
 	Enabled                   types.Bool                                                                     `tfsdk:"enabled" json:"enabled,computed"`
 	FallbackPool              types.String                                                                   `tfsdk:"fallback_pool" json:"fallback_pool,computed"`
-	ID                        types.String                                                                   `tfsdk:"id" json:"id,computed"`
 	ModifiedOn                types.String                                                                   `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name                      types.String                                                                   `tfsdk:"name" json:"name,computed"`
 	Proxied                   types.Bool                                                                     `tfsdk:"proxied" json:"proxied,computed"`
@@ -45,7 +45,6 @@ type LoadBalancerDataSourceModel struct {
 	RandomSteering            customfield.NestedObject[LoadBalancerRandomSteeringDataSourceModel]            `tfsdk:"random_steering" json:"random_steering,computed"`
 	Rules                     customfield.NestedObjectList[LoadBalancerRulesDataSourceModel]                 `tfsdk:"rules" json:"rules,computed"`
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancerSessionAffinityAttributesDataSourceModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed"`
-	Filter                    *LoadBalancerFindOneByDataSourceModel                                          `tfsdk:"filter"`
 }
 
 func (m *LoadBalancerDataSourceModel) toReadParams(_ context.Context) (params load_balancers.LoadBalancerGetParams, diags diag.Diagnostics) {
@@ -58,7 +57,7 @@ func (m *LoadBalancerDataSourceModel) toReadParams(_ context.Context) (params lo
 
 func (m *LoadBalancerDataSourceModel) toListParams(_ context.Context) (params load_balancers.LoadBalancerListParams, diags diag.Diagnostics) {
 	params = load_balancers.LoadBalancerListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
@@ -141,8 +140,4 @@ type LoadBalancerSessionAffinityAttributesDataSourceModel struct {
 	Samesite             types.String                   `tfsdk:"samesite" json:"samesite,computed"`
 	Secure               types.String                   `tfsdk:"secure" json:"secure,computed"`
 	ZeroDowntimeFailover types.String                   `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed"`
-}
-
-type LoadBalancerFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }

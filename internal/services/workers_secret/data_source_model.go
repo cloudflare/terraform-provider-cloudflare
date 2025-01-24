@@ -21,13 +21,13 @@ type WorkersSecretResultListDataSourceEnvelope struct {
 }
 
 type WorkersSecretDataSourceModel struct {
-	AccountID         types.String                           `tfsdk:"account_id" path:"account_id,optional"`
-	DispatchNamespace types.String                           `tfsdk:"dispatch_namespace" path:"dispatch_namespace,optional"`
-	ScriptName        types.String                           `tfsdk:"script_name" path:"script_name,optional"`
-	SecretName        types.String                           `tfsdk:"secret_name" path:"secret_name,optional"`
-	Name              types.String                           `tfsdk:"name" json:"name,computed"`
-	Type              types.String                           `tfsdk:"type" json:"type,computed"`
-	Filter            *WorkersSecretFindOneByDataSourceModel `tfsdk:"filter"`
+	ID                types.String `tfsdk:"id" json:"-,computed"`
+	SecretName        types.String `tfsdk:"secret_name" path:"secret_name,optional"`
+	AccountID         types.String `tfsdk:"account_id" path:"account_id,required"`
+	DispatchNamespace types.String `tfsdk:"dispatch_namespace" path:"dispatch_namespace,required"`
+	ScriptName        types.String `tfsdk:"script_name" path:"script_name,required"`
+	Name              types.String `tfsdk:"name" json:"name,computed"`
+	Type              types.String `tfsdk:"type" json:"type,computed"`
 }
 
 func (m *WorkersSecretDataSourceModel) toReadParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceScriptSecretGetParams, diags diag.Diagnostics) {
@@ -40,14 +40,8 @@ func (m *WorkersSecretDataSourceModel) toReadParams(_ context.Context) (params w
 
 func (m *WorkersSecretDataSourceModel) toListParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceScriptSecretListParams, diags diag.Diagnostics) {
 	params = workers_for_platforms.DispatchNamespaceScriptSecretListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
-}
-
-type WorkersSecretFindOneByDataSourceModel struct {
-	AccountID         types.String `tfsdk:"account_id" path:"account_id,required"`
-	DispatchNamespace types.String `tfsdk:"dispatch_namespace" path:"dispatch_namespace,required"`
-	ScriptName        types.String `tfsdk:"script_name" path:"script_name,required"`
 }

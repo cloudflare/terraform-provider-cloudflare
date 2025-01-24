@@ -23,11 +23,11 @@ type ZeroTrustDLPEntryResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDLPEntryDataSourceModel struct {
-	AccountID  types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
+	ID         types.String                                                         `tfsdk:"id" json:"-,computed"`
 	EntryID    types.String                                                         `tfsdk:"entry_id" path:"entry_id,optional"`
+	AccountID  types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAt  timetypes.RFC3339                                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Enabled    types.Bool                                                           `tfsdk:"enabled" json:"enabled,computed"`
-	ID         types.String                                                         `tfsdk:"id" json:"id,computed"`
 	Name       types.String                                                         `tfsdk:"name" json:"name,computed"`
 	ProfileID  types.String                                                         `tfsdk:"profile_id" json:"profile_id,computed"`
 	Secret     types.Bool                                                           `tfsdk:"secret" json:"secret,computed"`
@@ -36,7 +36,6 @@ type ZeroTrustDLPEntryDataSourceModel struct {
 	Confidence customfield.NestedObject[ZeroTrustDLPEntryConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
 	Pattern    customfield.NestedObject[ZeroTrustDLPEntryPatternDataSourceModel]    `tfsdk:"pattern" json:"pattern,computed"`
 	WordList   jsontypes.Normalized                                                 `tfsdk:"word_list" json:"word_list,computed"`
-	Filter     *ZeroTrustDLPEntryFindOneByDataSourceModel                           `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustDLPEntryDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DLPEntryGetParams, diags diag.Diagnostics) {
@@ -49,7 +48,7 @@ func (m *ZeroTrustDLPEntryDataSourceModel) toReadParams(_ context.Context) (para
 
 func (m *ZeroTrustDLPEntryDataSourceModel) toListParams(_ context.Context) (params zero_trust.DLPEntryListParams, diags diag.Diagnostics) {
 	params = zero_trust.DLPEntryListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -62,8 +61,4 @@ type ZeroTrustDLPEntryConfidenceDataSourceModel struct {
 type ZeroTrustDLPEntryPatternDataSourceModel struct {
 	Regex      types.String `tfsdk:"regex" json:"regex,computed"`
 	Validation types.String `tfsdk:"validation" json:"validation,computed"`
-}
-
-type ZeroTrustDLPEntryFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

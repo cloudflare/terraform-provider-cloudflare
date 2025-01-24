@@ -16,14 +16,10 @@ type MagicTransitSiteLANResultDataSourceEnvelope struct {
 	Result MagicTransitSiteLANDataSourceModel `json:"result,computed"`
 }
 
-type MagicTransitSiteLANResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[MagicTransitSiteLANDataSourceModel] `json:"result,computed"`
-}
-
 type MagicTransitSiteLANDataSourceModel struct {
-	AccountID        types.String                                                                  `tfsdk:"account_id" path:"account_id,optional"`
-	LANID            types.String                                                                  `tfsdk:"lan_id" path:"lan_id,optional"`
-	SiteID           types.String                                                                  `tfsdk:"site_id" path:"site_id,computed_optional"`
+	AccountID        types.String                                                                  `tfsdk:"account_id" path:"account_id,required"`
+	LANID            types.String                                                                  `tfsdk:"lan_id" path:"lan_id,required"`
+	SiteID           types.String                                                                  `tfsdk:"site_id" path:"site_id,computed"`
 	HaLink           types.Bool                                                                    `tfsdk:"ha_link" json:"ha_link,computed"`
 	ID               types.String                                                                  `tfsdk:"id" json:"id,computed"`
 	Name             types.String                                                                  `tfsdk:"name" json:"name,computed"`
@@ -32,20 +28,11 @@ type MagicTransitSiteLANDataSourceModel struct {
 	Nat              customfield.NestedObject[MagicTransitSiteLANNatDataSourceModel]               `tfsdk:"nat" json:"nat,computed"`
 	RoutedSubnets    customfield.NestedObjectList[MagicTransitSiteLANRoutedSubnetsDataSourceModel] `tfsdk:"routed_subnets" json:"routed_subnets,computed"`
 	StaticAddressing customfield.NestedObject[MagicTransitSiteLANStaticAddressingDataSourceModel]  `tfsdk:"static_addressing" json:"static_addressing,computed"`
-	Filter           *MagicTransitSiteLANFindOneByDataSourceModel                                  `tfsdk:"filter"`
 }
 
 func (m *MagicTransitSiteLANDataSourceModel) toReadParams(_ context.Context) (params magic_transit.SiteLANGetParams, diags diag.Diagnostics) {
 	params = magic_transit.SiteLANGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *MagicTransitSiteLANDataSourceModel) toListParams(_ context.Context) (params magic_transit.SiteLANListParams, diags diag.Diagnostics) {
-	params = magic_transit.SiteLANListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}
 
 	return
@@ -82,9 +69,4 @@ type MagicTransitSiteLANStaticAddressingDHCPServerDataSourceModel struct {
 	DHCPPoolStart types.String                  `tfsdk:"dhcp_pool_start" json:"dhcp_pool_start,computed"`
 	DNSServer     types.String                  `tfsdk:"dns_server" json:"dns_server,computed"`
 	Reservations  customfield.Map[types.String] `tfsdk:"reservations" json:"reservations,computed"`
-}
-
-type MagicTransitSiteLANFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
-	SiteID    types.String `tfsdk:"site_id" path:"site_id,required"`
 }

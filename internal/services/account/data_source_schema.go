@@ -20,6 +20,10 @@ var _ datasource.DataSourceWithConfigValidators = (*AccountDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Account identifier tag.",
+				Computed:    true,
+			},
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
 				Optional:    true,
@@ -28,10 +32,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Timestamp for the creation of the account",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Account name",
@@ -93,6 +93,6 @@ func (d *AccountDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 
 func (d *AccountDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("account_id"), path.MatchRoot("filter")),
 	}
 }

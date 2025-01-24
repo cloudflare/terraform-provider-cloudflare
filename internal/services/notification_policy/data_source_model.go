@@ -22,19 +22,18 @@ type NotificationPolicyResultListDataSourceEnvelope struct {
 }
 
 type NotificationPolicyDataSourceModel struct {
-	AccountID     types.String                                                          `tfsdk:"account_id" path:"account_id,optional"`
+	ID            types.String                                                          `tfsdk:"id" json:"-,computed"`
 	PolicyID      types.String                                                          `tfsdk:"policy_id" path:"policy_id,optional"`
+	AccountID     types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
 	AlertInterval types.String                                                          `tfsdk:"alert_interval" json:"alert_interval,computed"`
 	AlertType     types.String                                                          `tfsdk:"alert_type" json:"alert_type,computed"`
 	Created       timetypes.RFC3339                                                     `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Description   types.String                                                          `tfsdk:"description" json:"description,computed"`
 	Enabled       types.Bool                                                            `tfsdk:"enabled" json:"enabled,computed"`
-	ID            types.String                                                          `tfsdk:"id" json:"id,computed"`
 	Modified      timetypes.RFC3339                                                     `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Name          types.String                                                          `tfsdk:"name" json:"name,computed"`
 	Filters       customfield.NestedObject[NotificationPolicyFiltersDataSourceModel]    `tfsdk:"filters" json:"filters,computed"`
 	Mechanisms    customfield.NestedObject[NotificationPolicyMechanismsDataSourceModel] `tfsdk:"mechanisms" json:"mechanisms,computed"`
-	Filter        *NotificationPolicyFindOneByDataSourceModel                           `tfsdk:"filter"`
 }
 
 func (m *NotificationPolicyDataSourceModel) toReadParams(_ context.Context) (params alerting.PolicyGetParams, diags diag.Diagnostics) {
@@ -47,7 +46,7 @@ func (m *NotificationPolicyDataSourceModel) toReadParams(_ context.Context) (par
 
 func (m *NotificationPolicyDataSourceModel) toListParams(_ context.Context) (params alerting.PolicyListParams, diags diag.Diagnostics) {
 	params = alerting.PolicyListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -113,8 +112,4 @@ type NotificationPolicyMechanismsPagerdutyDataSourceModel struct {
 
 type NotificationPolicyMechanismsWebhooksDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
-}
-
-type NotificationPolicyFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

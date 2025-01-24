@@ -23,14 +23,18 @@ var _ datasource.DataSourceWithConfigValidators = (*APIShieldOperationDataSource
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "UUID",
+				Computed:    true,
 			},
 			"operation_id": schema.StringAttribute{
 				Description: "UUID",
 				Computed:    true,
 				Optional:    true,
+			},
+			"zone_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 			"feature": schema.ListAttribute{
 				Description: "Add feature(s) to the results. The feature name that is given here corresponds to the resulting feature object. Have a look at the top-level object description for more details on the specific meaning.",
@@ -284,10 +288,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
 					"direction": schema.StringAttribute{
 						Description: "Direction to order results.",
 						Optional:    true,
@@ -347,9 +347,6 @@ func (d *APIShieldOperationDataSource) Schema(ctx context.Context, req datasourc
 
 func (d *APIShieldOperationDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("operation_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("operation_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
-		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("feature")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("operation_id"), path.MatchRoot("filter")),
 	}
 }

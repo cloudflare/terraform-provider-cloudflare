@@ -7,32 +7,13 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/workers"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type WorkersScriptResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[WorkersScriptDataSourceModel] `json:"result,computed"`
-}
-
 type WorkersScriptDataSourceModel struct {
-	AccountID       types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
-	ScriptName      types.String                                                            `tfsdk:"script_name" path:"script_name,optional"`
-	CreatedOn       timetypes.RFC3339                                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Etag            types.String                                                            `tfsdk:"etag" json:"etag,computed"`
-	HasAssets       types.Bool                                                              `tfsdk:"has_assets" json:"has_assets,computed"`
-	HasModules      types.Bool                                                              `tfsdk:"has_modules" json:"has_modules,computed"`
-	ID              types.String                                                            `tfsdk:"id" json:"id,computed"`
-	Logpush         types.Bool                                                              `tfsdk:"logpush" json:"logpush,computed"`
-	ModifiedOn      timetypes.RFC3339                                                       `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	PlacementMode   types.String                                                            `tfsdk:"placement_mode" json:"placement_mode,computed"`
-	PlacementStatus types.String                                                            `tfsdk:"placement_status" json:"placement_status,computed"`
-	UsageModel      types.String                                                            `tfsdk:"usage_model" json:"usage_model,computed"`
-	Placement       customfield.NestedObject[WorkersScriptPlacementDataSourceModel]         `tfsdk:"placement" json:"placement,computed"`
-	TailConsumers   customfield.NestedObjectList[WorkersScriptTailConsumersDataSourceModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
-	Filter          *WorkersScriptFindOneByDataSourceModel                                  `tfsdk:"filter"`
+	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
+	ScriptName types.String `tfsdk:"script_name" path:"script_name,required"`
 }
 
 func (m *WorkersScriptDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptGetParams, diags diag.Diagnostics) {
@@ -41,27 +22,4 @@ func (m *WorkersScriptDataSourceModel) toReadParams(_ context.Context) (params w
 	}
 
 	return
-}
-
-func (m *WorkersScriptDataSourceModel) toListParams(_ context.Context) (params workers.ScriptListParams, diags diag.Diagnostics) {
-	params = workers.ScriptListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
-	}
-
-	return
-}
-
-type WorkersScriptPlacementDataSourceModel struct {
-	Mode   types.String `tfsdk:"mode" json:"mode,computed"`
-	Status types.String `tfsdk:"status" json:"status,computed"`
-}
-
-type WorkersScriptTailConsumersDataSourceModel struct {
-	Service     types.String `tfsdk:"service" json:"service,computed"`
-	Environment types.String `tfsdk:"environment" json:"environment,computed"`
-	Namespace   types.String `tfsdk:"namespace" json:"namespace,computed"`
-}
-
-type WorkersScriptFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

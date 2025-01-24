@@ -57,34 +57,7 @@ func (d *WorkersCustomDomainDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	if data.Filter == nil {
-		params, diags := data.toReadParams(ctx)
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		res := new(http.Response)
-		env := WorkersCustomDomainResultDataSourceEnvelope{*data}
-		_, err := d.client.Workers.Domains.Get(
-			ctx,
-			data.DomainID.ValueString(),
-			params,
-			option.WithResponseBodyInto(&res),
-			option.WithMiddleware(logging.Middleware(ctx)),
-		)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to make http request", err.Error())
-			return
-		}
-		bytes, _ := io.ReadAll(res.Body)
-		err = apijson.UnmarshalComputed(bytes, &env)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-			return
-		}
-		data = &env.Result
-	} else {
+	if data.Filter != nil {
 		params, diags := data.toListParams(ctx)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
@@ -111,8 +84,35 @@ func (d *WorkersCustomDomainDataSource) Read(ctx context.Context, req datasource
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data = &ts[0]
+		data.DomainID = ts[0].DomainID
 	}
+
+	params, diags := data.toReadParams(ctx)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := WorkersCustomDomainResultDataSourceEnvelope{*data}
+	_, err := d.client.Workers.Domains.Get(
+		ctx,
+		data.DomainID.ValueString(),
+		params,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

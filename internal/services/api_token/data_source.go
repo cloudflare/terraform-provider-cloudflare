@@ -57,27 +57,7 @@ func (d *APITokenDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	if data.Filter == nil {
-		res := new(http.Response)
-		env := APITokenResultDataSourceEnvelope{*data}
-		_, err := d.client.User.Tokens.Get(
-			ctx,
-			data.TokenID.ValueString(),
-			option.WithResponseBodyInto(&res),
-			option.WithMiddleware(logging.Middleware(ctx)),
-		)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to make http request", err.Error())
-			return
-		}
-		bytes, _ := io.ReadAll(res.Body)
-		err = apijson.UnmarshalComputed(bytes, &env)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-			return
-		}
-		data = &env.Result
-	} else {
+	if data.Filter != nil {
 		params, diags := data.toListParams(ctx)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
@@ -104,8 +84,28 @@ func (d *APITokenDataSource) Read(ctx context.Context, req datasource.ReadReques
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data = &ts[0]
+		data.TokenID = ts[0].TokenID
 	}
+
+	res := new(http.Response)
+	env := APITokenResultDataSourceEnvelope{*data}
+	_, err := d.client.User.Tokens.Get(
+		ctx,
+		data.TokenID.ValueString(),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

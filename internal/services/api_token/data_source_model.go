@@ -22,9 +22,9 @@ type APITokenResultListDataSourceEnvelope struct {
 }
 
 type APITokenDataSourceModel struct {
+	ID         types.String                                                  `tfsdk:"id" json:"-,computed"`
 	TokenID    types.String                                                  `tfsdk:"token_id" path:"token_id,optional"`
 	ExpiresOn  timetypes.RFC3339                                             `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
-	ID         types.String                                                  `tfsdk:"id" json:"id,computed"`
 	IssuedOn   timetypes.RFC3339                                             `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
 	LastUsedOn timetypes.RFC3339                                             `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
 	ModifiedOn timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`

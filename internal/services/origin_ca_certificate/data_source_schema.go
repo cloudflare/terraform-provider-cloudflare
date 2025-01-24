@@ -21,6 +21,10 @@ var _ datasource.DataSourceWithConfigValidators = (*OriginCACertificateDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 			"certificate_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
@@ -35,10 +39,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate will expire.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
 				Computed:    true,
 			},
 			"request_type": schema.StringAttribute{
@@ -92,6 +92,6 @@ func (d *OriginCACertificateDataSource) Schema(ctx context.Context, req datasour
 
 func (d *OriginCACertificateDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("certificate_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("certificate_id"), path.MatchRoot("filter")),
 	}
 }

@@ -6,13 +6,11 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,13 +20,17 @@ var _ datasource.DataSourceWithConfigValidators = (*RateLimitDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "The unique identifier of the rate limit.",
+				Computed:    true,
+			},
 			"rate_limit_id": schema.StringAttribute{
 				Description: "The unique identifier of the rate limit.",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the rate limit. This value is sanitized and any tags will be removed.",
@@ -36,10 +38,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"disabled": schema.BoolAttribute{
 				Description: "When true, indicates that the rate limit is currently disabled.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The unique identifier of the rate limit.",
 				Computed:    true,
 			},
 			"period": schema.Float64Attribute{
@@ -192,15 +190,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -210,9 +199,5 @@ func (d *RateLimitDataSource) Schema(ctx context.Context, req datasource.SchemaR
 }
 
 func (d *RateLimitDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("rate_limit_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("rate_limit_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

@@ -16,31 +16,18 @@ type AccountRoleResultDataSourceEnvelope struct {
 	Result AccountRoleDataSourceModel `json:"result,computed"`
 }
 
-type AccountRoleResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[AccountRoleDataSourceModel] `json:"result,computed"`
-}
-
 type AccountRoleDataSourceModel struct {
-	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
-	RoleID      types.String                                                    `tfsdk:"role_id" path:"role_id,optional"`
+	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
+	RoleID      types.String                                                    `tfsdk:"role_id" path:"role_id,required"`
 	Description types.String                                                    `tfsdk:"description" json:"description,computed"`
 	ID          types.String                                                    `tfsdk:"id" json:"id,computed"`
 	Name        types.String                                                    `tfsdk:"name" json:"name,computed"`
 	Permissions customfield.NestedObject[AccountRolePermissionsDataSourceModel] `tfsdk:"permissions" json:"permissions,computed"`
-	Filter      *AccountRoleFindOneByDataSourceModel                            `tfsdk:"filter"`
 }
 
 func (m *AccountRoleDataSourceModel) toReadParams(_ context.Context) (params accounts.RoleGetParams, diags diag.Diagnostics) {
 	params = accounts.RoleGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *AccountRoleDataSourceModel) toListParams(_ context.Context) (params accounts.RoleListParams, diags diag.Diagnostics) {
-	params = accounts.RoleListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}
 
 	return
@@ -119,8 +106,4 @@ type AccountRolePermissionsZoneSettingsDataSourceModel struct {
 type AccountRolePermissionsZonesDataSourceModel struct {
 	Read  types.Bool `tfsdk:"read" json:"read,computed"`
 	Write types.Bool `tfsdk:"write" json:"write,computed"`
-}
-
-type AccountRoleFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

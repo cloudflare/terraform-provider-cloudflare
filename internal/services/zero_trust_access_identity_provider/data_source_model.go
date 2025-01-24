@@ -21,10 +21,10 @@ type ZeroTrustAccessIdentityProviderResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessIdentityProviderDataSourceModel struct {
-	AccountID          types.String                                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	ID                 types.String                                                                       `tfsdk:"id" json:"-,computed"`
 	IdentityProviderID types.String                                                                       `tfsdk:"identity_provider_id" path:"identity_provider_id,optional"`
+	AccountID          types.String                                                                       `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID             types.String                                                                       `tfsdk:"zone_id" path:"zone_id,optional"`
-	ID                 types.String                                                                       `tfsdk:"id" json:"id,computed"`
 	Name               types.String                                                                       `tfsdk:"name" json:"name,computed"`
 	Type               types.String                                                                       `tfsdk:"type" json:"type,computed"`
 	Config             customfield.NestedObject[ZeroTrustAccessIdentityProviderConfigDataSourceModel]     `tfsdk:"config" json:"config,computed"`
@@ -35,10 +35,10 @@ type ZeroTrustAccessIdentityProviderDataSourceModel struct {
 func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toReadParams(_ context.Context) (params zero_trust.IdentityProviderGetParams, diags diag.Diagnostics) {
 	params = zero_trust.IdentityProviderGetParams{}
 
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -51,10 +51,10 @@ func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toListParams(_ context.
 		params.SCIMEnabled = cloudflare.F(m.Filter.SCIMEnabled.ValueString())
 	}
 
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -106,7 +106,5 @@ type ZeroTrustAccessIdentityProviderSCIMConfigDataSourceModel struct {
 }
 
 type ZeroTrustAccessIdentityProviderFindOneByDataSourceModel struct {
-	AccountID   types.String `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	SCIMEnabled types.String `tfsdk:"scim_enabled" query:"scim_enabled,optional"`
 }

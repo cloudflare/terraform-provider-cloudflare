@@ -22,15 +22,15 @@ type ZeroTrustGatewayPolicyResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustGatewayPolicyDataSourceModel struct {
-	AccountID     types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
+	ID            types.String                                                                `tfsdk:"id" json:"-,computed"`
 	RuleID        types.String                                                                `tfsdk:"rule_id" path:"rule_id,optional"`
+	AccountID     types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
 	Action        types.String                                                                `tfsdk:"action" json:"action,computed"`
 	CreatedAt     timetypes.RFC3339                                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt     timetypes.RFC3339                                                           `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
 	Description   types.String                                                                `tfsdk:"description" json:"description,computed"`
 	DevicePosture types.String                                                                `tfsdk:"device_posture" json:"device_posture,computed"`
 	Enabled       types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed"`
-	ID            types.String                                                                `tfsdk:"id" json:"id,computed"`
 	Identity      types.String                                                                `tfsdk:"identity" json:"identity,computed"`
 	Name          types.String                                                                `tfsdk:"name" json:"name,computed"`
 	Precedence    types.Int64                                                                 `tfsdk:"precedence" json:"precedence,computed"`
@@ -41,7 +41,6 @@ type ZeroTrustGatewayPolicyDataSourceModel struct {
 	Expiration    customfield.NestedObject[ZeroTrustGatewayPolicyExpirationDataSourceModel]   `tfsdk:"expiration" json:"expiration,computed"`
 	RuleSettings  customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsDataSourceModel] `tfsdk:"rule_settings" json:"rule_settings,computed"`
 	Schedule      customfield.NestedObject[ZeroTrustGatewayPolicyScheduleDataSourceModel]     `tfsdk:"schedule" json:"schedule,computed"`
-	Filter        *ZeroTrustGatewayPolicyFindOneByDataSourceModel                             `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustGatewayPolicyDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayRuleGetParams, diags diag.Diagnostics) {
@@ -54,7 +53,7 @@ func (m *ZeroTrustGatewayPolicyDataSourceModel) toReadParams(_ context.Context) 
 
 func (m *ZeroTrustGatewayPolicyDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayRuleListParams, diags diag.Diagnostics) {
 	params = zero_trust.GatewayRuleListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -178,8 +177,4 @@ type ZeroTrustGatewayPolicyScheduleDataSourceModel struct {
 	TimeZone types.String `tfsdk:"time_zone" json:"time_zone,computed"`
 	Tue      types.String `tfsdk:"tue" json:"tue,computed"`
 	Wed      types.String `tfsdk:"wed" json:"wed,computed"`
-}
-
-type ZeroTrustGatewayPolicyFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

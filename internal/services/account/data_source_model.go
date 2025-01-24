@@ -22,9 +22,9 @@ type AccountResultListDataSourceEnvelope struct {
 }
 
 type AccountDataSourceModel struct {
+	ID        types.String                                             `tfsdk:"id" json:"-,computed"`
 	AccountID types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedOn timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ID        types.String                                             `tfsdk:"id" json:"id,computed"`
 	Name      types.String                                             `tfsdk:"name" json:"name,computed"`
 	Settings  customfield.NestedObject[AccountSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
 	Filter    *AccountFindOneByDataSourceModel                         `tfsdk:"filter"`

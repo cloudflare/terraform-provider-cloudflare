@@ -21,15 +21,14 @@ type PageShieldPolicyResultListDataSourceEnvelope struct {
 }
 
 type PageShieldPolicyDataSourceModel struct {
-	PolicyID    types.String                              `tfsdk:"policy_id" path:"policy_id,optional"`
-	ZoneID      types.String                              `tfsdk:"zone_id" path:"zone_id,optional"`
-	Action      types.String                              `tfsdk:"action" json:"action,computed"`
-	Description types.String                              `tfsdk:"description" json:"description,computed"`
-	Enabled     types.Bool                                `tfsdk:"enabled" json:"enabled,computed"`
-	Expression  types.String                              `tfsdk:"expression" json:"expression,computed"`
-	ID          types.String                              `tfsdk:"id" json:"id,computed"`
-	Value       types.String                              `tfsdk:"value" json:"value,computed"`
-	Filter      *PageShieldPolicyFindOneByDataSourceModel `tfsdk:"filter"`
+	ID          types.String `tfsdk:"id" json:"-,computed"`
+	PolicyID    types.String `tfsdk:"policy_id" path:"policy_id,optional"`
+	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	Action      types.String `tfsdk:"action" json:"action,computed"`
+	Description types.String `tfsdk:"description" json:"description,computed"`
+	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+	Expression  types.String `tfsdk:"expression" json:"expression,computed"`
+	Value       types.String `tfsdk:"value" json:"value,computed"`
 }
 
 func (m *PageShieldPolicyDataSourceModel) toReadParams(_ context.Context) (params page_shield.PolicyGetParams, diags diag.Diagnostics) {
@@ -42,12 +41,8 @@ func (m *PageShieldPolicyDataSourceModel) toReadParams(_ context.Context) (param
 
 func (m *PageShieldPolicyDataSourceModel) toListParams(_ context.Context) (params page_shield.PolicyListParams, diags diag.Diagnostics) {
 	params = page_shield.PolicyListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
-}
-
-type PageShieldPolicyFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }

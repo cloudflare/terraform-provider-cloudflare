@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -19,22 +17,22 @@ var _ datasource.DataSourceWithConfigValidators = (*NotificationPolicyWebhooksDa
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "The account id",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "The unique identifier of a webhook",
+				Computed:    true,
 			},
 			"webhook_id": schema.StringAttribute{
 				Description: "The unique identifier of a webhook",
 				Optional:    true,
 			},
+			"account_id": schema.StringAttribute{
+				Description: "The account id",
+				Required:    true,
+			},
 			"created_at": schema.StringAttribute{
 				Description: "Timestamp of when the webhook destination was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "The unique identifier of a webhook",
-				Computed:    true,
 			},
 			"last_failure": schema.StringAttribute{
 				Description: "Timestamp of the last time an attempt to dispatch a notification to this webhook failed.",
@@ -69,15 +67,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The POST endpoint to call when dispatching a notification.",
 				Computed:    true,
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "The account id",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -87,9 +76,5 @@ func (d *NotificationPolicyWebhooksDataSource) Schema(ctx context.Context, req d
 }
 
 func (d *NotificationPolicyWebhooksDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("webhook_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("webhook_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

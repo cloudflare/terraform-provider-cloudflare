@@ -21,15 +21,14 @@ type DNSZoneTransfersPeerResultListDataSourceEnvelope struct {
 }
 
 type DNSZoneTransfersPeerDataSourceModel struct {
-	AccountID  types.String                                  `tfsdk:"account_id" path:"account_id,optional"`
-	PeerID     types.String                                  `tfsdk:"peer_id" path:"peer_id,optional"`
-	ID         types.String                                  `tfsdk:"id" json:"id,computed"`
-	IP         types.String                                  `tfsdk:"ip" json:"ip,computed"`
-	IxfrEnable types.Bool                                    `tfsdk:"ixfr_enable" json:"ixfr_enable,computed"`
-	Name       types.String                                  `tfsdk:"name" json:"name,computed"`
-	Port       types.Float64                                 `tfsdk:"port" json:"port,computed"`
-	TSIGID     types.String                                  `tfsdk:"tsig_id" json:"tsig_id,computed"`
-	Filter     *DNSZoneTransfersPeerFindOneByDataSourceModel `tfsdk:"filter"`
+	ID         types.String  `tfsdk:"id" json:"-,computed"`
+	PeerID     types.String  `tfsdk:"peer_id" path:"peer_id,optional"`
+	AccountID  types.String  `tfsdk:"account_id" path:"account_id,required"`
+	IP         types.String  `tfsdk:"ip" json:"ip,computed"`
+	IxfrEnable types.Bool    `tfsdk:"ixfr_enable" json:"ixfr_enable,computed"`
+	Name       types.String  `tfsdk:"name" json:"name,computed"`
+	Port       types.Float64 `tfsdk:"port" json:"port,computed"`
+	TSIGID     types.String  `tfsdk:"tsig_id" json:"tsig_id,computed"`
 }
 
 func (m *DNSZoneTransfersPeerDataSourceModel) toReadParams(_ context.Context) (params dns.ZoneTransferPeerGetParams, diags diag.Diagnostics) {
@@ -42,12 +41,8 @@ func (m *DNSZoneTransfersPeerDataSourceModel) toReadParams(_ context.Context) (p
 
 func (m *DNSZoneTransfersPeerDataSourceModel) toListParams(_ context.Context) (params dns.ZoneTransferPeerListParams, diags diag.Diagnostics) {
 	params = dns.ZoneTransferPeerListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
-}
-
-type DNSZoneTransfersPeerFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

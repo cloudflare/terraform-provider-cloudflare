@@ -21,13 +21,17 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustTunnelCloudflaredDa
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Cloudflare account ID",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "UUID of the tunnel.",
+				Computed:    true,
 			},
 			"tunnel_id": schema.StringAttribute{
 				Description: "UUID of the tunnel.",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Cloudflare account ID",
+				Required:    true,
 			},
 			"account_tag": schema.StringAttribute{
 				Description: "Cloudflare account ID",
@@ -52,10 +56,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "UUID of the tunnel.",
-				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "A user-friendly name for a tunnel.",
@@ -140,10 +140,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Cloudflare account ID",
-						Required:    true,
-					},
 					"exclude_prefix": schema.StringAttribute{
 						Optional: true,
 					},
@@ -199,8 +195,6 @@ func (d *ZeroTrustTunnelCloudflaredDataSource) Schema(ctx context.Context, req d
 
 func (d *ZeroTrustTunnelCloudflaredDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("tunnel_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("tunnel_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("tunnel_id"), path.MatchRoot("filter")),
 	}
 }

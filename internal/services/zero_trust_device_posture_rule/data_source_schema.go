@@ -6,12 +6,10 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,12 +19,16 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDevicePostureRuleDa
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Optional: true,
+			"id": schema.StringAttribute{
+				Description: "API UUID.",
+				Computed:    true,
 			},
 			"rule_id": schema.StringAttribute{
 				Description: "API UUID.",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Required: true,
 			},
 			"description": schema.StringAttribute{
 				Description: "The description of the device posture rule.",
@@ -34,10 +36,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"expiration": schema.StringAttribute{
 				Description: "Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "API UUID.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
@@ -383,14 +381,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Required: true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -400,9 +390,5 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 }
 
 func (d *ZeroTrustDevicePostureRuleDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("rule_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("rule_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

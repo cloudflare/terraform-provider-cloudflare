@@ -18,13 +18,9 @@ type StreamResultDataSourceEnvelope struct {
 	Result StreamDataSourceModel `json:"result,computed"`
 }
 
-type StreamResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[StreamDataSourceModel] `json:"result,computed"`
-}
-
 type StreamDataSourceModel struct {
-	AccountID             types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
-	Identifier            types.String                                             `tfsdk:"identifier" path:"identifier,optional"`
+	AccountID             types.String                                             `tfsdk:"account_id" path:"account_id,required"`
+	Identifier            types.String                                             `tfsdk:"identifier" path:"identifier,required"`
 	Created               timetypes.RFC3339                                        `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Creator               types.String                                             `tfsdk:"creator" json:"creator,computed"`
 	Duration              types.Float64                                            `tfsdk:"duration" json:"duration,computed"`
@@ -48,50 +44,11 @@ type StreamDataSourceModel struct {
 	Status                customfield.NestedObject[StreamStatusDataSourceModel]    `tfsdk:"status" json:"status,computed"`
 	Watermark             customfield.NestedObject[StreamWatermarkDataSourceModel] `tfsdk:"watermark" json:"watermark,computed"`
 	Meta                  jsontypes.Normalized                                     `tfsdk:"meta" json:"meta,computed"`
-	Filter                *StreamFindOneByDataSourceModel                          `tfsdk:"filter"`
 }
 
 func (m *StreamDataSourceModel) toReadParams(_ context.Context) (params stream.StreamGetParams, diags diag.Diagnostics) {
 	params = stream.StreamGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *StreamDataSourceModel) toListParams(_ context.Context) (params stream.StreamListParams, diags diag.Diagnostics) {
-	mFilterEnd, errs := m.Filter.End.ValueRFC3339Time()
-	diags.Append(errs...)
-	mFilterStart, errs := m.Filter.Start.ValueRFC3339Time()
-	diags.Append(errs...)
-
-	params = stream.StreamListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
-	}
-
-	if !m.Filter.Asc.IsNull() {
-		params.Asc = cloudflare.F(m.Filter.Asc.ValueBool())
-	}
-	if !m.Filter.Creator.IsNull() {
-		params.Creator = cloudflare.F(m.Filter.Creator.ValueString())
-	}
-	if !m.Filter.End.IsNull() {
-		params.End = cloudflare.F(mFilterEnd)
-	}
-	if !m.Filter.IncludeCounts.IsNull() {
-		params.IncludeCounts = cloudflare.F(m.Filter.IncludeCounts.ValueBool())
-	}
-	if !m.Filter.Search.IsNull() {
-		params.Search = cloudflare.F(m.Filter.Search.ValueString())
-	}
-	if !m.Filter.Start.IsNull() {
-		params.Start = cloudflare.F(mFilterStart)
-	}
-	if !m.Filter.Status.IsNull() {
-		params.Status = cloudflare.F(stream.StreamListParamsStatus(m.Filter.Status.ValueString()))
-	}
-	if !m.Filter.Type.IsNull() {
-		params.Type = cloudflare.F(m.Filter.Type.ValueString())
 	}
 
 	return
@@ -126,16 +83,4 @@ type StreamWatermarkDataSourceModel struct {
 	Size           types.Float64     `tfsdk:"size" json:"size,computed"`
 	UID            types.String      `tfsdk:"uid" json:"uid,computed"`
 	Width          types.Int64       `tfsdk:"width" json:"width,computed"`
-}
-
-type StreamFindOneByDataSourceModel struct {
-	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
-	Asc           types.Bool        `tfsdk:"asc" query:"asc,computed_optional"`
-	Creator       types.String      `tfsdk:"creator" query:"creator,optional"`
-	End           timetypes.RFC3339 `tfsdk:"end" query:"end,optional" format:"date-time"`
-	IncludeCounts types.Bool        `tfsdk:"include_counts" query:"include_counts,computed_optional"`
-	Search        types.String      `tfsdk:"search" query:"search,optional"`
-	Start         timetypes.RFC3339 `tfsdk:"start" query:"start,optional" format:"date-time"`
-	Status        types.String      `tfsdk:"status" query:"status,optional"`
-	Type          types.String      `tfsdk:"type" query:"type,optional"`
 }

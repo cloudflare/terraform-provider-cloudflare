@@ -19,13 +19,17 @@ var _ datasource.DataSourceWithConfigValidators = (*EmailRoutingAddressDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "Destination address identifier.",
+				Computed:    true,
 			},
 			"destination_address_identifier": schema.StringAttribute{
 				Description: "Destination address identifier.",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the destination address has been created.",
@@ -34,10 +38,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"email": schema.StringAttribute{
 				Description: "The contact email address of the user.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Destination address identifier.",
 				Computed:    true,
 			},
 			"modified": schema.StringAttribute{
@@ -57,10 +57,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
 					"direction": schema.StringAttribute{
 						Description: "Sorts results in an ascending or descending order.",
 						Computed:    true,
@@ -86,8 +82,6 @@ func (d *EmailRoutingAddressDataSource) Schema(ctx context.Context, req datasour
 
 func (d *EmailRoutingAddressDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("destination_address_identifier")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("destination_address_identifier")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("destination_address_identifier"), path.MatchRoot("filter")),
 	}
 }

@@ -21,10 +21,10 @@ type EmailRoutingRuleResultListDataSourceEnvelope struct {
 }
 
 type EmailRoutingRuleDataSourceModel struct {
+	ID             types.String                                                          `tfsdk:"id" json:"-,computed"`
 	RuleIdentifier types.String                                                          `tfsdk:"rule_identifier" path:"rule_identifier,optional"`
-	ZoneID         types.String                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID         types.String                                                          `tfsdk:"zone_id" path:"zone_id,required"`
 	Enabled        types.Bool                                                            `tfsdk:"enabled" json:"enabled,computed"`
-	ID             types.String                                                          `tfsdk:"id" json:"id,computed"`
 	Name           types.String                                                          `tfsdk:"name" json:"name,computed"`
 	Priority       types.Float64                                                         `tfsdk:"priority" json:"priority,computed"`
 	Tag            types.String                                                          `tfsdk:"tag" json:"tag,computed"`
@@ -43,7 +43,7 @@ func (m *EmailRoutingRuleDataSourceModel) toReadParams(_ context.Context) (param
 
 func (m *EmailRoutingRuleDataSourceModel) toListParams(_ context.Context) (params email_routing.RuleListParams, diags diag.Diagnostics) {
 	params = email_routing.RuleListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	if !m.Filter.Enabled.IsNull() {
@@ -65,6 +65,5 @@ type EmailRoutingRuleMatchersDataSourceModel struct {
 }
 
 type EmailRoutingRuleFindOneByDataSourceModel struct {
-	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
-	Enabled types.Bool   `tfsdk:"enabled" query:"enabled,optional"`
+	Enabled types.Bool `tfsdk:"enabled" query:"enabled,optional"`
 }

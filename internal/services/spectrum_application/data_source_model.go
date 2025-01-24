@@ -17,13 +17,9 @@ type SpectrumApplicationResultDataSourceEnvelope struct {
 	Result SpectrumApplicationDataSourceModel `json:"result,computed"`
 }
 
-type SpectrumApplicationResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[SpectrumApplicationDataSourceModel] `json:"result,computed"`
-}
-
 type SpectrumApplicationDataSourceModel struct {
-	AppID            types.String                                                          `tfsdk:"app_id" path:"app_id,optional"`
-	ZoneID           types.String                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
+	AppID            types.String                                                          `tfsdk:"app_id" path:"app_id,required"`
+	ZoneID           types.String                                                          `tfsdk:"zone_id" path:"zone_id,required"`
 	ArgoSmartRouting types.Bool                                                            `tfsdk:"argo_smart_routing" json:"argo_smart_routing,computed"`
 	CreatedOn        timetypes.RFC3339                                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ID               types.String                                                          `tfsdk:"id" json:"id,computed"`
@@ -38,27 +34,11 @@ type SpectrumApplicationDataSourceModel struct {
 	EdgeIPs          customfield.NestedObject[SpectrumApplicationEdgeIPsDataSourceModel]   `tfsdk:"edge_ips" json:"edge_ips,computed"`
 	OriginDNS        customfield.NestedObject[SpectrumApplicationOriginDNSDataSourceModel] `tfsdk:"origin_dns" json:"origin_dns,computed"`
 	OriginPort       types.Dynamic                                                         `tfsdk:"origin_port" json:"origin_port,computed"`
-	Filter           *SpectrumApplicationFindOneByDataSourceModel                          `tfsdk:"filter"`
 }
 
 func (m *SpectrumApplicationDataSourceModel) toReadParams(_ context.Context) (params spectrum.AppGetParams, diags diag.Diagnostics) {
 	params = spectrum.AppGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}
-
-func (m *SpectrumApplicationDataSourceModel) toListParams(_ context.Context) (params spectrum.AppListParams, diags diag.Diagnostics) {
-	params = spectrum.AppListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
-	}
-
-	if !m.Filter.Direction.IsNull() {
-		params.Direction = cloudflare.F(spectrum.AppListParamsDirection(m.Filter.Direction.ValueString()))
-	}
-	if !m.Filter.Order.IsNull() {
-		params.Order = cloudflare.F(spectrum.AppListParamsOrder(m.Filter.Order.ValueString()))
 	}
 
 	return
@@ -79,10 +59,4 @@ type SpectrumApplicationOriginDNSDataSourceModel struct {
 	Name types.String `tfsdk:"name" json:"name,computed"`
 	TTL  types.Int64  `tfsdk:"ttl" json:"ttl,computed"`
 	Type types.String `tfsdk:"type" json:"type,computed"`
-}
-
-type SpectrumApplicationFindOneByDataSourceModel struct {
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,required"`
-	Direction types.String `tfsdk:"direction" query:"direction,computed_optional"`
-	Order     types.String `tfsdk:"order" query:"order,computed_optional"`
 }

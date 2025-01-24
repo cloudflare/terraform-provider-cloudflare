@@ -21,20 +21,20 @@ var _ datasource.DataSourceWithConfigValidators = (*EmailRoutingRuleDataSource)(
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Routing rule identifier.",
+				Computed:    true,
+			},
 			"rule_identifier": schema.StringAttribute{
 				Description: "Routing rule identifier.",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Routing rule status.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Routing rule identifier.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
@@ -107,10 +107,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
 					"enabled": schema.BoolAttribute{
 						Description: "Filter by enabled routing rules.",
 						Optional:    true,
@@ -127,8 +123,6 @@ func (d *EmailRoutingRuleDataSource) Schema(ctx context.Context, req datasource.
 
 func (d *EmailRoutingRuleDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("rule_identifier"), path.MatchRoot("zone_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("rule_identifier")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("rule_identifier"), path.MatchRoot("filter")),
 	}
 }

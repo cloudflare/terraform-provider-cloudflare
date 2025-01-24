@@ -22,11 +22,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"rule_id": schema.StringAttribute{
 				Description: "The unique identifier of the firewall rule.",
-				Optional:    true,
+				Required:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "The unique identifier of the firewall rule.",
@@ -84,6 +84,36 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
+			},
+			"filter": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[FirewallRuleFilterDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description: "The unique identifier of the filter.",
+						Computed:    true,
+					},
+					"description": schema.StringAttribute{
+						Description: "An informative summary of the filter.",
+						Computed:    true,
+					},
+					"expression": schema.StringAttribute{
+						Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
+						Computed:    true,
+					},
+					"paused": schema.BoolAttribute{
+						Description: "When true, indicates that the filter is currently paused.",
+						Computed:    true,
+					},
+					"ref": schema.StringAttribute{
+						Description: "A short reference tag. Allows you to select related filters.",
+						Computed:    true,
+					},
+					"deleted": schema.BoolAttribute{
+						Description: "When true, indicates that the firewall rule was deleted.",
+						Computed:    true,
+					},
+				},
 			},
 		},
 	}

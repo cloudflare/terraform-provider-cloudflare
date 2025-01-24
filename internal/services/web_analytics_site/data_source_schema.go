@@ -21,13 +21,17 @@ var _ datasource.DataSourceWithConfigValidators = (*WebAnalyticsSiteDataSource)(
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Computed:    true,
 			},
 			"site_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 			"auto_install": schema.BoolAttribute{
 				Description: "If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.",
@@ -111,10 +115,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
 					"order_by": schema.StringAttribute{
 						Description: "The property used to sort the list of results.",
 						Optional:    true,
@@ -134,8 +134,6 @@ func (d *WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.
 
 func (d *WebAnalyticsSiteDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("site_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("site_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("site_id"), path.MatchRoot("filter")),
 	}
 }
