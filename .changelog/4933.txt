@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_device_posture_integration: fix bug where `custom_s2s` and `tanium_s2s` was not included in the type validation for s2s posture integrations.
+```
