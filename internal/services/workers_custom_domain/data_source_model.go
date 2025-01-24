@@ -21,11 +21,11 @@ type WorkersCustomDomainResultListDataSourceEnvelope struct {
 }
 
 type WorkersCustomDomainDataSourceModel struct {
-	AccountID   types.String                                 `tfsdk:"account_id" path:"account_id,optional"`
+	ID          types.String                                 `tfsdk:"id" json:"-,computed"`
 	DomainID    types.String                                 `tfsdk:"domain_id" path:"domain_id,optional"`
+	AccountID   types.String                                 `tfsdk:"account_id" path:"account_id,required"`
 	Environment types.String                                 `tfsdk:"environment" json:"environment,computed"`
 	Hostname    types.String                                 `tfsdk:"hostname" json:"hostname,computed"`
-	ID          types.String                                 `tfsdk:"id" json:"id,computed"`
 	Service     types.String                                 `tfsdk:"service" json:"service,computed"`
 	ZoneID      types.String                                 `tfsdk:"zone_id" json:"zone_id,computed"`
 	ZoneName    types.String                                 `tfsdk:"zone_name" json:"zone_name,computed"`
@@ -42,7 +42,7 @@ func (m *WorkersCustomDomainDataSourceModel) toReadParams(_ context.Context) (pa
 
 func (m *WorkersCustomDomainDataSourceModel) toListParams(_ context.Context) (params workers.DomainListParams, diags diag.Diagnostics) {
 	params = workers.DomainListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.Environment.IsNull() {
@@ -65,7 +65,6 @@ func (m *WorkersCustomDomainDataSourceModel) toListParams(_ context.Context) (pa
 }
 
 type WorkersCustomDomainFindOneByDataSourceModel struct {
-	AccountID   types.String `tfsdk:"account_id" path:"account_id,required"`
 	Environment types.String `tfsdk:"environment" query:"environment,optional"`
 	Hostname    types.String `tfsdk:"hostname" query:"hostname,optional"`
 	Service     types.String `tfsdk:"service" query:"service,optional"`

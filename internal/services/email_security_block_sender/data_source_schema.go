@@ -19,13 +19,17 @@ var _ datasource.DataSourceWithConfigValidators = (*EmailSecurityBlockSenderData
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Account Identifier",
-				Optional:    true,
+			"id": schema.Int64Attribute{
+				Description: "The unique identifier for the allow policy.",
+				Computed:    true,
 			},
 			"pattern_id": schema.Int64Attribute{
 				Description: "The unique identifier for the allow policy.",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Account Identifier",
+				Required:    true,
 			},
 			"comments": schema.StringAttribute{
 				Computed: true,
@@ -33,10 +37,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
-			},
-			"id": schema.Int64Attribute{
-				Description: "The unique identifier for the allow policy.",
-				Computed:    true,
 			},
 			"is_regex": schema.BoolAttribute{
 				Computed: true,
@@ -62,10 +62,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Account Identifier",
-						Required:    true,
-					},
 					"direction": schema.StringAttribute{
 						Description: "The sorting direction.",
 						Optional:    true,
@@ -107,8 +103,6 @@ func (d *EmailSecurityBlockSenderDataSource) Schema(ctx context.Context, req dat
 
 func (d *EmailSecurityBlockSenderDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("pattern_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("pattern_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("pattern_id"), path.MatchRoot("filter")),
 	}
 }

@@ -21,14 +21,18 @@ var _ datasource.DataSourceWithConfigValidators = (*TurnstileWidgetDataSource)(n
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "Widget item identifier tag.",
+				Computed:    true,
 			},
 			"sitekey": schema.StringAttribute{
 				Description: "Widget item identifier tag.",
 				Computed:    true,
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 			"bot_fight_mode": schema.BoolAttribute{
 				Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).\n",
@@ -98,10 +102,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
 					"direction": schema.StringAttribute{
 						Description: "Direction to order widgets.",
 						Optional:    true,
@@ -134,8 +134,6 @@ func (d *TurnstileWidgetDataSource) Schema(ctx context.Context, req datasource.S
 
 func (d *TurnstileWidgetDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("sitekey")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("sitekey")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("sitekey"), path.MatchRoot("filter")),
 	}
 }

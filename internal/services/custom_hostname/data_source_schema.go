@@ -22,13 +22,17 @@ var _ datasource.DataSourceWithConfigValidators = (*CustomHostnameDataSource)(ni
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 			"custom_hostname_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "This is the time the hostname was created.",
@@ -45,10 +49,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hostname": schema.StringAttribute{
 				Description: "The custom hostname that will point to your hostname via CNAME.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
@@ -339,10 +339,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
 					"id": schema.StringAttribute{
 						Description: "Hostname ID to match against. This ID was generated and returned during the initial custom_hostname creation. This parameter cannot be used with the 'hostname' parameter.",
 						Optional:    true,
@@ -385,8 +381,6 @@ func (d *CustomHostnameDataSource) Schema(ctx context.Context, req datasource.Sc
 
 func (d *CustomHostnameDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("custom_hostname_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("custom_hostname_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("custom_hostname_id"), path.MatchRoot("filter")),
 	}
 }

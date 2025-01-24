@@ -21,25 +21,24 @@ type RulesetResultListDataSourceEnvelope struct {
 }
 
 type RulesetDataSourceModel struct {
-	AccountID   types.String                                              `tfsdk:"account_id" path:"account_id,optional"`
+	ID          types.String                                              `tfsdk:"id" json:"-,computed"`
 	RulesetID   types.String                                              `tfsdk:"ruleset_id" path:"ruleset_id,optional"`
+	AccountID   types.String                                              `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID      types.String                                              `tfsdk:"zone_id" path:"zone_id,optional"`
 	Description types.String                                              `tfsdk:"description" json:"description,computed"`
-	ID          types.String                                              `tfsdk:"id" json:"id,computed"`
 	Kind        types.String                                              `tfsdk:"kind" json:"kind,computed"`
 	Name        types.String                                              `tfsdk:"name" json:"name,computed"`
 	Phase       types.String                                              `tfsdk:"phase" json:"phase,computed"`
 	Rules       customfield.NestedObjectList[RulesetRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
-	Filter      *RulesetFindOneByDataSourceModel                          `tfsdk:"filter"`
 }
 
 func (m *RulesetDataSourceModel) toReadParams(_ context.Context) (params rulesets.RulesetGetParams, diags diag.Diagnostics) {
 	params = rulesets.RulesetGetParams{}
 
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -48,10 +47,10 @@ func (m *RulesetDataSourceModel) toReadParams(_ context.Context) (params ruleset
 func (m *RulesetDataSourceModel) toListParams(_ context.Context) (params rulesets.RulesetListParams, diags diag.Diagnostics) {
 	params = rulesets.RulesetListParams{}
 
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -328,9 +327,4 @@ type RulesetRulesRatelimitDataSourceModel struct {
 	RequestsToOrigin        types.Bool                     `tfsdk:"requests_to_origin" json:"requests_to_origin,computed"`
 	ScorePerPeriod          types.Int64                    `tfsdk:"score_per_period" json:"score_per_period,computed"`
 	ScoreResponseHeaderName types.String                   `tfsdk:"score_response_header_name" json:"score_response_header_name,computed"`
-}
-
-type RulesetFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 }

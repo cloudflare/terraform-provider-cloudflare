@@ -22,8 +22,9 @@ type WaitingRoomResultListDataSourceEnvelope struct {
 }
 
 type WaitingRoomDataSourceModel struct {
+	ID                         types.String                                                             `tfsdk:"id" json:"-,computed"`
 	WaitingRoomID              types.String                                                             `tfsdk:"waiting_room_id" path:"waiting_room_id,optional"`
-	ZoneID                     types.String                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID                     types.String                                                             `tfsdk:"zone_id" path:"zone_id,required"`
 	CookieSuffix               types.String                                                             `tfsdk:"cookie_suffix" json:"cookie_suffix,computed"`
 	CreatedOn                  timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	CustomPageHTML             types.String                                                             `tfsdk:"custom_page_html" json:"custom_page_html,computed"`
@@ -31,7 +32,6 @@ type WaitingRoomDataSourceModel struct {
 	Description                types.String                                                             `tfsdk:"description" json:"description,computed"`
 	DisableSessionRenewal      types.Bool                                                               `tfsdk:"disable_session_renewal" json:"disable_session_renewal,computed"`
 	Host                       types.String                                                             `tfsdk:"host" json:"host,computed"`
-	ID                         types.String                                                             `tfsdk:"id" json:"id,computed"`
 	JsonResponseEnabled        types.Bool                                                               `tfsdk:"json_response_enabled" json:"json_response_enabled,computed"`
 	ModifiedOn                 timetypes.RFC3339                                                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                       types.String                                                             `tfsdk:"name" json:"name,computed"`
@@ -50,7 +50,6 @@ type WaitingRoomDataSourceModel struct {
 	EnabledOriginCommands      customfield.List[types.String]                                           `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed"`
 	AdditionalRoutes           customfield.NestedObjectList[WaitingRoomAdditionalRoutesDataSourceModel] `tfsdk:"additional_routes" json:"additional_routes,computed"`
 	CookieAttributes           customfield.NestedObject[WaitingRoomCookieAttributesDataSourceModel]     `tfsdk:"cookie_attributes" json:"cookie_attributes,computed"`
-	Filter                     *WaitingRoomFindOneByDataSourceModel                                     `tfsdk:"filter"`
 }
 
 func (m *WaitingRoomDataSourceModel) toReadParams(_ context.Context) (params waiting_rooms.WaitingRoomGetParams, diags diag.Diagnostics) {
@@ -63,7 +62,7 @@ func (m *WaitingRoomDataSourceModel) toReadParams(_ context.Context) (params wai
 
 func (m *WaitingRoomDataSourceModel) toListParams(_ context.Context) (params waiting_rooms.WaitingRoomListParams, diags diag.Diagnostics) {
 	params = waiting_rooms.WaitingRoomListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
@@ -77,8 +76,4 @@ type WaitingRoomAdditionalRoutesDataSourceModel struct {
 type WaitingRoomCookieAttributesDataSourceModel struct {
 	Samesite types.String `tfsdk:"samesite" json:"samesite,computed"`
 	Secure   types.String `tfsdk:"secure" json:"secure,computed"`
-}
-
-type WaitingRoomFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }

@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -19,16 +17,16 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDevicePostureIntegr
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Optional: true,
+			"id": schema.StringAttribute{
+				Description: "API UUID.",
+				Computed:    true,
 			},
 			"integration_id": schema.StringAttribute{
 				Description: "API UUID.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "API UUID.",
-				Computed:    true,
+			"account_id": schema.StringAttribute{
+				Required: true,
 			},
 			"interval": schema.StringAttribute{
 				Description: "The interval between each posture check with the third-party API. Use `m` for minutes (e.g. `5m`) and `h` for hours (e.g. `12h`).",
@@ -73,14 +71,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Required: true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -90,9 +80,5 @@ func (d *ZeroTrustDevicePostureIntegrationDataSource) Schema(ctx context.Context
 }
 
 func (d *ZeroTrustDevicePostureIntegrationDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("integration_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("integration_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

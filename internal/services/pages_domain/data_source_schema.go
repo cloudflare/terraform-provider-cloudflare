@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -19,17 +17,21 @@ var _ datasource.DataSourceWithConfigValidators = (*PagesDomainDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "Name of the domain.",
+				Computed:    true,
 			},
 			"domain_name": schema.StringAttribute{
 				Description: "Name of the domain.",
 				Optional:    true,
 			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
+			},
 			"project_name": schema.StringAttribute{
 				Description: "Name of the project.",
-				Optional:    true,
+				Required:    true,
 			},
 			"certificate_authority": schema.StringAttribute{
 				Computed: true,
@@ -41,9 +43,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"domain_id": schema.StringAttribute{
-				Computed: true,
-			},
-			"id": schema.StringAttribute{
 				Computed: true,
 			},
 			"name": schema.StringAttribute{
@@ -119,19 +118,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-					"project_name": schema.StringAttribute{
-						Description: "Name of the project.",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -141,14 +127,5 @@ func (d *PagesDomainDataSource) Schema(ctx context.Context, req datasource.Schem
 }
 
 func (d *PagesDomainDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(
-			path.MatchRoot("account_id"),
-			path.MatchRoot("domain_name"),
-			path.MatchRoot("project_name"),
-		),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("domain_name")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("project_name")),
-	}
+	return []datasource.ConfigValidator{}
 }

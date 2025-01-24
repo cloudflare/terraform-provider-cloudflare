@@ -25,13 +25,17 @@ var _ datasource.DataSourceWithConfigValidators = (*DNSRecordDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 			"dns_record_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"comment": schema.StringAttribute{
 				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
@@ -50,10 +54,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the record was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the record was last modified.",
@@ -382,10 +382,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
 					"comment": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
@@ -574,8 +570,6 @@ func (d *DNSRecordDataSource) Schema(ctx context.Context, req datasource.SchemaR
 
 func (d *DNSRecordDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("dns_record_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("dns_record_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("dns_record_id"), path.MatchRoot("filter")),
 	}
 }

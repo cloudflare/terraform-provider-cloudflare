@@ -21,8 +21,9 @@ type LoadBalancerMonitorResultListDataSourceEnvelope struct {
 }
 
 type LoadBalancerMonitorDataSourceModel struct {
-	AccountID       types.String                                    `tfsdk:"account_id" path:"account_id,optional"`
+	ID              types.String                                    `tfsdk:"id" json:"-,computed"`
 	MonitorID       types.String                                    `tfsdk:"monitor_id" path:"monitor_id,optional"`
+	AccountID       types.String                                    `tfsdk:"account_id" path:"account_id,required"`
 	AllowInsecure   types.Bool                                      `tfsdk:"allow_insecure" json:"allow_insecure,computed"`
 	ConsecutiveDown types.Int64                                     `tfsdk:"consecutive_down" json:"consecutive_down,computed"`
 	ConsecutiveUp   types.Int64                                     `tfsdk:"consecutive_up" json:"consecutive_up,computed"`
@@ -31,7 +32,6 @@ type LoadBalancerMonitorDataSourceModel struct {
 	ExpectedBody    types.String                                    `tfsdk:"expected_body" json:"expected_body,computed"`
 	ExpectedCodes   types.String                                    `tfsdk:"expected_codes" json:"expected_codes,computed"`
 	FollowRedirects types.Bool                                      `tfsdk:"follow_redirects" json:"follow_redirects,computed"`
-	ID              types.String                                    `tfsdk:"id" json:"id,computed"`
 	Interval        types.Int64                                     `tfsdk:"interval" json:"interval,computed"`
 	Method          types.String                                    `tfsdk:"method" json:"method,computed"`
 	ModifiedOn      types.String                                    `tfsdk:"modified_on" json:"modified_on,computed"`
@@ -42,7 +42,6 @@ type LoadBalancerMonitorDataSourceModel struct {
 	Timeout         types.Int64                                     `tfsdk:"timeout" json:"timeout,computed"`
 	Type            types.String                                    `tfsdk:"type" json:"type,computed"`
 	Header          customfield.Map[customfield.List[types.String]] `tfsdk:"header" json:"header,computed"`
-	Filter          *LoadBalancerMonitorFindOneByDataSourceModel    `tfsdk:"filter"`
 }
 
 func (m *LoadBalancerMonitorDataSourceModel) toReadParams(_ context.Context) (params load_balancers.MonitorGetParams, diags diag.Diagnostics) {
@@ -55,12 +54,8 @@ func (m *LoadBalancerMonitorDataSourceModel) toReadParams(_ context.Context) (pa
 
 func (m *LoadBalancerMonitorDataSourceModel) toListParams(_ context.Context) (params load_balancers.MonitorListParams, diags diag.Diagnostics) {
 	params = load_balancers.MonitorListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
-}
-
-type LoadBalancerMonitorFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

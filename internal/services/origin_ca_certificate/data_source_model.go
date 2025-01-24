@@ -21,11 +21,11 @@ type OriginCACertificateResultListDataSourceEnvelope struct {
 }
 
 type OriginCACertificateDataSourceModel struct {
+	ID                types.String                                 `tfsdk:"id" json:"-,computed"`
 	CertificateID     types.String                                 `tfsdk:"certificate_id" path:"certificate_id,optional"`
 	Certificate       types.String                                 `tfsdk:"certificate" json:"certificate,computed"`
 	Csr               types.String                                 `tfsdk:"csr" json:"csr,computed"`
 	ExpiresOn         types.String                                 `tfsdk:"expires_on" json:"expires_on,computed"`
-	ID                types.String                                 `tfsdk:"id" json:"id,computed"`
 	RequestType       types.String                                 `tfsdk:"request_type" json:"request_type,computed"`
 	RequestedValidity types.Float64                                `tfsdk:"requested_validity" json:"requested_validity,computed"`
 	Hostnames         customfield.List[types.String]               `tfsdk:"hostnames" json:"hostnames,computed"`

@@ -19,12 +19,16 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustListDataSource)(nil
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Optional: true,
+			"id": schema.StringAttribute{
+				Description: "API Resource UUID tag.",
+				Computed:    true,
 			},
 			"list_id": schema.StringAttribute{
 				Description: "API Resource UUID tag.",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Required: true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
@@ -32,10 +36,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "The description of the list.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "API Resource UUID tag.",
 				Computed:    true,
 			},
 			"list_count": schema.Float64Attribute{
@@ -66,9 +66,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Required: true,
-					},
 					"type": schema.StringAttribute{
 						Description: "The type of list.",
 						Optional:    true,
@@ -94,8 +91,6 @@ func (d *ZeroTrustListDataSource) Schema(ctx context.Context, req datasource.Sch
 
 func (d *ZeroTrustListDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("list_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("list_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("list_id"), path.MatchRoot("filter")),
 	}
 }

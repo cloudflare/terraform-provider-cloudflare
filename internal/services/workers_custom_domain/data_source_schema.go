@@ -16,13 +16,17 @@ var _ datasource.DataSourceWithConfigValidators = (*WorkersCustomDomainDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifer of the account.",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "Identifer of the Worker Domain.",
+				Computed:    true,
 			},
 			"domain_id": schema.StringAttribute{
 				Description: "Identifer of the Worker Domain.",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifer of the account.",
+				Required:    true,
 			},
 			"environment": schema.StringAttribute{
 				Description: "Worker environment associated with the zone and hostname.",
@@ -30,10 +34,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hostname": schema.StringAttribute{
 				Description: "Hostname of the Worker Domain.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifer of the Worker Domain.",
 				Computed:    true,
 			},
 			"service": schema.StringAttribute{
@@ -51,10 +51,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifer of the account.",
-						Required:    true,
-					},
 					"environment": schema.StringAttribute{
 						Description: "Worker environment associated with the zone and hostname.",
 						Optional:    true,
@@ -87,8 +83,6 @@ func (d *WorkersCustomDomainDataSource) Schema(ctx context.Context, req datasour
 
 func (d *WorkersCustomDomainDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("domain_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("domain_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("domain_id"), path.MatchRoot("filter")),
 	}
 }

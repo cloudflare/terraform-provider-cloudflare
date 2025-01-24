@@ -6,10 +6,8 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ByoIPPrefixDataSource)(nil)
@@ -17,6 +15,10 @@ var _ datasource.DataSourceWithConfigValidators = (*ByoIPPrefixDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier of an IP Prefix.",
+				Computed:    true,
+			},
 			"prefix_id": schema.StringAttribute{
 				Description: "Identifier of an IP Prefix.",
 				Optional:    true,
@@ -24,7 +26,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Description: "Identifier of a Cloudflare account.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"advertised": schema.BoolAttribute{
 				Description: "Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.",
@@ -55,10 +56,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Description of the prefix.",
 				Computed:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "Identifier of an IP Prefix.",
-				Computed:    true,
-			},
 			"loa_document_id": schema.StringAttribute{
 				Description: "Identifier for the uploaded LOA document.",
 				Computed:    true,
@@ -75,15 +72,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether advertisement status of the prefix is locked, meaning it cannot be changed.",
 				Computed:    true,
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier of a Cloudflare account.",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -93,9 +81,5 @@ func (d *ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.Schem
 }
 
 func (d *ByoIPPrefixDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("prefix_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("prefix_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

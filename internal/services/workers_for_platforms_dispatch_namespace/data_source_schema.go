@@ -6,10 +6,8 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*WorkersForPlatformsDispatchNamespaceDataSource)(nil)
@@ -17,13 +15,17 @@ var _ datasource.DataSourceWithConfigValidators = (*WorkersForPlatformsDispatchN
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "Name of the Workers for Platforms dispatch namespace.",
+				Computed:    true,
 			},
 			"dispatch_namespace": schema.StringAttribute{
 				Description: "Name of the Workers for Platforms dispatch namespace.",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 			"created_by": schema.StringAttribute{
 				Description: "Identifier",
@@ -55,15 +57,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The current number of scripts in this Dispatch Namespace",
 				Computed:    true,
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -73,9 +66,5 @@ func (d *WorkersForPlatformsDispatchNamespaceDataSource) Schema(ctx context.Cont
 }
 
 func (d *WorkersForPlatformsDispatchNamespaceDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("dispatch_namespace")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("dispatch_namespace")),
-	}
+	return []datasource.ConfigValidator{}
 }

@@ -5,10 +5,8 @@ package dns_zone_transfers_peer
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*DNSZoneTransfersPeerDataSource)(nil)
@@ -16,14 +14,14 @@ var _ datasource.DataSourceWithConfigValidators = (*DNSZoneTransfersPeerDataSour
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Optional: true,
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"peer_id": schema.StringAttribute{
 				Optional: true,
 			},
-			"id": schema.StringAttribute{
-				Computed: true,
+			"account_id": schema.StringAttribute{
+				Required: true,
 			},
 			"ip": schema.StringAttribute{
 				Description: "IPv4/IPv6 address of primary or secondary nameserver, depending on what zone this peer is linked to. For primary zones this IP defines the IP of the secondary nameserver Cloudflare will NOTIFY upon zone changes. For secondary zones this IP defines the IP of the primary nameserver Cloudflare will send AXFR/IXFR requests to.",
@@ -45,14 +43,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "TSIG authentication will be used for zone transfer if configured.",
 				Computed:    true,
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Required: true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -62,9 +52,5 @@ func (d *DNSZoneTransfersPeerDataSource) Schema(ctx context.Context, req datasou
 }
 
 func (d *DNSZoneTransfersPeerDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("peer_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("peer_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

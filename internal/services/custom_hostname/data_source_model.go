@@ -22,13 +22,13 @@ type CustomHostnameResultListDataSourceEnvelope struct {
 }
 
 type CustomHostnameDataSourceModel struct {
+	ID                        types.String                                                                     `tfsdk:"id" json:"-,computed"`
 	CustomHostnameID          types.String                                                                     `tfsdk:"custom_hostname_id" path:"custom_hostname_id,optional"`
-	ZoneID                    types.String                                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID                    types.String                                                                     `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedAt                 timetypes.RFC3339                                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CustomOriginServer        types.String                                                                     `tfsdk:"custom_origin_server" json:"custom_origin_server,computed"`
 	CustomOriginSNI           types.String                                                                     `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed"`
 	Hostname                  types.String                                                                     `tfsdk:"hostname" json:"hostname,computed"`
-	ID                        types.String                                                                     `tfsdk:"id" json:"id,computed"`
 	Status                    types.String                                                                     `tfsdk:"status" json:"status,computed"`
 	CustomMetadata            customfield.Map[types.String]                                                    `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
 	VerificationErrors        customfield.List[types.String]                                                   `tfsdk:"verification_errors" json:"verification_errors,computed"`
@@ -48,7 +48,7 @@ func (m *CustomHostnameDataSourceModel) toReadParams(_ context.Context) (params 
 
 func (m *CustomHostnameDataSourceModel) toListParams(_ context.Context) (params custom_hostnames.CustomHostnameListParams, diags diag.Diagnostics) {
 	params = custom_hostnames.CustomHostnameListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	if !m.Filter.ID.IsNull() {
@@ -124,7 +124,6 @@ type CustomHostnameSSLValidationRecordsDataSourceModel struct {
 }
 
 type CustomHostnameFindOneByDataSourceModel struct {
-	ZoneID    types.String  `tfsdk:"zone_id" path:"zone_id,required"`
 	ID        types.String  `tfsdk:"id" query:"id,optional"`
 	Direction types.String  `tfsdk:"direction" query:"direction,optional"`
 	Hostname  types.String  `tfsdk:"hostname" query:"hostname,optional"`

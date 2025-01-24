@@ -17,13 +17,17 @@ var _ datasource.DataSourceWithConfigValidators = (*MagicTransitSiteDataSource)(
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Computed:    true,
 			},
 			"site_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 			"connector_id": schema.StringAttribute{
 				Description: "Magic Connector identifier tag.",
@@ -34,10 +38,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"ha_mode": schema.BoolAttribute{
 				Description: "Site high availability mode. If set to true, the site can have two connectors and runs in high availability mode.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
@@ -66,10 +66,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
 					"connector_identifier": schema.StringAttribute{
 						Description: "Identifier",
 						Optional:    true,
@@ -86,8 +82,6 @@ func (d *MagicTransitSiteDataSource) Schema(ctx context.Context, req datasource.
 
 func (d *MagicTransitSiteDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("site_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("site_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("site_id"), path.MatchRoot("filter")),
 	}
 }

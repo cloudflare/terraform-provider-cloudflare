@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -19,14 +17,18 @@ var _ datasource.DataSourceWithConfigValidators = (*QueueDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description: "A Resource identifier.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"queue_id": schema.StringAttribute{
 				Description: "A Resource identifier.",
 				Computed:    true,
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "A Resource identifier.",
+				Required:    true,
 			},
 			"consumers_total_count": schema.Float64Attribute{
 				Computed: true,
@@ -140,15 +142,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "A Resource identifier.",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -158,9 +151,5 @@ func (d *QueueDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 }
 
 func (d *QueueDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("queue_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("queue_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

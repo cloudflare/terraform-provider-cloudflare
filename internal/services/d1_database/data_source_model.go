@@ -22,8 +22,9 @@ type D1DatabaseResultListDataSourceEnvelope struct {
 }
 
 type D1DatabaseDataSourceModel struct {
-	AccountID  types.String                        `tfsdk:"account_id" path:"account_id,optional"`
+	ID         types.String                        `tfsdk:"id" json:"-,computed"`
 	DatabaseID types.String                        `tfsdk:"database_id" path:"database_id,optional"`
+	AccountID  types.String                        `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAt  timetypes.RFC3339                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	FileSize   types.Float64                       `tfsdk:"file_size" json:"file_size,computed"`
 	Name       types.String                        `tfsdk:"name" json:"name,computed"`
@@ -43,7 +44,7 @@ func (m *D1DatabaseDataSourceModel) toReadParams(_ context.Context) (params d1.D
 
 func (m *D1DatabaseDataSourceModel) toListParams(_ context.Context) (params d1.DatabaseListParams, diags diag.Diagnostics) {
 	params = d1.DatabaseListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.Name.IsNull() {
@@ -54,6 +55,5 @@ func (m *D1DatabaseDataSourceModel) toListParams(_ context.Context) (params d1.D
 }
 
 type D1DatabaseFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
-	Name      types.String `tfsdk:"name" query:"name,optional"`
+	Name types.String `tfsdk:"name" query:"name,optional"`
 }

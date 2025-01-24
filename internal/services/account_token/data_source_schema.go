@@ -21,22 +21,22 @@ var _ datasource.DataSourceWithConfigValidators = (*AccountTokenDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Account identifier tag.",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "Token identifier tag.",
+				Computed:    true,
 			},
 			"token_id": schema.StringAttribute{
 				Description: "Token identifier tag.",
 				Optional:    true,
 			},
+			"account_id": schema.StringAttribute{
+				Description: "Account identifier tag.",
+				Required:    true,
+			},
 			"expires_on": schema.StringAttribute{
 				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Token identifier tag.",
-				Computed:    true,
 			},
 			"issued_on": schema.StringAttribute{
 				Description: "The time on which the token was created.",
@@ -157,10 +157,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Account identifier tag.",
-						Required:    true,
-					},
 					"direction": schema.StringAttribute{
 						Description: "Direction to order results.",
 						Optional:    true,
@@ -180,8 +176,6 @@ func (d *AccountTokenDataSource) Schema(ctx context.Context, req datasource.Sche
 
 func (d *AccountTokenDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("token_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("token_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("token_id"), path.MatchRoot("filter")),
 	}
 }

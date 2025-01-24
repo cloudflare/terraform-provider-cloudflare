@@ -22,11 +22,11 @@ type AccessRuleResultListDataSourceEnvelope struct {
 }
 
 type AccessRuleDataSourceModel struct {
-	AccountID     types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	ID            types.String                                                     `tfsdk:"id" json:"-,computed"`
 	RuleID        types.String                                                     `tfsdk:"rule_id" path:"rule_id,optional"`
+	AccountID     types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID        types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn     timetypes.RFC3339                                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ID            types.String                                                     `tfsdk:"id" json:"id,computed"`
 	Mode          types.String                                                     `tfsdk:"mode" json:"mode,computed"`
 	ModifiedOn    timetypes.RFC3339                                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Notes         types.String                                                     `tfsdk:"notes" json:"notes,computed"`
@@ -39,10 +39,10 @@ type AccessRuleDataSourceModel struct {
 func (m *AccessRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.AccessRuleGetParams, diags diag.Diagnostics) {
 	params = firewall.AccessRuleGetParams{}
 
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -77,10 +77,10 @@ func (m *AccessRuleDataSourceModel) toListParams(_ context.Context) (params fire
 		params.Order = cloudflare.F(firewall.AccessRuleListParamsOrder(m.Filter.Order.ValueString()))
 	}
 
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -98,8 +98,6 @@ type AccessRuleScopeDataSourceModel struct {
 }
 
 type AccessRuleFindOneByDataSourceModel struct {
-	AccountID     types.String                            `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID        types.String                            `tfsdk:"zone_id" path:"zone_id,optional"`
 	Configuration *AccessRuleConfigurationDataSourceModel `tfsdk:"configuration" query:"configuration,optional"`
 	Direction     types.String                            `tfsdk:"direction" query:"direction,optional"`
 	Match         types.String                            `tfsdk:"match" query:"match,computed_optional"`

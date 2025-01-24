@@ -22,8 +22,9 @@ type WebAnalyticsSiteResultListDataSourceEnvelope struct {
 }
 
 type WebAnalyticsSiteDataSourceModel struct {
-	AccountID   types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	ID          types.String                                                       `tfsdk:"id" json:"-,computed"`
 	SiteID      types.String                                                       `tfsdk:"site_id" path:"site_id,optional"`
+	AccountID   types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
 	AutoInstall types.Bool                                                         `tfsdk:"auto_install" json:"auto_install,computed"`
 	Created     timetypes.RFC3339                                                  `tfsdk:"created" json:"created,computed" format:"date-time"`
 	SiteTag     types.String                                                       `tfsdk:"site_tag" json:"site_tag,computed"`
@@ -44,7 +45,7 @@ func (m *WebAnalyticsSiteDataSourceModel) toReadParams(_ context.Context) (param
 
 func (m *WebAnalyticsSiteDataSourceModel) toListParams(_ context.Context) (params rum.SiteInfoListParams, diags diag.Diagnostics) {
 	params = rum.SiteInfoListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.OrderBy.IsNull() {
@@ -72,6 +73,5 @@ type WebAnalyticsSiteRulesetDataSourceModel struct {
 }
 
 type WebAnalyticsSiteFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
-	OrderBy   types.String `tfsdk:"order_by" query:"order_by,optional"`
+	OrderBy types.String `tfsdk:"order_by" query:"order_by,optional"`
 }

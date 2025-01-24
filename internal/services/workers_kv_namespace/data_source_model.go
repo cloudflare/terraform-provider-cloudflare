@@ -21,9 +21,9 @@ type WorkersKVNamespaceResultListDataSourceEnvelope struct {
 }
 
 type WorkersKVNamespaceDataSourceModel struct {
-	AccountID           types.String                                `tfsdk:"account_id" path:"account_id,optional"`
+	ID                  types.String                                `tfsdk:"id" json:"-,computed"`
 	NamespaceID         types.String                                `tfsdk:"namespace_id" path:"namespace_id,optional"`
-	ID                  types.String                                `tfsdk:"id" json:"id,computed"`
+	AccountID           types.String                                `tfsdk:"account_id" path:"account_id,required"`
 	SupportsURLEncoding types.Bool                                  `tfsdk:"supports_url_encoding" json:"supports_url_encoding,computed"`
 	Title               types.String                                `tfsdk:"title" json:"title,computed"`
 	Filter              *WorkersKVNamespaceFindOneByDataSourceModel `tfsdk:"filter"`
@@ -39,7 +39,7 @@ func (m *WorkersKVNamespaceDataSourceModel) toReadParams(_ context.Context) (par
 
 func (m *WorkersKVNamespaceDataSourceModel) toListParams(_ context.Context) (params kv.NamespaceListParams, diags diag.Diagnostics) {
 	params = kv.NamespaceListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.Direction.IsNull() {
@@ -53,7 +53,6 @@ func (m *WorkersKVNamespaceDataSourceModel) toListParams(_ context.Context) (par
 }
 
 type WorkersKVNamespaceFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	Direction types.String `tfsdk:"direction" query:"direction,optional"`
 	Order     types.String `tfsdk:"order" query:"order,optional"`
 }

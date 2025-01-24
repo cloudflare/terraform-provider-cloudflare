@@ -17,13 +17,17 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustTunnelCloudflaredVi
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Cloudflare account ID",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "UUID of the virtual network.",
+				Computed:    true,
 			},
 			"virtual_network_id": schema.StringAttribute{
 				Description: "UUID of the virtual network.",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Cloudflare account ID",
+				Required:    true,
 			},
 			"comment": schema.StringAttribute{
 				Description: "Optional remark describing the virtual network.",
@@ -39,10 +43,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"id": schema.StringAttribute{
-				Description: "UUID of the virtual network.",
-				Computed:    true,
-			},
 			"is_default_network": schema.BoolAttribute{
 				Description: "If `true`, this virtual network is the default for the account.",
 				Computed:    true,
@@ -54,10 +54,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Cloudflare account ID",
-						Required:    true,
-					},
 					"id": schema.StringAttribute{
 						Description: "UUID of the virtual network.",
 						Optional:    true,
@@ -86,8 +82,6 @@ func (d *ZeroTrustTunnelCloudflaredVirtualNetworkDataSource) Schema(ctx context.
 
 func (d *ZeroTrustTunnelCloudflaredVirtualNetworkDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("virtual_network_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("virtual_network_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("virtual_network_id"), path.MatchRoot("filter")),
 	}
 }

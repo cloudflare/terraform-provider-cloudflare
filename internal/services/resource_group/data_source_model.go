@@ -12,38 +12,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type ResourceGroupResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ResourceGroupDataSourceModel] `json:"result,computed"`
-}
-
 type ResourceGroupDataSourceModel struct {
-	AccountID       types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
-	ResourceGroupID types.String                                                    `tfsdk:"resource_group_id" path:"resource_group_id,optional"`
+	AccountID       types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
+	ResourceGroupID types.String                                                    `tfsdk:"resource_group_id" path:"resource_group_id,required"`
 	ID              types.String                                                    `tfsdk:"id" json:"id,computed"`
 	Name            types.String                                                    `tfsdk:"name" json:"name,computed"`
 	Meta            customfield.NestedObject[ResourceGroupMetaDataSourceModel]      `tfsdk:"meta" json:"meta,computed"`
 	Scope           customfield.NestedObjectList[ResourceGroupScopeDataSourceModel] `tfsdk:"scope" json:"scope,computed"`
-	Filter          *ResourceGroupFindOneByDataSourceModel                          `tfsdk:"filter"`
 }
 
 func (m *ResourceGroupDataSourceModel) toReadParams(_ context.Context) (params iam.ResourceGroupGetParams, diags diag.Diagnostics) {
 	params = iam.ResourceGroupGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *ResourceGroupDataSourceModel) toListParams(_ context.Context) (params iam.ResourceGroupListParams, diags diag.Diagnostics) {
-	params = iam.ResourceGroupListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
-	}
-
-	if !m.Filter.ID.IsNull() {
-		params.ID = cloudflare.F(m.Filter.ID.ValueString())
-	}
-	if !m.Filter.Name.IsNull() {
-		params.Name = cloudflare.F(m.Filter.Name.ValueString())
 	}
 
 	return
@@ -61,10 +41,4 @@ type ResourceGroupScopeDataSourceModel struct {
 
 type ResourceGroupScopeObjectsDataSourceModel struct {
 	Key types.String `tfsdk:"key" json:"key,computed"`
-}
-
-type ResourceGroupFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
-	ID        types.String `tfsdk:"id" query:"id,optional"`
-	Name      types.String `tfsdk:"name" query:"name,optional"`
 }

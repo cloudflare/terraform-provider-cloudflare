@@ -22,11 +22,11 @@ type RegionalHostnameResultListDataSourceEnvelope struct {
 }
 
 type RegionalHostnameDataSourceModel struct {
-	ZoneID    types.String                              `tfsdk:"zone_id" path:"zone_id,optional"`
-	Hostname  types.String                              `tfsdk:"hostname" path:"hostname,computed_optional"`
-	CreatedOn timetypes.RFC3339                         `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	RegionKey types.String                              `tfsdk:"region_key" json:"region_key,computed"`
-	Filter    *RegionalHostnameFindOneByDataSourceModel `tfsdk:"filter"`
+	ID        types.String      `tfsdk:"id" json:"-,computed"`
+	Hostname  types.String      `tfsdk:"hostname" path:"hostname,computed_optional"`
+	ZoneID    types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	CreatedOn timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	RegionKey types.String      `tfsdk:"region_key" json:"region_key,computed"`
 }
 
 func (m *RegionalHostnameDataSourceModel) toReadParams(_ context.Context) (params addressing.RegionalHostnameGetParams, diags diag.Diagnostics) {
@@ -39,12 +39,8 @@ func (m *RegionalHostnameDataSourceModel) toReadParams(_ context.Context) (param
 
 func (m *RegionalHostnameDataSourceModel) toListParams(_ context.Context) (params addressing.RegionalHostnameListParams, diags diag.Diagnostics) {
 	params = addressing.RegionalHostnameListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return
-}
-
-type RegionalHostnameFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }

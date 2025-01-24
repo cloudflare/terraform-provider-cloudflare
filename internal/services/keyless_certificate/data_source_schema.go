@@ -7,11 +7,9 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,13 +19,17 @@ var _ datasource.DataSourceWithConfigValidators = (*KeylessCertificateDataSource
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 			"keyless_certificate_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was created.",
@@ -40,10 +42,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"host": schema.StringAttribute{
 				Description: "The keyless SSL name.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Keyless certificate identifier tag.",
 				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
@@ -87,15 +85,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -105,9 +94,5 @@ func (d *KeylessCertificateDataSource) Schema(ctx context.Context, req datasourc
 }
 
 func (d *KeylessCertificateDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("keyless_certificate_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("keyless_certificate_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

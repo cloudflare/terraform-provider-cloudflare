@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -19,12 +17,16 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustGatewayCertificateD
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Optional: true,
+			"id": schema.StringAttribute{
+				Description: "Certificate UUID tag.",
+				Computed:    true,
 			},
 			"certificate_id": schema.StringAttribute{
 				Description: "Certificate UUID tag.",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Required: true,
 			},
 			"binding_status": schema.StringAttribute{
 				Description: "The deployment status of the certificate on Cloudflare's edge. Certificates in the 'available' (previously called 'active') state may be used for Gateway TLS interception.",
@@ -54,10 +56,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The SHA256 fingerprint of the certificate.",
 				Computed:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "Certificate UUID tag.",
-				Computed:    true,
-			},
 			"in_use": schema.BoolAttribute{
 				Description: "Use this certificate for Gateway TLS interception",
 				Computed:    true,
@@ -85,14 +83,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Required: true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -102,9 +92,5 @@ func (d *ZeroTrustGatewayCertificateDataSource) Schema(ctx context.Context, req 
 }
 
 func (d *ZeroTrustGatewayCertificateDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("certificate_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("certificate_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

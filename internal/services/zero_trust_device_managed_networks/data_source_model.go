@@ -21,12 +21,12 @@ type ZeroTrustDeviceManagedNetworksResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDeviceManagedNetworksDataSourceModel struct {
-	AccountID types.String                                                                  `tfsdk:"account_id" path:"account_id,optional"`
+	ID        types.String                                                                  `tfsdk:"id" json:"-,computed"`
 	NetworkID types.String                                                                  `tfsdk:"network_id" path:"network_id,computed_optional"`
+	AccountID types.String                                                                  `tfsdk:"account_id" path:"account_id,required"`
 	Name      types.String                                                                  `tfsdk:"name" json:"name,computed"`
 	Type      types.String                                                                  `tfsdk:"type" json:"type,computed"`
 	Config    customfield.NestedObject[ZeroTrustDeviceManagedNetworksConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
-	Filter    *ZeroTrustDeviceManagedNetworksFindOneByDataSourceModel                       `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DeviceNetworkGetParams, diags diag.Diagnostics) {
@@ -39,7 +39,7 @@ func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toReadParams(_ context.C
 
 func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toListParams(_ context.Context) (params zero_trust.DeviceNetworkListParams, diags diag.Diagnostics) {
 	params = zero_trust.DeviceNetworkListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -48,8 +48,4 @@ func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toListParams(_ context.C
 type ZeroTrustDeviceManagedNetworksConfigDataSourceModel struct {
 	TLSSockaddr types.String `tfsdk:"tls_sockaddr" json:"tls_sockaddr,computed"`
 	Sha256      types.String `tfsdk:"sha256" json:"sha256,computed"`
-}
-
-type ZeroTrustDeviceManagedNetworksFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

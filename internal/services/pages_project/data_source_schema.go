@@ -7,11 +7,9 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -23,34 +21,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"project_name": schema.StringAttribute{
 				Description: "Name of the project.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the project was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"environment": schema.StringAttribute{
-				Description: "Type of deploy.",
-				Computed:    true,
-			},
 			"id": schema.StringAttribute{
 				Description: "Id of the project.",
 				Computed:    true,
-			},
-			"is_skipped": schema.BoolAttribute{
-				Description: "If the deployment has been skipped.",
-				Computed:    true,
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "When the deployment was last modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
 				Description: "Name of the project.",
@@ -60,27 +44,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Production branch of the project. Used to identify production deployments.",
 				Computed:    true,
 			},
-			"project_id": schema.StringAttribute{
-				Description: "Id of the project.",
-				Computed:    true,
-			},
-			"short_id": schema.StringAttribute{
-				Description: "Short Id (8 character) of the deployment.",
-				Computed:    true,
-			},
 			"subdomain": schema.StringAttribute{
 				Description: "The Cloudflare subdomain associated with the project.",
 				Computed:    true,
-			},
-			"url": schema.StringAttribute{
-				Description: "The live URL to view this deployment.",
-				Computed:    true,
-			},
-			"aliases": schema.ListAttribute{
-				Description: "A list of alias URLs pointing to this deployment.",
-				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
 			},
 			"domains": schema.ListAttribute{
 				Description: "A list of associated custom domains for the project.",
@@ -784,53 +750,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"deployment_trigger": schema.SingleNestedAttribute{
-				Description: "Info about what caused the deployment.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentTriggerDataSourceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"metadata": schema.SingleNestedAttribute{
-						Description: "Additional info about the trigger.",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentTriggerMetadataDataSourceModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"branch": schema.StringAttribute{
-								Description: "Where the trigger happened.",
-								Computed:    true,
-							},
-							"commit_hash": schema.StringAttribute{
-								Description: "Hash of the deployment trigger commit.",
-								Computed:    true,
-							},
-							"commit_message": schema.StringAttribute{
-								Description: "Message of the deployment trigger commit.",
-								Computed:    true,
-							},
-						},
-					},
-					"type": schema.StringAttribute{
-						Description: "What caused the deployment.",
-						Computed:    true,
-					},
-				},
-			},
-			"env_vars": schema.MapNestedAttribute{
-				Description: "A dict of env variables to build this deploy.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectMapType[PagesProjectEnvVarsDataSourceModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"value": schema.StringAttribute{
-							Description: "Environment variable value.",
-							Computed:    true,
-						},
-						"type": schema.StringAttribute{
-							Description: "The type of environment variable.",
-							Computed:    true,
-						},
-					},
-				},
-			},
 			"latest_deployment": schema.SingleNestedAttribute{
 				Description: "Most recent deployment to the repo.",
 				Computed:    true,
@@ -1075,31 +994,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"latest_stage": schema.SingleNestedAttribute{
-				Description: "The status of the deployment.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[PagesProjectLatestStageDataSourceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"ended_on": schema.StringAttribute{
-						Description: "When the stage ended.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"name": schema.StringAttribute{
-						Description: "The current build stage.",
-						Computed:    true,
-					},
-					"started_on": schema.StringAttribute{
-						Description: "When the stage started.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"status": schema.StringAttribute{
-						Description: "State of the current stage.",
-						Computed:    true,
-					},
-				},
-			},
 			"source": schema.SingleNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[PagesProjectSourceDataSourceModel](ctx),
@@ -1163,42 +1057,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"stages": schema.ListNestedAttribute{
-				Description: "List of past stages.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[PagesProjectStagesDataSourceModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"ended_on": schema.StringAttribute{
-							Description: "When the stage ended.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
-						"name": schema.StringAttribute{
-							Description: "The current build stage.",
-							Computed:    true,
-						},
-						"started_on": schema.StringAttribute{
-							Description: "When the stage started.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
-						"status": schema.StringAttribute{
-							Description: "State of the current stage.",
-							Computed:    true,
-						},
-					},
-				},
-			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -1208,9 +1066,5 @@ func (d *PagesProjectDataSource) Schema(ctx context.Context, req datasource.Sche
 }
 
 func (d *PagesProjectDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("project_name")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("project_name")),
-	}
+	return []datasource.ConfigValidator{}
 }

@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -20,12 +18,16 @@ var _ datasource.DataSourceWithConfigValidators = (*MagicNetworkMonitoringRuleDa
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Optional: true,
+			"id": schema.StringAttribute{
+				Description: "The id of the rule. Must be unique.",
+				Computed:    true,
 			},
 			"rule_id": schema.StringAttribute{
 				Description: "The id of the rule. Must be unique.",
 				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Required: true,
 			},
 			"automatic_advertisement": schema.BoolAttribute{
 				Description: "Toggle on if you would like Cloudflare to automatically advertise the IP Prefixes within the rule via Magic Transit when the rule is triggered. Only available for users of Magic Transit.",
@@ -40,10 +42,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"duration": schema.StringAttribute{
 				Description: "The amount of time that the rule threshold must be exceeded to send an alert notification. The final value must be equivalent to one of the following 8 values [\"1m\",\"5m\",\"10m\",\"15m\",\"20m\",\"30m\",\"45m\",\"60m\"]. The format is AhBmCsDmsEusFns where A, B, C, D, E and F durations are optional; however at least one unit must be provided.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The id of the rule. Must be unique.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
@@ -62,14 +60,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Required: true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -79,9 +69,5 @@ func (d *MagicNetworkMonitoringRuleDataSource) Schema(ctx context.Context, req d
 }
 
 func (d *MagicNetworkMonitoringRuleDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("rule_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("rule_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

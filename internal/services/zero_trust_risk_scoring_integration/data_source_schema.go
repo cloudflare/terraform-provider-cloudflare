@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -19,11 +17,14 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustRiskScoringIntegrat
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Optional: true,
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"integration_id": schema.StringAttribute{
 				Optional: true,
+			},
+			"account_id": schema.StringAttribute{
+				Required: true,
 			},
 			"account_tag": schema.StringAttribute{
 				Description: "The Cloudflare account tag.",
@@ -37,10 +38,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the integration was created in RFC3339 format.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "The id of the integration, a UUIDv4.",
-				Computed:    true,
 			},
 			"integration_type": schema.StringAttribute{
 				Computed: true,
@@ -60,14 +57,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The URL for the Shared Signals Framework configuration, e.g. \"/.well-known/sse-configuration/{integration_uuid}/\". https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.6.2.1",
 				Computed:    true,
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Required: true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -77,9 +66,5 @@ func (d *ZeroTrustRiskScoringIntegrationDataSource) Schema(ctx context.Context, 
 }
 
 func (d *ZeroTrustRiskScoringIntegrationDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("integration_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("integration_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

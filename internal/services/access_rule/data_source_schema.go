@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -23,12 +22,16 @@ var _ datasource.DataSourceWithConfigValidators = (*AccessRuleDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "Unique identifier for a rule",
+				Computed:    true,
 			},
 			"rule_id": schema.StringAttribute{
 				Description: "Unique identifier for a rule",
+				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
@@ -39,10 +42,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The timestamp of when the rule was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "The unique identifier of the IP Access rule.",
-				Computed:    true,
 			},
 			"mode": schema.StringAttribute{
 				Description: "The action to apply to a matched request.",
@@ -131,18 +130,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
-				Validators: []validator.Object{
-					objectvalidator.ExactlyOneOf(path.MatchRelative().AtName("account_id"), path.MatchRelative().AtName("zone_id")),
-				},
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-						Optional:    true,
-					},
-					"zone_id": schema.StringAttribute{
-						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-						Optional:    true,
-					},
 					"configuration": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
@@ -219,9 +207,7 @@ func (d *AccessRuleDataSource) Schema(ctx context.Context, req datasource.Schema
 
 func (d *AccessRuleDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("rule_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("rule_id"), path.MatchRoot("filter")),
 		datasourcevalidator.Conflicting(path.MatchRoot("account_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
 	}
 }

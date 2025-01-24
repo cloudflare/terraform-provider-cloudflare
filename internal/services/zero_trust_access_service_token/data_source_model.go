@@ -22,14 +22,14 @@ type ZeroTrustAccessServiceTokenResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessServiceTokenDataSourceModel struct {
-	AccountID      types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
+	ID             types.String                                         `tfsdk:"id" json:"-,computed"`
 	ServiceTokenID types.String                                         `tfsdk:"service_token_id" path:"service_token_id,optional"`
+	AccountID      types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID         types.String                                         `tfsdk:"zone_id" path:"zone_id,optional"`
 	ClientID       types.String                                         `tfsdk:"client_id" json:"client_id,computed"`
 	CreatedAt      timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Duration       types.String                                         `tfsdk:"duration" json:"duration,computed"`
 	ExpiresAt      timetypes.RFC3339                                    `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
-	ID             types.String                                         `tfsdk:"id" json:"id,computed"`
 	LastSeenAt     timetypes.RFC3339                                    `tfsdk:"last_seen_at" json:"last_seen_at,computed" format:"date-time"`
 	Name           types.String                                         `tfsdk:"name" json:"name,computed"`
 	UpdatedAt      timetypes.RFC3339                                    `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
@@ -39,10 +39,10 @@ type ZeroTrustAccessServiceTokenDataSourceModel struct {
 func (m *ZeroTrustAccessServiceTokenDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessServiceTokenGetParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessServiceTokenGetParams{}
 
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
@@ -58,18 +58,16 @@ func (m *ZeroTrustAccessServiceTokenDataSourceModel) toListParams(_ context.Cont
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
 
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
 	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
 }
 
 type ZeroTrustAccessServiceTokenFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
-	Name      types.String `tfsdk:"name" query:"name,optional"`
-	Search    types.String `tfsdk:"search" query:"search,optional"`
+	Name   types.String `tfsdk:"name" query:"name,optional"`
+	Search types.String `tfsdk:"search" query:"search,optional"`
 }

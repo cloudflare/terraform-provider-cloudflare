@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -19,15 +17,18 @@ var _ datasource.DataSourceWithConfigValidators = (*WaitingRoomEventDataSource)(
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed: true,
+			},
 			"event_id": schema.StringAttribute{
 				Optional: true,
 			},
 			"waiting_room_id": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Required:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Computed:   true,
@@ -52,9 +53,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"event_start_time": schema.StringAttribute{
 				Description: "An ISO 8601 timestamp that marks the start of the event. At this time, queued users will be processed with the event's configuration. The start time must be at least one minute before `event_end_time`.",
 				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Computed: true,
 			},
 			"modified_on": schema.StringAttribute{
 				Computed:   true,
@@ -101,18 +99,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					int64validator.Between(200, 2147483647),
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-					"waiting_room_id": schema.StringAttribute{
-						Required: true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -122,14 +108,5 @@ func (d *WaitingRoomEventDataSource) Schema(ctx context.Context, req datasource.
 }
 
 func (d *WaitingRoomEventDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(
-			path.MatchRoot("event_id"),
-			path.MatchRoot("waiting_room_id"),
-			path.MatchRoot("zone_id"),
-		),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("event_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("waiting_room_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

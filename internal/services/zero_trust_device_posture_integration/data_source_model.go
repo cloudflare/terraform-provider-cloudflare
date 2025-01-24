@@ -21,14 +21,13 @@ type ZeroTrustDevicePostureIntegrationResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDevicePostureIntegrationDataSourceModel struct {
-	AccountID     types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	ID            types.String                                                                     `tfsdk:"id" json:"-,computed"`
 	IntegrationID types.String                                                                     `tfsdk:"integration_id" path:"integration_id,optional"`
-	ID            types.String                                                                     `tfsdk:"id" json:"id,computed"`
+	AccountID     types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
 	Interval      types.String                                                                     `tfsdk:"interval" json:"interval,computed"`
 	Name          types.String                                                                     `tfsdk:"name" json:"name,computed"`
 	Type          types.String                                                                     `tfsdk:"type" json:"type,computed"`
 	Config        customfield.NestedObject[ZeroTrustDevicePostureIntegrationConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
-	Filter        *ZeroTrustDevicePostureIntegrationFindOneByDataSourceModel                       `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustDevicePostureIntegrationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePostureIntegrationGetParams, diags diag.Diagnostics) {
@@ -41,7 +40,7 @@ func (m *ZeroTrustDevicePostureIntegrationDataSourceModel) toReadParams(_ contex
 
 func (m *ZeroTrustDevicePostureIntegrationDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePostureIntegrationListParams, diags diag.Diagnostics) {
 	params = zero_trust.DevicePostureIntegrationListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -51,8 +50,4 @@ type ZeroTrustDevicePostureIntegrationConfigDataSourceModel struct {
 	APIURL   types.String `tfsdk:"api_url" json:"api_url,computed"`
 	AuthURL  types.String `tfsdk:"auth_url" json:"auth_url,computed"`
 	ClientID types.String `tfsdk:"client_id" json:"client_id,computed"`
-}
-
-type ZeroTrustDevicePostureIntegrationFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

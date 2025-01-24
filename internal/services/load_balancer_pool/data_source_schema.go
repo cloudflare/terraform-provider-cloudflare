@@ -23,12 +23,15 @@ var _ datasource.DataSourceWithConfigValidators = (*LoadBalancerPoolDataSource)(
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"pool_id": schema.StringAttribute{
 				Optional: true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Computed: true,
@@ -45,9 +48,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"enabled": schema.BoolAttribute{
 				Description: "Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).",
 				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Computed: true,
 			},
 			"latitude": schema.Float64Attribute{
 				Description: "The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.",
@@ -252,10 +252,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
 					"monitor": schema.StringAttribute{
 						Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
 						Optional:    true,
@@ -272,8 +268,6 @@ func (d *LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.
 
 func (d *LoadBalancerPoolDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("pool_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("pool_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("pool_id"), path.MatchRoot("filter")),
 	}
 }

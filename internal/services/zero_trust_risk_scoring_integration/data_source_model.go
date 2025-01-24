@@ -22,17 +22,16 @@ type ZeroTrustRiskScoringIntegrationResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustRiskScoringIntegrationDataSourceModel struct {
-	AccountID       types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
-	IntegrationID   types.String                                             `tfsdk:"integration_id" path:"integration_id,optional"`
-	AccountTag      types.String                                             `tfsdk:"account_tag" json:"account_tag,computed"`
-	Active          types.Bool                                               `tfsdk:"active" json:"active,computed"`
-	CreatedAt       timetypes.RFC3339                                        `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	ID              types.String                                             `tfsdk:"id" json:"id,computed"`
-	IntegrationType types.String                                             `tfsdk:"integration_type" json:"integration_type,computed"`
-	ReferenceID     types.String                                             `tfsdk:"reference_id" json:"reference_id,computed"`
-	TenantURL       types.String                                             `tfsdk:"tenant_url" json:"tenant_url,computed"`
-	WellKnownURL    types.String                                             `tfsdk:"well_known_url" json:"well_known_url,computed"`
-	Filter          *ZeroTrustRiskScoringIntegrationFindOneByDataSourceModel `tfsdk:"filter"`
+	ID              types.String      `tfsdk:"id" json:"-,computed"`
+	IntegrationID   types.String      `tfsdk:"integration_id" path:"integration_id,optional"`
+	AccountID       types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountTag      types.String      `tfsdk:"account_tag" json:"account_tag,computed"`
+	Active          types.Bool        `tfsdk:"active" json:"active,computed"`
+	CreatedAt       timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	IntegrationType types.String      `tfsdk:"integration_type" json:"integration_type,computed"`
+	ReferenceID     types.String      `tfsdk:"reference_id" json:"reference_id,computed"`
+	TenantURL       types.String      `tfsdk:"tenant_url" json:"tenant_url,computed"`
+	WellKnownURL    types.String      `tfsdk:"well_known_url" json:"well_known_url,computed"`
 }
 
 func (m *ZeroTrustRiskScoringIntegrationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.RiskScoringIntegrationGetParams, diags diag.Diagnostics) {
@@ -45,12 +44,8 @@ func (m *ZeroTrustRiskScoringIntegrationDataSourceModel) toReadParams(_ context.
 
 func (m *ZeroTrustRiskScoringIntegrationDataSourceModel) toListParams(_ context.Context) (params zero_trust.RiskScoringIntegrationListParams, diags diag.Diagnostics) {
 	params = zero_trust.RiskScoringIntegrationListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
-}
-
-type ZeroTrustRiskScoringIntegrationFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

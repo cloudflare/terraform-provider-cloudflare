@@ -21,6 +21,10 @@ var _ datasource.DataSourceWithConfigValidators = (*APITokenDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Token identifier tag.",
+				Computed:    true,
+			},
 			"token_id": schema.StringAttribute{
 				Description: "Token identifier tag.",
 				Optional:    true,
@@ -29,10 +33,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Token identifier tag.",
-				Computed:    true,
 			},
 			"issued_on": schema.StringAttribute{
 				Description: "The time on which the token was created.",
@@ -172,6 +172,6 @@ func (d *APITokenDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 
 func (d *APITokenDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("token_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("token_id"), path.MatchRoot("filter")),
 	}
 }

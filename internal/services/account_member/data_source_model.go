@@ -21,9 +21,9 @@ type AccountMemberResultListDataSourceEnvelope struct {
 }
 
 type AccountMemberDataSourceModel struct {
-	AccountID types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	ID        types.String                                                       `tfsdk:"id" json:"-,computed"`
 	MemberID  types.String                                                       `tfsdk:"member_id" path:"member_id,optional"`
-	ID        types.String                                                       `tfsdk:"id" json:"id,computed"`
+	AccountID types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
 	Status    types.String                                                       `tfsdk:"status" json:"status,computed"`
 	Policies  customfield.NestedObjectList[AccountMemberPoliciesDataSourceModel] `tfsdk:"policies" json:"policies,computed"`
 	Roles     customfield.NestedObjectList[AccountMemberRolesDataSourceModel]    `tfsdk:"roles" json:"roles,computed"`
@@ -41,7 +41,7 @@ func (m *AccountMemberDataSourceModel) toReadParams(_ context.Context) (params a
 
 func (m *AccountMemberDataSourceModel) toListParams(_ context.Context) (params accounts.MemberListParams, diags diag.Diagnostics) {
 	params = accounts.MemberListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.Direction.IsNull() {
@@ -187,7 +187,6 @@ type AccountMemberUserDataSourceModel struct {
 }
 
 type AccountMemberFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	Direction types.String `tfsdk:"direction" query:"direction,optional"`
 	Order     types.String `tfsdk:"order" query:"order,optional"`
 	Status    types.String `tfsdk:"status" query:"status,optional"`
