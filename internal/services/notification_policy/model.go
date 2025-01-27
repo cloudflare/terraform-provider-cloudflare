@@ -70,6 +70,7 @@ type NotificationPolicyFiltersModel struct {
 	HealthCheckID                *[]types.String `tfsdk:"health_check_id" json:"health_check_id,optional"`
 	IncidentImpact               *[]types.String `tfsdk:"incident_impact" json:"incident_impact,optional"`
 	InputID                      *[]types.String `tfsdk:"input_id" json:"input_id,optional"`
+	InsightClass                 *[]types.String `tfsdk:"insight_class" json:"insight_class,optional"`
 	Limit                        *[]types.String `tfsdk:"limit" json:"limit,optional"`
 	LogoTag                      *[]types.String `tfsdk:"logo_tag" json:"logo_tag,optional"`
 	MegabitsPerSecond            *[]types.String `tfsdk:"megabits_per_second" json:"megabits_per_second,optional"`
@@ -77,7 +78,7 @@ type NotificationPolicyFiltersModel struct {
 	NewStatus                    *[]types.String `tfsdk:"new_status" json:"new_status,optional"`
 	PacketsPerSecond             *[]types.String `tfsdk:"packets_per_second" json:"packets_per_second,optional"`
 	PoolID                       *[]types.String `tfsdk:"pool_id" json:"pool_id,optional"`
-	POPName                      *[]types.String `tfsdk:"pop_name" json:"pop_name,optional"`
+	POPNames                     *[]types.String `tfsdk:"pop_names" json:"pop_names,optional"`
 	Product                      *[]types.String `tfsdk:"product" json:"product,optional"`
 	ProjectID                    *[]types.String `tfsdk:"project_id" json:"project_id,optional"`
 	Protocol                     *[]types.String `tfsdk:"protocol" json:"protocol,optional"`
