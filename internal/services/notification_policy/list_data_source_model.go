@@ -61,6 +61,7 @@ type NotificationPoliciesFiltersDataSourceModel struct {
 	HealthCheckID                customfield.List[types.String] `tfsdk:"health_check_id" json:"health_check_id,computed"`
 	IncidentImpact               customfield.List[types.String] `tfsdk:"incident_impact" json:"incident_impact,computed"`
 	InputID                      customfield.List[types.String] `tfsdk:"input_id" json:"input_id,computed"`
+	InsightClass                 customfield.List[types.String] `tfsdk:"insight_class" json:"insight_class,computed"`
 	Limit                        customfield.List[types.String] `tfsdk:"limit" json:"limit,computed"`
 	LogoTag                      customfield.List[types.String] `tfsdk:"logo_tag" json:"logo_tag,computed"`
 	MegabitsPerSecond            customfield.List[types.String] `tfsdk:"megabits_per_second" json:"megabits_per_second,computed"`
@@ -68,7 +69,7 @@ type NotificationPoliciesFiltersDataSourceModel struct {
 	NewStatus                    customfield.List[types.String] `tfsdk:"new_status" json:"new_status,computed"`
 	PacketsPerSecond             customfield.List[types.String] `tfsdk:"packets_per_second" json:"packets_per_second,computed"`
 	PoolID                       customfield.List[types.String] `tfsdk:"pool_id" json:"pool_id,computed"`
-	POPName                      customfield.List[types.String] `tfsdk:"pop_name" json:"pop_name,computed"`
+	POPNames                     customfield.List[types.String] `tfsdk:"pop_names" json:"pop_names,computed"`
 	Product                      customfield.List[types.String] `tfsdk:"product" json:"product,computed"`
 	ProjectID                    customfield.List[types.String] `tfsdk:"project_id" json:"project_id,computed"`
 	Protocol                     customfield.List[types.String] `tfsdk:"protocol" json:"protocol,computed"`
