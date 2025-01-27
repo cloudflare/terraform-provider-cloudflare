@@ -67,9 +67,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"hostname_aop_custom_certificate_expiration_type",
 						"http_alert_edge_error",
 						"http_alert_origin_error",
-						"incident_alert",
 						"image_notification",
 						"image_resizing_notification",
+						"incident_alert",
 						"load_balancing_health_alert",
 						"load_balancing_pool_enablement_alert",
 						"logo_match_alert",
@@ -92,6 +92,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"secondary_dns_warning",
 						"secondary_dns_zone_successfully_updated",
 						"secondary_dns_zone_validation_warning",
+						"security_insights_alert",
 						"sentinel_alert",
 						"stream_live_notifications",
 						"synthetic_test_latency_alert",
@@ -258,6 +259,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						ElementType: types.StringType,
 					},
+					"insight_class": schema.ListAttribute{
+						Description: "Used for configuring security_insights_alert",
+						Optional:    true,
+						ElementType: types.StringType,
+					},
 					"limit": schema.ListAttribute{
 						Description: "Used for configuring billing_usage_alert",
 						Optional:    true,
@@ -293,7 +299,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						ElementType: types.StringType,
 					},
-					"pop_name": schema.ListAttribute{
+					"pop_names": schema.ListAttribute{
 						Description: "Usage depends on specific alert type",
 						Optional:    true,
 						ElementType: types.StringType,
