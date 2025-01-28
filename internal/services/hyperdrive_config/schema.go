@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -25,9 +26,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"hyperdrive_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description:   "Identifier",
-				Optional:      true,
+				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
@@ -81,6 +82,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"disabled": schema.BoolAttribute{
 						Description: "When set to true, disables the caching of SQL responses. (Default: false)",
 						Optional:    true,
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"max_age": schema.Int64Attribute{
 						Description: "When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)",
@@ -96,10 +99,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the Hyperdrive configuration was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the Hyperdrive configuration was last modified.",
