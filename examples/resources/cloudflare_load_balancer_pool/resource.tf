@@ -3,7 +3,6 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
   name = "primary-dc-1"
   origins = [{
     address = "0.0.0.0"
-    disabled_at = "2019-12-27T18:11:19.117Z"
     enabled = true
     header = {
       host = ["example.com"]
