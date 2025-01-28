@@ -48,3 +48,11 @@ release:
   extra_files:
     - glob: "terraform-registry-manifest.json"
       name_template: "{{ .ProjectName }}_{{ .Version }}_manifest.json"
+changelog:
+  disable: true
+snapshot:
+  version_template: "{{.ShortCommit}}-dev"
+announce:
+  discord:
+    enabled: true
+    message_template: "{{ .ProjectName }} ({{ .Version }}) has been released. See the release notes at {{ .ReleaseURL }}"
