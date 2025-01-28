@@ -42,7 +42,7 @@ func (m *PageShieldScriptsListDataSourceModel) toListParams(_ context.Context) (
 	}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(page_shield.ScriptListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(ScriptListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.ExcludeCDNCGI.IsNull() {
 		params.ExcludeCDNCGI = cloudflare.F(m.ExcludeCDNCGI.ValueBool())
@@ -54,13 +54,13 @@ func (m *PageShieldScriptsListDataSourceModel) toListParams(_ context.Context) (
 		params.ExcludeURLs = cloudflare.F(m.ExcludeURLs.ValueString())
 	}
 	if !m.Export.IsNull() {
-		params.Export = cloudflare.F(page_shield.ScriptListParamsExport(m.Export.ValueString()))
+		params.Export = cloudflare.F(ScriptListParamsExport(m.Export.ValueString()))
 	}
 	if !m.Hosts.IsNull() {
 		params.Hosts = cloudflare.F(m.Hosts.ValueString())
 	}
 	if !m.OrderBy.IsNull() {
-		params.OrderBy = cloudflare.F(page_shield.ScriptListParamsOrderBy(m.OrderBy.ValueString()))
+		params.OrderBy = cloudflare.F(ScriptListParamsOrderBy(m.OrderBy.ValueString()))
 	}
 	if !m.Page.IsNull() {
 		params.Page = cloudflare.F(m.Page.ValueString())

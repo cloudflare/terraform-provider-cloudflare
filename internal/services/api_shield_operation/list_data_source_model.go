@@ -31,15 +31,15 @@ type APIShieldOperationsDataSourceModel struct {
 }
 
 func (m *APIShieldOperationsDataSourceModel) toListParams(_ context.Context) (params api_gateway.OperationListParams, diags diag.Diagnostics) {
-	mFeature := []api_gateway.OperationListParamsFeature{}
+	mFeature := []OperationListParamsFeature{}
 	for _, item := range *m.Feature {
-		mFeature = append(mFeature, api_gateway.OperationListParamsFeature(item.ValueString()))
+		mFeature = append(mFeature, OperationListParamsFeature(item.ValueString()))
 	}
-	mHost := []string{}
+	mHost := []OperationListParamsHost{}
 	for _, item := range *m.Host {
 		mHost = append(mHost, item.ValueString())
 	}
-	mMethod := []string{}
+	mMethod := []OperationListParamsMethod{}
 	for _, item := range *m.Method {
 		mMethod = append(mMethod, item.ValueString())
 	}
@@ -52,13 +52,13 @@ func (m *APIShieldOperationsDataSourceModel) toListParams(_ context.Context) (pa
 	}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(api_gateway.OperationListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(OperationListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Endpoint.IsNull() {
 		params.Endpoint = cloudflare.F(m.Endpoint.ValueString())
 	}
 	if !m.Order.IsNull() {
-		params.Order = cloudflare.F(api_gateway.OperationListParamsOrder(m.Order.ValueString()))
+		params.Order = cloudflare.F(OperationListParamsOrder(m.Order.ValueString()))
 	}
 
 	return

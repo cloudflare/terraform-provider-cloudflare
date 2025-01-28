@@ -29,7 +29,7 @@ func (m *EmailRoutingRulesDataSourceModel) toListParams(_ context.Context) (para
 	}
 
 	if !m.Enabled.IsNull() {
-		params.Enabled = cloudflare.F(email_routing.RuleListParamsEnabled(m.Enabled.ValueBool()))
+		params.Enabled = cloudflare.F(RuleListParamsEnabled(m.Enabled.ValueBool()))
 	}
 
 	return

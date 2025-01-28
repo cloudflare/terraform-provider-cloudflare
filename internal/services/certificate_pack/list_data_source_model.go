@@ -29,7 +29,7 @@ func (m *CertificatePacksDataSourceModel) toListParams(_ context.Context) (param
 	}
 
 	if !m.Status.IsNull() {
-		params.Status = cloudflare.F(ssl.CertificatePackListParamsStatus(m.Status.ValueString()))
+		params.Status = cloudflare.F(CertificatePackListParamsStatus(m.Status.ValueString()))
 	}
 
 	return

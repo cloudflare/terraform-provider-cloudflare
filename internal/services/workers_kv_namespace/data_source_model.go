@@ -43,10 +43,10 @@ func (m *WorkersKVNamespaceDataSourceModel) toListParams(_ context.Context) (par
 	}
 
 	if !m.Filter.Direction.IsNull() {
-		params.Direction = cloudflare.F(kv.NamespaceListParamsDirection(m.Filter.Direction.ValueString()))
+		params.Direction = cloudflare.F(NamespaceListParamsDirection(m.Filter.Direction.ValueString()))
 	}
 	if !m.Filter.Order.IsNull() {
-		params.Order = cloudflare.F(kv.NamespaceListParamsOrder(m.Filter.Order.ValueString()))
+		params.Order = cloudflare.F(NamespaceListParamsOrder(m.Filter.Order.ValueString()))
 	}
 
 	return

@@ -44,15 +44,15 @@ func (m *APIShieldOperationDataSourceModel) toReadParams(_ context.Context) (par
 }
 
 func (m *APIShieldOperationDataSourceModel) toListParams(_ context.Context) (params api_gateway.OperationListParams, diags diag.Diagnostics) {
-	mFilterFeature := []api_gateway.OperationListParamsFeature{}
+	mFilterFeature := []OperationListParamsFeature{}
 	for _, item := range *m.Filter.Feature {
-		mFilterFeature = append(mFilterFeature, api_gateway.OperationListParamsFeature(item.ValueString()))
+		mFilterFeature = append(mFilterFeature, OperationListParamsFeature(item.ValueString()))
 	}
-	mFilterHost := []string{}
+	mFilterHost := []OperationListParamsHost{}
 	for _, item := range *m.Filter.Host {
 		mFilterHost = append(mFilterHost, item.ValueString())
 	}
-	mFilterMethod := []string{}
+	mFilterMethod := []OperationListParamsMethod{}
 	for _, item := range *m.Filter.Method {
 		mFilterMethod = append(mFilterMethod, item.ValueString())
 	}
@@ -65,13 +65,13 @@ func (m *APIShieldOperationDataSourceModel) toListParams(_ context.Context) (par
 	}
 
 	if !m.Filter.Direction.IsNull() {
-		params.Direction = cloudflare.F(api_gateway.OperationListParamsDirection(m.Filter.Direction.ValueString()))
+		params.Direction = cloudflare.F(OperationListParamsDirection(m.Filter.Direction.ValueString()))
 	}
 	if !m.Filter.Endpoint.IsNull() {
 		params.Endpoint = cloudflare.F(m.Filter.Endpoint.ValueString())
 	}
 	if !m.Filter.Order.IsNull() {
-		params.Order = cloudflare.F(api_gateway.OperationListParamsOrder(m.Filter.Order.ValueString()))
+		params.Order = cloudflare.F(OperationListParamsOrder(m.Filter.Order.ValueString()))
 	}
 
 	return
