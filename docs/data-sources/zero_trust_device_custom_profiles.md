@@ -40,7 +40,7 @@ Read-Only:
 - `allow_mode_switch` (Boolean) Whether to allow the user to switch WARP between modes.
 - `allow_updates` (Boolean) Whether to receive update notifications when a new version of the client is available.
 - `allowed_to_leave` (Boolean) Whether to allow devices to leave the organization.
-- `auto_connect` (Number) The amount of time in minutes to reconnect after having been disabled.
+- `auto_connect` (Number) The amount of time in seconds to reconnect after having been disabled.
 - `captive_portal` (Number) Turn on the captive portal after the specified amount of time.
 - `default` (Boolean) Whether the policy is the default policy for an account.
 - `description` (String) A description of the policy.

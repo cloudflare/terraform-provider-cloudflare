@@ -34,7 +34,7 @@ data "cloudflare_access_rule" "example_access_rule" {
 - `allowed_modes` (List of String) The available actions that a rule can apply to a matched request.
 - `configuration` (Attributes) The rule configuration. (see [below for nested schema](#nestedatt--configuration))
 - `created_on` (String) The timestamp of when the rule was created.
-- `id` (String) The unique identifier of the IP Access rule.
+- `id` (String) Unique identifier for a rule
 - `mode` (String) The action to apply to a matched request.
 - `modified_on` (String) The timestamp of when the rule was last modified.
 - `notes` (String) An informative summary of the rule, typically used as a reminder or explanation.
@@ -45,7 +45,6 @@ data "cloudflare_access_rule" "example_access_rule" {
 
 Optional:
 
-- `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `configuration` (Attributes) (see [below for nested schema](#nestedatt--filter--configuration))
 - `direction` (String) The direction used to sort returned rules.
 - `match` (String) When set to `all`, all the search requirements must match. When set to `any`, only one of the search requirements has to match.
@@ -53,7 +52,6 @@ Optional:
 - `notes` (String) The string to search for in the notes of existing IP Access rules.
 Notes: For example, the string 'attack' would match IP Access rules with notes 'Attack 26/02' and 'Attack 27/02'. The search is case insensitive.
 - `order` (String) The field used to sort returned rules.
-- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 <a id="nestedatt--filter--configuration"></a>
 ### Nested Schema for `filter.configuration`

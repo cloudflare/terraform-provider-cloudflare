@@ -20,6 +20,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
       config = {
         html_handling = "auto-trailing-slash"
         not_found_handling = "none"
+        run_worker_first = false
         serve_directly = true
       }
       jwt = "jwt"
@@ -96,14 +97,13 @@ resource "cloudflare_workers_script" "example_workers_script" {
 
 ### Read-Only
 
+- `created_on` (String) When the script was created.
 - `etag` (String) Hashed script content, can be used in a If-None-Match header when updating.
 - `has_assets` (Boolean) Whether a Worker contains assets.
 - `has_modules` (Boolean) Whether a Worker contains modules.
 - `id` (String) Name of the script, used in URLs and route configuration.
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `modified_on` (String) When the script was last modified.
-- `placement_mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
-- `placement_status` (String) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 - `startup_time_ms` (Number)
 - `usage_model` (String) Usage model for the Worker invocations.
 
@@ -122,6 +122,7 @@ Optional:
 
 - `html_handling` (String) Determines the redirects and rewrites of requests for HTML content.
 - `not_found_handling` (String) Determines the response when a request does not match a static asset, and there is no Worker script.
+- `run_worker_first` (Boolean) When true, requests will always invoke the Worker script. Otherwise, attempt to serve an asset matching the request, falling back to the Worker script.
 - `serve_directly` (Boolean) When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.
 
 

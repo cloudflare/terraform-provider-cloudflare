@@ -37,7 +37,7 @@ data "cloudflare_zero_trust_device_posture_integrations" "example_zero_trust_dev
 
 Read-Only:
 
-- `config` (Attributes) The configuration object containing third-party integration information. (see [below for nested schema](#nestedatt--result--config))
+- `config` (Attributes) The Workspace One Config Response. (see [below for nested schema](#nestedatt--result--config))
 - `id` (String) API UUID.
 - `interval` (String) The interval between each posture check with the third-party API. Use `m` for minutes (e.g. `5m`) and `h` for hours (e.g. `12h`).
 - `name` (String) The name of the device posture integration.

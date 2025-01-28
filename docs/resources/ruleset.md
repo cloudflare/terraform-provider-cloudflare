@@ -112,7 +112,7 @@ Optional:
 - `browser_ttl` (Attributes) Specify how long client browsers should cache the response. Cloudflare cache purge will not purge content cached on client browsers, so high browser TTLs may lead to stale content. (see [below for nested schema](#nestedatt--rules--action_parameters--browser_ttl))
 - `cache` (Boolean) Mark whether the request’s response from origin is eligible for caching. Caching itself will still depend on the cache-control header and your other caching configurations.
 - `cache_key` (Attributes) Define which components of the request are included or excluded from the cache key Cloudflare uses to store the response in cache. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key))
-- `cache_reserve` (Attributes) Mark whether the request's response from origin is eligible for  Cache Reserve (requires a Cache Reserve add-on plan). (see [below for nested schema](#nestedatt--rules--action_parameters--cache_reserve))
+- `cache_reserve` (Attributes) Mark whether the request's response from origin is eligible for Cache Reserve (requires a Cache Reserve add-on plan). (see [below for nested schema](#nestedatt--rules--action_parameters--cache_reserve))
 - `content` (String) Error response content.
 - `content_type` (String) Content-type header to set with the response.
 - `cookie_fields` (Attributes List) The cookie fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--cookie_fields))
@@ -205,7 +205,7 @@ Optional:
 - `cookie` (Attributes) The cookies to include in building the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--cookie))
 - `header` (Attributes) The header names and values to include in building the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--header))
 - `host` (Attributes) Whether to use the original host or the resolved host in the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--host))
-- `query_string` (Attributes) Use the presence or absence of parameters in the query string to build the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string))
+- `query_string` (Attributes) Use the presence of parameters in the query string to build the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string))
 - `user` (Attributes) Characteristics of the request user agent used in building the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--user))
 
 <a id="nestedatt--rules--action_parameters--cache_key--custom_key--cookie"></a>
@@ -241,16 +241,16 @@ Optional:
 
 Optional:
 
-- `exclude` (Attributes) build the cache key using all query string parameters EXCECPT these excluded parameters (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string--exclude))
-- `include` (Attributes) build the cache key using a list of query string parameters that ARE in the request. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string--include))
+- `exclude` (Attributes) A list of query string parameters NOT used to build the cache key. All parameters present in the request but missing in this list will be used to build the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string--exclude))
+- `include` (Attributes) A list of query string parameters used to build the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string--include))
 
 <a id="nestedatt--rules--action_parameters--cache_key--custom_key--query_string--exclude"></a>
 ### Nested Schema for `rules.action_parameters.cache_key.custom_key.query_string.exclude`
 
 Optional:
 
-- `all` (Boolean) Exclude all query string parameters from use in building the cache key.
-- `list` (List of String) A list of query string parameters NOT used to build the cache key. All parameters present in the request but missing in this list will be used to build the cache key.
+- `all` (Boolean) Determines whether to exclude all query string parameters from the cache key.
+- `list` (List of String)
 
 
 <a id="nestedatt--rules--action_parameters--cache_key--custom_key--query_string--include"></a>
@@ -258,8 +258,8 @@ Optional:
 
 Optional:
 
-- `all` (Boolean) Use all query string parameters in the cache key.
-- `list` (List of String) A list of query string parameters used to build the cache key.
+- `all` (Boolean) Determines whether to include all query string parameters in the cache key.
+- `list` (List of String)
 
 
 

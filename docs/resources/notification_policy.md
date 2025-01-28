@@ -47,6 +47,7 @@ resource "cloudflare_notification_policy" "example_notification_policy" {
     health_check_id = ["string"]
     incident_impact = ["INCIDENT_IMPACT_NONE"]
     input_id = ["string"]
+    insight_class = ["string"]
     limit = ["string"]
     logo_tag = ["string"]
     megabits_per_second = ["string"]
@@ -54,7 +55,7 @@ resource "cloudflare_notification_policy" "example_notification_policy" {
     new_status = ["string"]
     packets_per_second = ["string"]
     pool_id = ["string"]
-    pop_name = ["string"]
+    pop_names = ["string"]
     product = ["string"]
     project_id = ["string"]
     protocol = ["string"]
@@ -83,7 +84,7 @@ resource "cloudflare_notification_policy" "example_notification_policy" {
 
 - `account_id` (String) The account id
 - `alert_type` (String) Refers to which event will trigger a Notification dispatch. You can use the endpoint to get available alert types which then will give you a list of possible values.
-- `mechanisms` (Map of List of Object) List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.
+- `mechanisms` (Attributes) List of IDs that will be used when dispatching a notification. IDs for email type will be the email address. (see [below for nested schema](#nestedatt--mechanisms))
 - `name` (String) Name of the policy.
 
 ### Optional
@@ -98,6 +99,40 @@ resource "cloudflare_notification_policy" "example_notification_policy" {
 - `created` (String)
 - `id` (String) UUID
 - `modified` (String)
+
+<a id="nestedatt--mechanisms"></a>
+### Nested Schema for `mechanisms`
+
+Optional:
+
+- `email` (Attributes List) (see [below for nested schema](#nestedatt--mechanisms--email))
+- `pagerduty` (Attributes List) (see [below for nested schema](#nestedatt--mechanisms--pagerduty))
+- `webhooks` (Attributes List) (see [below for nested schema](#nestedatt--mechanisms--webhooks))
+
+<a id="nestedatt--mechanisms--email"></a>
+### Nested Schema for `mechanisms.email`
+
+Optional:
+
+- `id` (String) The email address
+
+
+<a id="nestedatt--mechanisms--pagerduty"></a>
+### Nested Schema for `mechanisms.pagerduty`
+
+Read-Only:
+
+- `id` (String) UUID
+
+
+<a id="nestedatt--mechanisms--webhooks"></a>
+### Nested Schema for `mechanisms.webhooks`
+
+Read-Only:
+
+- `id` (String) UUID
+
+
 
 <a id="nestedatt--filters"></a>
 ### Nested Schema for `filters`
@@ -120,6 +155,7 @@ Optional:
 - `health_check_id` (List of String) Used for configuring health_check_status_notification
 - `incident_impact` (List of String) Used for configuring incident_alert
 - `input_id` (List of String) Used for configuring stream_live_notifications
+- `insight_class` (List of String) Used for configuring security_insights_alert
 - `limit` (List of String) Used for configuring billing_usage_alert
 - `logo_tag` (List of String) Used for configuring logo_match_alert
 - `megabits_per_second` (List of String) Used for configuring advanced_ddos_attack_l4_alert
@@ -127,7 +163,7 @@ Optional:
 - `new_status` (List of String) Used for configuring tunnel_health_event
 - `packets_per_second` (List of String) Used for configuring advanced_ddos_attack_l4_alert
 - `pool_id` (List of String) Usage depends on specific alert type
-- `pop_name` (List of String) Usage depends on specific alert type
+- `pop_names` (List of String) Usage depends on specific alert type
 - `product` (List of String) Used for configuring billing_usage_alert
 - `project_id` (List of String) Used for configuring pages_event_alert
 - `protocol` (List of String) Used for configuring advanced_ddos_attack_l4_alert

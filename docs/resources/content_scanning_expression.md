@@ -30,7 +30,7 @@ resource "cloudflare_content_scanning_expression" "example_content_scanning_expr
 
 ### Optional
 
-- `expression_id` (String) The unique ID for this custom scan expression
+- `expression_id` (String) Identifier
 
 <a id="nestedatt--body"></a>
 ### Nested Schema for `body`

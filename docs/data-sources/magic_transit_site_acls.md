@@ -46,6 +46,7 @@ Read-Only:
 - `lan_2` (Attributes) (see [below for nested schema](#nestedatt--result--lan_2))
 - `name` (String) The name of the ACL.
 - `protocols` (List of String)
+- `unidirectional` (Boolean) The desired traffic direction for this ACL policy. If set to "false", the policy will allow bidirectional traffic. If set to "true", the policy will only allow traffic in one direction. If not included in request, will default to false.
 
 <a id="nestedatt--result--lan_1"></a>
 ### Nested Schema for `result.lan_1`
@@ -54,7 +55,8 @@ Read-Only:
 
 - `lan_id` (String) The identifier for the LAN you want to create an ACL policy with.
 - `lan_name` (String) The name of the LAN based on the provided lan_id.
-- `ports` (List of Number) Array of ports on the provided LAN that will be included in the ACL. If no ports are provided, communication on any port on this LAN is allowed.
+- `port_ranges` (List of String) Array of port ranges on the provided LAN that will be included in the ACL. If no ports or port rangess are provided, communication on any port on this LAN is allowed.
+- `ports` (List of Number) Array of ports on the provided LAN that will be included in the ACL. If no ports or port ranges are provided, communication on any port on this LAN is allowed.
 - `subnets` (List of String) Array of subnet IPs within the LAN that will be included in the ACL. If no subnets are provided, communication on any subnets on this LAN are allowed.
 
 
@@ -65,7 +67,8 @@ Read-Only:
 
 - `lan_id` (String) The identifier for the LAN you want to create an ACL policy with.
 - `lan_name` (String) The name of the LAN based on the provided lan_id.
-- `ports` (List of Number) Array of ports on the provided LAN that will be included in the ACL. If no ports are provided, communication on any port on this LAN is allowed.
+- `port_ranges` (List of String) Array of port ranges on the provided LAN that will be included in the ACL. If no ports or port rangess are provided, communication on any port on this LAN is allowed.
+- `ports` (List of Number) Array of ports on the provided LAN that will be included in the ACL. If no ports or port ranges are provided, communication on any port on this LAN is allowed.
 - `subnets` (List of String) Array of subnet IPs within the LAN that will be included in the ACL. If no subnets are provided, communication on any subnets on this LAN are allowed.
 
 

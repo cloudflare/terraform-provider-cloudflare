@@ -44,7 +44,7 @@ Read-Only:
 - `enabled` (Boolean) Whether or not the Notification policy is enabled.
 - `filters` (Attributes) Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details. (see [below for nested schema](#nestedatt--result--filters))
 - `id` (String) The unique identifier of a notification policy
-- `mechanisms` (Map of List of Object) List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.
+- `mechanisms` (Attributes) List of IDs that will be used when dispatching a notification. IDs for email type will be the email address. (see [below for nested schema](#nestedatt--result--mechanisms))
 - `modified` (String)
 - `name` (String) Name of the policy.
 
@@ -69,6 +69,7 @@ Read-Only:
 - `health_check_id` (List of String) Used for configuring health_check_status_notification
 - `incident_impact` (List of String) Used for configuring incident_alert
 - `input_id` (List of String) Used for configuring stream_live_notifications
+- `insight_class` (List of String) Used for configuring security_insights_alert
 - `limit` (List of String) Used for configuring billing_usage_alert
 - `logo_tag` (List of String) Used for configuring logo_match_alert
 - `megabits_per_second` (List of String) Used for configuring advanced_ddos_attack_l4_alert
@@ -76,7 +77,7 @@ Read-Only:
 - `new_status` (List of String) Used for configuring tunnel_health_event
 - `packets_per_second` (List of String) Used for configuring advanced_ddos_attack_l4_alert
 - `pool_id` (List of String) Usage depends on specific alert type
-- `pop_name` (List of String) Usage depends on specific alert type
+- `pop_names` (List of String) Usage depends on specific alert type
 - `product` (List of String) Used for configuring billing_usage_alert
 - `project_id` (List of String) Used for configuring pages_event_alert
 - `protocol` (List of String) Used for configuring advanced_ddos_attack_l4_alert
@@ -94,5 +95,38 @@ Read-Only:
 - `tunnel_name` (List of String) Usage depends on specific alert type
 - `where` (List of String) Usage depends on specific alert type
 - `zones` (List of String) Usage depends on specific alert type
+
+
+<a id="nestedatt--result--mechanisms"></a>
+### Nested Schema for `result.mechanisms`
+
+Read-Only:
+
+- `email` (Attributes List) (see [below for nested schema](#nestedatt--result--mechanisms--email))
+- `pagerduty` (Attributes List) (see [below for nested schema](#nestedatt--result--mechanisms--pagerduty))
+- `webhooks` (Attributes List) (see [below for nested schema](#nestedatt--result--mechanisms--webhooks))
+
+<a id="nestedatt--result--mechanisms--email"></a>
+### Nested Schema for `result.mechanisms.email`
+
+Read-Only:
+
+- `id` (String) The email address
+
+
+<a id="nestedatt--result--mechanisms--pagerduty"></a>
+### Nested Schema for `result.mechanisms.pagerduty`
+
+Read-Only:
+
+- `id` (String) UUID
+
+
+<a id="nestedatt--result--mechanisms--webhooks"></a>
+### Nested Schema for `result.mechanisms.webhooks`
+
+Read-Only:
+
+- `id` (String) UUID
 
 
