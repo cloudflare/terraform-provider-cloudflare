@@ -44,7 +44,6 @@ resource "cloudflare_workers_script" "example_workers_script" {
     }
     placement = {
       mode = "smart"
-      status = "SUCCESS"
     }
     tags = ["string"]
     tail_consumers = [{

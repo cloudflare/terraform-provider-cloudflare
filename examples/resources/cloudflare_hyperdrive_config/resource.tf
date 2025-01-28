@@ -4,6 +4,7 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
   origin = {
     database = "postgres"
     host = "database.example.com"
+    password = "password"
     port = 5432
     scheme = "postgres"
     user = "postgres"

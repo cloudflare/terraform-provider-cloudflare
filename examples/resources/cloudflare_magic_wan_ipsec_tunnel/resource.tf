@@ -10,7 +10,6 @@ resource "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
     enabled = true
     rate = "low"
     target = {
-      effective = "203.0.113.1"
       saved = "203.0.113.1"
     }
     type = "reply"
