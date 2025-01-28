@@ -41,14 +41,26 @@ resource "cloudflare_zero_trust_access_application" "example_zero_trust_access_a
     type = "public"
     uri = "test.anotherexample.com/staff"
   }, {
-    type = "public"
-    uri = "10.5.0.2"
+    cidr = "10.5.0.0/24"
+    hostname = "hostname"
+    l4_protocol = "tcp"
+    port_range = "80-90"
+    type = "private"
+    vnet_id = "vnet_id"
   }, {
-    type = "public"
-    uri = "10.5.0.3/32:1234-4321"
+    cidr = "10.5.0.3/32"
+    hostname = "hostname"
+    l4_protocol = "tcp"
+    port_range = "80"
+    type = "private"
+    vnet_id = "vnet_id"
   }, {
-    type = "public"
-    uri = "private-sni.example.com"
+    cidr = "cidr"
+    hostname = "hostname"
+    l4_protocol = "tcp"
+    port_range = "port_range"
+    type = "private"
+    vnet_id = "vnet_id"
   }]
   enable_binding_cookie = true
   http_only_cookie_attribute = true
@@ -161,8 +173,13 @@ Optional:
 
 Optional:
 
+- `cidr` (String) The CIDR range of the destination. Single IPs will be computed as /32.
+- `hostname` (String) The hostname of the destination. Matches a valid SNI served by an HTTPS origin.
+- `l4_protocol` (String) The L4 protocol of the destination. When omitted, both UDP and TCP traffic will match.
+- `port_range` (String) The port range of the destination. Can be a single port or a range of ports. When omitted, all ports will match.
 - `type` (String)
-- `uri` (String) The URI of the destination. Public destinations can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/). Private destinations are an early access feature and gated behind a feature flag. Private destinations support private IPv4, IPv6, and Server Name Indications (SNI) with optional port ranges.
+- `uri` (String) The URI of the destination. Public destinations' URIs can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/).
+- `vnet_id` (String) The VNET ID to match the destination. When omitted, all VNETs will match.
 
 
 <a id="nestedatt--footer_links"></a>

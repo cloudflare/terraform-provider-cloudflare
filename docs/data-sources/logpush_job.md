@@ -25,7 +25,6 @@ data "cloudflare_logpush_job" "example_logpush_job" {
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `job_id` (Number) Unique id of the job.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
@@ -46,15 +45,6 @@ data "cloudflare_logpush_job" "example_logpush_job" {
 - `max_upload_records` (Number) The maximum number of log lines per batch. This setting must be between 1000 and 1,000,000 lines, or `0` to disable it. Note that you cannot specify a minimum number of log lines per batch; this means that log files may contain many fewer lines than this. This parameter is not available for jobs with `edge` as its kind.
 - `name` (String) Optional human readable job name. Not unique. Cloudflare suggests that you set this to a meaningful string, like the domain name, to make it easier to identify your job.
 - `output_options` (Attributes) The structured replacement for `logpull_options`. When including this field, the `logpull_option` field will be ignored. (see [below for nested schema](#nestedatt--output_options))
-
-<a id="nestedatt--filter"></a>
-### Nested Schema for `filter`
-
-Optional:
-
-- `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
-
 
 <a id="nestedatt--output_options"></a>
 ### Nested Schema for `output_options`

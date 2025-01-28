@@ -39,6 +39,7 @@ resource "cloudflare_zero_trust_access_service_token" "example_zero_trust_access
 - `created_at` (String)
 - `expires_at` (String)
 - `id` (String) The ID of the service token.
+- `last_seen_at` (String)
 - `updated_at` (String)
 
 ## Import

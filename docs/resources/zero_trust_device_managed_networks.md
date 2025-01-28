@@ -15,7 +15,7 @@ description: |-
 resource "cloudflare_zero_trust_device_managed_networks" "example_zero_trust_device_managed_networks" {
   account_id = "699d98642c564d2e855e9661899b7252"
   config = {
-    tls_sockaddr = "foo.bar:1234"
+    tls_sockaddr = "foobar:1234"
     sha256 = "b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c"
   }
   name = "managed-network-1"
@@ -29,7 +29,7 @@ resource "cloudflare_zero_trust_device_managed_networks" "example_zero_trust_dev
 ### Required
 
 - `account_id` (String)
-- `config` (Attributes) The configuration object containing information for the WARP client to detect the managed network. (see [below for nested schema](#nestedatt--config))
+- `config` (Attributes) (see [below for nested schema](#nestedatt--config))
 - `name` (String) The name of the device managed network. This name must be unique.
 - `type` (String) The type of device managed network.
 

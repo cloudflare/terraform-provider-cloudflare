@@ -18,12 +18,14 @@ resource "cloudflare_magic_transit_site_acl" "example_magic_transit_site_acl" {
   lan_1 = {
     lan_id = "lan_id"
     lan_name = "lan_name"
+    port_ranges = ["8080-9000"]
     ports = [1]
     subnets = ["192.0.2.1"]
   }
   lan_2 = {
     lan_id = "lan_id"
     lan_name = "lan_name"
+    port_ranges = ["8080-9000"]
     ports = [1]
     subnets = ["192.0.2.1"]
   }
@@ -31,6 +33,7 @@ resource "cloudflare_magic_transit_site_acl" "example_magic_transit_site_acl" {
   description = "Allows local traffic between PIN pads and cash register."
   forward_locally = true
   protocols = ["tcp"]
+  unidirectional = true
 }
 ```
 
@@ -50,6 +53,7 @@ resource "cloudflare_magic_transit_site_acl" "example_magic_transit_site_acl" {
 - `description` (String) Description for the ACL.
 - `forward_locally` (Boolean) The desired forwarding action for this ACL policy. If set to "false", the policy will forward traffic to Cloudflare. If set to "true", the policy will forward traffic locally on the Magic Connector. If not included in request, will default to false.
 - `protocols` (List of String)
+- `unidirectional` (Boolean) The desired traffic direction for this ACL policy. If set to "false", the policy will allow bidirectional traffic. If set to "true", the policy will only allow traffic in one direction. If not included in request, will default to false.
 
 ### Read-Only
 
@@ -65,7 +69,8 @@ Required:
 Optional:
 
 - `lan_name` (String) The name of the LAN based on the provided lan_id.
-- `ports` (List of Number) Array of ports on the provided LAN that will be included in the ACL. If no ports are provided, communication on any port on this LAN is allowed.
+- `port_ranges` (List of String) Array of port ranges on the provided LAN that will be included in the ACL. If no ports or port rangess are provided, communication on any port on this LAN is allowed.
+- `ports` (List of Number) Array of ports on the provided LAN that will be included in the ACL. If no ports or port ranges are provided, communication on any port on this LAN is allowed.
 - `subnets` (List of String) Array of subnet IPs within the LAN that will be included in the ACL. If no subnets are provided, communication on any subnets on this LAN are allowed.
 
 
@@ -79,7 +84,8 @@ Required:
 Optional:
 
 - `lan_name` (String) The name of the LAN based on the provided lan_id.
-- `ports` (List of Number) Array of ports on the provided LAN that will be included in the ACL. If no ports are provided, communication on any port on this LAN is allowed.
+- `port_ranges` (List of String) Array of port ranges on the provided LAN that will be included in the ACL. If no ports or port rangess are provided, communication on any port on this LAN is allowed.
+- `ports` (List of Number) Array of ports on the provided LAN that will be included in the ACL. If no ports or port ranges are provided, communication on any port on this LAN is allowed.
 - `subnets` (List of String) Array of subnet IPs within the LAN that will be included in the ACL. If no subnets are provided, communication on any subnets on this LAN are allowed.
 
 ## Import

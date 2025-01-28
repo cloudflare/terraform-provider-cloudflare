@@ -45,10 +45,8 @@ data "cloudflare_zero_trust_access_group" "example_zero_trust_access_group" {
 
 Optional:
 
-- `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `name` (String) The name of the group.
 - `search` (String) Search for groups by other listed query parameters.
-- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 
 <a id="nestedatt--exclude"></a>

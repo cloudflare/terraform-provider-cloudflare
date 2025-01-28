@@ -53,7 +53,7 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 - `allow_mode_switch` (Boolean) Whether to allow the user to switch WARP between modes.
 - `allow_updates` (Boolean) Whether to receive update notifications when a new version of the client is available.
 - `allowed_to_leave` (Boolean) Whether to allow devices to leave the organization.
-- `auto_connect` (Number) The amount of time in minutes to reconnect after having been disabled.
+- `auto_connect` (Number) The amount of time in seconds to reconnect after having been disabled.
 - `captive_portal` (Number) Turn on the captive portal after the specified amount of time.
 - `description` (String) A description of the policy.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.

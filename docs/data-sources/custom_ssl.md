@@ -25,7 +25,6 @@ data "cloudflare_custom_ssl" "example_custom_ssl" {
 
 - `custom_certificate_id` (String) Identifier
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `zone_id` (String) Identifier
 
 ### Read-Only
 
@@ -42,13 +41,10 @@ data "cloudflare_custom_ssl" "example_custom_ssl" {
 - `signature` (String) The type of hash used for the certificate.
 - `status` (String) Status of the zone's custom SSL.
 - `uploaded_on` (String) When the certificate was uploaded to Cloudflare.
+- `zone_id` (String) Identifier
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
-
-Required:
-
-- `zone_id` (String) Identifier
 
 Optional:
 

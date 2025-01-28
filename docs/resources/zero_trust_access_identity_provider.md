@@ -29,6 +29,7 @@ resource "cloudflare_zero_trust_access_identity_provider" "example_zero_trust_ac
   scim_config = {
     enabled = true
     identity_update_behavior = "automatic"
+    scim_base_url = "scim_base_url"
     seat_deprovision = true
     secret = "secret"
     user_deprovision = true
@@ -114,7 +115,8 @@ Optional:
 
 Read-Only:
 
-- `secret` (String) A read-only token generated when the SCIM integration is enabled for the first time.  It is redacted on subsequent requests.  If you lose this you will need to refresh it token at /access/identity_providers/:idpID/refresh_scim_secret.
+- `scim_base_url` (String) The base URL of Cloudflare's SCIM V2.0 API endpoint.
+- `secret` (String) A read-only token generated when the SCIM integration is enabled for the first time.  It is redacted on subsequent requests.  If you lose this you will need to refresh it at /access/identity_providers/:idpID/refresh_scim_secret.
 
 ## Import
 

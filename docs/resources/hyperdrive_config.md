@@ -18,7 +18,6 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
   origin = {
     database = "postgres"
     host = "database.example.com"
-    password = "password"
     port = 5432
     scheme = "postgres"
     user = "postgres"
@@ -41,10 +40,13 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 ### Optional
 
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--caching))
+- `hyperdrive_id` (String) Identifier
 
 ### Read-Only
 
+- `created_on` (String) When the Hyperdrive configuration was created.
 - `id` (String) Identifier
+- `modified_on` (String) When the Hyperdrive configuration was last modified.
 
 <a id="nestedatt--origin"></a>
 ### Nested Schema for `origin`
@@ -59,7 +61,7 @@ Required:
 
 Optional:
 
-- `access_client_id` (String) The Client ID of the Access token to use when connecting to the origin database
+- `access_client_id` (String) The Client ID of the Access token to use when connecting to the origin database.
 - `access_client_secret` (String) The Client Secret of the Access token to use when connecting to the origin database. This value is write-only and never returned by the API.
 - `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 
@@ -73,10 +75,4 @@ Optional:
 - `max_age` (Number) When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)
 - `stale_while_revalidate` (Number) When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)
 
-## Import
 
-Import is supported using the following syntax:
-
-```shell
-$ terraform import cloudflare_hyperdrive_config.example '<account_id>/<hyperdrive_id>'
-```

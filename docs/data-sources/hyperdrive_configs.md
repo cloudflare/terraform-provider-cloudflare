@@ -38,7 +38,9 @@ data "cloudflare_hyperdrive_configs" "example_hyperdrive_configs" {
 Read-Only:
 
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--result--caching))
+- `created_on` (String) When the Hyperdrive configuration was created.
 - `id` (String) Identifier
+- `modified_on` (String) When the Hyperdrive configuration was last modified.
 - `name` (String)
 - `origin` (Attributes) (see [below for nested schema](#nestedatt--result--origin))
 
@@ -57,7 +59,7 @@ Read-Only:
 
 Read-Only:
 
-- `access_client_id` (String) The Client ID of the Access token to use when connecting to the origin database
+- `access_client_id` (String) The Client ID of the Access token to use when connecting to the origin database.
 - `access_client_secret` (String) The Client Secret of the Access token to use when connecting to the origin database. This value is write-only and never returned by the API.
 - `database` (String) The name of your origin database.
 - `host` (String) The host (hostname or IP) of your origin database.

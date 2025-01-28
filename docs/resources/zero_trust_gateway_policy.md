@@ -36,11 +36,18 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       command_logging = false
     }
     biso_admin_controls = {
+      copy = "enabled"
       dcp = false
       dd = false
       dk = false
+      download = "enabled"
       dp = false
       du = false
+      keyboard = "enabled"
+      paste = "enabled"
+      printing = "enabled"
+      upload = "enabled"
+      version = "v1"
     }
     block_page_enabled = true
     block_reason = "This website is a security risk"
@@ -88,6 +95,10 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
     }
     quarantine = {
       file_types = ["exe"]
+    }
+    resolve_dns_internally = {
+      fallback = "none"
+      view_id = "view_id"
     }
     resolve_dns_through_cloudflare = true
     untrusted_cert = {
@@ -177,7 +188,7 @@ Optional:
 - `block_reason` (String) The text describing why this block occurred, displayed on the custom block page (if enabled).
 - `bypass_parent_rule` (Boolean) Set by children MSP accounts to bypass their parent's rules.
 - `check_session` (Attributes) Configure how session check behaves. (see [below for nested schema](#nestedatt--rule_settings--check_session))
-- `dns_resolvers` (Attributes) Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when resolve_dns_through_cloudflare is set. DNS queries will route to the address closest to their origin. Only valid when a rule's action is set to 'resolve'. (see [below for nested schema](#nestedatt--rule_settings--dns_resolvers))
+- `dns_resolvers` (Attributes) Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when 'resolve_dns_through_cloudflare' or 'resolve_dns_internally' are set. DNS queries will route to the address closest to their origin. Only valid when a rule's action is set to 'resolve'. (see [below for nested schema](#nestedatt--rule_settings--dns_resolvers))
 - `egress` (Attributes) Configure how Gateway Proxy traffic egresses. You can enable this setting for rules with Egress actions and filters, or omit it to indicate local egress via WARP IPs. (see [below for nested schema](#nestedatt--rule_settings--egress))
 - `ignore_cname_category_matches` (Boolean) Set to true, to ignore the category matches at CNAME domains in a response. If unchecked, the categories in this rule will be checked against all the CNAME domain categories in a response.
 - `insecure_disable_dnssec_validation` (Boolean) INSECURE - disable DNSSEC validation (for Allow actions).
@@ -189,7 +200,8 @@ Optional:
 - `override_ips` (List of String) Override matching DNS queries with an IP or set of IPs.
 - `payload_log` (Attributes) Configure DLP payload logging. (see [below for nested schema](#nestedatt--rule_settings--payload_log))
 - `quarantine` (Attributes) Settings that apply to quarantine rules (see [below for nested schema](#nestedatt--rule_settings--quarantine))
-- `resolve_dns_through_cloudflare` (Boolean) Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when dns_resolvers are specified. Only valid when a rule's action is set to 'resolve'.
+- `resolve_dns_internally` (Attributes) Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action is set to 'resolve'. (see [below for nested schema](#nestedatt--rule_settings--resolve_dns_internally))
+- `resolve_dns_through_cloudflare` (Boolean) Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_internally' is set. Only valid when a rule's action is set to 'resolve'.
 - `untrusted_cert` (Attributes) Configure behavior when an upstream cert is invalid or an SSL error occurs. (see [below for nested schema](#nestedatt--rule_settings--untrusted_cert))
 
 <a id="nestedatt--rule_settings--audit_ssh"></a>
@@ -205,11 +217,18 @@ Optional:
 
 Optional:
 
-- `dcp` (Boolean) Set to false to enable copy-pasting.
-- `dd` (Boolean) Set to false to enable downloading.
-- `dk` (Boolean) Set to false to enable keyboard usage.
-- `dp` (Boolean) Set to false to enable printing.
-- `du` (Boolean) Set to false to enable uploading.
+- `copy` (String) Configure whether copy is enabled or not. When set with "remote_only", copying isolated content from the remote browser to the user's local clipboard is disabled. When absent, copy is enabled. Only applies when `version == "v2"`.
+- `dcp` (Boolean) Set to false to enable copy-pasting. Only applies when `version == "v1"`.
+- `dd` (Boolean) Set to false to enable downloading. Only applies when `version == "v1"`.
+- `dk` (Boolean) Set to false to enable keyboard usage. Only applies when `version == "v1"`.
+- `download` (String) Configure whether downloading enabled or not. When absent, downloading is enabled. Only applies when `version == "v2"`.
+- `dp` (Boolean) Set to false to enable printing. Only applies when `version == "v1"`.
+- `du` (Boolean) Set to false to enable uploading. Only applies when `version == "v1"`.
+- `keyboard` (String) Configure whether keyboard usage is enabled or not. When absent, keyboard usage is enabled. Only applies when `version == "v2"`.
+- `paste` (String) Configure whether pasting is enabled or not. When set with "remote_only", pasting content from the user's local clipboard into isolated pages is disabled. When absent, paste is enabled. Only applies when `version == "v2"`.
+- `printing` (String) Configure whether printing is enabled or not. When absent, printing is enabled. Only applies when `version == "v2"`.
+- `upload` (String) Configure whether uploading is enabled or not. When absent, uploading is enabled. Only applies when `version == "v2"`.
+- `version` (String) Indicates which version of the browser isolation controls should apply.
 
 
 <a id="nestedatt--rule_settings--check_session"></a>
@@ -301,6 +320,15 @@ Optional:
 Optional:
 
 - `file_types` (List of String) Types of files to sandbox.
+
+
+<a id="nestedatt--rule_settings--resolve_dns_internally"></a>
+### Nested Schema for `rule_settings.resolve_dns_internally`
+
+Optional:
+
+- `fallback` (String) The fallback behavior to apply when the internal DNS response code is different from 'NOERROR' or when the response data only contains CNAME records for 'A' or 'AAAA' queries.
+- `view_id` (String) The internal DNS view identifier that's passed to the internal DNS service.
 
 
 <a id="nestedatt--rule_settings--untrusted_cert"></a>
