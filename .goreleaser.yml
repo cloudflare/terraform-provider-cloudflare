@@ -1,3 +1,4 @@
+# yaml-language-server: schema=https://goreleaser.com/static/schema.json
 version: 2
 builds:
   - env:
@@ -11,7 +12,7 @@ builds:
     ldflags:
       - "-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}"
     goos:
-      # - freebsd
+      - freebsd
       - windows
       - linux
       - darwin
@@ -25,7 +26,7 @@ builds:
         goarch: "386"
     binary: "{{ .ProjectName }}_v{{ .Version }}"
 archives:
-  - format: zip
+  - formats: [ 'zip' ]
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 checksum:
   name_template: "{{ .ProjectName }}_{{ .Version }}_SHA256SUMS"
@@ -51,7 +52,6 @@ changelog:
   disable: true
 snapshot:
   version_template: "{{.ShortCommit}}-dev"
-
 announce:
   discord:
     enabled: true
