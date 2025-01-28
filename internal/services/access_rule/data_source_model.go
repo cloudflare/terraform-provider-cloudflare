@@ -52,9 +52,9 @@ func (m *AccessRuleDataSourceModel) toListParams(_ context.Context) (params fire
 	params = firewall.AccessRuleListParams{}
 
 	if m.Filter.Configuration != nil {
-		paramsConfiguration := firewall.AccessRuleListParamsConfiguration{}
+		paramsConfiguration := AccessRuleListParamsConfiguration{}
 		if !m.Filter.Configuration.Target.IsNull() {
-			paramsConfiguration.Target = cloudflare.F(firewall.AccessRuleListParamsConfigurationTarget(m.Filter.Configuration.Target.ValueString()))
+			paramsConfiguration.Target = cloudflare.F(AccessRuleListParamsConfigurationTarget(m.Filter.Configuration.Target.ValueString()))
 		}
 		if !m.Filter.Configuration.Value.IsNull() {
 			paramsConfiguration.Value = cloudflare.F(m.Filter.Configuration.Value.ValueString())
@@ -62,19 +62,19 @@ func (m *AccessRuleDataSourceModel) toListParams(_ context.Context) (params fire
 		params.Configuration = cloudflare.F(paramsConfiguration)
 	}
 	if !m.Filter.Direction.IsNull() {
-		params.Direction = cloudflare.F(firewall.AccessRuleListParamsDirection(m.Filter.Direction.ValueString()))
+		params.Direction = cloudflare.F(AccessRuleListParamsDirection(m.Filter.Direction.ValueString()))
 	}
 	if !m.Filter.Match.IsNull() {
-		params.Match = cloudflare.F(firewall.AccessRuleListParamsMatch(m.Filter.Match.ValueString()))
+		params.Match = cloudflare.F(AccessRuleListParamsMatch(m.Filter.Match.ValueString()))
 	}
 	if !m.Filter.Mode.IsNull() {
-		params.Mode = cloudflare.F(firewall.AccessRuleListParamsMode(m.Filter.Mode.ValueString()))
+		params.Mode = cloudflare.F(AccessRuleListParamsMode(m.Filter.Mode.ValueString()))
 	}
 	if !m.Filter.Notes.IsNull() {
 		params.Notes = cloudflare.F(m.Filter.Notes.ValueString())
 	}
 	if !m.Filter.Order.IsNull() {
-		params.Order = cloudflare.F(firewall.AccessRuleListParamsOrder(m.Filter.Order.ValueString()))
+		params.Order = cloudflare.F(AccessRuleListParamsOrder(m.Filter.Order.ValueString()))
 	}
 
 	if !m.AccountID.IsNull() {

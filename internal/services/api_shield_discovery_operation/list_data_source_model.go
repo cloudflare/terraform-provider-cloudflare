@@ -32,11 +32,11 @@ type APIShieldDiscoveryOperationsDataSourceModel struct {
 }
 
 func (m *APIShieldDiscoveryOperationsDataSourceModel) toListParams(_ context.Context) (params api_gateway.DiscoveryOperationListParams, diags diag.Diagnostics) {
-	mHost := []string{}
+	mHost := []DiscoveryOperationListParamsHost{}
 	for _, item := range *m.Host {
 		mHost = append(mHost, item.ValueString())
 	}
-	mMethod := []string{}
+	mMethod := []DiscoveryOperationListParamsMethod{}
 	for _, item := range *m.Method {
 		mMethod = append(mMethod, item.ValueString())
 	}
@@ -51,19 +51,19 @@ func (m *APIShieldDiscoveryOperationsDataSourceModel) toListParams(_ context.Con
 		params.Diff = cloudflare.F(m.Diff.ValueBool())
 	}
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(api_gateway.DiscoveryOperationListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(DiscoveryOperationListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Endpoint.IsNull() {
 		params.Endpoint = cloudflare.F(m.Endpoint.ValueString())
 	}
 	if !m.Order.IsNull() {
-		params.Order = cloudflare.F(api_gateway.DiscoveryOperationListParamsOrder(m.Order.ValueString()))
+		params.Order = cloudflare.F(DiscoveryOperationListParamsOrder(m.Order.ValueString()))
 	}
 	if !m.Origin.IsNull() {
-		params.Origin = cloudflare.F(api_gateway.DiscoveryOperationListParamsOrigin(m.Origin.ValueString()))
+		params.Origin = cloudflare.F(DiscoveryOperationListParamsOrigin(m.Origin.ValueString()))
 	}
 	if !m.State.IsNull() {
-		params.State = cloudflare.F(api_gateway.DiscoveryOperationListParamsState(m.State.ValueString()))
+		params.State = cloudflare.F(DiscoveryOperationListParamsState(m.State.ValueString()))
 	}
 
 	return

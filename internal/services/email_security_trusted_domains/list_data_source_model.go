@@ -34,7 +34,7 @@ func (m *EmailSecurityTrustedDomainsListDataSourceModel) toListParams(_ context.
 	}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(email_security.SettingTrustedDomainListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(SettingTrustedDomainListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.IsRecent.IsNull() {
 		params.IsRecent = cloudflare.F(m.IsRecent.ValueBool())
@@ -43,7 +43,7 @@ func (m *EmailSecurityTrustedDomainsListDataSourceModel) toListParams(_ context.
 		params.IsSimilarity = cloudflare.F(m.IsSimilarity.ValueBool())
 	}
 	if !m.Order.IsNull() {
-		params.Order = cloudflare.F(email_security.SettingTrustedDomainListParamsOrder(m.Order.ValueString()))
+		params.Order = cloudflare.F(SettingTrustedDomainListParamsOrder(m.Order.ValueString()))
 	}
 	if !m.Search.IsNull() {
 		params.Search = cloudflare.F(m.Search.ValueString())
