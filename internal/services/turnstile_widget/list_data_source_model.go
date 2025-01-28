@@ -31,10 +31,10 @@ func (m *TurnstileWidgetsDataSourceModel) toListParams(_ context.Context) (param
 	}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(WidgetListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(turnstile.WidgetListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Order.IsNull() {
-		params.Order = cloudflare.F(WidgetListParamsOrder(m.Order.ValueString()))
+		params.Order = cloudflare.F(turnstile.WidgetListParamsOrder(m.Order.ValueString()))
 	}
 
 	return

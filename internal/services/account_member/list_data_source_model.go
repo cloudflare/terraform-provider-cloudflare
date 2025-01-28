@@ -31,13 +31,13 @@ func (m *AccountMembersDataSourceModel) toListParams(_ context.Context) (params 
 	}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(MemberListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(accounts.MemberListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Order.IsNull() {
-		params.Order = cloudflare.F(MemberListParamsOrder(m.Order.ValueString()))
+		params.Order = cloudflare.F(accounts.MemberListParamsOrder(m.Order.ValueString()))
 	}
 	if !m.Status.IsNull() {
-		params.Status = cloudflare.F(MemberListParamsStatus(m.Status.ValueString()))
+		params.Status = cloudflare.F(accounts.MemberListParamsStatus(m.Status.ValueString()))
 	}
 
 	return

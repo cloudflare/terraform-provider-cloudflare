@@ -33,13 +33,13 @@ func (m *EmailSecurityImpersonationRegistriesDataSourceModel) toListParams(_ con
 	}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(SettingImpersonationRegistryListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(email_security.SettingImpersonationRegistryListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Order.IsNull() {
-		params.Order = cloudflare.F(SettingImpersonationRegistryListParamsOrder(m.Order.ValueString()))
+		params.Order = cloudflare.F(email_security.SettingImpersonationRegistryListParamsOrder(m.Order.ValueString()))
 	}
 	if !m.Provenance.IsNull() {
-		params.Provenance = cloudflare.F(SettingImpersonationRegistryListParamsProvenance(m.Provenance.ValueString()))
+		params.Provenance = cloudflare.F(email_security.SettingImpersonationRegistryListParamsProvenance(m.Provenance.ValueString()))
 	}
 	if !m.Search.IsNull() {
 		params.Search = cloudflare.F(m.Search.ValueString())

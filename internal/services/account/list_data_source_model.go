@@ -28,7 +28,7 @@ func (m *AccountsDataSourceModel) toListParams(_ context.Context) (params accoun
 	params = accounts.AccountListParams{}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(AccountListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(accounts.AccountListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Name.IsNull() {
 		params.Name = cloudflare.F(m.Name.ValueString())

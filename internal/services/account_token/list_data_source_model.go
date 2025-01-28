@@ -30,7 +30,7 @@ func (m *AccountTokensDataSourceModel) toListParams(_ context.Context) (params a
 	}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(TokenListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(accounts.TokenListParamsDirection(m.Direction.ValueString()))
 	}
 
 	return

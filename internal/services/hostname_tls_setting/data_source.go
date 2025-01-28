@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/hostnames"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -67,7 +68,7 @@ func (d *HostnameTLSSettingDataSource) Read(ctx context.Context, req datasource.
 	env := HostnameTLSSettingResultDataSourceEnvelope{*data}
 	_, err := d.client.Hostnames.Settings.TLS.Get(
 		ctx,
-		SettingTLSGetParamsSettingID(data.SettingID.ValueString()),
+		hostnames.SettingTLSGetParamsSettingID(data.SettingID.ValueString()),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
