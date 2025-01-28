@@ -63,44 +63,44 @@ func (m *DNSRecordsDataSourceModel) toListParams(_ context.Context) (params dns.
 		}
 		params.Comment = cloudflare.F(paramsComment)
 	}
-	if m.Content != nil {
-		paramsContent := dns.RecordListParamsContent{}
-		if !m.Content.Contains.IsNull() {
-			paramsContent.Contains = cloudflare.F(m.Content.Contains.ValueString())
-		}
-		if !m.Content.Endswith.IsNull() {
-			paramsContent.Endswith = cloudflare.F(m.Content.Endswith.ValueString())
-		}
-		if !m.Content.Exact.IsNull() {
-			paramsContent.Exact = cloudflare.F(m.Content.Exact.ValueString())
-		}
-		if !m.Content.Startswith.IsNull() {
-			paramsContent.Startswith = cloudflare.F(m.Content.Startswith.ValueString())
-		}
-		params.Content = cloudflare.F(paramsContent)
-	}
+	// if m.Content != nil {
+	// 	paramsContent := dns.RecordListParamsContent{}
+	// 	if !m.Content.Contains.IsNull() {
+	// 		paramsContent.Contains = cloudflare.F(m.Content.Contains.ValueString())
+	// 	}
+	// 	if !m.Content.Endswith.IsNull() {
+	// 		paramsContent.Endswith = cloudflare.F(m.Content.Endswith.ValueString())
+	// 	}
+	// 	if !m.Content.Exact.IsNull() {
+	// 		paramsContent.Exact = cloudflare.F(m.Content.Exact.ValueString())
+	// 	}
+	// 	if !m.Content.Startswith.IsNull() {
+	// 		paramsContent.Startswith = cloudflare.F(m.Content.Startswith.ValueString())
+	// 	}
+	// 	params.Content = cloudflare.F(paramsContent)
+	// }
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(shared.SortDirection(m.Direction.ValueString()))
 	}
 	if !m.Match.IsNull() {
 		params.Match = cloudflare.F(dns.RecordListParamsMatch(m.Match.ValueString()))
 	}
-	if m.Name != nil {
-		paramsName := dns.RecordListParamsName{}
-		if !m.Name.Contains.IsNull() {
-			paramsName.Contains = cloudflare.F(m.Name.Contains.ValueString())
-		}
-		if !m.Name.Endswith.IsNull() {
-			paramsName.Endswith = cloudflare.F(m.Name.Endswith.ValueString())
-		}
-		if !m.Name.Exact.IsNull() {
-			paramsName.Exact = cloudflare.F(m.Name.Exact.ValueString())
-		}
-		if !m.Name.Startswith.IsNull() {
-			paramsName.Startswith = cloudflare.F(m.Name.Startswith.ValueString())
-		}
-		params.Name = cloudflare.F(paramsName)
-	}
+	// if m.Name != nil {
+	// 	paramsName := dns.RecordListParamsName{}
+	// 	if !m.Name.Contains.IsNull() {
+	// 		paramsName.Contains = cloudflare.F(m.Name.Contains.ValueString())
+	// 	}
+	// 	if !m.Name.Endswith.IsNull() {
+	// 		paramsName.Endswith = cloudflare.F(m.Name.Endswith.ValueString())
+	// 	}
+	// 	if !m.Name.Exact.IsNull() {
+	// 		paramsName.Exact = cloudflare.F(m.Name.Exact.ValueString())
+	// 	}
+	// 	if !m.Name.Startswith.IsNull() {
+	// 		paramsName.Startswith = cloudflare.F(m.Name.Startswith.ValueString())
+	// 	}
+	// 	params.Name = cloudflare.F(paramsName)
+	// }
 	if !m.Order.IsNull() {
 		params.Order = cloudflare.F(dns.RecordListParamsOrder(m.Order.ValueString()))
 	}
