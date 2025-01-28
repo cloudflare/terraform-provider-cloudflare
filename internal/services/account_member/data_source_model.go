@@ -45,13 +45,13 @@ func (m *AccountMemberDataSourceModel) toListParams(_ context.Context) (params a
 	}
 
 	if !m.Filter.Direction.IsNull() {
-		params.Direction = cloudflare.F(accounts.MemberListParamsDirection(m.Filter.Direction.ValueString()))
+		params.Direction = cloudflare.F(MemberListParamsDirection(m.Filter.Direction.ValueString()))
 	}
 	if !m.Filter.Order.IsNull() {
-		params.Order = cloudflare.F(accounts.MemberListParamsOrder(m.Filter.Order.ValueString()))
+		params.Order = cloudflare.F(MemberListParamsOrder(m.Filter.Order.ValueString()))
 	}
 	if !m.Filter.Status.IsNull() {
-		params.Status = cloudflare.F(accounts.MemberListParamsStatus(m.Filter.Status.ValueString()))
+		params.Status = cloudflare.F(MemberListParamsStatus(m.Filter.Status.ValueString()))
 	}
 
 	return

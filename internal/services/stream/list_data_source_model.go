@@ -61,7 +61,7 @@ func (m *StreamsDataSourceModel) toListParams(_ context.Context) (params stream.
 		params.Start = cloudflare.F(mStart)
 	}
 	if !m.Status.IsNull() {
-		params.Status = cloudflare.F(stream.StreamListParamsStatus(m.Status.ValueString()))
+		params.Status = cloudflare.F(StreamListParamsStatus(m.Status.ValueString()))
 	}
 	if !m.Type.IsNull() {
 		params.Type = cloudflare.F(m.Type.ValueString())

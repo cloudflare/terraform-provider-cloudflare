@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/dns"
-	"github.com/cloudflare/cloudflare-go/v4/shared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -42,7 +41,7 @@ func (m *DNSRecordsDataSourceModel) toListParams(_ context.Context) (params dns.
 	}
 
 	if m.Comment != nil {
-		paramsComment := dns.RecordListParamsComment{}
+		paramsComment := RecordListParamsComment{}
 		if !m.Comment.Absent.IsNull() {
 			paramsComment.Absent = cloudflare.F(m.Comment.Absent.ValueString())
 		}
@@ -63,46 +62,46 @@ func (m *DNSRecordsDataSourceModel) toListParams(_ context.Context) (params dns.
 		}
 		params.Comment = cloudflare.F(paramsComment)
 	}
-	// if m.Content != nil {
-	// 	paramsContent := dns.RecordListParamsContent{}
-	// 	if !m.Content.Contains.IsNull() {
-	// 		paramsContent.Contains = cloudflare.F(m.Content.Contains.ValueString())
-	// 	}
-	// 	if !m.Content.Endswith.IsNull() {
-	// 		paramsContent.Endswith = cloudflare.F(m.Content.Endswith.ValueString())
-	// 	}
-	// 	if !m.Content.Exact.IsNull() {
-	// 		paramsContent.Exact = cloudflare.F(m.Content.Exact.ValueString())
-	// 	}
-	// 	if !m.Content.Startswith.IsNull() {
-	// 		paramsContent.Startswith = cloudflare.F(m.Content.Startswith.ValueString())
-	// 	}
-	// 	params.Content = cloudflare.F(paramsContent)
-	// }
+	if m.Content != nil {
+		paramsContent := RecordListParamsContent{}
+		if !m.Content.Contains.IsNull() {
+			paramsContent.Contains = cloudflare.F(m.Content.Contains.ValueString())
+		}
+		if !m.Content.Endswith.IsNull() {
+			paramsContent.Endswith = cloudflare.F(m.Content.Endswith.ValueString())
+		}
+		if !m.Content.Exact.IsNull() {
+			paramsContent.Exact = cloudflare.F(m.Content.Exact.ValueString())
+		}
+		if !m.Content.Startswith.IsNull() {
+			paramsContent.Startswith = cloudflare.F(m.Content.Startswith.ValueString())
+		}
+		params.Content = cloudflare.F(paramsContent)
+	}
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(shared.SortDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(SortDirection(m.Direction.ValueString()))
 	}
 	if !m.Match.IsNull() {
-		params.Match = cloudflare.F(dns.RecordListParamsMatch(m.Match.ValueString()))
+		params.Match = cloudflare.F(RecordListParamsMatch(m.Match.ValueString()))
 	}
-	// if m.Name != nil {
-	// 	paramsName := dns.RecordListParamsName{}
-	// 	if !m.Name.Contains.IsNull() {
-	// 		paramsName.Contains = cloudflare.F(m.Name.Contains.ValueString())
-	// 	}
-	// 	if !m.Name.Endswith.IsNull() {
-	// 		paramsName.Endswith = cloudflare.F(m.Name.Endswith.ValueString())
-	// 	}
-	// 	if !m.Name.Exact.IsNull() {
-	// 		paramsName.Exact = cloudflare.F(m.Name.Exact.ValueString())
-	// 	}
-	// 	if !m.Name.Startswith.IsNull() {
-	// 		paramsName.Startswith = cloudflare.F(m.Name.Startswith.ValueString())
-	// 	}
-	// 	params.Name = cloudflare.F(paramsName)
-	// }
+	if m.Name != nil {
+		paramsName := RecordListParamsName{}
+		if !m.Name.Contains.IsNull() {
+			paramsName.Contains = cloudflare.F(m.Name.Contains.ValueString())
+		}
+		if !m.Name.Endswith.IsNull() {
+			paramsName.Endswith = cloudflare.F(m.Name.Endswith.ValueString())
+		}
+		if !m.Name.Exact.IsNull() {
+			paramsName.Exact = cloudflare.F(m.Name.Exact.ValueString())
+		}
+		if !m.Name.Startswith.IsNull() {
+			paramsName.Startswith = cloudflare.F(m.Name.Startswith.ValueString())
+		}
+		params.Name = cloudflare.F(paramsName)
+	}
 	if !m.Order.IsNull() {
-		params.Order = cloudflare.F(dns.RecordListParamsOrder(m.Order.ValueString()))
+		params.Order = cloudflare.F(RecordListParamsOrder(m.Order.ValueString()))
 	}
 	if !m.Proxied.IsNull() {
 		params.Proxied = cloudflare.F(m.Proxied.ValueBool())
@@ -111,7 +110,7 @@ func (m *DNSRecordsDataSourceModel) toListParams(_ context.Context) (params dns.
 		params.Search = cloudflare.F(m.Search.ValueString())
 	}
 	if m.Tag != nil {
-		paramsTag := dns.RecordListParamsTag{}
+		paramsTag := RecordListParamsTag{}
 		if !m.Tag.Absent.IsNull() {
 			paramsTag.Absent = cloudflare.F(m.Tag.Absent.ValueString())
 		}
@@ -133,10 +132,10 @@ func (m *DNSRecordsDataSourceModel) toListParams(_ context.Context) (params dns.
 		params.Tag = cloudflare.F(paramsTag)
 	}
 	if !m.TagMatch.IsNull() {
-		params.TagMatch = cloudflare.F(dns.RecordListParamsTagMatch(m.TagMatch.ValueString()))
+		params.TagMatch = cloudflare.F(RecordListParamsTagMatch(m.TagMatch.ValueString()))
 	}
 	if !m.Type.IsNull() {
-		params.Type = cloudflare.F(dns.RecordListParamsType(m.Type.ValueString()))
+		params.Type = cloudflare.F(RecordListParamsType(m.Type.ValueString()))
 	}
 
 	return

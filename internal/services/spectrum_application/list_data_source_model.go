@@ -30,10 +30,10 @@ func (m *SpectrumApplicationsDataSourceModel) toListParams(_ context.Context) (p
 	}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(spectrum.AppListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(AppListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Order.IsNull() {
-		params.Order = cloudflare.F(spectrum.AppListParamsOrder(m.Order.ValueString()))
+		params.Order = cloudflare.F(AppListParamsOrder(m.Order.ValueString()))
 	}
 
 	return

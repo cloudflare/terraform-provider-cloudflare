@@ -61,7 +61,7 @@ func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Cont
 		params.Name = cloudflare.F(m.Name.ValueString())
 	}
 	if !m.Status.IsNull() {
-		params.Status = cloudflare.F(zero_trust.TunnelListParamsStatus(m.Status.ValueString()))
+		params.Status = cloudflare.F(TunnelListParamsStatus(m.Status.ValueString()))
 	}
 	if !m.UUID.IsNull() {
 		params.UUID = cloudflare.F(m.UUID.ValueString())

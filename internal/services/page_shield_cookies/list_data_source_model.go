@@ -43,13 +43,13 @@ func (m *PageShieldCookiesListDataSourceModel) toListParams(_ context.Context) (
 	}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(page_shield.CookieListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(CookieListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Domain.IsNull() {
 		params.Domain = cloudflare.F(m.Domain.ValueString())
 	}
 	if !m.Export.IsNull() {
-		params.Export = cloudflare.F(page_shield.CookieListParamsExport(m.Export.ValueString()))
+		params.Export = cloudflare.F(CookieListParamsExport(m.Export.ValueString()))
 	}
 	if !m.Hosts.IsNull() {
 		params.Hosts = cloudflare.F(m.Hosts.ValueString())
@@ -61,7 +61,7 @@ func (m *PageShieldCookiesListDataSourceModel) toListParams(_ context.Context) (
 		params.Name = cloudflare.F(m.Name.ValueString())
 	}
 	if !m.OrderBy.IsNull() {
-		params.OrderBy = cloudflare.F(page_shield.CookieListParamsOrderBy(m.OrderBy.ValueString()))
+		params.OrderBy = cloudflare.F(CookieListParamsOrderBy(m.OrderBy.ValueString()))
 	}
 	if !m.Page.IsNull() {
 		params.Page = cloudflare.F(m.Page.ValueString())
@@ -76,13 +76,13 @@ func (m *PageShieldCookiesListDataSourceModel) toListParams(_ context.Context) (
 		params.PerPage = cloudflare.F(m.PerPage.ValueFloat64())
 	}
 	if !m.SameSite.IsNull() {
-		params.SameSite = cloudflare.F(page_shield.CookieListParamsSameSite(m.SameSite.ValueString()))
+		params.SameSite = cloudflare.F(CookieListParamsSameSite(m.SameSite.ValueString()))
 	}
 	if !m.Secure.IsNull() {
 		params.Secure = cloudflare.F(m.Secure.ValueBool())
 	}
 	if !m.Type.IsNull() {
-		params.Type = cloudflare.F(page_shield.CookieListParamsType(m.Type.ValueString()))
+		params.Type = cloudflare.F(CookieListParamsType(m.Type.ValueString()))
 	}
 
 	return
