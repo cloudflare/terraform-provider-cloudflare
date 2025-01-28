@@ -37,16 +37,16 @@ func (m *CustomHostnamesDataSourceModel) toListParams(_ context.Context) (params
 		params.ID = cloudflare.F(m.ID.ValueString())
 	}
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(CustomHostnameListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(custom_hostnames.CustomHostnameListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Hostname.IsNull() {
 		params.Hostname = cloudflare.F(m.Hostname.ValueString())
 	}
 	if !m.Order.IsNull() {
-		params.Order = cloudflare.F(CustomHostnameListParamsOrder(m.Order.ValueString()))
+		params.Order = cloudflare.F(custom_hostnames.CustomHostnameListParamsOrder(m.Order.ValueString()))
 	}
 	if !m.SSL.IsNull() {
-		params.SSL = cloudflare.F(CustomHostnameListParamsSSL(m.SSL.ValueFloat64()))
+		params.SSL = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(m.SSL.ValueFloat64()))
 	}
 
 	return

@@ -54,10 +54,10 @@ func (m *CustomSSLDataSourceModel) toListParams(_ context.Context) (params custo
 	}
 
 	if !m.Filter.Match.IsNull() {
-		params.Match = cloudflare.F(CustomCertificateListParamsMatch(m.Filter.Match.ValueString()))
+		params.Match = cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(m.Filter.Match.ValueString()))
 	}
 	if !m.Filter.Status.IsNull() {
-		params.Status = cloudflare.F(CustomCertificateListParamsStatus(m.Filter.Status.ValueString()))
+		params.Status = cloudflare.F(custom_certificates.CustomCertificateListParamsStatus(m.Filter.Status.ValueString()))
 	}
 
 	return

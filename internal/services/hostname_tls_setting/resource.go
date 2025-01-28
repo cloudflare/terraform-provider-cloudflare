@@ -73,7 +73,7 @@ func (r *HostnameTLSSettingResource) Create(ctx context.Context, req resource.Cr
 	env := HostnameTLSSettingResultEnvelope{*data}
 	_, err = r.client.Hostnames.Settings.TLS.Update(
 		ctx,
-		SettingTLSUpdateParamsSettingID(data.SettingID.ValueString()),
+		hostnames.SettingTLSUpdateParamsSettingID(data.SettingID.ValueString()),
 		data.Hostname.ValueString(),
 		hostnames.SettingTLSUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
@@ -124,7 +124,7 @@ func (r *HostnameTLSSettingResource) Update(ctx context.Context, req resource.Up
 	env := HostnameTLSSettingResultEnvelope{*data}
 	_, err = r.client.Hostnames.Settings.TLS.Update(
 		ctx,
-		SettingTLSUpdateParamsSettingID(data.SettingID.ValueString()),
+		hostnames.SettingTLSUpdateParamsSettingID(data.SettingID.ValueString()),
 		data.SettingID.ValueString(),
 		hostnames.SettingTLSUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
@@ -162,7 +162,7 @@ func (r *HostnameTLSSettingResource) Read(ctx context.Context, req resource.Read
 	env := HostnameTLSSettingResultEnvelope{*data}
 	_, err := r.client.Hostnames.Settings.TLS.Get(
 		ctx,
-		SettingTLSGetParamsSettingID(data.SettingID.ValueString()),
+		hostnames.SettingTLSGetParamsSettingID(data.SettingID.ValueString()),
 		hostnames.SettingTLSGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -201,7 +201,7 @@ func (r *HostnameTLSSettingResource) Delete(ctx context.Context, req resource.De
 
 	_, err := r.client.Hostnames.Settings.TLS.Delete(
 		ctx,
-		SettingTLSDeleteParamsSettingID(data.SettingID.ValueString()),
+		hostnames.SettingTLSDeleteParamsSettingID(data.SettingID.ValueString()),
 		data.Hostname.ValueString(),
 		hostnames.SettingTLSDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
@@ -240,7 +240,7 @@ func (r *HostnameTLSSettingResource) ImportState(ctx context.Context, req resour
 	env := HostnameTLSSettingResultEnvelope{*data}
 	_, err := r.client.Hostnames.Settings.TLS.Get(
 		ctx,
-		SettingTLSGetParamsSettingID(path_setting_id),
+		hostnames.SettingTLSGetParamsSettingID(path_setting_id),
 		hostnames.SettingTLSGetParams{
 			ZoneID: cloudflare.F(path_zone_id),
 		},

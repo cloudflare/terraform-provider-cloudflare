@@ -30,7 +30,7 @@ func (m *ZeroTrustListsDataSourceModel) toListParams(_ context.Context) (params 
 	}
 
 	if !m.Type.IsNull() {
-		params.Type = cloudflare.F(GatewayListListParamsType(m.Type.ValueString()))
+		params.Type = cloudflare.F(zero_trust.GatewayListListParamsType(m.Type.ValueString()))
 	}
 
 	return
