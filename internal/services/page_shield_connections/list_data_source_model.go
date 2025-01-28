@@ -41,7 +41,7 @@ func (m *PageShieldConnectionsListDataSourceModel) toListParams(_ context.Contex
 	}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(ConnectionListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(page_shield.ConnectionListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.ExcludeCDNCGI.IsNull() {
 		params.ExcludeCDNCGI = cloudflare.F(m.ExcludeCDNCGI.ValueBool())
@@ -50,13 +50,13 @@ func (m *PageShieldConnectionsListDataSourceModel) toListParams(_ context.Contex
 		params.ExcludeURLs = cloudflare.F(m.ExcludeURLs.ValueString())
 	}
 	if !m.Export.IsNull() {
-		params.Export = cloudflare.F(ConnectionListParamsExport(m.Export.ValueString()))
+		params.Export = cloudflare.F(page_shield.ConnectionListParamsExport(m.Export.ValueString()))
 	}
 	if !m.Hosts.IsNull() {
 		params.Hosts = cloudflare.F(m.Hosts.ValueString())
 	}
 	if !m.OrderBy.IsNull() {
-		params.OrderBy = cloudflare.F(ConnectionListParamsOrderBy(m.OrderBy.ValueString()))
+		params.OrderBy = cloudflare.F(page_shield.ConnectionListParamsOrderBy(m.OrderBy.ValueString()))
 	}
 	if !m.Page.IsNull() {
 		params.Page = cloudflare.F(m.Page.ValueString())

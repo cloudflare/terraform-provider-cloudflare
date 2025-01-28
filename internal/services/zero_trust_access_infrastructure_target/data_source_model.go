@@ -41,7 +41,7 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toReadParams(_ cont
 }
 
 func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessInfrastructureTargetListParams, diags diag.Diagnostics) {
-	mFilterIPs := []AccessInfrastructureTargetListParamsIP{}
+	mFilterIPs := []string{}
 	for _, item := range *m.Filter.IPs {
 		mFilterIPs = append(mFilterIPs, item.ValueString())
 	}
@@ -66,7 +66,7 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ cont
 		params.CreatedBefore = cloudflare.F(mFilterCreatedBefore)
 	}
 	if !m.Filter.Direction.IsNull() {
-		params.Direction = cloudflare.F(AccessInfrastructureTargetListParamsDirection(m.Filter.Direction.ValueString()))
+		params.Direction = cloudflare.F(zero_trust.AccessInfrastructureTargetListParamsDirection(m.Filter.Direction.ValueString()))
 	}
 	if !m.Filter.Hostname.IsNull() {
 		params.Hostname = cloudflare.F(m.Filter.Hostname.ValueString())
@@ -87,7 +87,7 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ cont
 		params.ModifiedBefore = cloudflare.F(mFilterModifiedBefore)
 	}
 	if !m.Filter.Order.IsNull() {
-		params.Order = cloudflare.F(AccessInfrastructureTargetListParamsOrder(m.Filter.Order.ValueString()))
+		params.Order = cloudflare.F(zero_trust.AccessInfrastructureTargetListParamsOrder(m.Filter.Order.ValueString()))
 	}
 	if !m.Filter.VirtualNetworkID.IsNull() {
 		params.VirtualNetworkID = cloudflare.F(m.Filter.VirtualNetworkID.ValueString())

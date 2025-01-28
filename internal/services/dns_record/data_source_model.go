@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/dns"
+	"github.com/cloudflare/cloudflare-go/v4/shared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -59,7 +60,7 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 	}
 
 	if m.Filter.Comment != nil {
-		paramsComment := RecordListParamsComment{}
+		paramsComment := dns.RecordListParamsComment{}
 		if !m.Filter.Comment.Absent.IsNull() {
 			paramsComment.Absent = cloudflare.F(m.Filter.Comment.Absent.ValueString())
 		}
@@ -81,7 +82,7 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 		params.Comment = cloudflare.F(paramsComment)
 	}
 	if m.Filter.Content != nil {
-		paramsContent := RecordListParamsContent{}
+		paramsContent := dns.RecordListParamsContent{}
 		if !m.Filter.Content.Contains.IsNull() {
 			paramsContent.Contains = cloudflare.F(m.Filter.Content.Contains.ValueString())
 		}
@@ -97,13 +98,13 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 		params.Content = cloudflare.F(paramsContent)
 	}
 	if !m.Filter.Direction.IsNull() {
-		params.Direction = cloudflare.F(SortDirection(m.Filter.Direction.ValueString()))
+		params.Direction = cloudflare.F(shared.SortDirection(m.Filter.Direction.ValueString()))
 	}
 	if !m.Filter.Match.IsNull() {
-		params.Match = cloudflare.F(RecordListParamsMatch(m.Filter.Match.ValueString()))
+		params.Match = cloudflare.F(dns.RecordListParamsMatch(m.Filter.Match.ValueString()))
 	}
 	if m.Filter.Name != nil {
-		paramsName := RecordListParamsName{}
+		paramsName := dns.RecordListParamsName{}
 		if !m.Filter.Name.Contains.IsNull() {
 			paramsName.Contains = cloudflare.F(m.Filter.Name.Contains.ValueString())
 		}
@@ -119,7 +120,7 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 		params.Name = cloudflare.F(paramsName)
 	}
 	if !m.Filter.Order.IsNull() {
-		params.Order = cloudflare.F(RecordListParamsOrder(m.Filter.Order.ValueString()))
+		params.Order = cloudflare.F(dns.RecordListParamsOrder(m.Filter.Order.ValueString()))
 	}
 	if !m.Filter.Proxied.IsNull() {
 		params.Proxied = cloudflare.F(m.Filter.Proxied.ValueBool())
@@ -128,7 +129,7 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
 	if m.Filter.Tag != nil {
-		paramsTag := RecordListParamsTag{}
+		paramsTag := dns.RecordListParamsTag{}
 		if !m.Filter.Tag.Absent.IsNull() {
 			paramsTag.Absent = cloudflare.F(m.Filter.Tag.Absent.ValueString())
 		}
@@ -150,10 +151,10 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 		params.Tag = cloudflare.F(paramsTag)
 	}
 	if !m.Filter.TagMatch.IsNull() {
-		params.TagMatch = cloudflare.F(RecordListParamsTagMatch(m.Filter.TagMatch.ValueString()))
+		params.TagMatch = cloudflare.F(dns.RecordListParamsTagMatch(m.Filter.TagMatch.ValueString()))
 	}
 	if !m.Filter.Type.IsNull() {
-		params.Type = cloudflare.F(RecordListParamsType(m.Filter.Type.ValueString()))
+		params.Type = cloudflare.F(dns.RecordListParamsType(m.Filter.Type.ValueString()))
 	}
 
 	return

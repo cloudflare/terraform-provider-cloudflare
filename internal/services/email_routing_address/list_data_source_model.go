@@ -31,10 +31,10 @@ func (m *EmailRoutingAddressesDataSourceModel) toListParams(_ context.Context) (
 	}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(AddressListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(email_routing.AddressListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Verified.IsNull() {
-		params.Verified = cloudflare.F(AddressListParamsVerified(m.Verified.ValueBool()))
+		params.Verified = cloudflare.F(email_routing.AddressListParamsVerified(m.Verified.ValueBool()))
 	}
 
 	return

@@ -49,7 +49,7 @@ func (m *WebAnalyticsSiteDataSourceModel) toListParams(_ context.Context) (param
 	}
 
 	if !m.Filter.OrderBy.IsNull() {
-		params.OrderBy = cloudflare.F(SiteInfoListParamsOrderBy(m.Filter.OrderBy.ValueString()))
+		params.OrderBy = cloudflare.F(rum.SiteInfoListParamsOrderBy(m.Filter.OrderBy.ValueString()))
 	}
 
 	return

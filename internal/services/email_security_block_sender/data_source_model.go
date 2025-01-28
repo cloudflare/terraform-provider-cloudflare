@@ -48,13 +48,13 @@ func (m *EmailSecurityBlockSenderDataSourceModel) toListParams(_ context.Context
 	}
 
 	if !m.Filter.Direction.IsNull() {
-		params.Direction = cloudflare.F(SettingBlockSenderListParamsDirection(m.Filter.Direction.ValueString()))
+		params.Direction = cloudflare.F(email_security.SettingBlockSenderListParamsDirection(m.Filter.Direction.ValueString()))
 	}
 	if !m.Filter.Order.IsNull() {
-		params.Order = cloudflare.F(SettingBlockSenderListParamsOrder(m.Filter.Order.ValueString()))
+		params.Order = cloudflare.F(email_security.SettingBlockSenderListParamsOrder(m.Filter.Order.ValueString()))
 	}
 	if !m.Filter.PatternType.IsNull() {
-		params.PatternType = cloudflare.F(SettingBlockSenderListParamsPatternType(m.Filter.PatternType.ValueString()))
+		params.PatternType = cloudflare.F(email_security.SettingBlockSenderListParamsPatternType(m.Filter.PatternType.ValueString()))
 	}
 	if !m.Filter.Search.IsNull() {
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())

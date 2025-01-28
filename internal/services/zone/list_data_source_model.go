@@ -32,7 +32,7 @@ func (m *ZonesDataSourceModel) toListParams(_ context.Context) (params zones.Zon
 	params = zones.ZoneListParams{}
 
 	if m.Account != nil {
-		paramsAccount := ZoneListParamsAccount{}
+		paramsAccount := zones.ZoneListParamsAccount{}
 		if !m.Account.ID.IsNull() {
 			paramsAccount.ID = cloudflare.F(m.Account.ID.ValueString())
 		}
@@ -42,19 +42,19 @@ func (m *ZonesDataSourceModel) toListParams(_ context.Context) (params zones.Zon
 		params.Account = cloudflare.F(paramsAccount)
 	}
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(ZoneListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(zones.ZoneListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Match.IsNull() {
-		params.Match = cloudflare.F(ZoneListParamsMatch(m.Match.ValueString()))
+		params.Match = cloudflare.F(zones.ZoneListParamsMatch(m.Match.ValueString()))
 	}
 	if !m.Name.IsNull() {
 		params.Name = cloudflare.F(m.Name.ValueString())
 	}
 	if !m.Order.IsNull() {
-		params.Order = cloudflare.F(ZoneListParamsOrder(m.Order.ValueString()))
+		params.Order = cloudflare.F(zones.ZoneListParamsOrder(m.Order.ValueString()))
 	}
 	if !m.Status.IsNull() {
-		params.Status = cloudflare.F(ZoneListParamsStatus(m.Status.ValueString()))
+		params.Status = cloudflare.F(zones.ZoneListParamsStatus(m.Status.ValueString()))
 	}
 
 	return
