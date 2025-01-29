@@ -6,8 +6,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/services/cloudforce_one_request"
+	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/test_helpers"
 )
 
 func TestCloudforceOneRequestDataSourceModelSchemaParity(t *testing.T) {
