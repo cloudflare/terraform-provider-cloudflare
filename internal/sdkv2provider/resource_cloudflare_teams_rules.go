@@ -344,6 +344,13 @@ func flattenTeamsRuleBisoAdminControls(settings *cloudflare.TeamsBISOAdminContro
 		"disable_upload":                settings.DisableUpload,
 		"disable_keyboard":              settings.DisableKeyboard,
 		"disable_clipboard_redirection": settings.DisableClipboardRedirection,
+		"version":                       settings.Version,
+		"copy":                          settings.Copy,
+		"download":                      settings.Download,
+		"keyboard":                      settings.Keyboard,
+		"paste":                         settings.Paste,
+		"printing":                      settings.Printing,
+		"upload":                        settings.Upload,
 	}}
 }
 
@@ -370,6 +377,13 @@ func inflateTeamsRuleBisoAdminControls(settings interface{}) *cloudflare.TeamsBI
 	disableUpload := settingsMap["disable_upload"].(bool)
 	disableKeyboard := settingsMap["disable_keyboard"].(bool)
 	disableClipboardRedirection := settingsMap["disable_clipboard_redirection"].(bool)
+	version := settingsMap["version"].(string)
+	copy := settingsMap["copy"].(string)
+	download := settingsMap["download"].(string)
+	keyboard := settingsMap["keyboard"].(string)
+	paste := settingsMap["paste"].(string)
+	printing := settingsMap["printing"].(string)
+	upload := settingsMap["upload"].(string)
 	return &cloudflare.TeamsBISOAdminControlSettings{
 		DisablePrinting:             disablePrinting,
 		DisableCopyPaste:            disableCopyPaste,
@@ -377,6 +391,13 @@ func inflateTeamsRuleBisoAdminControls(settings interface{}) *cloudflare.TeamsBI
 		DisableUpload:               disableUpload,
 		DisableKeyboard:             disableKeyboard,
 		DisableClipboardRedirection: disableClipboardRedirection,
+		Version:                     cloudflare.TeamsBISOAdminControlSettingsVersion(version),
+		Copy:                        cloudflare.TeamsTeamsBISOAdminControlSettingsValue(copy),
+		Download:                    cloudflare.TeamsTeamsBISOAdminControlSettingsValue(download),
+		Keyboard:                    cloudflare.TeamsTeamsBISOAdminControlSettingsValue(keyboard),
+		Paste:                       cloudflare.TeamsTeamsBISOAdminControlSettingsValue(paste),
+		Printing:                    cloudflare.TeamsTeamsBISOAdminControlSettingsValue(printing),
+		Upload:                      cloudflare.TeamsTeamsBISOAdminControlSettingsValue(upload),
 	}
 }
 
