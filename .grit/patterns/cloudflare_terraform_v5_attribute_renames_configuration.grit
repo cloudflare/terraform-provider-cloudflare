@@ -1,6 +1,6 @@
 language hcl
 
-pattern cloudflare_terraform_v5_attribute_renames_config() {
+pattern cloudflare_terraform_v5_attribute_renames_configuration() {
   any {
     // provider
     `version = $version` => `version = "~> 5"` where { $match <: within `provider "cloudflare" { $_ }` },
