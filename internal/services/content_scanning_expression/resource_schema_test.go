@@ -6,8 +6,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/services/content_scanning_expression"
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning_expression"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestContentScanningExpressionModelSchemaParity(t *testing.T) {

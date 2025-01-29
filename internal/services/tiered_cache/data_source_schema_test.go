@@ -6,8 +6,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/services/tiered_cache"
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestTieredCacheDataSourceModelSchemaParity(t *testing.T) {
