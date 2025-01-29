@@ -61,9 +61,6 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "example_zero_trust_t
       tcp_keep_alive = 0
       tls_timeout = 0
     }
-    warp_routing = {
-      enabled = true
-    }
   }
 }
 ```

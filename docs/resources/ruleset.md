@@ -31,7 +31,6 @@ resource "cloudflare_ruleset" "example_ruleset" {
         status_code = 400
       }
     }
-    categories = ["directory-traversal", "header"]
     description = "Block when the IP address is not 1.1.1.1"
     enabled = true
     exposed_credential_check = {
