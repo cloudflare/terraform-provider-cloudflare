@@ -6,8 +6,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/calls_turn_app"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/services/calls_turn_app"
+	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/test_helpers"
 )
 
 func TestCallsTURNAppsDataSourceModelSchemaParity(t *testing.T) {
