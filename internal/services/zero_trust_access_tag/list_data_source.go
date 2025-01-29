@@ -7,8 +7,8 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
