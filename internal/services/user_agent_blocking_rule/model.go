@@ -3,7 +3,7 @@
 package user_agent_blocking_rule
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
