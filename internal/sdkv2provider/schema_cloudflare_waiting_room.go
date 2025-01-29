@@ -60,6 +60,18 @@ var waitingRoomOriginCommands = []string{
 	"revoke",
 }
 
+var waitingRoomTurnstileModes = []string{
+	"off",
+	"invisible",
+	"visible_non_interactive",
+	"visible_managed",
+}
+
+var waitingRoomTurnstileActions = []string{
+	"log",
+	"infinite_queue",
+}
+
 func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.ZoneIDSchemaKey: {
@@ -210,6 +222,28 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 			Elem: &schema.Schema{
 				Type:         schema.TypeString,
 				ValidateFunc: validation.StringInSlice(waitingRoomOriginCommands, false),
+			},
+		},
+
+		"turnstile_mode": {
+			Description: fmt.Sprintf("The type of Turnstile widget to use. %s", renderAvailableDocumentationValuesStringSlice(waitingRoomTurnstileModes)),
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "off",
+			Elem: &schema.Schema{
+				Type:         schema.TypeString,
+				ValidateFunc: validation.StringInSlice(waitingRoomTurnstileModes, false),
+			},
+		},
+
+		"turnstile_action": {
+			Description: fmt.Sprintf("The action to take when an end user fails a Turnstile challenge. %s", renderAvailableDocumentationValuesStringSlice(waitingRoomTurnstileActions)),
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "log",
+			Elem: &schema.Schema{
+				Type:         schema.TypeString,
+				ValidateFunc: validation.StringInSlice(waitingRoomTurnstileActions, false),
 			},
 		},
 	}

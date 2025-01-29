@@ -65,6 +65,8 @@ func buildWaitingRoom(d *schema.ResourceData) cloudflare.WaitingRoom {
 		AdditionalRoutes:        additional_routes,
 		QueueingStatusCode:      d.Get("queueing_status_code").(int),
 		EnabledOriginCommands:   expandInterfaceToStringList(d.Get("enabled_origin_commands").([]interface{})),
+		TurnstileMode:           d.Get("turnstile_mode").(string),
+		TurnstileAction:         d.Get("turnstile_action").(string),
 	}
 }
 
@@ -121,6 +123,8 @@ func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceDa
 	d.Set("additional_routes", flattenWaitingRoomAdditionalRoutes(waitingRoom.AdditionalRoutes))
 	d.Set("queueing_status_code", waitingRoom.QueueingStatusCode)
 	d.Set("enabled_origin_commands", waitingRoom.EnabledOriginCommands)
+	d.Set("turnstile_mode", waitingRoom.TurnstileMode)
+	d.Set("turnstile_action", waitingRoom.TurnstileAction)
 	return nil
 }
 
