@@ -160,7 +160,7 @@ func (r *PagesDomainResource) Read(ctx context.Context, req resource.ReadRequest
 	_, err := r.client.Pages.Projects.Domains.Get(
 		ctx,
 		data.ProjectName.ValueString(),
-		data.ID.ValueString(),
+		data.Name.ValueString(),
 		pages.ProjectDomainGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
