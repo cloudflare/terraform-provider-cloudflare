@@ -11,12 +11,14 @@ for non-Terraform or service specific information.
 
 ## Usage
 
+<!-- x-release-please-start-version -->
+
 ```
 terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 0.0.1-alpha.0"
+      version = "~> 5"
     }
   }
 }
