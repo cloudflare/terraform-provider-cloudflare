@@ -5,7 +5,7 @@ package zero_trust_device_default_profile
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"

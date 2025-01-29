@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"mime/multipart"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/apiform"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
