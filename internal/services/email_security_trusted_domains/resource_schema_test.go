@@ -6,8 +6,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/services/email_security_trusted_domains"
+	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/test_helpers"
 )
 
 func TestEmailSecurityTrustedDomainsModelSchemaParity(t *testing.T) {
