@@ -348,3 +348,70 @@ resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
 }
 `, rnd, accountID)
 }
+
+func TestAccCloudflareTeamsRule_WithBisoV2(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_gateway_policy.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareTeamsRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareTeamsRuleConfigWithBisoV2(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "description", "desc"),
+					resource.TestCheckResourceAttr(name, "precedence", "12302"),
+					resource.TestCheckResourceAttr(name, "action", "isolate"),
+					resource.TestCheckResourceAttr(name, "filters.0", "http"),
+					resource.TestCheckResourceAttr(name, "traffic", "http.conn.src_ip == 1.2.3.4"),
+					resource.TestCheckResourceAttr(name, "rule_settings.#", "1"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.biso_admin_controls.0.version", "v2"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.biso_admin_controls.0.printing", "enabled"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.biso_admin_controls.0.copy", "remote_only"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.biso_admin_controls.0.paste", "remote_only"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.biso_admin_controls.0.download", "disabled"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.biso_admin_controls.0.upload", "enabled"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.biso_admin_controls.0.keyboard", "disabled"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCloudflareTeamsRuleConfigWithBisoV2(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
+  name = "%[1]s"
+  account_id = "%[2]s"
+  description = "desc"
+  precedence = 12302
+  action = "isolate"
+  filters = ["http"]
+  traffic = "http.conn.src_ip == 1.2.3.4"
+  rule_settings {
+    biso_admin_controls {
+	  version = "v2"
+      printing = "enabled"
+      copy = "remote_only"
+	  paste = "remote_only"
+      download = "disabled"
+      upload = "enabled"
+      keyboard = "disabled"
+    }
+  }
+}
+`, rnd, accountID)
+}
