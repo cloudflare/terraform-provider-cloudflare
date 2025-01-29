@@ -1,11 +1,10 @@
 // You likely don't want to run this _unless_ you know what you're doing.
 //
-// Applying this solely against state files will likely break your
-// configuration. However, used in conjunction with a custom
-// `terraform state mv` operation _may_ get you what want.
+// See https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/migrating-renamed-resources
+// for full details on how to handle mass renames.
 language hcl
 
-pattern cloudflare_terraform_v5_resource_renames() {
+pattern cloudflare_terraform_v5_resource_renames_configuration() {
   any {
     `"cloudflare_access_application"` => `"cloudflare_zero_trust_access_application"`,
     `"cloudflare_access_ca_certificate"` => `"cloudflare_zero_trust_access_short_lived_certificate"`,
@@ -56,3 +55,5 @@ pattern cloudflare_terraform_v5_resource_renames() {
     $old_name <: within `resource $_ { $_ }`
   }
 }
+
+cloudflare_terraform_v5_resource_renames_configuration()

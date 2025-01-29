@@ -47,6 +47,11 @@ provider "cloudflare" {
 For an in depth guide on how to perform migrations for resources or datasources that
 have been renamed, check out [migrating renamed resources].
 
+The pattern files for v5 resource renames are:
+
+- `cloudflare_terraform_v5_resource_renames_configuration`
+- `cloudflare_terraform_v5_resource_renames_state`
+
 ## Automatic migration
 
 For assisting with automatic migrations, we have provided a [GritQL] pattern.
@@ -63,7 +68,7 @@ as effective. We recommend reviewing the migration notes below to verify all the
 changes.
 
 ```bash
-$ grit apply cloudflare_terraform_v5
+$ grit apply github.com/cloudflare/terraform-provider-cloudflare#terraform_cloudflare_v5
 ```
 
 We recommend ensuring you are using version control for these changes or make a
