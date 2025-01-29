@@ -3,7 +3,7 @@
 ```grit
 language hcl
 
-terraform_cloudflare_v5()
+cloudflare_terraform_v5()
 ```
 
 ## test: basic rewrite
