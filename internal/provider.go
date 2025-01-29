@@ -65,6 +65,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/hyperdrive_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image_variant"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ip_ranges"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/keyless_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check_rule"
@@ -493,6 +494,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		api_token_permissions_groups.NewAPITokenPermissionsGroupsListDataSource,
 		origin_ca_certificate.NewOriginCACertificateDataSource,
 		origin_ca_certificate.NewOriginCACertificatesDataSource,
+		ip_ranges.NewIPRangesDataSource,
 		user.NewUserDataSource,
 		api_token.NewAPITokenDataSource,
 		api_token.NewAPITokensDataSource,
