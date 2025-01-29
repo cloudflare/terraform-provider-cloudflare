@@ -6,8 +6,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image_variant"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/services/image_variant"
+	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/test_helpers"
 )
 
 func TestImageVariantModelSchemaParity(t *testing.T) {
