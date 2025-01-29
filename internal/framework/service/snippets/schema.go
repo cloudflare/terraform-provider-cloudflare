@@ -5,7 +5,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -41,11 +41,11 @@ func (r *SnippetResource) Schema(ctx context.Context, req resource.SchemaRequest
 			},
 		},
 		Blocks: map[string]schema.Block{
-			"files": schema.SetNestedBlock{
+			"files": schema.ListNestedBlock{
 				MarkdownDescription: "List of Snippet Files",
-				Validators: []validator.Set{
-					setvalidator.SizeAtLeast(1),
-					setvalidator.IsRequired(),
+				Validators: []validator.List{
+					listvalidator.SizeAtLeast(1),
+					listvalidator.IsRequired(),
 				},
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{

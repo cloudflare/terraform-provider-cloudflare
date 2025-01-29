@@ -5,7 +5,8 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/modifiers/defaults"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -30,16 +31,20 @@ func (r *SnippetRulesResource) Schema(ctx context.Context, req resource.SchemaRe
 			},
 		},
 		Blocks: map[string]schema.Block{
-			"rules": schema.SetNestedBlock{
+			"rules": schema.ListNestedBlock{
 				MarkdownDescription: "List of Snippet Rules",
-				Validators: []validator.Set{
-					setvalidator.SizeAtLeast(1),
-					setvalidator.IsRequired(),
+				Validators: []validator.List{
+					listvalidator.SizeAtLeast(1),
+					listvalidator.IsRequired(),
 				},
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"enabled": schema.BoolAttribute{
-							Optional:            true,
+							Optional: true,
+							Computed: true,
+							PlanModifiers: []planmodifier.Bool{
+								defaults.DefaultBool(true),
+							},
 							MarkdownDescription: "Whether the headers rule is active.",
 						},
 						"expression": schema.StringAttribute{
@@ -51,7 +56,11 @@ func (r *SnippetRulesResource) Schema(ctx context.Context, req resource.SchemaRe
 							MarkdownDescription: "Name of the snippet invoked by this rule.",
 						},
 						"description": schema.StringAttribute{
-							Optional:            true,
+							Optional: true,
+							Computed: true,
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 							MarkdownDescription: "Brief summary of the snippet rule and its intended use.",
 						},
 					},
