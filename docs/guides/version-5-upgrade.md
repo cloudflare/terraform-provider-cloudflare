@@ -74,7 +74,7 @@ backup prior to initiating the change to enable reverting if needed.
 ```grit
 language hcl
 
-terraform_cloudflare_v5()
+cloudflare_terraform_v5()
 ```
 
 ## cloudflare_access_application
