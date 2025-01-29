@@ -3,7 +3,7 @@
 package authenticated_origin_pulls_certificate
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )

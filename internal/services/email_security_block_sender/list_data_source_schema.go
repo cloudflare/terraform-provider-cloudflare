@@ -5,7 +5,7 @@ package email_security_block_sender
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"

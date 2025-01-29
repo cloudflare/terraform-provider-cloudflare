@@ -6,8 +6,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/services/notification_policy_webhooks"
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy_webhooks"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestNotificationPolicyWebhooksModelSchemaParity(t *testing.T) {

@@ -3,7 +3,7 @@
 package list_item
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 

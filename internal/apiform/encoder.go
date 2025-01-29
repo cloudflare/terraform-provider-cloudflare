@@ -21,8 +21,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 var encoders sync.Map // map[encoderEntry]encoderFunc
