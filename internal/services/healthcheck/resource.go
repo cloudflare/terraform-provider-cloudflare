@@ -11,9 +11,9 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/healthchecks"
 	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/importpath"
+	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
