@@ -5,7 +5,7 @@ package firewall_rule
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"

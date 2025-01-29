@@ -11,8 +11,8 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/leaked_credential_checks"
 	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/logging"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 

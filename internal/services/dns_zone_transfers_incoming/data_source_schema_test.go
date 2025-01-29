@@ -6,8 +6,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/services/dns_zone_transfers_incoming"
-	"github.com/cloudflare/terraform-provider-cloudflare/v5/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_incoming"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestDNSZoneTransfersIncomingDataSourceModelSchemaParity(t *testing.T) {
