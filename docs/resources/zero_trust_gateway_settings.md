@@ -52,8 +52,6 @@ resource "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_se
     custom_certificate = {
       enabled = true
       id = "d1b364c5-1311-466e-a194-f0e943e0799f"
-      binding_status = "pending_deployment"
-      updated_at = "2019-12-27T18:11:19.117Z"
     }
     extended_email_matching = {
       enabled = true

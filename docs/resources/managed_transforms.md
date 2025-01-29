@@ -17,14 +17,10 @@ resource "cloudflare_managed_transforms" "example_managed_transforms" {
   managed_request_headers = [{
     id = "add_bot_protection_headers"
     enabled = true
-    has_conflict = false
-    conflicts_with = ["add_true_client_ip_headers"]
   }]
   managed_response_headers = [{
     id = "add_security_headers"
     enabled = true
-    has_conflict = false
-    conflicts_with = ["add_true_client_ip_headers"]
   }]
 }
 ```

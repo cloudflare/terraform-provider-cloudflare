@@ -15,22 +15,17 @@ description: |-
 resource "cloudflare_api_token" "example_api_token" {
   name = "readonly token"
   policies = [{
-    id = "f267e341f3dd4697bd3b9f71dd96247f"
     effect = "allow"
     permission_groups = [{
-      id = "c8fed203ed3043cba015a93ad1616f1f"
       meta = {
         key = "key"
         value = "value"
       }
-      name = "Zone Read"
     }, {
-      id = "82e64a83756745bbbb1c9c2701bf816b"
       meta = {
         key = "key"
         value = "value"
       }
-      name = "Magic Network Monitoring"
     }]
     resources = {
       "com.cloudflare.api.account.zone.22b1de5f1c0e4b3ea97bb1e963b06a43" = "*"

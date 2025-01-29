@@ -18,7 +18,6 @@ resource "cloudflare_zero_trust_list" "example_zero_trust_list" {
   type = "SERIAL"
   description = "The serial numbers for administrators"
   items = [{
-    created_at = "2014-01-01T05:20:00.12345Z"
     description = "Austin office IP"
     value = "8GE8721REF"
   }]

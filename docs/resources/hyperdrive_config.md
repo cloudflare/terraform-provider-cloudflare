@@ -18,6 +18,7 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
   origin = {
     database = "postgres"
     host = "database.example.com"
+    password = "password"
     port = 5432
     scheme = "postgres"
     user = "postgres"
@@ -40,7 +41,6 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 ### Optional
 
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--caching))
-- `hyperdrive_id` (String) Identifier
 
 ### Read-Only
 
