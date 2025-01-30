@@ -16,10 +16,6 @@ type ZeroTrustAccessIdentityProviderResultDataSourceEnvelope struct {
 	Result ZeroTrustAccessIdentityProviderDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustAccessIdentityProviderResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustAccessIdentityProviderDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustAccessIdentityProviderDataSourceModel struct {
 	ID                 types.String                                                                       `tfsdk:"id" json:"-,computed"`
 	IdentityProviderID types.String                                                                       `tfsdk:"identity_provider_id" path:"identity_provider_id,optional"`

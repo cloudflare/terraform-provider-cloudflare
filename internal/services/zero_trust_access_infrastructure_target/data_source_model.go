@@ -17,10 +17,6 @@ type ZeroTrustAccessInfrastructureTargetResultDataSourceEnvelope struct {
 	Result ZeroTrustAccessInfrastructureTargetDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustAccessInfrastructureTargetResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustAccessInfrastructureTargetDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustAccessInfrastructureTargetDataSourceModel struct {
 	ID         types.String                                                                   `tfsdk:"id" json:"-,computed"`
 	TargetID   types.String                                                                   `tfsdk:"target_id" path:"target_id,optional"`

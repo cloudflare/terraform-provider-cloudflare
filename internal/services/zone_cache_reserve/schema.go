@@ -48,13 +48,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"zone_setting_id": schema.StringAttribute{
-				Description: "ID of the zone setting.",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("cache_reserve"),
-				},
-			},
 		},
 	}
 }

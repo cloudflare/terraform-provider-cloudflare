@@ -25,6 +25,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether the setting is editable",
 				Computed:    true,
 			},
+			"id": schema.StringAttribute{
+				Description: "ID of the zone setting.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("cache_reserve"),
+				},
+			},
 			"modified_on": schema.StringAttribute{
 				Description: "Last time this setting was modified.",
 				Computed:    true,
@@ -35,13 +42,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),
-				},
-			},
-			"zone_setting_id": schema.StringAttribute{
-				Description: "ID of the zone setting.",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("cache_reserve"),
 				},
 			},
 		},

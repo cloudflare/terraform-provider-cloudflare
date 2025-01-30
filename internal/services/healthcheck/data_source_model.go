@@ -17,10 +17,6 @@ type HealthcheckResultDataSourceEnvelope struct {
 	Result HealthcheckDataSourceModel `json:"result,computed"`
 }
 
-type HealthcheckResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[HealthcheckDataSourceModel] `json:"result,computed"`
-}
-
 type HealthcheckDataSourceModel struct {
 	ID                   types.String                                                   `tfsdk:"id" json:"-,computed"`
 	HealthcheckID        types.String                                                   `tfsdk:"healthcheck_id" path:"healthcheck_id,optional"`

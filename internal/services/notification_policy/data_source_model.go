@@ -17,10 +17,6 @@ type NotificationPolicyResultDataSourceEnvelope struct {
 	Result NotificationPolicyDataSourceModel `json:"result,computed"`
 }
 
-type NotificationPolicyResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[NotificationPolicyDataSourceModel] `json:"result,computed"`
-}
-
 type NotificationPolicyDataSourceModel struct {
 	ID            types.String                                                          `tfsdk:"id" json:"-,computed"`
 	PolicyID      types.String                                                          `tfsdk:"policy_id" path:"policy_id,optional"`
