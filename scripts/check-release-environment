@@ -2,12 +2,12 @@
 
 errors=()
 
-if [ -z "${GPG_SIGNING_KEY}" ]; then
-  errors+=("The GPG_SIGNING_KEY secret has not been set. Please set it in either this repository's secrets or your organization secrets")
+if [ -z "${GPG_PRIVATE_KEY}" ]; then
+  errors+=("The GPG_PRIVATE_KEY secret has not been set. Please set it in either this repository's secrets or your organization secrets")
 fi
 
-if [ -z "${GPG_SIGNING_PASSWORD}" ]; then
-  errors+=("The GPG_SIGNING_PASSWORD secret has not been set. Please set it in either this repository's secrets or your organization secrets")
+if [ -z "${GPG_PASSPHRASE}" ]; then
+  errors+=("The GPG_PASSPHRASE secret has not been set. Please set it in either this repository's secrets or your organization secrets")
 fi
 
 lenErrors=${#errors[@]}
