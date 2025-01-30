@@ -112,6 +112,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Partial match to the hostname of a target",
 						Optional:    true,
 					},
+					"ip_like": schema.StringAttribute{
+						Description: "Filters for targets whose IP addresses look like the specified string.\nSupports `*` as a wildcard character",
+						Optional:    true,
+					},
 					"ip_v4": schema.StringAttribute{
 						Description: "IPv4 address of the target",
 						Optional:    true,
@@ -124,6 +128,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Filters for targets that have any of the following IP addresses. Specify\n`ips` multiple times in query parameter to build list of candidates.",
 						Optional:    true,
 						ElementType: types.StringType,
+					},
+					"ipv4_end": schema.StringAttribute{
+						Description: "Defines an IPv4 filter range's ending value (inclusive). Requires\n`ipv4_start` to be specified as well.",
+						Optional:    true,
+					},
+					"ipv4_start": schema.StringAttribute{
+						Description: "Defines an IPv4 filter range's starting value (inclusive). Requires\n`ipv4_end` to be specified as well.",
+						Optional:    true,
+					},
+					"ipv6_end": schema.StringAttribute{
+						Description: "Defines an IPv6 filter range's ending value (inclusive). Requires\n`ipv6_start` to be specified as well.",
+						Optional:    true,
+					},
+					"ipv6_start": schema.StringAttribute{
+						Description: "Defines an IPv6 filter range's starting value (inclusive). Requires\n`ipv6_end` to be specified as well.",
+						Optional:    true,
 					},
 					"modified_after": schema.StringAttribute{
 						Description: "Date and time at which the target was modified after (inclusive)",
@@ -141,6 +161,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("hostname", "created_at"),
 						},
+					},
+					"target_ids": schema.ListAttribute{
+						Description: "Filters for targets that have any of the following UUIDs. Specify\n`target_ids` multiple times in query parameter to build list of\ncandidates.",
+						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"virtual_network_id": schema.StringAttribute{
 						Description: "Private virtual network identifier of the target",

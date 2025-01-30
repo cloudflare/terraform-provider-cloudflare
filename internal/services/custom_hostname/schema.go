@@ -70,6 +70,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true",
 						Optional:    true,
 					},
+					"custom_cert_bundle": schema.ListNestedAttribute{
+						Description: "Array of custom certificate and key pairs (1 or 2 pairs allowed)",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"custom_certificate": schema.StringAttribute{
+									Description: "If a custom uploaded certificate is used.",
+									Required:    true,
+								},
+								"custom_key": schema.StringAttribute{
+									Description: "The key for a custom uploaded certificate.",
+									Required:    true,
+								},
+							},
+						},
+					},
 					"custom_certificate": schema.StringAttribute{
 						Description: "If a custom uploaded certificate is used.",
 						Optional:    true,
