@@ -64,7 +64,7 @@ func (d *EmailSecurityTrustedDomainsDataSource) Read(ctx context.Context, req da
 			return
 		}
 
-		env := EmailSecurityTrustedDomainsResultListDataSourceEnvelope{}
+		env := EmailSecurityTrustedDomainsListResultListDataSourceEnvelope{}
 		page, err := d.client.EmailSecurity.Settings.TrustedDomains.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *EmailSecurityTrustedDomainsDataSource) Read(ctx context.Context, req da
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.TrustedDomainID = ts[0].TrustedDomainID
+		data.TrustedDomainID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)
