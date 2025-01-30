@@ -17,10 +17,6 @@ type ZoneResultDataSourceEnvelope struct {
 	Result ZoneDataSourceModel `json:"result,computed"`
 }
 
-type ZoneResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZoneDataSourceModel] `json:"result,computed"`
-}
-
 type ZoneDataSourceModel struct {
 	ID                  types.String                                         `tfsdk:"id" json:"-,computed"`
 	ZoneID              types.String                                         `tfsdk:"zone_id" path:"zone_id,optional"`

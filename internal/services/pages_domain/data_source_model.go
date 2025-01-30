@@ -16,10 +16,6 @@ type PagesDomainResultDataSourceEnvelope struct {
 	Result PagesDomainDataSourceModel `json:"result,computed"`
 }
 
-type PagesDomainResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[PagesDomainDataSourceModel] `json:"result,computed"`
-}
-
 type PagesDomainDataSourceModel struct {
 	ID                   types.String                                                         `tfsdk:"id" json:"-,computed"`
 	DomainName           types.String                                                         `tfsdk:"domain_name" path:"domain_name,optional"`

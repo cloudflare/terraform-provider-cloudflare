@@ -7,17 +7,12 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/kv"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type WorkersKVNamespaceResultDataSourceEnvelope struct {
 	Result WorkersKVNamespaceDataSourceModel `json:"result,computed"`
-}
-
-type WorkersKVNamespaceResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[WorkersKVNamespaceDataSourceModel] `json:"result,computed"`
 }
 
 type WorkersKVNamespaceDataSourceModel struct {

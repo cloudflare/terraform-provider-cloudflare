@@ -16,10 +16,6 @@ type MagicTransitSiteResultDataSourceEnvelope struct {
 	Result MagicTransitSiteDataSourceModel `json:"result,computed"`
 }
 
-type MagicTransitSiteResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[MagicTransitSiteDataSourceModel] `json:"result,computed"`
-}
-
 type MagicTransitSiteDataSourceModel struct {
 	ID                   types.String                                                      `tfsdk:"id" json:"-,computed"`
 	SiteID               types.String                                                      `tfsdk:"site_id" path:"site_id,optional"`
