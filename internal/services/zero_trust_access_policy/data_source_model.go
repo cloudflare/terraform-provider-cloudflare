@@ -17,10 +17,6 @@ type ZeroTrustAccessPolicyResultDataSourceEnvelope struct {
 	Result ZeroTrustAccessPolicyDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustAccessPolicyResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustAccessPolicyDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustAccessPolicyDataSourceModel struct {
 	ID                           types.String                                                                     `tfsdk:"id" json:"-,computed"`
 	PolicyID                     types.String                                                                     `tfsdk:"policy_id" path:"policy_id,optional"`
