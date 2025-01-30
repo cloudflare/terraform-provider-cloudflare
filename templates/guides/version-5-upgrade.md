@@ -1118,6 +1118,7 @@ resource "cloudflare_api_token" "example" {
 ## cloudflare_dns_record
 
 - `data` is now a single nested attribute (`data = { ... }`) instead of a block (`data { ... }`).
+- `hostname` has been removed. Instead, you should use a combination of data source and resource attributes to get the same value.
 
 ## cloudflare_zero_trust_risk_behavior
 
