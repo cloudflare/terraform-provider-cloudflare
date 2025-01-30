@@ -145,6 +145,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_dispatch_namespace"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv_namespace"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script_subdomain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_secret"
