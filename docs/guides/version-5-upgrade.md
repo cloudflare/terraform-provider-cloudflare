@@ -19,9 +19,13 @@ If you are not ready to make a move to version 5 of the Cloudflare provider,
 you may keep the 4.x branch active for your Terraform project by specifying:
 
 ```hcl
-provider "cloudflare" {
-  version = "~> 4"
-  # ... any other configuration
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
+  }
 }
 ```
 
@@ -36,9 +40,13 @@ existing configuration.
 Once ready, make the following change to use the latest 5.x release:
 
 ```hcl
-provider "cloudflare" {
-  version = "~> 5"
-  # ... any other configuration
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 5.0"
+    }
+  }
 }
 ```
 
