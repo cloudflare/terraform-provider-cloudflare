@@ -152,7 +152,7 @@ cloudflare_terraform_v5()
 
 ## cloudflare_device_settings_policy
 
-- Renamed to `cloudflare_zero_trust_device_profiles`
+- Renamed to `cloudflare_zero_trust_device_custom_profile` or `cloudflare_zero_trust_device_custom_profile` depending on your intended usage.
 
 ## cloudflare_dlp_custom_profile
 
@@ -166,7 +166,7 @@ cloudflare_terraform_v5()
 
 - Renamed to `cloudflare_zero_trust_custom_dlp_profile` or `cloudflare_zero_trust_predefined_dlp_profile` depending on which you are targeting.
 
-## cloudflare_fallback_domain
+## cloudflare_fallback_domain / cloudflare_zero_trust_local_fallback_domain
 
 - Renamed to `cloudflare_zero_trust_device_custom_profile_local_domain_fallback` or `cloudflare_zero_trust_device_default_profile_local_domain_fallback` depending on which you are targeting.
 
@@ -192,7 +192,7 @@ cloudflare_terraform_v5()
 
 ## cloudflare_split_tunnel
 
-- Renamed to `cloudflare_zero_trust_split_tunnels`
+- Renamed to `cloudflare_zero_trust_device_default_profile` and `cloudflare_zero_trust_device_custom_profile` depending on which you are targeting.
 
 ## cloudflare_static_route
 
@@ -228,11 +228,11 @@ cloudflare_terraform_v5()
 
 ## cloudflare_tunnel_route
 
-- Renamed to `cloudflare_zero_trust_tunnel_route`
+- Renamed to `cloudflare_zero_trust_tunnel_cloudflared_route`
 
 ## cloudflare_tunnel_virtual_network
 
-- Renamed to `cloudflare_zero_trust_tunnel_virtual_network`
+- Renamed to `cloudflare_zero_trust_tunnel_cloudflared_virtual_network`
 
 ## cloudflare_worker_cron_trigger
 
