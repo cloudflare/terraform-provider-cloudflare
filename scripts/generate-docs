@@ -10,4 +10,4 @@ then
   go install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
 fi
 
-"$(go env GOPATH)/bin/tfplugindocs" generate -rendered-provider-name "Cloudflare" -provider-name="cloudflare"
+tfplugindocs generate -rendered-provider-name "Cloudflare" -provider-name="cloudflare"
