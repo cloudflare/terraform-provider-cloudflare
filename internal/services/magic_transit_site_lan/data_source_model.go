@@ -17,11 +17,11 @@ type MagicTransitSiteLANResultDataSourceEnvelope struct {
 }
 
 type MagicTransitSiteLANDataSourceModel struct {
+	ID               types.String                                                                  `tfsdk:"id" json:"-,computed"`
+	LANID            types.String                                                                  `tfsdk:"lan_id" path:"lan_id,optional"`
 	AccountID        types.String                                                                  `tfsdk:"account_id" path:"account_id,required"`
-	LANID            types.String                                                                  `tfsdk:"lan_id" path:"lan_id,required"`
 	SiteID           types.String                                                                  `tfsdk:"site_id" path:"site_id,computed"`
 	HaLink           types.Bool                                                                    `tfsdk:"ha_link" json:"ha_link,computed"`
-	ID               types.String                                                                  `tfsdk:"id" json:"id,computed"`
 	Name             types.String                                                                  `tfsdk:"name" json:"name,computed"`
 	Physport         types.Int64                                                                   `tfsdk:"physport" json:"physport,computed"`
 	VlanTag          types.Int64                                                                   `tfsdk:"vlan_tag" json:"vlan_tag,computed"`
@@ -32,6 +32,14 @@ type MagicTransitSiteLANDataSourceModel struct {
 
 func (m *MagicTransitSiteLANDataSourceModel) toReadParams(_ context.Context) (params magic_transit.SiteLANGetParams, diags diag.Diagnostics) {
 	params = magic_transit.SiteLANGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *MagicTransitSiteLANDataSourceModel) toListParams(_ context.Context) (params magic_transit.SiteLANListParams, diags diag.Diagnostics) {
+	params = magic_transit.SiteLANListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

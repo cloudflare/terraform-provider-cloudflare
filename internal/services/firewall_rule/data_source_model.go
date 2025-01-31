@@ -17,16 +17,16 @@ type FirewallRuleResultDataSourceEnvelope struct {
 }
 
 type FirewallRuleDataSourceModel struct {
-	RuleID      types.String                                                `tfsdk:"rule_id" path:"rule_id,required"`
-	ZoneID      types.String                                                `tfsdk:"zone_id" path:"zone_id,required"`
-	ID          types.String                                                `tfsdk:"id" query:"id,computed_optional"`
-	Action      types.String                                                `tfsdk:"action" json:"action,computed"`
-	Description types.String                                                `tfsdk:"description" json:"description,computed"`
-	Paused      types.Bool                                                  `tfsdk:"paused" json:"paused,computed"`
-	Priority    types.Float64                                               `tfsdk:"priority" json:"priority,computed"`
-	Ref         types.String                                                `tfsdk:"ref" json:"ref,computed"`
-	Products    customfield.List[types.String]                              `tfsdk:"products" json:"products,computed"`
-	Filter      customfield.NestedObject[FirewallRuleFilterDataSourceModel] `tfsdk:"filter" json:"filter,computed"`
+	ID          types.String                   `tfsdk:"id" json:"-,computed"`
+	RuleID      types.String                   `tfsdk:"rule_id" path:"rule_id,optional"`
+	ZoneID      types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
+	ID          types.String                   `tfsdk:"id" query:"id,optional"`
+	Action      types.String                   `tfsdk:"action" json:"action,computed"`
+	Description types.String                   `tfsdk:"description" json:"description,computed"`
+	Paused      types.Bool                     `tfsdk:"paused" json:"paused,computed"`
+	Priority    types.Float64                  `tfsdk:"priority" json:"priority,computed"`
+	Ref         types.String                   `tfsdk:"ref" json:"ref,computed"`
+	Products    customfield.List[types.String] `tfsdk:"products" json:"products,computed"`
 }
 
 func (m *FirewallRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.RuleGetParams, diags diag.Diagnostics) {
@@ -37,11 +37,10 @@ func (m *FirewallRuleDataSourceModel) toReadParams(_ context.Context) (params fi
 	return
 }
 
-type FirewallRuleFilterDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Expression  types.String `tfsdk:"expression" json:"expression,computed"`
-	Paused      types.Bool   `tfsdk:"paused" json:"paused,computed"`
-	Ref         types.String `tfsdk:"ref" json:"ref,computed"`
-	Deleted     types.Bool   `tfsdk:"deleted" json:"deleted,computed"`
+func (m *FirewallRuleDataSourceModel) toListParams(_ context.Context) (params firewall.RuleListParams, diags diag.Diagnostics) {
+	params = firewall.RuleListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }

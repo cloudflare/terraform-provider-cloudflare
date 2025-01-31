@@ -17,11 +17,15 @@ var _ datasource.DataSourceWithConfigValidators = (*MagicTransitSiteWANDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description: "Identifier",
-				Required:    true,
+				Computed:    true,
 			},
 			"wan_id": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},
@@ -39,10 +43,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"high",
 					),
 				},
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Computed: true,

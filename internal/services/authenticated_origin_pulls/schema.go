@@ -97,8 +97,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",
+				Computed:    true,
+			},
+			"private_key": schema.StringAttribute{
+				Description: "The hostname certificate's private key.",
 				Computed:    true,
 			},
 			"serial_number": schema.StringAttribute{
