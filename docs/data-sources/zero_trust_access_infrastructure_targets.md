@@ -19,12 +19,18 @@ data "cloudflare_zero_trust_access_infrastructure_targets" "example_zero_trust_a
   direction = "asc"
   hostname = "hostname"
   hostname_contains = "hostname_contains"
+  ip_like = "ip_like"
   ip_v4 = "ip_v4"
   ip_v6 = "ip_v6"
   ips = ["string"]
+  ipv4_end = "ipv4_end"
+  ipv4_start = "ipv4_start"
+  ipv6_end = "ipv6_end"
+  ipv6_start = "ipv6_start"
   modified_after = "2019-12-27T18:11:19.117Z"
   modified_before = "2019-12-27T18:11:19.117Z"
   order = "hostname"
+  target_ids = ["182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"]
   virtual_network_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
 }
 ```
@@ -43,14 +49,27 @@ data "cloudflare_zero_trust_access_infrastructure_targets" "example_zero_trust_a
 - `direction` (String) The sorting direction.
 - `hostname` (String) Hostname of a target
 - `hostname_contains` (String) Partial match to the hostname of a target
+- `ip_like` (String) Filters for targets whose IP addresses look like the specified string.
+Supports `*` as a wildcard character
 - `ip_v4` (String) IPv4 address of the target
 - `ip_v6` (String) IPv6 address of the target
 - `ips` (List of String) Filters for targets that have any of the following IP addresses. Specify
 `ips` multiple times in query parameter to build list of candidates.
+- `ipv4_end` (String) Defines an IPv4 filter range's ending value (inclusive). Requires
+`ipv4_start` to be specified as well.
+- `ipv4_start` (String) Defines an IPv4 filter range's starting value (inclusive). Requires
+`ipv4_end` to be specified as well.
+- `ipv6_end` (String) Defines an IPv6 filter range's ending value (inclusive). Requires
+`ipv6_start` to be specified as well.
+- `ipv6_start` (String) Defines an IPv6 filter range's starting value (inclusive). Requires
+`ipv6_end` to be specified as well.
 - `max_items` (Number) Max items to fetch, default: 1000
 - `modified_after` (String) Date and time at which the target was modified after (inclusive)
 - `modified_before` (String) Date and time at which the target was modified before (inclusive)
 - `order` (String) The field to sort by.
+- `target_ids` (List of String) Filters for targets that have any of the following UUIDs. Specify
+`target_ids` multiple times in query parameter to build list of
+candidates.
 - `virtual_network_id` (String) Private virtual network identifier of the target
 
 ### Read-Only
