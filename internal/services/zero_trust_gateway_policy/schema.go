@@ -456,10 +456,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"fallback": schema.StringAttribute{
 								Description: "The fallback behavior to apply when the internal DNS response code is different from 'NOERROR' or when the response data only contains CNAME records for 'A' or 'AAAA' queries.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("none", "public_dns"),
 								},
+								Default: stringdefault.StaticString("none"),
 							},
 							"view_id": schema.StringAttribute{
 								Description: "The internal DNS view identifier that's passed to the internal DNS service.",
