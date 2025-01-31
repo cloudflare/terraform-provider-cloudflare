@@ -221,5 +221,13 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
             $instances <: contains `"jump_start": $v` => .
         }
     },
+
+    // cloudflare_dns_record
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        and {
+            $resource_type <: contains `cloudflare_dns_record`,
+            $instances <: contains `"hostname": $v` => .
+        }
+    },
   }
 }

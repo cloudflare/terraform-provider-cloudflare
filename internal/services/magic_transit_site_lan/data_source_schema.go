@@ -119,6 +119,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Description: "A valid IPv4 address.",
 								Computed:    true,
 							},
+							"dns_servers": schema.ListAttribute{
+								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
 							"reservations": schema.MapAttribute{
 								Description: "Mapping of MAC addresses to IP addresses",
 								Computed:    true,

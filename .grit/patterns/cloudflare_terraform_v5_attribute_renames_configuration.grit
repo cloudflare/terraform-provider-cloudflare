@@ -127,6 +127,9 @@ pattern cloudflare_terraform_v5_attribute_renames_configuration() {
     // cloudflare_tiered_cache
     `cache_type = $v` as $attribute => `value = $v` where { $attribute <: within `resource "cloudflare_tiered_cache" $_ { $_ }` },
 
+    // cloudflare_dns_record
+    `hostname = $v` as $hostname => . where { $attribute <: within `resource "cloudflare_dns_record" $_ { $_ }` },
+
     // cloudflare_web_analytics_site
     `ruleset_id = $v` as $attribute => `ruleset = {
       id = $v

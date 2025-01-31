@@ -44,5 +44,5 @@ resource "cloudflare_r2_bucket" "example_r2_bucket" {
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_r2_bucket.example '<account_id>/<bucket_name>'
+$ terraform import cloudflare_r2_bucket.example '<account_id>/<bucket_name>/<jurisdiction>'
 ```

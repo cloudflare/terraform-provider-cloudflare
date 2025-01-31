@@ -64,7 +64,7 @@ func (d *CustomHostnameDataSource) Read(ctx context.Context, req datasource.Read
 			return
 		}
 
-		env := CustomHostnameResultListDataSourceEnvelope{}
+		env := CustomHostnamesResultListDataSourceEnvelope{}
 		page, err := d.client.CustomHostnames.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *CustomHostnameDataSource) Read(ctx context.Context, req datasource.Read
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.CustomHostnameID = ts[0].CustomHostnameID
+		data.CustomHostnameID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

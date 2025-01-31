@@ -64,7 +64,7 @@ func (d *AccessRuleDataSource) Read(ctx context.Context, req datasource.ReadRequ
 			return
 		}
 
-		env := AccessRuleResultListDataSourceEnvelope{}
+		env := AccessRulesResultListDataSourceEnvelope{}
 		page, err := d.client.Firewall.AccessRules.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *AccessRuleDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.RuleID = ts[0].RuleID
+		data.RuleID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

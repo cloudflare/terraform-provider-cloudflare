@@ -16,10 +16,6 @@ type MagicNetworkMonitoringRuleResultDataSourceEnvelope struct {
 	Result MagicNetworkMonitoringRuleDataSourceModel `json:"result,computed"`
 }
 
-type MagicNetworkMonitoringRuleResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[MagicNetworkMonitoringRuleDataSourceModel] `json:"result,computed"`
-}
-
 type MagicNetworkMonitoringRuleDataSourceModel struct {
 	ID                     types.String                   `tfsdk:"id" json:"-,computed"`
 	RuleID                 types.String                   `tfsdk:"rule_id" path:"rule_id,optional"`

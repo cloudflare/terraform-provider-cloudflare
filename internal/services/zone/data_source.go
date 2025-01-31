@@ -64,7 +64,7 @@ func (d *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 			return
 		}
 
-		env := ZoneResultListDataSourceEnvelope{}
+		env := ZonesResultListDataSourceEnvelope{}
 		page, err := d.client.Zones.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.ZoneID = ts[0].ZoneID
+		data.ZoneID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

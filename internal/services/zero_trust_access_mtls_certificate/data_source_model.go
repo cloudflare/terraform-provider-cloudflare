@@ -17,10 +17,6 @@ type ZeroTrustAccessMTLSCertificateResultDataSourceEnvelope struct {
 	Result ZeroTrustAccessMTLSCertificateDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustAccessMTLSCertificateResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustAccessMTLSCertificateDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustAccessMTLSCertificateDataSourceModel struct {
 	ID                  types.String                   `tfsdk:"id" json:"-,computed"`
 	CertificateID       types.String                   `tfsdk:"certificate_id" path:"certificate_id,optional"`

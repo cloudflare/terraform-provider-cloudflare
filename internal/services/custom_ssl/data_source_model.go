@@ -17,10 +17,6 @@ type CustomSSLResultDataSourceEnvelope struct {
 	Result CustomSSLDataSourceModel `json:"result,computed"`
 }
 
-type CustomSSLResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[CustomSSLDataSourceModel] `json:"result,computed"`
-}
-
 type CustomSSLDataSourceModel struct {
 	ID                  types.String                                                      `tfsdk:"id" json:"-,computed"`
 	CustomCertificateID types.String                                                      `tfsdk:"custom_certificate_id" path:"custom_certificate_id,optional"`

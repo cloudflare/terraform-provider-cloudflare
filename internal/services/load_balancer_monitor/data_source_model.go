@@ -16,10 +16,6 @@ type LoadBalancerMonitorResultDataSourceEnvelope struct {
 	Result LoadBalancerMonitorDataSourceModel `json:"result,computed"`
 }
 
-type LoadBalancerMonitorResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[LoadBalancerMonitorDataSourceModel] `json:"result,computed"`
-}
-
 type LoadBalancerMonitorDataSourceModel struct {
 	ID              types.String                                    `tfsdk:"id" json:"-,computed"`
 	MonitorID       types.String                                    `tfsdk:"monitor_id" path:"monitor_id,optional"`

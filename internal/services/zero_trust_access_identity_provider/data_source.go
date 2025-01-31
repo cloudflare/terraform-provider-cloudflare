@@ -64,7 +64,7 @@ func (d *ZeroTrustAccessIdentityProviderDataSource) Read(ctx context.Context, re
 			return
 		}
 
-		env := ZeroTrustAccessIdentityProviderResultListDataSourceEnvelope{}
+		env := ZeroTrustAccessIdentityProvidersResultListDataSourceEnvelope{}
 		page, err := d.client.ZeroTrust.IdentityProviders.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *ZeroTrustAccessIdentityProviderDataSource) Read(ctx context.Context, re
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.IdentityProviderID = ts[0].IdentityProviderID
+		data.IdentityProviderID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

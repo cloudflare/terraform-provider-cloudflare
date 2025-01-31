@@ -17,10 +17,6 @@ type APITokenResultDataSourceEnvelope struct {
 	Result APITokenDataSourceModel `json:"result,computed"`
 }
 
-type APITokenResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[APITokenDataSourceModel] `json:"result,computed"`
-}
-
 type APITokenDataSourceModel struct {
 	ID         types.String                                                  `tfsdk:"id" json:"-,computed"`
 	TokenID    types.String                                                  `tfsdk:"token_id" path:"token_id,optional"`
