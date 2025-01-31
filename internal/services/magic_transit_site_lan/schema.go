@@ -127,6 +127,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "A valid IPv4 address.",
 								Optional:    true,
 							},
+							"dns_servers": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
 							"reservations": schema.MapAttribute{
 								Description: "Mapping of MAC addresses to IP addresses",
 								Optional:    true,
