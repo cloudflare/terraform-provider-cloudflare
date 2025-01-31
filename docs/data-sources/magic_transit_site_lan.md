@@ -92,6 +92,7 @@ Read-Only:
 - `dhcp_pool_end` (String) A valid IPv4 address.
 - `dhcp_pool_start` (String) A valid IPv4 address.
 - `dns_server` (String) A valid IPv4 address.
+- `dns_servers` (List of String)
 - `reservations` (Map of String) Mapping of MAC addresses to IP addresses
 
 
