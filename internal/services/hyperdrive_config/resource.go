@@ -118,7 +118,7 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 	env := HyperdriveConfigResultEnvelope{*data}
 	_, err = r.client.Hyperdrive.Configs.Update(
 		ctx,
-		data.HyperdriveID.ValueString(),
+		data.ID.ValueString(),
 		hyperdrive.ConfigUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -154,7 +154,7 @@ func (r *HyperdriveConfigResource) Read(ctx context.Context, req resource.ReadRe
 	env := HyperdriveConfigResultEnvelope{*data}
 	_, err := r.client.Hyperdrive.Configs.Get(
 		ctx,
-		data.HyperdriveID.ValueString(),
+		data.ID.ValueString(),
 		hyperdrive.ConfigGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -192,7 +192,7 @@ func (r *HyperdriveConfigResource) Delete(ctx context.Context, req resource.Dele
 
 	_, err := r.client.Hyperdrive.Configs.Delete(
 		ctx,
-		data.HyperdriveID.ValueString(),
+		data.ID.ValueString(),
 		hyperdrive.ConfigDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},

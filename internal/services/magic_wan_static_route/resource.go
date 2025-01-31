@@ -62,6 +62,11 @@ func (r *MagicWANStaticRouteResource) Create(ctx context.Context, req resource.C
 	}
 
 	dataBytes, err := data.MarshalJSON()
+
+	// Workaround to wrap the route into an array, which is what the API expects.
+	dataBytes = append([]byte("["), dataBytes...)
+	dataBytes = append(dataBytes, byte(']'))
+
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return

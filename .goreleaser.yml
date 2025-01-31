@@ -12,18 +12,24 @@ builds:
     ldflags:
       - "-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}"
     goos:
-      - freebsd
-      - windows
-      - linux
       - darwin
+      - freebsd
+      - linux
+      - windows
     goarch:
-      - amd64
       - "386"
+      - amd64
       - arm
       - arm64
     ignore:
-      - goos: darwin
-        goarch: "386"
+      - goarch: "386"
+        goos: darwin
+      - goarch: arm
+        goos: windows
+      - goarch: arm64
+        goos: freebsd
+      - goarch: arm64
+        goos: windows
     binary: "{{ .ProjectName }}_v{{ .Version }}"
 archives:
   - formats: [ 'zip' ]
@@ -48,3 +54,11 @@ release:
   extra_files:
     - glob: "terraform-registry-manifest.json"
       name_template: "{{ .ProjectName }}_{{ .Version }}_manifest.json"
+changelog:
+  disable: true
+snapshot:
+  version_template: "{{.ShortCommit}}-dev"
+announce:
+  discord:
+    enabled: true
+    message_template: "{{ .ProjectName }} ({{ .Version }}) has been released. See the release notes at {{ .ReleaseURL }}"

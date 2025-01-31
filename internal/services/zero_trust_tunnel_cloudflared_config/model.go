@@ -19,7 +19,7 @@ type ZeroTrustTunnelCloudflaredConfigModel struct {
 	AccountID types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
 	Config    customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigModel] `tfsdk:"config" json:"config,computed_optional"`
 	CreatedAt timetypes.RFC3339                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Source    types.String                                                          `tfsdk:"source" json:"source,computed"`
+	Source    types.String                                                          `tfsdk:"source" json:"source,computed_optional"`
 	Version   types.Int64                                                           `tfsdk:"version" json:"version,computed"`
 }
 
@@ -34,11 +34,11 @@ func (m ZeroTrustTunnelCloudflaredConfigModel) MarshalJSONForUpdate(state ZeroTr
 type ZeroTrustTunnelCloudflaredConfigConfigModel struct {
 	Ingress       customfield.NestedObjectList[ZeroTrustTunnelCloudflaredConfigConfigIngressModel]   `tfsdk:"ingress" json:"ingress,computed_optional"`
 	OriginRequest customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigOriginRequestModel] `tfsdk:"origin_request" json:"originRequest,computed_optional"`
-	WARPRouting   customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel]   `tfsdk:"warp_routing" json:"warp-routing,computed"`
+	WARPRouting   customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel]   `tfsdk:"warp_routing" json:"warp-routing,computed_optional"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigIngressModel struct {
-	Hostname      types.String                                                                              `tfsdk:"hostname" json:"hostname,required"`
+	Hostname      types.String                                                                              `tfsdk:"hostname" json:"hostname,optional"`
 	Service       types.String                                                                              `tfsdk:"service" json:"service,required"`
 	OriginRequest customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestModel] `tfsdk:"origin_request" json:"originRequest,computed_optional"`
 	Path          types.String                                                                              `tfsdk:"path" json:"path,computed_optional"`

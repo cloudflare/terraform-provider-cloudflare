@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/kv"
@@ -64,21 +65,18 @@ func (r *WorkersKVResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	dataBytes, contentType, err := data.MarshalMultipart()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
-		return
-	}
+	data.KeyName = types.StringValue(url.PathEscape(data.KeyName.ValueString()))
+
 	res := new(http.Response)
 	env := WorkersKVResultEnvelope{*data}
-	_, err = r.client.KV.Namespaces.Values.Update(
+	_, err := r.client.KV.Namespaces.Values.Update(
 		ctx,
 		data.NamespaceID.ValueString(),
 		data.KeyName.ValueString(),
 		kv.NamespaceValueUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody(contentType, dataBytes),
+		option.WithRequestBody("application/octet-stream", []byte(data.Value.ValueString())),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -115,21 +113,17 @@ func (r *WorkersKVResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	dataBytes, contentType, err := data.MarshalMultipart()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
-		return
-	}
+	data.KeyName = types.StringValue(url.PathEscape(data.KeyName.ValueString()))
 	res := new(http.Response)
 	env := WorkersKVResultEnvelope{*data}
-	_, err = r.client.KV.Namespaces.Values.Update(
+	_, err := r.client.KV.Namespaces.Values.Update(
 		ctx,
 		data.NamespaceID.ValueString(),
 		data.KeyName.ValueString(),
 		kv.NamespaceValueUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody(contentType, dataBytes),
+		option.WithRequestBody("application/octet-stream", []byte(data.Value.ValueString())),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
