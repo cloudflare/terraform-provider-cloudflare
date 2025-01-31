@@ -46,8 +46,8 @@ func (m *MagicTransitSiteDataSourceModel) toListParams(_ context.Context) (param
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
-	if !m.Filter.ConnectorIdentifier.IsNull() {
-		params.ConnectorIdentifier = cloudflare.F(m.Filter.ConnectorIdentifier.ValueString())
+	if !m.Filter.Connectorid.IsNull() {
+		params.Connectorid = cloudflare.F(m.Filter.Connectorid.ValueString())
 	}
 
 	return
@@ -59,5 +59,5 @@ type MagicTransitSiteLocationDataSourceModel struct {
 }
 
 type MagicTransitSiteFindOneByDataSourceModel struct {
-	ConnectorIdentifier types.String `tfsdk:"connector_identifier" query:"connector_identifier,optional"`
+	Connectorid types.String `tfsdk:"connectorid" query:"connectorid,optional"`
 }
