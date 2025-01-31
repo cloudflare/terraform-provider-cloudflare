@@ -45,7 +45,7 @@ data "cloudflare_magic_transit_site" "example_magic_transit_site" {
 
 Optional:
 
-- `connector_identifier` (String) Identifier
+- `connectorid` (String) Identifier
 
 
 <a id="nestedatt--location"></a>

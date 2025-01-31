@@ -38,6 +38,7 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
       dhcp_pool_end = "192.0.2.1"
       dhcp_pool_start = "192.0.2.1"
       dns_server = "192.0.2.1"
+      dns_servers = ["192.0.2.1"]
       reservations = {
         "00:11:22:33:44:55" = "192.0.2.100"
         "AA:BB:CC:DD:EE:FF" = "192.168.1.101"
@@ -131,6 +132,7 @@ Optional:
 - `dhcp_pool_end` (String) A valid IPv4 address.
 - `dhcp_pool_start` (String) A valid IPv4 address.
 - `dns_server` (String) A valid IPv4 address.
+- `dns_servers` (List of String)
 - `reservations` (Map of String) Mapping of MAC addresses to IP addresses
 
 
