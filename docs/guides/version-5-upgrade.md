@@ -44,8 +44,8 @@ provider "cloudflare" {
 
 ## Resource renames
 
-For an in depth guide on how to perform migrations for resources or datasources that
-have been renamed, check out [migrating renamed resources].
+For a detailed guide on migrating renamed resources or datasources, including
+handling state migration, check out [migrating renamed resources].
 
 The pattern files for v5 resource renames are:
 
