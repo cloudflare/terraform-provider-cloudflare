@@ -25,6 +25,7 @@ pattern cloudflare_terraform_v5_resource_renames_state() {
     `"cloudflare_device_posture_integration"` => `"cloudflare_zero_trust_device_posture_integration"`,
     `"cloudflare_device_posture_rule"` => `"cloudflare_zero_trust_device_posture_rule"`,
     `"cloudflare_device_settings_policy"` => `"cloudflare_zero_trust_device_profiles"`,
+    `"cloudflare_record"` => `"cloudflare_dns_record"`,
     `"cloudflare_dlp_profile"` => `"cloudflare_zero_trust_dlp_profile"`,
     `"cloudflare_dlp_custom_profile"` => `"cloudflare_zero_trust_dlp_custom_profile"`,
     `"cloudflare_dlp_predefined_profile"` => `"cloudflare_zero_trust_dlp_predefined_profile"`,
