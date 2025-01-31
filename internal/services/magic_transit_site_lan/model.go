@@ -13,9 +13,9 @@ type MagicTransitSiteLANResultEnvelope struct {
 }
 
 type MagicTransitSiteLANModel struct {
+	ID               types.String                                                        `tfsdk:"id" json:"id,computed"`
 	AccountID        types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	SiteID           types.String                                                        `tfsdk:"site_id" path:"site_id,required"`
-	LANID            types.String                                                        `tfsdk:"lan_id" path:"lan_id,optional"`
 	HaLink           types.Bool                                                          `tfsdk:"ha_link" json:"ha_link,optional"`
 	Physport         types.Int64                                                         `tfsdk:"physport" json:"physport,required"`
 	VlanTag          types.Int64                                                         `tfsdk:"vlan_tag" json:"vlan_tag,required"`
@@ -23,7 +23,6 @@ type MagicTransitSiteLANModel struct {
 	Nat              customfield.NestedObject[MagicTransitSiteLANNatModel]               `tfsdk:"nat" json:"nat,computed_optional"`
 	RoutedSubnets    customfield.NestedObjectList[MagicTransitSiteLANRoutedSubnetsModel] `tfsdk:"routed_subnets" json:"routed_subnets,computed_optional"`
 	StaticAddressing customfield.NestedObject[MagicTransitSiteLANStaticAddressingModel]  `tfsdk:"static_addressing" json:"static_addressing,computed_optional"`
-	ID               types.String                                                        `tfsdk:"id" json:"id,computed"`
 }
 
 func (m MagicTransitSiteLANModel) MarshalJSON() (data []byte, err error) {

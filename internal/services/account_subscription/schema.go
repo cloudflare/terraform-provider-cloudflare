@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -77,6 +78,43 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						ElementType: types.StringType,
 					},
+				},
+			},
+			"currency": schema.StringAttribute{
+				Description: "The monetary unit in which pricing information is displayed.",
+				Computed:    true,
+			},
+			"current_period_end": schema.StringAttribute{
+				Description: "The end of the current period and also when the next billing is due.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"current_period_start": schema.StringAttribute{
+				Description: "When the current billing period started. May match initial_period_start if this is the first period.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "Subscription identifier tag.",
+				Computed:    true,
+			},
+			"price": schema.Float64Attribute{
+				Description: "The price of the subscription that will be billed, in US dollars.",
+				Computed:    true,
+			},
+			"state": schema.StringAttribute{
+				Description: "The state that the subscription is in.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"Trial",
+						"Provisioned",
+						"Paid",
+						"AwaitingPayment",
+						"Cancelled",
+						"Failed",
+						"Expired",
+					),
 				},
 			},
 		},
