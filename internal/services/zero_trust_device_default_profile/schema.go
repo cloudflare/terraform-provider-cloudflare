@@ -8,9 +8,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -21,59 +18,53 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDeviceDefaultProfileRes
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"account_id": schema.StringAttribute{
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"allow_mode_switch": schema.BoolAttribute{
-				Description:   "Whether to allow the user to switch WARP between modes.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Whether to allow the user to switch WARP between modes.",
+				Optional:    true,
 			},
 			"allow_updates": schema.BoolAttribute{
-				Description:   "Whether to receive update notifications when a new version of the client is available.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Whether to receive update notifications when a new version of the client is available.",
+				Optional:    true,
 			},
 			"allowed_to_leave": schema.BoolAttribute{
-				Description:   "Whether to allow devices to leave the organization.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Whether to allow devices to leave the organization.",
+				Optional:    true,
 			},
 			"auto_connect": schema.Float64Attribute{
-				Description:   "The amount of time in seconds to reconnect after having been disabled.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
+				Description: "The amount of time in seconds to reconnect after having been disabled.",
+				Optional:    true,
 			},
 			"captive_portal": schema.Float64Attribute{
-				Description:   "Turn on the captive portal after the specified amount of time.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
+				Description: "Turn on the captive portal after the specified amount of time.",
+				Optional:    true,
 			},
 			"disable_auto_fallback": schema.BoolAttribute{
-				Description:   "If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.",
+				Optional:    true,
 			},
 			"exclude_office_ips": schema.BoolAttribute{
-				Description:   "Whether to add Microsoft IPs to Split Tunnel exclusions.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
+				Optional:    true,
 			},
 			"support_url": schema.StringAttribute{
-				Description:   "The URL to launch when the Send Feedback button is clicked.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "The URL to launch when the Send Feedback button is clicked.",
+				Optional:    true,
 			},
 			"switch_locked": schema.BoolAttribute{
-				Description:   "Whether to allow the user to turn off the WARP switch and disconnect the client.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Whether to allow the user to turn off the WARP switch and disconnect the client.",
+				Optional:    true,
 			},
 			"tunnel_protocol": schema.StringAttribute{
-				Description:   "Determines which tunnel protocol to use.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "Determines which tunnel protocol to use.",
+				Optional:    true,
 			},
 			"service_mode_v2": schema.SingleNestedAttribute{
 				Computed:   true,
@@ -89,7 +80,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"default": schema.BoolAttribute{
 				Description: "Whether the policy will be applied to matching devices.",
