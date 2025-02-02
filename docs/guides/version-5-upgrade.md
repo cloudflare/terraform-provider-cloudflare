@@ -52,6 +52,11 @@ The pattern files for v5 resource renames are:
 - `cloudflare_terraform_v5_resource_renames_configuration`
 - `cloudflare_terraform_v5_resource_renames_state`
 
+~> Due to the potential impact of migrating critical resources, codemods
+**do not automatically** migrate resources that have been renamed. You should instead
+review the documentation above and chose the migration method that best suits your
+needs before attempting the attribute migration path below.
+
 ## Automatic migration
 
 For assisting with automatic migrations, we have provided a [GritQL] pattern.
@@ -68,7 +73,7 @@ as effective. We recommend reviewing the migration notes below to verify all the
 changes.
 
 ```bash
-$ grit apply github.com/cloudflare/terraform-provider-cloudflare#terraform_cloudflare_v5
+$ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5
 ```
 
 We recommend ensuring you are using version control for these changes or make a
