@@ -4,10 +4,4 @@ set -e
 
 cd "$(dirname "$0")/.."
 
-echo "==> Generating Terraform provider documentation"
-if ! command -v "tfplugindocs" &> /dev/null
-then
-  go install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
-fi
-
-tfplugindocs generate -rendered-provider-name "Cloudflare" -provider-name="cloudflare"
+# tfplugindocs is disabled. To enable it, set `generate_docs: true` in the provider options.
