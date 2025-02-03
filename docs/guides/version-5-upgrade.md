@@ -68,7 +68,7 @@ as effective. We recommend reviewing the migration notes below to verify all the
 changes.
 
 ```bash
-$ grit apply github.com/cloudflare/terraform-provider-cloudflare#terraform_cloudflare_v5
+$ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5
 ```
 
 We recommend ensuring you are using version control for these changes or make a
