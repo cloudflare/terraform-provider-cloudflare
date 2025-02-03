@@ -134,5 +134,8 @@ pattern cloudflare_terraform_v5_attribute_renames_configuration() {
     `ruleset_id = $v` as $attribute => `ruleset = {
       id = $v
     }` where { $attribute <: within `resource "cloudflare_web_analytics_site" $_ { $_ }` },
+
+    // cloudflare_dns_record
+    `allow_overwrite = $v` as $attribute => . where { $attribute <: within `resource "cloudflare_dns_record" $_ { $_ }` },
   }
 }

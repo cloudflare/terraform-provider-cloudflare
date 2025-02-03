@@ -229,5 +229,11 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
             $instances <: contains `"hostname": $v` => .
         }
     },
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        and {
+            $resource_type <: contains `cloudflare_dns_record`,
+            $instances <: contains `"allow_overwrite": $v` => .
+        }
+    },
   }
 }
