@@ -30,6 +30,7 @@ type ZoneDataSourceModel struct {
 	Paused              types.Bool                                           `tfsdk:"paused" json:"paused,computed"`
 	Status              types.String                                         `tfsdk:"status" json:"status,computed"`
 	Type                types.String                                         `tfsdk:"type" json:"type,computed"`
+	VerificationKey     types.String                                         `tfsdk:"verification_key" json:"verification_key,computed"`
 	NameServers         customfield.List[types.String]                       `tfsdk:"name_servers" json:"name_servers,computed"`
 	OriginalNameServers customfield.List[types.String]                       `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
 	VanityNameServers   customfield.List[types.String]                       `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed"`
