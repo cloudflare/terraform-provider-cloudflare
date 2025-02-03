@@ -259,10 +259,6 @@ cloudflare_terraform_v5()
 
 - Renamed to `cloudflare_workers_for_platforms_dispatch_namespace`
 
-## cloudflare_zone_dnssec
-
-- Renamed to `cloudflare_dns_zone_dnssec`
-
 ## cloudflare_managed_headers
 
 - Renamed to `cloudflare_managed_transforms`

@@ -48,7 +48,6 @@ pattern cloudflare_terraform_v5_resource_renames_configuration() {
     `"cloudflare_worker_script"` => `"cloudflare_workers_script"`,
     `"cloudflare_worker_secret"` => `"cloudflare_workers_secret"`,
     `"cloudflare_workers_for_platforms_namespace"` => `"cloudflare_workers_for_platforms_dispatch_namespace"`,
-    `"cloudflare_zone_dnssec"` => `"cloudflare_dns_zone_dnssec"`,
     `"cloudflare_managed_headers"` => `"cloudflare_managed_transforms"`,
   } as $old_name where {
     $old_name <: within `resource $_ { $_ }`
