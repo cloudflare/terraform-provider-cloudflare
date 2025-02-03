@@ -82,7 +82,6 @@ pattern cloudflare_terraform_v5_resource_renames_state() {
     `"cloudflare_worker_script.$dep"` => `"cloudflare_workers_script.$dep"`,
     `"cloudflare_worker_secret.$dep"` => `"cloudflare_workers_secret.$dep"`,
     `"cloudflare_workers_for_platforms_namespace.$dep"` => `"cloudflare_workers_for_platforms_dispatch_namespace.$dep"`,
-    `"cloudflare_zone_dnssec.$dep"` => `"cloudflare_dns_zone_dnssec.$dep"`,
     `"cloudflare_managed_headers.$dep"` => `"cloudflare_managed_transforms.$dep"`,
   }
 }
