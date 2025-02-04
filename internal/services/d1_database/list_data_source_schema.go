@@ -45,12 +45,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
-							Description: "D1 database name.",
-							Computed:    true,
+							Computed: true,
 						},
 						"uuid": schema.StringAttribute{
-							Description: "D1 database identifier (UUID).",
-							Computed:    true,
+							Computed: true,
 						},
 						"version": schema.StringAttribute{
 							Computed: true,

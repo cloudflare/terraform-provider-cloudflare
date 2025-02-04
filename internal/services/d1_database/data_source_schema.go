@@ -18,12 +18,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "D1 database identifier (UUID).",
-				Computed:    true,
+				Computed: true,
 			},
 			"database_id": schema.StringAttribute{
-				Description: "D1 database identifier (UUID).",
-				Optional:    true,
+				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
@@ -39,15 +37,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "D1 database name.",
-				Computed:    true,
+				Computed: true,
 			},
 			"num_tables": schema.Float64Attribute{
 				Computed: true,
 			},
 			"uuid": schema.StringAttribute{
-				Description: "D1 database identifier (UUID).",
-				Computed:    true,
+				Computed: true,
 			},
 			"version": schema.StringAttribute{
 				Computed: true,
