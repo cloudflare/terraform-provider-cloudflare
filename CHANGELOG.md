@@ -1,5 +1,22 @@
 ## 4.52.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_waiting_room: add support for Turnstile fields ([#4952](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4952))
+* resource/cloudflare_zero_trust_gateway_policy: allow configuring isolate rules with BISO admin control V2 settings ([#4962](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4962))
+* resource/snippets-rules: make terraform consistent with the API and do not require "enabled" and "description" fields
+resource/snippets: use list instead of set
+resource/cloud_connector_rules: use list instead of set ([#4787](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4787))
+
+BUG FIXES:
+
+* resource/cloudflare_device_posture_integration: fix bug where `custom_s2s` and `tanium_s2s` was not included in the type validation for s2s posture integrations. ([#4933](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4933))
+
+DEPENDENCIES:
+
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.25.0 to 0.26.0 ([#4928](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4928))
+* provider: bump github.com/hashicorp/terraform-plugin-mux from 0.17.0 to 0.18.0 ([#4934](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4934))
+
 ## 4.51.0 (January 22nd, 2025)
 
 NOTES:
