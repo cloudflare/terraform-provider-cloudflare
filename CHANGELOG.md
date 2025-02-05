@@ -1,4 +1,4 @@
-## 4.52.0 (Unreleased)
+## 4.52.0 (February 5th, 2025)
 
 ENHANCEMENTS:
 
