@@ -1145,7 +1145,7 @@ resource "cloudflare_api_token" "example" {
 - `from_list` is now a list of objects (`from_list = [{ ... }]`) instead of multiple block attribute (`from_list { ... }`).
 - `from_value` is now a list of objects (`from_value = [{ ... }]`) instead of multiple block attribute (`from_value { ... }`).
 - `header` is now a list of objects (`header = [{ ... }]`) instead of multiple block attribute (`header { ... }`).
-- `headers` is now a list of objects (`headers = [{ ... }]`) instead of multiple block attribute (`headers { ... }`).
+- `headers` is now a map of attributes keyed by the name instead of multiple block attribute (`headers { ... }`).
 - `host` is now a list of objects (`host = [{ ... }]`) instead of multiple block attribute (`host { ... }`).
 - `logging` is now a single nested attribute (`logging = { ... }`) instead of a block (`logging { ... }`).
 - `matched_data` is now a list of objects (`matched_data = [{ ... }]`) instead of multiple block attribute (`matched_data { ... }`).
@@ -1256,6 +1256,7 @@ resource "cloudflare_api_token" "example" {
 
 ## cloudflare_page_rule
 
+- `actions`is now a single nested attribute instead of a block.
 - `ignore = true` is now `exclude = ["*"]`
 - `ignore = false` is now `include = ["*"]`
 - `cache_ttl_by_status` is now a map (`cache_ttl_by_status = { ... }`) instead of a list of objects (`cache_ttl_by_status = [{ ... }]`)
@@ -1265,16 +1266,14 @@ Before
 ```
 resource "cloudflare_page_rule" "example" {
   target = "example.com"
-  actions = [
-    {
-      cache_key_fields = {
-        query_string = {
-            ignore = true
-            ignore = false
-        }
+  actions {
+    cache_key_fields = {
+      query_string = {
+        ignore = true
+        ignore = false
       }
     }
-  ]
+  }
 }
 ```
 
@@ -1283,16 +1282,14 @@ After
 ```
 resource "cloudflare_page_rule" "example" {
   target = "example.com"
-  actions = [
-    {
-      cache_key_fields = {
-        query_string = {
-            exclude = ["*"]
-            include = ["*"]
-        }
+  actions = {
+    cache_key_fields = {
+      query_string = {
+        exclude = ["*"]
+        include = ["*"]
       }
     }
-  ]
+  }
 }
 ```
 

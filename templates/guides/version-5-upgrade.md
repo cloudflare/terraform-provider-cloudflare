@@ -1145,7 +1145,7 @@ resource "cloudflare_api_token" "example" {
 - `from_list` is now a list of objects (`from_list = [{ ... }]`) instead of multiple block attribute (`from_list { ... }`).
 - `from_value` is now a list of objects (`from_value = [{ ... }]`) instead of multiple block attribute (`from_value { ... }`).
 - `header` is now a list of objects (`header = [{ ... }]`) instead of multiple block attribute (`header { ... }`).
-- `headers` is now a list of objects (`headers = [{ ... }]`) instead of multiple block attribute (`headers { ... }`).
+- `headers` is now a map of attributes keyed by the name instead of multiple block attribute (`headers { ... }`).
 - `host` is now a list of objects (`host = [{ ... }]`) instead of multiple block attribute (`host { ... }`).
 - `logging` is now a single nested attribute (`logging = { ... }`) instead of a block (`logging { ... }`).
 - `matched_data` is now a list of objects (`matched_data = [{ ... }]`) instead of multiple block attribute (`matched_data { ... }`).
