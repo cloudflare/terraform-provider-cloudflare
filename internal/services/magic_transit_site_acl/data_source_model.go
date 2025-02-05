@@ -16,10 +16,6 @@ type MagicTransitSiteACLResultDataSourceEnvelope struct {
 	Result MagicTransitSiteACLDataSourceModel `json:"result,computed"`
 }
 
-type MagicTransitSiteACLResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[MagicTransitSiteACLDataSourceModel] `json:"result,computed"`
-}
-
 type MagicTransitSiteACLDataSourceModel struct {
 	ID             types.String                                                     `tfsdk:"id" json:"-,computed"`
 	ACLID          types.String                                                     `tfsdk:"acl_id" path:"acl_id,optional"`

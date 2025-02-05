@@ -224,12 +224,23 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
             $instances <: contains `"jump_start": $v` => .
         }
     },
-
+    
     // cloudflare_record
     `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
         and {
             $resource_type <: contains `cloudflare_record`,
             $instances <: contains `"data": [$inner]` => `"data": {$inner}`
+    },
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        and {
+            $resource_type <: contains `cloudflare_record`,
+            $instances <: contains `"hostname": $v` => .
+        }
+    },
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        and {
+            $resource_type <: contains `cloudflare_record`,
+            $instances <: contains `"allow_overwrite": $v` => .
         }
     },
   }

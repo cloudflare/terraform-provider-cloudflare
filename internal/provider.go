@@ -68,6 +68,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/hyperdrive_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image_variant"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ip_ranges"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/keyless_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check_rule"
@@ -144,6 +145,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_dispatch_namespace"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv_namespace"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script_subdomain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_secret"
@@ -186,6 +188,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_route"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_virtual_network"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_reserve"
@@ -420,6 +423,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		waiting_room_rules.NewResource,
 		waiting_room_settings.NewResource,
 		web3_hostname.NewResource,
+		workers_route.NewResource,
 		workers_script.NewResource,
 		workers_script_subdomain.NewResource,
 		workers_cron_trigger.NewResource,
@@ -549,6 +553,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		api_token_permissions_groups.NewAPITokenPermissionsGroupsListDataSource,
 		origin_ca_certificate.NewOriginCACertificateDataSource,
 		origin_ca_certificate.NewOriginCACertificatesDataSource,
+		ip_ranges.NewIPRangesDataSource,
 		user.NewUserDataSource,
 		api_token.NewAPITokenDataSource,
 		api_token.NewAPITokensDataSource,
@@ -636,6 +641,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		waiting_room_settings.NewWaitingRoomSettingsDataSource,
 		web3_hostname.NewWeb3HostnameDataSource,
 		web3_hostname.NewWeb3HostnamesDataSource,
+		workers_route.NewWorkersRouteDataSource,
+		workers_route.NewWorkersRoutesDataSource,
 		workers_script.NewWorkersScriptDataSource,
 		workers_script.NewWorkersScriptsDataSource,
 		workers_script_subdomain.NewWorkersScriptSubdomainDataSource,
@@ -769,6 +776,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_cloudflared.NewZeroTrustTunnelCloudflaredDataSource,
 		zero_trust_tunnel_cloudflared.NewZeroTrustTunnelCloudflaredsDataSource,
 		zero_trust_tunnel_cloudflared_config.NewZeroTrustTunnelCloudflaredConfigDataSource,
+		zero_trust_tunnel_cloudflared_token.NewZeroTrustTunnelCloudflaredTokenDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetsDataSource,
 		zero_trust_dlp_custom_profile.NewZeroTrustDLPCustomProfileDataSource,
