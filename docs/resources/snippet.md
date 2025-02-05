@@ -21,7 +21,7 @@ The [Snippet](https://developers.cloudflare.com/rules/snippets/) resource allows
 
 ### Optional
 
-- `files` (Block Set) List of Snippet Files (see [below for nested schema](#nestedblock--files))
+- `files` (Block List) List of Snippet Files (see [below for nested schema](#nestedblock--files))
 
 <a id="nestedblock--files"></a>
 ### Nested Schema for `files`

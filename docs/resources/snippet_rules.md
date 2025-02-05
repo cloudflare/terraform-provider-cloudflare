@@ -19,7 +19,7 @@ The [Snippet Rules](https://developers.cloudflare.com/rules/snippets/) resource 
 
 ### Optional
 
-- `rules` (Block Set) List of Snippet Rules (see [below for nested schema](#nestedblock--rules))
+- `rules` (Block List) List of Snippet Rules (see [below for nested schema](#nestedblock--rules))
 
 <a id="nestedblock--rules"></a>
 ### Nested Schema for `rules`

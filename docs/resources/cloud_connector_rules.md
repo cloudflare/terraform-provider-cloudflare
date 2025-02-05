@@ -35,7 +35,7 @@ resource "cloudflare_cloud_connector_rules" "example" {
 
 ### Optional
 
-- `rules` (Block Set) List of Cloud Connector Rules (see [below for nested schema](#nestedblock--rules))
+- `rules` (Block List) List of Cloud Connector Rules (see [below for nested schema](#nestedblock--rules))
 
 <a id="nestedblock--rules"></a>
 ### Nested Schema for `rules`

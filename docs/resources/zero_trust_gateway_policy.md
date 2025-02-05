@@ -91,12 +91,19 @@ Required:
 
 Optional:
 
-- `disable_clipboard_redirection` (Boolean) Disable clipboard redirection.
-- `disable_copy_paste` (Boolean) Disable copy-paste.
-- `disable_download` (Boolean) Disable download.
-- `disable_keyboard` (Boolean) Disable keyboard usage.
-- `disable_printing` (Boolean) Disable printing.
-- `disable_upload` (Boolean) Disable upload.
+- `copy` (String) Configure whether copy is enabled or not. When set with 'remote_only', copying isolated content from the remote browser to the user's local clipboard is disabled. When absent, copy is enabled. Only applies when version == v2.
+- `disable_clipboard_redirection` (Boolean) Disable clipboard redirection. Only applies when version == v1.
+- `disable_copy_paste` (Boolean) Disable copy-paste. Only applies when version == v1.
+- `disable_download` (Boolean) Disable download. Only applies when version == v1.
+- `disable_keyboard` (Boolean) Disable keyboard usage. Only applies when version == v1.
+- `disable_printing` (Boolean) Disable printing. Only applies when version == v1.
+- `disable_upload` (Boolean) Disable upload. Only applies when version == v1.
+- `download` (String) Configure whether downloading enabled or not. When absent, downloading is enabled. Only applies when version == v2.
+- `keyboard` (String) Configure whether keyboard usage is enabled or not. When absent, keyboard usage is enabled. Only applies when version == v2.
+- `paste` (String) Configure whether pasting is enabled or not. When set with 'remote_only', pasting content from the user's local clipboard into isolated pages is disabled. When absent, paste is enabled. Only applies when version == v2.
+- `printing` (String) Configure whether printing is enabled or not. When absent, printing is enabled. Only applies when version == v2.
+- `upload` (String) Configure whether uploading is enabled or not. When absent, uploading is enabled. Only applies when version == v2.
+- `version` (String) Indicates which version (v1 or v2) of the browser isolation controls should apply. Defaults to `v1`.
 
 
 <a id="nestedblock--rule_settings--check_session"></a>
