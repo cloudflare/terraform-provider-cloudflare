@@ -18,10 +18,6 @@ type ZeroTrustDLPEntryResultDataSourceEnvelope struct {
 	Result ZeroTrustDLPEntryDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustDLPEntryResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustDLPEntryDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustDLPEntryDataSourceModel struct {
 	ID         types.String                                                         `tfsdk:"id" json:"-,computed"`
 	EntryID    types.String                                                         `tfsdk:"entry_id" path:"entry_id,optional"`

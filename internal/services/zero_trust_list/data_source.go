@@ -64,7 +64,7 @@ func (d *ZeroTrustListDataSource) Read(ctx context.Context, req datasource.ReadR
 			return
 		}
 
-		env := ZeroTrustListResultListDataSourceEnvelope{}
+		env := ZeroTrustListsResultListDataSourceEnvelope{}
 		page, err := d.client.ZeroTrust.Gateway.Lists.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *ZeroTrustListDataSource) Read(ctx context.Context, req datasource.ReadR
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.ListID = ts[0].ListID
+		data.ListID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

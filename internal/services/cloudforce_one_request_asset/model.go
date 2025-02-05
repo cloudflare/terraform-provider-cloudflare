@@ -13,16 +13,15 @@ type CloudforceOneRequestAssetResultEnvelope struct {
 }
 
 type CloudforceOneRequestAssetModel struct {
+	ID                types.Int64       `tfsdk:"id" json:"id,computed"`
 	AccountIdentifier types.String      `tfsdk:"account_identifier" path:"account_identifier,required"`
 	RequestIdentifier types.String      `tfsdk:"request_identifier" path:"request_identifier,required"`
-	AssetIdentifer    types.String      `tfsdk:"asset_identifer" path:"asset_identifer,optional"`
 	Page              types.Int64       `tfsdk:"page" json:"page,required"`
 	PerPage           types.Int64       `tfsdk:"per_page" json:"per_page,required"`
 	Source            types.String      `tfsdk:"source" json:"source,optional"`
 	Created           timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Description       types.String      `tfsdk:"description" json:"description,computed"`
 	FileType          types.String      `tfsdk:"file_type" json:"file_type,computed"`
-	ID                types.Int64       `tfsdk:"id" json:"id,computed"`
 	Name              types.String      `tfsdk:"name" json:"name,computed"`
 }
 

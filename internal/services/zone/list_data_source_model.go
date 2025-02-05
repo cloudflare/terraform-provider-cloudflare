@@ -83,6 +83,7 @@ type ZonesResultDataSourceModel struct {
 	Status              types.String                                          `tfsdk:"status" json:"status,computed"`
 	Type                types.String                                          `tfsdk:"type" json:"type,computed"`
 	VanityNameServers   customfield.List[types.String]                        `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed"`
+	VerificationKey     types.String                                          `tfsdk:"verification_key" json:"verification_key,computed"`
 }
 
 type ZonesMetaDataSourceModel struct {
