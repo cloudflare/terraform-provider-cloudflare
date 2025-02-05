@@ -554,6 +554,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		account_subscription.NewAccountSubscriptionDataSource,
 		account_token.NewAccountTokenDataSource,
 		account_token.NewAccountTokensDataSource,
+		api_token_permissions_groups.NewAPITokenPermissionsGroupsDataSource,
 		api_token_permissions_groups.NewAPITokenPermissionsGroupsListDataSource,
 		origin_ca_certificate.NewOriginCACertificateDataSource,
 		origin_ca_certificate.NewOriginCACertificatesDataSource,
