@@ -831,6 +831,10 @@ resource "cloudflare_api_token" "example" {
   }
   ```
 
+## cloudflare_custom_page
+
+- `cloudflare_custom_page` has been removed.
+
 ## cloudflare_zone_settings_override
 
 - `cloudflare_zone_settings_override` has been removed. Use `cloudflare_zone_setting` instead on a per setting basis.
