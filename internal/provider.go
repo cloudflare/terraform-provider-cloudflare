@@ -31,6 +31,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/bot_management"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/botnet_feed_config_asn"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/byo_ip_prefix"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/calls_sfu_app"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/calls_turn_app"
@@ -837,6 +838,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		resource_group.NewResourceGroupDataSource,
 		resource_group.NewResourceGroupsDataSource,
 		cloud_connector_rules.NewCloudConnectorRulesListDataSource,
+		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
 		leaked_credential_check.NewLeakedCredentialCheckDataSource,
 		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
 		content_scanning_expression.NewContentScanningExpressionsDataSource,
