@@ -18,6 +18,10 @@ type StreamAudioTrackResultDataSourceEnvelope struct {
 type StreamAudioTrackDataSourceModel struct {
 	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
 	Identifier types.String `tfsdk:"identifier" path:"identifier,required"`
+	Default    types.Bool   `tfsdk:"default" json:"default,computed"`
+	Label      types.String `tfsdk:"label" json:"label,computed"`
+	Status     types.String `tfsdk:"status" json:"status,computed"`
+	UID        types.String `tfsdk:"uid" json:"uid,computed"`
 }
 
 func (m *StreamAudioTrackDataSourceModel) toReadParams(_ context.Context) (params stream.AudioTrackGetParams, diags diag.Diagnostics) {

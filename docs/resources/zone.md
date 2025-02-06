@@ -57,6 +57,7 @@ domain. If development mode has never been enabled, this value is 0.
 true value means the zone will not receive security or performance
 benefits.
 - `status` (String) The zone status on Cloudflare.
+- `verification_key` (String) Verification key for partial zone setup.
 
 <a id="nestedatt--account"></a>
 ### Nested Schema for `account`

@@ -64,7 +64,7 @@ func (d *APITokenDataSource) Read(ctx context.Context, req datasource.ReadReques
 			return
 		}
 
-		env := APITokenResultListDataSourceEnvelope{}
+		env := APITokensResultListDataSourceEnvelope{}
 		page, err := d.client.User.Tokens.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *APITokenDataSource) Read(ctx context.Context, req datasource.ReadReques
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.TokenID = ts[0].TokenID
+		data.TokenID = ts[0].ID
 	}
 
 	res := new(http.Response)

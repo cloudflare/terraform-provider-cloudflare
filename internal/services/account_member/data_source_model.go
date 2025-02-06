@@ -16,10 +16,6 @@ type AccountMemberResultDataSourceEnvelope struct {
 	Result AccountMemberDataSourceModel `json:"result,computed"`
 }
 
-type AccountMemberResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[AccountMemberDataSourceModel] `json:"result,computed"`
-}
-
 type AccountMemberDataSourceModel struct {
 	ID        types.String                                                       `tfsdk:"id" json:"-,computed"`
 	MemberID  types.String                                                       `tfsdk:"member_id" path:"member_id,optional"`

@@ -46,6 +46,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"id": schema.StringAttribute{
 						Description: "The ID of the rate plan.",
 						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"free",
+								"lite",
+								"pro",
+								"pro_plus",
+								"business",
+								"enterprise",
+								"partners_free",
+								"partners_pro",
+								"partners_business",
+								"partners_enterprise",
+							),
+						},
 					},
 					"currency": schema.StringAttribute{
 						Description: "The currency applied to the rate plan subscription.",

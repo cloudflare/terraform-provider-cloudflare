@@ -16,10 +16,6 @@ type RulesetResultDataSourceEnvelope struct {
 	Result RulesetDataSourceModel `json:"result,computed"`
 }
 
-type RulesetResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[RulesetDataSourceModel] `json:"result,computed"`
-}
-
 type RulesetDataSourceModel struct {
 	ID          types.String                                              `tfsdk:"id" json:"-,computed"`
 	RulesetID   types.String                                              `tfsdk:"ruleset_id" path:"ruleset_id,optional"`

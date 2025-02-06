@@ -16,8 +16,11 @@ type ZeroTrustAccessMTLSHostnameSettingsResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessMTLSHostnameSettingsDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	AccountID                   types.String `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID                      types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	ChinaNetwork                types.Bool   `tfsdk:"china_network" json:"china_network,computed"`
+	ClientCertificateForwarding types.Bool   `tfsdk:"client_certificate_forwarding" json:"client_certificate_forwarding,computed"`
+	Hostname                    types.String `tfsdk:"hostname" json:"hostname,computed"`
 }
 
 func (m *ZeroTrustAccessMTLSHostnameSettingsDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessCertificateSettingGetParams, diags diag.Diagnostics) {

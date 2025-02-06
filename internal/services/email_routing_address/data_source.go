@@ -64,7 +64,7 @@ func (d *EmailRoutingAddressDataSource) Read(ctx context.Context, req datasource
 			return
 		}
 
-		env := EmailRoutingAddressResultListDataSourceEnvelope{}
+		env := EmailRoutingAddressesResultListDataSourceEnvelope{}
 		page, err := d.client.EmailRouting.Addresses.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *EmailRoutingAddressDataSource) Read(ctx context.Context, req datasource
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.DestinationAddressIdentifier = ts[0].DestinationAddressIdentifier
+		data.DestinationAddressIdentifier = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

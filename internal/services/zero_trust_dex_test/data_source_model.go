@@ -16,10 +16,6 @@ type ZeroTrustDEXTestResultDataSourceEnvelope struct {
 	Result ZeroTrustDEXTestDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustDEXTestResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustDEXTestDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustDEXTestDataSourceModel struct {
 	ID             types.String                                                                `tfsdk:"id" json:"-,computed"`
 	DEXTestID      types.String                                                                `tfsdk:"dex_test_id" path:"dex_test_id,optional"`

@@ -17,10 +17,6 @@ type ZeroTrustAccessInfrastructureTargetResultDataSourceEnvelope struct {
 	Result ZeroTrustAccessInfrastructureTargetDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustAccessInfrastructureTargetResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustAccessInfrastructureTargetDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustAccessInfrastructureTargetDataSourceModel struct {
 	ID         types.String                                                                   `tfsdk:"id" json:"-,computed"`
 	TargetID   types.String                                                                   `tfsdk:"target_id" path:"target_id,optional"`
@@ -45,6 +41,10 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ cont
 	for _, item := range *m.Filter.IPs {
 		mFilterIPs = append(mFilterIPs, item.ValueString())
 	}
+	mFilterTargetIDs := []string{}
+	for _, item := range *m.Filter.TargetIDs {
+		mFilterTargetIDs = append(mFilterTargetIDs, item.ValueString())
+	}
 	mFilterCreatedAfter, errs := m.Filter.CreatedAfter.ValueRFC3339Time()
 	diags.Append(errs...)
 	mFilterCreatedBefore, errs := m.Filter.CreatedBefore.ValueRFC3339Time()
@@ -57,6 +57,7 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ cont
 	params = zero_trust.AccessInfrastructureTargetListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 		IPs:       cloudflare.F(mFilterIPs),
+		TargetIDs: cloudflare.F(mFilterTargetIDs),
 	}
 
 	if !m.Filter.CreatedAfter.IsNull() {
@@ -74,11 +75,26 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ cont
 	if !m.Filter.HostnameContains.IsNull() {
 		params.HostnameContains = cloudflare.F(m.Filter.HostnameContains.ValueString())
 	}
+	if !m.Filter.IPLike.IsNull() {
+		params.IPLike = cloudflare.F(m.Filter.IPLike.ValueString())
+	}
 	if !m.Filter.IPV4.IsNull() {
 		params.IPV4 = cloudflare.F(m.Filter.IPV4.ValueString())
 	}
 	if !m.Filter.IPV6.IsNull() {
 		params.IPV6 = cloudflare.F(m.Filter.IPV6.ValueString())
+	}
+	if !m.Filter.IPV4End.IsNull() {
+		params.IPV4End = cloudflare.F(m.Filter.IPV4End.ValueString())
+	}
+	if !m.Filter.IPV4Start.IsNull() {
+		params.IPV4Start = cloudflare.F(m.Filter.IPV4Start.ValueString())
+	}
+	if !m.Filter.IPV6End.IsNull() {
+		params.IPV6End = cloudflare.F(m.Filter.IPV6End.ValueString())
+	}
+	if !m.Filter.IPV6Start.IsNull() {
+		params.IPV6Start = cloudflare.F(m.Filter.IPV6Start.ValueString())
 	}
 	if !m.Filter.ModifiedAfter.IsNull() {
 		params.ModifiedAfter = cloudflare.F(mFilterModifiedAfter)
@@ -117,11 +133,17 @@ type ZeroTrustAccessInfrastructureTargetFindOneByDataSourceModel struct {
 	Direction        types.String      `tfsdk:"direction" query:"direction,optional"`
 	Hostname         types.String      `tfsdk:"hostname" query:"hostname,optional"`
 	HostnameContains types.String      `tfsdk:"hostname_contains" query:"hostname_contains,optional"`
+	IPLike           types.String      `tfsdk:"ip_like" query:"ip_like,optional"`
 	IPV4             types.String      `tfsdk:"ip_v4" query:"ip_v4,optional"`
 	IPV6             types.String      `tfsdk:"ip_v6" query:"ip_v6,optional"`
 	IPs              *[]types.String   `tfsdk:"ips" query:"ips,optional"`
+	IPV4End          types.String      `tfsdk:"ipv4_end" query:"ipv4_end,optional"`
+	IPV4Start        types.String      `tfsdk:"ipv4_start" query:"ipv4_start,optional"`
+	IPV6End          types.String      `tfsdk:"ipv6_end" query:"ipv6_end,optional"`
+	IPV6Start        types.String      `tfsdk:"ipv6_start" query:"ipv6_start,optional"`
 	ModifiedAfter    timetypes.RFC3339 `tfsdk:"modified_after" query:"modified_after,optional" format:"date-time"`
 	ModifiedBefore   timetypes.RFC3339 `tfsdk:"modified_before" query:"modified_before,optional" format:"date-time"`
 	Order            types.String      `tfsdk:"order" query:"order,optional"`
+	TargetIDs        *[]types.String   `tfsdk:"target_ids" query:"target_ids,optional"`
 	VirtualNetworkID types.String      `tfsdk:"virtual_network_id" query:"virtual_network_id,optional"`
 }

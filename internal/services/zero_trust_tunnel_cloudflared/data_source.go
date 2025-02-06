@@ -64,7 +64,7 @@ func (d *ZeroTrustTunnelCloudflaredDataSource) Read(ctx context.Context, req dat
 			return
 		}
 
-		env := ZeroTrustTunnelCloudflaredResultListDataSourceEnvelope{}
+		env := ZeroTrustTunnelCloudflaredsResultListDataSourceEnvelope{}
 		page, err := d.client.ZeroTrust.Tunnels.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *ZeroTrustTunnelCloudflaredDataSource) Read(ctx context.Context, req dat
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.TunnelID = ts[0].TunnelID
+		data.TunnelID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

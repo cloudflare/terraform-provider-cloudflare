@@ -13,20 +13,35 @@ for non-Terraform or service specific information.
 
 <!-- x-release-please-start-version -->
 
-```
+```hcl
+# Declare the provider and version
 terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 5"
+      version = "~> 5.0.0"
     }
   }
+}
+
+# Initialize the provider
+provider "cloudflare" {
+  api_token = "Sn3lZJTBX6kkg7OdcBUAxOO963GEIyGQqnFTOFYY" # or set CLOUDFLARE_API_TOKEN env variable
+}
+
+# Configure a resource
+resource "cloudflare_zone" "example_zone" {
+  account = {
+    id = "023e105f4ecef8ad9ca31a8372d0c353"
+  }
+  name = "example.com"
+  type = "full"
 }
 ```
 
 <!-- x-release-please-end -->
 
-And initialize your project by running `terraform init`.
+Initialize your project by running `terraform init` in the directory.
 
 ## Migrating to Terraform from using the Dashboard
 

@@ -17,10 +17,6 @@ type AccountTokenResultDataSourceEnvelope struct {
 	Result AccountTokenDataSourceModel `json:"result,computed"`
 }
 
-type AccountTokenResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[AccountTokenDataSourceModel] `json:"result,computed"`
-}
-
 type AccountTokenDataSourceModel struct {
 	ID         types.String                                                      `tfsdk:"id" json:"-,computed"`
 	TokenID    types.String                                                      `tfsdk:"token_id" path:"token_id,optional"`

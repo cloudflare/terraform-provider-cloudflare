@@ -7,17 +7,12 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/page_shield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type PageShieldPolicyResultDataSourceEnvelope struct {
 	Result PageShieldPolicyDataSourceModel `json:"result,computed"`
-}
-
-type PageShieldPolicyResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[PageShieldPolicyDataSourceModel] `json:"result,computed"`
 }
 
 type PageShieldPolicyDataSourceModel struct {

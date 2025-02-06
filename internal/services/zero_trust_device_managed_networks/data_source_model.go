@@ -16,10 +16,6 @@ type ZeroTrustDeviceManagedNetworksResultDataSourceEnvelope struct {
 	Result ZeroTrustDeviceManagedNetworksDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustDeviceManagedNetworksResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustDeviceManagedNetworksDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustDeviceManagedNetworksDataSourceModel struct {
 	ID        types.String                                                                  `tfsdk:"id" json:"-,computed"`
 	NetworkID types.String                                                                  `tfsdk:"network_id" path:"network_id,computed_optional"`

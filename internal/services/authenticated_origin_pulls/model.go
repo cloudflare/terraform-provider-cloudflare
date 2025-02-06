@@ -24,7 +24,9 @@ type AuthenticatedOriginPullsModel struct {
 	CreatedAt      timetypes.RFC3339                       `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Enabled        types.Bool                              `tfsdk:"enabled" json:"enabled,computed"`
 	ExpiresOn      timetypes.RFC3339                       `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	ID             types.String                            `tfsdk:"id" json:"id,computed"`
 	Issuer         types.String                            `tfsdk:"issuer" json:"issuer,computed"`
+	PrivateKey     types.String                            `tfsdk:"private_key" json:"private_key,computed"`
 	SerialNumber   types.String                            `tfsdk:"serial_number" json:"serial_number,computed"`
 	Signature      types.String                            `tfsdk:"signature" json:"signature,computed"`
 	Status         types.String                            `tfsdk:"status" json:"status,computed"`

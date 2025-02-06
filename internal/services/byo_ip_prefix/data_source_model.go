@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/addressing"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,10 +14,6 @@ import (
 
 type ByoIPPrefixResultDataSourceEnvelope struct {
 	Result ByoIPPrefixDataSourceModel `json:"result,computed"`
-}
-
-type ByoIPPrefixResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ByoIPPrefixDataSourceModel] `json:"result,computed"`
 }
 
 type ByoIPPrefixDataSourceModel struct {

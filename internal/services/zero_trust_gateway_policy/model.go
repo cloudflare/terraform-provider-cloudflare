@@ -143,7 +143,7 @@ type ZeroTrustGatewayPolicyRuleSettingsQuarantineModel struct {
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsResolveDNSInternallyModel struct {
-	Fallback types.String `tfsdk:"fallback" json:"fallback,optional"`
+	Fallback types.String `tfsdk:"fallback" json:"fallback,computed_optional"`
 	ViewID   types.String `tfsdk:"view_id" json:"view_id,optional"`
 }
 

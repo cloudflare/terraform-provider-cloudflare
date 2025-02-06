@@ -237,6 +237,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
+						"verification_key": schema.StringAttribute{
+							Description: "Verification key for partial zone setup.",
+							Computed:    true,
+						},
 					},
 				},
 			},

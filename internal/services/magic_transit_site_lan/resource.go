@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/magic_transit"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*MagicTransitSiteLANResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*MagicTransitSiteLANResource)(nil)
+var _ resource.ResourceWithImportState = (*MagicTransitSiteLANResource)(nil)
 
 func NewResource() resource.Resource {
 	return &MagicTransitSiteLANResource{}
@@ -120,7 +123,7 @@ func (r *MagicTransitSiteLANResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.MagicTransit.Sites.LANs.Update(
 		ctx,
 		data.SiteID.ValueString(),
-		data.LANID.ValueString(),
+		data.ID.ValueString(),
 		magic_transit.SiteLANUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -157,7 +160,7 @@ func (r *MagicTransitSiteLANResource) Read(ctx context.Context, req resource.Rea
 	_, err := r.client.MagicTransit.Sites.LANs.Get(
 		ctx,
 		data.SiteID.ValueString(),
-		data.LANID.ValueString(),
+		data.ID.ValueString(),
 		magic_transit.SiteLANGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -196,7 +199,7 @@ func (r *MagicTransitSiteLANResource) Delete(ctx context.Context, req resource.D
 	_, err := r.client.MagicTransit.Sites.LANs.Delete(
 		ctx,
 		data.SiteID.ValueString(),
-		data.LANID.ValueString(),
+		data.ID.ValueString(),
 		magic_transit.SiteLANDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -206,6 +209,55 @@ func (r *MagicTransitSiteLANResource) Delete(ctx context.Context, req resource.D
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *MagicTransitSiteLANResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *MagicTransitSiteLANModel = new(MagicTransitSiteLANModel)
+
+	path_account_id := ""
+	path_site_id := ""
+	path_lan_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<site_id>/<lan_id>",
+		&path_account_id,
+		&path_site_id,
+		&path_lan_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.SiteID = types.StringValue(path_site_id)
+	data.ID = types.StringValue(path_lan_id)
+
+	res := new(http.Response)
+	env := MagicTransitSiteLANResultEnvelope{*data}
+	_, err := r.client.MagicTransit.Sites.LANs.Get(
+		ctx,
+		path_site_id,
+		path_lan_id,
+		magic_transit.SiteLANGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -64,7 +64,7 @@ func (d *WebAnalyticsSiteDataSource) Read(ctx context.Context, req datasource.Re
 			return
 		}
 
-		env := WebAnalyticsSiteResultListDataSourceEnvelope{}
+		env := WebAnalyticsSitesResultListDataSourceEnvelope{}
 		page, err := d.client.RUM.SiteInfo.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *WebAnalyticsSiteDataSource) Read(ctx context.Context, req datasource.Re
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.SiteID = ts[0].SiteID
+		data.SiteID = ts[0].SiteTag
 	}
 
 	params, diags := data.toReadParams(ctx)

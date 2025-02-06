@@ -64,7 +64,7 @@ func (d *D1DatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequ
 			return
 		}
 
-		env := D1DatabaseResultListDataSourceEnvelope{}
+		env := D1DatabasesResultListDataSourceEnvelope{}
 		page, err := d.client.D1.Database.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *D1DatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.DatabaseID = ts[0].DatabaseID
+		data.DatabaseID = ts[0].UUID
 	}
 
 	params, diags := data.toReadParams(ctx)

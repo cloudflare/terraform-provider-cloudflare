@@ -12,11 +12,10 @@ type FilterResultEnvelope struct {
 }
 
 type FilterModel struct {
+	ID          types.String `tfsdk:"id" json:"id,computed"`
 	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,required"`
-	FilterID    types.String `tfsdk:"filter_id" path:"filter_id,optional"`
 	Expression  types.String `tfsdk:"expression" json:"expression,required"`
 	Description types.String `tfsdk:"description" json:"description,computed"`
-	ID          types.String `tfsdk:"id" json:"id,computed"`
 	Paused      types.Bool   `tfsdk:"paused" json:"paused,computed"`
 	Ref         types.String `tfsdk:"ref" json:"ref,computed"`
 }

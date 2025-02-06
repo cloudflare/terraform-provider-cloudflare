@@ -5,6 +5,7 @@ package cloud_connector_rules
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -19,6 +20,10 @@ var _ resource.ResourceWithConfigValidators = (*CloudConnectorRulesResource)(nil
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
@@ -66,6 +71,38 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
+			},
+			"cloud_provider": schema.StringAttribute{
+				Description: "Cloud Provider type",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"aws_s3",
+						"r2",
+						"gcp_storage",
+						"azure_storage",
+					),
+				},
+			},
+			"description": schema.StringAttribute{
+				Computed: true,
+			},
+			"enabled": schema.BoolAttribute{
+				Computed: true,
+			},
+			"expression": schema.StringAttribute{
+				Computed: true,
+			},
+			"parameters": schema.SingleNestedAttribute{
+				Description: "Parameters of Cloud Connector Rule",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[CloudConnectorRulesParametersModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"host": schema.StringAttribute{
+						Description: "Host to perform Cloud Connection to",
+						Computed:    true,
+					},
+				},
 			},
 		},
 	}

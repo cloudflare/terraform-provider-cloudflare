@@ -18,6 +18,11 @@ var _ resource.ResourceWithConfigValidators = (*CloudforceOneRequestAssetResourc
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.Int64Attribute{
+				Description:   "Asset ID",
+				Computed:      true,
+				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
+			},
 			"account_identifier": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
@@ -26,11 +31,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"request_identifier": schema.StringAttribute{
 				Description:   "UUID",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"asset_identifer": schema.StringAttribute{
-				Description:   "UUID",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"page": schema.Int64Attribute{
@@ -58,10 +58,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"file_type": schema.StringAttribute{
 				Description: "Asset file type",
-				Computed:    true,
-			},
-			"id": schema.Int64Attribute{
-				Description: "Asset ID",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{

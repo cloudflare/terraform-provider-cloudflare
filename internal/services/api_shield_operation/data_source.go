@@ -64,7 +64,7 @@ func (d *APIShieldOperationDataSource) Read(ctx context.Context, req datasource.
 			return
 		}
 
-		env := APIShieldOperationResultListDataSourceEnvelope{}
+		env := APIShieldOperationsResultListDataSourceEnvelope{}
 		page, err := d.client.APIGateway.Operations.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

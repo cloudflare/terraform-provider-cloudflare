@@ -64,7 +64,7 @@ func (d *EmailSecurityBlockSenderDataSource) Read(ctx context.Context, req datas
 			return
 		}
 
-		env := EmailSecurityBlockSenderResultListDataSourceEnvelope{}
+		env := EmailSecurityBlockSendersResultListDataSourceEnvelope{}
 		page, err := d.client.EmailSecurity.Settings.BlockSenders.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *EmailSecurityBlockSenderDataSource) Read(ctx context.Context, req datas
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.PatternID = ts[0].PatternID
+		data.PatternID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

@@ -16,10 +16,6 @@ type ZeroTrustDeviceCustomProfileResultDataSourceEnvelope struct {
 	Result ZeroTrustDeviceCustomProfileDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustDeviceCustomProfileResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustDeviceCustomProfileDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustDeviceCustomProfileDataSourceModel struct {
 	ID                  types.String                                                                             `tfsdk:"id" json:"-,computed"`
 	PolicyID            types.String                                                                             `tfsdk:"policy_id" path:"policy_id,computed_optional"`

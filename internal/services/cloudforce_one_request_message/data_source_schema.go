@@ -5,6 +5,7 @@ package cloudforce_one_request_message
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -21,6 +22,32 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"request_identifier": schema.StringAttribute{
 				Description: "UUID",
 				Required:    true,
+			},
+			"author": schema.StringAttribute{
+				Description: "Author of message",
+				Computed:    true,
+			},
+			"content": schema.StringAttribute{
+				Description: "Content of message",
+				Computed:    true,
+			},
+			"created": schema.StringAttribute{
+				Description: "Message creation time",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"id": schema.Int64Attribute{
+				Description: "Message ID",
+				Computed:    true,
+			},
+			"is_follow_on_request": schema.BoolAttribute{
+				Description: "Whether the message is a follow-on request",
+				Computed:    true,
+			},
+			"updated": schema.StringAttribute{
+				Description: "Message last updated time",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}

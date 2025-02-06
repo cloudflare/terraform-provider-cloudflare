@@ -64,7 +64,7 @@ func (d *EmailSecurityImpersonationRegistryDataSource) Read(ctx context.Context,
 			return
 		}
 
-		env := EmailSecurityImpersonationRegistryResultListDataSourceEnvelope{}
+		env := EmailSecurityImpersonationRegistriesResultListDataSourceEnvelope{}
 		page, err := d.client.EmailSecurity.Settings.ImpersonationRegistry.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *EmailSecurityImpersonationRegistryDataSource) Read(ctx context.Context,
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.DisplayNameID = ts[0].DisplayNameID
+		data.DisplayNameID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

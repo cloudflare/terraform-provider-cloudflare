@@ -26,7 +26,7 @@ resource "cloudflare_hostname_tls_setting" "example_hostname_tls_setting" {
 ### Required
 
 - `setting_id` (String) The TLS Setting name.
-- `value` (Number) The tls setting value.
+- `value` (Dynamic) The tls setting value.
 - `zone_id` (String) Identifier
 
 ### Optional
