@@ -44,7 +44,6 @@ resource "cloudflare_spectrum_application" "example_spectrum_application" {
 ### Required
 
 - `dns` (Attributes) The name and type of DNS record for the Spectrum application. (see [below for nested schema](#nestedatt--dns))
-- `id` (String) Identifier
 - `protocol` (String) The port configuration at Cloudflare's edge. May specify a single port, for example `"tcp/1000"`, or a range of ports, for example `"tcp/1000-2000"`.
 - `zone_id` (String) Identifier
 
@@ -66,6 +65,7 @@ Notes: If specifying a port range, the number of ports in the range must match t
 ### Read-Only
 
 - `created_on` (String) When the Application was created.
+- `id` (String) Identifier
 - `modified_on` (String) When the Application was last modified.
 
 <a id="nestedatt--dns"></a>
