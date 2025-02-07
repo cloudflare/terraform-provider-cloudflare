@@ -26,4 +26,13 @@ data "cloudflare_cloudforce_one_request_message" "example_cloudforce_one_request
 - `account_identifier` (String) Identifier
 - `request_identifier` (String) UUID
 
+### Read-Only
+
+- `author` (String) Author of message
+- `content` (String) Content of message
+- `created` (String) Message creation time
+- `id` (Number) Message ID
+- `is_follow_on_request` (Boolean) Whether the message is a follow-on request
+- `updated` (String) Message last updated time
+
 

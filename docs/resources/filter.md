@@ -32,10 +32,6 @@ resource "cloudflare_filter" "example_filter" {
 - `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
 - `zone_id` (String) Identifier
 
-### Optional
-
-- `filter_id` (String) The unique identifier of the filter.
-
 ### Read-Only
 
 - `description` (String) An informative summary of the filter.
@@ -43,4 +39,10 @@ resource "cloudflare_filter" "example_filter" {
 - `paused` (Boolean) When true, indicates that the filter is currently paused.
 - `ref` (String) A short reference tag. Allows you to select related filters.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_filter.example '<zone_id>/<filter_id>'
+```

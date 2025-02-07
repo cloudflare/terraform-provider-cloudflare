@@ -1,18 +1,18 @@
 ---
-page_title: "cloudflare_stream_key Data Source - Cloudflare"
+page_title: "cloudflare_botnet_feed_config_asn Data Source - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_stream_key (Data Source)
+# cloudflare_botnet_feed_config_asn (Data Source)
 
 
 
 ## Example Usage
 
 ```terraform
-data "cloudflare_stream_key" "example_stream_key" {
+data "cloudflare_botnet_feed_config_asn" "example_botnet_feed_config_asn" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }
 ```
@@ -26,7 +26,6 @@ data "cloudflare_stream_key" "example_stream_key" {
 
 ### Read-Only
 
-- `created` (String) The date and time a signing key was created.
-- `id` (String) Identifier
+- `asn` (Number)
 
 
