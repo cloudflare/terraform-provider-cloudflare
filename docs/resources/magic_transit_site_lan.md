@@ -63,7 +63,6 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
 ### Optional
 
 - `ha_link` (Boolean) mark true to use this LAN for HA probing. only works for site with HA turned on. only one LAN can be set as the ha_link.
-- `lan_id` (String) Identifier
 - `name` (String)
 - `nat` (Attributes) (see [below for nested schema](#nestedatt--nat))
 - `routed_subnets` (Attributes List) (see [below for nested schema](#nestedatt--routed_subnets))
@@ -135,4 +134,10 @@ Optional:
 - `dns_servers` (List of String)
 - `reservations` (Map of String) Mapping of MAC addresses to IP addresses
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_magic_transit_site_lan.example '<account_id>/<site_id>/<lan_id>'
+```

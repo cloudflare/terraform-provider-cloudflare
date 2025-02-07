@@ -25,6 +25,9 @@ data "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
 ### Required
 
 - `account_id` (String) Identifier
+
+### Optional
+
 - `lan_id` (String) Identifier
 
 ### Read-Only

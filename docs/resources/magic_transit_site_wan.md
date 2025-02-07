@@ -42,7 +42,6 @@ resource "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
 - `name` (String)
 - `priority` (Number)
 - `static_addressing` (Attributes) (optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode. (see [below for nested schema](#nestedatt--static_addressing))
-- `wan_id` (String) Identifier
 
 ### Read-Only
 
@@ -61,4 +60,10 @@ Optional:
 
 - `secondary_address` (String) A valid CIDR notation representing an IP range.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_magic_transit_site_wan.example '<account_id>/<site_id>/<wan_id>'
+```
