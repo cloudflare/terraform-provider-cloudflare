@@ -20,7 +20,7 @@ you may keep the 4.x branch active for your Terraform project by specifying:
 
 ```hcl
 provider "cloudflare" {
-  version = "~> 4"
+  version = "~> 4.0"
   # ... any other configuration
 }
 ```
@@ -37,7 +37,7 @@ Once ready, make the following change to use the latest 5.x release:
 
 ```hcl
 provider "cloudflare" {
-  version = "~> 5"
+  version = "~> 5.0"
   # ... any other configuration
 }
 ```
