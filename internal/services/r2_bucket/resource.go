@@ -23,6 +23,8 @@ var _ resource.ResourceWithConfigure = (*R2BucketResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*R2BucketResource)(nil)
 var _ resource.ResourceWithImportState = (*R2BucketResource)(nil)
 
+const jurisdictionHTTPHeaderName = "cf-r2-jurisdiction"
+
 func NewResource() resource.Resource {
 	return &R2BucketResource{}
 }
@@ -76,6 +78,7 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
 		r2.BucketNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
+		option.WithHeader(jurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -125,6 +128,7 @@ func (r *R2BucketResource) Update(ctx context.Context, req resource.UpdateReques
 		r2.BucketNewParams{
 			AccountID: cloudflare.F(data.Name.ValueString()),
 		},
+		option.WithHeader(jurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -162,6 +166,7 @@ func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, r
 		r2.BucketGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
+		option.WithHeader(jurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -201,6 +206,7 @@ func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteReques
 		r2.BucketDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
+		option.WithHeader(jurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
@@ -217,11 +223,13 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 
 	path_account_id := ""
 	path_bucket_name := ""
+	jurisdiction := "default"
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<bucket_name>",
+		"<account_id>/<bucket_name>/<jurisdiction>",
 		&path_account_id,
 		&path_bucket_name,
+		&jurisdiction,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -231,6 +239,12 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 	data.AccountID = types.StringValue(path_account_id)
 	data.Name = types.StringValue(path_bucket_name)
 
+	if jurisdiction == "default" {
+		data.Jurisdiction = types.StringValue("default")
+	} else {
+		data.Jurisdiction = types.StringValue(jurisdiction)
+	}
+
 	res := new(http.Response)
 	env := R2BucketResultEnvelope{*data}
 	_, err := r.client.R2.Buckets.Get(
@@ -239,6 +253,7 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 		r2.BucketGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
+		option.WithHeader(jurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
