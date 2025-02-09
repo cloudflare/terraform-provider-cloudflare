@@ -112,6 +112,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket_cors"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_custom_domain"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_managed_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
@@ -482,6 +485,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		notification_policy.NewResource,
 		d1_database.NewResource,
 		r2_bucket.NewResource,
+		r2_bucket_cors.NewResource,
+		r2_custom_domain.NewResource,
+		r2_managed_domain.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
 		workers_secret.NewResource,
 		zero_trust_dex_test.NewResource,
@@ -741,6 +747,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		d1_database.NewD1DatabaseDataSource,
 		d1_database.NewD1DatabasesDataSource,
 		r2_bucket.NewR2BucketDataSource,
+		r2_bucket_cors.NewR2BucketCORSDataSource,
+		r2_custom_domain.NewR2CustomDomainDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespaceDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespacesDataSource,
 		workers_secret.NewWorkersSecretDataSource,
