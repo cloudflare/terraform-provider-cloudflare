@@ -16,11 +16,15 @@ var _ datasource.DataSourceWithConfigValidators = (*MagicTransitSiteLANDataSourc
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description: "Identifier",
-				Required:    true,
+				Computed:    true,
 			},
 			"lan_id": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},
@@ -30,10 +34,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"ha_link": schema.BoolAttribute{
 				Description: "mark true to use this LAN for HA probing. only works for site with HA turned on. only one LAN can be set as the ha_link.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
@@ -118,6 +118,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"dns_server": schema.StringAttribute{
 								Description: "A valid IPv4 address.",
 								Computed:    true,
+							},
+							"dns_servers": schema.ListAttribute{
+								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
 							},
 							"reservations": schema.MapAttribute{
 								Description: "Mapping of MAC addresses to IP addresses",

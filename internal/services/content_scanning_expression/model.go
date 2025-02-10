@@ -12,9 +12,10 @@ type ContentScanningExpressionResultEnvelope struct {
 }
 
 type ContentScanningExpressionModel struct {
-	ZoneID       types.String                           `tfsdk:"zone_id" path:"zone_id,required"`
-	ExpressionID types.String                           `tfsdk:"expression_id" path:"expression_id,optional"`
-	Body         *[]*ContentScanningExpressionBodyModel `tfsdk:"body" json:"body,required"`
+	ID      types.String                           `tfsdk:"id" json:"id,computed"`
+	ZoneID  types.String                           `tfsdk:"zone_id" path:"zone_id,required"`
+	Body    *[]*ContentScanningExpressionBodyModel `tfsdk:"body" json:"body,required"`
+	Payload types.String                           `tfsdk:"payload" json:"payload,computed"`
 }
 
 func (m ContentScanningExpressionModel) MarshalJSON() (data []byte, err error) {

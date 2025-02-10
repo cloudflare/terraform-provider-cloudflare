@@ -64,7 +64,7 @@ func (d *MagicTransitSiteDataSource) Read(ctx context.Context, req datasource.Re
 			return
 		}
 
-		env := MagicTransitSiteResultListDataSourceEnvelope{}
+		env := MagicTransitSitesResultListDataSourceEnvelope{}
 		page, err := d.client.MagicTransit.Sites.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *MagicTransitSiteDataSource) Read(ctx context.Context, req datasource.Re
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.SiteID = ts[0].SiteID
+		data.SiteID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

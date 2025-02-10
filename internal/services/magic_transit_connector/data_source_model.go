@@ -16,10 +16,6 @@ type MagicTransitConnectorResultDataSourceEnvelope struct {
 	Result MagicTransitConnectorDataSourceModel `json:"result,computed"`
 }
 
-type MagicTransitConnectorResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[MagicTransitConnectorDataSourceModel] `json:"result,computed"`
-}
-
 type MagicTransitConnectorDataSourceModel struct {
 	ID                           types.String                                                         `tfsdk:"id" json:"-,computed"`
 	ConnectorID                  types.String                                                         `tfsdk:"connector_id" path:"connector_id,optional"`

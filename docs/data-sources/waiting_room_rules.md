@@ -26,4 +26,14 @@ data "cloudflare_waiting_room_rules" "example_waiting_room_rules" {
 - `waiting_room_id` (String)
 - `zone_id` (String) Identifier
 
+### Read-Only
+
+- `action` (String) The action to take when the expression matches.
+- `description` (String) The description of the rule.
+- `enabled` (Boolean) When set to true, the rule is enabled.
+- `expression` (String) Criteria defining when there is a match for the current rule.
+- `id` (String) The ID of the rule.
+- `last_updated` (String)
+- `version` (String) The version of the rule.
+
 

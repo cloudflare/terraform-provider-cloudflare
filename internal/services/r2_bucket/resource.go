@@ -223,11 +223,13 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 
 	path_account_id := ""
 	path_bucket_name := ""
+	jurisdiction := "default"
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<bucket_name>",
+		"<account_id>/<bucket_name>/<jurisdiction>",
 		&path_account_id,
 		&path_bucket_name,
+		&jurisdiction,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -237,6 +239,12 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 	data.AccountID = types.StringValue(path_account_id)
 	data.Name = types.StringValue(path_bucket_name)
 
+	if jurisdiction == "default" {
+		data.Jurisdiction = types.StringValue("default")
+	} else {
+		data.Jurisdiction = types.StringValue(jurisdiction)
+	}
+
 	res := new(http.Response)
 	env := R2BucketResultEnvelope{*data}
 	_, err := r.client.R2.Buckets.Get(
@@ -245,6 +253,7 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 		r2.BucketGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
+		option.WithHeader(jurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

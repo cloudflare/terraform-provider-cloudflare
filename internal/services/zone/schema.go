@@ -106,6 +106,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"verification_key": schema.StringAttribute{
+				Description: "Verification key for partial zone setup.",
+				Computed:    true,
+			},
 			"name_servers": schema.ListAttribute{
 				Description: "The name servers Cloudflare assigns to a zone",
 				Computed:    true,

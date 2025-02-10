@@ -64,7 +64,7 @@ func (d *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.
 			return
 		}
 
-		env := WorkersKVNamespaceResultListDataSourceEnvelope{}
+		env := WorkersKVNamespacesResultListDataSourceEnvelope{}
 		page, err := d.client.KV.Namespaces.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.NamespaceID = ts[0].NamespaceID
+		data.NamespaceID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

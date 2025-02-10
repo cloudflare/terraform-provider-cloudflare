@@ -18,10 +18,6 @@ type APIShieldOperationResultDataSourceEnvelope struct {
 	Result APIShieldOperationDataSourceModel `json:"result,computed"`
 }
 
-type APIShieldOperationResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[APIShieldOperationDataSourceModel] `json:"result,computed"`
-}
-
 type APIShieldOperationDataSourceModel struct {
 	ID          types.String                                                        `tfsdk:"id" json:"-,computed"`
 	OperationID types.String                                                        `tfsdk:"operation_id" path:"operation_id,computed_optional"`

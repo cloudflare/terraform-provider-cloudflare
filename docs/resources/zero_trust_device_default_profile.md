@@ -59,6 +59,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
 - `exclude` (Attributes List) (see [below for nested schema](#nestedatt--exclude))
 - `fallback_domains` (Attributes List) (see [below for nested schema](#nestedatt--fallback_domains))
 - `gateway_unique_id` (String)
+- `id` (String) The ID of this resource.
 - `include` (Attributes List) (see [below for nested schema](#nestedatt--include))
 
 <a id="nestedatt--service_mode_v2"></a>
@@ -99,4 +100,10 @@ Read-Only:
 - `description` (String) A description of the split tunnel item, displayed in the client UI.
 - `host` (String) The domain name to include in the tunnel. If host is present, address must not be present.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_zero_trust_device_default_profile.example '<account_id>'
+```

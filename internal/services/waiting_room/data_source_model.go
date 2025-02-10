@@ -17,10 +17,6 @@ type WaitingRoomResultDataSourceEnvelope struct {
 	Result WaitingRoomDataSourceModel `json:"result,computed"`
 }
 
-type WaitingRoomResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[WaitingRoomDataSourceModel] `json:"result,computed"`
-}
-
 type WaitingRoomDataSourceModel struct {
 	ID                         types.String                                                             `tfsdk:"id" json:"-,computed"`
 	WaitingRoomID              types.String                                                             `tfsdk:"waiting_room_id" path:"waiting_room_id,optional"`

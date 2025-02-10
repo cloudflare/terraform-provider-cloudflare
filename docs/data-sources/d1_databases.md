@@ -40,8 +40,8 @@ data "cloudflare_d1_databases" "example_d1_databases" {
 Read-Only:
 
 - `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
-- `name` (String)
-- `uuid` (String)
+- `name` (String) D1 database name.
+- `uuid` (String) D1 database identifier (UUID).
 - `version` (String)
 
 

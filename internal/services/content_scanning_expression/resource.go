@@ -119,7 +119,7 @@ func (r *ContentScanningExpressionResource) Update(ctx context.Context, req reso
 	_, err = r.client.ContentScanning.Payloads.New(
 		ctx,
 		content_scanning.PayloadNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -155,7 +155,7 @@ func (r *ContentScanningExpressionResource) Delete(ctx context.Context, req reso
 
 	_, err := r.client.ContentScanning.Payloads.Delete(
 		ctx,
-		data.ExpressionID.ValueString(),
+		data.ID.ValueString(),
 		content_scanning.PayloadDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},

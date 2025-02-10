@@ -16,10 +16,6 @@ type QueueResultDataSourceEnvelope struct {
 	Result QueueDataSourceModel `json:"result,computed"`
 }
 
-type QueueResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[QueueDataSourceModel] `json:"result,computed"`
-}
-
 type QueueDataSourceModel struct {
 	ID                  types.String                                                `tfsdk:"id" json:"-,computed"`
 	QueueID             types.String                                                `tfsdk:"queue_id" path:"queue_id,computed_optional"`

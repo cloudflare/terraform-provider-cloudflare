@@ -24,4 +24,9 @@ data "cloudflare_stream_key" "example_stream_key" {
 
 - `account_id` (String) Identifier
 
+### Read-Only
+
+- `created` (String) The date and time a signing key was created.
+- `id` (String) Identifier
+
 

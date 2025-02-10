@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -80,12 +79,38 @@ func TestAccCloudflareHostnameTLSSetting_Basic(t *testing.T) {
 				),
 			},
 		},
-		CheckDestroy: testAccCheckCloudflareHostnameTLSSettingDestroy,
+	})
+}
+
+func TestAccCloudflareHostnameTLSSetting_ListOfStrings(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	hostname := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_hostname_tls_setting." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHostnameTLSSettingConfig_Ciphers(zoneID, fmt.Sprintf("%s.%s", rnd, hostname), "ciphers", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+				),
+			},
+		},
 	})
 }
 
 func testAccCheckCloudflareHostnameTLSSettingConfig(zoneID, hostname, setting, value, rnd string) string {
 	return acctest.LoadTestCase("hostnametlssettingconfig.tf", zoneID, hostname, setting, value, rnd)
+}
+
+func testAccCheckCloudflareHostnameTLSSettingConfig_Ciphers(zoneID, hostname, setting, rnd string) string {
+	return acctest.LoadTestCase("ciphers.tf", zoneID, hostname, setting, rnd)
 }
 
 func testAccCheckCloudflareHostnameTLSSettingExists(name string, htlss *cloudflare.HostnameTLSSetting) resource.TestCheckFunc {
@@ -118,23 +143,4 @@ func testAccCheckCloudflareHostnameTLSSettingExists(name string, htlss *cloudfla
 		*htlss = settings[0]
 		return nil
 	}
-}
-
-func testAccCheckCloudflareHostnameTLSSettingDestroy(s *terraform.State) error {
-	// sleep in order to allow htlss to enter active state before being deleted
-	// lintignore: R018
-	time.Sleep(time.Second)
-	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-	}
-	for _, rs := range s.RootModule().Resources {
-		zoneID := rs.Primary.Attributes[consts.ZoneIDSchemaKey]
-		zoneIDrc := cloudflare.ZoneIdentifier(zoneID)
-		_, err := client.DeleteHostnameTLSSetting(context.Background(), zoneIDrc, cloudflare.DeleteHostnameTLSSettingParams{Hostname: rs.Primary.ID, Setting: "min_tls_version"})
-		if err == nil {
-			return fmt.Errorf("error deleting hostname tls setting in zone %q: %w", zoneID, err)
-		}
-	}
-	return nil
 }

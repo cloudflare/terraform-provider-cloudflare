@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/filters"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*FilterResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*FilterResource)(nil)
+var _ resource.ResourceWithImportState = (*FilterResource)(nil)
 
 func NewResource() resource.Resource {
 	return &FilterResource{}
@@ -118,7 +121,7 @@ func (r *FilterResource) Update(ctx context.Context, req resource.UpdateRequest,
 	env := FilterResultEnvelope{*data}
 	_, err = r.client.Filters.Update(
 		ctx,
-		data.FilterID.ValueString(),
+		data.ID.ValueString(),
 		filters.FilterUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -154,7 +157,7 @@ func (r *FilterResource) Read(ctx context.Context, req resource.ReadRequest, res
 	env := FilterResultEnvelope{*data}
 	_, err := r.client.Filters.Get(
 		ctx,
-		data.FilterID.ValueString(),
+		data.ID.ValueString(),
 		filters.FilterGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -192,7 +195,7 @@ func (r *FilterResource) Delete(ctx context.Context, req resource.DeleteRequest,
 
 	_, err := r.client.Filters.Delete(
 		ctx,
-		data.FilterID.ValueString(),
+		data.ID.ValueString(),
 		filters.FilterDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -202,6 +205,51 @@ func (r *FilterResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *FilterResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *FilterModel = new(FilterModel)
+
+	path_zone_id := ""
+	path_filter_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<filter_id>",
+		&path_zone_id,
+		&path_filter_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.ID = types.StringValue(path_filter_id)
+
+	res := new(http.Response)
+	env := FilterResultEnvelope{*data}
+	_, err := r.client.Filters.Get(
+		ctx,
+		path_filter_id,
+		filters.FilterGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -19,6 +19,20 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
     bundle_method = "ubiquitous"
     certificate_authority = "digicert"
     cloudflare_branding = false
+    custom_cert_bundle = [{
+      custom_certificate = <<EOT
+      -----BEGIN CERTIFICATE-----
+      MIIDdjCCAl6gAwIBAgIJAPnMg0Fs+/B0MA0GCSqGSIb3DQEBCwUAMFsx...
+      -----END CERTIFICATE-----
+
+      EOT
+      custom_key = <<EOT
+      -----BEGIN PRIVATE KEY-----
+      MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC/SCB5...
+      -----END PRIVATE KEY-----
+
+      EOT
+    }]
     custom_certificate = "-----BEGIN CERTIFICATE-----\\nMIIFJDCCBAygAwIBAgIQD0ifmj/Yi5NP/2gdUySbfzANBgkqhkiG9w0BAQsFADBN\\nMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMScwJQYDVQQDEx5E...SzSHfXp5lnu/3V08I72q1QNzOCgY1XeL4GKVcj4or6cT6tX6oJH7ePPmfrBfqI/O\\nOeH8gMJ+FuwtXYEPa4hBf38M5eU5xWG7\\n-----END CERTIFICATE-----\\n"
     custom_key = <<EOT
     -----BEGIN RSA PRIVATE KEY-----
@@ -99,12 +113,22 @@ Optional:
 - `bundle_method` (String) A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.
 - `certificate_authority` (String) The Certificate Authority that will issue the certificate
 - `cloudflare_branding` (Boolean) Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true
+- `custom_cert_bundle` (Attributes List) Array of custom certificate and key pairs (1 or 2 pairs allowed) (see [below for nested schema](#nestedatt--ssl--custom_cert_bundle))
 - `custom_certificate` (String) If a custom uploaded certificate is used.
 - `custom_key` (String) The key for a custom uploaded certificate.
 - `method` (String) Domain control validation (DCV) method used for this hostname.
 - `settings` (Attributes) SSL specific settings. (see [below for nested schema](#nestedatt--ssl--settings))
 - `type` (String) Level of validation to be used for this hostname. Domain validation (dv) must be used.
 - `wildcard` (Boolean) Indicates whether the certificate covers a wildcard.
+
+<a id="nestedatt--ssl--custom_cert_bundle"></a>
+### Nested Schema for `ssl.custom_cert_bundle`
+
+Required:
+
+- `custom_certificate` (String) If a custom uploaded certificate is used.
+- `custom_key` (String) The key for a custom uploaded certificate.
+
 
 <a id="nestedatt--ssl--settings"></a>
 ### Nested Schema for `ssl.settings`

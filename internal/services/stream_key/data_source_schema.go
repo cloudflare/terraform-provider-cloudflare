@@ -5,6 +5,7 @@ package stream_key
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -17,6 +18,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
+			},
+			"created": schema.StringAttribute{
+				Description: "The date and time a signing key was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
 			},
 		},
 	}

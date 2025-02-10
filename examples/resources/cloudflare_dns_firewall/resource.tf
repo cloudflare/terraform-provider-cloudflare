@@ -12,5 +12,5 @@ resource "cloudflare_dns_firewall" "example_dns_firewall" {
   negative_cache_ttl = 900
   ratelimit = 600
   retries = 2
-  upstream_ips = ["192.0.2.1", "198.51.100.1", "string"]
+  upstream_ips = ["192.0.2.1", "198.51.100.1", "2001:DB8:100::CF"]
 }

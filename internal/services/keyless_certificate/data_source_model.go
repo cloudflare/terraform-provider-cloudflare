@@ -17,10 +17,6 @@ type KeylessCertificateResultDataSourceEnvelope struct {
 	Result KeylessCertificateDataSourceModel `json:"result,computed"`
 }
 
-type KeylessCertificateResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[KeylessCertificateDataSourceModel] `json:"result,computed"`
-}
-
 type KeylessCertificateDataSourceModel struct {
 	ID                   types.String                                                      `tfsdk:"id" json:"-,computed"`
 	KeylessCertificateID types.String                                                      `tfsdk:"keyless_certificate_id" path:"keyless_certificate_id,optional"`

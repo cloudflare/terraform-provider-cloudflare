@@ -16,10 +16,6 @@ type EmailRoutingRuleResultDataSourceEnvelope struct {
 	Result EmailRoutingRuleDataSourceModel `json:"result,computed"`
 }
 
-type EmailRoutingRuleResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[EmailRoutingRuleDataSourceModel] `json:"result,computed"`
-}
-
 type EmailRoutingRuleDataSourceModel struct {
 	ID             types.String                                                          `tfsdk:"id" json:"-,computed"`
 	RuleIdentifier types.String                                                          `tfsdk:"rule_identifier" path:"rule_identifier,optional"`

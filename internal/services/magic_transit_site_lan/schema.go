@@ -19,6 +19,11 @@ var _ resource.ResourceWithConfigValidators = (*MagicTransitSiteLANResource)(nil
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "Identifier",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
@@ -27,11 +32,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"site_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"lan_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"ha_link": schema.BoolAttribute{
@@ -127,6 +127,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "A valid IPv4 address.",
 								Optional:    true,
 							},
+							"dns_servers": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
 							"reservations": schema.MapAttribute{
 								Description: "Mapping of MAC addresses to IP addresses",
 								Optional:    true,
@@ -143,10 +147,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
 			},
 		},
 	}

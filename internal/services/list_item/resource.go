@@ -115,7 +115,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 	}
 	findListItem, _ := io.ReadAll(findItemRes.Body)
 	itemID := gjson.Get(string(findListItem), "result.0.id")
-	data.ItemID = types.StringValue(itemID.String())
+	data.ID = types.StringValue(itemID.String())
 
 	env := ListItemResultEnvelope{*data}
 	listItemRes := new(http.Response)
@@ -123,7 +123,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		ctx,
 		data.AccountID.ValueString(),
 		data.ListID.ValueString(),
-		data.ItemID.ValueString(),
+		data.ID.ValueString(),
 		option.WithResponseBodyInto(&listItemRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -207,7 +207,7 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 		ctx,
 		data.AccountID.ValueString(),
 		data.ListID.ValueString(),
-		data.ItemID.ValueString(),
+		data.ID.ValueString(),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -242,7 +242,7 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 
 	deletePayload := bodyDeletePayload{
 		Items: []bodyDeleteItems{{
-			ID: data.ItemID.ValueString(),
+			ID: data.ID.ValueString(),
 		}},
 	}
 	deleteBody, _ := json.Marshal(deletePayload)

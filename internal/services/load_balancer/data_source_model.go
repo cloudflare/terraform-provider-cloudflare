@@ -16,10 +16,6 @@ type LoadBalancerResultDataSourceEnvelope struct {
 	Result LoadBalancerDataSourceModel `json:"result,computed"`
 }
 
-type LoadBalancerResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[LoadBalancerDataSourceModel] `json:"result,computed"`
-}
-
 type LoadBalancerDataSourceModel struct {
 	ID                        types.String                                                                   `tfsdk:"id" json:"-,computed"`
 	LoadBalancerID            types.String                                                                   `tfsdk:"load_balancer_id" path:"load_balancer_id,optional"`

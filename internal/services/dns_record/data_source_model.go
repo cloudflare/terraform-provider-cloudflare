@@ -19,10 +19,6 @@ type DNSRecordResultDataSourceEnvelope struct {
 	Result DNSRecordDataSourceModel `json:"result,computed"`
 }
 
-type DNSRecordResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[DNSRecordDataSourceModel] `json:"result,computed"`
-}
-
 type DNSRecordDataSourceModel struct {
 	ID                types.String                                               `tfsdk:"id" json:"-,computed"`
 	DNSRecordID       types.String                                               `tfsdk:"dns_record_id" path:"dns_record_id,optional"`

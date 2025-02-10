@@ -27,17 +27,17 @@ data "cloudflare_d1_database" "example_d1_database" {
 
 ### Optional
 
-- `database_id` (String)
+- `database_id` (String) D1 database identifier (UUID).
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
 
 - `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
 - `file_size` (Number) The D1 database's size, in bytes.
-- `id` (String) The ID of this resource.
-- `name` (String)
+- `id` (String) D1 database identifier (UUID).
+- `name` (String) D1 database name.
 - `num_tables` (Number)
-- `uuid` (String)
+- `uuid` (String) D1 database identifier (UUID).
 - `version` (String)
 
 <a id="nestedatt--filter"></a>

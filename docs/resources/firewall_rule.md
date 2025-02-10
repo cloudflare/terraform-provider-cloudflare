@@ -45,10 +45,6 @@ resource "cloudflare_firewall_rule" "example_firewall_rule" {
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `zone_id` (String) Identifier
 
-### Optional
-
-- `rule_id` (String) The unique identifier of the firewall rule.
-
 ### Read-Only
 
 - `description` (String) An informative summary of the firewall rule.
@@ -93,4 +89,10 @@ Read-Only:
 
 - `id` (String) The unique identifier of the filter.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_firewall_rule.example '<zone_id>/<rule_id>'
+```

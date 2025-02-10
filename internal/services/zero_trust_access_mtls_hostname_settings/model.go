@@ -12,9 +12,12 @@ type ZeroTrustAccessMTLSHostnameSettingsResultEnvelope struct {
 }
 
 type ZeroTrustAccessMTLSHostnameSettingsModel struct {
-	AccountID types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID    types.String                                         `tfsdk:"zone_id" path:"zone_id,optional"`
-	Settings  *[]*ZeroTrustAccessMTLSHostnameSettingsSettingsModel `tfsdk:"settings" json:"settings,required"`
+	AccountID                   types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID                      types.String                                         `tfsdk:"zone_id" path:"zone_id,optional"`
+	Settings                    *[]*ZeroTrustAccessMTLSHostnameSettingsSettingsModel `tfsdk:"settings" json:"settings,required"`
+	ChinaNetwork                types.Bool                                           `tfsdk:"china_network" json:"china_network,computed"`
+	ClientCertificateForwarding types.Bool                                           `tfsdk:"client_certificate_forwarding" json:"client_certificate_forwarding,computed"`
+	Hostname                    types.String                                         `tfsdk:"hostname" json:"hostname,computed"`
 }
 
 func (m ZeroTrustAccessMTLSHostnameSettingsModel) MarshalJSON() (data []byte, err error) {

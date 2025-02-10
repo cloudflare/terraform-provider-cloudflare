@@ -16,10 +16,6 @@ type ZeroTrustDevicePostureRuleResultDataSourceEnvelope struct {
 	Result ZeroTrustDevicePostureRuleDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustDevicePostureRuleResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustDevicePostureRuleDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustDevicePostureRuleDataSourceModel struct {
 	ID          types.String                                                                 `tfsdk:"id" json:"-,computed"`
 	RuleID      types.String                                                                 `tfsdk:"rule_id" path:"rule_id,optional"`

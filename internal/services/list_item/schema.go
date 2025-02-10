@@ -31,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"item_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description:   "The unique ID of the item in the List.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
@@ -42,14 +42,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"comment": schema.StringAttribute{
 				Description: "An informative summary of the list item.",
-				Computed:    true,
+				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "The RFC 3339 timestamp of when the item was created.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The unique ID of the list.",
 				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{

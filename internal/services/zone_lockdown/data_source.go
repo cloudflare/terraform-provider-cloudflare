@@ -64,7 +64,7 @@ func (d *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 			return
 		}
 
-		env := ZoneLockdownResultListDataSourceEnvelope{}
+		env := ZoneLockdownsResultListDataSourceEnvelope{}
 		page, err := d.client.Firewall.Lockdowns.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.LockDownsID = ts[0].LockDownsID
+		data.LockDownsID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

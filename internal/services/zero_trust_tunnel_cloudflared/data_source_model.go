@@ -18,10 +18,6 @@ type ZeroTrustTunnelCloudflaredResultDataSourceEnvelope struct {
 	Result ZeroTrustTunnelCloudflaredDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustTunnelCloudflaredResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustTunnelCloudflaredDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustTunnelCloudflaredDataSourceModel struct {
 	ID              types.String                                                                       `tfsdk:"id" json:"-,computed"`
 	TunnelID        types.String                                                                       `tfsdk:"tunnel_id" path:"tunnel_id,optional"`

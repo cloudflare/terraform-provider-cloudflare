@@ -34,6 +34,12 @@ resource "cloudflare_zero_trust_access_mtls_hostname_settings" "example_zero_tru
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
+### Read-Only
+
+- `china_network` (Boolean) Request client certificates for this hostname in China. Can only be set to true if this zone is china network enabled.
+- `client_certificate_forwarding` (Boolean) Client Certificate Forwarding is a feature that takes the client cert provided by the eyeball to the edge, and forwards it to the origin as a HTTP header to allow logging on the origin.
+- `hostname` (String) The hostname that these settings apply to.
+
 <a id="nestedatt--settings"></a>
 ### Nested Schema for `settings`
 

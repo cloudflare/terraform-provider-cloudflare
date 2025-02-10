@@ -7,17 +7,12 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/dns"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type DNSZoneTransfersACLResultDataSourceEnvelope struct {
 	Result DNSZoneTransfersACLDataSourceModel `json:"result,computed"`
-}
-
-type DNSZoneTransfersACLResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[DNSZoneTransfersACLDataSourceModel] `json:"result,computed"`
 }
 
 type DNSZoneTransfersACLDataSourceModel struct {

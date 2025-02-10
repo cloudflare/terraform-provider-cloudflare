@@ -17,10 +17,6 @@ type ZeroTrustDNSLocationResultDataSourceEnvelope struct {
 	Result ZeroTrustDNSLocationDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustDNSLocationResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustDNSLocationDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustDNSLocationDataSourceModel struct {
 	ID                        types.String                                                              `tfsdk:"id" json:"-,computed"`
 	LocationID                types.String                                                              `tfsdk:"location_id" path:"location_id,optional"`

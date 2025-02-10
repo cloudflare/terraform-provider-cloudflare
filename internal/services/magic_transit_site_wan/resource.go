@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/magic_transit"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*MagicTransitSiteWANResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*MagicTransitSiteWANResource)(nil)
+var _ resource.ResourceWithImportState = (*MagicTransitSiteWANResource)(nil)
 
 func NewResource() resource.Resource {
 	return &MagicTransitSiteWANResource{}
@@ -120,7 +123,7 @@ func (r *MagicTransitSiteWANResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.MagicTransit.Sites.WANs.Update(
 		ctx,
 		data.SiteID.ValueString(),
-		data.WANID.ValueString(),
+		data.ID.ValueString(),
 		magic_transit.SiteWANUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -157,7 +160,7 @@ func (r *MagicTransitSiteWANResource) Read(ctx context.Context, req resource.Rea
 	_, err := r.client.MagicTransit.Sites.WANs.Get(
 		ctx,
 		data.SiteID.ValueString(),
-		data.WANID.ValueString(),
+		data.ID.ValueString(),
 		magic_transit.SiteWANGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -196,7 +199,7 @@ func (r *MagicTransitSiteWANResource) Delete(ctx context.Context, req resource.D
 	_, err := r.client.MagicTransit.Sites.WANs.Delete(
 		ctx,
 		data.SiteID.ValueString(),
-		data.WANID.ValueString(),
+		data.ID.ValueString(),
 		magic_transit.SiteWANDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -206,6 +209,55 @@ func (r *MagicTransitSiteWANResource) Delete(ctx context.Context, req resource.D
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *MagicTransitSiteWANResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *MagicTransitSiteWANModel = new(MagicTransitSiteWANModel)
+
+	path_account_id := ""
+	path_site_id := ""
+	path_wan_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<site_id>/<wan_id>",
+		&path_account_id,
+		&path_site_id,
+		&path_wan_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.SiteID = types.StringValue(path_site_id)
+	data.ID = types.StringValue(path_wan_id)
+
+	res := new(http.Response)
+	env := MagicTransitSiteWANResultEnvelope{*data}
+	_, err := r.client.MagicTransit.Sites.WANs.Get(
+		ctx,
+		path_site_id,
+		path_wan_id,
+		magic_transit.SiteWANGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

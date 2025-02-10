@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/d1"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,10 +14,6 @@ import (
 
 type D1DatabaseResultDataSourceEnvelope struct {
 	Result D1DatabaseDataSourceModel `json:"result,computed"`
-}
-
-type D1DatabaseResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[D1DatabaseDataSourceModel] `json:"result,computed"`
 }
 
 type D1DatabaseDataSourceModel struct {
