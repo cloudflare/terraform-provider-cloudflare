@@ -547,6 +547,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeLoginMethodDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
+												Computed:    true,
+											},
+										},
+									},
 									"ip_list": schema.SingleNestedAttribute{
 										Computed:   true,
 										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeIPListDataSourceModel](ctx),
@@ -789,6 +799,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											},
 											"identity_provider_id": schema.StringAttribute{
 												Description: "The ID of your Google Workspace identity provider.",
+												Computed:    true,
+											},
+										},
+									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeLoginMethodDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
 												Computed:    true,
 											},
 										},
@@ -1055,6 +1075,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireLoginMethodDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
+												Computed:    true,
+											},
+										},
+									},
 									"ip_list": schema.SingleNestedAttribute{
 										Computed:   true,
 										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireIPListDataSourceModel](ctx),
@@ -1214,11 +1244,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											Description: "The name of the IdP attribute.",
 											Computed:    true,
 										},
-										"name_by_idp": schema.MapAttribute{
+										"name_by_idp": schema.ListNestedAttribute{
 											Description: "A mapping from IdP ID to attribute name.",
 											Computed:    true,
-											CustomType:  customfield.NewMapType[types.String](ctx),
-											ElementType: types.StringType,
+											CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationSaaSAppCustomAttributesSourceNameByIdPDataSourceModel](ctx),
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"idp_id": schema.StringAttribute{
+														Description: "The UID of the IdP.",
+														Computed:    true,
+													},
+													"source_name": schema.StringAttribute{
+														Description: "The name of the IdP provided attribute.",
+														Computed:    true,
+													},
+												},
+											},
 										},
 									},
 								},
