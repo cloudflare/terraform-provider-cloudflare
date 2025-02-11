@@ -5,7 +5,7 @@ package hyperdrive_config
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -73,24 +73,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"caching": schema.SingleNestedAttribute{
-				Computed:   true,
+			"caching": schema.StringAttribute{
 				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[HyperdriveConfigCachingModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"disabled": schema.BoolAttribute{
-						Description: "When set to true, disables the caching of SQL responses. (Default: false)",
-						Optional:    true,
-					},
-					"max_age": schema.Int64Attribute{
-						Description: "When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)",
-						Optional:    true,
-					},
-					"stale_while_revalidate": schema.Int64Attribute{
-						Description: "When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)",
-						Optional:    true,
-					},
-				},
+				CustomType: jsontypes.NormalizedType{},
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Hyperdrive configuration was created.",

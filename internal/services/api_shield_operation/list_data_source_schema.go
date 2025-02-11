@@ -23,8 +23,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+				Required: true,
 			},
 			"direction": schema.StringAttribute{
 				Description: "Direction to order results.",
@@ -95,8 +94,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"last_updated": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
+							Computed: true,
 						},
 						"method": schema.StringAttribute{
 							Description: "The HTTP method used to access the endpoint.",
@@ -116,8 +114,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"operation_id": schema.StringAttribute{
-							Description: "UUID",
-							Computed:    true,
+							Computed: true,
 						},
 						"features": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -289,8 +286,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											CustomType:  customfield.NewNestedObjectType[APIShieldOperationsFeaturesSchemaInfoActiveSchemaDataSourceModel](ctx),
 											Attributes: map[string]schema.Attribute{
 												"id": schema.StringAttribute{
-													Description: "UUID",
-													Computed:    true,
+													Computed: true,
 												},
 												"created_at": schema.StringAttribute{
 													Computed:   true,

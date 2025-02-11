@@ -7,7 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -34,23 +34,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Enables Argo Smart Routing for this application.\nNotes: Only available for TCP applications with traffic_type set to \"direct\".",
 				Computed:    true,
 			},
-			"created_on": schema.StringAttribute{
-				Description: "When the Application was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "App identifier.",
-				Computed:    true,
-			},
 			"ip_firewall": schema.BoolAttribute{
 				Description: "Enables IP Access Rules for this application.\nNotes: Only available for TCP applications.",
 				Computed:    true,
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "When the Application was last modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"protocol": schema.StringAttribute{
 				Description: "The port configuration at Cloudflare's edge. May specify a single port, for example `\"tcp/1000\"`, or a range of ports, for example `\"tcp/1000-2000\"`.",
@@ -182,6 +168,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.Dynamic{
 					customvalidator.AllowedSubtypes(basetypes.Int64Type{}, basetypes.StringType{}),
 				},
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the Application was created.",
+				Computed:    true,
+				CustomType:  jsontypes.NormalizedType{},
+			},
+			"id": schema.StringAttribute{
+				Description: "App identifier.",
+				Computed:    true,
+				CustomType:  jsontypes.NormalizedType{},
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the Application was last modified.",
+				Computed:    true,
+				CustomType:  jsontypes.NormalizedType{},
 			},
 		},
 	}
