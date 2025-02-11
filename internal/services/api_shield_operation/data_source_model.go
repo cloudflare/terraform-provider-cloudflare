@@ -25,7 +25,7 @@ type APIShieldOperationDataSourceModel struct {
 	Feature     *[]types.String                                                     `tfsdk:"feature" query:"feature,optional"`
 	Endpoint    types.String                                                        `tfsdk:"endpoint" json:"endpoint,computed"`
 	Host        types.String                                                        `tfsdk:"host" json:"host,computed"`
-	LastUpdated timetypes.RFC3339                                                   `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	LastUpdated types.String                                                        `tfsdk:"last_updated" json:"last_updated,computed"`
 	Method      types.String                                                        `tfsdk:"method" json:"method,computed"`
 	Features    customfield.NestedObject[APIShieldOperationFeaturesDataSourceModel] `tfsdk:"features" json:"features,computed"`
 	Filter      *APIShieldOperationFindOneByDataSourceModel                         `tfsdk:"filter"`

@@ -22,14 +22,14 @@ var _ resource.ResourceWithConfigValidators = (*EmailRoutingRuleResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description:   "Routing rule identifier.",
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"rule_identifier": schema.StringAttribute{
+				Description:   "Routing rule identifier.",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"actions": schema.ListNestedAttribute{
@@ -99,10 +99,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					float64validator.AtLeast(0),
 				},
 				Default: float64default.StaticFloat64(0),
-			},
-			"tag": schema.StringAttribute{
-				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
-				Computed:    true,
 			},
 		},
 	}
