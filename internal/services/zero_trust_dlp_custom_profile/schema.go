@@ -73,6 +73,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Required: true,
 						},
+						"ai_context_enabled": schema.BoolAttribute{
+							Optional: true,
+						},
 						"allowed_match_count": schema.Int64Attribute{
 							Description: "Related DLP policies will trigger when the match count exceeds the number set.",
 							Computed:    true,
@@ -144,6 +147,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
+			},
+			"ai_context_enabled": schema.BoolAttribute{
+				Optional: true,
 			},
 			"confidence_threshold": schema.StringAttribute{
 				Optional: true,
