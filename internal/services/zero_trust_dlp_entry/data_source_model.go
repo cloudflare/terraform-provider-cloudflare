@@ -51,7 +51,8 @@ func (m *ZeroTrustDLPEntryDataSourceModel) toListParams(_ context.Context) (para
 }
 
 type ZeroTrustDLPEntryConfidenceDataSourceModel struct {
-	Available types.Bool `tfsdk:"available" json:"available,computed"`
+	AIContextAvailable types.Bool `tfsdk:"ai_context_available" json:"ai_context_available,computed"`
+	Available          types.Bool `tfsdk:"available" json:"available,computed"`
 }
 
 type ZeroTrustDLPEntryPatternDataSourceModel struct {
