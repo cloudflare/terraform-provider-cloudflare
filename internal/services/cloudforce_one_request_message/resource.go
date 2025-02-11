@@ -147,38 +147,38 @@ func (r *CloudforceOneRequestMessageResource) Update(ctx context.Context, req re
 func (r *CloudforceOneRequestMessageResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data *CloudforceOneRequestMessageModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	// 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+	// 	if resp.Diagnostics.HasError() {
+	// 		return
+	// 	}
 
-	res := new(http.Response)
-	env := CloudforceOneRequestMessageResultEnvelope{*data}
-	_, err := r.client.CloudforceOne.Requests.Message.Get(
-		ctx,
-		data.AccountIdentifier.ValueString(),
-		data.ID.ValueInt64(),
-		cloudforce_one.RequestMessageGetParams{},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if res != nil && res.StatusCode == 404 {
-		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
-		resp.State.RemoveResource(ctx)
-		return
-	}
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
+	// 	res := new(http.Response)
+	// 	env := CloudforceOneRequestMessageResultEnvelope{*data}
+	// 	_, err := r.client.CloudforceOne.Requests.Message.Get(
+	// 		ctx,
+	// 		data.AccountIdentifier.ValueString(),
+	// 		data.ID.ValueInt64(),
+	// 		cloudforce_one.RequestMessageGetParams{},
+	// 		option.WithResponseBodyInto(&res),
+	// 		option.WithMiddleware(logging.Middleware(ctx)),
+	// 	)
+	// 	if res != nil && res.StatusCode == 404 {
+	// 		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
+	// 		resp.State.RemoveResource(ctx)
+	// 		return
+	// 	}
+	// 	if err != nil {
+	// 		resp.Diagnostics.AddError("failed to make http request", err.Error())
+	// 		return
+	// 	}
+	// 	bytes, _ := io.ReadAll(res.Body)
+	// 	err = apijson.UnmarshalComputed(bytes, &env)
+	// 	if err != nil {
+	// 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+	// 		return
+	// 	}
+	// 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
