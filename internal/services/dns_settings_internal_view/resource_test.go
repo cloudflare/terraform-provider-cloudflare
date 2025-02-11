@@ -53,20 +53,22 @@ func testSweepCloudflareDNSSettingsInternalView(r string) error {
 }
 
 func TestAccCloudflareDNSInternalView_Basic(t *testing.T) {
+	acctest.TestAccPreCheck_InternalZoneID(t)
+
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_dns_settings_internal_view." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	internalZoneID := os.Getenv("CLOUDFLARE_INTERNAL_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testDNSInternalViewConfig(rnd, accountID, rnd, zoneID),
+				Config: testDNSInternalViewConfig(rnd, accountID, rnd, internalZoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "zones.0", zoneID),
+					resource.TestCheckResourceAttr(name, "zones.0", internalZoneID),
 				),
 			},
 		},
@@ -74,27 +76,29 @@ func TestAccCloudflareDNSInternalView_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareDNSInternalView_Update(t *testing.T) {
+	acctest.TestAccPreCheck_InternalZoneID(t)
+
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_dns_settings_internal_view." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	internalZoneID := os.Getenv("CLOUDFLARE_INTERNAL_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testDNSInternalViewConfig(rnd, accountID, rnd, zoneID),
+				Config: testDNSInternalViewConfig(rnd, accountID, rnd, internalZoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "zones.0", zoneID),
+					resource.TestCheckResourceAttr(name, "zones.0", internalZoneID),
 				),
 			},
 			{
-				Config: testDNSInternalViewConfig(rnd, accountID, rnd+"-update", zoneID),
+				Config: testDNSInternalViewConfig(rnd, accountID, rnd+"-update", internalZoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd+"-update"),
-					resource.TestCheckResourceAttr(name, "zones.0", zoneID),
+					resource.TestCheckResourceAttr(name, "zones.0", internalZoneID),
 				),
 			},
 		},
