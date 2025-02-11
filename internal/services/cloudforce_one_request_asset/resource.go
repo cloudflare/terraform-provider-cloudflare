@@ -123,7 +123,7 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 		ctx,
 		data.AccountIdentifier.ValueString(),
 		data.RequestIdentifier.ValueString(),
-		data.ID.ValueInt64(),
+		string(data.ID.ValueInt64()),
 		cloudforce_one.RequestAssetUpdateParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -159,7 +159,7 @@ func (r *CloudforceOneRequestAssetResource) Read(ctx context.Context, req resour
 		ctx,
 		data.AccountIdentifier.ValueString(),
 		data.RequestIdentifier.ValueString(),
-		data.ID.ValueInt64(),
+		string(data.ID.ValueInt64()),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -196,7 +196,7 @@ func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req reso
 		ctx,
 		data.AccountIdentifier.ValueString(),
 		data.RequestIdentifier.ValueString(),
-		data.ID.ValueInt64(),
+		string(data.ID.ValueInt64()),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
@@ -235,7 +235,7 @@ func (r *CloudforceOneRequestAssetResource) ImportState(ctx context.Context, req
 		ctx,
 		path_account_identifier,
 		path_request_identifier,
-		path_asset_identifer,
+		string(path_asset_identifer),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
