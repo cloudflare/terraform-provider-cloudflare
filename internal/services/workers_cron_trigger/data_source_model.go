@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,9 +17,9 @@ type WorkersCronTriggerResultDataSourceEnvelope struct {
 }
 
 type WorkersCronTriggerDataSourceModel struct {
-	AccountID  types.String                           `tfsdk:"account_id" path:"account_id,required"`
-	ScriptName types.String                           `tfsdk:"script_name" path:"script_name,required"`
-	Schedules  customfield.List[jsontypes.Normalized] `tfsdk:"schedules" json:"schedules,computed"`
+	AccountID  types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
+	ScriptName types.String                                                             `tfsdk:"script_name" path:"script_name,required"`
+	Schedules  customfield.NestedObjectList[WorkersCronTriggerSchedulesDataSourceModel] `tfsdk:"schedules" json:"schedules,computed"`
 }
 
 func (m *WorkersCronTriggerDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptScheduleGetParams, diags diag.Diagnostics) {
@@ -29,4 +28,10 @@ func (m *WorkersCronTriggerDataSourceModel) toReadParams(_ context.Context) (par
 	}
 
 	return
+}
+
+type WorkersCronTriggerSchedulesDataSourceModel struct {
+	CreatedOn  types.String `tfsdk:"created_on" json:"created_on,computed"`
+	Cron       types.String `tfsdk:"cron" json:"cron,computed"`
+	ModifiedOn types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/content_scanning"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -32,6 +31,6 @@ func (m *ContentScanningExpressionsDataSourceModel) toListParams(_ context.Conte
 }
 
 type ContentScanningExpressionsResultDataSourceModel struct {
-	ID      jsontypes.Normalized `tfsdk:"id" json:"id,computed"`
-	Payload types.String         `tfsdk:"payload" json:"payload,computed"`
+	ID      types.String `tfsdk:"id" json:"id,computed"`
+	Payload types.String `tfsdk:"payload" json:"payload,computed"`
 }

@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -49,10 +48,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"schedules": schema.ListAttribute{
-				Computed:    true,
-				CustomType:  customfield.NewListType[jsontypes.Normalized](ctx),
-				ElementType: jsontypes.NormalizedType{},
+			"schedules": schema.ListNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[WorkersCronTriggerSchedulesModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"created_on": schema.StringAttribute{
+							Computed: true,
+						},
+						"cron": schema.StringAttribute{
+							Computed: true,
+						},
+						"modified_on": schema.StringAttribute{
+							Computed: true,
+						},
+					},
+				},
 			},
 		},
 	}

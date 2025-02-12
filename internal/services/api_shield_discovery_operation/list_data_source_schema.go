@@ -22,7 +22,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Required: true,
+				Description: "Identifier",
+				Required:    true,
 			},
 			"diff": schema.BoolAttribute{
 				Description: "When `true`, only return API Discovery results that are not saved into API Shield Endpoint Management",
@@ -94,7 +95,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Computed: true,
+							Description: "UUID",
+							Computed:    true,
 						},
 						"endpoint": schema.StringAttribute{
 							Description: "The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.",
@@ -105,7 +107,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"last_updated": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"method": schema.StringAttribute{
 							Description: "The HTTP method used to access the endpoint.",
