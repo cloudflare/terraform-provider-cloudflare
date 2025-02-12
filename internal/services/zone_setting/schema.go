@@ -72,6 +72,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"origin_max_http_version",
 						"polish",
 						"prefetch_preload",
+						"privacy_pass",
 						"proxy_read_timeout",
 						"pseudo_ipv4",
 						"replace_insecure_js",
