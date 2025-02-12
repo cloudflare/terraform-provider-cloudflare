@@ -185,6 +185,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_app_types"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_categories"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_logging"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_proxy_endpoint"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_settings"
@@ -469,6 +470,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_gateway_settings.NewResource,
 		zero_trust_list.NewResource,
 		zero_trust_dns_location.NewResource,
+		zero_trust_gateway_logging.NewResource,
 		zero_trust_gateway_proxy_endpoint.NewResource,
 		zero_trust_gateway_policy.NewResource,
 		zero_trust_gateway_certificate.NewResource,
@@ -759,6 +761,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_list.NewZeroTrustListsDataSource,
 		zero_trust_dns_location.NewZeroTrustDNSLocationDataSource,
 		zero_trust_dns_location.NewZeroTrustDNSLocationsDataSource,
+		zero_trust_gateway_logging.NewZeroTrustGatewayLoggingDataSource,
 		zero_trust_gateway_proxy_endpoint.NewZeroTrustGatewayProxyEndpointDataSource,
 		zero_trust_gateway_policy.NewZeroTrustGatewayPolicyDataSource,
 		zero_trust_gateway_policy.NewZeroTrustGatewayPoliciesDataSource,
