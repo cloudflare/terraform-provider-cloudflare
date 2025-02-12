@@ -7,9 +7,12 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*APITokenPermissionsGroupsListDataSource)(nil)
@@ -33,7 +36,32 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[APITokenPermissionsGroupsListResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{},
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "Public ID.",
+							Computed:    true,
+						},
+						"name": schema.StringAttribute{
+							Description: "Permission Group Name",
+							Computed:    true,
+						},
+						"scopes": schema.ListAttribute{
+							Description: "Resources to which the Permission Group is scoped",
+							Computed:    true,
+							Validators: []validator.List{
+								listvalidator.ValueStringsAre(
+									stringvalidator.OneOfCaseInsensitive(
+										"com.cloudflare.api.account",
+										"com.cloudflare.api.account.zone",
+										"com.cloudflare.api.user",
+										"com.cloudflare.edge.r2.bucket",
+									),
+								),
+							},
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+					},
 				},
 			},
 		},

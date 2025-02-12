@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/accounts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,7 +17,10 @@ type APITokenPermissionsGroupsResultDataSourceEnvelope struct {
 }
 
 type APITokenPermissionsGroupsDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                   `tfsdk:"account_id" path:"account_id,required"`
+	ID        types.String                   `tfsdk:"id" json:"id,computed"`
+	Name      types.String                   `tfsdk:"name" json:"name,computed"`
+	Scopes    customfield.List[types.String] `tfsdk:"scopes" json:"scopes,computed"`
 }
 
 func (m *APITokenPermissionsGroupsDataSourceModel) toReadParams(_ context.Context) (params accounts.TokenPermissionGroupGetParams, diags diag.Diagnostics) {
