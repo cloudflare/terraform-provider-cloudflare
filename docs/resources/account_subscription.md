@@ -40,15 +40,6 @@ resource "cloudflare_account_subscription" "example_account_subscription" {
 - `rate_plan` (Attributes) The rate plan applied to the subscription. (see [below for nested schema](#nestedatt--rate_plan))
 - `subscription_identifier` (String) Subscription identifier tag.
 
-### Read-Only
-
-- `currency` (String) The monetary unit in which pricing information is displayed.
-- `current_period_end` (String) The end of the current period and also when the next billing is due.
-- `current_period_start` (String) When the current billing period started. May match initial_period_start if this is the first period.
-- `id` (String) Subscription identifier tag.
-- `price` (Number) The price of the subscription that will be billed, in US dollars.
-- `state` (String) The state that the subscription is in.
-
 <a id="nestedatt--rate_plan"></a>
 ### Nested Schema for `rate_plan`
 

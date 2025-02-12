@@ -65,6 +65,7 @@ Optional:
 
 Read-Only:
 
+- `ai_context_available` (Boolean)
 - `available` (Boolean) Indicates whether this entry can be made more or less sensitive by setting a confidence threshold.
 Profiles that use an entry with `available` set to true can use confidence thresholds
 
