@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/waiting_rooms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*WaitingRoomRulesResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*WaitingRoomRulesResource)(nil)
+var _ resource.ResourceWithImportState = (*WaitingRoomRulesResource)(nil)
 
 func NewResource() resource.Resource {
 	return &WaitingRoomRulesResource{}
@@ -119,7 +122,7 @@ func (r *WaitingRoomRulesResource) Update(ctx context.Context, req resource.Upda
 	env := WaitingRoomRulesResultEnvelope{data.Rules}
 	_, err = r.client.WaitingRooms.Rules.Update(
 		ctx,
-		data.WaitingRoomID.ValueString(),
+		data.ID.ValueString(),
 		waiting_rooms.RuleUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -155,7 +158,7 @@ func (r *WaitingRoomRulesResource) Read(ctx context.Context, req resource.ReadRe
 	env := WaitingRoomRulesResultEnvelope{data.Rules}
 	_, err := r.client.WaitingRooms.Rules.Get(
 		ctx,
-		data.WaitingRoomID.ValueString(),
+		data.ID.ValueString(),
 		waiting_rooms.RuleGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -206,6 +209,51 @@ func (r *WaitingRoomRulesResource) Delete(ctx context.Context, req resource.Dele
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WaitingRoomRulesResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *WaitingRoomRulesModel = new(WaitingRoomRulesModel)
+
+	path_zone_id := ""
+	path_waiting_room_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<waiting_room_id>",
+		&path_zone_id,
+		&path_waiting_room_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.WaitingRoomID = types.StringValue(path_waiting_room_id)
+
+	res := new(http.Response)
+	env := WaitingRoomRulesResultEnvelope{data.Rules}
+	_, err := r.client.WaitingRooms.Rules.Get(
+		ctx,
+		path_waiting_room_id,
+		waiting_rooms.RuleGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data.Rules = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

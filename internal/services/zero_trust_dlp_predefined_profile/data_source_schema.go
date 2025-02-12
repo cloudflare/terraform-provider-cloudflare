@@ -26,6 +26,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"profile_id": schema.StringAttribute{
 				Required: true,
 			},
+			"ai_context_enabled": schema.BoolAttribute{
+				Computed: true,
+			},
 			"allowed_match_count": schema.Int64Attribute{
 				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
 				Computed:    true,
@@ -161,6 +164,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustDLPPredefinedProfileEntriesConfidenceDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
+								"ai_context_available": schema.BoolAttribute{
+									Computed: true,
+								},
 								"available": schema.BoolAttribute{
 									Description: "Indicates whether this entry can be made more or less sensitive by setting a confidence threshold.\nProfiles that use an entry with `available` set to true can use confidence thresholds",
 									Computed:    true,

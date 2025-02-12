@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/waiting_rooms"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,10 +14,6 @@ import (
 
 type WaitingRoomEventResultDataSourceEnvelope struct {
 	Result WaitingRoomEventDataSourceModel `json:"result,computed"`
-}
-
-type WaitingRoomEventResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[WaitingRoomEventDataSourceModel] `json:"result,computed"`
 }
 
 type WaitingRoomEventDataSourceModel struct {

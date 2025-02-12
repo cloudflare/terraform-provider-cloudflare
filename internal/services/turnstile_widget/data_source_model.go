@@ -17,10 +17,6 @@ type TurnstileWidgetResultDataSourceEnvelope struct {
 	Result TurnstileWidgetDataSourceModel `json:"result,computed"`
 }
 
-type TurnstileWidgetResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[TurnstileWidgetDataSourceModel] `json:"result,computed"`
-}
-
 type TurnstileWidgetDataSourceModel struct {
 	ID             types.String                             `tfsdk:"id" json:"-,computed"`
 	Sitekey        types.String                             `tfsdk:"sitekey" path:"sitekey,computed_optional"`

@@ -92,6 +92,7 @@ func (r *PagesDomainResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -123,7 +124,7 @@ func (r *PagesDomainResource) Update(ctx context.Context, req resource.UpdateReq
 	_, err = r.client.Pages.Projects.Domains.Edit(
 		ctx,
 		data.ProjectName.ValueString(),
-		data.ID.ValueString(),
+		data.Name.ValueString(),
 		pages.ProjectDomainEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -142,6 +143,7 @@ func (r *PagesDomainResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -160,7 +162,7 @@ func (r *PagesDomainResource) Read(ctx context.Context, req resource.ReadRequest
 	_, err := r.client.Pages.Projects.Domains.Get(
 		ctx,
 		data.ProjectName.ValueString(),
-		data.ID.ValueString(),
+		data.Name.ValueString(),
 		pages.ProjectDomainGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -183,6 +185,7 @@ func (r *PagesDomainResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -199,7 +202,7 @@ func (r *PagesDomainResource) Delete(ctx context.Context, req resource.DeleteReq
 	_, err := r.client.Pages.Projects.Domains.Delete(
 		ctx,
 		data.ProjectName.ValueString(),
-		data.ID.ValueString(),
+		data.Name.ValueString(),
 		pages.ProjectDomainDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -209,6 +212,7 @@ func (r *PagesDomainResource) Delete(ctx context.Context, req resource.DeleteReq
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -233,7 +237,7 @@ func (r *PagesDomainResource) ImportState(ctx context.Context, req resource.Impo
 
 	data.AccountID = types.StringValue(path_account_id)
 	data.ProjectName = types.StringValue(path_project_name)
-	data.ID = types.StringValue(path_domain_name)
+	data.Name = types.StringValue(path_domain_name)
 
 	res := new(http.Response)
 	env := PagesDomainResultEnvelope{*data}
@@ -258,6 +262,7 @@ func (r *PagesDomainResource) ImportState(ctx context.Context, req resource.Impo
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

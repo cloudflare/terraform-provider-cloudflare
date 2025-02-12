@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/firewall"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*FirewallRuleResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*FirewallRuleResource)(nil)
+var _ resource.ResourceWithImportState = (*FirewallRuleResource)(nil)
 
 func NewResource() resource.Resource {
 	return &FirewallRuleResource{}
@@ -118,7 +121,7 @@ func (r *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 	env := FirewallRuleResultEnvelope{*data}
 	_, err = r.client.Firewall.Rules.Update(
 		ctx,
-		data.RuleID.ValueString(),
+		data.ID.ValueString(),
 		firewall.RuleUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -154,7 +157,7 @@ func (r *FirewallRuleResource) Read(ctx context.Context, req resource.ReadReques
 	env := FirewallRuleResultEnvelope{*data}
 	_, err := r.client.Firewall.Rules.Get(
 		ctx,
-		data.RuleID.ValueString(),
+		data.ID.ValueString(),
 		firewall.RuleGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -192,7 +195,7 @@ func (r *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRe
 
 	_, err := r.client.Firewall.Rules.Delete(
 		ctx,
-		data.RuleID.ValueString(),
+		data.ID.ValueString(),
 		firewall.RuleDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -202,6 +205,51 @@ func (r *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRe
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *FirewallRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *FirewallRuleModel = new(FirewallRuleModel)
+
+	path_zone_id := ""
+	path_rule_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<rule_id>",
+		&path_zone_id,
+		&path_rule_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.ID = types.StringValue(path_rule_id)
+
+	res := new(http.Response)
+	env := FirewallRuleResultEnvelope{*data}
+	_, err := r.client.Firewall.Rules.Get(
+		ctx,
+		path_rule_id,
+		firewall.RuleGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
