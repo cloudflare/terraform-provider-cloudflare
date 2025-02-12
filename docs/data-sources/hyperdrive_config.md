@@ -28,22 +28,12 @@ data "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 
 ### Read-Only
 
-- `caching` (Attributes) (see [below for nested schema](#nestedatt--caching))
+- `caching` (String)
 - `created_on` (String) When the Hyperdrive configuration was created.
 - `id` (String) Identifier
 - `modified_on` (String) When the Hyperdrive configuration was last modified.
 - `name` (String)
 - `origin` (Attributes) (see [below for nested schema](#nestedatt--origin))
-
-<a id="nestedatt--caching"></a>
-### Nested Schema for `caching`
-
-Read-Only:
-
-- `disabled` (Boolean) When set to true, disables the caching of SQL responses. (Default: false)
-- `max_age` (Number) When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)
-- `stale_while_revalidate` (Number) When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)
-
 
 <a id="nestedatt--origin"></a>
 ### Nested Schema for `origin`

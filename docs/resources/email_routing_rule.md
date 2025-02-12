@@ -43,11 +43,7 @@ resource "cloudflare_email_routing_rule" "example_email_routing_rule" {
 - `enabled` (Boolean) Routing rule status.
 - `name` (String) Routing rule name.
 - `priority` (Number) Priority of the routing rule.
-
-### Read-Only
-
-- `id` (String) Routing rule identifier.
-- `tag` (String) Routing rule tag. (Deprecated, replaced by routing rule identifier)
+- `rule_identifier` (String) Routing rule identifier.
 
 <a id="nestedatt--actions"></a>
 ### Nested Schema for `actions`
@@ -67,10 +63,4 @@ Required:
 - `type` (String) Type of matcher.
 - `value` (String) Value for matcher.
 
-## Import
 
-Import is supported using the following syntax:
-
-```shell
-$ terraform import cloudflare_email_routing_rule.example '<zone_id>/<rule_identifier>'
-```
