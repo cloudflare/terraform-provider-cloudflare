@@ -241,6 +241,18 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
         }
     },    
     `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        or {
+            and {
+                $resource_type <: contains `cloudflare_record`,
+                $instances <: contains `"data": []` => `"data": {}`
+            },
+            and {
+                $resource_type <: contains `cloudflare_record`,
+                $instances <: contains `"data": [$inner]` => `"data": $inner`
+            }
+        }
+    },
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
         and {
             $resource_type <: contains `cloudflare_record`,
             $instances <: contains `"hostname": $v` => .
