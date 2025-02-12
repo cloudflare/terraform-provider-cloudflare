@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -20,8 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+				Required: true,
 			},
 			"validation_enabled": schema.BoolAttribute{
 				Description: "Flag whether schema is enabled for validation.",
@@ -46,8 +44,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"created_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
+							Computed: true,
 						},
 						"kind": schema.StringAttribute{
 							Description: "Kind of schema",
@@ -61,8 +58,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"schema_id": schema.StringAttribute{
-							Description: "UUID",
-							Computed:    true,
+							Computed: true,
 						},
 						"source": schema.StringAttribute{
 							Description: "Source of the schema",

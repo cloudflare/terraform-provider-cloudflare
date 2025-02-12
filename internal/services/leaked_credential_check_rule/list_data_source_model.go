@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/leaked_credential_checks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -31,7 +32,7 @@ func (m *LeakedCredentialCheckRulesDataSourceModel) toListParams(_ context.Conte
 }
 
 type LeakedCredentialCheckRulesResultDataSourceModel struct {
-	ID       types.String `tfsdk:"id" json:"id,computed"`
-	Password types.String `tfsdk:"password" json:"password,computed"`
-	Username types.String `tfsdk:"username" json:"username,computed"`
+	ID       jsontypes.Normalized `tfsdk:"id" json:"id,computed"`
+	Password types.String         `tfsdk:"password" json:"password,computed"`
+	Username types.String         `tfsdk:"username" json:"username,computed"`
 }

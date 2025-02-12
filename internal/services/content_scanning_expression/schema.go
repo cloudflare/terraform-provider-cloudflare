@@ -5,6 +5,7 @@ package content_scanning_expression
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
@@ -18,9 +19,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "The unique ID for this custom scan expression",
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				Description: "The unique ID for this custom scan expression",
+				Computed:    true,
+				CustomType:  jsontypes.NormalizedType{},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
