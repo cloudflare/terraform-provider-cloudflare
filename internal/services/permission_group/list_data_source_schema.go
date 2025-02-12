@@ -45,7 +45,29 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[PermissionGroupsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{},
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "Identifier of the group.",
+							Computed:    true,
+						},
+						"meta": schema.SingleNestedAttribute{
+							Description: "Attributes associated to the permission group.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[PermissionGroupsMetaDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"key": schema.StringAttribute{
+									Computed: true,
+								},
+								"value": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+						},
+						"name": schema.StringAttribute{
+							Description: "Name of the group.",
+							Computed:    true,
+						},
+					},
 				},
 			},
 		},
