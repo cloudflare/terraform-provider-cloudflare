@@ -17,10 +17,6 @@ type AddressMapResultDataSourceEnvelope struct {
 	Result AddressMapDataSourceModel `json:"result,computed"`
 }
 
-type AddressMapResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[AddressMapDataSourceModel] `json:"result,computed"`
-}
-
 type AddressMapDataSourceModel struct {
 	ID           types.String                                                       `tfsdk:"id" json:"-,computed"`
 	AddressMapID types.String                                                       `tfsdk:"address_map_id" path:"address_map_id,optional"`

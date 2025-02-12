@@ -17,10 +17,6 @@ type ZeroTrustAccessApplicationResultDataSourceEnvelope struct {
 	Result ZeroTrustAccessApplicationDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustAccessApplicationResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustAccessApplicationDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustAccessApplicationDataSourceModel struct {
 	ID                       types.String                                                                          `tfsdk:"id" json:"-,computed"`
 	AppID                    types.String                                                                          `tfsdk:"app_id" path:"app_id,optional"`

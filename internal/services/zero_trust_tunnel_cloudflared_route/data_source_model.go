@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,10 +14,6 @@ import (
 
 type ZeroTrustTunnelCloudflaredRouteResultDataSourceEnvelope struct {
 	Result ZeroTrustTunnelCloudflaredRouteDataSourceModel `json:"result,computed"`
-}
-
-type ZeroTrustTunnelCloudflaredRouteResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustTunnelCloudflaredRouteDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustTunnelCloudflaredRouteDataSourceModel struct {

@@ -47,6 +47,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
+			"description": schema.StringAttribute{
+				Computed: true,
+			},
+			"enabled": schema.BoolAttribute{
+				Computed: true,
+			},
+			"expression": schema.StringAttribute{
+				Computed: true,
+			},
+			"snippet_name": schema.StringAttribute{
+				Description: "Snippet identifying name",
+				Computed:    true,
+			},
 		},
 	}
 }

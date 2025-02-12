@@ -17,10 +17,6 @@ type WebAnalyticsSiteResultDataSourceEnvelope struct {
 	Result WebAnalyticsSiteDataSourceModel `json:"result,computed"`
 }
 
-type WebAnalyticsSiteResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[WebAnalyticsSiteDataSourceModel] `json:"result,computed"`
-}
-
 type WebAnalyticsSiteDataSourceModel struct {
 	ID          types.String                                                       `tfsdk:"id" json:"-,computed"`
 	SiteID      types.String                                                       `tfsdk:"site_id" path:"site_id,optional"`

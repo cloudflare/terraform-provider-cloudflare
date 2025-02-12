@@ -119,7 +119,7 @@ func (r *CloudConnectorRulesResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.CloudConnector.Rules.Update(
 		ctx,
 		cloud_connector.RuleUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),

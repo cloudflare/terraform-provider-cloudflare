@@ -64,7 +64,7 @@ func (d *AccountDataSource) Read(ctx context.Context, req datasource.ReadRequest
 			return
 		}
 
-		env := AccountResultListDataSourceEnvelope{}
+		env := AccountsResultListDataSourceEnvelope{}
 		page, err := d.client.Accounts.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *AccountDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.AccountID = ts[0].AccountID
+		data.AccountID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)
