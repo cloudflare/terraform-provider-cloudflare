@@ -5,6 +5,7 @@ package hostname_tls_setting
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -30,6 +31,28 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
+			},
+			"created_at": schema.StringAttribute{
+				Description: "This is the time the tls setting was originally created for this hostname.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"hostname": schema.StringAttribute{
+				Description: "The hostname for which the tls settings are set.",
+				Computed:    true,
+			},
+			"status": schema.StringAttribute{
+				Description: "Deployment status for the given tls setting.",
+				Computed:    true,
+			},
+			"updated_at": schema.StringAttribute{
+				Description: "This is the time the tls setting was updated.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"value": schema.Float64Attribute{
+				Description: "The tls setting value.",
+				Computed:    true,
 			},
 		},
 	}

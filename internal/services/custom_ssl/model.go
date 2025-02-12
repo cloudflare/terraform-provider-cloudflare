@@ -5,6 +5,7 @@ package custom_ssl
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -30,7 +31,7 @@ type CustomSSLModel struct {
 	Status          types.String                                            `tfsdk:"status" json:"status,computed"`
 	UploadedOn      timetypes.RFC3339                                       `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
 	Hosts           customfield.List[types.String]                          `tfsdk:"hosts" json:"hosts,computed"`
-	KeylessServer   customfield.NestedObject[CustomSSLKeylessServerModel]   `tfsdk:"keyless_server" json:"keyless_server,computed"`
+	KeylessServer   jsontypes.Normalized                                    `tfsdk:"keyless_server" json:"keyless_server,computed"`
 }
 
 func (m CustomSSLModel) MarshalJSON() (data []byte, err error) {
@@ -43,22 +44,4 @@ func (m CustomSSLModel) MarshalJSONForUpdate(state CustomSSLModel) (data []byte,
 
 type CustomSSLGeoRestrictionsModel struct {
 	Label types.String `tfsdk:"label" json:"label,optional"`
-}
-
-type CustomSSLKeylessServerModel struct {
-	ID          types.String                                                `tfsdk:"id" json:"id,computed"`
-	CreatedOn   timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Enabled     types.Bool                                                  `tfsdk:"enabled" json:"enabled,computed"`
-	Host        types.String                                                `tfsdk:"host" json:"host,computed"`
-	ModifiedOn  timetypes.RFC3339                                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name        types.String                                                `tfsdk:"name" json:"name,computed"`
-	Permissions customfield.List[types.String]                              `tfsdk:"permissions" json:"permissions,computed"`
-	Port        types.Float64                                               `tfsdk:"port" json:"port,computed"`
-	Status      types.String                                                `tfsdk:"status" json:"status,computed"`
-	Tunnel      customfield.NestedObject[CustomSSLKeylessServerTunnelModel] `tfsdk:"tunnel" json:"tunnel,computed"`
-}
-
-type CustomSSLKeylessServerTunnelModel struct {
-	PrivateIP types.String `tfsdk:"private_ip" json:"private_ip,computed"`
-	VnetID    types.String `tfsdk:"vnet_id" json:"vnet_id,computed"`
 }

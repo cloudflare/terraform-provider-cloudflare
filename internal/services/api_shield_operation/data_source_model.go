@@ -18,10 +18,6 @@ type APIShieldOperationResultDataSourceEnvelope struct {
 	Result APIShieldOperationDataSourceModel `json:"result,computed"`
 }
 
-type APIShieldOperationResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[APIShieldOperationDataSourceModel] `json:"result,computed"`
-}
-
 type APIShieldOperationDataSourceModel struct {
 	ID          types.String                                                        `tfsdk:"id" json:"-,computed"`
 	OperationID types.String                                                        `tfsdk:"operation_id" path:"operation_id,computed_optional"`
@@ -29,7 +25,7 @@ type APIShieldOperationDataSourceModel struct {
 	Feature     *[]types.String                                                     `tfsdk:"feature" query:"feature,optional"`
 	Endpoint    types.String                                                        `tfsdk:"endpoint" json:"endpoint,computed"`
 	Host        types.String                                                        `tfsdk:"host" json:"host,computed"`
-	LastUpdated timetypes.RFC3339                                                   `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	LastUpdated types.String                                                        `tfsdk:"last_updated" json:"last_updated,computed"`
 	Method      types.String                                                        `tfsdk:"method" json:"method,computed"`
 	Features    customfield.NestedObject[APIShieldOperationFeaturesDataSourceModel] `tfsdk:"features" json:"features,computed"`
 	Filter      *APIShieldOperationFindOneByDataSourceModel                         `tfsdk:"filter"`

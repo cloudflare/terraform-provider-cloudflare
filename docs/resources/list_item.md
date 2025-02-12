@@ -46,16 +46,15 @@ resource "cloudflare_list_item" "example_list_item" {
 
 - `account_id` (String) Identifier
 - `asn` (Number) A non-negative 32 bit integer
+- `comment` (String) An informative summary of the list item.
 - `hostname` (Attributes) Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-). (see [below for nested schema](#nestedatt--hostname))
 - `ip` (String) An IPv4 address, an IPv4 CIDR, or an IPv6 CIDR. IPv6 CIDRs are limited to a maximum of /64.
 - `redirect` (Attributes) The definition of the redirect. (see [below for nested schema](#nestedatt--redirect))
 
 ### Read-Only
 
-- `comment` (String) An informative summary of the list item.
 - `created_on` (String) The RFC 3339 timestamp of when the item was created.
-- `id` (String) The unique ID of the list.
-- `item_id` (String) The unique ID of the item in the List.
+- `id` (String) The unique ID of the item in the List.
 - `modified_on` (String) The RFC 3339 timestamp of when the item was last modified.
 - `operation_id` (String) The unique operation ID of the asynchronous action.
 

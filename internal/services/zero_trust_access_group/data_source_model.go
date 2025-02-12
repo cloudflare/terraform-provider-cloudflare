@@ -17,10 +17,6 @@ type ZeroTrustAccessGroupResultDataSourceEnvelope struct {
 	Result ZeroTrustAccessGroupDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustAccessGroupResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustAccessGroupDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustAccessGroupDataSourceModel struct {
 	ID        types.String                                                               `tfsdk:"id" json:"-,computed"`
 	GroupID   types.String                                                               `tfsdk:"group_id" path:"group_id,optional"`

@@ -7,7 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -28,7 +28,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier",
-				Required:      true,
+				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
@@ -183,12 +183,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"created_on": schema.StringAttribute{
 				Description: "When the Application was created.",
 				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				CustomType:  jsontypes.NormalizedType{},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the Application was last modified.",
 				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				CustomType:  jsontypes.NormalizedType{},
 			},
 		},
 	}

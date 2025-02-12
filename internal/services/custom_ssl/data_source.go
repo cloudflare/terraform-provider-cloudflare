@@ -64,7 +64,7 @@ func (d *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadReque
 			return
 		}
 
-		env := CustomSSLResultListDataSourceEnvelope{}
+		env := CustomSSLsResultListDataSourceEnvelope{}
 		page, err := d.client.CustomCertificates.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadReque
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.CustomCertificateID = ts[0].CustomCertificateID
+		data.CustomCertificateID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

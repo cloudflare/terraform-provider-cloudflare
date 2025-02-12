@@ -43,5 +43,6 @@ type ZeroTrustDLPEntryPatternModel struct {
 }
 
 type ZeroTrustDLPEntryConfidenceModel struct {
-	Available types.Bool `tfsdk:"available" json:"available,computed"`
+	AIContextAvailable types.Bool `tfsdk:"ai_context_available" json:"ai_context_available,computed"`
+	Available          types.Bool `tfsdk:"available" json:"available,computed"`
 }

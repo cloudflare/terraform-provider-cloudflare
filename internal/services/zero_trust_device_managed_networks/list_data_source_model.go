@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -31,13 +32,8 @@ func (m *ZeroTrustDeviceManagedNetworksListDataSourceModel) toListParams(_ conte
 }
 
 type ZeroTrustDeviceManagedNetworksListResultDataSourceModel struct {
-	Config    customfield.NestedObject[ZeroTrustDeviceManagedNetworksListConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
-	Name      types.String                                                                      `tfsdk:"name" json:"name,computed"`
-	NetworkID types.String                                                                      `tfsdk:"network_id" json:"network_id,computed"`
-	Type      types.String                                                                      `tfsdk:"type" json:"type,computed"`
-}
-
-type ZeroTrustDeviceManagedNetworksListConfigDataSourceModel struct {
-	TLSSockaddr types.String `tfsdk:"tls_sockaddr" json:"tls_sockaddr,computed"`
-	Sha256      types.String `tfsdk:"sha256" json:"sha256,computed"`
+	Config    jsontypes.Normalized `tfsdk:"config" json:"config,computed"`
+	Name      types.String         `tfsdk:"name" json:"name,computed"`
+	NetworkID types.String         `tfsdk:"network_id" json:"network_id,computed"`
+	Type      types.String         `tfsdk:"type" json:"type,computed"`
 }

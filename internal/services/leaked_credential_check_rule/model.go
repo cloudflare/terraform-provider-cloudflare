@@ -4,6 +4,7 @@ package leaked_credential_check_rule
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -12,10 +13,10 @@ type LeakedCredentialCheckRuleResultEnvelope struct {
 }
 
 type LeakedCredentialCheckRuleModel struct {
-	ID       types.String `tfsdk:"id" json:"id,computed"`
-	ZoneID   types.String `tfsdk:"zone_id" path:"zone_id,required"`
-	Password types.String `tfsdk:"password" json:"password,optional"`
-	Username types.String `tfsdk:"username" json:"username,optional"`
+	ID       jsontypes.Normalized `tfsdk:"id" json:"id,required"`
+	ZoneID   types.String         `tfsdk:"zone_id" path:"zone_id,required"`
+	Password types.String         `tfsdk:"password" json:"password,optional"`
+	Username types.String         `tfsdk:"username" json:"username,optional"`
 }
 
 func (m LeakedCredentialCheckRuleModel) MarshalJSON() (data []byte, err error) {

@@ -64,7 +64,7 @@ func (d *LoadBalancerPoolDataSource) Read(ctx context.Context, req datasource.Re
 			return
 		}
 
-		env := LoadBalancerPoolResultListDataSourceEnvelope{}
+		env := LoadBalancerPoolsResultListDataSourceEnvelope{}
 		page, err := d.client.LoadBalancers.Pools.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *LoadBalancerPoolDataSource) Read(ctx context.Context, req datasource.Re
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.PoolID = ts[0].PoolID
+		data.PoolID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

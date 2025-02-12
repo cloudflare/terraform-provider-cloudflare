@@ -16,10 +16,6 @@ type ZeroTrustDevicePostureIntegrationResultDataSourceEnvelope struct {
 	Result ZeroTrustDevicePostureIntegrationDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustDevicePostureIntegrationResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustDevicePostureIntegrationDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustDevicePostureIntegrationDataSourceModel struct {
 	ID            types.String                                                                     `tfsdk:"id" json:"-,computed"`
 	IntegrationID types.String                                                                     `tfsdk:"integration_id" path:"integration_id,optional"`

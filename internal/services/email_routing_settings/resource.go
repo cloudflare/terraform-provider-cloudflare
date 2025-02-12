@@ -12,16 +12,13 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/email_routing"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*EmailRoutingSettingsResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*EmailRoutingSettingsResource)(nil)
-var _ resource.ResourceWithImportState = (*EmailRoutingSettingsResource)(nil)
 
 func NewResource() resource.Resource {
 	return &EmailRoutingSettingsResource{}
@@ -122,7 +119,7 @@ func (r *EmailRoutingSettingsResource) Update(ctx context.Context, req resource.
 	_, err = r.client.EmailRouting.Enable(
 		ctx,
 		email_routing.EmailRoutingEnableParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -157,7 +154,7 @@ func (r *EmailRoutingSettingsResource) Read(ctx context.Context, req resource.Re
 	_, err := r.client.EmailRouting.Get(
 		ctx,
 		email_routing.EmailRoutingGetParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -194,7 +191,7 @@ func (r *EmailRoutingSettingsResource) Delete(ctx context.Context, req resource.
 	_, err := r.client.EmailRouting.Disable(
 		ctx,
 		email_routing.EmailRoutingDisableParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -202,47 +199,6 @@ func (r *EmailRoutingSettingsResource) Delete(ctx context.Context, req resource.
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *EmailRoutingSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *EmailRoutingSettingsModel = new(EmailRoutingSettingsModel)
-
-	path := ""
-	diags := importpath.ParseImportID(
-		req.ID,
-		"<zone_id>",
-		&path,
-	)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	data.ZoneID = types.StringValue(path)
-
-	res := new(http.Response)
-	env := EmailRoutingSettingsResultEnvelope{*data}
-	_, err := r.client.EmailRouting.Get(
-		ctx,
-		email_routing.EmailRoutingGetParams{
-			ZoneID: cloudflare.F(path),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
