@@ -6,11 +6,13 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -20,18 +22,17 @@ var _ datasource.DataSourceWithConfigValidators = (*FirewallRuleDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "The unique identifier of the firewall rule.",
+				Computed:    true,
+			},
 			"rule_id": schema.StringAttribute{
 				Description: "The unique identifier of the firewall rule.",
-				Required:    true,
+				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The unique identifier of the firewall rule.",
-				Computed:    true,
-				Optional:    true,
 			},
 			"action": schema.StringAttribute{
 				Description: "The action to apply to a matched request. The `log` action is only available on an Enterprise plan.",
@@ -85,36 +86,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
-			"filter": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[FirewallRuleFilterDataSourceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"id": schema.StringAttribute{
-						Description: "The unique identifier of the filter.",
-						Computed:    true,
-					},
-					"description": schema.StringAttribute{
-						Description: "An informative summary of the filter.",
-						Computed:    true,
-					},
-					"expression": schema.StringAttribute{
-						Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
-						Computed:    true,
-					},
-					"paused": schema.BoolAttribute{
-						Description: "When true, indicates that the filter is currently paused.",
-						Computed:    true,
-					},
-					"ref": schema.StringAttribute{
-						Description: "A short reference tag. Allows you to select related filters.",
-						Computed:    true,
-					},
-					"deleted": schema.BoolAttribute{
-						Description: "When true, indicates that the firewall rule was deleted.",
-						Computed:    true,
-					},
-				},
-			},
 		},
 	}
 }
@@ -124,5 +95,7 @@ func (d *FirewallRuleDataSource) Schema(ctx context.Context, req datasource.Sche
 }
 
 func (d *FirewallRuleDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("rule_id"), path.MatchRoot("filter")),
+	}
 }

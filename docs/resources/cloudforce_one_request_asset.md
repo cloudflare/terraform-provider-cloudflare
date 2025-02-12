@@ -32,7 +32,6 @@ resource "cloudflare_cloudforce_one_request_asset" "example_cloudforce_one_reque
 
 ### Optional
 
-- `asset_identifer` (String) UUID
 - `source` (String) Asset file to upload
 
 ### Read-Only
@@ -43,4 +42,10 @@ resource "cloudflare_cloudforce_one_request_asset" "example_cloudforce_one_reque
 - `id` (Number) Asset ID
 - `name` (String) Asset name
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_cloudforce_one_request_asset.example '<account_identifier>/<request_identifier>/<asset_identifer>'
+```

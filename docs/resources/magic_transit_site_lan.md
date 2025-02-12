@@ -38,6 +38,7 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
       dhcp_pool_end = "192.0.2.1"
       dhcp_pool_start = "192.0.2.1"
       dns_server = "192.0.2.1"
+      dns_servers = ["192.0.2.1"]
       reservations = {
         "00:11:22:33:44:55" = "192.0.2.100"
         "AA:BB:CC:DD:EE:FF" = "192.168.1.101"
@@ -62,7 +63,6 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
 ### Optional
 
 - `ha_link` (Boolean) mark true to use this LAN for HA probing. only works for site with HA turned on. only one LAN can be set as the ha_link.
-- `lan_id` (String) Identifier
 - `name` (String)
 - `nat` (Attributes) (see [below for nested schema](#nestedatt--nat))
 - `routed_subnets` (Attributes List) (see [below for nested schema](#nestedatt--routed_subnets))
@@ -131,6 +131,13 @@ Optional:
 - `dhcp_pool_end` (String) A valid IPv4 address.
 - `dhcp_pool_start` (String) A valid IPv4 address.
 - `dns_server` (String) A valid IPv4 address.
+- `dns_servers` (List of String)
 - `reservations` (Map of String) Mapping of MAC addresses to IP addresses
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_magic_transit_site_lan.example '<account_id>/<site_id>/<lan_id>'
+```

@@ -17,6 +17,7 @@ type ZeroTrustDLPCustomProfileModel struct {
 	ID                  types.String                                                              `tfsdk:"id" json:"id,computed"`
 	AccountID           types.String                                                              `tfsdk:"account_id" path:"account_id,required"`
 	Profiles            customfield.NestedObjectList[ZeroTrustDLPCustomProfileProfilesModel]      `tfsdk:"profiles" json:"profiles,computed_optional"`
+	AIContextEnabled    types.Bool                                                                `tfsdk:"ai_context_enabled" json:"ai_context_enabled,optional"`
 	ConfidenceThreshold types.String                                                              `tfsdk:"confidence_threshold" json:"confidence_threshold,optional"`
 	Description         types.String                                                              `tfsdk:"description" json:"description,optional"`
 	Name                types.String                                                              `tfsdk:"name" json:"name,optional"`
@@ -42,6 +43,7 @@ func (m ZeroTrustDLPCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustDLPC
 type ZeroTrustDLPCustomProfileProfilesModel struct {
 	Entries             *[]*ZeroTrustDLPCustomProfileProfilesEntriesModel                                 `tfsdk:"entries" json:"entries,required"`
 	Name                types.String                                                                      `tfsdk:"name" json:"name,required"`
+	AIContextEnabled    types.Bool                                                                        `tfsdk:"ai_context_enabled" json:"ai_context_enabled,optional"`
 	AllowedMatchCount   types.Int64                                                                       `tfsdk:"allowed_match_count" json:"allowed_match_count,computed_optional"`
 	ConfidenceThreshold types.String                                                                      `tfsdk:"confidence_threshold" json:"confidence_threshold,optional"`
 	ContextAwareness    customfield.NestedObject[ZeroTrustDLPCustomProfileProfilesContextAwarenessModel]  `tfsdk:"context_awareness" json:"context_awareness,computed_optional"`

@@ -21,6 +21,7 @@ type ZeroTrustDLPPredefinedProfileResultDataSourceEnvelope struct {
 type ZeroTrustDLPPredefinedProfileDataSourceModel struct {
 	AccountID           types.String                                                                           `tfsdk:"account_id" path:"account_id,required"`
 	ProfileID           types.String                                                                           `tfsdk:"profile_id" path:"profile_id,required"`
+	AIContextEnabled    types.Bool                                                                             `tfsdk:"ai_context_enabled" json:"ai_context_enabled,computed"`
 	AllowedMatchCount   types.Int64                                                                            `tfsdk:"allowed_match_count" json:"allowed_match_count,computed"`
 	ConfidenceThreshold types.String                                                                           `tfsdk:"confidence_threshold" json:"confidence_threshold,computed"`
 	CreatedAt           timetypes.RFC3339                                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -72,5 +73,6 @@ type ZeroTrustDLPPredefinedProfileEntriesPatternDataSourceModel struct {
 }
 
 type ZeroTrustDLPPredefinedProfileEntriesConfidenceDataSourceModel struct {
-	Available types.Bool `tfsdk:"available" json:"available,computed"`
+	AIContextAvailable types.Bool `tfsdk:"ai_context_available" json:"ai_context_available,computed"`
+	Available          types.Bool `tfsdk:"available" json:"available,computed"`
 }

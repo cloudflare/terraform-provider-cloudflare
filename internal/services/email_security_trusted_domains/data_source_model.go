@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/email_security"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,10 +14,6 @@ import (
 
 type EmailSecurityTrustedDomainsResultDataSourceEnvelope struct {
 	Result EmailSecurityTrustedDomainsDataSourceModel `json:"result,computed"`
-}
-
-type EmailSecurityTrustedDomainsResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[EmailSecurityTrustedDomainsDataSourceModel] `json:"result,computed"`
 }
 
 type EmailSecurityTrustedDomainsDataSourceModel struct {

@@ -17,10 +17,6 @@ type LogpushJobResultDataSourceEnvelope struct {
 	Result LogpushJobDataSourceModel `json:"result,computed"`
 }
 
-type LogpushJobResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[LogpushJobDataSourceModel] `json:"result,computed"`
-}
-
 type LogpushJobDataSourceModel struct {
 	ID                       types.Int64                                                      `tfsdk:"id" json:"-,computed"`
 	JobID                    types.Int64                                                      `tfsdk:"job_id" path:"job_id,optional"`
