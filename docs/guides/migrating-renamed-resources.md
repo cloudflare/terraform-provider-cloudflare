@@ -17,7 +17,7 @@ description: Guide for handling renamed resources in the Cloudflare Provider
   migration.
 - Make backups of your configuration and state file.
 
-~> It is recommended to do perform testing in a non-production, non-critical
+~> It is recommended to perform testing in a non-production, non-critical
 environment or a small subset resources before performing the changes to
 all resources.
 
