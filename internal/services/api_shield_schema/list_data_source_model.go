@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/api_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -40,10 +41,10 @@ func (m *APIShieldSchemasDataSourceModel) toListParams(_ context.Context) (param
 }
 
 type APIShieldSchemasResultDataSourceModel struct {
-	CreatedAt         types.String `tfsdk:"created_at" json:"created_at,computed"`
-	Kind              types.String `tfsdk:"kind" json:"kind,computed"`
-	Name              types.String `tfsdk:"name" json:"name,computed"`
-	SchemaID          types.String `tfsdk:"schema_id" json:"schema_id,computed"`
-	Source            types.String `tfsdk:"source" json:"source,computed"`
-	ValidationEnabled types.Bool   `tfsdk:"validation_enabled" json:"validation_enabled,computed"`
+	CreatedAt         timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Kind              types.String      `tfsdk:"kind" json:"kind,computed"`
+	Name              types.String      `tfsdk:"name" json:"name,computed"`
+	SchemaID          types.String      `tfsdk:"schema_id" json:"schema_id,computed"`
+	Source            types.String      `tfsdk:"source" json:"source,computed"`
+	ValidationEnabled types.Bool        `tfsdk:"validation_enabled" json:"validation_enabled,computed"`
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/spectrum"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,7 +21,10 @@ type SpectrumApplicationDataSourceModel struct {
 	AppID            types.String                                                          `tfsdk:"app_id" path:"app_id,required"`
 	ZoneID           types.String                                                          `tfsdk:"zone_id" path:"zone_id,required"`
 	ArgoSmartRouting types.Bool                                                            `tfsdk:"argo_smart_routing" json:"argo_smart_routing,computed"`
+	CreatedOn        timetypes.RFC3339                                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ID               types.String                                                          `tfsdk:"id" json:"id,computed"`
 	IPFirewall       types.Bool                                                            `tfsdk:"ip_firewall" json:"ip_firewall,computed"`
+	ModifiedOn       timetypes.RFC3339                                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Protocol         types.String                                                          `tfsdk:"protocol" json:"protocol,computed"`
 	ProxyProtocol    types.String                                                          `tfsdk:"proxy_protocol" json:"proxy_protocol,computed"`
 	TLS              types.String                                                          `tfsdk:"tls" json:"tls,computed"`
@@ -31,9 +34,6 @@ type SpectrumApplicationDataSourceModel struct {
 	EdgeIPs          customfield.NestedObject[SpectrumApplicationEdgeIPsDataSourceModel]   `tfsdk:"edge_ips" json:"edge_ips,computed"`
 	OriginDNS        customfield.NestedObject[SpectrumApplicationOriginDNSDataSourceModel] `tfsdk:"origin_dns" json:"origin_dns,computed"`
 	OriginPort       types.Dynamic                                                         `tfsdk:"origin_port" json:"origin_port,computed"`
-	CreatedOn        jsontypes.Normalized                                                  `tfsdk:"created_on" json:"created_on,computed"`
-	ID               jsontypes.Normalized                                                  `tfsdk:"id" json:"id,computed"`
-	ModifiedOn       jsontypes.Normalized                                                  `tfsdk:"modified_on" json:"modified_on,computed"`
 }
 
 func (m *SpectrumApplicationDataSourceModel) toReadParams(_ context.Context) (params spectrum.AppGetParams, diags diag.Diagnostics) {

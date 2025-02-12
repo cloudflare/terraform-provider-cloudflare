@@ -73,7 +73,7 @@ type APIShieldDiscoveryOperationsResultDataSourceModel struct {
 	ID          types.String                                                                  `tfsdk:"id" json:"id,computed"`
 	Endpoint    types.String                                                                  `tfsdk:"endpoint" json:"endpoint,computed"`
 	Host        types.String                                                                  `tfsdk:"host" json:"host,computed"`
-	LastUpdated types.String                                                                  `tfsdk:"last_updated" json:"last_updated,computed"`
+	LastUpdated timetypes.RFC3339                                                             `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Method      types.String                                                                  `tfsdk:"method" json:"method,computed"`
 	Origin      customfield.List[types.String]                                                `tfsdk:"origin" json:"origin,computed"`
 	State       types.String                                                                  `tfsdk:"state" json:"state,computed"`

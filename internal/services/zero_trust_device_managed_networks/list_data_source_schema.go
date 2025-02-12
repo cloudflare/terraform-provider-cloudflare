@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -35,10 +34,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceManagedNetworksListResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"config": schema.StringAttribute{
+						"config": schema.SingleNestedAttribute{
 							Description: "The configuration object containing information for the WARP client to detect the managed network.",
 							Computed:    true,
-							CustomType:  jsontypes.NormalizedType{},
+							CustomType:  customfield.NewNestedObjectType[ZeroTrustDeviceManagedNetworksListConfigDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"tls_sockaddr": schema.StringAttribute{
+									Description: "A network address of the form \"host:port\" that the WARP client will use to detect the presence of a TLS host.",
+									Computed:    true,
+								},
+								"sha256": schema.StringAttribute{
+									Description: "The SHA-256 hash of the TLS certificate presented by the host found at tls_sockaddr. If absent, regular certificate verification (trusted roots, valid timestamp, etc) will be used to validate the certificate.",
+									Computed:    true,
+								},
+							},
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the device managed network. This name must be unique.",

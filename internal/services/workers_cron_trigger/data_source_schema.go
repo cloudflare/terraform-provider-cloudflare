@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -24,10 +23,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Name of the script, used in URLs and route configuration.",
 				Required:    true,
 			},
-			"schedules": schema.ListAttribute{
-				Computed:    true,
-				CustomType:  customfield.NewListType[jsontypes.Normalized](ctx),
-				ElementType: jsontypes.NormalizedType{},
+			"schedules": schema.ListNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[WorkersCronTriggerSchedulesDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"created_on": schema.StringAttribute{
+							Computed: true,
+						},
+						"cron": schema.StringAttribute{
+							Computed: true,
+						},
+						"modified_on": schema.StringAttribute{
+							Computed: true,
+						},
+					},
+				},
 			},
 		},
 	}

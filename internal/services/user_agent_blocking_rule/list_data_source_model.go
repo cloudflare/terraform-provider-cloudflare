@@ -44,4 +44,14 @@ func (m *UserAgentBlockingRulesDataSourceModel) toListParams(_ context.Context) 
 }
 
 type UserAgentBlockingRulesResultDataSourceModel struct {
+	ID            types.String                                                                 `tfsdk:"id" json:"id,computed"`
+	Configuration customfield.NestedObject[UserAgentBlockingRulesConfigurationDataSourceModel] `tfsdk:"configuration" json:"configuration,computed"`
+	Description   types.String                                                                 `tfsdk:"description" json:"description,computed"`
+	Mode          types.String                                                                 `tfsdk:"mode" json:"mode,computed"`
+	Paused        types.Bool                                                                   `tfsdk:"paused" json:"paused,computed"`
+}
+
+type UserAgentBlockingRulesConfigurationDataSourceModel struct {
+	Target types.String `tfsdk:"target" json:"target,computed"`
+	Value  types.String `tfsdk:"value" json:"value,computed"`
 }
