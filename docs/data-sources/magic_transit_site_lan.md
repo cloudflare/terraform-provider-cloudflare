@@ -25,6 +25,9 @@ data "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
 ### Required
 
 - `account_id` (String) Identifier
+
+### Optional
+
 - `lan_id` (String) Identifier
 
 ### Read-Only
@@ -92,6 +95,7 @@ Read-Only:
 - `dhcp_pool_end` (String) A valid IPv4 address.
 - `dhcp_pool_start` (String) A valid IPv4 address.
 - `dns_server` (String) A valid IPv4 address.
+- `dns_servers` (List of String)
 - `reservations` (Map of String) Mapping of MAC addresses to IP addresses
 
 

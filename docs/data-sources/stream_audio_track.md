@@ -26,4 +26,11 @@ data "cloudflare_stream_audio_track" "example_stream_audio_track" {
 - `account_id` (String) The account identifier tag.
 - `identifier` (String) A Cloudflare-generated unique identifier for a media item.
 
+### Read-Only
+
+- `default` (Boolean) Denotes whether the audio track will be played by default in a player.
+- `label` (String) A string to uniquely identify the track amongst other audio track labels for the specified video.
+- `status` (String) Specifies the processing status of the video.
+- `uid` (String) A Cloudflare-generated unique identifier for a media item.
+
 

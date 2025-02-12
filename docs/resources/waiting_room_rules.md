@@ -33,9 +33,15 @@ resource "cloudflare_waiting_room_rules" "example_waiting_room_rules" {
 - `waiting_room_id` (String)
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
-- `rule_id` (String) The ID of the rule.
+- `action` (String) The action to take when the expression matches.
+- `description` (String) The description of the rule.
+- `enabled` (Boolean) When set to true, the rule is enabled.
+- `expression` (String) Criteria defining when there is a match for the current rule.
+- `id` (String) The ID of the rule.
+- `last_updated` (String)
+- `version` (String) The version of the rule.
 
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`
@@ -50,4 +56,10 @@ Optional:
 - `description` (String) The description of the rule.
 - `enabled` (Boolean) When set to true, the rule is enabled.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_waiting_room_rules.example '<zone_id>/<waiting_room_id>'
+```

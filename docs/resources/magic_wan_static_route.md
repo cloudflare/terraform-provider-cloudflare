@@ -30,7 +30,9 @@ resource "cloudflare_magic_wan_static_route" "example_magic_wan_static_route" {
 - `nexthop` (String) The next-hop IP Address for the static route.
 - `prefix` (String) IP Prefix in Classless Inter-Domain Routing format.
 - `priority` (Number) Priority of the static route.
+- `route` (Attributes) (see [below for nested schema](#nestedatt--route))
 - `route_id` (String) Identifier
+- `routes` (Attributes List) (see [below for nested schema](#nestedatt--routes))
 - `scope` (Attributes) Used only for ECMP routes. (see [below for nested schema](#nestedatt--scope))
 - `weight` (Number) Optional weight of the ECMP scope - if provided.
 
@@ -38,8 +40,62 @@ resource "cloudflare_magic_wan_static_route" "example_magic_wan_static_route" {
 
 - `modified` (Boolean)
 - `modified_route` (Attributes) (see [below for nested schema](#nestedatt--modified_route))
-- `route` (Attributes) (see [below for nested schema](#nestedatt--route))
-- `routes` (Attributes List) (see [below for nested schema](#nestedatt--routes))
+
+<a id="nestedatt--route"></a>
+### Nested Schema for `route`
+
+Optional:
+
+- `description` (String) An optional human provided description of the static route.
+- `nexthop` (String) The next-hop IP Address for the static route.
+- `prefix` (String) IP Prefix in Classless Inter-Domain Routing format.
+- `priority` (Number) Priority of the static route.
+- `scope` (Attributes) Used only for ECMP routes. (see [below for nested schema](#nestedatt--route--scope))
+- `weight` (Number) Optional weight of the ECMP scope - if provided.
+
+Read-Only:
+
+- `created_on` (String) When the route was created.
+- `id` (String) Identifier
+- `modified_on` (String) When the route was last modified.
+
+<a id="nestedatt--route--scope"></a>
+### Nested Schema for `route.scope`
+
+Optional:
+
+- `colo_names` (List of String) List of colo names for the ECMP scope.
+- `colo_regions` (List of String) List of colo regions for the ECMP scope.
+
+
+
+<a id="nestedatt--routes"></a>
+### Nested Schema for `routes`
+
+Optional:
+
+- `description` (String) An optional human provided description of the static route.
+- `nexthop` (String) The next-hop IP Address for the static route.
+- `prefix` (String) IP Prefix in Classless Inter-Domain Routing format.
+- `priority` (Number) Priority of the static route.
+- `scope` (Attributes) Used only for ECMP routes. (see [below for nested schema](#nestedatt--routes--scope))
+- `weight` (Number) Optional weight of the ECMP scope - if provided.
+
+Read-Only:
+
+- `created_on` (String) When the route was created.
+- `id` (String) Identifier
+- `modified_on` (String) When the route was last modified.
+
+<a id="nestedatt--routes--scope"></a>
+### Nested Schema for `routes.scope`
+
+Optional:
+
+- `colo_names` (List of String) List of colo names for the ECMP scope.
+- `colo_regions` (List of String) List of colo regions for the ECMP scope.
+
+
 
 <a id="nestedatt--scope"></a>
 ### Nested Schema for `scope`
@@ -67,56 +123,6 @@ Read-Only:
 
 <a id="nestedatt--modified_route--scope"></a>
 ### Nested Schema for `modified_route.scope`
-
-Read-Only:
-
-- `colo_names` (List of String) List of colo names for the ECMP scope.
-- `colo_regions` (List of String) List of colo regions for the ECMP scope.
-
-
-
-<a id="nestedatt--route"></a>
-### Nested Schema for `route`
-
-Read-Only:
-
-- `created_on` (String) When the route was created.
-- `description` (String) An optional human provided description of the static route.
-- `id` (String) Identifier
-- `modified_on` (String) When the route was last modified.
-- `nexthop` (String) The next-hop IP Address for the static route.
-- `prefix` (String) IP Prefix in Classless Inter-Domain Routing format.
-- `priority` (Number) Priority of the static route.
-- `scope` (Attributes) Used only for ECMP routes. (see [below for nested schema](#nestedatt--route--scope))
-- `weight` (Number) Optional weight of the ECMP scope - if provided.
-
-<a id="nestedatt--route--scope"></a>
-### Nested Schema for `route.scope`
-
-Read-Only:
-
-- `colo_names` (List of String) List of colo names for the ECMP scope.
-- `colo_regions` (List of String) List of colo regions for the ECMP scope.
-
-
-
-<a id="nestedatt--routes"></a>
-### Nested Schema for `routes`
-
-Read-Only:
-
-- `created_on` (String) When the route was created.
-- `description` (String) An optional human provided description of the static route.
-- `id` (String) Identifier
-- `modified_on` (String) When the route was last modified.
-- `nexthop` (String) The next-hop IP Address for the static route.
-- `prefix` (String) IP Prefix in Classless Inter-Domain Routing format.
-- `priority` (Number) Priority of the static route.
-- `scope` (Attributes) Used only for ECMP routes. (see [below for nested schema](#nestedatt--routes--scope))
-- `weight` (Number) Optional weight of the ECMP scope - if provided.
-
-<a id="nestedatt--routes--scope"></a>
-### Nested Schema for `routes.scope`
 
 Read-Only:
 

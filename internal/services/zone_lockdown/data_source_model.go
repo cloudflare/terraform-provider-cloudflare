@@ -17,10 +17,6 @@ type ZoneLockdownResultDataSourceEnvelope struct {
 	Result ZoneLockdownDataSourceModel `json:"result,computed"`
 }
 
-type ZoneLockdownResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZoneLockdownDataSourceModel] `json:"result,computed"`
-}
-
 type ZoneLockdownDataSourceModel struct {
 	ID             types.String                                                            `tfsdk:"id" json:"-,computed"`
 	LockDownsID    types.String                                                            `tfsdk:"lock_downs_id" path:"lock_downs_id,optional"`

@@ -14,7 +14,7 @@ description: |-
 ```terraform
 data "cloudflare_magic_transit_sites" "example_magic_transit_sites" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  connector_identifier = "023e105f4ecef8ad9ca31a8372d0c353"
+  connectorid = "023e105f4ecef8ad9ca31a8372d0c353"
 }
 ```
 
@@ -27,7 +27,7 @@ data "cloudflare_magic_transit_sites" "example_magic_transit_sites" {
 
 ### Optional
 
-- `connector_identifier` (String) Identifier
+- `connectorid` (String) Identifier
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only

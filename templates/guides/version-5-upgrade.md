@@ -52,6 +52,11 @@ The pattern files for v5 resource renames are:
 - `cloudflare_terraform_v5_resource_renames_configuration`
 - `cloudflare_terraform_v5_resource_renames_state`
 
+~> Due to the potential impact of migrating critical resources, codemods
+**do not automatically** migrate resources that have been renamed. You should instead
+review the documentation above and chose the migration method that best suits your
+needs before attempting the attribute migration path below.
+
 ## Automatic migration
 
 For assisting with automatic migrations, we have provided a [GritQL] pattern.
@@ -152,7 +157,7 @@ cloudflare_terraform_v5()
 
 ## cloudflare_device_settings_policy
 
-- Renamed to `cloudflare_zero_trust_device_profiles`
+- Renamed to `cloudflare_zero_trust_device_custom_profile` or `cloudflare_zero_trust_device_custom_profile` depending on your intended usage.
 
 ## cloudflare_dlp_custom_profile
 
@@ -166,7 +171,7 @@ cloudflare_terraform_v5()
 
 - Renamed to `cloudflare_zero_trust_custom_dlp_profile` or `cloudflare_zero_trust_predefined_dlp_profile` depending on which you are targeting.
 
-## cloudflare_fallback_domain
+## cloudflare_fallback_domain / cloudflare_zero_trust_local_fallback_domain
 
 - Renamed to `cloudflare_zero_trust_device_custom_profile_local_domain_fallback` or `cloudflare_zero_trust_device_default_profile_local_domain_fallback` depending on which you are targeting.
 
@@ -192,7 +197,7 @@ cloudflare_terraform_v5()
 
 ## cloudflare_split_tunnel
 
-- Renamed to `cloudflare_zero_trust_split_tunnels`
+- Renamed to `cloudflare_zero_trust_device_default_profile` and `cloudflare_zero_trust_device_custom_profile` depending on which you are targeting.
 
 ## cloudflare_static_route
 
@@ -228,11 +233,11 @@ cloudflare_terraform_v5()
 
 ## cloudflare_tunnel_route
 
-- Renamed to `cloudflare_zero_trust_tunnel_route`
+- Renamed to `cloudflare_zero_trust_tunnel_cloudflared_route`
 
 ## cloudflare_tunnel_virtual_network
 
-- Renamed to `cloudflare_zero_trust_tunnel_virtual_network`
+- Renamed to `cloudflare_zero_trust_tunnel_cloudflared_virtual_network`
 
 ## cloudflare_worker_cron_trigger
 
@@ -253,10 +258,6 @@ cloudflare_terraform_v5()
 ## cloudflare_workers_for_platforms_namespace
 
 - Renamed to `cloudflare_workers_for_platforms_dispatch_namespace`
-
-## cloudflare_zone_dnssec
-
-- Renamed to `cloudflare_dns_zone_dnssec`
 
 ## cloudflare_managed_headers
 
@@ -830,6 +831,10 @@ resource "cloudflare_api_token" "example" {
   }
   ```
 
+## cloudflare_custom_page
+
+- `cloudflare_custom_page` has been removed.
+
 ## cloudflare_zone_settings_override
 
 - `cloudflare_zone_settings_override` has been removed. Use `cloudflare_zone_setting` instead on a per setting basis.
@@ -1118,6 +1123,8 @@ resource "cloudflare_api_token" "example" {
 ## cloudflare_dns_record
 
 - `data` is now a single nested attribute (`data = { ... }`) instead of a block (`data { ... }`).
+- `hostname` has been removed. Instead, you should use a combination of data source and resource attributes to get the same value.
+- `allow_overwrite` has been removed.
 
 ## cloudflare_zero_trust_risk_behavior
 
@@ -1138,7 +1145,7 @@ resource "cloudflare_api_token" "example" {
 - `from_list` is now a list of objects (`from_list = [{ ... }]`) instead of multiple block attribute (`from_list { ... }`).
 - `from_value` is now a list of objects (`from_value = [{ ... }]`) instead of multiple block attribute (`from_value { ... }`).
 - `header` is now a list of objects (`header = [{ ... }]`) instead of multiple block attribute (`header { ... }`).
-- `headers` is now a list of objects (`headers = [{ ... }]`) instead of multiple block attribute (`headers { ... }`).
+- `headers` is now a map of attributes keyed by the name instead of multiple block attribute (`headers { ... }`).
 - `host` is now a list of objects (`host = [{ ... }]`) instead of multiple block attribute (`host { ... }`).
 - `logging` is now a single nested attribute (`logging = { ... }`) instead of a block (`logging { ... }`).
 - `matched_data` is now a list of objects (`matched_data = [{ ... }]`) instead of multiple block attribute (`matched_data { ... }`).
