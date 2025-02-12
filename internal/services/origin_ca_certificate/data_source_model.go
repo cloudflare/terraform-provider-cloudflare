@@ -16,10 +16,6 @@ type OriginCACertificateResultDataSourceEnvelope struct {
 	Result OriginCACertificateDataSourceModel `json:"result,computed"`
 }
 
-type OriginCACertificateResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[OriginCACertificateDataSourceModel] `json:"result,computed"`
-}
-
 type OriginCACertificateDataSourceModel struct {
 	ID                types.String                                 `tfsdk:"id" json:"-,computed"`
 	CertificateID     types.String                                 `tfsdk:"certificate_id" path:"certificate_id,optional"`

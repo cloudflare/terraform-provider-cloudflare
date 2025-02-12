@@ -13,6 +13,7 @@ type ZeroTrustDeviceDefaultProfileResultEnvelope struct {
 }
 
 type ZeroTrustDeviceDefaultProfileModel struct {
+	ID                  types.String                                                                    `tfsdk:"id" json:"-,computed"`
 	AccountID           types.String                                                                    `tfsdk:"account_id" path:"account_id,required"`
 	AllowModeSwitch     types.Bool                                                                      `tfsdk:"allow_mode_switch" json:"allow_mode_switch,optional"`
 	AllowUpdates        types.Bool                                                                      `tfsdk:"allow_updates" json:"allow_updates,optional"`

@@ -8,7 +8,6 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,7 +22,7 @@ type APIShieldSchemaModel struct {
 	Kind              types.String                                                `tfsdk:"kind" json:"kind,required"`
 	Name              types.String                                                `tfsdk:"name" json:"name,optional"`
 	ValidationEnabled types.String                                                `tfsdk:"validation_enabled" json:"validation_enabled,optional"`
-	CreatedAt         timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	CreatedAt         types.String                                                `tfsdk:"created_at" json:"created_at,computed"`
 	Source            types.String                                                `tfsdk:"source" json:"source,computed"`
 	Schema            customfield.NestedObject[APIShieldSchemaSchemaModel]        `tfsdk:"schema" json:"schema,computed"`
 	UploadDetails     customfield.NestedObject[APIShieldSchemaUploadDetailsModel] `tfsdk:"upload_details" json:"upload_details,computed"`
@@ -45,12 +44,12 @@ func (r APIShieldSchemaModel) MarshalMultipart() (data []byte, contentType strin
 }
 
 type APIShieldSchemaSchemaModel struct {
-	CreatedAt         timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Kind              types.String      `tfsdk:"kind" json:"kind,computed"`
-	Name              types.String      `tfsdk:"name" json:"name,computed"`
-	SchemaID          types.String      `tfsdk:"schema_id" json:"schema_id,computed"`
-	Source            types.String      `tfsdk:"source" json:"source,computed"`
-	ValidationEnabled types.Bool        `tfsdk:"validation_enabled" json:"validation_enabled,computed"`
+	CreatedAt         types.String `tfsdk:"created_at" json:"created_at,computed"`
+	Kind              types.String `tfsdk:"kind" json:"kind,computed"`
+	Name              types.String `tfsdk:"name" json:"name,computed"`
+	SchemaID          types.String `tfsdk:"schema_id" json:"schema_id,computed"`
+	Source            types.String `tfsdk:"source" json:"source,computed"`
+	ValidationEnabled types.Bool   `tfsdk:"validation_enabled" json:"validation_enabled,computed"`
 }
 
 type APIShieldSchemaUploadDetailsModel struct {

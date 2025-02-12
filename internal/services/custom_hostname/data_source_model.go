@@ -17,10 +17,6 @@ type CustomHostnameResultDataSourceEnvelope struct {
 	Result CustomHostnameDataSourceModel `json:"result,computed"`
 }
 
-type CustomHostnameResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[CustomHostnameDataSourceModel] `json:"result,computed"`
-}
-
 type CustomHostnameDataSourceModel struct {
 	ID                        types.String                                                                     `tfsdk:"id" json:"-,computed"`
 	CustomHostnameID          types.String                                                                     `tfsdk:"custom_hostname_id" path:"custom_hostname_id,optional"`

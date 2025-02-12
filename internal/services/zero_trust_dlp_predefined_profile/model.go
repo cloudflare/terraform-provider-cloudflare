@@ -18,6 +18,7 @@ type ZeroTrustDLPPredefinedProfileModel struct {
 	ProfileID           types.String                                                                 `tfsdk:"profile_id" path:"profile_id,required"`
 	AccountID           types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
 	Entries             *[]*ZeroTrustDLPPredefinedProfileEntriesModel                                `tfsdk:"entries" json:"entries,required"`
+	AIContextEnabled    types.Bool                                                                   `tfsdk:"ai_context_enabled" json:"ai_context_enabled,optional"`
 	AllowedMatchCount   types.Int64                                                                  `tfsdk:"allowed_match_count" json:"allowed_match_count,optional"`
 	ConfidenceThreshold types.String                                                                 `tfsdk:"confidence_threshold" json:"confidence_threshold,optional"`
 	OCREnabled          types.Bool                                                                   `tfsdk:"ocr_enabled" json:"ocr_enabled,optional"`

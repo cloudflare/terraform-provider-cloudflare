@@ -5,6 +5,7 @@ package content_scanning_expression
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
@@ -17,14 +18,14 @@ var _ resource.ResourceWithConfigValidators = (*ContentScanningExpressionResourc
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "The unique ID for this custom scan expression",
+				Computed:    true,
+				CustomType:  jsontypes.NormalizedType{},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"expression_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"body": schema.ListNestedAttribute{
@@ -38,6 +39,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
+			},
+			"payload": schema.StringAttribute{
+				Description: "Ruleset expression to use in matching content objects",
+				Computed:    true,
 			},
 		},
 	}

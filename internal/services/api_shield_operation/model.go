@@ -21,7 +21,7 @@ type APIShieldOperationModel struct {
 	Endpoint    types.String                                              `tfsdk:"endpoint" json:"endpoint,required"`
 	Host        types.String                                              `tfsdk:"host" json:"host,required"`
 	Method      types.String                                              `tfsdk:"method" json:"method,required"`
-	LastUpdated timetypes.RFC3339                                         `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	LastUpdated types.String                                              `tfsdk:"last_updated" json:"last_updated,computed"`
 	Features    customfield.NestedObject[APIShieldOperationFeaturesModel] `tfsdk:"features" json:"features,computed"`
 }
 

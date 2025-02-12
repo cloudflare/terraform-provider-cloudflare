@@ -17,11 +17,11 @@ type MagicTransitSiteWANResultDataSourceEnvelope struct {
 }
 
 type MagicTransitSiteWANDataSourceModel struct {
+	ID               types.String                                                                 `tfsdk:"id" json:"-,computed"`
+	WANID            types.String                                                                 `tfsdk:"wan_id" path:"wan_id,optional"`
 	AccountID        types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
-	WANID            types.String                                                                 `tfsdk:"wan_id" path:"wan_id,required"`
 	SiteID           types.String                                                                 `tfsdk:"site_id" path:"site_id,computed"`
 	HealthCheckRate  types.String                                                                 `tfsdk:"health_check_rate" json:"health_check_rate,computed"`
-	ID               types.String                                                                 `tfsdk:"id" json:"id,computed"`
 	Name             types.String                                                                 `tfsdk:"name" json:"name,computed"`
 	Physport         types.Int64                                                                  `tfsdk:"physport" json:"physport,computed"`
 	Priority         types.Int64                                                                  `tfsdk:"priority" json:"priority,computed"`
@@ -31,6 +31,14 @@ type MagicTransitSiteWANDataSourceModel struct {
 
 func (m *MagicTransitSiteWANDataSourceModel) toReadParams(_ context.Context) (params magic_transit.SiteWANGetParams, diags diag.Diagnostics) {
 	params = magic_transit.SiteWANGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *MagicTransitSiteWANDataSourceModel) toListParams(_ context.Context) (params magic_transit.SiteWANListParams, diags diag.Diagnostics) {
+	params = magic_transit.SiteWANListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
