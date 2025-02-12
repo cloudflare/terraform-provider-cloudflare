@@ -42,44 +42,62 @@ provider "cloudflare" {
 }
 ```
 
-## Resource renames
+## Approach
 
-For an in depth guide on how to perform migrations for resources or datasources that
-have been renamed, check out [migrating renamed resources].
+At a high level, there are two parts to the migration. The first is the migration of the
+configuration (HCL) and the second is the migration of the state. Within each of those
+sections, there is the need to migrate attributes and potentially the resource rename.
 
-The pattern files for v5 resource renames are:
+### Automatic
 
-- `cloudflare_terraform_v5_resource_renames_configuration`
-- `cloudflare_terraform_v5_resource_renames_state`
+For assisting with automatic migrations, we have provided [GritQL] patterns.
 
-~> Due to the potential impact of migrating critical resources, codemods
-**do not automatically** migrate resources that have been renamed. You should instead
-review the documentation above and chose the migration method that best suits your
-needs before attempting the attribute migration path below.
-
-## Automatic migration
-
-For assisting with automatic migrations, we have provided a [GritQL] pattern.
-
-This will allow you to rewrite the parts of your Terraform configuration (not state)
-that have changed automatically. Once you [install Grit], you can run the following
-command in the directory where your Terraform configuration is located.
+This will allow you to rewrite the parts of your Terraform configuration and state
+that have changed automatically. Once you [install Grit], you can run the commands
+in the directory where your Terraform configuration is located.
 
 ~> While all efforts have been made to ease the transition, some of the more complex
 resources that may contain difficult to reconcile resources have been intentionally
 skipped for the automatic migration and are only manually documented. If you are
 using modules or other dynamic features of HCL, the provided codemods may not be
-as effective. We recommend reviewing the migration notes below to verify all the
+as effective. We recommend reviewing the manual migration notes to verify all the
 changes.
-
-```bash
-$ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5
-```
 
 We recommend ensuring you are using version control for these changes or make a
 backup prior to initiating the change to enable reverting if needed.
 
+1. Update the resource attributes in your configuration. _Note: this will not update
+  your state file. The next step will determine how your state file is updated._
+  ```bash
+  $ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5
+  ```
+2. Choose the appropriate method from [migrating renamed resources] that best suits
+  your situation and use case to migrate the attribute changes. If you are choosing to
+  use the provided GritQL patterns, the pattern name is
+  `cloudflare_terraform_v5_attribute_renames_state`. Otherwise, you can reimport the
+  resources without manually managing the state file.
+3. Perform the resource renames. _Note: this will not update your state file.
+  The next step will determine how your state file is updated._
+  ```bash
+  $ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5_resource_renames_configuration
+  ```
+4. Choose the appropriate method from [migrating renamed resources] that best suits
+  your situation and use case to migrate the resource renames. If you are choosing to
+  use the provided GritQL patterns, the pattern name is
+  `cloudflare_terraform_v5_resource_renames_state`.
+
+### Manual
+
+1. Update the resource attributes in your configuration using the migration notes.
+2. Choose the appropriate method from [migrating renamed resources] that best suits
+  your situation and use case to migrate the attribute changes.
+3. Perform the resource renames using the migration notes.
+4. Choose the appropriate method from [migrating renamed resources] that best suits
+  your situation and use case to migrate the resource renames.
+
 <!-- This code block is only used for confirming grit patterns -->
+
+## Changelog
 
 ```grit
 language hcl
@@ -1235,9 +1253,6 @@ resource "cloudflare_api_token" "example" {
 ## cloudflare_workers_script
 
 - `name` is now `script_name`.
-- `compatibility_date` is now `metadata.compatibility_date`.
-- `compatibility_flags` is now `metadata.compatibility_flags`.
-- `tags` is now `metadata.tags`.
 - `analytics_engine_binding` is now a list of objects (`analytics_engine_binding = [{ ... }]`) instead of multiple block attribute (`analytics_engine_binding { ... }`).
 - `d1_database_binding` is now a list of objects (`d1_database_binding = [{ ... }]`) instead of multiple block attribute (`d1_database_binding { ... }`).
 - `kv_namespace_binding` is now a list of objects (`kv_namespace_binding = [{ ... }]`) instead of multiple block attribute (`kv_namespace_binding { ... }`).
