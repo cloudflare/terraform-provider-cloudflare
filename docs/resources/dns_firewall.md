@@ -14,6 +14,8 @@ description: |-
 ```terraform
 resource "cloudflare_dns_firewall" "example_dns_firewall" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  name = "My Awesome DNS Firewall cluster"
+  upstream_ips = ["192.0.2.1", "198.51.100.1", "2001:DB8:100::CF"]
   attack_mitigation = {
     enabled = true
     only_when_upstream_unhealthy = false
@@ -22,11 +24,9 @@ resource "cloudflare_dns_firewall" "example_dns_firewall" {
   ecs_fallback = false
   maximum_cache_ttl = 900
   minimum_cache_ttl = 60
-  name = "My Awesome DNS Firewall cluster"
   negative_cache_ttl = 900
   ratelimit = 600
   retries = 2
-  upstream_ips = ["192.0.2.1", "198.51.100.1", "2001:DB8:100::CF"]
 }
 ```
 
@@ -36,6 +36,8 @@ resource "cloudflare_dns_firewall" "example_dns_firewall" {
 ### Required
 
 - `account_id` (String) Identifier
+- `name` (String) DNS Firewall cluster name
+- `upstream_ips` (List of String)
 
 ### Optional
 
@@ -44,11 +46,9 @@ resource "cloudflare_dns_firewall" "example_dns_firewall" {
 - `ecs_fallback` (Boolean) Whether to forward client IP (resolver) subnet if no EDNS Client Subnet is sent
 - `maximum_cache_ttl` (Number) Maximum DNS cache TTL This setting sets an upper bound on DNS TTLs for purposes of caching between DNS Firewall and the upstream servers. Higher TTLs will be decreased to the maximum defined here for caching purposes.
 - `minimum_cache_ttl` (Number) Minimum DNS cache TTL This setting sets a lower bound on DNS TTLs for purposes of caching between DNS Firewall and the upstream servers. Lower TTLs will be increased to the minimum defined here for caching purposes.
-- `name` (String) DNS Firewall cluster name
 - `negative_cache_ttl` (Number) Negative DNS cache TTL This setting controls how long DNS Firewall should cache negative responses (e.g., NXDOMAIN) from the upstream servers.
 - `ratelimit` (Number) Ratelimit in queries per second per datacenter (applies to DNS queries sent to the upstream nameservers configured on the cluster)
 - `retries` (Number) Number of retries for fetching DNS responses from upstream nameservers (not counting the initial attempt)
-- `upstream_ips` (List of String)
 
 ### Read-Only
 

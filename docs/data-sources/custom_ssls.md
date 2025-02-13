@@ -46,7 +46,7 @@ Read-Only:
 - `hosts` (List of String)
 - `id` (String) Identifier
 - `issuer` (String) The certificate authority that issued the certificate.
-- `keyless_server` (String)
+- `keyless_server` (Attributes) (see [below for nested schema](#nestedatt--result--keyless_server))
 - `modified_on` (String) When the certificate was last modified.
 - `policy` (String) Specify the policy that determines the region where your private key will be held locally. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Any combination of countries, specified by their two letter country code (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) can be chosen, such as 'country: IN', as well as 'region: EU' which refers to the EU region. If there are too few data centers satisfying the policy, it will be rejected.
 - `priority` (Number) The order/priority in which the certificate will be used in a request. The higher priority will break ties across overlapping 'legacy_custom' certificates, but 'legacy_custom' certificates will always supercede 'sni_custom' certificates.
@@ -61,5 +61,30 @@ Read-Only:
 Read-Only:
 
 - `label` (String)
+
+
+<a id="nestedatt--result--keyless_server"></a>
+### Nested Schema for `result.keyless_server`
+
+Read-Only:
+
+- `created_on` (String) When the Keyless SSL was created.
+- `enabled` (Boolean) Whether or not the Keyless SSL is on or off.
+- `host` (String) The keyless SSL name.
+- `id` (String) Keyless certificate identifier tag.
+- `modified_on` (String) When the Keyless SSL was last modified.
+- `name` (String) The keyless SSL name.
+- `permissions` (List of String) Available permissions for the Keyless SSL for the current user requesting the item.
+- `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
+- `status` (String) Status of the Keyless SSL.
+- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--result--keyless_server--tunnel))
+
+<a id="nestedatt--result--keyless_server--tunnel"></a>
+### Nested Schema for `result.keyless_server.tunnel`
+
+Read-Only:
+
+- `private_ip` (String) Private IP of the Key Server Host
+- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID
 
 

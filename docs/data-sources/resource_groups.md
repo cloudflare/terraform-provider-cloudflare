@@ -39,4 +39,35 @@ data "cloudflare_resource_groups" "example_resource_groups" {
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
+Read-Only:
+
+- `id` (String) Identifier of the group.
+- `meta` (Attributes) Attributes associated to the resource group. (see [below for nested schema](#nestedatt--result--meta))
+- `name` (String) Name of the resource group.
+- `scope` (Attributes List) The scope associated to the resource group (see [below for nested schema](#nestedatt--result--scope))
+
+<a id="nestedatt--result--meta"></a>
+### Nested Schema for `result.meta`
+
+Read-Only:
+
+- `key` (String)
+- `value` (String)
+
+
+<a id="nestedatt--result--scope"></a>
+### Nested Schema for `result.scope`
+
+Read-Only:
+
+- `key` (String) This is a combination of pre-defined resource name and identifier (like Account ID etc.)
+- `objects` (Attributes List) A list of scope objects for additional context. (see [below for nested schema](#nestedatt--result--scope--objects))
+
+<a id="nestedatt--result--scope--objects"></a>
+### Nested Schema for `result.scope.objects`
+
+Read-Only:
+
+- `key` (String) This is a combination of pre-defined resource name and identifier (like Zone ID etc.)
+
 

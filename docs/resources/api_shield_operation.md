@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 resource "cloudflare_api_shield_operation" "example_api_shield_operation" {
-  zone_id = "zone_id"
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   endpoint = "/api/v1/users/{var1}"
   host = "www.example.com"
   method = "GET"
@@ -28,14 +28,14 @@ resource "cloudflare_api_shield_operation" "example_api_shield_operation" {
 - `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.
 - `host` (String) RFC3986-compliant host.
 - `method` (String) The HTTP method used to access the endpoint.
-- `zone_id` (String)
+- `zone_id` (String) Identifier
 
 ### Read-Only
 
 - `features` (Attributes) (see [below for nested schema](#nestedatt--features))
-- `id` (String) The ID of this resource.
+- `id` (String) UUID
 - `last_updated` (String)
-- `operation_id` (String)
+- `operation_id` (String) UUID
 
 <a id="nestedatt--features"></a>
 ### Nested Schema for `features`
@@ -145,7 +145,7 @@ Read-Only:
 Read-Only:
 
 - `created_at` (String)
-- `id` (String)
+- `id` (String) UUID
 - `is_learned` (Boolean) True if schema is Cloudflare-provided.
 - `name` (String) Schema file name.
 

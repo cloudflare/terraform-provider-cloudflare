@@ -23,8 +23,8 @@ data "cloudflare_spectrum_application" "example_spectrum_application" {
 
 ### Required
 
-- `app_id` (String) Identifier
-- `zone_id` (String) Identifier
+- `app_id` (String) App identifier.
+- `zone_id` (String) Zone identifier.
 
 ### Read-Only
 

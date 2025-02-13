@@ -35,4 +35,10 @@ data "cloudflare_api_token_permissions_groups_list" "example_api_token_permissio
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
+Read-Only:
+
+- `id` (String) Public ID.
+- `name` (String) Permission Group Name
+- `scopes` (List of String) Resources to which the Permission Group is scoped
+
 

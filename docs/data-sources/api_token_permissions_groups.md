@@ -24,4 +24,10 @@ data "cloudflare_api_token_permissions_groups" "example_api_token_permissions_gr
 
 - `account_id` (String) Account identifier tag.
 
+### Read-Only
+
+- `id` (String) Public ID.
+- `name` (String) Permission Group Name
+- `scopes` (List of String) Resources to which the Permission Group is scoped
+
 

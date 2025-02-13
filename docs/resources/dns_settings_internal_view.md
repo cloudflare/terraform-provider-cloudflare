@@ -25,9 +25,6 @@ resource "cloudflare_dns_settings_internal_view" "example_dns_settings_internal_
 ### Required
 
 - `account_id` (String) Identifier
-
-### Optional
-
 - `name` (String) The name of the view.
 - `zones` (List of String) The list of zones linked to this view.
 
