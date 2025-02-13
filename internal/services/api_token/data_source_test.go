@@ -1,4 +1,4 @@
-package api_token
+package api_token_test
 
 import (
 	"fmt"

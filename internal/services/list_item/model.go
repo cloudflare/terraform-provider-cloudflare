@@ -19,8 +19,8 @@ type ListItemModel struct {
 	ASN         types.Int64                                     `tfsdk:"asn" json:"asn,optional"`
 	Comment     types.String                                    `tfsdk:"comment" json:"comment,optional"`
 	IP          types.String                                    `tfsdk:"ip" json:"ip,optional"`
-	Hostname    customfield.NestedObject[ListItemHostnameModel] `tfsdk:"hostname" json:"hostname,computed_optional"`
-	Redirect    customfield.NestedObject[ListItemRedirectModel] `tfsdk:"redirect" json:"redirect,computed_optional"`
+	Hostname    customfield.NestedObject[ListItemHostnameModel] `tfsdk:"hostname" json:"hostname,optional"`
+	Redirect    customfield.NestedObject[ListItemRedirectModel] `tfsdk:"redirect" json:"redirect,optional"`
 	OperationID types.String                                    `tfsdk:"operation_id" json:"operation_id,computed"`
 	ModifiedOn  types.String                                    `tfsdk:"modified_on" json:"modified_on,computed"`
 	CreatedOn   types.String                                    `tfsdk:"created_on" json:"created_on,computed"`
