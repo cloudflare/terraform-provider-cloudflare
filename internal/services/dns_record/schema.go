@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -23,7 +22,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 var _ resource.ResourceWithConfigValidators = (*DNSRecordResource)(nil)
@@ -123,11 +121,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				CustomType: customfield.NewNestedObjectType[DNSRecordDataModel](ctx),
 				Attributes: map[string]schema.Attribute{
-					"flags": schema.DynamicAttribute{
+					"flags": schema.Float64Attribute{
 						Description: "Flags for the CAA record.",
 						Optional:    true,
-						Validators: []validator.Dynamic{
-							customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
+						Validators: []validator.Float64{
+							float64validator.Between(0, 255),
 						},
 					},
 					"tag": schema.StringAttribute{
