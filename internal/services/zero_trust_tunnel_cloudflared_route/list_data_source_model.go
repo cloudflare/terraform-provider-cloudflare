@@ -20,7 +20,7 @@ type ZeroTrustTunnelCloudflaredRoutesResultListDataSourceEnvelope struct {
 type ZeroTrustTunnelCloudflaredRoutesDataSourceModel struct {
 	AccountID        types.String                                                                        `tfsdk:"account_id" path:"account_id,required"`
 	Comment          types.String                                                                        `tfsdk:"comment" query:"comment,optional"`
-	ExistedAt        timetypes.RFC3339                                                                   `tfsdk:"existed_at" query:"existed_at,optional" format:"date-time"`
+	ExistedAt        types.String                                                                        `tfsdk:"existed_at" query:"existed_at,optional"`
 	IsDeleted        types.Bool                                                                          `tfsdk:"is_deleted" query:"is_deleted,optional"`
 	NetworkSubset    types.String                                                                        `tfsdk:"network_subset" query:"network_subset,optional"`
 	NetworkSuperset  types.String                                                                        `tfsdk:"network_superset" query:"network_superset,optional"`
@@ -33,9 +33,6 @@ type ZeroTrustTunnelCloudflaredRoutesDataSourceModel struct {
 }
 
 func (m *ZeroTrustTunnelCloudflaredRoutesDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkRouteListParams, diags diag.Diagnostics) {
-	mExistedAt, errs := m.ExistedAt.ValueRFC3339Time()
-	diags.Append(errs...)
-
 	params = zero_trust.NetworkRouteListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -44,7 +41,7 @@ func (m *ZeroTrustTunnelCloudflaredRoutesDataSourceModel) toListParams(_ context
 		params.Comment = cloudflare.F(m.Comment.ValueString())
 	}
 	if !m.ExistedAt.IsNull() {
-		params.ExistedAt = cloudflare.F(mExistedAt)
+		params.ExistedAt = cloudflare.F(m.ExistedAt.ValueString())
 	}
 	if !m.IsDeleted.IsNull() {
 		params.IsDeleted = cloudflare.F(m.IsDeleted.ValueBool())
