@@ -65,6 +65,14 @@ func TestAccCloudflareDNSZoneTransfersIncoming_Basic(t *testing.T) {
 		tflog.Error(context.Background(), fmt.Sprintf("Failed to bootstrap Cloudflare DNS peer: %s", err))
 	}
 
+	defer func() {
+		// Delete the original peer after we are done
+		_, err = client.DNS.ZoneTransfers.Peers.Delete(context.Background(), peer.ID, dns.ZoneTransferPeerDeleteParams{AccountID: cloudflare.F(accountID)})
+		if err != nil {
+			tflog.Error(context.Background(), fmt.Sprintf("Failed to cleanup Cloudflare DNS peer in incoming test: %s", err))
+		}
+	}()
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -79,11 +87,6 @@ func TestAccCloudflareDNSZoneTransfersIncoming_Basic(t *testing.T) {
 			},
 		},
 	})
-	// Delete the original peer after we are done
-	_, err = client.DNS.ZoneTransfers.Peers.Delete(context.Background(), peer.ID, dns.ZoneTransferPeerDeleteParams{AccountID: cloudflare.F(accountID)})
-	if err != nil {
-		tflog.Error(context.Background(), fmt.Sprintf("Failed to cleanup Cloudflare DNS peer in incoming test: %s", err))
-	}
 }
 
 func TestAccCloudflareDNSZoneTransfersIncoming_Update(t *testing.T) {
