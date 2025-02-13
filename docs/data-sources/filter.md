@@ -23,8 +23,12 @@ data "cloudflare_filter" "example_filter" {
 
 ### Required
 
-- `filter_id` (String) The unique identifier of the filter.
 - `zone_id` (String) Identifier
+
+### Optional
+
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+- `filter_id` (String) The unique identifier of the filter.
 
 ### Read-Only
 
@@ -33,5 +37,16 @@ data "cloudflare_filter" "example_filter" {
 - `id` (String) The unique identifier of the filter.
 - `paused` (Boolean) When true, indicates that the filter is currently paused.
 - `ref` (String) A short reference tag. Allows you to select related filters.
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Optional:
+
+- `description` (String) A case-insensitive string to find in the description.
+- `expression` (String) A case-insensitive string to find in the expression.
+- `id` (String) The unique identifier of the filter.
+- `paused` (Boolean) When true, indicates that the filter is currently paused.
+- `ref` (String) The filter ref (a short reference tag) to search for. Must be an exact match.
 
 

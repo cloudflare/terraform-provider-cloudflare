@@ -44,4 +44,12 @@ func (m *PermissionGroupsDataSourceModel) toListParams(_ context.Context) (param
 }
 
 type PermissionGroupsResultDataSourceModel struct {
+	ID   types.String                                                  `tfsdk:"id" json:"id,computed"`
+	Meta customfield.NestedObject[PermissionGroupsMetaDataSourceModel] `tfsdk:"meta" json:"meta,computed"`
+	Name types.String                                                  `tfsdk:"name" json:"name,computed"`
+}
+
+type PermissionGroupsMetaDataSourceModel struct {
+	Key   types.String `tfsdk:"key" json:"key,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }

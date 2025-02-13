@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/alerting"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,10 +14,6 @@ import (
 
 type NotificationPolicyWebhooksResultDataSourceEnvelope struct {
 	Result NotificationPolicyWebhooksDataSourceModel `json:"result,computed"`
-}
-
-type NotificationPolicyWebhooksResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[NotificationPolicyWebhooksDataSourceModel] `json:"result,computed"`
 }
 
 type NotificationPolicyWebhooksDataSourceModel struct {

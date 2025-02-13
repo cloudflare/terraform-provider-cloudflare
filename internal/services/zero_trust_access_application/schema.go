@@ -532,6 +532,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeLoginMethodModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
+												Required:    true,
+											},
+										},
+									},
 									"ip_list": schema.SingleNestedAttribute{
 										Computed:   true,
 										Optional:   true,
@@ -823,6 +834,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeLoginMethodModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
+												Required:    true,
+											},
+										},
+									},
 									"ip_list": schema.SingleNestedAttribute{
 										Computed:   true,
 										Optional:   true,
@@ -1085,6 +1107,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireLoginMethodModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
+												Required:    true,
+											},
+										},
+									},
 									"ip_list": schema.SingleNestedAttribute{
 										Computed:   true,
 										Optional:   true,
@@ -1217,10 +1250,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Description: "The name of the IdP attribute.",
 											Optional:    true,
 										},
-										"name_by_idp": schema.MapAttribute{
+										"name_by_idp": schema.ListNestedAttribute{
 											Description: "A mapping from IdP ID to attribute name.",
+											Computed:    true,
 											Optional:    true,
-											ElementType: types.StringType,
+											CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationSaaSAppCustomAttributesSourceNameByIdPModel](ctx),
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"idp_id": schema.StringAttribute{
+														Description: "The UID of the IdP.",
+														Optional:    true,
+													},
+													"source_name": schema.StringAttribute{
+														Description: "The name of the IdP provided attribute.",
+														Optional:    true,
+													},
+												},
+											},
 										},
 									},
 								},

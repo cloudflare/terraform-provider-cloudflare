@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_api_shield_operations" "example_api_shield_operations" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  zone_id = "zone_id"
   direction = "asc"
   endpoint = "/api/v1"
   feature = ["thresholds"]
@@ -28,7 +28,7 @@ data "cloudflare_api_shield_operations" "example_api_shield_operations" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String)
 
 ### Optional
 
@@ -54,7 +54,7 @@ Read-Only:
 - `host` (String) RFC3986-compliant host.
 - `last_updated` (String)
 - `method` (String) The HTTP method used to access the endpoint.
-- `operation_id` (String) UUID
+- `operation_id` (String)
 
 <a id="nestedatt--result--features"></a>
 ### Nested Schema for `result.features`
@@ -164,7 +164,7 @@ Read-Only:
 Read-Only:
 
 - `created_at` (String)
-- `id` (String) UUID
+- `id` (String)
 - `is_learned` (Boolean) True if schema is Cloudflare-provided.
 - `name` (String) Schema file name.
 

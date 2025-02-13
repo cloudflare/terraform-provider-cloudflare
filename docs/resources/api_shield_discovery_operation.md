@@ -13,8 +13,8 @@ description: |-
 
 ```terraform
 resource "cloudflare_api_shield_discovery_operation" "example_api_shield_discovery_operation" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  operation_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+  zone_id = "zone_id"
+  operation_id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   state = "review"
 }
 ```
@@ -24,8 +24,8 @@ resource "cloudflare_api_shield_discovery_operation" "example_api_shield_discove
 
 ### Required
 
-- `operation_id` (String) UUID
-- `zone_id` (String) Identifier
+- `operation_id` (String)
+- `zone_id` (String)
 
 ### Optional
 
@@ -35,6 +35,6 @@ resource "cloudflare_api_shield_discovery_operation" "example_api_shield_discove
 
 ### Read-Only
 
-- `id` (String) UUID
+- `id` (String) The ID of this resource.
 
 

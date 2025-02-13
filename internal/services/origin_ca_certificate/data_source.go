@@ -64,7 +64,7 @@ func (d *OriginCACertificateDataSource) Read(ctx context.Context, req datasource
 			return
 		}
 
-		env := OriginCACertificateResultListDataSourceEnvelope{}
+		env := OriginCACertificatesResultListDataSourceEnvelope{}
 		page, err := d.client.OriginCACertificates.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *OriginCACertificateDataSource) Read(ctx context.Context, req datasource
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.CertificateID = ts[0].CertificateID
+		data.CertificateID = ts[0].ID
 	}
 
 	res := new(http.Response)

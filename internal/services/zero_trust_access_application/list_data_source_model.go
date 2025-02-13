@@ -157,6 +157,7 @@ type ZeroTrustAccessApplicationsPoliciesExcludeDataSourceModel struct {
 	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeExternalEvaluationDataSourceModel]   `tfsdk:"external_evaluation" json:"external_evaluation,computed"`
 	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeGitHubOrganizationDataSourceModel]   `tfsdk:"github_organization" json:"github-organization,computed"`
 	GSuite               customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeGSuiteDataSourceModel]               `tfsdk:"gsuite" json:"gsuite,computed"`
+	LoginMethod          customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeLoginMethodDataSourceModel]          `tfsdk:"login_method" json:"login_method,computed"`
 	IPList               customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeIPListDataSourceModel]               `tfsdk:"ip_list" json:"ip_list,computed"`
 	IP                   customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	Okta                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
@@ -232,6 +233,10 @@ type ZeroTrustAccessApplicationsPoliciesExcludeGSuiteDataSourceModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
 }
 
+type ZeroTrustAccessApplicationsPoliciesExcludeLoginMethodDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
+}
+
 type ZeroTrustAccessApplicationsPoliciesExcludeIPListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
@@ -272,6 +277,7 @@ type ZeroTrustAccessApplicationsPoliciesIncludeDataSourceModel struct {
 	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeExternalEvaluationDataSourceModel]   `tfsdk:"external_evaluation" json:"external_evaluation,computed"`
 	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeGitHubOrganizationDataSourceModel]   `tfsdk:"github_organization" json:"github-organization,computed"`
 	GSuite               customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeGSuiteDataSourceModel]               `tfsdk:"gsuite" json:"gsuite,computed"`
+	LoginMethod          customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeLoginMethodDataSourceModel]          `tfsdk:"login_method" json:"login_method,computed"`
 	IPList               customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeIPListDataSourceModel]               `tfsdk:"ip_list" json:"ip_list,computed"`
 	IP                   customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	Okta                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
@@ -347,6 +353,10 @@ type ZeroTrustAccessApplicationsPoliciesIncludeGSuiteDataSourceModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
 }
 
+type ZeroTrustAccessApplicationsPoliciesIncludeLoginMethodDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
+}
+
 type ZeroTrustAccessApplicationsPoliciesIncludeIPListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
@@ -387,6 +397,7 @@ type ZeroTrustAccessApplicationsPoliciesRequireDataSourceModel struct {
 	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireExternalEvaluationDataSourceModel]   `tfsdk:"external_evaluation" json:"external_evaluation,computed"`
 	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireGitHubOrganizationDataSourceModel]   `tfsdk:"github_organization" json:"github-organization,computed"`
 	GSuite               customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireGSuiteDataSourceModel]               `tfsdk:"gsuite" json:"gsuite,computed"`
+	LoginMethod          customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireLoginMethodDataSourceModel]          `tfsdk:"login_method" json:"login_method,computed"`
 	IPList               customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireIPListDataSourceModel]               `tfsdk:"ip_list" json:"ip_list,computed"`
 	IP                   customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	Okta                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
@@ -460,6 +471,10 @@ type ZeroTrustAccessApplicationsPoliciesRequireGitHubOrganizationDataSourceModel
 type ZeroTrustAccessApplicationsPoliciesRequireGSuiteDataSourceModel struct {
 	Email              types.String `tfsdk:"email" json:"email,computed"`
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+}
+
+type ZeroTrustAccessApplicationsPoliciesRequireLoginMethodDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesRequireIPListDataSourceModel struct {
@@ -567,8 +582,13 @@ type ZeroTrustAccessApplicationsSaaSAppCustomAttributesDataSourceModel struct {
 }
 
 type ZeroTrustAccessApplicationsSaaSAppCustomAttributesSourceDataSourceModel struct {
-	Name      types.String                  `tfsdk:"name" json:"name,computed"`
-	NameByIdP customfield.Map[types.String] `tfsdk:"name_by_idp" json:"name_by_idp,computed"`
+	Name      types.String                                                                                                   `tfsdk:"name" json:"name,computed"`
+	NameByIdP customfield.NestedObjectList[ZeroTrustAccessApplicationsSaaSAppCustomAttributesSourceNameByIdPDataSourceModel] `tfsdk:"name_by_idp" json:"name_by_idp,computed"`
+}
+
+type ZeroTrustAccessApplicationsSaaSAppCustomAttributesSourceNameByIdPDataSourceModel struct {
+	IdPID      types.String `tfsdk:"idp_id" json:"idp_id,computed"`
+	SourceName types.String `tfsdk:"source_name" json:"source_name,computed"`
 }
 
 type ZeroTrustAccessApplicationsSaaSAppCustomClaimsDataSourceModel struct {

@@ -45,6 +45,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"ai_context_enabled": schema.BoolAttribute{
+				Optional: true,
+			},
 			"allowed_match_count": schema.Int64Attribute{
 				Optional: true,
 			},

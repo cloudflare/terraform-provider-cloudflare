@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 resource "cloudflare_api_shield" "example_api_shield" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  zone_id = "zone_id"
   auth_id_characteristics = [{
     name = "authorization"
     type = "header"
@@ -27,12 +27,12 @@ resource "cloudflare_api_shield" "example_api_shield" {
 ### Required
 
 - `auth_id_characteristics` (Attributes List) (see [below for nested schema](#nestedatt--auth_id_characteristics))
-- `zone_id` (String) Identifier
+- `zone_id` (String)
 
 ### Read-Only
 
 - `errors` (Attributes List) (see [below for nested schema](#nestedatt--errors))
-- `id` (String) Identifier
+- `id` (String) The ID of this resource.
 - `messages` (Attributes List) (see [below for nested schema](#nestedatt--messages))
 - `success` (Boolean) Whether the API call was successful
 

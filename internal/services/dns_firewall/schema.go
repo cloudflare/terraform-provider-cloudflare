@@ -33,16 +33,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"name": schema.StringAttribute{
+				Description: "DNS Firewall cluster name",
+				Required:    true,
+			},
+			"upstream_ips": schema.ListAttribute{
+				Required:    true,
+				ElementType: types.StringType,
+			},
 			"deprecate_any_requests": schema.BoolAttribute{
 				Description: "Whether to refuse to answer queries for the ANY type",
 				Optional:    true,
 			},
 			"ecs_fallback": schema.BoolAttribute{
 				Description: "Whether to forward client IP (resolver) subnet if no EDNS Client Subnet is sent",
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "DNS Firewall cluster name",
 				Optional:    true,
 			},
 			"negative_cache_ttl": schema.Float64Attribute{
@@ -58,10 +62,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.Float64{
 					float64validator.Between(100, 1000000000),
 				},
-			},
-			"upstream_ips": schema.ListAttribute{
-				Optional:    true,
-				ElementType: types.StringType,
 			},
 			"maximum_cache_ttl": schema.Float64Attribute{
 				Description: "Maximum DNS cache TTL This setting sets an upper bound on DNS TTLs for purposes of caching between DNS Firewall and the upstream servers. Higher TTLs will be decreased to the maximum defined here for caching purposes.",
