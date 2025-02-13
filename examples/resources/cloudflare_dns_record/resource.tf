@@ -9,6 +9,6 @@ resource "cloudflare_dns_record" "example_dns_record" {
     ipv6_only = true
   }
   tags = ["owner:dns-team"]
-  ttl = 3600
+  ttl = 1
   type = "A"
 }
