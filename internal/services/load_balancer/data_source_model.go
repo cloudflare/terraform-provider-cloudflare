@@ -35,7 +35,7 @@ type LoadBalancerDataSourceModel struct {
 	DefaultPools              customfield.List[types.String]                                                 `tfsdk:"default_pools" json:"default_pools,computed"`
 	Networks                  customfield.List[types.String]                                                 `tfsdk:"networks" json:"networks,computed"`
 	POPPools                  customfield.Map[customfield.List[types.String]]                                `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
-	RegionPools               customfield.Map[customfield.List[types.String]]                                `tfsdk:"region_pools" json:"region_pools,computed"`
+	RegionPools               customfield.Map[customfield.List[types.String]]                                `tfsdk:"region_pools" json:"region_pools,computed_optional"`
 	AdaptiveRouting           customfield.NestedObject[LoadBalancerAdaptiveRoutingDataSourceModel]           `tfsdk:"adaptive_routing" json:"adaptive_routing,computed"`
 	LocationStrategy          customfield.NestedObject[LoadBalancerLocationStrategyDataSourceModel]          `tfsdk:"location_strategy" json:"location_strategy,computed"`
 	RandomSteering            customfield.NestedObject[LoadBalancerRandomSteeringDataSourceModel]            `tfsdk:"random_steering" json:"random_steering,computed"`
