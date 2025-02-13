@@ -5,6 +5,9 @@ pattern cloudflare_terraform_v5_attribute_renames_configuration() {
     // provider
     `version = $version` => `version = "~> 5"` where { $match <: within `provider "cloudflare" { $_ }` },
 
+    // cloudflare_origin_ca_certificate
+    `min_days_for_renewal = $days` as $attribute => . where { $attribute <: within `resource "cloudflare_origin_ca_certificate" $_ { $_ }` },
+
     // cloudflare_api_token
     `policy = $v` as $attribute => `policies = $v` where { $attribute <: within `resource "cloudflare_api_token" $_ { $_ }` },
 
