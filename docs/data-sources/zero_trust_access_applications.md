@@ -205,6 +205,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--policies--exclude--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--policies--exclude--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--policies--exclude--ip_list))
+- `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--policies--exclude--login_method))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--policies--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--policies--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--policies--exclude--service_token))
@@ -348,6 +349,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--result--policies--exclude--login_method"></a>
+### Nested Schema for `result.policies.exclude.login_method`
+
+Read-Only:
+
+- `id` (String) The ID of an identity provider.
+
+
 <a id="nestedatt--result--policies--exclude--okta"></a>
 ### Nested Schema for `result.policies.exclude.okta`
 
@@ -399,6 +408,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--policies--include--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--policies--include--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--policies--include--ip_list))
+- `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--policies--include--login_method))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--policies--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--policies--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--policies--include--service_token))
@@ -542,6 +552,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--result--policies--include--login_method"></a>
+### Nested Schema for `result.policies.include.login_method`
+
+Read-Only:
+
+- `id` (String) The ID of an identity provider.
+
+
 <a id="nestedatt--result--policies--include--okta"></a>
 ### Nested Schema for `result.policies.include.okta`
 
@@ -593,6 +611,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--policies--require--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--policies--require--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--policies--require--ip_list))
+- `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--policies--require--login_method))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--policies--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--policies--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--policies--require--service_token))
@@ -736,6 +755,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--result--policies--require--login_method"></a>
+### Nested Schema for `result.policies.require.login_method`
+
+Read-Only:
+
+- `id` (String) The ID of an identity provider.
+
+
 <a id="nestedatt--result--policies--require--okta"></a>
 ### Nested Schema for `result.policies.require.okta`
 
@@ -813,7 +840,16 @@ Read-Only:
 Read-Only:
 
 - `name` (String) The name of the IdP attribute.
-- `name_by_idp` (Map of String) A mapping from IdP ID to attribute name.
+- `name_by_idp` (Attributes List) A mapping from IdP ID to attribute name. (see [below for nested schema](#nestedatt--result--saas_app--custom_attributes--source--name_by_idp))
+
+<a id="nestedatt--result--saas_app--custom_attributes--source--name_by_idp"></a>
+### Nested Schema for `result.saas_app.custom_attributes.source.name_by_idp`
+
+Read-Only:
+
+- `idp_id` (String) The UID of the IdP.
+- `source_name` (String) The name of the IdP provided attribute.
+
 
 
 

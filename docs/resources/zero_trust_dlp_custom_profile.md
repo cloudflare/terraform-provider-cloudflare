@@ -24,6 +24,7 @@ resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_cust
       }
     }]
     name = "name"
+    ai_context_enabled = true
     allowed_match_count = 5
     confidence_threshold = "confidence_threshold"
     context_awareness = {
@@ -52,6 +53,7 @@ resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_cust
 
 ### Optional
 
+- `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String)
 - `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
@@ -123,6 +125,7 @@ Required:
 
 Optional:
 
+- `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String)
 - `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--profiles--context_awareness))

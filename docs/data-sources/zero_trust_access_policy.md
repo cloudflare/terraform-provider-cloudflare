@@ -81,6 +81,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--exclude--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--exclude--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--exclude--ip_list))
+- `login_method` (Attributes) (see [below for nested schema](#nestedatt--exclude--login_method))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--exclude--service_token))
@@ -224,6 +225,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--exclude--login_method"></a>
+### Nested Schema for `exclude.login_method`
+
+Read-Only:
+
+- `id` (String) The ID of an identity provider.
+
+
 <a id="nestedatt--exclude--okta"></a>
 ### Nested Schema for `exclude.okta`
 
@@ -275,6 +284,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--include--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--include--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--include--ip_list))
+- `login_method` (Attributes) (see [below for nested schema](#nestedatt--include--login_method))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--include--service_token))
@@ -418,6 +428,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--include--login_method"></a>
+### Nested Schema for `include.login_method`
+
+Read-Only:
+
+- `id` (String) The ID of an identity provider.
+
+
 <a id="nestedatt--include--okta"></a>
 ### Nested Schema for `include.okta`
 
@@ -469,6 +487,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--require--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--require--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--require--ip_list))
+- `login_method` (Attributes) (see [below for nested schema](#nestedatt--require--login_method))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--require--service_token))
@@ -610,6 +629,14 @@ Read-Only:
 Read-Only:
 
 - `id` (String) The ID of a previously created IP list.
+
+
+<a id="nestedatt--require--login_method"></a>
+### Nested Schema for `require.login_method`
+
+Read-Only:
+
+- `id` (String) The ID of an identity provider.
 
 
 <a id="nestedatt--require--okta"></a>

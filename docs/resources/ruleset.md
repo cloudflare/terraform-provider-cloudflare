@@ -280,9 +280,6 @@ Optional:
 Required:
 
 - `eligible` (Boolean) Determines whether cache reserve is enabled. If this is true and a request meets eligibility criteria, Cloudflare will write the resource to cache reserve.
-
-Optional:
-
 - `minimum_file_size` (Number) The minimum file size eligible for store in cache reserve.
 
 
@@ -360,10 +357,13 @@ Optional:
 <a id="nestedatt--rules--action_parameters--headers"></a>
 ### Nested Schema for `rules.action_parameters.headers`
 
+Required:
+
+- `operation` (String)
+
 Optional:
 
 - `expression` (String) Expression for the header value.
-- `operation` (String)
 - `value` (String) Static value for the header.
 
 

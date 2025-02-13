@@ -18,11 +18,13 @@ resource "cloudflare_account_token" "example_account_token" {
   policies = [{
     effect = "allow"
     permission_groups = [{
+      id = "c8fed203ed3043cba015a93ad1616f1f"
       meta = {
         key = "key"
         value = "value"
       }
     }, {
+      id = "82e64a83756745bbbb1c9c2701bf816b"
       meta = {
         key = "key"
         value = "value"
@@ -84,13 +86,16 @@ Read-Only:
 <a id="nestedatt--policies--permission_groups"></a>
 ### Nested Schema for `policies.permission_groups`
 
+Required:
+
+- `id` (String) Identifier of the group.
+
 Optional:
 
 - `meta` (Attributes) Attributes associated to the permission group. (see [below for nested schema](#nestedatt--policies--permission_groups--meta))
 
 Read-Only:
 
-- `id` (String) Identifier of the group.
 - `name` (String) Name of the group.
 
 <a id="nestedatt--policies--permission_groups--meta"></a>

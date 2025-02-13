@@ -13,12 +13,11 @@ type ZoneCacheReserveResultEnvelope struct {
 }
 
 type ZoneCacheReserveModel struct {
-	ID            types.String      `tfsdk:"id" json:"-,computed"`
-	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id,required"`
-	Value         types.String      `tfsdk:"value" json:"value,computed_optional"`
-	Editable      types.Bool        `tfsdk:"editable" json:"editable,computed"`
-	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	ZoneSettingID types.String      `tfsdk:"zone_setting_id" json:"id,computed"`
+	ID         types.String      `tfsdk:"id" json:"-,computed"`
+	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	Value      types.String      `tfsdk:"value" json:"value,computed_optional"`
+	Editable   types.Bool        `tfsdk:"editable" json:"editable,computed"`
+	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }
 
 func (m ZoneCacheReserveModel) MarshalJSON() (data []byte, err error) {

@@ -201,6 +201,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"login_method": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "The ID of an identity provider.",
+									Required:    true,
+								},
+							},
+						},
 						"ip_list": schema.SingleNestedAttribute{
 							Optional: true,
 							Attributes: map[string]schema.Attribute{
@@ -453,6 +462,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"identity_provider_id": schema.StringAttribute{
 									Description: "The ID of your Google Workspace identity provider.",
+									Required:    true,
+								},
+							},
+						},
+						"login_method": schema.SingleNestedAttribute{
+							Computed:   true,
+							Optional:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupExcludeLoginMethodModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "The ID of an identity provider.",
 									Required:    true,
 								},
 							},
@@ -715,6 +735,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"identity_provider_id": schema.StringAttribute{
 									Description: "The ID of your Google Workspace identity provider.",
+									Required:    true,
+								},
+							},
+						},
+						"login_method": schema.SingleNestedAttribute{
+							Computed:   true,
+							Optional:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupRequireLoginMethodModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "The ID of an identity provider.",
 									Required:    true,
 								},
 							},

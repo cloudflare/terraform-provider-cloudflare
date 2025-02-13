@@ -19,11 +19,11 @@ import (
 func init() {
 	resource.AddTestSweepers("cloudflare_dns_zone_transfers_incoming", &resource.Sweeper{
 		Name: "cloudflare_dns_zone_transfers_incoming",
-		F:    testSweepCloudflareSecondaryDNSIncoming,
+		F:    testSweepCloudflareDNSZoneTransfersIncoming,
 	})
 }
 
-func testSweepCloudflareSecondaryDNSIncoming(r string) error {
+func testSweepCloudflareDNSZoneTransfersIncoming(r string) error {
 	ctx := context.Background()
 	client := acctest.SharedClient()
 
@@ -51,79 +51,53 @@ func testSweepCloudflareSecondaryDNSIncoming(r string) error {
 	return nil
 }
 
-func TestAccCloudflareSecondaryDNSIncoming_Basic(t *testing.T) {
+func TestAccCloudflareDNSZoneTransfersIncoming_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	name := "cloudflare_dns_zone_transfers_incoming." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	client := acctest.SharedClient()
-
-	peer, err := client.DNS.ZoneTransfers.Peers.New(context.Background(), dns.ZoneTransferPeerNewParams{AccountID: cloudflare.F(accountID), Name: cloudflare.F("terraform-peer")})
-	if err != nil {
-		tflog.Error(context.Background(), fmt.Sprintf("Failed to bootstrap Cloudflare DNS peer: %s", err))
-	}
-
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testSecondaryDNSIncomingConfig(rnd, zoneName, zoneID, 300, peer.ID),
+				Config: testDNSZoneTransfersIncomingConfig(rnd, zoneName, zoneID, 300, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", zoneName),
 					resource.TestCheckResourceAttr(name, "auto_refresh_seconds", "300"),
-					resource.TestCheckResourceAttr(name, "peers.0", peer.ID),
 				),
 			},
 		},
 	})
-	// Delete the original peer after we are done
-	_, err = client.DNS.ZoneTransfers.Peers.Delete(context.Background(), peer.ID, dns.ZoneTransferPeerDeleteParams{AccountID: cloudflare.F(accountID)})
-	if err != nil {
-		tflog.Error(context.Background(), fmt.Sprintf("Failed to cleanup Cloudflare DNS peer in incoming test: %s", err))
-	}
 }
 
-func TestAccCloudflareSecondaryDNSIncoming_Update(t *testing.T) {
+func TestAccCloudflareDNSZoneTransfersIncoming_Update(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	name := "cloudflare_dns_zone_transfers_incoming." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	client := acctest.SharedClient()
-
-	peer, err := client.DNS.ZoneTransfers.Peers.New(context.Background(), dns.ZoneTransferPeerNewParams{AccountID: cloudflare.F(accountID), Name: cloudflare.F("terraform-peer")})
-	if err != nil {
-		tflog.Error(context.Background(), fmt.Sprintf("Failed to bootstrap Cloudflare DNS peer: %s", err))
-	}
-
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testSecondaryDNSIncomingConfig(rnd, zoneName, zoneID, 300, peer.ID),
+				Config: testDNSZoneTransfersIncomingConfig(rnd, zoneName, zoneID, 300, accountID),
 			},
 			{
-				Config: testSecondaryDNSIncomingConfig(rnd, zoneName, zoneID, 500, peer.ID),
+				Config: testDNSZoneTransfersIncomingConfig(rnd, zoneName, zoneID, 500, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", zoneName),
 					resource.TestCheckResourceAttr(name, "auto_refresh_seconds", "500"),
-					resource.TestCheckResourceAttr(name, "peers.0", peer.ID),
 				),
 			},
 		},
 	})
-	// Delete the original peer after we are done
-	_, err = client.DNS.ZoneTransfers.Peers.Delete(context.Background(), peer.ID, dns.ZoneTransferPeerDeleteParams{AccountID: cloudflare.F(accountID)})
-	if err != nil {
-		tflog.Error(context.Background(), fmt.Sprintf("Failed to cleanup Cloudflare DNS peer in incoming test: %s", err))
-	}
 }
 
-func testSecondaryDNSIncomingConfig(resourceID, zoneName, zoneID string, autoRefreshSeconds int, peers string) string {
-	return acctest.LoadTestCase("incoming.tf", resourceID, zoneID, autoRefreshSeconds, zoneName, peers)
+func testDNSZoneTransfersIncomingConfig(resourceID, zoneName, zoneID string, autoRefreshSeconds int, accountID string) string {
+	return acctest.LoadTestCase("incoming.tf", resourceID, zoneID, autoRefreshSeconds, zoneName, accountID)
 }

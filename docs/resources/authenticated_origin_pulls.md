@@ -44,7 +44,9 @@ resource "cloudflare_authenticated_origin_pulls" "example_authenticated_origin_p
 - `created_at` (String) The time when the certificate was created.
 - `enabled` (Boolean) Indicates whether hostname-level authenticated origin pulls is enabled. A null value voids the association.
 - `expires_on` (String) The date when the certificate expires.
+- `id` (String) Identifier
 - `issuer` (String) The certificate authority that issued the certificate.
+- `private_key` (String) The hostname certificate's private key.
 - `serial_number` (String) The serial number on the uploaded certificate.
 - `signature` (String) The type of hash used for the certificate.
 - `status` (String) Status of the certificate or the association.

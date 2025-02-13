@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/cloudforce_one"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*CloudforceOneRequestAssetResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*CloudforceOneRequestAssetResource)(nil)
+var _ resource.ResourceWithImportState = (*CloudforceOneRequestAssetResource)(nil)
 
 func NewResource() resource.Resource {
 	return &CloudforceOneRequestAssetResource{}
@@ -120,7 +123,7 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 		ctx,
 		data.AccountIdentifier.ValueString(),
 		data.RequestIdentifier.ValueString(),
-		data.AssetIdentifer.ValueString(),
+		fmt.Sprintf("%d", data.ID.ValueInt64()),
 		cloudforce_one.RequestAssetUpdateParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -156,7 +159,7 @@ func (r *CloudforceOneRequestAssetResource) Read(ctx context.Context, req resour
 		ctx,
 		data.AccountIdentifier.ValueString(),
 		data.RequestIdentifier.ValueString(),
-		data.AssetIdentifer.ValueString(),
+		fmt.Sprintf("%d", data.ID.ValueInt64()),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,13 +196,60 @@ func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req reso
 		ctx,
 		data.AccountIdentifier.ValueString(),
 		data.RequestIdentifier.ValueString(),
-		data.AssetIdentifer.ValueString(),
+		fmt.Sprintf("%d", data.ID.ValueInt64()),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *CloudforceOneRequestAssetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *CloudforceOneRequestAssetModel = new(CloudforceOneRequestAssetModel)
+
+	path_account_identifier := ""
+	path_request_identifier := ""
+	path_asset_identifer := int64(0)
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_identifier>/<request_identifier>/<asset_identifer>",
+		&path_account_identifier,
+		&path_request_identifier,
+		&path_asset_identifer,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountIdentifier = types.StringValue(path_account_identifier)
+	data.RequestIdentifier = types.StringValue(path_request_identifier)
+	data.ID = types.Int64Value(path_asset_identifer)
+
+	res := new(http.Response)
+	env := CloudforceOneRequestAssetResultEnvelope{*data}
+	_, err := r.client.CloudforceOne.Requests.Assets.Get(
+		ctx,
+		path_account_identifier,
+		path_request_identifier,
+		fmt.Sprintf("%d", path_asset_identifer),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

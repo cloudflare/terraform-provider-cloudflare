@@ -66,7 +66,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"connector_identifier": schema.StringAttribute{
+					"connectorid": schema.StringAttribute{
 						Description: "Identifier",
 						Optional:    true,
 					},

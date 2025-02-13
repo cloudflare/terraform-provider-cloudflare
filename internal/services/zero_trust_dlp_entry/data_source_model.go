@@ -18,10 +18,6 @@ type ZeroTrustDLPEntryResultDataSourceEnvelope struct {
 	Result ZeroTrustDLPEntryDataSourceModel `json:"result,computed"`
 }
 
-type ZeroTrustDLPEntryResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[ZeroTrustDLPEntryDataSourceModel] `json:"result,computed"`
-}
-
 type ZeroTrustDLPEntryDataSourceModel struct {
 	ID         types.String                                                         `tfsdk:"id" json:"-,computed"`
 	EntryID    types.String                                                         `tfsdk:"entry_id" path:"entry_id,optional"`
@@ -55,7 +51,8 @@ func (m *ZeroTrustDLPEntryDataSourceModel) toListParams(_ context.Context) (para
 }
 
 type ZeroTrustDLPEntryConfidenceDataSourceModel struct {
-	Available types.Bool `tfsdk:"available" json:"available,computed"`
+	AIContextAvailable types.Bool `tfsdk:"ai_context_available" json:"ai_context_available,computed"`
+	Available          types.Bool `tfsdk:"available" json:"available,computed"`
 }
 
 type ZeroTrustDLPEntryPatternDataSourceModel struct {

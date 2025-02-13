@@ -51,6 +51,7 @@ type ZeroTrustAccessGroupIncludeModel struct {
 	ExternalEvaluation   *ZeroTrustAccessGroupIncludeExternalEvaluationModel   `tfsdk:"external_evaluation" json:"external_evaluation,optional"`
 	GitHubOrganization   *ZeroTrustAccessGroupIncludeGitHubOrganizationModel   `tfsdk:"github_organization" json:"github-organization,optional"`
 	GSuite               *ZeroTrustAccessGroupIncludeGSuiteModel               `tfsdk:"gsuite" json:"gsuite,optional"`
+	LoginMethod          *ZeroTrustAccessGroupIncludeLoginMethodModel          `tfsdk:"login_method" json:"login_method,optional"`
 	IPList               *ZeroTrustAccessGroupIncludeIPListModel               `tfsdk:"ip_list" json:"ip_list,optional"`
 	IP                   *ZeroTrustAccessGroupIncludeIPModel                   `tfsdk:"ip" json:"ip,optional"`
 	Okta                 *ZeroTrustAccessGroupIncludeOktaModel                 `tfsdk:"okta" json:"okta,optional"`
@@ -126,6 +127,10 @@ type ZeroTrustAccessGroupIncludeGSuiteModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
 }
 
+type ZeroTrustAccessGroupIncludeLoginMethodModel struct {
+	ID types.String `tfsdk:"id" json:"id,required"`
+}
+
 type ZeroTrustAccessGroupIncludeIPListModel struct {
 	ID types.String `tfsdk:"id" json:"id,required"`
 }
@@ -166,6 +171,7 @@ type ZeroTrustAccessGroupExcludeModel struct {
 	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessGroupExcludeExternalEvaluationModel] `tfsdk:"external_evaluation" json:"external_evaluation,computed_optional"`
 	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessGroupExcludeGitHubOrganizationModel] `tfsdk:"github_organization" json:"github-organization,computed_optional"`
 	GSuite               customfield.NestedObject[ZeroTrustAccessGroupExcludeGSuiteModel]             `tfsdk:"gsuite" json:"gsuite,computed_optional"`
+	LoginMethod          customfield.NestedObject[ZeroTrustAccessGroupExcludeLoginMethodModel]        `tfsdk:"login_method" json:"login_method,computed_optional"`
 	IPList               customfield.NestedObject[ZeroTrustAccessGroupExcludeIPListModel]             `tfsdk:"ip_list" json:"ip_list,computed_optional"`
 	IP                   customfield.NestedObject[ZeroTrustAccessGroupExcludeIPModel]                 `tfsdk:"ip" json:"ip,computed_optional"`
 	Okta                 customfield.NestedObject[ZeroTrustAccessGroupExcludeOktaModel]               `tfsdk:"okta" json:"okta,computed_optional"`
@@ -241,6 +247,10 @@ type ZeroTrustAccessGroupExcludeGSuiteModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
 }
 
+type ZeroTrustAccessGroupExcludeLoginMethodModel struct {
+	ID types.String `tfsdk:"id" json:"id,required"`
+}
+
 type ZeroTrustAccessGroupExcludeIPListModel struct {
 	ID types.String `tfsdk:"id" json:"id,required"`
 }
@@ -281,6 +291,7 @@ type ZeroTrustAccessGroupRequireModel struct {
 	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessGroupRequireExternalEvaluationModel] `tfsdk:"external_evaluation" json:"external_evaluation,computed_optional"`
 	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessGroupRequireGitHubOrganizationModel] `tfsdk:"github_organization" json:"github-organization,computed_optional"`
 	GSuite               customfield.NestedObject[ZeroTrustAccessGroupRequireGSuiteModel]             `tfsdk:"gsuite" json:"gsuite,computed_optional"`
+	LoginMethod          customfield.NestedObject[ZeroTrustAccessGroupRequireLoginMethodModel]        `tfsdk:"login_method" json:"login_method,computed_optional"`
 	IPList               customfield.NestedObject[ZeroTrustAccessGroupRequireIPListModel]             `tfsdk:"ip_list" json:"ip_list,computed_optional"`
 	IP                   customfield.NestedObject[ZeroTrustAccessGroupRequireIPModel]                 `tfsdk:"ip" json:"ip,computed_optional"`
 	Okta                 customfield.NestedObject[ZeroTrustAccessGroupRequireOktaModel]               `tfsdk:"okta" json:"okta,computed_optional"`
@@ -354,6 +365,10 @@ type ZeroTrustAccessGroupRequireGitHubOrganizationModel struct {
 type ZeroTrustAccessGroupRequireGSuiteModel struct {
 	Email              types.String `tfsdk:"email" json:"email,required"`
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
+}
+
+type ZeroTrustAccessGroupRequireLoginMethodModel struct {
+	ID types.String `tfsdk:"id" json:"id,required"`
 }
 
 type ZeroTrustAccessGroupRequireIPListModel struct {

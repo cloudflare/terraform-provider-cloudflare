@@ -67,14 +67,14 @@ func (m PageRuleModel) marshalTargetsAndActions(b []byte) (data []byte, err erro
 }
 
 type PageRuleActionsCacheKeyFieldsQueryStringModel struct {
-	Include []types.String `tfsdk:"include" json:"include,optional,omitempty"`
-	Exclude []types.String `tfsdk:"exclude" json:"exclude,optional,omitempty"`
+	Include []types.String `tfsdk:"include" json:"include,computed_optional,omitempty"`
+	Exclude []types.String `tfsdk:"exclude" json:"exclude,computed_optional,omitempty"`
 }
 
 type PageRuleActionsCacheKeyFieldsHeaderModel struct {
-	CheckPresence []types.String `tfsdk:"check_presence" json:"check_presence,optional,omitempty"`
-	Include       []types.String `tfsdk:"include" json:"include,optional,omitempty"`
-	Exclude       []types.String `tfsdk:"exclude" json:"exclude,optional,omitempty"`
+	CheckPresence []types.String `tfsdk:"check_presence" json:"check_presence,computed_optional,omitempty"`
+	Include       []types.String `tfsdk:"include" json:"include,computed_optional,omitempty"`
+	Exclude       []types.String `tfsdk:"exclude" json:"exclude,computed_optional,omitempty"`
 }
 
 type PageRuleActionsCacheKeyFieldsHostModel struct {
@@ -82,8 +82,8 @@ type PageRuleActionsCacheKeyFieldsHostModel struct {
 }
 
 type PageRuleActionsCacheKeyFieldsCookieModel struct {
-	Include       []types.String `tfsdk:"include" json:"include,optional,omitempty"`
-	CheckPresence []types.String `tfsdk:"check_presence" json:"check_presence,optional,omitempty"`
+	Include       []types.String `tfsdk:"include" json:"include,computed_optional,omitempty"`
+	CheckPresence []types.String `tfsdk:"check_presence" json:"check_presence,computed_optional,omitempty"`
 }
 
 type PageRuleActionsCacheKeyFieldsUserModel struct {

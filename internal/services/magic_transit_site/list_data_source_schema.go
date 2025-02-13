@@ -21,7 +21,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Required:    true,
 			},
-			"connector_identifier": schema.StringAttribute{
+			"connectorid": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},
