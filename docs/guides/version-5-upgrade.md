@@ -1141,6 +1141,7 @@ resource "cloudflare_api_token" "example" {
 ## cloudflare_dns_record
 
 - `data` is now a single nested attribute (`data = { ... }`) instead of a block (`data { ... }`).
+- `data.flag` is now a number (`flag = 0`) instead of a string (`flag = "0"`).
 - `hostname` has been removed. Instead, you should use a combination of data source and resource attributes to get the same value.
 - `allow_overwrite` has been removed.
 

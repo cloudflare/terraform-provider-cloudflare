@@ -44,7 +44,7 @@ func (m DNSRecordModel) MarshalJSONForUpdate(state DNSRecordModel) (data []byte,
 }
 
 type DNSRecordDataModel struct {
-	Flags         types.Dynamic `tfsdk:"flags" json:"flags,optional"`
+	Flags         types.Float64 `tfsdk:"flags" json:"flags,optional"`
 	Tag           types.String  `tfsdk:"tag" json:"tag,optional"`
 	Value         types.String  `tfsdk:"value" json:"value,optional"`
 	Algorithm     types.Float64 `tfsdk:"algorithm" json:"algorithm,optional"`
