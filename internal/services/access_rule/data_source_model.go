@@ -17,10 +17,6 @@ type AccessRuleResultDataSourceEnvelope struct {
 	Result AccessRuleDataSourceModel `json:"result,computed"`
 }
 
-type AccessRuleResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[AccessRuleDataSourceModel] `json:"result,computed"`
-}
-
 type AccessRuleDataSourceModel struct {
 	ID            types.String                                                     `tfsdk:"id" json:"-,computed"`
 	RuleID        types.String                                                     `tfsdk:"rule_id" path:"rule_id,optional"`

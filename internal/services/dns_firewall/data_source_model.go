@@ -17,10 +17,6 @@ type DNSFirewallResultDataSourceEnvelope struct {
 	Result DNSFirewallDataSourceModel `json:"result,computed"`
 }
 
-type DNSFirewallResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[DNSFirewallDataSourceModel] `json:"result,computed"`
-}
-
 type DNSFirewallDataSourceModel struct {
 	ID                   types.String                                                         `tfsdk:"id" json:"-,computed"`
 	DNSFirewallID        types.String                                                         `tfsdk:"dns_firewall_id" path:"dns_firewall_id,optional"`

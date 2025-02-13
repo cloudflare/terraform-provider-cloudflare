@@ -64,7 +64,7 @@ func (d *ZeroTrustAccessApplicationDataSource) Read(ctx context.Context, req dat
 			return
 		}
 
-		env := ZeroTrustAccessApplicationResultListDataSourceEnvelope{}
+		env := ZeroTrustAccessApplicationsResultListDataSourceEnvelope{}
 		page, err := d.client.ZeroTrust.Access.Applications.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *ZeroTrustAccessApplicationDataSource) Read(ctx context.Context, req dat
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.AppID = ts[0].AppID
+		data.AppID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

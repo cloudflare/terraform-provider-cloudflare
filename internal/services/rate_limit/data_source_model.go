@@ -16,10 +16,6 @@ type RateLimitResultDataSourceEnvelope struct {
 	Result RateLimitDataSourceModel `json:"result,computed"`
 }
 
-type RateLimitResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[RateLimitDataSourceModel] `json:"result,computed"`
-}
-
 type RateLimitDataSourceModel struct {
 	ID          types.String                                                 `tfsdk:"id" json:"-,computed"`
 	RateLimitID types.String                                                 `tfsdk:"rate_limit_id" path:"rate_limit_id,optional"`

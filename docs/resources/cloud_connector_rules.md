@@ -35,6 +35,15 @@ resource "cloudflare_cloud_connector_rules" "example_cloud_connector_rules" {
 - `rules` (Attributes List) List of Cloud Connector rules (see [below for nested schema](#nestedatt--rules))
 - `zone_id` (String) Identifier
 
+### Read-Only
+
+- `cloud_provider` (String) Cloud Provider type
+- `description` (String)
+- `enabled` (Boolean)
+- `expression` (String)
+- `id` (String) The ID of this resource.
+- `parameters` (Attributes) Parameters of Cloud Connector Rule (see [below for nested schema](#nestedatt--parameters))
+
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`
 
@@ -51,6 +60,15 @@ Optional:
 ### Nested Schema for `rules.parameters`
 
 Optional:
+
+- `host` (String) Host to perform Cloud Connection to
+
+
+
+<a id="nestedatt--parameters"></a>
+### Nested Schema for `parameters`
+
+Read-Only:
 
 - `host` (String) Host to perform Cloud Connection to
 

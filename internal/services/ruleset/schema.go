@@ -334,8 +334,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"operation": schema.StringAttribute{
-												Computed: true,
-												Optional: true,
+												Required: true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("remove", "set"),
 												},
@@ -792,7 +791,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"minimum_file_size": schema.Int64Attribute{
 											Description: "The minimum file size eligible for store in cache reserve.",
-											Optional:    true,
+											Required:    true,
 										},
 									},
 								},

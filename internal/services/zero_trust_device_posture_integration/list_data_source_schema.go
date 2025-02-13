@@ -39,7 +39,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"config": schema.SingleNestedAttribute{
-							Description: "The Workspace One Config Response.",
+							Description: "The configuration object containing third-party integration information.",
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectType[ZeroTrustDevicePostureIntegrationsConfigDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{

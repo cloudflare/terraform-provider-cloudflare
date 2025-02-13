@@ -28,6 +28,7 @@ data "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_custom_p
 
 ### Read-Only
 
+- `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String)
 - `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
@@ -80,6 +81,7 @@ Read-Only:
 
 Read-Only:
 
+- `ai_context_available` (Boolean)
 - `available` (Boolean) Indicates whether this entry can be made more or less sensitive by setting a confidence threshold.
 Profiles that use an entry with `available` set to true can use confidence thresholds
 

@@ -50,6 +50,7 @@ benefits.
 - `type` (String) A full zone implies that DNS is hosted with Cloudflare. A partial zone is
 typically a partner-hosted zone or a CNAME setup.
 - `vanity_name_servers` (List of String) An array of domains used for custom name servers. This is only available for Business and Enterprise plans.
+- `verification_key` (String) Verification key for partial zone setup.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

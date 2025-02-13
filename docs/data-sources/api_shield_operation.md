@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_api_shield_operation" "example_api_shield_operation" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  zone_id = "zone_id"
   operation_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
   feature = ["thresholds"]
 }
@@ -24,7 +24,7 @@ data "cloudflare_api_shield_operation" "example_api_shield_operation" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String)
 
 ### Optional
 
@@ -162,7 +162,7 @@ Read-Only:
 Read-Only:
 
 - `created_at` (String)
-- `id` (String) UUID
+- `id` (String)
 - `is_learned` (Boolean) True if schema is Cloudflare-provided.
 - `name` (String) Schema file name.
 

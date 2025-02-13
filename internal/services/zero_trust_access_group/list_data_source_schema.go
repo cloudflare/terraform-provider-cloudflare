@@ -238,6 +238,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeLoginMethodDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
+												Computed:    true,
+											},
+										},
+									},
 									"ip_list": schema.SingleNestedAttribute{
 										Computed:   true,
 										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeIPListDataSourceModel](ctx),
@@ -480,6 +490,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 											"identity_provider_id": schema.StringAttribute{
 												Description: "The ID of your Google Workspace identity provider.",
+												Computed:    true,
+											},
+										},
+									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeLoginMethodDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
 												Computed:    true,
 											},
 										},
@@ -730,6 +750,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultLoginMethodDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
+												Computed:    true,
+											},
+										},
+									},
 									"ip_list": schema.SingleNestedAttribute{
 										Computed:   true,
 										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultIPListDataSourceModel](ctx),
@@ -976,6 +1006,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 											"identity_provider_id": schema.StringAttribute{
 												Description: "The ID of your Google Workspace identity provider.",
+												Computed:    true,
+											},
+										},
+									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireLoginMethodDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
 												Computed:    true,
 											},
 										},
