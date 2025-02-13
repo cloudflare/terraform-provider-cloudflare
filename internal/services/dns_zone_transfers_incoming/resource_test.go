@@ -19,11 +19,11 @@ import (
 func init() {
 	resource.AddTestSweepers("cloudflare_dns_zone_transfers_incoming", &resource.Sweeper{
 		Name: "cloudflare_dns_zone_transfers_incoming",
-		F:    testSweepCloudflareSecondaryDNSIncoming,
+		F:    testSweepCloudflareDNSZoneTransfersIncoming,
 	})
 }
 
-func testSweepCloudflareSecondaryDNSIncoming(r string) error {
+func testSweepCloudflareDNSZoneTransfersIncoming(r string) error {
 	ctx := context.Background()
 	client := acctest.SharedClient()
 
@@ -51,7 +51,7 @@ func testSweepCloudflareSecondaryDNSIncoming(r string) error {
 	return nil
 }
 
-func TestAccCloudflareSecondaryDNSIncoming_Basic(t *testing.T) {
+func TestAccCloudflareDNSZoneTransfersIncoming_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	name := "cloudflare_dns_zone_transfers_incoming." + rnd
@@ -70,7 +70,7 @@ func TestAccCloudflareSecondaryDNSIncoming_Basic(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testSecondaryDNSIncomingConfig(rnd, zoneName, zoneID, 300, peer.ID),
+				Config: testDNSZoneTransfersIncomingConfig(rnd, zoneName, zoneID, 300, peer.ID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", zoneName),
 					resource.TestCheckResourceAttr(name, "auto_refresh_seconds", "300"),
@@ -86,7 +86,7 @@ func TestAccCloudflareSecondaryDNSIncoming_Basic(t *testing.T) {
 	}
 }
 
-func TestAccCloudflareSecondaryDNSIncoming_Update(t *testing.T) {
+func TestAccCloudflareDNSZoneTransfersIncoming_Update(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	name := "cloudflare_dns_zone_transfers_incoming." + rnd
@@ -105,10 +105,10 @@ func TestAccCloudflareSecondaryDNSIncoming_Update(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testSecondaryDNSIncomingConfig(rnd, zoneName, zoneID, 300, peer.ID),
+				Config: testDNSZoneTransfersIncomingConfig(rnd, zoneName, zoneID, 300, peer.ID),
 			},
 			{
-				Config: testSecondaryDNSIncomingConfig(rnd, zoneName, zoneID, 500, peer.ID),
+				Config: testDNSZoneTransfersIncomingConfig(rnd, zoneName, zoneID, 500, peer.ID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", zoneName),
 					resource.TestCheckResourceAttr(name, "auto_refresh_seconds", "500"),
@@ -124,6 +124,6 @@ func TestAccCloudflareSecondaryDNSIncoming_Update(t *testing.T) {
 	}
 }
 
-func testSecondaryDNSIncomingConfig(resourceID, zoneName, zoneID string, autoRefreshSeconds int, peers string) string {
+func testDNSZoneTransfersIncomingConfig(resourceID, zoneName, zoneID string, autoRefreshSeconds int, peers string) string {
 	return acctest.LoadTestCase("incoming.tf", resourceID, zoneID, autoRefreshSeconds, zoneName, peers)
 }
