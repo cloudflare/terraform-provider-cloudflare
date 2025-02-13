@@ -203,6 +203,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--ip_list))
+- `login_method` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--login_method))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--service_token))
@@ -346,6 +347,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--policies--exclude--login_method"></a>
+### Nested Schema for `policies.exclude.login_method`
+
+Read-Only:
+
+- `id` (String) The ID of an identity provider.
+
+
 <a id="nestedatt--policies--exclude--okta"></a>
 ### Nested Schema for `policies.exclude.okta`
 
@@ -397,6 +406,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--policies--include--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--policies--include--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--policies--include--ip_list))
+- `login_method` (Attributes) (see [below for nested schema](#nestedatt--policies--include--login_method))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--policies--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--policies--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--policies--include--service_token))
@@ -540,6 +550,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--policies--include--login_method"></a>
+### Nested Schema for `policies.include.login_method`
+
+Read-Only:
+
+- `id` (String) The ID of an identity provider.
+
+
 <a id="nestedatt--policies--include--okta"></a>
 ### Nested Schema for `policies.include.okta`
 
@@ -591,6 +609,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--policies--require--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--policies--require--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--policies--require--ip_list))
+- `login_method` (Attributes) (see [below for nested schema](#nestedatt--policies--require--login_method))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--policies--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--policies--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--policies--require--service_token))
@@ -734,6 +753,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--policies--require--login_method"></a>
+### Nested Schema for `policies.require.login_method`
+
+Read-Only:
+
+- `id` (String) The ID of an identity provider.
+
+
 <a id="nestedatt--policies--require--okta"></a>
 ### Nested Schema for `policies.require.okta`
 
@@ -811,7 +838,16 @@ Read-Only:
 Read-Only:
 
 - `name` (String) The name of the IdP attribute.
-- `name_by_idp` (Map of String) A mapping from IdP ID to attribute name.
+- `name_by_idp` (Attributes List) A mapping from IdP ID to attribute name. (see [below for nested schema](#nestedatt--saas_app--custom_attributes--source--name_by_idp))
+
+<a id="nestedatt--saas_app--custom_attributes--source--name_by_idp"></a>
+### Nested Schema for `saas_app.custom_attributes.source.name_by_idp`
+
+Read-Only:
+
+- `idp_id` (String) The UID of the IdP.
+- `source_name` (String) The name of the IdP provided attribute.
+
 
 
 

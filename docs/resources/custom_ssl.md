@@ -100,7 +100,7 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
 - `hosts` (List of String)
 - `id` (String) Identifier
 - `issuer` (String) The certificate authority that issued the certificate.
-- `keyless_server` (String)
+- `keyless_server` (Attributes) (see [below for nested schema](#nestedatt--keyless_server))
 - `modified_on` (String) When the certificate was last modified.
 - `priority` (Number) The order/priority in which the certificate will be used in a request. The higher priority will break ties across overlapping 'legacy_custom' certificates, but 'legacy_custom' certificates will always supercede 'sni_custom' certificates.
 - `signature` (String) The type of hash used for the certificate.
@@ -113,6 +113,31 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
 Optional:
 
 - `label` (String)
+
+
+<a id="nestedatt--keyless_server"></a>
+### Nested Schema for `keyless_server`
+
+Read-Only:
+
+- `created_on` (String) When the Keyless SSL was created.
+- `enabled` (Boolean) Whether or not the Keyless SSL is on or off.
+- `host` (String) The keyless SSL name.
+- `id` (String) Keyless certificate identifier tag.
+- `modified_on` (String) When the Keyless SSL was last modified.
+- `name` (String) The keyless SSL name.
+- `permissions` (List of String) Available permissions for the Keyless SSL for the current user requesting the item.
+- `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
+- `status` (String) Status of the Keyless SSL.
+- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--keyless_server--tunnel))
+
+<a id="nestedatt--keyless_server--tunnel"></a>
+### Nested Schema for `keyless_server.tunnel`
+
+Read-Only:
+
+- `private_ip` (String) Private IP of the Key Server Host
+- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID
 
 ## Import
 

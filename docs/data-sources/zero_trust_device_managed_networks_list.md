@@ -37,9 +37,17 @@ data "cloudflare_zero_trust_device_managed_networks_list" "example_zero_trust_de
 
 Read-Only:
 
-- `config` (String) The configuration object containing information for the WARP client to detect the managed network.
+- `config` (Attributes) The configuration object containing information for the WARP client to detect the managed network. (see [below for nested schema](#nestedatt--result--config))
 - `name` (String) The name of the device managed network. This name must be unique.
 - `network_id` (String) API UUID.
 - `type` (String) The type of device managed network.
+
+<a id="nestedatt--result--config"></a>
+### Nested Schema for `result.config`
+
+Read-Only:
+
+- `sha256` (String) The SHA-256 hash of the TLS certificate presented by the host found at tls_sockaddr. If absent, regular certificate verification (trusted roots, valid timestamp, etc) will be used to validate the certificate.
+- `tls_sockaddr` (String) A network address of the form "host:port" that the WARP client will use to detect the presence of a TLS host.
 
 

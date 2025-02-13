@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 resource "cloudflare_api_shield_schema" "example_api_shield_schema" {
-  zone_id = "zone_id"
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   file = "file.txt"
   kind = "openapi_v3"
   name = "petstore schema"
@@ -28,7 +28,7 @@ resource "cloudflare_api_shield_schema" "example_api_shield_schema" {
 
 - `file` (String) Schema file bytes
 - `kind` (String) Kind of schema
-- `zone_id` (String)
+- `zone_id` (String) Identifier
 
 ### Optional
 
@@ -51,7 +51,7 @@ Read-Only:
 - `created_at` (String)
 - `kind` (String) Kind of schema
 - `name` (String) Name of the schema
-- `schema_id` (String)
+- `schema_id` (String) UUID
 - `source` (String) Source of the schema
 - `validation_enabled` (Boolean) Flag whether schema is enabled for validation.
 

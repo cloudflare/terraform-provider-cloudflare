@@ -28,12 +28,18 @@ resource "cloudflare_email_routing_dns" "example_email_routing_dns" {
 
 ### Read-Only
 
+- `created` (String) The date and time the settings have been created.
+- `enabled` (Boolean) State of the zone settings for Email Routing.
 - `errors` (Attributes List) (see [below for nested schema](#nestedatt--errors))
 - `id` (String) Identifier
 - `messages` (Attributes List) (see [below for nested schema](#nestedatt--messages))
+- `modified` (String) The date and time the settings have been modified.
 - `result` (Attributes) (see [below for nested schema](#nestedatt--result))
 - `result_info` (Attributes) (see [below for nested schema](#nestedatt--result_info))
+- `skip_wizard` (Boolean) Flag to check if the user skipped the configuration wizard.
+- `status` (String) Show the state of your account, and the type or configuration error.
 - `success` (Boolean) Whether the API call was successful
+- `tag` (String) Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)
 
 <a id="nestedatt--errors"></a>
 ### Nested Schema for `errors`

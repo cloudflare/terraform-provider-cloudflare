@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_api_shield_discovery_operations" "example_api_shield_discovery_operations" {
-  zone_id = "zone_id"
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   diff = true
   direction = "asc"
   endpoint = "/api/v1"
@@ -30,7 +30,7 @@ data "cloudflare_api_shield_discovery_operations" "example_api_shield_discovery_
 
 ### Required
 
-- `zone_id` (String)
+- `zone_id` (String) Identifier
 
 ### Optional
 
@@ -61,7 +61,7 @@ Read-Only:
 - `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.
 - `features` (Attributes) (see [below for nested schema](#nestedatt--result--features))
 - `host` (String) RFC3986-compliant host.
-- `id` (String)
+- `id` (String) UUID
 - `last_updated` (String)
 - `method` (String) The HTTP method used to access the endpoint.
 - `origin` (List of String) API discovery engine(s) that discovered this operation

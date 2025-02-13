@@ -41,4 +41,18 @@ data "cloudflare_permission_groups" "example_permission_groups" {
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
+Read-Only:
+
+- `id` (String) Identifier of the group.
+- `meta` (Attributes) Attributes associated to the permission group. (see [below for nested schema](#nestedatt--result--meta))
+- `name` (String) Name of the group.
+
+<a id="nestedatt--result--meta"></a>
+### Nested Schema for `result.meta`
+
+Read-Only:
+
+- `key` (String)
+- `value` (String)
+
 
