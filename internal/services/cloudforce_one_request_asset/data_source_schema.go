@@ -5,6 +5,7 @@ package cloudforce_one_request_asset
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -25,6 +26,27 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"request_identifier": schema.StringAttribute{
 				Description: "UUID",
 				Required:    true,
+			},
+			"created": schema.StringAttribute{
+				Description: "Asset creation time",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"description": schema.StringAttribute{
+				Description: "Asset description",
+				Computed:    true,
+			},
+			"file_type": schema.StringAttribute{
+				Description: "Asset file type",
+				Computed:    true,
+			},
+			"id": schema.Int64Attribute{
+				Description: "Asset ID",
+				Computed:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "Asset name",
+				Computed:    true,
 			},
 		},
 	}

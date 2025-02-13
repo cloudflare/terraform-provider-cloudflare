@@ -19,6 +19,7 @@ resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_
     id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
     enabled = true
   }]
+  ai_context_enabled = true
   allowed_match_count = 0
   confidence_threshold = "confidence_threshold"
   context_awareness = {
@@ -42,6 +43,7 @@ resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_
 
 ### Optional
 
+- `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number)
 - `confidence_threshold` (String)
 - `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))

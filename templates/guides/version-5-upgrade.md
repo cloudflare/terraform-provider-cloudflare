@@ -42,39 +42,62 @@ provider "cloudflare" {
 }
 ```
 
-## Resource renames
+## Approach
 
-For an in depth guide on how to perform migrations for resources or datasources that
-have been renamed, check out [migrating renamed resources].
+At a high level, there are two parts to the migration. The first is the migration of the
+configuration (HCL) and the second is the migration of the state. Within each of those
+sections, there is the need to migrate attributes and potentially the resource rename.
 
-The pattern files for v5 resource renames are:
+### Automatic
 
-- `cloudflare_terraform_v5_resource_renames_configuration`
-- `cloudflare_terraform_v5_resource_renames_state`
+For assisting with automatic migrations, we have provided [GritQL] patterns.
 
-## Automatic migration
-
-For assisting with automatic migrations, we have provided a [GritQL] pattern.
-
-This will allow you to rewrite the parts of your Terraform configuration (not state)
-that have changed automatically. Once you [install Grit], you can run the following
-command in the directory where your Terraform configuration is located.
+This will allow you to rewrite the parts of your Terraform configuration and state
+that have changed automatically. Once you [install Grit], you can run the commands
+in the directory where your Terraform configuration is located.
 
 ~> While all efforts have been made to ease the transition, some of the more complex
 resources that may contain difficult to reconcile resources have been intentionally
 skipped for the automatic migration and are only manually documented. If you are
 using modules or other dynamic features of HCL, the provided codemods may not be
-as effective. We recommend reviewing the migration notes below to verify all the
+as effective. We recommend reviewing the manual migration notes to verify all the
 changes.
-
-```bash
-$ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5
-```
 
 We recommend ensuring you are using version control for these changes or make a
 backup prior to initiating the change to enable reverting if needed.
 
+1. Update the resource attributes in your configuration. _Note: this will not update
+  your state file. The next step will determine how your state file is updated._
+  ```bash
+  $ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5
+  ```
+2. Choose the appropriate method from [migrating renamed resources] that best suits
+  your situation and use case to migrate the attribute changes. If you are choosing to
+  use the provided GritQL patterns, the pattern name is
+  `cloudflare_terraform_v5_attribute_renames_state`. Otherwise, you can reimport the
+  resources without manually managing the state file.
+3. Perform the resource renames. _Note: this will not update your state file.
+  The next step will determine how your state file is updated._
+  ```bash
+  $ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5_resource_renames_configuration
+  ```
+4. Choose the appropriate method from [migrating renamed resources] that best suits
+  your situation and use case to migrate the resource renames. If you are choosing to
+  use the provided GritQL patterns, the pattern name is
+  `cloudflare_terraform_v5_resource_renames_state`.
+
+### Manual
+
+1. Update the resource attributes in your configuration using the migration notes.
+2. Choose the appropriate method from [migrating renamed resources] that best suits
+  your situation and use case to migrate the attribute changes.
+3. Perform the resource renames using the migration notes.
+4. Choose the appropriate method from [migrating renamed resources] that best suits
+  your situation and use case to migrate the resource renames.
+
 <!-- This code block is only used for confirming grit patterns -->
+
+## Changelog
 
 ```grit
 language hcl
@@ -152,7 +175,7 @@ cloudflare_terraform_v5()
 
 ## cloudflare_device_settings_policy
 
-- Renamed to `cloudflare_zero_trust_device_profiles`
+- Renamed to `cloudflare_zero_trust_device_custom_profile` or `cloudflare_zero_trust_device_custom_profile` depending on your intended usage.
 
 ## cloudflare_dlp_custom_profile
 
@@ -166,7 +189,7 @@ cloudflare_terraform_v5()
 
 - Renamed to `cloudflare_zero_trust_custom_dlp_profile` or `cloudflare_zero_trust_predefined_dlp_profile` depending on which you are targeting.
 
-## cloudflare_fallback_domain
+## cloudflare_fallback_domain / cloudflare_zero_trust_local_fallback_domain
 
 - Renamed to `cloudflare_zero_trust_device_custom_profile_local_domain_fallback` or `cloudflare_zero_trust_device_default_profile_local_domain_fallback` depending on which you are targeting.
 
@@ -192,7 +215,7 @@ cloudflare_terraform_v5()
 
 ## cloudflare_split_tunnel
 
-- Renamed to `cloudflare_zero_trust_split_tunnels`
+- Renamed to `cloudflare_zero_trust_device_default_profile` and `cloudflare_zero_trust_device_custom_profile` depending on which you are targeting.
 
 ## cloudflare_static_route
 
@@ -228,11 +251,11 @@ cloudflare_terraform_v5()
 
 ## cloudflare_tunnel_route
 
-- Renamed to `cloudflare_zero_trust_tunnel_route`
+- Renamed to `cloudflare_zero_trust_tunnel_cloudflared_route`
 
 ## cloudflare_tunnel_virtual_network
 
-- Renamed to `cloudflare_zero_trust_tunnel_virtual_network`
+- Renamed to `cloudflare_zero_trust_tunnel_cloudflared_virtual_network`
 
 ## cloudflare_worker_cron_trigger
 
@@ -253,10 +276,6 @@ cloudflare_terraform_v5()
 ## cloudflare_workers_for_platforms_namespace
 
 - Renamed to `cloudflare_workers_for_platforms_dispatch_namespace`
-
-## cloudflare_zone_dnssec
-
-- Renamed to `cloudflare_dns_zone_dnssec`
 
 ## cloudflare_managed_headers
 
@@ -830,6 +849,10 @@ resource "cloudflare_api_token" "example" {
   }
   ```
 
+## cloudflare_custom_page
+
+- `cloudflare_custom_page` has been removed.
+
 ## cloudflare_zone_settings_override
 
 - `cloudflare_zone_settings_override` has been removed. Use `cloudflare_zone_setting` instead on a per setting basis.
@@ -1118,6 +1141,9 @@ resource "cloudflare_api_token" "example" {
 ## cloudflare_dns_record
 
 - `data` is now a single nested attribute (`data = { ... }`) instead of a block (`data { ... }`).
+- `data.flag` is now a number (`flag = 0`) instead of a string (`flag = "0"`).
+- `hostname` has been removed. Instead, you should use a combination of data source and resource attributes to get the same value.
+- `allow_overwrite` has been removed.
 
 ## cloudflare_zero_trust_risk_behavior
 
@@ -1138,7 +1164,7 @@ resource "cloudflare_api_token" "example" {
 - `from_list` is now a list of objects (`from_list = [{ ... }]`) instead of multiple block attribute (`from_list { ... }`).
 - `from_value` is now a list of objects (`from_value = [{ ... }]`) instead of multiple block attribute (`from_value { ... }`).
 - `header` is now a list of objects (`header = [{ ... }]`) instead of multiple block attribute (`header { ... }`).
-- `headers` is now a list of objects (`headers = [{ ... }]`) instead of multiple block attribute (`headers { ... }`).
+- `headers` is now a map of attributes keyed by the name instead of multiple block attribute (`headers { ... }`).
 - `host` is now a list of objects (`host = [{ ... }]`) instead of multiple block attribute (`host { ... }`).
 - `logging` is now a single nested attribute (`logging = { ... }`) instead of a block (`logging { ... }`).
 - `matched_data` is now a list of objects (`matched_data = [{ ... }]`) instead of multiple block attribute (`matched_data { ... }`).
@@ -1228,9 +1254,6 @@ resource "cloudflare_api_token" "example" {
 ## cloudflare_workers_script
 
 - `name` is now `script_name`.
-- `compatibility_date` is now `metadata.compatibility_date`.
-- `compatibility_flags` is now `metadata.compatibility_flags`.
-- `tags` is now `metadata.tags`.
 - `analytics_engine_binding` is now a list of objects (`analytics_engine_binding = [{ ... }]`) instead of multiple block attribute (`analytics_engine_binding { ... }`).
 - `d1_database_binding` is now a list of objects (`d1_database_binding = [{ ... }]`) instead of multiple block attribute (`d1_database_binding { ... }`).
 - `kv_namespace_binding` is now a list of objects (`kv_namespace_binding = [{ ... }]`) instead of multiple block attribute (`kv_namespace_binding { ... }`).

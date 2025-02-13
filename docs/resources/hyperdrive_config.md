@@ -24,7 +24,7 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
     user = "postgres"
   }
   caching = {
-    disabled = true
+
   }
 }
 ```

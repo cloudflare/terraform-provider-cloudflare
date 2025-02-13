@@ -64,7 +64,7 @@ func (d *WorkersCustomDomainDataSource) Read(ctx context.Context, req datasource
 			return
 		}
 
-		env := WorkersCustomDomainResultListDataSourceEnvelope{}
+		env := WorkersCustomDomainsResultListDataSourceEnvelope{}
 		page, err := d.client.Workers.Domains.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *WorkersCustomDomainDataSource) Read(ctx context.Context, req datasource
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.DomainID = ts[0].DomainID
+		data.DomainID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

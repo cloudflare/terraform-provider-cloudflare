@@ -64,7 +64,7 @@ func (d *ZeroTrustAccessGroupDataSource) Read(ctx context.Context, req datasourc
 			return
 		}
 
-		env := ZeroTrustAccessGroupResultListDataSourceEnvelope{}
+		env := ZeroTrustAccessGroupsResultListDataSourceEnvelope{}
 		page, err := d.client.ZeroTrust.Access.Groups.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -84,7 +84,7 @@ func (d *ZeroTrustAccessGroupDataSource) Read(ctx context.Context, req datasourc
 		}
 		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
-		data.GroupID = ts[0].GroupID
+		data.GroupID = ts[0].ID
 	}
 
 	params, diags := data.toReadParams(ctx)

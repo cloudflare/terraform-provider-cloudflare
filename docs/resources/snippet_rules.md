@@ -34,6 +34,13 @@ resource "cloudflare_snippet_rules" "example_snippet_rules" {
 
 - `rules` (Attributes List) List of snippet rules (see [below for nested schema](#nestedatt--rules))
 
+### Read-Only
+
+- `description` (String)
+- `enabled` (Boolean)
+- `expression` (String)
+- `snippet_name` (String) Snippet identifying name
+
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`
 

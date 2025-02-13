@@ -188,6 +188,13 @@ func TestAccPreCheck_HyperdriveWithAccess(t *testing.T) {
 	}
 }
 
+// Test helper method checking `CLOUDFLARE_INTERNAL_ZONE_ID` is present.
+func TestAccPreCheck_InternalZoneID(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_INTERNAL_ZONE_ID"); v == "" {
+		t.Skip("Skipping acceptance test as CLOUDFLARE_INTERNAL_ZONE_ID is not set")
+	}
+}
+
 // TestAccSkipForDefaultZone is used for skipping over tests that are not run by
 // default on usual acceptance test suite account.
 func TestAccSkipForDefaultZone(t *testing.T, reason string) {

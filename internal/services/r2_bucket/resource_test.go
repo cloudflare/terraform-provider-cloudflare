@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -15,6 +16,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestMain(m *testing.M) {
@@ -120,12 +122,15 @@ func TestAccCloudflareR2Bucket_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "location", "ENAM"),
 				),
 			},
-			// {
-			// 	ResourceName:        resourceName,
-			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			// 	ImportState:         true,
-			// 	ImportStateVerify:   true,
-			// },
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(*terraform.State) (string, error) {
+					return strings.Join([]string{accountID, rnd, "default"}, "/"), nil
+				},
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "storage_class"},
+			},
 		},
 	})
 }
@@ -171,6 +176,15 @@ func TestAccCloudflareR2Bucket_Jurisdiction(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "id", rnd),
 				),
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(*terraform.State) (string, error) {
+					return strings.Join([]string{accountID, rnd, "eu"}, "/"), nil
+				},
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"storage_class"},
 			},
 		},
 	})

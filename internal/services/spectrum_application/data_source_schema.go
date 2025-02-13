@@ -23,11 +23,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"app_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "App identifier.",
 				Required:    true,
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Zone identifier.",
 				Required:    true,
 			},
 			"argo_smart_routing": schema.BoolAttribute{

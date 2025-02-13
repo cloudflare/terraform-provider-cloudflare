@@ -28,7 +28,7 @@ resource "cloudflare_d1_database" "example_d1_database" {
 ### Required
 
 - `account_id` (String) Account identifier tag.
-- `name` (String)
+- `name` (String) D1 database name.
 
 ### Optional
 
@@ -38,9 +38,9 @@ resource "cloudflare_d1_database" "example_d1_database" {
 
 - `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
 - `file_size` (Number) The D1 database's size, in bytes.
-- `id` (String) The ID of this resource.
+- `id` (String) D1 database identifier (UUID).
 - `num_tables` (Number)
-- `uuid` (String)
+- `uuid` (String) D1 database identifier (UUID).
 - `version` (String)
 
 ## Import

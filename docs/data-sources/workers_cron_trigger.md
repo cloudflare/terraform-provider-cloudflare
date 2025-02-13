@@ -28,15 +28,6 @@ data "cloudflare_workers_cron_trigger" "example_workers_cron_trigger" {
 
 ### Read-Only
 
-- `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
-
-<a id="nestedatt--schedules"></a>
-### Nested Schema for `schedules`
-
-Read-Only:
-
-- `created_on` (String)
-- `cron` (String)
-- `modified_on` (String)
+- `schedules` (List of String)
 
 

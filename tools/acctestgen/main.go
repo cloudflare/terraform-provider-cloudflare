@@ -60,7 +60,7 @@ Example: go run cmd/acctest/main.go %s
 	}
 	input = strings.ToLower(input)
 	if input != "y" && input != "yes" {
-		fmt.Println("\nFile creation aborted.\n")
+		fmt.Println("\nFile creation aborted")
 		os.Exit(0)
 	}
 

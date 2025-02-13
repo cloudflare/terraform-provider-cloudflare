@@ -273,6 +273,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesExcludeLoginMethodDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
+												Computed:    true,
+											},
+										},
+									},
 									"ip_list": schema.SingleNestedAttribute{
 										Computed:   true,
 										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesExcludeIPListDataSourceModel](ctx),
@@ -515,6 +525,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 											"identity_provider_id": schema.StringAttribute{
 												Description: "The ID of your Google Workspace identity provider.",
+												Computed:    true,
+											},
+										},
+									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesIncludeLoginMethodDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
 												Computed:    true,
 											},
 										},
@@ -777,6 +797,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 											"identity_provider_id": schema.StringAttribute{
 												Description: "The ID of your Google Workspace identity provider.",
+												Computed:    true,
+											},
+										},
+									},
+									"login_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesRequireLoginMethodDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an identity provider.",
 												Computed:    true,
 											},
 										},
