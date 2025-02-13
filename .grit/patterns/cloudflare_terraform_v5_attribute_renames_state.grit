@@ -224,22 +224,22 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
             $instances <: contains `"jump_start": $v` => .
         }
     },
-    
+
     // cloudflare_record
    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
         and {
             $resource_type <: contains `cloudflare_record`,
             $instances <: contains `"data": [{$obj}]` => `"data": {
             $obj
-        }`  
+        }`
         }
-    }, 
+    },
    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
         and {
             $resource_type <: contains `cloudflare_record`,
             $instances <: contains `"data": []` => `"data": {}`
         }
-    },    
+    },
     `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
         and {
             $resource_type <: contains `cloudflare_record`,
@@ -250,6 +250,14 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
         and {
             $resource_type <: contains `cloudflare_record`,
             $instances <: contains `"allow_overwrite": $v` => .
+        }
+    },
+
+    // cloudflare_origin_ca_certificate
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        and {
+            $resource_type <: contains `cloudflare_origin_ca_certificate`,
+            $instances <: contains `"min_days_for_renewal": $v` => .
         }
     },
   }
