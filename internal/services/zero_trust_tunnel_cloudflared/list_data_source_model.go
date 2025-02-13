@@ -21,7 +21,7 @@ type ZeroTrustTunnelCloudflaredsResultListDataSourceEnvelope struct {
 type ZeroTrustTunnelCloudflaredsDataSourceModel struct {
 	AccountID     types.String                                                                   `tfsdk:"account_id" path:"account_id,required"`
 	ExcludePrefix types.String                                                                   `tfsdk:"exclude_prefix" query:"exclude_prefix,optional"`
-	ExistedAt     timetypes.RFC3339                                                              `tfsdk:"existed_at" query:"existed_at,optional" format:"date-time"`
+	ExistedAt     types.String                                                                   `tfsdk:"existed_at" query:"existed_at,optional"`
 	IncludePrefix types.String                                                                   `tfsdk:"include_prefix" query:"include_prefix,optional"`
 	IsDeleted     types.Bool                                                                     `tfsdk:"is_deleted" query:"is_deleted,optional"`
 	Name          types.String                                                                   `tfsdk:"name" query:"name,optional"`
@@ -34,8 +34,6 @@ type ZeroTrustTunnelCloudflaredsDataSourceModel struct {
 }
 
 func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelListParams, diags diag.Diagnostics) {
-	mExistedAt, errs := m.ExistedAt.ValueRFC3339Time()
-	diags.Append(errs...)
 	mWasActiveAt, errs := m.WasActiveAt.ValueRFC3339Time()
 	diags.Append(errs...)
 	mWasInactiveAt, errs := m.WasInactiveAt.ValueRFC3339Time()
@@ -49,7 +47,7 @@ func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Cont
 		params.ExcludePrefix = cloudflare.F(m.ExcludePrefix.ValueString())
 	}
 	if !m.ExistedAt.IsNull() {
-		params.ExistedAt = cloudflare.F(mExistedAt)
+		params.ExistedAt = cloudflare.F(m.ExistedAt.ValueString())
 	}
 	if !m.IncludePrefix.IsNull() {
 		params.IncludePrefix = cloudflare.F(m.IncludePrefix.ValueString())
