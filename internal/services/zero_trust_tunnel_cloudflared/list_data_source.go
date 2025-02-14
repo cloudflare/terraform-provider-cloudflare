@@ -67,7 +67,7 @@ func (d *ZeroTrustTunnelCloudflaredsDataSource) Read(ctx context.Context, req da
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.ZeroTrust.Tunnels.List(ctx, params)
+	page, err := d.client.ZeroTrust.Tunnels.Cloudflared.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
