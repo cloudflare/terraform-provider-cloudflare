@@ -65,7 +65,7 @@ func (d *ZeroTrustTunnelCloudflaredConfigDataSource) Read(ctx context.Context, r
 
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredConfigResultDataSourceEnvelope{*data}
-	_, err := d.client.ZeroTrust.Tunnels.Configurations.Get(
+	_, err := d.client.ZeroTrust.Tunnels.Cloudflared.Configurations.Get(
 		ctx,
 		data.TunnelID.ValueString(),
 		params,

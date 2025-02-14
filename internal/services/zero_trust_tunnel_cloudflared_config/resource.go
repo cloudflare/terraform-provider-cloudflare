@@ -71,10 +71,10 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Create(ctx context.Context, r
 	}
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredConfigResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Tunnels.Configurations.Update(
+	_, err = r.client.ZeroTrust.Tunnels.Cloudflared.Configurations.Update(
 		ctx,
 		data.TunnelID.ValueString(),
-		zero_trust.TunnelConfigurationUpdateParams{
+		zero_trust.TunnelCloudflaredConfigurationUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -121,10 +121,10 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Update(ctx context.Context, r
 	}
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredConfigResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Tunnels.Configurations.Update(
+	_, err = r.client.ZeroTrust.Tunnels.Cloudflared.Configurations.Update(
 		ctx,
 		data.TunnelID.ValueString(),
-		zero_trust.TunnelConfigurationUpdateParams{
+		zero_trust.TunnelCloudflaredConfigurationUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -158,10 +158,10 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Read(ctx context.Context, req
 
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredConfigResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Tunnels.Configurations.Get(
+	_, err := r.client.ZeroTrust.Tunnels.Cloudflared.Configurations.Get(
 		ctx,
 		data.TunnelID.ValueString(),
-		zero_trust.TunnelConfigurationGetParams{
+		zero_trust.TunnelCloudflaredConfigurationGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -213,10 +213,10 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) ImportState(ctx context.Conte
 
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredConfigResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Tunnels.Configurations.Get(
+	_, err := r.client.ZeroTrust.Tunnels.Cloudflared.Configurations.Get(
 		ctx,
 		path_tunnel_id,
-		zero_trust.TunnelConfigurationGetParams{
+		zero_trust.TunnelCloudflaredConfigurationGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
 		option.WithResponseBodyInto(&res),
