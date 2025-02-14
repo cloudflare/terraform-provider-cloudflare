@@ -33,13 +33,13 @@ type ZeroTrustTunnelCloudflaredsDataSourceModel struct {
 	Result        customfield.NestedObjectList[ZeroTrustTunnelCloudflaredsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelCloudflaredListParams, diags diag.Diagnostics) {
 	mWasActiveAt, errs := m.WasActiveAt.ValueRFC3339Time()
 	diags.Append(errs...)
 	mWasInactiveAt, errs := m.WasInactiveAt.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = zero_trust.TunnelListParams{
+	params = zero_trust.TunnelCloudflaredListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
@@ -59,7 +59,7 @@ func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Cont
 		params.Name = cloudflare.F(m.Name.ValueString())
 	}
 	if !m.Status.IsNull() {
-		params.Status = cloudflare.F(zero_trust.TunnelListParamsStatus(m.Status.ValueString()))
+		params.Status = cloudflare.F(zero_trust.TunnelCloudflaredListParamsStatus(m.Status.ValueString()))
 	}
 	if !m.UUID.IsNull() {
 		params.UUID = cloudflare.F(m.UUID.ValueString())

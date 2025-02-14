@@ -36,21 +36,21 @@ type ZeroTrustTunnelCloudflaredDataSourceModel struct {
 	Filter          *ZeroTrustTunnelCloudflaredFindOneByDataSourceModel                                `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelGetParams, diags diag.Diagnostics) {
-	params = zero_trust.TunnelGetParams{
+func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelCloudflaredGetParams, diags diag.Diagnostics) {
+	params = zero_trust.TunnelCloudflaredGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
-func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelCloudflaredListParams, diags diag.Diagnostics) {
 	mFilterWasActiveAt, errs := m.Filter.WasActiveAt.ValueRFC3339Time()
 	diags.Append(errs...)
 	mFilterWasInactiveAt, errs := m.Filter.WasInactiveAt.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = zero_trust.TunnelListParams{
+	params = zero_trust.TunnelCloudflaredListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
@@ -70,7 +70,7 @@ func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Conte
 		params.Name = cloudflare.F(m.Filter.Name.ValueString())
 	}
 	if !m.Filter.Status.IsNull() {
-		params.Status = cloudflare.F(zero_trust.TunnelListParamsStatus(m.Filter.Status.ValueString()))
+		params.Status = cloudflare.F(zero_trust.TunnelCloudflaredListParamsStatus(m.Filter.Status.ValueString()))
 	}
 	if !m.Filter.UUID.IsNull() {
 		params.UUID = cloudflare.F(m.Filter.UUID.ValueString())
