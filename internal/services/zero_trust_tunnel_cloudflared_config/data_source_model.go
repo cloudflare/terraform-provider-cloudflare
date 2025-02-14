@@ -26,8 +26,8 @@ type ZeroTrustTunnelCloudflaredConfigDataSourceModel struct {
 	Config    customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
 }
 
-func (m *ZeroTrustTunnelCloudflaredConfigDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelConfigurationGetParams, diags diag.Diagnostics) {
-	params = zero_trust.TunnelConfigurationGetParams{
+func (m *ZeroTrustTunnelCloudflaredConfigDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelCloudflaredConfigurationGetParams, diags diag.Diagnostics) {
+	params = zero_trust.TunnelCloudflaredConfigurationGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

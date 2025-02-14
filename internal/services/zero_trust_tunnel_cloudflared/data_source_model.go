@@ -36,23 +36,21 @@ type ZeroTrustTunnelCloudflaredDataSourceModel struct {
 	Filter          *ZeroTrustTunnelCloudflaredFindOneByDataSourceModel                                `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelGetParams, diags diag.Diagnostics) {
-	params = zero_trust.TunnelGetParams{
+func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelCloudflaredGetParams, diags diag.Diagnostics) {
+	params = zero_trust.TunnelCloudflaredGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
-func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelListParams, diags diag.Diagnostics) {
-	mFilterExistedAt, errs := m.Filter.ExistedAt.ValueRFC3339Time()
-	diags.Append(errs...)
+func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelCloudflaredListParams, diags diag.Diagnostics) {
 	mFilterWasActiveAt, errs := m.Filter.WasActiveAt.ValueRFC3339Time()
 	diags.Append(errs...)
 	mFilterWasInactiveAt, errs := m.Filter.WasInactiveAt.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = zero_trust.TunnelListParams{
+	params = zero_trust.TunnelCloudflaredListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
@@ -60,7 +58,7 @@ func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Conte
 		params.ExcludePrefix = cloudflare.F(m.Filter.ExcludePrefix.ValueString())
 	}
 	if !m.Filter.ExistedAt.IsNull() {
-		params.ExistedAt = cloudflare.F(mFilterExistedAt)
+		params.ExistedAt = cloudflare.F(m.Filter.ExistedAt.ValueString())
 	}
 	if !m.Filter.IncludePrefix.IsNull() {
 		params.IncludePrefix = cloudflare.F(m.Filter.IncludePrefix.ValueString())
@@ -72,7 +70,7 @@ func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Conte
 		params.Name = cloudflare.F(m.Filter.Name.ValueString())
 	}
 	if !m.Filter.Status.IsNull() {
-		params.Status = cloudflare.F(zero_trust.TunnelListParamsStatus(m.Filter.Status.ValueString()))
+		params.Status = cloudflare.F(zero_trust.TunnelCloudflaredListParamsStatus(m.Filter.Status.ValueString()))
 	}
 	if !m.Filter.UUID.IsNull() {
 		params.UUID = cloudflare.F(m.Filter.UUID.ValueString())
@@ -100,7 +98,7 @@ type ZeroTrustTunnelCloudflaredConnectionsDataSourceModel struct {
 
 type ZeroTrustTunnelCloudflaredFindOneByDataSourceModel struct {
 	ExcludePrefix types.String      `tfsdk:"exclude_prefix" query:"exclude_prefix,optional"`
-	ExistedAt     timetypes.RFC3339 `tfsdk:"existed_at" query:"existed_at,optional" format:"date-time"`
+	ExistedAt     types.String      `tfsdk:"existed_at" query:"existed_at,optional"`
 	IncludePrefix types.String      `tfsdk:"include_prefix" query:"include_prefix,optional"`
 	IsDeleted     types.Bool        `tfsdk:"is_deleted" query:"is_deleted,optional"`
 	Name          types.String      `tfsdk:"name" query:"name,optional"`

@@ -28,9 +28,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"existed_at": schema.StringAttribute{
-				Description: "If provided, include only tunnels that were created (and not deleted) before this time.",
+				Description: "If provided, include only resources that were created (and not deleted) before this time. URL encoded.",
 				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"is_deleted": schema.BoolAttribute{
 				Description: "If `true`, only include deleted routes. If `false`, exclude deleted routes. If empty, all routes will be included.",

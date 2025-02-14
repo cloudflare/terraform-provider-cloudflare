@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.2.0 (2025-02-14)
+
+Full Changelog: [v5.1.0...v5.2.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.1.0...v5.2.0)
+
+### ⚠ BREAKING CHANGES
+
+* **tunnels:** move all cloudflared resources into dedicated namespace ([#5143](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5143))
+
+### Features
+
+* **api:** api update ([#5137](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5137)) ([8c2c76d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8c2c76d9e83d1bfc8eb86317c58e7b180d498b89))
+* **tunnels:** move all cloudflared resources into dedicated namespace ([#5143](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5143)) ([3b2bdc7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3b2bdc7f68ddd0e3ca856412631947ab45afe08e))
+
 ## 5.1.0 (2025-02-13)
 
 Full Changelog: [v5.0.0...v5.1.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.0.0...v5.1.0)

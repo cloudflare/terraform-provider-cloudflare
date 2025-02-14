@@ -71,9 +71,9 @@ func (r *ZeroTrustTunnelCloudflaredResource) Create(ctx context.Context, req res
 	}
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Tunnels.New(
+	_, err = r.client.ZeroTrust.Tunnels.Cloudflared.New(
 		ctx,
-		zero_trust.TunnelNewParams{
+		zero_trust.TunnelCloudflaredNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -119,10 +119,10 @@ func (r *ZeroTrustTunnelCloudflaredResource) Update(ctx context.Context, req res
 	}
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Tunnels.Edit(
+	_, err = r.client.ZeroTrust.Tunnels.Cloudflared.Edit(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.TunnelEditParams{
+		zero_trust.TunnelCloudflaredEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -155,10 +155,10 @@ func (r *ZeroTrustTunnelCloudflaredResource) Read(ctx context.Context, req resou
 
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Tunnels.Get(
+	_, err := r.client.ZeroTrust.Tunnels.Cloudflared.Get(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.TunnelGetParams{
+		zero_trust.TunnelCloudflaredGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -193,10 +193,10 @@ func (r *ZeroTrustTunnelCloudflaredResource) Delete(ctx context.Context, req res
 		return
 	}
 
-	_, err := r.client.ZeroTrust.Tunnels.Delete(
+	_, err := r.client.ZeroTrust.Tunnels.Cloudflared.Delete(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.TunnelDeleteParams{
+		zero_trust.TunnelCloudflaredDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -230,10 +230,10 @@ func (r *ZeroTrustTunnelCloudflaredResource) ImportState(ctx context.Context, re
 
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Tunnels.Get(
+	_, err := r.client.ZeroTrust.Tunnels.Cloudflared.Get(
 		ctx,
 		path_tunnel_id,
-		zero_trust.TunnelGetParams{
+		zero_trust.TunnelCloudflaredGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
 		option.WithResponseBodyInto(&res),
