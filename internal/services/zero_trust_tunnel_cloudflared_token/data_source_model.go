@@ -20,8 +20,8 @@ type ZeroTrustTunnelCloudflaredTokenDataSourceModel struct {
 	TunnelID  types.String `tfsdk:"tunnel_id" path:"tunnel_id,required"`
 }
 
-func (m *ZeroTrustTunnelCloudflaredTokenDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelTokenGetParams, diags diag.Diagnostics) {
-	params = zero_trust.TunnelTokenGetParams{
+func (m *ZeroTrustTunnelCloudflaredTokenDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelCloudflaredTokenGetParams, diags diag.Diagnostics) {
+	params = zero_trust.TunnelCloudflaredTokenGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
