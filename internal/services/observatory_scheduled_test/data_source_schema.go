@@ -16,17 +16,18 @@ var _ datasource.DataSourceWithConfigValidators = (*ObservatoryScheduledTestData
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"url": schema.StringAttribute{
+				Description: "A URL.",
+				Required:    true,
+			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},
-			"url": schema.StringAttribute{
-				Description: "A URL.",
-				Computed:    true,
-			},
 			"region": schema.StringAttribute{
 				Description: "A test region.",
 				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"asia-east1",
