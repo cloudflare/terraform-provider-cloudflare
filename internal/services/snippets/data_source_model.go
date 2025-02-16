@@ -16,8 +16,8 @@ type SnippetsResultDataSourceEnvelope struct {
 }
 
 type SnippetsDataSourceModel struct {
+	SnippetName types.String `tfsdk:"snippet_name" path:"snippet_name,required"`
 	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,required"`
-	SnippetName types.String `tfsdk:"snippet_name" path:"snippet_name,computed"`
 	CreatedOn   types.String `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn  types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 }

@@ -31,7 +31,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"site_id": schema.StringAttribute{
 				Description: "Identifier",
-				Computed:    true,
+				Required:    true,
 			},
 			"health_check_rate": schema.StringAttribute{
 				Description: "Magic WAN health check rate for tunnels created on this link. The default value is `mid`.",
