@@ -17,12 +17,12 @@ var _ datasource.DataSourceWithConfigValidators = (*APIShieldSchemaDataSource)(n
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"schema_id": schema.StringAttribute{
+				Required: true,
+			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
-			},
-			"schema_id": schema.StringAttribute{
-				Computed: true,
 			},
 			"omit_source": schema.BoolAttribute{
 				Description: "Omit the source-files of schemas and only retrieve their meta-data.",
