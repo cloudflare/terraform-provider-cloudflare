@@ -17,13 +17,13 @@ var _ datasource.DataSourceWithConfigValidators = (*AuthenticatedOriginPullsData
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"hostname": schema.StringAttribute{
+				Description: "The hostname on the origin for which the client certificate uploaded will be used.",
+				Required:    true,
+			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
-			},
-			"hostname": schema.StringAttribute{
-				Description: "The hostname on the origin for which the client certificate uploaded will be used.",
-				Computed:    true,
 			},
 			"cert_id": schema.StringAttribute{
 				Description: "Identifier",
