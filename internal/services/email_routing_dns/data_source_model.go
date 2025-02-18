@@ -27,6 +27,10 @@ func (m *EmailRoutingDNSDataSourceModel) toReadParams(_ context.Context) (params
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
+	if !m.Subdomain.IsNull() {
+		params.Subdomain = cloudflare.F(m.Subdomain.ValueString())
+	}
+
 	return
 }
 
