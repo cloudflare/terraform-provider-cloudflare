@@ -66,6 +66,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.",
 							Computed:    true,
 						},
+						"doh_in_tunnel": schema.BoolAttribute{
+							Description: "Determines how the WARP client sends DNS requests to Cloudflare Gateway. When `true`, DNS traffic is sent over DoH inside the WARP tunnel. When `false`, the DoH connection operates outside of the WARP tunnel.",
+							Computed:    true,
+						},
 						"enabled": schema.BoolAttribute{
 							Description: "Whether the policy will be applied to matching devices.",
 							Computed:    true,
@@ -161,6 +165,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"precedence": schema.Float64Attribute{
 							Description: "The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.",
+							Computed:    true,
+						},
+						"register_interface_ip_with_dns": schema.BoolAttribute{
+							Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
 							Computed:    true,
 						},
 						"service_mode_v2": schema.SingleNestedAttribute{
