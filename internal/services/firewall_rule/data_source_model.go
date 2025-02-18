@@ -33,10 +33,6 @@ func (m *FirewallRuleDataSourceModel) toReadParams(_ context.Context) (params fi
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
-	if !m.ID.IsNull() {
-		params.ID = cloudflare.F(m.ID.ValueString())
-	}
-
 	return
 }
 
