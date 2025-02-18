@@ -27,5 +27,9 @@ func (m *ObservatoryScheduledTestDataSourceModel) toReadParams(_ context.Context
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
+	if !m.Region.IsNull() {
+		params.Region = cloudflare.F(speed.ScheduleGetParamsRegion(m.Region.ValueString()))
+	}
+
 	return
 }
