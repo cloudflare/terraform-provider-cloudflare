@@ -34,10 +34,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Required:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "The unique identifier of the firewall rule.",
-				Optional:    true,
-			},
 			"action": schema.StringAttribute{
 				Description: "The action to apply to a matched request. The `log` action is only available on an Enterprise plan.",
 				Computed:    true,
