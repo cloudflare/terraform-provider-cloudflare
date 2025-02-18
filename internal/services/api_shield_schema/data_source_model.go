@@ -32,5 +32,9 @@ func (m *APIShieldSchemaDataSourceModel) toReadParams(_ context.Context) (params
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
+	if !m.OmitSource.IsNull() {
+		params.OmitSource = cloudflare.F(m.OmitSource.ValueBool())
+	}
+
 	return
 }
