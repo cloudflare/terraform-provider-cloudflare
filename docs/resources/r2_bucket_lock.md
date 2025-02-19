@@ -37,6 +37,7 @@ resource "cloudflare_r2_bucket_lock" "example_r2_bucket_lock" {
 
 ### Optional
 
+- `jurisdiction` (String) Jurisdiction of the bucket
 - `rules` (Attributes List) (see [below for nested schema](#nestedatt--rules))
 
 <a id="nestedatt--rules"></a>
