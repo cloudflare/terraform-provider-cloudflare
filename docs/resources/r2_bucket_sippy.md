@@ -41,6 +41,7 @@ resource "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
 ### Optional
 
 - `destination` (Attributes) R2 bucket to copy objects to (see [below for nested schema](#nestedatt--destination))
+- `jurisdiction` (String) Jurisdiction of the bucket
 - `source` (Attributes) AWS S3 bucket to copy objects from (see [below for nested schema](#nestedatt--source))
 
 ### Read-Only
