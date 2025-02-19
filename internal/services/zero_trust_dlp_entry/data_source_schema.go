@@ -65,10 +65,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[ZeroTrustDLPEntryConfidenceDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ai_context_available": schema.BoolAttribute{
-						Computed: true,
+						Description: "Indicates whether this entry has AI remote service validation",
+						Computed:    true,
 					},
 					"available": schema.BoolAttribute{
-						Description: "Indicates whether this entry can be made more or less sensitive by setting a confidence threshold.\nProfiles that use an entry with `available` set to true can use confidence thresholds",
+						Description: "Indicates whether this entry has any form of validation that is not an AI remote service",
 						Computed:    true,
 					},
 				},
