@@ -10,7 +10,9 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_member"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_permission_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_role"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_token"
@@ -22,7 +24,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_schema"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_schema_validation_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_token"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_token_permissions_groups"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_token_permission_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/argo_smart_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/argo_tiered_caching"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls"
@@ -105,7 +107,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_scripts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_project"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/permission_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
@@ -511,14 +512,15 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		account_subscription.NewAccountSubscriptionDataSource,
 		account_token.NewAccountTokenDataSource,
 		account_token.NewAccountTokensDataSource,
-		api_token_permissions_groups.NewAPITokenPermissionsGroupsDataSource,
-		api_token_permissions_groups.NewAPITokenPermissionsGroupsListDataSource,
+		account_api_token_permission_groups.NewAccountAPITokenPermissionGroupsDataSource,
+		account_api_token_permission_groups.NewAccountAPITokenPermissionGroupsListDataSource,
 		origin_ca_certificate.NewOriginCACertificateDataSource,
 		origin_ca_certificate.NewOriginCACertificatesDataSource,
 		ip_ranges.NewIPRangesDataSource,
 		user.NewUserDataSource,
 		api_token.NewAPITokenDataSource,
 		api_token.NewAPITokensDataSource,
+		api_token_permission_groups.NewAPITokenPermissionGroupsListDataSource,
 		zone.NewZoneDataSource,
 		zone.NewZonesDataSource,
 		zone_setting.NewZoneSettingDataSource,
@@ -796,8 +798,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		cloudforce_one_request_message.NewCloudforceOneRequestMessageDataSource,
 		cloudforce_one_request_priority.NewCloudforceOneRequestPriorityDataSource,
 		cloudforce_one_request_asset.NewCloudforceOneRequestAssetDataSource,
-		permission_group.NewPermissionGroupDataSource,
-		permission_group.NewPermissionGroupsDataSource,
+		account_permission_group.NewAccountPermissionGroupDataSource,
+		account_permission_group.NewAccountPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
 		resource_group.NewResourceGroupsDataSource,
 		cloud_connector_rules.NewCloudConnectorRulesListDataSource,
