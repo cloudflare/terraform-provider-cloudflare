@@ -493,6 +493,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
 							Computed:    true,
 						},
+						"zone_name": schema.StringAttribute{
+							Computed: true,
+						},
 					},
 				},
 			},
