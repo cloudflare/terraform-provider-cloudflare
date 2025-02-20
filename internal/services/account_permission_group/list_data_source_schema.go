@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package permission_group
+package account_permission_group
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*PermissionGroupsDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*AccountPermissionGroupsDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -43,7 +43,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[PermissionGroupsResultDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectListType[AccountPermissionGroupsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -53,7 +53,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"meta": schema.SingleNestedAttribute{
 							Description: "Attributes associated to the permission group.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectType[PermissionGroupsMetaDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectType[AccountPermissionGroupsMetaDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"key": schema.StringAttribute{
 									Computed: true,
@@ -74,10 +74,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *PermissionGroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccountPermissionGroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = ListDataSourceSchema(ctx)
 }
 
-func (d *PermissionGroupsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *AccountPermissionGroupsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
 }
