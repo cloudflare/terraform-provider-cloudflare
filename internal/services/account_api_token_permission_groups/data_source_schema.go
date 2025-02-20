@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package api_token_permissions_groups
+package account_api_token_permission_groups
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*APITokenPermissionsGroupsDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*AccountAPITokenPermissionGroupsDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -51,10 +51,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *APITokenPermissionsGroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccountAPITokenPermissionGroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = DataSourceSchema(ctx)
 }
 
-func (d *APITokenPermissionsGroupsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *AccountAPITokenPermissionGroupsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
 }
