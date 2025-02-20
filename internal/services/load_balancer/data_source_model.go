@@ -31,6 +31,7 @@ type LoadBalancerDataSourceModel struct {
 	SessionAffinityTTL        types.Float64                                                                  `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed"`
 	SteeringPolicy            types.String                                                                   `tfsdk:"steering_policy" json:"steering_policy,computed"`
 	TTL                       types.Float64                                                                  `tfsdk:"ttl" json:"ttl,computed"`
+	ZoneName                  types.String                                                                   `tfsdk:"zone_name" json:"zone_name,computed"`
 	CountryPools              customfield.Map[customfield.List[types.String]]                                `tfsdk:"country_pools" json:"country_pools,computed"`
 	DefaultPools              customfield.List[types.String]                                                 `tfsdk:"default_pools" json:"default_pools,computed"`
 	Networks                  customfield.List[types.String]                                                 `tfsdk:"networks" json:"networks,computed"`
