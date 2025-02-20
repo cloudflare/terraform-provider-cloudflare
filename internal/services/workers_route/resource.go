@@ -116,7 +116,7 @@ func (r *WorkersRouteResource) Update(ctx context.Context, req resource.UpdateRe
 	env := WorkersRouteResultEnvelope{*data}
 	_, err = r.client.Workers.Routes.Update(
 		ctx,
-		data.RouteID.ValueString(),
+		data.ID.ValueString(),
 		workers.RouteUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -152,7 +152,7 @@ func (r *WorkersRouteResource) Read(ctx context.Context, req resource.ReadReques
 	env := WorkersRouteResultEnvelope{*data}
 	_, err := r.client.Workers.Routes.Get(
 		ctx,
-		data.RouteID.ValueString(),
+		data.ID.ValueString(),
 		workers.RouteGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -190,7 +190,7 @@ func (r *WorkersRouteResource) Delete(ctx context.Context, req resource.DeleteRe
 
 	_, err := r.client.Workers.Routes.Delete(
 		ctx,
-		data.RouteID.ValueString(),
+		data.ID.ValueString(),
 		workers.RouteDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
