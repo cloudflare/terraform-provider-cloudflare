@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package permission_group
+package account_permission_group
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*PermissionGroupDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*AccountPermissionGroupDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -34,7 +34,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"meta": schema.SingleNestedAttribute{
 				Description: "Attributes associated to the permission group.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[PermissionGroupMetaDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectType[AccountPermissionGroupMetaDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"key": schema.StringAttribute{
 						Computed: true,
@@ -48,10 +48,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *PermissionGroupDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccountPermissionGroupDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = DataSourceSchema(ctx)
 }
 
-func (d *PermissionGroupDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *AccountPermissionGroupDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
 }
