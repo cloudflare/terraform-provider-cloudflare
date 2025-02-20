@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package permission_group
+package account_api_token_permission_groups
 
 import (
 	"context"
@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type PermissionGroupDataSource struct {
+type AccountAPITokenPermissionGroupsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*PermissionGroupDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*AccountAPITokenPermissionGroupsDataSource)(nil)
 
-func NewPermissionGroupDataSource() datasource.DataSource {
-	return &PermissionGroupDataSource{}
+func NewAccountAPITokenPermissionGroupsDataSource() datasource.DataSource {
+	return &AccountAPITokenPermissionGroupsDataSource{}
 }
 
-func (d *PermissionGroupDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_permission_group"
+func (d *AccountAPITokenPermissionGroupsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_account_api_token_permission_groups"
 }
 
-func (d *PermissionGroupDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccountAPITokenPermissionGroupsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *PermissionGroupDataSource) Configure(ctx context.Context, req datasourc
 	d.client = client
 }
 
-func (d *PermissionGroupDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *PermissionGroupDataSourceModel
+func (d *AccountAPITokenPermissionGroupsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *AccountAPITokenPermissionGroupsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -64,9 +64,9 @@ func (d *PermissionGroupDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	res := new(http.Response)
-	_, err := d.client.IAM.PermissionGroups.Get(
+	env := AccountAPITokenPermissionGroupsResultDataSourceEnvelope{*data}
+	_, err := d.client.Accounts.Tokens.PermissionGroups.Get(
 		ctx,
-		data.PermissionGroupID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -76,11 +76,12 @@ func (d *PermissionGroupDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

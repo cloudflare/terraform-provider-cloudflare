@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package api_token_permissions_groups
+package api_token_permission_groups
 
 import (
 	"context"
@@ -13,21 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type APITokenPermissionsGroupsListDataSource struct {
+type APITokenPermissionGroupsListDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*APITokenPermissionsGroupsListDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*APITokenPermissionGroupsListDataSource)(nil)
 
-func NewAPITokenPermissionsGroupsListDataSource() datasource.DataSource {
-	return &APITokenPermissionsGroupsListDataSource{}
+func NewAPITokenPermissionGroupsListDataSource() datasource.DataSource {
+	return &APITokenPermissionGroupsListDataSource{}
 }
 
-func (d *APITokenPermissionsGroupsListDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_api_token_permissions_groups_list"
+func (d *APITokenPermissionGroupsListDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_api_token_permission_groups_list"
 }
 
-func (d *APITokenPermissionsGroupsListDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *APITokenPermissionGroupsListDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,8 +46,8 @@ func (d *APITokenPermissionsGroupsListDataSource) Configure(ctx context.Context,
 	d.client = client
 }
 
-func (d *APITokenPermissionsGroupsListDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *APITokenPermissionsGroupsListDataSourceModel
+func (d *APITokenPermissionGroupsListDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *APITokenPermissionGroupsListDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -55,19 +55,13 @@ func (d *APITokenPermissionsGroupsListDataSource) Read(ctx context.Context, req 
 		return
 	}
 
-	params, diags := data.toListParams(ctx)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	env := APITokenPermissionsGroupsListResultListDataSourceEnvelope{}
+	env := APITokenPermissionGroupsListResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.Accounts.Tokens.PermissionGroups.List(ctx, params)
+	page, err := d.client.User.Tokens.PermissionGroups.List(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
@@ -92,7 +86,7 @@ func (d *APITokenPermissionsGroupsListDataSource) Read(ctx context.Context, req 
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[APITokenPermissionsGroupsListResultDataSourceModel](ctx, acc)
+	result, diags := customfield.NewObjectListFromAttributes[APITokenPermissionGroupsListResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result
 
