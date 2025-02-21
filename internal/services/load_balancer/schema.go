@@ -558,6 +558,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"modified_on": schema.StringAttribute{
 				Computed: true,
 			},
+			"zone_name": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }
