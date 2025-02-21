@@ -146,6 +146,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"value": schema.StringAttribute{
 				Description: "The token value.",
 				Computed:    true,
+				Sensitive:   true,
 			},
 		},
 	}
