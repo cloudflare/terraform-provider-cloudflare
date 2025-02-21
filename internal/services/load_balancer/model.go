@@ -36,6 +36,7 @@ type LoadBalancerModel struct {
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancerSessionAffinityAttributesModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed_optional"`
 	CreatedOn                 types.String                                                         `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn                types.String                                                         `tfsdk:"modified_on" json:"modified_on,computed"`
+	ZoneName                  types.String                                                         `tfsdk:"zone_name" json:"zone_name,computed"`
 }
 
 func (m LoadBalancerModel) MarshalJSON() (data []byte, err error) {

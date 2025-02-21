@@ -507,6 +507,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							Optional:    true,
 						},
+						"zone_name": schema.StringAttribute{
+							Computed: true,
+						},
 					},
 				},
 			},
