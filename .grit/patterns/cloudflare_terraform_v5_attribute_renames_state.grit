@@ -144,6 +144,14 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
             $instances <: contains `"zone": $v` => `"name": $v`
         }
     },
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        and {
+            $resource_type <: contains `cloudflare_zone`,
+            $instances <: contains `"account_id": $v` => `"account": { 
+                "id": $v 
+            }`
+        }
+    },
 
     // cloudflare_access_policy & cloudflare_zero_trust_access_group
     `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
