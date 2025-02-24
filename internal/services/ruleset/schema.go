@@ -956,8 +956,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
+								"raw_response_fields": schema.ListNestedAttribute{
+									Description: "The raw response fields to log.",
+									Computed:    true,
+									Optional:    true,
+									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersRawResponseFieldsModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"name": schema.StringAttribute{
+												Description: "The name of the field.",
+												Required:    true,
+											},
+											"preserve_duplicates": schema.BoolAttribute{
+												Description: "Whether to log duplicate values of the same header.",
+												Computed:    true,
+												Optional:    true,
+												Default:     booldefault.StaticBool(false),
+											},
+										},
+									},
+								},
 								"request_fields": schema.ListNestedAttribute{
-									Description: "The request fields to log.",
+									Description: "The raw request fields to log.",
 									Computed:    true,
 									Optional:    true,
 									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersRequestFieldsModel](ctx),
@@ -971,10 +991,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"response_fields": schema.ListNestedAttribute{
-									Description: "The response fields to log.",
+									Description: "The transformed response fields to log.",
 									Computed:    true,
 									Optional:    true,
 									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersResponseFieldsModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"name": schema.StringAttribute{
+												Description: "The name of the field.",
+												Required:    true,
+											},
+											"preserve_duplicates": schema.BoolAttribute{
+												Description: "Whether to log duplicate values of the same header.",
+												Computed:    true,
+												Optional:    true,
+												Default:     booldefault.StaticBool(false),
+											},
+										},
+									},
+								},
+								"transformed_request_fields": schema.ListNestedAttribute{
+									Description: "The transformed request fields to log.",
+									Computed:    true,
+									Optional:    true,
+									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersTransformedRequestFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
