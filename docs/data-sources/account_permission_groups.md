@@ -1,18 +1,18 @@
 ---
-page_title: "cloudflare_permission_groups Data Source - Cloudflare"
+page_title: "cloudflare_account_permission_groups Data Source - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_permission_groups (Data Source)
+# cloudflare_account_permission_groups (Data Source)
 
 
 
 ## Example Usage
 
 ```terraform
-data "cloudflare_permission_groups" "example_permission_groups" {
+data "cloudflare_account_permission_groups" "example_account_permission_groups" {
   account_id = "eb78d65290b24279ba6f44721b3ea3c4"
   id = "6d7f2f5f5b1d4a0e9081fdc98d432fd1"
   label = "labelOfThePermissionGroup"
