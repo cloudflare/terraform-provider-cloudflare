@@ -1,18 +1,18 @@
 ---
-page_title: "cloudflare_api_token_permissions_groups_list Data Source - Cloudflare"
+page_title: "cloudflare_account_api_token_permission_groups_list Data Source - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_api_token_permissions_groups_list (Data Source)
+# cloudflare_account_api_token_permission_groups_list (Data Source)
 
 
 
 ## Example Usage
 
 ```terraform
-data "cloudflare_api_token_permissions_groups_list" "example_api_token_permissions_groups_list" {
+data "cloudflare_account_api_token_permission_groups_list" "example_account_api_token_permission_groups_list" {
   account_id = "eb78d65290b24279ba6f44721b3ea3c4"
 }
 ```

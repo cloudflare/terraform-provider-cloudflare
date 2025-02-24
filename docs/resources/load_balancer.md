@@ -168,6 +168,7 @@ resource "cloudflare_load_balancer" "example_load_balancer" {
 - `created_on` (String)
 - `id` (String) The ID of this resource.
 - `modified_on` (String)
+- `zone_name` (String)
 
 <a id="nestedatt--adaptive_routing"></a>
 ### Nested Schema for `adaptive_routing`
