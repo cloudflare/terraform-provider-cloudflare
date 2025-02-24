@@ -935,8 +935,25 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
+								"raw_response_fields": schema.ListNestedAttribute{
+									Description: "The raw response fields to log.",
+									Computed:    true,
+									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersRawResponseFieldsDataSourceModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"name": schema.StringAttribute{
+												Description: "The name of the field.",
+												Computed:    true,
+											},
+											"preserve_duplicates": schema.BoolAttribute{
+												Description: "Whether to log duplicate values of the same header.",
+												Computed:    true,
+											},
+										},
+									},
+								},
 								"request_fields": schema.ListNestedAttribute{
-									Description: "The request fields to log.",
+									Description: "The raw request fields to log.",
 									Computed:    true,
 									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersRequestFieldsDataSourceModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
@@ -949,9 +966,26 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"response_fields": schema.ListNestedAttribute{
-									Description: "The response fields to log.",
+									Description: "The transformed response fields to log.",
 									Computed:    true,
 									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersResponseFieldsDataSourceModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"name": schema.StringAttribute{
+												Description: "The name of the field.",
+												Computed:    true,
+											},
+											"preserve_duplicates": schema.BoolAttribute{
+												Description: "Whether to log duplicate values of the same header.",
+												Computed:    true,
+											},
+										},
+									},
+								},
+								"transformed_request_fields": schema.ListNestedAttribute{
+									Description: "The transformed request fields to log.",
+									Computed:    true,
+									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersTransformedRequestFieldsDataSourceModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
