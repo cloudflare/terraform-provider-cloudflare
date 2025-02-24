@@ -32,6 +32,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/argo_tiered_caching"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/bot_management"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/botnet_feed_config_asn"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/byo_ip_prefix"
@@ -430,6 +431,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		logpull_retention.NewResource,
 		authenticated_origin_pulls_certificate.NewResource,
 		authenticated_origin_pulls.NewResource,
+		authenticated_origin_pulls_settings.NewResource,
 		page_rule.NewResource,
 		rate_limit.NewResource,
 		waiting_room.NewResource,
@@ -657,6 +659,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificateDataSource,
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificatesDataSource,
 		authenticated_origin_pulls.NewAuthenticatedOriginPullsDataSource,
+		authenticated_origin_pulls_settings.NewAuthenticatedOriginPullsSettingsDataSource,
 		page_rule.NewPageRuleDataSource,
 		rate_limit.NewRateLimitDataSource,
 		rate_limit.NewRateLimitsDataSource,
