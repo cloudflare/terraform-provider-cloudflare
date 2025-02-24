@@ -23,6 +23,7 @@ data "cloudflare_authenticated_origin_pulls" "example_authenticated_origin_pulls
 
 ### Required
 
+- `hostname` (String) The hostname on the origin for which the client certificate uploaded will be used.
 - `zone_id` (String) Identifier
 
 ### Read-Only
@@ -35,7 +36,6 @@ data "cloudflare_authenticated_origin_pulls" "example_authenticated_origin_pulls
 - `created_at` (String) The time when the certificate was created.
 - `enabled` (Boolean) Indicates whether hostname-level authenticated origin pulls is enabled. A null value voids the association.
 - `expires_on` (String) The date when the certificate expires.
-- `hostname` (String) The hostname on the origin for which the client certificate uploaded will be used.
 - `issuer` (String) The certificate authority that issued the certificate.
 - `serial_number` (String) The serial number on the uploaded certificate.
 - `signature` (String) The type of hash used for the certificate.

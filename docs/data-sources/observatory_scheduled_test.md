@@ -24,12 +24,15 @@ data "cloudflare_observatory_scheduled_test" "example_observatory_scheduled_test
 
 ### Required
 
+- `url` (String) A URL.
 - `zone_id` (String) Identifier
+
+### Optional
+
+- `region` (String) A test region.
 
 ### Read-Only
 
 - `frequency` (String) The frequency of the test.
-- `region` (String) A test region.
-- `url` (String) A URL.
 
 

@@ -32,8 +32,11 @@ resource "cloudflare_cloud_connector_rules" "example_cloud_connector_rules" {
 
 ### Required
 
-- `rules` (Attributes List) List of Cloud Connector rules (see [below for nested schema](#nestedatt--rules))
 - `zone_id` (String) Identifier
+
+### Optional
+
+- `rules` (Attributes List) List of Cloud Connector rules (see [below for nested schema](#nestedatt--rules))
 
 ### Read-Only
 
