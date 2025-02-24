@@ -1090,10 +1090,32 @@ resource "cloudflare_api_token" "example" {
 
 ## cloudflare_list
 
-- `hostname` is now a list of objects (`hostname = [{ ... }]`) instead of multiple block attribute (`hostname { ... }`).
-- `item` is now a list of objects (`item = [{ ... }]`) instead of multiple block attribute (`item { ... }`).
-- `redirect` is now a list of objects (`redirect = [{ ... }]`) instead of multiple block attribute (`redirect { ... }`).
-- `value` is now a list of objects (`value = [{ ... }]`) instead of multiple block attribute (`value { ... }`).
+- Items are no longer attached on the `cloudflare_list` resource. Instead, they should live in their own resources.
+
+Before
+
+```hcl
+resource "cloudflare_list" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  item {
+    ip = "198.51.100.1"
+  }
+}
+```
+
+After
+
+```hcl
+resource "cloudflare_list" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+}
+
+resource "cloudflare_list_item" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  list_id = cloudflare_list.example.id
+  ip = "198.51.100.1"
+}
+```
 
 ## cloudflare_list_item
 
