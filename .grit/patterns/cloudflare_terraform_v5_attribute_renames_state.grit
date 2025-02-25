@@ -3,7 +3,9 @@ language json
 pattern cloudflare_terraform_v5_attribute_renames_state() {
   any {
     // clear out any previously defined schema bumps
-    `"schema_version": $version`=> `"schema_version": 0`,
+    `"schema_version": $version`=> `"schema_version": 0` where {
+        $resource_type <: contains `cloudflare_`,
+    },
 
     // cloudflare_api_token
     `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
