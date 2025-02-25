@@ -1198,6 +1198,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"auth_type": schema.StringAttribute{
 						Description: "Optional identifier indicating the authentication protocol used for the saas app. Required for OIDC. Default if unset is \"saml\"",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("saml", "oidc"),
@@ -1278,6 +1279,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"idp_entity_id": schema.StringAttribute{
 						Description: "The unique identifier for your SaaS application.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"name_id_format": schema.StringAttribute{
@@ -1293,6 +1295,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"public_key": schema.StringAttribute{
 						Description: "The Access public certificate that will be used to verify your identity.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"saml_attribute_transform_jsonata": schema.StringAttribute{
@@ -1305,6 +1308,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"sso_endpoint": schema.StringAttribute{
 						Description: "The endpoint where your SaaS application will send login requests.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"updated_at": schema.StringAttribute{
@@ -1325,10 +1329,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"client_id": schema.StringAttribute{
 						Description: "The application client id",
+						Computed:    true,
 						Optional:    true,
 					},
 					"client_secret": schema.StringAttribute{
 						Description: "The application client secret, only returned on POST request.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"custom_claims": schema.ListNestedAttribute{
