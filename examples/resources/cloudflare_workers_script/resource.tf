@@ -13,7 +13,6 @@ resource "cloudflare_workers_script" "example_workers_script" {
     }
     bindings = [{
       name = "MY_ENV_VAR"
-      text = "my_data"
       type = "plain_text"
     }]
     body_part = "worker.js"

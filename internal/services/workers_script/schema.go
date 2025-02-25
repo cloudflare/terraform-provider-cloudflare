@@ -106,7 +106,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Required:    true,
 								},
 								"dataset": schema.StringAttribute{
-									Description: "The dataset name to bind to.",
+									Description: "The name of the dataset to bind to.",
 									Optional:    true,
 								},
 								"id": schema.StringAttribute{
