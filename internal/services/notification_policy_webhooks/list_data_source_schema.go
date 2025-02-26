@@ -64,7 +64,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "Type of webhook endpoint.",
+							Description: "Type of webhook endpoint.\navailable values: \"slack\", \"generic\", \"gchat\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

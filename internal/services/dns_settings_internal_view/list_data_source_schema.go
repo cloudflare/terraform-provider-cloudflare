@@ -25,7 +25,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"order": schema.StringAttribute{
-				Description: "Field to order DNS views by.",
+				Description: "Field to order DNS views by.\navailable values: \"name\", \"created_on\", \"modified_on\"",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -36,36 +36,36 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "A zone ID that exists in the zones list for the view.\n",
+				Description: "A zone ID that exists in the zones list for the view.",
 				Optional:    true,
 			},
 			"zone_name": schema.StringAttribute{
-				Description: "A zone name that exists in the zones list for the view.\n",
+				Description: "A zone name that exists in the zones list for the view.",
 				Optional:    true,
 			},
 			"name": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"contains": schema.StringAttribute{
-						Description: "Substring of the DNS view name.\n",
+						Description: "Substring of the DNS view name.",
 						Optional:    true,
 					},
 					"endswith": schema.StringAttribute{
-						Description: "Suffix of the DNS view name.\n",
+						Description: "Suffix of the DNS view name.",
 						Optional:    true,
 					},
 					"exact": schema.StringAttribute{
-						Description: "Exact value of the DNS view name.\n",
+						Description: "Exact value of the DNS view name.",
 						Optional:    true,
 					},
 					"startswith": schema.StringAttribute{
-						Description: "Prefix of the DNS view name.\n",
+						Description: "Prefix of the DNS view name.",
 						Optional:    true,
 					},
 				},
 			},
 			"direction": schema.StringAttribute{
-				Description: "Direction to order DNS views in.",
+				Description: "Direction to order DNS views in.\navailable values: \"asc\", \"desc\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -73,7 +73,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"match": schema.StringAttribute{
-				Description: "Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead.\n",
+				Description: "Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead.\navailable values: \"any\", \"all\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{

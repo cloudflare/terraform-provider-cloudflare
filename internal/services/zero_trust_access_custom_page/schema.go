@@ -42,7 +42,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Custom page type.",
+				Description: "Custom page type.\navailable values: \"identity_denied\", \"forbidden\"",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("identity_denied", "forbidden"),

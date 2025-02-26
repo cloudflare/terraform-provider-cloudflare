@@ -48,7 +48,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of secret to put.",
+				Description: "The type of secret to put.\navailable values: \"secret_text\"",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("secret_text"),

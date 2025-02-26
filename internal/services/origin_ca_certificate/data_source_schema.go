@@ -42,7 +42,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"request_type": schema.StringAttribute{
-				Description: "Signature type desired on certificate (\"origin-rsa\" (rsa), \"origin-ecc\" (ecdsa), or \"keyless-certificate\" (for Keyless SSL servers).",
+				Description: "Signature type desired on certificate (\"origin-rsa\" (rsa), \"origin-ecc\" (ecdsa), or \"keyless-certificate\" (for Keyless SSL servers).\navailable values: \"origin-rsa\", \"origin-ecc\", \"keyless-certificate\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -53,7 +53,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"requested_validity": schema.Float64Attribute{
-				Description: "The number of days for which the certificate should be valid.",
+				Description: "The number of days for which the certificate should be valid.\navailable values: 7, 30, 90, 365, 730, 1095, 5475",
 				Computed:    true,
 				Validators: []validator.Float64{
 					float64validator.OneOf(

@@ -64,7 +64,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"scheme": schema.StringAttribute{
-									Description: "Specifies the URL scheme used to connect to your origin database.",
+									Description: "Specifies the URL scheme used to connect to your origin database.\navailable values: \"postgres\", \"postgresql\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("postgres", "postgresql"),

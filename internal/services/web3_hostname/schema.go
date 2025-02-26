@@ -35,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"target": schema.StringAttribute{
-				Description: "Target gateway of the hostname.",
+				Description: "Target gateway of the hostname.\navailable values: \"ethereum\", \"ipfs\", \"ipfs_universal_path\"",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -63,7 +63,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of the hostname's activation.",
+				Description: "Status of the hostname's activation.\navailable values: \"active\", \"pending\", \"deleting\", \"error\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

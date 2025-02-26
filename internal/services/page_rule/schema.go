@@ -32,13 +32,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"priority": schema.Int64Attribute{
-				Description: "The priority of the rule, used to define which Page Rule is processed\nover another. A higher number indicates a higher priority. For example,\nif you have a catch-all Page Rule (rule A: `/images/*`) but want a more\nspecific Page Rule to take precedence (rule B: `/images/special/*`),\nspecify a higher priority for rule B so it overrides rule A.\n",
+				Description: "The priority of the rule, used to define which Page Rule is processed\nover another. A higher number indicates a higher priority. For example,\nif you have a catch-all Page Rule (rule A: `/images/*`) but want a more\nspecific Page Rule to take precedence (rule B: `/images/special/*`),\nspecify a higher priority for rule B so it overrides rule A.",
 				Computed:    true,
 				Optional:    true,
 				Default:     int64default.StaticInt64(1),
 			},
 			"status": schema.StringAttribute{
-				Description: "The status of the Page Rule.",
+				Description: "The status of the Page Rule.\navailable values: \"active\", \"disabled\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{

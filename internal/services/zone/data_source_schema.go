@@ -61,11 +61,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"paused": schema.BoolAttribute{
-				Description: "Indicates whether the zone is only using Cloudflare DNS services. A\ntrue value means the zone will not receive security or performance\nbenefits.\n",
+				Description: "Indicates whether the zone is only using Cloudflare DNS services. A\ntrue value means the zone will not receive security or performance\nbenefits.",
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "The zone status on Cloudflare.",
+				Description: "The zone status on Cloudflare.\navailable values: \"initializing\", \"pending\", \"active\", \"moved\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -77,7 +77,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"type": schema.StringAttribute{
-				Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\n",
+				Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\navailable values: \"full\", \"partial\", \"secondary\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -188,20 +188,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 							"name": schema.StringAttribute{
-								Description: "An account Name. Optional filter operators can be provided to extend refine the search:\n  * `equal` (default)\n  * `not_equal`\n  * `starts_with`\n  * `ends_with`\n  * `contains`\n  * `starts_with_case_sensitive`\n  * `ends_with_case_sensitive`\n  * `contains_case_sensitive`\n",
+								Description: "An account Name. Optional filter operators can be provided to extend refine the search:\n  * `equal` (default)\n  * `not_equal`\n  * `starts_with`\n  * `ends_with`\n  * `contains`\n  * `starts_with_case_sensitive`\n  * `ends_with_case_sensitive`\n  * `contains_case_sensitive`",
 								Optional:    true,
 							},
 						},
 					},
 					"direction": schema.StringAttribute{
-						Description: "Direction to order zones.",
+						Description: "Direction to order zones.\navailable values: \"asc\", \"desc\"",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 						},
 					},
 					"match": schema.StringAttribute{
-						Description: "Whether to match all search requirements or at least one (any).",
+						Description: "Whether to match all search requirements or at least one (any).\navailable values: \"any\", \"all\"",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -209,11 +209,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"name": schema.StringAttribute{
-						Description: "A domain name. Optional filter operators can be provided to extend refine the search:\n  * `equal` (default)\n  * `not_equal`\n  * `starts_with`\n  * `ends_with`\n  * `contains`\n  * `starts_with_case_sensitive`\n  * `ends_with_case_sensitive`\n  * `contains_case_sensitive`\n",
+						Description: "A domain name. Optional filter operators can be provided to extend refine the search:\n  * `equal` (default)\n  * `not_equal`\n  * `starts_with`\n  * `ends_with`\n  * `contains`\n  * `starts_with_case_sensitive`\n  * `ends_with_case_sensitive`\n  * `contains_case_sensitive`",
 						Optional:    true,
 					},
 					"order": schema.StringAttribute{
-						Description: "Field to order zones by.",
+						Description: "Field to order zones by.\navailable values: \"name\", \"status\", \"account.id\", \"account.name\"",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -225,7 +225,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"status": schema.StringAttribute{
-						Description: "A zone status",
+						Description: "A zone status\navailable values: \"initializing\", \"pending\", \"active\", \"moved\"",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

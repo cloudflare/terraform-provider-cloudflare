@@ -20,7 +20,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "The TLS Setting name.",
+				Description: "The TLS Setting name.\navailable values: \"ciphers\", \"min_tls_version\", \"http2\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -32,7 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"setting_id": schema.StringAttribute{
-				Description: "The TLS Setting name.",
+				Description: "The TLS Setting name.\navailable values: \"ciphers\", \"min_tls_version\", \"http2\"",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

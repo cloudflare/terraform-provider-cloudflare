@@ -124,7 +124,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"method": schema.StringAttribute{
-									Description: "The HTTP method to use for the health check.",
+									Description: "The HTTP method to use for the health check.\navailable values: \"GET\", \"HEAD\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("GET", "HEAD"),
@@ -157,7 +157,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"status": schema.StringAttribute{
-							Description: "The current status of the origin server according to the health check.",
+							Description: "The current status of the origin server according to the health check.\navailable values: \"unknown\", \"healthy\", \"unhealthy\", \"suspended\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -178,7 +178,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[HealthchecksTCPConfigDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"method": schema.StringAttribute{
-									Description: "The TCP connection method to use for the health check.",
+									Description: "The TCP connection method to use for the health check.\navailable values: \"connection_established\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("connection_established"),

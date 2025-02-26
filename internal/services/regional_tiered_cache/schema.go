@@ -31,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"value": schema.StringAttribute{
-				Description: "Value of the Regional Tiered Cache zone setting.",
+				Description: "Value of the Regional Tiered Cache zone setting.\navailable values: \"on\", \"off\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{

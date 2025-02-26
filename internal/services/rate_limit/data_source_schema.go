@@ -60,7 +60,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[RateLimitActionDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
-						Description: "The action to perform.",
+						Description: "The action to perform.\navailable values: \"simulate\", \"ban\", \"challenge\", \"js_challenge\", \"managed_challenge\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -103,7 +103,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
-							Computed: true,
+							Description: "available values: \"url\"",
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("url"),
 							},
@@ -130,7 +131,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"op": schema.StringAttribute{
-									Description: "The operator used when matching: `eq` means \"equal\" and `ne` means \"not equal\".",
+									Description: "The operator used when matching: `eq` means \"equal\" and `ne` means \"not equal\".\navailable values: \"eq\", \"ne\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("eq", "ne"),

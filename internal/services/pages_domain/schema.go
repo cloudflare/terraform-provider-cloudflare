@@ -38,7 +38,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"certificate_authority": schema.StringAttribute{
-				Computed: true,
+				Description: "available values: \"google\", \"lets_encrypt\"",
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt"),
 				},
@@ -50,7 +51,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"status": schema.StringAttribute{
-				Computed: true,
+				Description: "available values: \"initializing\", \"pending\", \"active\", \"deactivated\", \"blocked\", \"error\"",
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"initializing",
@@ -73,13 +75,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"method": schema.StringAttribute{
-						Computed: true,
+						Description: "available values: \"http\", \"txt\"",
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("http", "txt"),
 						},
 					},
 					"status": schema.StringAttribute{
-						Computed: true,
+						Description: "available values: \"initializing\", \"pending\", \"active\", \"deactivated\", \"error\"",
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"initializing",
@@ -106,7 +110,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"status": schema.StringAttribute{
-						Computed: true,
+						Description: "available values: \"pending\", \"active\", \"deactivated\", \"blocked\", \"error\"",
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"pending",

@@ -50,7 +50,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								Attributes: map[string]schema.Attribute{
 									"html_handling": schema.StringAttribute{
-										Description: "Determines the redirects and rewrites of requests for HTML content.",
+										Description: "Determines the redirects and rewrites of requests for HTML content.\navailable values: \"auto-trailing-slash\", \"force-trailing-slash\", \"drop-trailing-slash\", \"none\"",
 										Optional:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -62,7 +62,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"not_found_handling": schema.StringAttribute{
-										Description: "Determines the response when a request does not match a static asset, and there is no Worker script.",
+										Description: "Determines the response when a request does not match a static asset, and there is no Worker script.\navailable values: \"none\", \"404-page\", \"single-page-application\"",
 										Optional:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -352,14 +352,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"mode": schema.StringAttribute{
-								Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+								Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\navailable values: \"smart\"",
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("smart"),
 								},
 							},
 							"status": schema.StringAttribute{
-								Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+								Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\navailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\"",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -397,7 +397,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"usage_model": schema.StringAttribute{
-						Description: "Usage model for the Worker invocations.",
+						Description: "Usage model for the Worker invocations.\navailable values: \"standard\"",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("standard"),
@@ -432,14 +432,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"placement_mode": schema.StringAttribute{
-				Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+				Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\navailable values: \"smart\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("smart"),
 				},
 			},
 			"placement_status": schema.StringAttribute{
-				Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+				Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\navailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -453,7 +453,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"usage_model": schema.StringAttribute{
-				Description: "Usage model for the Worker invocations.",
+				Description: "Usage model for the Worker invocations.\navailable values: \"standard\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("standard"),
@@ -465,14 +465,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[WorkersScriptPlacementModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
-						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\navailable values: \"smart\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("smart"),
 						},
 					},
 					"status": schema.StringAttribute{
-						Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\navailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
