@@ -3,7 +3,12 @@ language json
 pattern cloudflare_terraform_v5_attribute_renames_state() {
   any {
     // clear out any previously defined schema bumps
-    `"schema_version": $version`=> `"schema_version": 0`,
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        and {
+            $resource_type <: r"^cloudflare_.*",
+            $instances <: contains `"schema_version": $version`=> `"schema_version": 0`
+        }
+    },
 
     // cloudflare_api_token
     `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
@@ -147,8 +152,8 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
     `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
         and {
             $resource_type <: contains `cloudflare_zone`,
-            $instances <: contains `"account_id": $v` => `"account": { 
-                "id": $v 
+            $instances <: contains `"account_id": $v` => `"account": {
+                "id": $v
             }`
         }
     },
