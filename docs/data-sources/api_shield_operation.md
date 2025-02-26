@@ -40,6 +40,7 @@ data "cloudflare_api_shield_operation" "example_api_shield_operation" {
 - `id` (String) UUID
 - `last_updated` (String)
 - `method` (String) The HTTP method used to access the endpoint.
+Available values: "GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "CONNECT", "PATCH", "TRACE".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -47,11 +48,13 @@ data "cloudflare_api_shield_operation" "example_api_shield_operation" {
 Optional:
 
 - `direction` (String) Direction to order results.
+Available values: "asc", "desc".
 - `endpoint` (String) Filter results to only include endpoints containing this pattern.
 - `feature` (List of String) Add feature(s) to the results. The feature name that is given here corresponds to the resulting feature object. Have a look at the top-level object description for more details on the specific meaning.
 - `host` (List of String) Filter results to only include the specified hosts.
 - `method` (List of String) Filter results to only include the specified HTTP methods.
 - `order` (String) Field to order by. When requesting a feature, the feature keys are available for ordering as well, e.g., `thresholds.suggested_threshold`.
+Available values: "method", "host", "endpoint", "thresholds.$key".
 
 
 <a id="nestedatt--features"></a>
@@ -155,6 +158,7 @@ Read-Only:
 - `active_schema` (Attributes) Schema active on endpoint. (see [below for nested schema](#nestedatt--features--schema_info--active_schema))
 - `learned_available` (Boolean) True if a Cloudflare-provided learned schema is available for this endpoint.
 - `mitigation_action` (String) Action taken on requests failing validation.
+Available values: "none", "log", "block".
 
 <a id="nestedatt--features--schema_info--active_schema"></a>
 ### Nested Schema for `features.schema_info.active_schema`

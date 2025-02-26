@@ -57,6 +57,7 @@ Required:
 - `host` (String) The host (hostname or IP) of your origin database.
 - `password` (String) The password required to access your origin database. This value is write-only and never returned by the API.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
+Available values: "postgres", "postgresql".
 - `user` (String) The user of your origin database.
 
 Optional:

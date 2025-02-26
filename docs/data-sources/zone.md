@@ -47,8 +47,10 @@ domain. If development mode has never been enabled, this value is 0.
 true value means the zone will not receive security or performance
 benefits.
 - `status` (String) The zone status on Cloudflare.
+Available values: "initializing", "pending", "active", "moved".
 - `type` (String) A full zone implies that DNS is hosted with Cloudflare. A partial zone is
 typically a partner-hosted zone or a CNAME setup.
+Available values: "full", "partial", "secondary".
 - `vanity_name_servers` (List of String) An array of domains used for custom name servers. This is only available for Business and Enterprise plans.
 - `verification_key` (String) Verification key for partial zone setup.
 
@@ -59,7 +61,9 @@ Optional:
 
 - `account` (Attributes) (see [below for nested schema](#nestedatt--filter--account))
 - `direction` (String) Direction to order zones.
+Available values: "asc", "desc".
 - `match` (String) Whether to match all search requirements or at least one (any).
+Available values: "any", "all".
 - `name` (String) A domain name. Optional filter operators can be provided to extend refine the search:
   * `equal` (default)
   * `not_equal`
@@ -70,7 +74,9 @@ Optional:
   * `ends_with_case_sensitive`
   * `contains_case_sensitive`
 - `order` (String) Field to order zones by.
+Available values: "name", "status", "account.id", "account.name".
 - `status` (String) A zone status
+Available values: "initializing", "pending", "active", "moved".
 
 <a id="nestedatt--filter--account"></a>
 ### Nested Schema for `filter.account`

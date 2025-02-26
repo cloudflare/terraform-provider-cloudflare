@@ -37,6 +37,6 @@ resource "cloudflare_zero_trust_risk_behavior" "example_zero_trust_risk_behavior
 Required:
 
 - `enabled` (Boolean)
-- `risk_level` (String)
+- `risk_level` (String) Available values: "low", "medium", "high".
 
 

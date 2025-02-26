@@ -37,6 +37,7 @@ data "cloudflare_api_token" "example_api_token" {
 - `not_before` (String) The time before which the token MUST NOT be accepted for processing.
 - `policies` (Attributes List) List of access policies assigned to the token. (see [below for nested schema](#nestedatt--policies))
 - `status` (String) Status of the token.
+Available values: "active", "disabled", "expired".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -44,6 +45,7 @@ data "cloudflare_api_token" "example_api_token" {
 Optional:
 
 - `direction` (String) Direction to order results.
+Available values: "asc", "desc".
 
 
 <a id="nestedatt--condition"></a>
@@ -69,6 +71,7 @@ Read-Only:
 Read-Only:
 
 - `effect` (String) Allow or deny operations against the resources.
+Available values: "allow", "deny".
 - `id` (String) Policy identifier.
 - `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
 - `resources` (Map of String) A list of resource names that the policy applies to.

@@ -42,6 +42,8 @@ data "cloudflare_workers_kv_namespace" "example_workers_kv_namespace" {
 Optional:
 
 - `direction` (String) Direction to order namespaces.
+Available values: "asc", "desc".
 - `order` (String) Field to order results by.
+Available values: "id", "title".
 
 

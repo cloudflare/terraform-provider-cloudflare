@@ -54,6 +54,7 @@ Optional:
 Read-Only:
 
 - `type` (String) Type of supported action.
+Available values: "drop", "forward", "worker".
 - `value` (List of String)
 
 
@@ -63,7 +64,9 @@ Read-Only:
 Read-Only:
 
 - `field` (String) Field for type matcher.
+Available values: "to".
 - `type` (String) Type of matcher.
+Available values: "literal".
 - `value` (String) Value for matcher.
 
 

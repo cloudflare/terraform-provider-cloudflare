@@ -38,6 +38,7 @@ resource "cloudflare_stream_audio_track" "example_stream_audio_track" {
 ### Read-Only
 
 - `status` (String) Specifies the processing status of the video.
+Available values: "queued", "ready", "error".
 - `uid` (String) A Cloudflare-generated unique identifier for a media item.
 
 

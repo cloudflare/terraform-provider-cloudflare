@@ -39,6 +39,7 @@ data "cloudflare_email_routing_catch_all" "example_email_routing_catch_all" {
 Read-Only:
 
 - `type` (String) Type of action for catch-all rule.
+Available values: "drop", "forward", "worker".
 - `value` (List of String)
 
 
@@ -48,5 +49,6 @@ Read-Only:
 Read-Only:
 
 - `type` (String) Type of matcher. Default is 'all'.
+Available values: "all".
 
 

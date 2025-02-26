@@ -30,6 +30,7 @@ data "cloudflare_custom_hostname_fallback_origin" "example_custom_hostname_fallb
 - `errors` (List of String) These are errors that were encountered while trying to activate a fallback origin.
 - `origin` (String) Your origin hostname that requests to your custom hostnames will be sent to.
 - `status` (String) Status of the fallback origin's activation.
+Available values: "initializing", "pending_deployment", "pending_deletion", "active", "deployment_timed_out", "deletion_timed_out".
 - `updated_at` (String) This is the time the fallback origin was updated.
 
 

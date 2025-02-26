@@ -45,7 +45,7 @@ Read-Only:
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--result--pattern))
 - `profile_id` (String)
 - `secret` (Boolean)
-- `type` (String)
+- `type` (String) Available values: "custom".
 - `updated_at` (String)
 - `word_list` (String)
 
@@ -64,6 +64,6 @@ Read-Only:
 Read-Only:
 
 - `regex` (String)
-- `validation` (String)
+- `validation` (String) Available values: "luhn".
 
 

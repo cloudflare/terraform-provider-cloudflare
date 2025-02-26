@@ -27,16 +27,20 @@ data "cloudflare_bot_management" "example_bot_management" {
 ### Read-Only
 
 - `ai_bots_protection` (String) Enable rule to block AI Scrapers and Crawlers.
+Available values: "block", "disabled".
 - `auto_update_model` (Boolean) Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)
 - `enable_js` (Boolean) Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).
 - `fight_mode` (Boolean) Whether to enable Bot Fight Mode.
 - `optimize_wordpress` (Boolean) Whether to optimize Super Bot Fight Mode protections for Wordpress.
 - `sbfm_definitely_automated` (String) Super Bot Fight Mode (SBFM) action to take on definitely automated requests.
+Available values: "allow", "block", "managed_challenge".
 - `sbfm_likely_automated` (String) Super Bot Fight Mode (SBFM) action to take on likely automated requests.
+Available values: "allow", "block", "managed_challenge".
 - `sbfm_static_resource_protection` (Boolean) Super Bot Fight Mode (SBFM) to enable static resource protection.
 Enable if static resources on your application need bot protection.
 Note: Static resource protection can also result in legitimate traffic being blocked.
 - `sbfm_verified_bots` (String) Super Bot Fight Mode (SBFM) action to take on verified bots requests.
+Available values: "allow", "block".
 - `stale_zone_configuration` (Attributes) A read-only field that shows which unauthorized settings are currently active on the zone. These settings typically result from upgrades or downgrades. (see [below for nested schema](#nestedatt--stale_zone_configuration))
 - `suppress_session_score` (Boolean) Whether to disable tracking the highest bot score for a session in the Bot Management cookie.
 - `using_latest_model` (Boolean) A read-only field that indicates whether the zone currently is running the latest ML model.

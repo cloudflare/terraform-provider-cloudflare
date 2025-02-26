@@ -39,6 +39,7 @@ Read-Only:
 
 - `beta` (Boolean) True if the category is in beta and subject to change.
 - `class` (String) Which account types are allowed to create policies based on this category. `blocked` categories are blocked unconditionally for all accounts. `removalPending` categories can be removed from policies but not added. `noBlock` categories cannot be blocked.
+Available values: "free", "premium", "blocked", "removalPending", "noBlock".
 - `description` (String) A short summary of domains in the category.
 - `id` (Number) The identifier for this category. There is only one category per ID.
 - `name` (String) The name of the category.
@@ -51,6 +52,7 @@ Read-Only:
 
 - `beta` (Boolean) True if the category is in beta and subject to change.
 - `class` (String) Which account types are allowed to create policies based on this category. `blocked` categories are blocked unconditionally for all accounts. `removalPending` categories can be removed from policies but not added. `noBlock` categories cannot be blocked.
+Available values: "free", "premium", "blocked", "removalPending", "noBlock".
 - `description` (String) A short summary of domains in the category.
 - `id` (Number) The identifier for this category. There is only one category per ID.
 - `name` (String) The name of the category.

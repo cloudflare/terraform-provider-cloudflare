@@ -47,6 +47,7 @@ Read-Only:
 - `description` (String) An informative summary of the rule.
 - `id` (String) The unique identifier of the User Agent Blocking rule.
 - `mode` (String) The action to apply to a matched request.
+Available values: "block", "challenge", "js_challenge", "managed_challenge".
 - `paused` (Boolean) When true, indicates that the rule is currently paused.
 
 <a id="nestedatt--result--configuration"></a>

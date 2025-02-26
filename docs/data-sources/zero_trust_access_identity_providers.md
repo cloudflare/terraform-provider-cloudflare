@@ -43,6 +43,7 @@ Read-Only:
 - `name` (String) The name of the identity provider, shown to users on the login page.
 - `scim_config` (Attributes) The configuration settings for enabling a System for Cross-Domain Identity Management (SCIM) with the identity provider. (see [below for nested schema](#nestedatt--result--scim_config))
 - `type` (String) The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).
+Available values: "onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "okta", "onelogin", "pingone", "yandex".
 
 <a id="nestedatt--result--config"></a>
 ### Nested Schema for `result.config`
@@ -71,6 +72,7 @@ Read-Only:
 - `ping_env_id` (String) Your PingOne environment identifier
 - `pkce_enabled` (Boolean) Enable Proof Key for Code Exchange (PKCE)
 - `prompt` (String) Indicates the type of user interaction that is required. prompt=login forces the user to enter their credentials on that request, negating single-sign on. prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error. prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.
+Available values: "login", "select_account", "none".
 - `scopes` (List of String) OAuth scopes
 - `sign_request` (Boolean) Sign the SAML authentication request with Access credentials. To verify the signature, use the public key from the Access certs endpoints.
 - `sso_target_url` (String) URL to send the SAML authentication requests to
@@ -94,6 +96,7 @@ Read-Only:
 
 - `enabled` (Boolean) A flag to enable or disable SCIM for the identity provider.
 - `identity_update_behavior` (String) Indicates how a SCIM event updates a user identity used for policy evaluation. Use "automatic" to automatically update a user's identity and augment it with fields from the SCIM user resource. Use "reauth" to force re-authentication on group membership updates, user identity update will only occur after successful re-authentication. With "reauth" identities will not contain fields from the SCIM user resource. With "no_action" identities will not be changed by SCIM updates in any way and users will not be prompted to reauthenticate.
+Available values: "automatic", "reauth", "no_action".
 - `scim_base_url` (String) The base URL of Cloudflare's SCIM V2.0 API endpoint.
 - `seat_deprovision` (Boolean) A flag to remove a user's seat in Zero Trust when they have been deprovisioned in the Identity Provider.  This cannot be enabled unless user_deprovision is also enabled.
 - `secret` (String) A read-only token generated when the SCIM integration is enabled for the first time.  It is redacted on subsequent requests.  If you lose this you will need to refresh it at /access/identity_providers/:idpID/refresh_scim_secret.

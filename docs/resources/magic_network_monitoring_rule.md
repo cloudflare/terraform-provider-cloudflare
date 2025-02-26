@@ -14,7 +14,7 @@ description: |-
 ```terraform
 resource "cloudflare_magic_network_monitoring_rule" "example_magic_network_monitoring_rule" {
   account_id = "6f91088a406011ed95aed352566e8d4c"
-  duration = "300s"
+  duration = "1m"
   name = "my_rule_1"
   automatic_advertisement = true
   bandwidth = 1000
@@ -36,13 +36,22 @@ resource "cloudflare_magic_network_monitoring_rule" "example_magic_network_monit
 
 - `automatic_advertisement` (Boolean) Toggle on if you would like Cloudflare to automatically advertise the IP Prefixes within the rule via Magic Transit when the rule is triggered. Only available for users of Magic Transit.
 - `bandwidth` (Number) The number of bits per second for the rule. When this value is exceeded for the set duration, an alert notification is sent. Minimum of 1 and no maximum.
-- `duration` (String) The amount of time that the rule threshold must be exceeded to send an alert notification. The final value must be equivalent to one of the following 8 values ["1m","5m","10m","15m","20m","30m","45m","60m"]. The format is AhBmCsDmsEusFns where A, B, C, D, E and F durations are optional; however at least one unit must be provided.
+- `duration` (String) The amount of time that the rule threshold must be exceeded to send an alert notification. The final value must be equivalent to one of the following 8 values ["1m","5m","10m","15m","20m","30m","45m","60m"].
+Available values: "1m", "5m", "10m", "15m", "20m", "30m", "45m", "60m".
 - `packet_threshold` (Number) The number of packets per second for the rule. When this value is exceeded for the set duration, an alert notification is sent. Minimum of 1 and no maximum.
 - `prefixes` (List of String)
 
 ### Read-Only
 
 - `bandwidth_threshold` (Number) The number of bits per second for the rule. When this value is exceeded for the set duration, an alert notification is sent. Minimum of 1 and no maximum.
+- `prefix_match` (String) Prefix match type to be applied for a prefix auto advertisement when using an advanced_ddos rule.
+Available values: "exact", "subnet", "supernet".
+- `type` (String) MNM rule type.
+Available values: "threshold", "zscore", "advanced_ddos".
+- `zscore_sensitivity` (String) Level of sensitivity set for zscore rules.
+Available values: "low", "medium", "high".
+- `zscore_target` (String) Target of the zscore rule analysis.
+Available values: "bits", "packets".
 
 ## Import
 

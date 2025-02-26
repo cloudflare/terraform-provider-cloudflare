@@ -36,6 +36,7 @@ resource "cloudflare_dns_record" "example_dns_record" {
 - `name` (String) DNS record name (or @ for the zone apex) in Punycode.
 - `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
 - `type` (String) Record type.
+Available values: "A".
 - `zone_id` (String) Identifier
 
 ### Optional
@@ -73,10 +74,12 @@ Optional:
 - `key_tag` (Number) Key Tag.
 - `lat_degrees` (Number) Degrees of latitude.
 - `lat_direction` (String) Latitude direction.
+Available values: "N", "S".
 - `lat_minutes` (Number) Minutes of latitude.
 - `lat_seconds` (Number) Seconds of latitude.
 - `long_degrees` (Number) Degrees of longitude.
 - `long_direction` (String) Longitude direction.
+Available values: "E", "W".
 - `long_minutes` (Number) Minutes of longitude.
 - `long_seconds` (Number) Seconds of longitude.
 - `matching_type` (Number) Matching Type.

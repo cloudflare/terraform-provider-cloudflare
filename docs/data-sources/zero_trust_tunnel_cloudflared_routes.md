@@ -61,6 +61,7 @@ Read-Only:
 - `id` (String) UUID of the route.
 - `network` (String) The private IPv4 or IPv6 range connected by the route, in CIDR notation.
 - `tun_type` (String) The type of tunnel.
+Available values: "cfd_tunnel", "warp_connector", "ip_sec", "gre", "cni".
 - `tunnel_id` (String) UUID of the tunnel.
 - `tunnel_name` (String) A user-friendly name for a tunnel.
 - `virtual_network_id` (String) UUID of the virtual network.

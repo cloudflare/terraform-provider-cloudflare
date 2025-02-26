@@ -41,6 +41,7 @@ Read-Only:
 - `created_at` (String)
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
+Available values: "identity_denied", "forbidden".
 - `uid` (String) UUID
 - `updated_at` (String)
 

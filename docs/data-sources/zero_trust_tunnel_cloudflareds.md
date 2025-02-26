@@ -42,6 +42,7 @@ data "cloudflare_zero_trust_tunnel_cloudflareds" "example_zero_trust_tunnel_clou
 - `max_items` (Number) Max items to fetch, default: 1000
 - `name` (String) A user-friendly name for a tunnel.
 - `status` (String) The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).
+Available values: "inactive", "degraded", "healthy", "down".
 - `uuid` (String) UUID of the tunnel.
 - `was_active_at` (String)
 - `was_inactive_at` (String)
@@ -66,7 +67,9 @@ Read-Only:
 - `name` (String) A user-friendly name for a tunnel.
 - `remote_config` (Boolean) If `true`, the tunnel can be configured remotely from the Zero Trust dashboard. If `false`, the tunnel must be configured locally on the origin machine.
 - `status` (String) The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).
+Available values: "inactive", "degraded", "healthy", "down".
 - `tun_type` (String) The type of tunnel.
+Available values: "cfd_tunnel", "warp_connector", "ip_sec", "gre", "cni".
 
 <a id="nestedatt--result--connections"></a>
 ### Nested Schema for `result.connections`
