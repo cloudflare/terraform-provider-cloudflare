@@ -45,7 +45,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"kind": schema.StringAttribute{
-				Description: "The kind of the ruleset.",
+				Description: "The kind of the ruleset.\navailable values: \"managed\", \"custom\", \"root\", \"zone\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -61,7 +61,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"phase": schema.StringAttribute{
-				Description: "The phase of the ruleset.",
+				Description: "The phase of the ruleset.\navailable values: \"ddos_l4\", \"ddos_l7\", \"http_config_settings\", \"http_custom_errors\", \"http_log_custom_fields\", \"http_ratelimit\", \"http_request_cache_settings\", \"http_request_dynamic_redirect\", \"http_request_firewall_custom\", \"http_request_firewall_managed\", \"http_request_late_transform\", \"http_request_origin\", \"http_request_redirect\", \"http_request_sanitize\", \"http_request_sbfm\", \"http_request_transform\", \"http_response_compression\", \"http_response_firewall_managed\", \"http_response_headers_transform\", \"magic_transit\", \"magic_transit_ids_managed\", \"magic_transit_managed\", \"magic_transit_ratelimit\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -102,7 +102,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"action": schema.StringAttribute{
-							Description: "The action to perform when the rule matches.",
+							Description: "The action to perform when the rule matches.\navailable values: \"block\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -161,7 +161,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
-												Description: "Name of compression algorithm to enable.",
+												Description: "Name of compression algorithm to enable.\navailable values: \"none\", \"auto\", \"default\", \"gzip\", \"brotli\"",
 												Computed:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(
@@ -219,7 +219,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 														Computed:    true,
 													},
 													"sensitivity_level": schema.StringAttribute{
-														Description: "The sensitivity level to use for rules in the category.",
+														Description: "The sensitivity level to use for rules in the category.\navailable values: \"default\", \"medium\", \"low\", \"eoff\"",
 														Computed:    true,
 														Validators: []validator.String{
 															stringvalidator.OneOfCaseInsensitive(
@@ -260,7 +260,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 														Computed:    true,
 													},
 													"sensitivity_level": schema.StringAttribute{
-														Description: "The sensitivity level to use for the rule.",
+														Description: "The sensitivity level to use for the rule.\navailable values: \"default\", \"medium\", \"low\", \"eoff\"",
 														Computed:    true,
 														Validators: []validator.String{
 															stringvalidator.OneOfCaseInsensitive(
@@ -275,7 +275,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"sensitivity_level": schema.StringAttribute{
-											Description: "A sensitivity level to set for all rules. This option has lower precedence than rule and category overrides and is only applicable for DDoS phases.",
+											Description: "A sensitivity level to set for all rules. This option has lower precedence than rule and category overrides and is only applicable for DDoS phases.\navailable values: \"default\", \"medium\", \"low\", \"eoff\"",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
@@ -313,7 +313,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 										},
 										"status_code": schema.Float64Attribute{
-											Description: "The status code to be used for the redirect.",
+											Description: "The status code to be used for the redirect.\navailable values: 301, 302, 303, 307, 308",
 											Computed:    true,
 											Validators: []validator.Float64{
 												float64validator.OneOf(
@@ -349,7 +349,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"operation": schema.StringAttribute{
-												Computed: true,
+												Description: "available values: \"remove\"",
+												Computed:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("remove", "set"),
 												},
@@ -444,7 +445,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"content_type": schema.StringAttribute{
-									Description: "Content-type header to set with the response.",
+									Description: "Content-type header to set with the response.\navailable values: \"application/json\", \"text/xml\", \"text/plain\", \"text/html\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -522,7 +523,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"polish": schema.StringAttribute{
-									Description: "Configure the Polish level.",
+									Description: "Configure the Polish level.\navailable values: \"off\", \"lossless\", \"lossy\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -537,7 +538,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"security_level": schema.StringAttribute{
-									Description: "Configure the Security Level.",
+									Description: "Configure the Security Level.\navailable values: \"off\", \"essentially_off\", \"low\", \"medium\", \"high\", \"under_attack\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -555,7 +556,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"ssl": schema.StringAttribute{
-									Description: "Configure the SSL level.",
+									Description: "Configure the SSL level.\navailable values: \"off\", \"flexible\", \"full\", \"strict\", \"origin_pull\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -634,7 +635,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"ruleset": schema.StringAttribute{
-									Description: "A ruleset to skip the execution of. This option is incompatible with the rulesets, rules and phases options.",
+									Description: "A ruleset to skip the execution of. This option is incompatible with the rulesets, rules and phases options.\navailable values: \"current\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("current"),
@@ -658,7 +659,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersBrowserTTLDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"mode": schema.StringAttribute{
-											Description: "Determines which browser ttl mode to use.",
+											Description: "Determines which browser ttl mode to use.\navailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\"",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
@@ -851,7 +852,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"mode": schema.StringAttribute{
-											Description: "edge ttl options",
+											Description: "edge ttl options\navailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\"",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
@@ -1053,7 +1054,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									ElementType: types.StringType,
 								},
 								"period": schema.Int64Attribute{
-									Description: "Period in seconds over which the counter is being incremented.",
+									Description: "Period in seconds over which the counter is being incremented.\navailable values: 10, 60, 600, 3600",
 									Computed:    true,
 									Validators: []validator.Int64{
 										int64validator.OneOf(

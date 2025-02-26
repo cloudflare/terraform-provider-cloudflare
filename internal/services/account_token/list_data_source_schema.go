@@ -25,7 +25,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "Direction to order results.",
+				Description: "Direction to order results.\navailable values: \"asc\", \"desc\"",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
@@ -113,7 +113,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Computed:    true,
 									},
 									"effect": schema.StringAttribute{
-										Description: "Allow or deny operations against the resources.",
+										Description: "Allow or deny operations against the resources.\navailable values: \"allow\", \"deny\"",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive("allow", "deny"),
@@ -159,7 +159,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"status": schema.StringAttribute{
-							Description: "Status of the token.",
+							Description: "Status of the token.\navailable values: \"active\", \"disabled\", \"expired\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

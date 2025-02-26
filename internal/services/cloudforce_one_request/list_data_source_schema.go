@@ -46,7 +46,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"priority": schema.StringAttribute{
-							Computed: true,
+							Description: "available values: \"routine\", \"high\", \"urgent\"",
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"routine",
@@ -64,7 +65,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"tlp": schema.StringAttribute{
-							Description: "The CISA defined Traffic Light Protocol (TLP)",
+							Description: "The CISA defined Traffic Light Protocol (TLP)\navailable values: \"clear\", \"amber\", \"amber-strict\", \"green\", \"red\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -95,7 +96,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"status": schema.StringAttribute{
-							Description: "Request Status",
+							Description: "Request Status\navailable values: \"open\", \"accepted\", \"reported\", \"approved\", \"completed\", \"declined\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

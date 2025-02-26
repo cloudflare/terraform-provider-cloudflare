@@ -52,7 +52,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"type": schema.StringAttribute{
-										Description: "Type of supported action.",
+										Description: "Type of supported action.\navailable values: \"drop\", \"forward\", \"worker\"",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -81,14 +81,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"field": schema.StringAttribute{
-										Description: "Field for type matcher.",
+										Description: "Field for type matcher.\navailable values: \"to\"",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive("to"),
 										},
 									},
 									"type": schema.StringAttribute{
-										Description: "Type of matcher.",
+										Description: "Type of matcher.\navailable values: \"literal\"",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive("literal"),

@@ -36,7 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"region": schema.StringAttribute{
-				Description: "Region where this widget can be used.",
+				Description: "Region where this widget can be used.\navailable values: \"world\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -46,7 +46,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:       stringdefault.StaticString("world"),
 			},
 			"mode": schema.StringAttribute{
-				Description: "Widget Mode",
+				Description: "Widget Mode\navailable values: \"non-interactive\", \"invisible\", \"managed\"",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -57,7 +57,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Human readable widget name. Not unique. Cloudflare suggests that you\nset this to a meaningful string to make it easier to identify your\nwidget, and where it is used.\n",
+				Description: "Human readable widget name. Not unique. Cloudflare suggests that you\nset this to a meaningful string to make it easier to identify your\nwidget, and where it is used.",
 				Required:    true,
 			},
 			"domains": schema.ListAttribute{
@@ -65,11 +65,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"bot_fight_mode": schema.BoolAttribute{
-				Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).\n",
+				Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).",
 				Optional:    true,
 			},
 			"clearance_level": schema.StringAttribute{
-				Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\n",
+				Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\navailable values: \"no_clearance\", \"jschallenge\", \"managed\", \"interactive\"",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -81,11 +81,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"ephemeral_id": schema.BoolAttribute{
-				Description: "Return the Ephemeral ID in /siteverify (ENT only).\n",
+				Description: "Return the Ephemeral ID in /siteverify (ENT only).",
 				Optional:    true,
 			},
 			"offlabel": schema.BoolAttribute{
-				Description: "Do not show any Cloudflare branding on the widget (ENT only).\n",
+				Description: "Do not show any Cloudflare branding on the widget (ENT only).",
 				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{

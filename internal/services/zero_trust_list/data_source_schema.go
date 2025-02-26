@@ -47,7 +47,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of list.",
+				Description: "The type of list.\navailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -67,7 +67,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
-						Description: "The type of list.",
+						Description: "The type of list.\navailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\"",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

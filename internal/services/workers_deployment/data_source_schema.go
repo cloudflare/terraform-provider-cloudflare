@@ -32,7 +32,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"strategy": schema.StringAttribute{
-							Computed: true,
+							Description: "available values: \"percentage\"",
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("percentage"),
 							},

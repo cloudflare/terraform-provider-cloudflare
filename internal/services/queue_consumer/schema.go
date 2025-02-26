@@ -42,7 +42,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"type": schema.StringAttribute{
-				Optional: true,
+				Description: "available values: \"worker\"",
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("worker", "http_pull"),
 				},

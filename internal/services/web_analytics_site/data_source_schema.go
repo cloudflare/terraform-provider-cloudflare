@@ -116,7 +116,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"order_by": schema.StringAttribute{
-						Description: "The property used to sort the list of results.",
+						Description: "The property used to sort the list of results.\navailable values: \"host\", \"created\"",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("host", "created"),

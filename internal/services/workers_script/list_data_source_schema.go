@@ -72,14 +72,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[WorkersScriptsPlacementDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"mode": schema.StringAttribute{
-									Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+									Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\navailable values: \"smart\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("smart"),
 									},
 								},
 								"status": schema.StringAttribute{
-									Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+									Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\navailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -92,14 +92,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"placement_mode": schema.StringAttribute{
-							Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+							Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\navailable values: \"smart\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("smart"),
 							},
 						},
 						"placement_status": schema.StringAttribute{
-							Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+							Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\navailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -131,7 +131,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"usage_model": schema.StringAttribute{
-							Description: "Usage model for the Worker invocations.",
+							Description: "Usage model for the Worker invocations.\navailable values: \"standard\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("standard"),
