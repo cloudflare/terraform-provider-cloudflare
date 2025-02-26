@@ -58,7 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"kind": schema.StringAttribute{
-							Description: "The type of the membership.",
+							Description: "The type of the membership.\navailable values: \"zone\", \"account\"",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("zone", "account"),

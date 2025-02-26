@@ -38,7 +38,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewNestedObjectType[ImageVariantVariantOptionsDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"fit": schema.StringAttribute{
-								Description: "The fit property describes how the width and height dimensions should be interpreted.",
+								Description: "The fit property describes how the width and height dimensions should be interpreted.\navailable values: \"scale-down\", \"contain\", \"cover\", \"crop\", \"pad\"",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -58,7 +58,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"metadata": schema.StringAttribute{
-								Description: "What EXIF data should be preserved in the output image.",
+								Description: "What EXIF data should be preserved in the output image.\navailable values: \"keep\", \"copyright\", \"none\"",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(

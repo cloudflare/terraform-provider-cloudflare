@@ -29,14 +29,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"scope": schema.StringAttribute{
-				Description: "The scope of the URL normalization.",
+				Description: "The scope of the URL normalization.\navailable values: \"incoming\", \"both\"",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("incoming", "both"),
 				},
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of URL normalization performed by Cloudflare.",
+				Description: "The type of URL normalization performed by Cloudflare.\navailable values: \"cloudflare\", \"rfc3986\"",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("cloudflare", "rfc3986"),

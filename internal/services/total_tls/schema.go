@@ -34,7 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"certificate_authority": schema.StringAttribute{
-				Description: "The Certificate Authority that Total TLS certificates will be issued through.",
+				Description: "The Certificate Authority that Total TLS certificates will be issued through.\navailable values: \"google\", \"lets_encrypt\", \"ssl_com\"",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -45,7 +45,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"validity_period": schema.Int64Attribute{
-				Description: "The validity period in days for the certificates ordered via Total TLS.",
+				Description: "The validity period in days for the certificates ordered via Total TLS.\navailable values: 90",
 				Computed:    true,
 				Validators: []validator.Int64{
 					int64validator.OneOf(90),

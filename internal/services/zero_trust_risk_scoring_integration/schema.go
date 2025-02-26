@@ -29,7 +29,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"integration_type": schema.StringAttribute{
-				Required: true,
+				Description: "available values: \"Okta\"",
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("Okta"),
 				},

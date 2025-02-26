@@ -241,7 +241,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 							"fallback_action": schema.StringAttribute{
-								Description: "Action to take when the file cannot be scanned.",
+								Description: "Action to take when the file cannot be scanned.\navailable values: \"allow\", \"block\"",
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("allow", "block"),

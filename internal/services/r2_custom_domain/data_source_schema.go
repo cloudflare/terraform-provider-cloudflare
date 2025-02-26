@@ -38,7 +38,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"min_tls": schema.StringAttribute{
-				Description: "Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.",
+				Description: "Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.\navailable values: \"1.0\", \"1.1\", \"1.2\", \"1.3\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -62,7 +62,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[R2CustomDomainStatusDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ownership": schema.StringAttribute{
-						Description: "Ownership status of the domain",
+						Description: "Ownership status of the domain\navailable values: \"pending\", \"active\", \"deactivated\", \"blocked\", \"error\", \"unknown\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -76,7 +76,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"ssl": schema.StringAttribute{
-						Description: "SSL certificate status",
+						Description: "SSL certificate status\navailable values: \"initializing\", \"pending\", \"active\", \"deactivated\", \"error\", \"unknown\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

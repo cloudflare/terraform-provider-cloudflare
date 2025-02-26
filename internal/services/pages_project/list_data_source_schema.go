@@ -218,7 +218,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											ElementType: types.StringType,
 										},
 										"preview_deployment_setting": schema.StringAttribute{
-											Computed: true,
+											Description: "available values: \"all\", \"none\", \"custom\"",
+											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
 													"all",

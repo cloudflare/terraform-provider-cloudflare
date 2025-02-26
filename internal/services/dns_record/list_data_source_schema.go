@@ -29,11 +29,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"search": schema.StringAttribute{
-				Description: "Allows searching in multiple properties of a DNS record simultaneously. This parameter is intended for human users, not automation. Its exact behavior is intentionally left unspecified and is subject to change in the future. This parameter works independently of the `match` setting. For automated searches, please use the other available parameters.\n",
+				Description: "Allows searching in multiple properties of a DNS record simultaneously. This parameter is intended for human users, not automation. Its exact behavior is intentionally left unspecified and is subject to change in the future. This parameter works independently of the `match` setting. For automated searches, please use the other available parameters.",
 				Optional:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Record type.",
+				Description: "Record type.\navailable values: \"A\", \"AAAA\", \"CAA\", \"CERT\", \"CNAME\", \"DNSKEY\", \"DS\", \"HTTPS\", \"LOC\", \"MX\", \"NAPTR\", \"NS\", \"OPENPGPKEY\", \"PTR\", \"SMIMEA\", \"SRV\", \"SSHFP\", \"SVCB\", \"TLSA\", \"TXT\", \"URI\"",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -65,27 +65,27 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"absent": schema.StringAttribute{
-						Description: "If this parameter is present, only records *without* a comment are returned.\n",
+						Description: "If this parameter is present, only records *without* a comment are returned.",
 						Optional:    true,
 					},
 					"contains": schema.StringAttribute{
-						Description: "Substring of the DNS record comment. Comment filters are case-insensitive.\n",
+						Description: "Substring of the DNS record comment. Comment filters are case-insensitive.",
 						Optional:    true,
 					},
 					"endswith": schema.StringAttribute{
-						Description: "Suffix of the DNS record comment. Comment filters are case-insensitive.\n",
+						Description: "Suffix of the DNS record comment. Comment filters are case-insensitive.",
 						Optional:    true,
 					},
 					"exact": schema.StringAttribute{
-						Description: "Exact value of the DNS record comment. Comment filters are case-insensitive.\n",
+						Description: "Exact value of the DNS record comment. Comment filters are case-insensitive.",
 						Optional:    true,
 					},
 					"present": schema.StringAttribute{
-						Description: "If this parameter is present, only records *with* a comment are returned.\n",
+						Description: "If this parameter is present, only records *with* a comment are returned.",
 						Optional:    true,
 					},
 					"startswith": schema.StringAttribute{
-						Description: "Prefix of the DNS record comment. Comment filters are case-insensitive.\n",
+						Description: "Prefix of the DNS record comment. Comment filters are case-insensitive.",
 						Optional:    true,
 					},
 				},
@@ -94,19 +94,19 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"contains": schema.StringAttribute{
-						Description: "Substring of the DNS record content. Content filters are case-insensitive.\n",
+						Description: "Substring of the DNS record content. Content filters are case-insensitive.",
 						Optional:    true,
 					},
 					"endswith": schema.StringAttribute{
-						Description: "Suffix of the DNS record content. Content filters are case-insensitive.\n",
+						Description: "Suffix of the DNS record content. Content filters are case-insensitive.",
 						Optional:    true,
 					},
 					"exact": schema.StringAttribute{
-						Description: "Exact value of the DNS record content. Content filters are case-insensitive.\n",
+						Description: "Exact value of the DNS record content. Content filters are case-insensitive.",
 						Optional:    true,
 					},
 					"startswith": schema.StringAttribute{
-						Description: "Prefix of the DNS record content. Content filters are case-insensitive.\n",
+						Description: "Prefix of the DNS record content. Content filters are case-insensitive.",
 						Optional:    true,
 					},
 				},
@@ -115,19 +115,19 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"contains": schema.StringAttribute{
-						Description: "Substring of the DNS record name. Name filters are case-insensitive.\n",
+						Description: "Substring of the DNS record name. Name filters are case-insensitive.",
 						Optional:    true,
 					},
 					"endswith": schema.StringAttribute{
-						Description: "Suffix of the DNS record name. Name filters are case-insensitive.\n",
+						Description: "Suffix of the DNS record name. Name filters are case-insensitive.",
 						Optional:    true,
 					},
 					"exact": schema.StringAttribute{
-						Description: "Exact value of the DNS record name. Name filters are case-insensitive.\n",
+						Description: "Exact value of the DNS record name. Name filters are case-insensitive.",
 						Optional:    true,
 					},
 					"startswith": schema.StringAttribute{
-						Description: "Prefix of the DNS record name. Name filters are case-insensitive.\n",
+						Description: "Prefix of the DNS record name. Name filters are case-insensitive.",
 						Optional:    true,
 					},
 				},
@@ -136,33 +136,33 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"absent": schema.StringAttribute{
-						Description: "Name of a tag which must *not* be present on the DNS record. Tag filters are case-insensitive.\n",
+						Description: "Name of a tag which must *not* be present on the DNS record. Tag filters are case-insensitive.",
 						Optional:    true,
 					},
 					"contains": schema.StringAttribute{
-						Description: "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value contains `<tag-value>`. Tag filters are case-insensitive.\n",
+						Description: "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value contains `<tag-value>`. Tag filters are case-insensitive.",
 						Optional:    true,
 					},
 					"endswith": schema.StringAttribute{
-						Description: "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value ends with `<tag-value>`. Tag filters are case-insensitive.\n",
+						Description: "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value ends with `<tag-value>`. Tag filters are case-insensitive.",
 						Optional:    true,
 					},
 					"exact": schema.StringAttribute{
-						Description: "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value is `<tag-value>`. Tag filters are case-insensitive.\n",
+						Description: "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value is `<tag-value>`. Tag filters are case-insensitive.",
 						Optional:    true,
 					},
 					"present": schema.StringAttribute{
-						Description: "Name of a tag which must be present on the DNS record. Tag filters are case-insensitive.\n",
+						Description: "Name of a tag which must be present on the DNS record. Tag filters are case-insensitive.",
 						Optional:    true,
 					},
 					"startswith": schema.StringAttribute{
-						Description: "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value starts with `<tag-value>`. Tag filters are case-insensitive.\n",
+						Description: "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value starts with `<tag-value>`. Tag filters are case-insensitive.",
 						Optional:    true,
 					},
 				},
 			},
 			"direction": schema.StringAttribute{
-				Description: "Direction to order DNS records in.",
+				Description: "Direction to order DNS records in.\navailable values: \"asc\", \"desc\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -170,7 +170,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"match": schema.StringAttribute{
-				Description: "Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead. Note that the interaction between tag filters is controlled by the `tag-match` parameter instead.\n",
+				Description: "Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead. Note that the interaction between tag filters is controlled by the `tag-match` parameter instead.\navailable values: \"any\", \"all\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -178,7 +178,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"order": schema.StringAttribute{
-				Description: "Field to order DNS records by.",
+				Description: "Field to order DNS records by.\navailable values: \"type\", \"name\", \"content\", \"ttl\", \"proxied\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -197,7 +197,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"tag_match": schema.StringAttribute{
-				Description: "Whether to match all tag search requirements or at least one (any). If set to `all`, acts like a logical AND between tag filters. If set to `any`, acts like a logical OR instead. Note that the regular `match` parameter is still used to combine the resulting condition with other filters that aren't related to tags.\n",
+				Description: "Whether to match all tag search requirements or at least one (any). If set to `all`, acts like a logical AND between tag filters. If set to `any`, acts like a logical OR instead. Note that the regular `match` parameter is still used to combine the resulting condition with other filters that aren't related to tags.\navailable values: \"any\", \"all\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -266,7 +266,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: "Record type.",
+							Description: "Record type.\navailable values: \"A\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -420,7 +420,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"lat_direction": schema.StringAttribute{
-									Description: "Latitude direction.",
+									Description: "Latitude direction.\navailable values: \"N\", \"S\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("N", "S"),
@@ -448,7 +448,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"long_direction": schema.StringAttribute{
-									Description: "Longitude direction.",
+									Description: "Longitude direction.\navailable values: \"E\", \"W\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("E", "W"),

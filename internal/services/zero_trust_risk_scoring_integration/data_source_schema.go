@@ -40,7 +40,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"integration_type": schema.StringAttribute{
-				Computed: true,
+				Description: "available values: \"Okta\"",
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("Okta"),
 				},

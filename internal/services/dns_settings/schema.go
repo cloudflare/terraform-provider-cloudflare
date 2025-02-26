@@ -67,7 +67,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewNestedObjectType[DNSSettingsZoneDefaultsNameserversModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"type": schema.StringAttribute{
-								Description: "Nameserver type",
+								Description: "Nameserver type\navailable values: \"cloudflare.standard\", \"cloudflare.standard.random\", \"custom.account\", \"custom.tenant\"",
 								Required:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -143,7 +143,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"zone_mode": schema.StringAttribute{
-						Description: "Whether the zone mode is a regular or CDN/DNS only zone.",
+						Description: "Whether the zone mode is a regular or CDN/DNS only zone.\navailable values: \"standard\", \"cdn_only\", \"dns_only\"",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

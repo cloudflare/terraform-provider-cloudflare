@@ -35,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"location": schema.StringAttribute{
-				Description: "Location of the bucket",
+				Description: "Location of the bucket\navailable values: \"apac\", \"eeur\", \"enam\", \"weur\", \"wnam\"",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -61,7 +61,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"storage_class": schema.StringAttribute{
-				Description: "Storage class for newly uploaded objects, unless specified otherwise.",
+				Description: "Storage class for newly uploaded objects, unless specified otherwise.\navailable values: \"Standard\", \"InfrequentAccess\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
