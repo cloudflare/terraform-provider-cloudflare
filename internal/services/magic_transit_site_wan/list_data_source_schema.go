@@ -44,7 +44,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"health_check_rate": schema.StringAttribute{
-							Description: "Magic WAN health check rate for tunnels created on this link. The default value is `mid`.\navailable values: \"low\", \"mid\", \"high\"",
+							Description: "Magic WAN health check rate for tunnels created on this link. The default value is `mid`.\nAvailable values: \"low\", \"mid\", \"high\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

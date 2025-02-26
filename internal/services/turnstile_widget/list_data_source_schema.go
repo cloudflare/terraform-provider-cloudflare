@@ -25,14 +25,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "Direction to order widgets.\navailable values: \"asc\", \"desc\"",
+				Description: "Direction to order widgets.\nAvailable values: \"asc\", \"desc\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 				},
 			},
 			"order": schema.StringAttribute{
-				Description: "Field to order widgets by.\navailable values: \"id\", \"sitekey\", \"name\", \"created_on\", \"modified_on\"",
+				Description: "Field to order widgets by.\nAvailable values: \"id\", \"sitekey\", \"name\", \"created_on\", \"modified_on\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -62,7 +62,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"clearance_level": schema.StringAttribute{
-							Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\navailable values: \"no_clearance\", \"jschallenge\", \"managed\", \"interactive\"",
+							Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\nAvailable values: \"no_clearance\", \"jschallenge\", \"managed\", \"interactive\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -88,7 +88,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"mode": schema.StringAttribute{
-							Description: "Widget Mode\navailable values: \"non-interactive\", \"invisible\", \"managed\"",
+							Description: "Widget Mode\nAvailable values: \"non-interactive\", \"invisible\", \"managed\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -112,7 +112,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"region": schema.StringAttribute{
-							Description: "Region where this widget can be used.\navailable values: \"world\"",
+							Description: "Region where this widget can be used.\nAvailable values: \"world\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("world"),

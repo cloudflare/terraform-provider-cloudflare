@@ -230,7 +230,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
-							Description: "available values: \"public\"",
+							Description: "Available values: \"public\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("public", "private"),
@@ -249,7 +249,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"l4_protocol": schema.StringAttribute{
-							Description: "The L4 protocol of the destination. When omitted, both UDP and TCP traffic will match.\navailable values: \"tcp\", \"udp\"",
+							Description: "The L4 protocol of the destination. When omitted, both UDP and TCP traffic will match.\nAvailable values: \"tcp\", \"udp\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("tcp", "udp"),
@@ -330,7 +330,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"decision": schema.StringAttribute{
-							Description: "The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.\navailable values: \"allow\", \"deny\", \"non_identity\", \"bypass\"",
+							Description: "The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.\nAvailable values: \"allow\", \"deny\", \"non_identity\", \"bypass\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -1199,7 +1199,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"auth_type": schema.StringAttribute{
 						Computed:    true,
-						Description: "Optional identifier indicating the authentication protocol used for the saas app. Required for OIDC. Default if unset is \"saml\"\navailable values: \"saml\", \"oidc\"",
+						Description: "Optional identifier indicating the authentication protocol used for the saas app. Required for OIDC. Default if unset is \"saml\"\nAvailable values: \"saml\", \"oidc\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("saml", "oidc"),
@@ -1228,7 +1228,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 								},
 								"name_format": schema.StringAttribute{
-									Description: "A globally unique name for an identity or service provider.\navailable values: \"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified\", \"urn:oasis:names:tc:SAML:2.0:attrname-format:basic\", \"urn:oasis:names:tc:SAML:2.0:attrname-format:uri\"",
+									Description: "A globally unique name for an identity or service provider.\nAvailable values: \"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified\", \"urn:oasis:names:tc:SAML:2.0:attrname-format:basic\", \"urn:oasis:names:tc:SAML:2.0:attrname-format:uri\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -1284,7 +1284,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"name_id_format": schema.StringAttribute{
-						Description: "The format of the name identifier sent to the SaaS application.\navailable values: \"id\", \"email\"",
+						Description: "The format of the name identifier sent to the SaaS application.\nAvailable values: \"id\", \"email\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("id", "email"),
@@ -1353,7 +1353,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 								},
 								"scope": schema.StringAttribute{
-									Description: "The scope of the claim.\navailable values: \"groups\", \"profile\", \"email\", \"openid\"",
+									Description: "The scope of the claim.\nAvailable values: \"groups\", \"profile\", \"email\", \"openid\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -1476,7 +1476,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 							"scheme": schema.StringAttribute{
-								Description: "The authentication scheme to use when making SCIM requests to this application.\navailable values: \"httpbasic\"",
+								Description: "The authentication scheme to use when making SCIM requests to this application.\nAvailable values: \"httpbasic\".",
 								Required:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -1566,7 +1566,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"strictness": schema.StringAttribute{
-									Description: "The level of adherence to outbound resource schemas when provisioning to this mapping. ‘Strict’ removes unknown values, while ‘passthrough’ passes unknown values to the target.\navailable values: \"strict\", \"passthrough\"",
+									Description: "The level of adherence to outbound resource schemas when provisioning to this mapping. ‘Strict’ removes unknown values, while ‘passthrough’ passes unknown values to the target.\nAvailable values: \"strict\", \"passthrough\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("strict", "passthrough"),
@@ -1592,7 +1592,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"protocol": schema.StringAttribute{
-							Description: "The communication protocol your application secures.\navailable values: \"ssh\"",
+							Description: "The communication protocol your application secures.\nAvailable values: \"ssh\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("ssh"),

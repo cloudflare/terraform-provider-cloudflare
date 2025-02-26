@@ -45,7 +45,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"effect": schema.StringAttribute{
-							Description: "Allow or deny operations against the resources.\navailable values: \"allow\", \"deny\"",
+							Description: "Allow or deny operations against the resources.\nAvailable values: \"allow\", \"deny\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
@@ -98,7 +98,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of the token.\navailable values: \"active\", \"disabled\", \"expired\"",
+				Description: "Status of the token.\nAvailable values: \"active\", \"disabled\", \"expired\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

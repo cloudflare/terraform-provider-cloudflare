@@ -25,7 +25,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"order": schema.StringAttribute{
-				Description: "Field to order DNS views by.\navailable values: \"name\", \"created_on\", \"modified_on\"",
+				Description: "Field to order DNS views by.\nAvailable values: \"name\", \"created_on\", \"modified_on\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -65,7 +65,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"direction": schema.StringAttribute{
-				Description: "Direction to order DNS views in.\navailable values: \"asc\", \"desc\"",
+				Description: "Direction to order DNS views in.\nAvailable values: \"asc\", \"desc\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -73,7 +73,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"match": schema.StringAttribute{
-				Description: "Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead.\navailable values: \"any\", \"all\"",
+				Description: "Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead.\nAvailable values: \"any\", \"all\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{

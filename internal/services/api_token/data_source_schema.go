@@ -59,7 +59,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of the token.\navailable values: \"active\", \"disabled\", \"expired\"",
+				Description: "Status of the token.\nAvailable values: \"active\", \"disabled\", \"expired\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -105,7 +105,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"effect": schema.StringAttribute{
-							Description: "Allow or deny operations against the resources.\navailable values: \"allow\", \"deny\"",
+							Description: "Allow or deny operations against the resources.\nAvailable values: \"allow\", \"deny\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
@@ -154,7 +154,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{
-						Description: "Direction to order results.\navailable values: \"asc\", \"desc\"",
+						Description: "Direction to order results.\nAvailable values: \"asc\", \"desc\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("asc", "desc"),

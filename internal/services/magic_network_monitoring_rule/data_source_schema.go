@@ -42,7 +42,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"duration": schema.StringAttribute{
-				Description: "The amount of time that the rule threshold must be exceeded to send an alert notification. The final value must be equivalent to one of the following 8 values [\"1m\",\"5m\",\"10m\",\"15m\",\"20m\",\"30m\",\"45m\",\"60m\"].\navailable values: \"1m\", \"5m\", \"10m\", \"15m\", \"20m\", \"30m\", \"45m\", \"60m\"",
+				Description: "The amount of time that the rule threshold must be exceeded to send an alert notification. The final value must be equivalent to one of the following 8 values [\"1m\",\"5m\",\"10m\",\"15m\",\"20m\",\"30m\",\"45m\",\"60m\"].\nAvailable values: \"1m\", \"5m\", \"10m\", \"15m\", \"20m\", \"30m\", \"45m\", \"60m\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -69,7 +69,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"prefix_match": schema.StringAttribute{
-				Description: "Prefix match type to be applied for a prefix auto advertisement when using an advanced_ddos rule.\navailable values: \"exact\", \"subnet\", \"supernet\"",
+				Description: "Prefix match type to be applied for a prefix auto advertisement when using an advanced_ddos rule.\nAvailable values: \"exact\", \"subnet\", \"supernet\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -80,7 +80,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"type": schema.StringAttribute{
-				Description: "MNM rule type.\navailable values: \"threshold\", \"zscore\", \"advanced_ddos\"",
+				Description: "MNM rule type.\nAvailable values: \"threshold\", \"zscore\", \"advanced_ddos\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -91,7 +91,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"zscore_sensitivity": schema.StringAttribute{
-				Description: "Level of sensitivity set for zscore rules.\navailable values: \"low\", \"medium\", \"high\"",
+				Description: "Level of sensitivity set for zscore rules.\nAvailable values: \"low\", \"medium\", \"high\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -102,7 +102,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"zscore_target": schema.StringAttribute{
-				Description: "Target of the zscore rule analysis.\navailable values: \"bits\", \"packets\"",
+				Description: "Target of the zscore rule analysis.\nAvailable values: \"bits\", \"packets\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("bits", "packets"),

@@ -24,21 +24,21 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "The sorting direction.\navailable values: \"asc\", \"desc\"",
+				Description: "The sorting direction.\nAvailable values: \"asc\", \"desc\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 				},
 			},
 			"order": schema.StringAttribute{
-				Description: "The field to sort by.\navailable values: \"pattern\", \"created_at\"",
+				Description: "The field to sort by.\nAvailable values: \"pattern\", \"created_at\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("pattern", "created_at"),
 				},
 			},
 			"pattern_type": schema.StringAttribute{
-				Description: "available values: \"EMAIL\", \"DOMAIN\", \"IP\", \"UNKNOWN\"",
+				Description: "Available values: \"EMAIL\", \"DOMAIN\", \"IP\", \"UNKNOWN\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -85,7 +85,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"pattern_type": schema.StringAttribute{
-							Description: "available values: \"EMAIL\", \"DOMAIN\", \"IP\", \"UNKNOWN\"",
+							Description: "Available values: \"EMAIL\", \"DOMAIN\", \"IP\", \"UNKNOWN\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

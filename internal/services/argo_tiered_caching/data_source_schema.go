@@ -26,7 +26,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "ID of the zone setting.\navailable values: \"tiered_caching\"",
+				Description: "ID of the zone setting.\nAvailable values: \"tiered_caching\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("tiered_caching"),
@@ -38,7 +38,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"value": schema.StringAttribute{
-				Description: "The value of the feature\navailable values: \"on\", \"off\"",
+				Description: "The value of the feature\nAvailable values: \"on\", \"off\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),

@@ -38,7 +38,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"status": schema.StringAttribute{
-				Description: "available values: \"accepted\", \"pending\"",
+				Description: "Available values: \"accepted\", \"pending\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -64,7 +64,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"access": schema.StringAttribute{
-							Description: "Allow or deny operations against the resources.\navailable values: \"allow\", \"deny\"",
+							Description: "Allow or deny operations against the resources.\nAvailable values: \"allow\", \"deny\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("allow", "deny"),

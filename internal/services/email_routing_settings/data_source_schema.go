@@ -48,7 +48,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Show the state of your account, and the type or configuration error.\navailable values: \"ready\", \"unconfigured\", \"misconfigured\", \"misconfigured/locked\", \"unlocked\"",
+				Description: "Show the state of your account, and the type or configuration error.\nAvailable values: \"ready\", \"unconfigured\", \"misconfigured\", \"misconfigured/locked\", \"unlocked\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

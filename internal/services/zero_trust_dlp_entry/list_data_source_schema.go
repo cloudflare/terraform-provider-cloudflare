@@ -57,7 +57,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed: true,
 								},
 								"validation": schema.StringAttribute{
-									Description: "available values: \"luhn\"",
+									Description: "Available values: \"luhn\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("luhn"),
@@ -66,7 +66,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: "available values: \"custom\"",
+							Description: "Available values: \"custom\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

@@ -23,7 +23,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Include Certificate Packs of all statuses, not just active ones.\navailable values: \"all\"",
+				Description: "Include Certificate Packs of all statuses, not just active ones.\nAvailable values: \"all\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("all"),
