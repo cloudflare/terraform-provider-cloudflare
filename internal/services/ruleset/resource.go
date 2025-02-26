@@ -96,6 +96,7 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -103,17 +104,13 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 
 func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *RulesetModel
-
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	var state *RulesetModel
-
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -197,6 +194,7 @@ func (r *RulesetResource) Read(ctx context.Context, req resource.ReadRequest, re
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -287,6 +285,60 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *RulesetResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	var state *RulesetModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
+	var plan *RulesetModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Do nothing if there is no state or no plan.
+	if state == nil || plan == nil {
+		return
+	}
+
+	ruleIDsByRef := make(map[string]types.String)
+
+	stateElements := make([]RulesetRulesModel, 0, len(state.Rules.Elements()))
+	diags := state.Rules.ElementsAs(ctx, &stateElements, false)
+	if diags != nil {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+
+	for _, rule := range stateElements {
+		if ref := rule.Ref.ValueString(); ref != "" {
+			ruleIDsByRef[ref] = rule.ID
+		}
+	}
+
+	planElements := make([]RulesetRulesModel, 0, len(state.Rules.Elements()))
+	diags = state.Rules.ElementsAs(ctx, &planElements, false)
+	if diags != nil {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+
+	for _, rule := range planElements {
+		// Do nothing if the rule's ID is a known planned value.
+		if !rule.ID.IsUnknown() {
+			continue
+		}
+
+		// If the rule's ref matches a rule in the state, populate the planned
+		// value of its ID with the corresponding ID from the state.
+		if ref := rule.Ref.ValueString(); ref != "" {
+			if id, ok := ruleIDsByRef[ref]; ok {
+				rule.ID = id
+			}
+		}
+	}
+
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
 }
