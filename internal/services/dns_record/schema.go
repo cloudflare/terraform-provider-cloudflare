@@ -57,7 +57,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"type": schema.StringAttribute{
-				Description: "Record type.",
+				Description: "Record type.\navailable values: \"A\"",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -209,7 +209,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"lat_direction": schema.StringAttribute{
-						Description: "Latitude direction.",
+						Description: "Latitude direction.\navailable values: \"N\", \"S\"",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("N", "S"),
@@ -241,7 +241,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"long_direction": schema.StringAttribute{
-						Description: "Longitude direction.",
+						Description: "Longitude direction.\navailable values: \"E\", \"W\"",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("E", "W"),

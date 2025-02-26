@@ -34,7 +34,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"bundle_method": schema.StringAttribute{
-				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
+				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.\navailable values: \"ubiquitous\", \"optimal\", \"force\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -71,7 +71,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of the zone's custom SSL.",
+				Description: "Status of the zone's custom SSL.\navailable values: \"active\", \"expired\", \"deleted\", \"pending\", \"initializing\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -99,7 +99,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[CustomSSLGeoRestrictionsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"label": schema.StringAttribute{
-						Computed: true,
+						Description: "available values: \"us\", \"eu\", \"highest_security\"",
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"us",
@@ -151,7 +152,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"status": schema.StringAttribute{
-						Description: "Status of the Keyless SSL.",
+						Description: "Status of the Keyless SSL.\navailable values: \"active\", \"deleted\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("active", "deleted"),
@@ -178,7 +179,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"match": schema.StringAttribute{
-						Description: "Whether to match all search requirements or at least one (any).",
+						Description: "Whether to match all search requirements or at least one (any).\navailable values: \"any\", \"all\"",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -186,7 +187,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"status": schema.StringAttribute{
-						Description: "Status of the zone's custom SSL.",
+						Description: "Status of the zone's custom SSL.\navailable values: \"active\", \"expired\", \"deleted\", \"pending\", \"initializing\"",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

@@ -68,7 +68,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     stringdefault.StaticString(""),
 			},
 			"default_template_language": schema.StringAttribute{
-				Description: "The language of the default page template. If no default_template_language is provided, then `en-US` (English) will be used.",
+				Description: "The language of the default page template. If no default_template_language is provided, then `en-US` (English) will be used.\navailable values: \"en-US\", \"es-ES\", \"de-DE\", \"fr-FR\", \"it-IT\", \"ja-JP\", \"ko-KR\", \"pt-BR\", \"zh-CN\", \"zh-TW\", \"nl-NL\", \"pl-PL\", \"id-ID\", \"tr-TR\", \"ar-EG\", \"ru-RU\", \"fa-IR\", \"bg-BG\", \"hr-HR\", \"cs-CZ\", \"da-DK\", \"fi-FI\", \"lt-LT\", \"ms-MY\", \"nb-NO\", \"ro-RO\", \"el-GR\", \"he-IL\", \"hi-IN\", \"hu-HU\", \"sr-BA\", \"sk-SK\", \"sl-SI\", \"sv-SE\", \"tl-PH\", \"th-TH\", \"uk-UA\", \"vi-VN\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -146,7 +146,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"queueing_method": schema.StringAttribute{
-				Description: "Sets the queueing method used by the waiting room. Changing this parameter from the **default** queueing method is only available for the Waiting Room Advanced subscription. Regardless of the queueing method, if `queue_all` is enabled or an event is prequeueing, users in the waiting room will not be accepted to the origin. These users will always see a waiting room page that refreshes automatically. The valid queueing methods are:\n1. `fifo` **(default)**: First-In-First-Out queue where customers gain access in the order they arrived.\n2. `random`: Random queue where customers gain access randomly, regardless of arrival time.\n3. `passthrough`: Users will pass directly through the waiting room and into the origin website. As a result, any configured limits will not be respected while this is enabled. This method can be used as an alternative to disabling a waiting room (with `suspended`) so that analytics are still reported. This can be used if you wish to allow all traffic normally, but want to restrict traffic during a waiting room event, or vice versa.\n4. `reject`: Users will be immediately rejected from the waiting room. As a result, no users will reach the origin website while this is enabled. This can be used if you wish to reject all traffic while performing maintenance, block traffic during a specified period of time (an event), or block traffic while events are not occurring. Consider a waiting room used for vaccine distribution that only allows traffic during sign-up events, and otherwise blocks all traffic. For this case, the waiting room uses `reject`, and its events override this with `fifo`, `random`, or `passthrough`. When this queueing method is enabled and neither `queueAll` is enabled nor an event is prequeueing, the waiting room page **will not refresh automatically**.",
+				Description: "Sets the queueing method used by the waiting room. Changing this parameter from the **default** queueing method is only available for the Waiting Room Advanced subscription. Regardless of the queueing method, if `queue_all` is enabled or an event is prequeueing, users in the waiting room will not be accepted to the origin. These users will always see a waiting room page that refreshes automatically. The valid queueing methods are:\n1. `fifo` **(default)**: First-In-First-Out queue where customers gain access in the order they arrived.\n2. `random`: Random queue where customers gain access randomly, regardless of arrival time.\n3. `passthrough`: Users will pass directly through the waiting room and into the origin website. As a result, any configured limits will not be respected while this is enabled. This method can be used as an alternative to disabling a waiting room (with `suspended`) so that analytics are still reported. This can be used if you wish to allow all traffic normally, but want to restrict traffic during a waiting room event, or vice versa.\n4. `reject`: Users will be immediately rejected from the waiting room. As a result, no users will reach the origin website while this is enabled. This can be used if you wish to reject all traffic while performing maintenance, block traffic during a specified period of time (an event), or block traffic while events are not occurring. Consider a waiting room used for vaccine distribution that only allows traffic during sign-up events, and otherwise blocks all traffic. For this case, the waiting room uses `reject`, and its events override this with `fifo`, `random`, or `passthrough`. When this queueing method is enabled and neither `queueAll` is enabled nor an event is prequeueing, the waiting room page **will not refresh automatically**.\navailable values: \"fifo\", \"random\", \"passthrough\", \"reject\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -160,7 +160,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: stringdefault.StaticString("fifo"),
 			},
 			"queueing_status_code": schema.Int64Attribute{
-				Description: "HTTP status code returned to a user while in the queue.",
+				Description: "HTTP status code returned to a user while in the queue.\navailable values: 200, 202, 429",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.Int64{
@@ -188,7 +188,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"turnstile_action": schema.StringAttribute{
-				Description: "Which action to take when a bot is detected using Turnstile. `log` will\nhave no impact on queueing behavior, simply keeping track of how many\nbots are detected in Waiting Room Analytics. `infinite_queue` will send\nbots to a false queueing state, where they will never reach your\norigin. `infinite_queue` requires Advanced Waiting Room.\n",
+				Description: "Which action to take when a bot is detected using Turnstile. `log` will\nhave no impact on queueing behavior, simply keeping track of how many\nbots are detected in Waiting Room Analytics. `infinite_queue` will send\nbots to a false queueing state, where they will never reach your\norigin. `infinite_queue` requires Advanced Waiting Room.\navailable values: \"log\", \"infinite_queue\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -197,7 +197,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: stringdefault.StaticString("log"),
 			},
 			"turnstile_mode": schema.StringAttribute{
-				Description: "Which Turnstile widget type to use for detecting bot traffic. See\n[the Turnstile documentation](https://developers.cloudflare.com/turnstile/concepts/widget/#widget-types)\nfor the definitions of these widget types. Set to `off` to disable the\nTurnstile integration entirely. Setting this to anything other than\n`off` or `invisible` requires Advanced Waiting Room.\n",
+				Description: "Which Turnstile widget type to use for detecting bot traffic. See\n[the Turnstile documentation](https://developers.cloudflare.com/turnstile/concepts/widget/#widget-types)\nfor the definitions of these widget types. Set to `off` to disable the\nTurnstile integration entirely. Setting this to anything other than\n`off` or `invisible` requires Advanced Waiting Room.\navailable values: \"off\", \"invisible\", \"visible_non_interactive\", \"visible_managed\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -249,7 +249,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[WaitingRoomCookieAttributesModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"samesite": schema.StringAttribute{
-						Description: "Configures the SameSite attribute on the waiting room cookie. Value `auto` will be translated to `lax` or `none` depending if **Always Use HTTPS** is enabled. Note that when using value `none`, the secure attribute cannot be set to `never`.",
+						Description: "Configures the SameSite attribute on the waiting room cookie. Value `auto` will be translated to `lax` or `none` depending if **Always Use HTTPS** is enabled. Note that when using value `none`, the secure attribute cannot be set to `never`.\navailable values: \"auto\", \"lax\", \"none\", \"strict\"",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -263,7 +263,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("auto"),
 					},
 					"secure": schema.StringAttribute{
-						Description: "Configures the Secure attribute on the waiting room cookie. Value `always` indicates that the Secure attribute will be set in the Set-Cookie header, `never` indicates that the Secure attribute will not be set, and `auto` will set the Secure attribute depending if **Always Use HTTPS** is enabled.",
+						Description: "Configures the Secure attribute on the waiting room cookie. Value `always` indicates that the Secure attribute will be set in the Set-Cookie header, `never` indicates that the Secure attribute will not be set, and `auto` will set the Secure attribute depending if **Always Use HTTPS** is enabled.\navailable values: \"auto\", \"always\", \"never\"",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{

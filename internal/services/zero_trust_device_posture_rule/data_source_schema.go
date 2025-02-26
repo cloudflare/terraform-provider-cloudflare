@@ -47,7 +47,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of device posture rule.",
+				Description: "The type of device posture rule.\navailable values: \"file\", \"application\", \"tanium\", \"gateway\", \"warp\", \"disk_encryption\", \"sentinelone\", \"carbonblack\", \"firewall\", \"os_version\", \"domain_joined\", \"client_certificate\", \"client_certificate_v2\", \"unique_client_id\", \"kolide\", \"tanium_s2s\", \"crowdstrike_s2s\", \"intune\", \"workspace_one\", \"sentinelone_s2s\", \"custom_s2s\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -81,7 +81,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustDevicePostureRuleInputDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"operating_system": schema.StringAttribute{
-						Description: "Operating system",
+						Description: "Operating system\navailable values: \"windows\", \"linux\", \"mac\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -119,7 +119,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"operator": schema.StringAttribute{
-						Description: "operator",
+						Description: "operator\navailable values: \"<\", \"<=\", \">\", \">=\", \"==\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -208,7 +208,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"compliance_status": schema.StringAttribute{
-						Description: "Compliance Status",
+						Description: "Compliance Status\navailable values: \"compliant\", \"noncompliant\", \"unknown\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -242,7 +242,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"state": schema.StringAttribute{
-						Description: "For more details on state, please refer to the Crowdstrike documentation.",
+						Description: "For more details on state, please refer to the Crowdstrike documentation.\navailable values: \"online\", \"offline\", \"unknown\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -253,7 +253,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"version_operator": schema.StringAttribute{
-						Description: "Version Operator",
+						Description: "Version Operator\navailable values: \"<\", \"<=\", \">\", \">=\", \"==\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -266,7 +266,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"count_operator": schema.StringAttribute{
-						Description: "Count Operator",
+						Description: "Count Operator\navailable values: \"<\", \"<=\", \">\", \">=\", \"==\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -287,7 +287,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"risk_level": schema.StringAttribute{
-						Description: "For more details on risk level, refer to the Tanium documentation.",
+						Description: "For more details on risk level, refer to the Tanium documentation.\navailable values: \"low\", \"medium\", \"high\", \"critical\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -299,7 +299,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"score_operator": schema.StringAttribute{
-						Description: "Score Operator",
+						Description: "Score Operator\navailable values: \"<\", \"<=\", \">\", \">=\", \"==\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -328,7 +328,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"network_status": schema.StringAttribute{
-						Description: "Network status of device.",
+						Description: "Network status of device.\navailable values: \"connected\", \"disconnected\", \"disconnecting\", \"connecting\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -340,7 +340,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"operational_state": schema.StringAttribute{
-						Description: "Agent operational state.",
+						Description: "Agent operational state.\navailable values: \"na\", \"partially_disabled\", \"auto_fully_disabled\", \"fully_disabled\", \"auto_partially_disabled\", \"disabled_error\", \"db_corruption\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -367,7 +367,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"platform": schema.StringAttribute{
-							Computed: true,
+							Description: "available values: \"windows\", \"mac\", \"linux\", \"android\", \"ios\"",
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"windows",

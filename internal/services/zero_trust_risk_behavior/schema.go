@@ -31,7 +31,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required: true,
 						},
 						"risk_level": schema.StringAttribute{
-							Required: true,
+							Description: "available values: \"low\", \"medium\", \"high\"",
+							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"low",

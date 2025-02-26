@@ -29,7 +29,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"action": schema.StringAttribute{
-				Description: "The action to take if the expression matches",
+				Description: "The action to take if the expression matches\navailable values: \"allow\", \"log\"",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("allow", "log"),

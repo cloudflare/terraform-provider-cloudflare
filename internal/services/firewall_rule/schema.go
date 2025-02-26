@@ -37,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
-						Description: "The action to perform.",
+						Description: "The action to perform.\navailable values: \"simulate\", \"ban\", \"challenge\", \"js_challenge\", \"managed_challenge\"",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

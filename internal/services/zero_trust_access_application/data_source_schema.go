@@ -152,7 +152,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"self_hosted_domains": schema.ListAttribute{
-				Description: "List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.\n",
+				Description: "List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.",
 				Computed:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
@@ -226,19 +226,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"destinations": schema.ListNestedAttribute{
-				Description: "List of destinations secured by Access. This supersedes `self_hosted_domains` to allow for more flexibility in defining different types of domains. If `destinations` are provided, then `self_hosted_domains` will be ignored.\n",
+				Description: "List of destinations secured by Access. This supersedes `self_hosted_domains` to allow for more flexibility in defining different types of domains. If `destinations` are provided, then `self_hosted_domains` will be ignored.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationDestinationsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
-							Computed: true,
+							Description: "available values: \"public\"",
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("public", "private"),
 							},
 						},
 						"uri": schema.StringAttribute{
-							Description: "The URI of the destination. Public destinations' URIs can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/).\n",
+							Description: "The URI of the destination. Public destinations' URIs can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/).",
 							Computed:    true,
 						},
 						"cidr": schema.StringAttribute{
@@ -250,14 +251,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"l4_protocol": schema.StringAttribute{
-							Description: "The L4 protocol of the destination. When omitted, both UDP and TCP traffic will match.",
+							Description: "The L4 protocol of the destination. When omitted, both UDP and TCP traffic will match.\navailable values: \"tcp\", \"udp\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("tcp", "udp"),
 							},
 						},
 						"port_range": schema.StringAttribute{
-							Description: "The port range of the destination. Can be a single port or a range of ports. When omitted, all ports will match.\n",
+							Description: "The port range of the destination. Can be a single port or a range of ports. When omitted, all ports will match.",
 							Computed:    true,
 						},
 						"vnet_id": schema.StringAttribute{
@@ -355,7 +356,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"decision": schema.StringAttribute{
-							Description: "The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.",
+							Description: "The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.\navailable values: \"allow\", \"deny\", \"non_identity\", \"bypass\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -1194,7 +1195,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationSaaSAppDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"auth_type": schema.StringAttribute{
-						Description: "Optional identifier indicating the authentication protocol used for the saas app. Required for OIDC. Default if unset is \"saml\"",
+						Description: "Optional identifier indicating the authentication protocol used for the saas app. Required for OIDC. Default if unset is \"saml\"\navailable values: \"saml\", \"oidc\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("saml", "oidc"),
@@ -1222,7 +1223,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"name_format": schema.StringAttribute{
-									Description: "A globally unique name for an identity or service provider.",
+									Description: "A globally unique name for an identity or service provider.\navailable values: \"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified\", \"urn:oasis:names:tc:SAML:2.0:attrname-format:basic\", \"urn:oasis:names:tc:SAML:2.0:attrname-format:uri\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -1275,14 +1276,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"name_id_format": schema.StringAttribute{
-						Description: "The format of the name identifier sent to the SaaS application.",
+						Description: "The format of the name identifier sent to the SaaS application.\navailable values: \"id\", \"email\"",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("id", "email"),
 						},
 					},
 					"name_id_transform_jsonata": schema.StringAttribute{
-						Description: "A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.\n",
+						Description: "A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.",
 						Computed:    true,
 					},
 					"public_key": schema.StringAttribute{
@@ -1290,7 +1291,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"saml_attribute_transform_jsonata": schema.StringAttribute{
-						Description: "A [JSONata] (https://jsonata.org/) expression that transforms an application's user identities into attribute assertions in the SAML response. The expression can transform id, email, name, and groups values. It can also transform fields listed in the saml_attributes or oidc_fields of the identity provider used to authenticate. The output of this expression must be a JSON object.\n",
+						Description: "A [JSONata] (https://jsonata.org/) expression that transforms an application's user identities into attribute assertions in the SAML response. The expression can transform id, email, name, and groups values. It can also transform fields listed in the saml_attributes or oidc_fields of the identity provider used to authenticate. The output of this expression must be a JSON object.",
 						Computed:    true,
 					},
 					"sp_entity_id": schema.StringAttribute{
@@ -1339,7 +1340,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"scope": schema.StringAttribute{
-									Description: "The scope of the claim.",
+									Description: "The scope of the claim.\navailable values: \"groups\", \"profile\", \"email\", \"openid\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -1461,7 +1462,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"scheme": schema.StringAttribute{
-								Description: "The authentication scheme to use when making SCIM requests to this application.",
+								Description: "The authentication scheme to use when making SCIM requests to this application.\navailable values: \"httpbasic\"",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -1550,7 +1551,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"strictness": schema.StringAttribute{
-									Description: "The level of adherence to outbound resource schemas when provisioning to this mapping. ‘Strict’ removes unknown values, while ‘passthrough’ passes unknown values to the target.",
+									Description: "The level of adherence to outbound resource schemas when provisioning to this mapping. ‘Strict’ removes unknown values, while ‘passthrough’ passes unknown values to the target.\navailable values: \"strict\", \"passthrough\"",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("strict", "passthrough"),
@@ -1575,7 +1576,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"protocol": schema.StringAttribute{
-							Description: "The communication protocol your application secures.",
+							Description: "The communication protocol your application secures.\navailable values: \"ssh\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("ssh"),

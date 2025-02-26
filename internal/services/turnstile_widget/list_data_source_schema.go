@@ -25,14 +25,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "Direction to order widgets.",
+				Description: "Direction to order widgets.\navailable values: \"asc\", \"desc\"",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 				},
 			},
 			"order": schema.StringAttribute{
-				Description: "Field to order widgets by.",
+				Description: "Field to order widgets by.\navailable values: \"id\", \"sitekey\", \"name\", \"created_on\", \"modified_on\"",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -58,11 +58,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"bot_fight_mode": schema.BoolAttribute{
-							Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).\n",
+							Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).",
 							Computed:    true,
 						},
 						"clearance_level": schema.StringAttribute{
-							Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\n",
+							Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\navailable values: \"no_clearance\", \"jschallenge\", \"managed\", \"interactive\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -84,11 +84,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							ElementType: types.StringType,
 						},
 						"ephemeral_id": schema.BoolAttribute{
-							Description: "Return the Ephemeral ID in /siteverify (ENT only).\n",
+							Description: "Return the Ephemeral ID in /siteverify (ENT only).",
 							Computed:    true,
 						},
 						"mode": schema.StringAttribute{
-							Description: "Widget Mode",
+							Description: "Widget Mode\navailable values: \"non-interactive\", \"invisible\", \"managed\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -104,15 +104,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
-							Description: "Human readable widget name. Not unique. Cloudflare suggests that you\nset this to a meaningful string to make it easier to identify your\nwidget, and where it is used.\n",
+							Description: "Human readable widget name. Not unique. Cloudflare suggests that you\nset this to a meaningful string to make it easier to identify your\nwidget, and where it is used.",
 							Computed:    true,
 						},
 						"offlabel": schema.BoolAttribute{
-							Description: "Do not show any Cloudflare branding on the widget (ENT only).\n",
+							Description: "Do not show any Cloudflare branding on the widget (ENT only).",
 							Computed:    true,
 						},
 						"region": schema.StringAttribute{
-							Description: "Region where this widget can be used.",
+							Description: "Region where this widget can be used.\navailable values: \"world\"",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("world"),

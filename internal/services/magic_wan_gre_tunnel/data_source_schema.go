@@ -64,7 +64,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelGRETunnelHealthCheckDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"direction": schema.StringAttribute{
-								Description: "The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.",
+								Description: "The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.\navailable values: \"unidirectional\", \"bidirectional\"",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("unidirectional", "bidirectional"),
@@ -75,7 +75,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"rate": schema.StringAttribute{
-								Description: "How frequent the health check is run. The default value is `mid`.",
+								Description: "How frequent the health check is run. The default value is `mid`.\navailable values: \"low\", \"mid\", \"high\"",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -101,7 +101,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"type": schema.StringAttribute{
-								Description: "The type of healthcheck to run, reply or request. The default value is `reply`.",
+								Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\navailable values: \"reply\", \"request\"",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("reply", "request"),

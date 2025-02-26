@@ -84,7 +84,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"status_code": schema.Int64Attribute{
-						Computed: true,
+						Description: "available values: 301, 302, 307, 308",
+						Computed:    true,
 						Validators: []validator.Int64{
 							int64validator.OneOf(
 								301,

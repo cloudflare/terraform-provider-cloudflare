@@ -24,7 +24,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "Sorts results in an ascending or descending order.",
+				Description: "Sorts results in an ascending or descending order.\navailable values: \"asc\", \"desc\"",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
