@@ -43,7 +43,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"certificate_authority": schema.StringAttribute{
-							Description: "available values: \"google\", \"lets_encrypt\"",
+							Description: "Available values: \"google\", \"lets_encrypt\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt"),
@@ -59,7 +59,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"status": schema.StringAttribute{
-							Description: "available values: \"initializing\", \"pending\", \"active\", \"deactivated\", \"blocked\", \"error\"",
+							Description: "Available values: \"initializing\", \"pending\", \"active\", \"deactivated\", \"blocked\", \"error\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -80,14 +80,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed: true,
 								},
 								"method": schema.StringAttribute{
-									Description: "available values: \"http\", \"txt\"",
+									Description: "Available values: \"http\", \"txt\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("http", "txt"),
 									},
 								},
 								"status": schema.StringAttribute{
-									Description: "available values: \"initializing\", \"pending\", \"active\", \"deactivated\", \"error\"",
+									Description: "Available values: \"initializing\", \"pending\", \"active\", \"deactivated\", \"error\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -115,7 +115,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed: true,
 								},
 								"status": schema.StringAttribute{
-									Description: "available values: \"pending\", \"active\", \"deactivated\", \"blocked\", \"error\"",
+									Description: "Available values: \"pending\", \"active\", \"deactivated\", \"blocked\", \"error\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(

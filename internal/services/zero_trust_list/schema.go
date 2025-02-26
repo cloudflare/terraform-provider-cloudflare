@@ -30,7 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of list.\navailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\"",
+				Description: "The type of list.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

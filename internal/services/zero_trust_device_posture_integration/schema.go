@@ -36,7 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of device posture integration.\navailable values: \"workspace_one\", \"crowdstrike_s2s\", \"uptycs\", \"intune\", \"kolide\", \"tanium\", \"sentinelone_s2s\", \"custom_s2s\"",
+				Description: "The type of device posture integration.\nAvailable values: \"workspace_one\", \"crowdstrike_s2s\", \"uptycs\", \"intune\", \"kolide\", \"tanium\", \"sentinelone_s2s\", \"custom_s2s\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

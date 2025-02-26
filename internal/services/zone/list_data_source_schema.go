@@ -21,7 +21,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"direction": schema.StringAttribute{
-				Description: "Direction to order zones.\navailable values: \"asc\", \"desc\"",
+				Description: "Direction to order zones.\nAvailable values: \"asc\", \"desc\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
@@ -32,7 +32,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"order": schema.StringAttribute{
-				Description: "Field to order zones by.\navailable values: \"name\", \"status\", \"account.id\", \"account.name\"",
+				Description: "Field to order zones by.\nAvailable values: \"name\", \"status\", \"account.id\", \"account.name\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -44,7 +44,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"status": schema.StringAttribute{
-				Description: "A zone status\navailable values: \"initializing\", \"pending\", \"active\", \"moved\"",
+				Description: "A zone status\nAvailable values: \"initializing\", \"pending\", \"active\", \"moved\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -69,7 +69,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"match": schema.StringAttribute{
-				Description: "Whether to match all search requirements or at least one (any).\navailable values: \"any\", \"all\"",
+				Description: "Whether to match all search requirements or at least one (any).\nAvailable values: \"any\", \"all\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -209,7 +209,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"status": schema.StringAttribute{
-							Description: "The zone status on Cloudflare.\navailable values: \"initializing\", \"pending\", \"active\", \"moved\"",
+							Description: "The zone status on Cloudflare.\nAvailable values: \"initializing\", \"pending\", \"active\", \"moved\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -221,7 +221,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\navailable values: \"full\", \"partial\", \"secondary\"",
+							Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\nAvailable values: \"full\", \"partial\", \"secondary\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

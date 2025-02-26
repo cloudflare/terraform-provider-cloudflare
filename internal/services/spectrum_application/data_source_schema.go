@@ -57,7 +57,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"proxy_protocol": schema.StringAttribute{
-				Description: "Enables Proxy Protocol to the origin. Refer to [Enable Proxy protocol](https://developers.cloudflare.com/spectrum/getting-started/proxy-protocol/) for implementation details on PROXY Protocol V1, PROXY Protocol V2, and Simple Proxy Protocol.\navailable values: \"off\", \"v1\", \"v2\", \"simple\"",
+				Description: "Enables Proxy Protocol to the origin. Refer to [Enable Proxy protocol](https://developers.cloudflare.com/spectrum/getting-started/proxy-protocol/) for implementation details on PROXY Protocol V1, PROXY Protocol V2, and Simple Proxy Protocol.\nAvailable values: \"off\", \"v1\", \"v2\", \"simple\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -69,7 +69,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"tls": schema.StringAttribute{
-				Description: "The type of TLS termination associated with the application.\navailable values: \"off\", \"flexible\", \"full\", \"strict\"",
+				Description: "The type of TLS termination associated with the application.\nAvailable values: \"off\", \"flexible\", \"full\", \"strict\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -81,7 +81,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"traffic_type": schema.StringAttribute{
-				Description: "Determines how data travels from the edge to your origin. When set to \"direct\", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to \"http\" or \"https\", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly.\navailable values: \"direct\", \"http\", \"https\"",
+				Description: "Determines how data travels from the edge to your origin. When set to \"direct\", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to \"http\" or \"https\", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly.\nAvailable values: \"direct\", \"http\", \"https\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -107,7 +107,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"type": schema.StringAttribute{
-						Description: "The type of DNS record associated with the application.\navailable values: \"CNAME\", \"ADDRESS\"",
+						Description: "The type of DNS record associated with the application.\nAvailable values: \"CNAME\", \"ADDRESS\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("CNAME", "ADDRESS"),
@@ -121,7 +121,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[SpectrumApplicationEdgeIPsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"connectivity": schema.StringAttribute{
-						Description: "The IP versions supported for inbound connections on Spectrum anycast IPs.\navailable values: \"all\", \"ipv4\", \"ipv6\"",
+						Description: "The IP versions supported for inbound connections on Spectrum anycast IPs.\nAvailable values: \"all\", \"ipv4\", \"ipv6\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -132,7 +132,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Description: "The type of edge IP configuration specified. Dynamically allocated edge IPs use Spectrum anycast IPs in accordance with the connectivity you specify. Only valid with CNAME DNS names.\navailable values: \"dynamic\"",
+						Description: "The type of edge IP configuration specified. Dynamically allocated edge IPs use Spectrum anycast IPs in accordance with the connectivity you specify. Only valid with CNAME DNS names.\nAvailable values: \"dynamic\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("dynamic", "static"),
@@ -163,7 +163,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Description: "The type of DNS record associated with the origin. \"\" is used to specify a combination of A/AAAA records.\navailable values: \"\", \"A\", \"AAAA\", \"SRV\"",
+						Description: "The type of DNS record associated with the origin. \"\" is used to specify a combination of A/AAAA records.\nAvailable values: \"\", \"A\", \"AAAA\", \"SRV\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

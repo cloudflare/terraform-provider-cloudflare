@@ -34,7 +34,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"kind": schema.StringAttribute{
-				Description: "Kind of schema\navailable values: \"openapi_v3\"",
+				Description: "Kind of schema\nAvailable values: \"openapi_v3\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("openapi_v3"),

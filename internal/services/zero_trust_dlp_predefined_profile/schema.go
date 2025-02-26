@@ -97,7 +97,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "available values: \"custom\"",
+				Description: "Available values: \"custom\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

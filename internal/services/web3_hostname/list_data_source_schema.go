@@ -61,7 +61,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"status": schema.StringAttribute{
-							Description: "Status of the hostname's activation.\navailable values: \"active\", \"pending\", \"deleting\", \"error\"",
+							Description: "Status of the hostname's activation.\nAvailable values: \"active\", \"pending\", \"deleting\", \"error\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -73,7 +73,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"target": schema.StringAttribute{
-							Description: "Target gateway of the hostname.\navailable values: \"ethereum\", \"ipfs\", \"ipfs_universal_path\"",
+							Description: "Target gateway of the hostname.\nAvailable values: \"ethereum\", \"ipfs\", \"ipfs_universal_path\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

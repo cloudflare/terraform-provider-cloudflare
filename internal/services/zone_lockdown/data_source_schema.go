@@ -64,7 +64,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"target": schema.StringAttribute{
-							Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the Zone Lockdown rule.\navailable values: \"ip\"",
+							Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the Zone Lockdown rule.\nAvailable values: \"ip\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("ip", "ip_range"),

@@ -95,7 +95,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"tun_type": schema.StringAttribute{
-							Description: "The type of tunnel.\navailable values: \"cfd_tunnel\", \"warp_connector\", \"ip_sec\", \"gre\", \"cni\"",
+							Description: "The type of tunnel.\nAvailable values: \"cfd_tunnel\", \"warp_connector\", \"ip_sec\", \"gre\", \"cni\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

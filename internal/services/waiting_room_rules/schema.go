@@ -41,7 +41,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"action": schema.StringAttribute{
-							Description: "The action to take when the expression matches.\navailable values: \"bypass_waiting_room\"",
+							Description: "The action to take when the expression matches.\nAvailable values: \"bypass_waiting_room\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("bypass_waiting_room"),
@@ -68,7 +68,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"action": schema.StringAttribute{
-				Description: "The action to take when the expression matches.\navailable values: \"bypass_waiting_room\"",
+				Description: "The action to take when the expression matches.\nAvailable values: \"bypass_waiting_room\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("bypass_waiting_room"),

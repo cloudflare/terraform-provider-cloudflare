@@ -68,7 +68,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelHealthCheckModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{
-						Description: "The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.\navailable values: \"unidirectional\", \"bidirectional\"",
+						Description: "The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.\nAvailable values: \"unidirectional\", \"bidirectional\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -83,7 +83,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(true),
 					},
 					"rate": schema.StringAttribute{
-						Description: "How frequent the health check is run. The default value is `mid`.\navailable values: \"low\", \"mid\", \"high\"",
+						Description: "How frequent the health check is run. The default value is `mid`.\nAvailable values: \"low\", \"mid\", \"high\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -112,7 +112,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\navailable values: \"reply\", \"request\"",
+						Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\nAvailable values: \"reply\", \"request\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -167,7 +167,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelHealthCheckModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"direction": schema.StringAttribute{
-								Description: "The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.\navailable values: \"unidirectional\", \"bidirectional\"",
+								Description: "The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.\nAvailable values: \"unidirectional\", \"bidirectional\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("unidirectional", "bidirectional"),
@@ -180,7 +180,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(true),
 							},
 							"rate": schema.StringAttribute{
-								Description: "How frequent the health check is run. The default value is `mid`.\navailable values: \"low\", \"mid\", \"high\"",
+								Description: "How frequent the health check is run. The default value is `mid`.\nAvailable values: \"low\", \"mid\", \"high\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -207,7 +207,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"type": schema.StringAttribute{
-								Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\navailable values: \"reply\", \"request\"",
+								Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\nAvailable values: \"reply\", \"request\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("reply", "request"),
@@ -283,7 +283,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelsHealthCheckModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"direction": schema.StringAttribute{
-									Description: "The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.\navailable values: \"unidirectional\", \"bidirectional\"",
+									Description: "The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.\nAvailable values: \"unidirectional\", \"bidirectional\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("unidirectional", "bidirectional"),
@@ -296,7 +296,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Default:     booldefault.StaticBool(true),
 								},
 								"rate": schema.StringAttribute{
-									Description: "How frequent the health check is run. The default value is `mid`.\navailable values: \"low\", \"mid\", \"high\"",
+									Description: "How frequent the health check is run. The default value is `mid`.\nAvailable values: \"low\", \"mid\", \"high\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -323,7 +323,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"type": schema.StringAttribute{
-									Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\navailable values: \"reply\", \"request\"",
+									Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\nAvailable values: \"reply\", \"request\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("reply", "request"),
@@ -399,7 +399,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelModifiedIPSECTunnelHealthCheckModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"direction": schema.StringAttribute{
-								Description: "The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.\navailable values: \"unidirectional\", \"bidirectional\"",
+								Description: "The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.\nAvailable values: \"unidirectional\", \"bidirectional\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("unidirectional", "bidirectional"),
@@ -412,7 +412,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(true),
 							},
 							"rate": schema.StringAttribute{
-								Description: "How frequent the health check is run. The default value is `mid`.\navailable values: \"low\", \"mid\", \"high\"",
+								Description: "How frequent the health check is run. The default value is `mid`.\nAvailable values: \"low\", \"mid\", \"high\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -439,7 +439,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"type": schema.StringAttribute{
-								Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\navailable values: \"reply\", \"request\"",
+								Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\nAvailable values: \"reply\", \"request\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("reply", "request"),

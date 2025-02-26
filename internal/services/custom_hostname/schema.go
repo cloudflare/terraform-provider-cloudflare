@@ -42,7 +42,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"bundle_method": schema.StringAttribute{
-						Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.\navailable values: \"ubiquitous\", \"optimal\", \"force\"",
+						Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.\nAvailable values: \"ubiquitous\", \"optimal\", \"force\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -55,7 +55,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("ubiquitous"),
 					},
 					"certificate_authority": schema.StringAttribute{
-						Description: "The Certificate Authority that will issue the certificate\navailable values: \"digicert\", \"google\", \"lets_encrypt\", \"ssl_com\"",
+						Description: "The Certificate Authority that will issue the certificate\nAvailable values: \"digicert\", \"google\", \"lets_encrypt\", \"ssl_com\".",
 						Optional:    true,
 						Computed:    true,
 						Validators: []validator.String{
@@ -96,7 +96,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"method": schema.StringAttribute{
-						Description: "Domain control validation (DCV) method used for this hostname.\navailable values: \"http\", \"txt\", \"email\"",
+						Description: "Domain control validation (DCV) method used for this hostname.\nAvailable values: \"http\", \"txt\", \"email\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -116,21 +116,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								ElementType: types.StringType,
 							},
 							"early_hints": schema.StringAttribute{
-								Description: "Whether or not Early Hints is enabled.\navailable values: \"on\", \"off\"",
+								Description: "Whether or not Early Hints is enabled.\nAvailable values: \"on\", \"off\".",
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("on", "off"),
 								},
 							},
 							"http2": schema.StringAttribute{
-								Description: "Whether or not HTTP2 is enabled.\navailable values: \"on\", \"off\"",
+								Description: "Whether or not HTTP2 is enabled.\nAvailable values: \"on\", \"off\".",
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("on", "off"),
 								},
 							},
 							"min_tls_version": schema.StringAttribute{
-								Description: "The minimum TLS version supported.\navailable values: \"1.0\", \"1.1\", \"1.2\", \"1.3\"",
+								Description: "The minimum TLS version supported.\nAvailable values: \"1.0\", \"1.1\", \"1.2\", \"1.3\".",
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -142,7 +142,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"tls_1_3": schema.StringAttribute{
-								Description: "Whether or not TLS 1.3 is enabled.\navailable values: \"on\", \"off\"",
+								Description: "Whether or not TLS 1.3 is enabled.\nAvailable values: \"on\", \"off\".",
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("on", "off"),
@@ -151,7 +151,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Description: "Level of validation to be used for this hostname. Domain validation (dv) must be used.\navailable values: \"dv\"",
+						Description: "Level of validation to be used for this hostname. Domain validation (dv) must be used.\nAvailable values: \"dv\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("dv"),
@@ -182,7 +182,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of the hostname's activation.\navailable values: \"active\", \"pending\", \"active_redeploying\", \"moved\", \"pending_deletion\", \"deleted\", \"pending_blocked\", \"pending_migration\", \"pending_provisioned\", \"test_pending\", \"test_active\", \"test_active_apex\", \"test_blocked\", \"test_failed\", \"provisioned\", \"blocked\"",
+				Description: "Status of the hostname's activation.\nAvailable values: \"active\", \"pending\", \"active_redeploying\", \"moved\", \"pending_deletion\", \"deleted\", \"pending_blocked\", \"pending_migration\", \"pending_provisioned\", \"test_pending\", \"test_active\", \"test_active_apex\", \"test_blocked\", \"test_failed\", \"provisioned\", \"blocked\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -221,7 +221,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"type": schema.StringAttribute{
-						Description: "DNS Record type.\navailable values: \"txt\"",
+						Description: "DNS Record type.\nAvailable values: \"txt\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("txt"),

@@ -36,14 +36,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"frequency": schema.StringAttribute{
-				Description: "The frequency of the test.\navailable values: \"DAILY\", \"WEEKLY\"",
+				Description: "The frequency of the test.\nAvailable values: \"DAILY\", \"WEEKLY\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("DAILY", "WEEKLY"),
 				},
 			},
 			"region": schema.StringAttribute{
-				Description: "A test region.\navailable values: \"asia-east1\", \"asia-northeast1\", \"asia-northeast2\", \"asia-south1\", \"asia-southeast1\", \"australia-southeast1\", \"europe-north1\", \"europe-southwest1\", \"europe-west1\", \"europe-west2\", \"europe-west3\", \"europe-west4\", \"europe-west8\", \"europe-west9\", \"me-west1\", \"southamerica-east1\", \"us-central1\", \"us-east1\", \"us-east4\", \"us-south1\", \"us-west1\"",
+				Description: "A test region.\nAvailable values: \"asia-east1\", \"asia-northeast1\", \"asia-northeast2\", \"asia-south1\", \"asia-southeast1\", \"australia-southeast1\", \"europe-north1\", \"europe-southwest1\", \"europe-west1\", \"europe-west2\", \"europe-west3\", \"europe-west4\", \"europe-west8\", \"europe-west9\", \"me-west1\", \"southamerica-east1\", \"us-central1\", \"us-east1\", \"us-east4\", \"us-south1\", \"us-west1\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -77,14 +77,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[ObservatoryScheduledTestScheduleModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"frequency": schema.StringAttribute{
-						Description: "The frequency of the test.\navailable values: \"DAILY\", \"WEEKLY\"",
+						Description: "The frequency of the test.\nAvailable values: \"DAILY\", \"WEEKLY\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("DAILY", "WEEKLY"),
 						},
 					},
 					"region": schema.StringAttribute{
-						Description: "A test region.\navailable values: \"asia-east1\", \"asia-northeast1\", \"asia-northeast2\", \"asia-south1\", \"asia-southeast1\", \"australia-southeast1\", \"europe-north1\", \"europe-southwest1\", \"europe-west1\", \"europe-west2\", \"europe-west3\", \"europe-west4\", \"europe-west8\", \"europe-west9\", \"me-west1\", \"southamerica-east1\", \"us-central1\", \"us-east1\", \"us-east4\", \"us-south1\", \"us-west1\"",
+						Description: "A test region.\nAvailable values: \"asia-east1\", \"asia-northeast1\", \"asia-northeast2\", \"asia-south1\", \"asia-southeast1\", \"australia-southeast1\", \"europe-north1\", \"europe-southwest1\", \"europe-west1\", \"europe-west2\", \"europe-west3\", \"europe-west4\", \"europe-west8\", \"europe-west9\", \"me-west1\", \"southamerica-east1\", \"us-central1\", \"us-east1\", \"us-east4\", \"us-south1\", \"us-west1\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -140,7 +140,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"device_type": schema.StringAttribute{
-								Description: "The type of device.\navailable values: \"DESKTOP\", \"MOBILE\"",
+								Description: "The type of device.\nAvailable values: \"DESKTOP\", \"MOBILE\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("DESKTOP", "MOBILE"),
@@ -151,7 +151,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								CustomType: customfield.NewNestedObjectType[ObservatoryScheduledTestTestDesktopReportErrorModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"code": schema.StringAttribute{
-										Description: "The error code of the Lighthouse result.\navailable values: \"NOT_REACHABLE\", \"DNS_FAILURE\", \"NOT_HTML\", \"LIGHTHOUSE_TIMEOUT\", \"UNKNOWN\"",
+										Description: "The error code of the Lighthouse result.\nAvailable values: \"NOT_REACHABLE\", \"DNS_FAILURE\", \"NOT_HTML\", \"LIGHTHOUSE_TIMEOUT\", \"UNKNOWN\".",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -194,7 +194,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"state": schema.StringAttribute{
-								Description: "The state of the Lighthouse report.\navailable values: \"RUNNING\", \"COMPLETE\", \"FAILED\"",
+								Description: "The state of the Lighthouse report.\nAvailable values: \"RUNNING\", \"COMPLETE\", \"FAILED\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -228,7 +228,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"device_type": schema.StringAttribute{
-								Description: "The type of device.\navailable values: \"DESKTOP\", \"MOBILE\"",
+								Description: "The type of device.\nAvailable values: \"DESKTOP\", \"MOBILE\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("DESKTOP", "MOBILE"),
@@ -239,7 +239,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								CustomType: customfield.NewNestedObjectType[ObservatoryScheduledTestTestMobileReportErrorModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"code": schema.StringAttribute{
-										Description: "The error code of the Lighthouse result.\navailable values: \"NOT_REACHABLE\", \"DNS_FAILURE\", \"NOT_HTML\", \"LIGHTHOUSE_TIMEOUT\", \"UNKNOWN\"",
+										Description: "The error code of the Lighthouse result.\nAvailable values: \"NOT_REACHABLE\", \"DNS_FAILURE\", \"NOT_HTML\", \"LIGHTHOUSE_TIMEOUT\", \"UNKNOWN\".",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -282,7 +282,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"state": schema.StringAttribute{
-								Description: "The state of the Lighthouse report.\navailable values: \"RUNNING\", \"COMPLETE\", \"FAILED\"",
+								Description: "The state of the Lighthouse report.\nAvailable values: \"RUNNING\", \"COMPLETE\", \"FAILED\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -315,7 +315,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Computed: true,
 							},
 							"value": schema.StringAttribute{
-								Description: "A test region.\navailable values: \"asia-east1\", \"asia-northeast1\", \"asia-northeast2\", \"asia-south1\", \"asia-southeast1\", \"australia-southeast1\", \"europe-north1\", \"europe-southwest1\", \"europe-west1\", \"europe-west2\", \"europe-west3\", \"europe-west4\", \"europe-west8\", \"europe-west9\", \"me-west1\", \"southamerica-east1\", \"us-central1\", \"us-east1\", \"us-east4\", \"us-south1\", \"us-west1\"",
+								Description: "A test region.\nAvailable values: \"asia-east1\", \"asia-northeast1\", \"asia-northeast2\", \"asia-south1\", \"asia-southeast1\", \"australia-southeast1\", \"europe-north1\", \"europe-southwest1\", \"europe-west1\", \"europe-west2\", \"europe-west3\", \"europe-west4\", \"europe-west8\", \"europe-west9\", \"me-west1\", \"southamerica-east1\", \"us-central1\", \"us-east1\", \"us-east4\", \"us-south1\", \"us-west1\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -346,7 +346,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"schedule_frequency": schema.StringAttribute{
-						Description: "The frequency of the test.\navailable values: \"DAILY\", \"WEEKLY\"",
+						Description: "The frequency of the test.\nAvailable values: \"DAILY\", \"WEEKLY\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("DAILY", "WEEKLY"),

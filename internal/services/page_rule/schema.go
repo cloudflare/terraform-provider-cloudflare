@@ -43,7 +43,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     int64default.StaticInt64(1),
 			},
 			"status": schema.StringAttribute{
-				Description: "The status of the Page Rule.\navailable values: \"active\", \"disabled\"",
+				Description: "The status of the Page Rule.\nAvailable values: \"active\", \"disabled\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{

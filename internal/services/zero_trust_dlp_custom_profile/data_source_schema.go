@@ -37,7 +37,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"confidence_threshold": schema.StringAttribute{
-				Description: "available values: \"low\", \"medium\", \"high\", \"very_high\"",
+				Description: "Available values: \"low\", \"medium\", \"high\", \"very_high\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -73,7 +73,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "available values: \"custom\"",
+				Description: "Available values: \"custom\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -136,7 +136,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed: true,
 								},
 								"validation": schema.StringAttribute{
-									Description: "available values: \"luhn\"",
+									Description: "Available values: \"luhn\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("luhn"),
@@ -145,7 +145,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: "available values: \"custom\"",
+							Description: "Available values: \"custom\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

@@ -40,7 +40,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"action": schema.StringAttribute{
-							Description: "The action to take if the expression matches\navailable values: \"allow\", \"log\"",
+							Description: "The action to take if the expression matches\nAvailable values: \"allow\", \"log\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("allow", "log"),

@@ -38,7 +38,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
-							Description: "Type of supported action.\navailable values: \"drop\", \"forward\", \"worker\"",
+							Description: "Type of supported action.\nAvailable values: \"drop\", \"forward\", \"worker\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -61,14 +61,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"field": schema.StringAttribute{
-							Description: "Field for type matcher.\navailable values: \"to\"",
+							Description: "Field for type matcher.\nAvailable values: \"to\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("to"),
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: "Type of matcher.\navailable values: \"literal\"",
+							Description: "Type of matcher.\nAvailable values: \"literal\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("literal"),
