@@ -26,7 +26,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "The direction used to sort returned cookies.'\navailable values: \"asc\", \"desc\"",
+				Description: "The direction used to sort returned cookies.'\nAvailable values: \"asc\", \"desc\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
@@ -37,7 +37,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"export": schema.StringAttribute{
-				Description: "Export the list of cookies as a file.\navailable values: \"csv\"",
+				Description: "Export the list of cookies as a file.\nAvailable values: \"csv\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("csv"),
@@ -56,7 +56,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"order_by": schema.StringAttribute{
-				Description: "The field used to sort returned cookies.\navailable values: \"first_seen_at\", \"last_seen_at\"",
+				Description: "The field used to sort returned cookies.\nAvailable values: \"first_seen_at\", \"last_seen_at\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("first_seen_at", "last_seen_at"),
@@ -82,7 +82,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"same_site": schema.StringAttribute{
-				Description: "Filters the returned cookies that match the specified same_site attribute\navailable values: \"lax\", \"strict\", \"none\"",
+				Description: "Filters the returned cookies that match the specified same_site attribute\nAvailable values: \"lax\", \"strict\", \"none\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -97,7 +97,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Filters the returned cookies that match the specified type attribute\navailable values: \"first_party\", \"unknown\"",
+				Description: "Filters the returned cookies that match the specified type attribute\nAvailable values: \"first_party\", \"unknown\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("first_party", "unknown"),
@@ -135,7 +135,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"type": schema.StringAttribute{
-							Description: "available values: \"first_party\", \"unknown\"",
+							Description: "Available values: \"first_party\", \"unknown\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("first_party", "unknown"),
@@ -163,7 +163,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"same_site_attribute": schema.StringAttribute{
-							Description: "available values: \"lax\", \"strict\", \"none\"",
+							Description: "Available values: \"lax\", \"strict\", \"none\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

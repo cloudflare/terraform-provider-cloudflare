@@ -34,7 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
-				Description: "The type 'legacy_custom' enables support for legacy clients which do not include SNI in the TLS handshake.\navailable values: \"legacy_custom\", \"sni_custom\"",
+				Description: "The type 'legacy_custom' enables support for legacy clients which do not include SNI in the TLS handshake.\nAvailable values: \"legacy_custom\", \"sni_custom\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -56,7 +56,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"bundle_method": schema.StringAttribute{
-				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.\navailable values: \"ubiquitous\", \"optimal\", \"force\"",
+				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.\nAvailable values: \"ubiquitous\", \"optimal\", \"force\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -75,7 +75,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[CustomSSLGeoRestrictionsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"label": schema.StringAttribute{
-						Description: "available values: \"us\", \"eu\", \"highest_security\"",
+						Description: "Available values: \"us\", \"eu\", \"highest_security\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -111,7 +111,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of the zone's custom SSL.\navailable values: \"active\", \"expired\", \"deleted\", \"pending\", \"initializing\"",
+				Description: "Status of the zone's custom SSL.\nAvailable values: \"active\", \"expired\", \"deleted\", \"pending\", \"initializing\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -175,7 +175,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     float64default.StaticFloat64(24008),
 					},
 					"status": schema.StringAttribute{
-						Description: "Status of the Keyless SSL.\navailable values: \"active\", \"deleted\"",
+						Description: "Status of the Keyless SSL.\nAvailable values: \"active\", \"deleted\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("active", "deleted"),

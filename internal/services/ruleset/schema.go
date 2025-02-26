@@ -42,7 +42,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"kind": schema.StringAttribute{
-				Description: "The kind of the ruleset.\navailable values: \"managed\", \"custom\", \"root\", \"zone\"",
+				Description: "The kind of the ruleset.\nAvailable values: \"managed\", \"custom\", \"root\", \"zone\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -58,7 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"phase": schema.StringAttribute{
-				Description: "The phase of the ruleset.\navailable values: \"ddos_l4\", \"ddos_l7\", \"http_config_settings\", \"http_custom_errors\", \"http_log_custom_fields\", \"http_ratelimit\", \"http_request_cache_settings\", \"http_request_dynamic_redirect\", \"http_request_firewall_custom\", \"http_request_firewall_managed\", \"http_request_late_transform\", \"http_request_origin\", \"http_request_redirect\", \"http_request_sanitize\", \"http_request_sbfm\", \"http_request_transform\", \"http_response_compression\", \"http_response_firewall_managed\", \"http_response_headers_transform\", \"magic_transit\", \"magic_transit_ids_managed\", \"magic_transit_managed\", \"magic_transit_ratelimit\"",
+				Description: "The phase of the ruleset.\nAvailable values: \"ddos_l4\", \"ddos_l7\", \"http_config_settings\", \"http_custom_errors\", \"http_log_custom_fields\", \"http_ratelimit\", \"http_request_cache_settings\", \"http_request_dynamic_redirect\", \"http_request_firewall_custom\", \"http_request_firewall_managed\", \"http_request_late_transform\", \"http_request_origin\", \"http_request_redirect\", \"http_request_sanitize\", \"http_request_sbfm\", \"http_request_transform\", \"http_response_compression\", \"http_response_firewall_managed\", \"http_response_headers_transform\", \"magic_transit\", \"magic_transit_ids_managed\", \"magic_transit_managed\", \"magic_transit_ratelimit\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -106,7 +106,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"action": schema.StringAttribute{
-							Description: "The action to perform when the rule matches.\navailable values: \"block\"",
+							Description: "The action to perform when the rule matches.\nAvailable values: \"block\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -168,7 +168,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
-												Description: "Name of compression algorithm to enable.\navailable values: \"none\", \"auto\", \"default\", \"gzip\", \"brotli\"",
+												Description: "Name of compression algorithm to enable.\nAvailable values: \"none\", \"auto\", \"default\", \"gzip\", \"brotli\".",
 												Optional:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(
@@ -229,7 +229,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 														Optional:    true,
 													},
 													"sensitivity_level": schema.StringAttribute{
-														Description: "The sensitivity level to use for rules in the category.\navailable values: \"default\", \"medium\", \"low\", \"eoff\"",
+														Description: "The sensitivity level to use for rules in the category.\nAvailable values: \"default\", \"medium\", \"low\", \"eoff\".",
 														Optional:    true,
 														Validators: []validator.String{
 															stringvalidator.OneOfCaseInsensitive(
@@ -271,7 +271,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 														Optional:    true,
 													},
 													"sensitivity_level": schema.StringAttribute{
-														Description: "The sensitivity level to use for the rule.\navailable values: \"default\", \"medium\", \"low\", \"eoff\"",
+														Description: "The sensitivity level to use for the rule.\nAvailable values: \"default\", \"medium\", \"low\", \"eoff\".",
 														Optional:    true,
 														Validators: []validator.String{
 															stringvalidator.OneOfCaseInsensitive(
@@ -286,7 +286,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"sensitivity_level": schema.StringAttribute{
-											Description: "A sensitivity level to set for all rules. This option has lower precedence than rule and category overrides and is only applicable for DDoS phases.\navailable values: \"default\", \"medium\", \"low\", \"eoff\"",
+											Description: "A sensitivity level to set for all rules. This option has lower precedence than rule and category overrides and is only applicable for DDoS phases.\nAvailable values: \"default\", \"medium\", \"low\", \"eoff\".",
 											Optional:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
@@ -326,7 +326,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Optional:    true,
 										},
 										"status_code": schema.Float64Attribute{
-											Description: "The status code to be used for the redirect.\navailable values: 301, 302, 303, 307, 308",
+											Description: "The status code to be used for the redirect.\nAvailable values: 301, 302, 303, 307, 308.",
 											Optional:    true,
 											Validators: []validator.Float64{
 												float64validator.OneOf(
@@ -364,7 +364,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"operation": schema.StringAttribute{
-												Description: "available values: \"remove\"",
+												Description: "Available values: \"remove\".",
 												Required:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("remove", "set"),
@@ -465,7 +465,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 								},
 								"content_type": schema.StringAttribute{
-									Description: "Content-type header to set with the response.\navailable values: \"application/json\", \"text/xml\", \"text/plain\", \"text/html\"",
+									Description: "Content-type header to set with the response.\nAvailable values: \"application/json\", \"text/xml\", \"text/plain\", \"text/html\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -544,7 +544,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 								},
 								"polish": schema.StringAttribute{
-									Description: "Configure the Polish level.\navailable values: \"off\", \"lossless\", \"lossy\"",
+									Description: "Configure the Polish level.\nAvailable values: \"off\", \"lossless\", \"lossy\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -559,7 +559,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 								},
 								"security_level": schema.StringAttribute{
-									Description: "Configure the Security Level.\navailable values: \"off\", \"essentially_off\", \"low\", \"medium\", \"high\", \"under_attack\"",
+									Description: "Configure the Security Level.\nAvailable values: \"off\", \"essentially_off\", \"low\", \"medium\", \"high\", \"under_attack\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -577,7 +577,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 								},
 								"ssl": schema.StringAttribute{
-									Description: "Configure the SSL level.\navailable values: \"off\", \"flexible\", \"full\", \"strict\", \"origin_pull\"",
+									Description: "Configure the SSL level.\nAvailable values: \"off\", \"flexible\", \"full\", \"strict\", \"origin_pull\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -653,7 +653,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"ruleset": schema.StringAttribute{
-									Description: "A ruleset to skip the execution of. This option is incompatible with the rulesets, rules and phases options.\navailable values: \"current\"",
+									Description: "A ruleset to skip the execution of. This option is incompatible with the rulesets, rules and phases options.\nAvailable values: \"current\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("current"),
@@ -676,7 +676,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersBrowserTTLModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"mode": schema.StringAttribute{
-											Description: "Determines which browser ttl mode to use.\navailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\"",
+											Description: "Determines which browser ttl mode to use.\nAvailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\".",
 											Required:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
@@ -873,7 +873,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"mode": schema.StringAttribute{
-											Description: "edge ttl options\navailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\"",
+											Description: "edge ttl options\nAvailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\".",
 											Required:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
@@ -1089,7 +1089,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									ElementType: types.StringType,
 								},
 								"period": schema.Int64Attribute{
-									Description: "Period in seconds over which the counter is being incremented.\navailable values: 10, 60, 600, 3600",
+									Description: "Period in seconds over which the counter is being incremented.\nAvailable values: 10, 60, 600, 3600.",
 									Required:    true,
 									Validators: []validator.Int64{
 										int64validator.OneOf(

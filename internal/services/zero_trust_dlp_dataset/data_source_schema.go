@@ -52,7 +52,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"status": schema.StringAttribute{
-				Description: "available values: \"empty\", \"uploading\", \"processing\", \"failed\", \"complete\"",
+				Description: "Available values: \"empty\", \"uploading\", \"processing\", \"failed\", \"complete\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -84,7 +84,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"upload_status": schema.StringAttribute{
-							Description: "available values: \"empty\", \"uploading\", \"processing\", \"failed\", \"complete\"",
+							Description: "Available values: \"empty\", \"uploading\", \"processing\", \"failed\", \"complete\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -108,7 +108,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"status": schema.StringAttribute{
-							Description: "available values: \"empty\", \"uploading\", \"processing\", \"failed\", \"complete\"",
+							Description: "Available values: \"empty\", \"uploading\", \"processing\", \"failed\", \"complete\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

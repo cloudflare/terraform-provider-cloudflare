@@ -229,7 +229,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"fallback_action": schema.StringAttribute{
-								Description: "Action to take when the file cannot be scanned.\navailable values: \"allow\", \"block\"",
+								Description: "Action to take when the file cannot be scanned.\nAvailable values: \"allow\", \"block\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("allow", "block"),

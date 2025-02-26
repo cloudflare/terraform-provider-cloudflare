@@ -36,7 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"region": schema.StringAttribute{
-				Description: "Region where this widget can be used.\navailable values: \"world\"",
+				Description: "Region where this widget can be used.\nAvailable values: \"world\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -46,7 +46,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:       stringdefault.StaticString("world"),
 			},
 			"mode": schema.StringAttribute{
-				Description: "Widget Mode\navailable values: \"non-interactive\", \"invisible\", \"managed\"",
+				Description: "Widget Mode\nAvailable values: \"non-interactive\", \"invisible\", \"managed\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -69,7 +69,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"clearance_level": schema.StringAttribute{
-				Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\navailable values: \"no_clearance\", \"jschallenge\", \"managed\", \"interactive\"",
+				Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\nAvailable values: \"no_clearance\", \"jschallenge\", \"managed\", \"interactive\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

@@ -26,7 +26,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "The direction used to sort returned connections.\navailable values: \"asc\", \"desc\"",
+				Description: "The direction used to sort returned connections.\nAvailable values: \"asc\", \"desc\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
@@ -41,7 +41,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"export": schema.StringAttribute{
-				Description: "Export the list of connections as a file.\navailable values: \"csv\"",
+				Description: "Export the list of connections as a file.\nAvailable values: \"csv\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("csv"),
@@ -52,7 +52,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"order_by": schema.StringAttribute{
-				Description: "The field used to sort returned connections.\navailable values: \"first_seen_at\", \"last_seen_at\"",
+				Description: "The field used to sort returned connections.\nAvailable values: \"first_seen_at\", \"last_seen_at\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("first_seen_at", "last_seen_at"),

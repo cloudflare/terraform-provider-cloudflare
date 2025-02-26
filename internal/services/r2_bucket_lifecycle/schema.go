@@ -71,7 +71,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Required: true,
 										},
 										"type": schema.StringAttribute{
-											Description: "available values: \"Age\"",
+											Description: "Available values: \"Age\".",
 											Required:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("Age"),
@@ -97,7 +97,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 										},
 										"type": schema.StringAttribute{
-											Description: "available values: \"Age\"",
+											Description: "Available values: \"Age\".",
 											Required:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("Age", "Date"),
@@ -126,7 +126,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												Optional: true,
 											},
 											"type": schema.StringAttribute{
-												Description: "available values: \"Age\"",
+												Description: "Available values: \"Age\".",
 												Required:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("Age", "Date"),
@@ -139,7 +139,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"storage_class": schema.StringAttribute{
-										Description: "available values: \"InfrequentAccess\"",
+										Description: "Available values: \"InfrequentAccess\".",
 										Required:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive("InfrequentAccess"),

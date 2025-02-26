@@ -42,7 +42,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"action": schema.StringAttribute{
-							Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.\navailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\"",
+							Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -168,7 +168,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsBISOAdminControlsDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"copy": schema.StringAttribute{
-											Description: "Configure whether copy is enabled or not. When set with \"remote_only\", copying isolated content from the remote browser to the user's local clipboard is disabled. When absent, copy is enabled. Only applies when `version == \"v2\"`.\navailable values: \"enabled\", \"disabled\", \"remote_only\"",
+											Description: "Configure whether copy is enabled or not. When set with \"remote_only\", copying isolated content from the remote browser to the user's local clipboard is disabled. When absent, copy is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
@@ -191,7 +191,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 										},
 										"download": schema.StringAttribute{
-											Description: "Configure whether downloading enabled or not. When absent, downloading is enabled. Only applies when `version == \"v2\"`.\navailable values: \"enabled\", \"disabled\"",
+											Description: "Configure whether downloading enabled or not. When absent, downloading is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
@@ -206,14 +206,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 										},
 										"keyboard": schema.StringAttribute{
-											Description: "Configure whether keyboard usage is enabled or not. When absent, keyboard usage is enabled. Only applies when `version == \"v2\"`.\navailable values: \"enabled\", \"disabled\"",
+											Description: "Configure whether keyboard usage is enabled or not. When absent, keyboard usage is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
 											},
 										},
 										"paste": schema.StringAttribute{
-											Description: "Configure whether pasting is enabled or not. When set with \"remote_only\", pasting content from the user's local clipboard into isolated pages is disabled. When absent, paste is enabled. Only applies when `version == \"v2\"`.\navailable values: \"enabled\", \"disabled\", \"remote_only\"",
+											Description: "Configure whether pasting is enabled or not. When set with \"remote_only\", pasting content from the user's local clipboard into isolated pages is disabled. When absent, paste is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
@@ -224,21 +224,21 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"printing": schema.StringAttribute{
-											Description: "Configure whether printing is enabled or not. When absent, printing is enabled. Only applies when `version == \"v2\"`.\navailable values: \"enabled\", \"disabled\"",
+											Description: "Configure whether printing is enabled or not. When absent, printing is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
 											},
 										},
 										"upload": schema.StringAttribute{
-											Description: "Configure whether uploading is enabled or not. When absent, uploading is enabled. Only applies when `version == \"v2\"`.\navailable values: \"enabled\", \"disabled\"",
+											Description: "Configure whether uploading is enabled or not. When absent, uploading is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
 											},
 										},
 										"version": schema.StringAttribute{
-											Description: "Indicates which version of the browser isolation controls should apply.\navailable values: \"v1\", \"v2\"",
+											Description: "Indicates which version of the browser isolation controls should apply.\nAvailable values: \"v1\", \"v2\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("v1", "v2"),
@@ -456,7 +456,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsResolveDNSInternallyDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"fallback": schema.StringAttribute{
-											Description: "The fallback behavior to apply when the internal DNS response code is different from 'NOERROR' or when the response data only contains CNAME records for 'A' or 'AAAA' queries.\navailable values: \"none\", \"public_dns\"",
+											Description: "The fallback behavior to apply when the internal DNS response code is different from 'NOERROR' or when the response data only contains CNAME records for 'A' or 'AAAA' queries.\nAvailable values: \"none\", \"public_dns\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("none", "public_dns"),
@@ -478,7 +478,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsUntrustedCERTDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"action": schema.StringAttribute{
-											Description: "The action performed when an untrusted certificate is seen. The default action is an error with HTTP code 526.\navailable values: \"pass_through\", \"block\", \"error\"",
+											Description: "The action performed when an untrusted certificate is seen. The default action is an error with HTTP code 526.\nAvailable values: \"pass_through\", \"block\", \"error\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(

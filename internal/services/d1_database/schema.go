@@ -40,7 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"primary_location_hint": schema.StringAttribute{
-				Description: "Specify the region to create the D1 primary, if available. If this option is omitted, the D1 will be created as close as possible to the current user.\navailable values: \"wnam\", \"enam\", \"weur\", \"eeur\", \"apac\", \"oc\"",
+				Description: "Specify the region to create the D1 primary, if available. If this option is omitted, the D1 will be created as close as possible to the current user.\nAvailable values: \"wnam\", \"enam\", \"weur\", \"eeur\", \"apac\", \"oc\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

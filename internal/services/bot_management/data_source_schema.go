@@ -22,7 +22,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"ai_bots_protection": schema.StringAttribute{
-				Description: "Enable rule to block AI Scrapers and Crawlers.\navailable values: \"block\", \"disabled\"",
+				Description: "Enable rule to block AI Scrapers and Crawlers.\nAvailable values: \"block\", \"disabled\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("block", "disabled"),
@@ -45,7 +45,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"sbfm_definitely_automated": schema.StringAttribute{
-				Description: "Super Bot Fight Mode (SBFM) action to take on definitely automated requests.\navailable values: \"allow\", \"block\", \"managed_challenge\"",
+				Description: "Super Bot Fight Mode (SBFM) action to take on definitely automated requests.\nAvailable values: \"allow\", \"block\", \"managed_challenge\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -56,7 +56,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"sbfm_likely_automated": schema.StringAttribute{
-				Description: "Super Bot Fight Mode (SBFM) action to take on likely automated requests.\navailable values: \"allow\", \"block\", \"managed_challenge\"",
+				Description: "Super Bot Fight Mode (SBFM) action to take on likely automated requests.\nAvailable values: \"allow\", \"block\", \"managed_challenge\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -71,7 +71,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"sbfm_verified_bots": schema.StringAttribute{
-				Description: "Super Bot Fight Mode (SBFM) action to take on verified bots requests.\navailable values: \"allow\", \"block\"",
+				Description: "Super Bot Fight Mode (SBFM) action to take on verified bots requests.\nAvailable values: \"allow\", \"block\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("allow", "block"),

@@ -31,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"value": schema.StringAttribute{
-				Description: "Value of the Cache Reserve zone setting.\navailable values: \"on\", \"off\"",
+				Description: "Value of the Cache Reserve zone setting.\nAvailable values: \"on\", \"off\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{

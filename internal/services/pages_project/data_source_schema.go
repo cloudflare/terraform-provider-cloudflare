@@ -271,7 +271,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										ElementType: types.StringType,
 									},
 									"preview_deployment_setting": schema.StringAttribute{
-										Description: "available values: \"all\", \"none\", \"custom\"",
+										Description: "Available values: \"all\", \"none\", \"custom\".",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -420,7 +420,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 										},
 										"type": schema.StringAttribute{
-											Description: "The type of environment variable.\navailable values: \"plain_text\", \"secret_text\"",
+											Description: "The type of environment variable.\nAvailable values: \"plain_text\", \"secret_text\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
@@ -627,7 +627,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 										},
 										"type": schema.StringAttribute{
-											Description: "The type of environment variable.\navailable values: \"plain_text\", \"secret_text\"",
+											Description: "The type of environment variable.\nAvailable values: \"plain_text\", \"secret_text\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
@@ -937,7 +937,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										ElementType: types.StringType,
 									},
 									"preview_deployment_setting": schema.StringAttribute{
-										Description: "available values: \"all\", \"none\", \"custom\"",
+										Description: "Available values: \"all\", \"none\", \"custom\".",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -1034,7 +1034,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								ElementType: types.StringType,
 							},
 							"preview_deployment_setting": schema.StringAttribute{
-								Description: "available values: \"all\", \"none\", \"custom\"",
+								Description: "Available values: \"all\", \"none\", \"custom\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(

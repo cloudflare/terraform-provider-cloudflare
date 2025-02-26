@@ -38,7 +38,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of DNSSEC, based on user-desired state and presence of necessary records.\navailable values: \"active\", \"disabled\"",
+				Description: "Status of DNSSEC, based on user-desired state and presence of necessary records.\nAvailable values: \"active\", \"disabled\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("active", "disabled"),

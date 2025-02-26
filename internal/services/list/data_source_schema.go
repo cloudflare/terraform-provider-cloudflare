@@ -37,7 +37,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"kind": schema.StringAttribute{
-				Description: "The type of the list. Each type supports specific list items (IP addresses, ASNs, hostnames or redirects).\navailable values: \"ip\", \"redirect\", \"hostname\", \"asn\"",
+				Description: "The type of the list. Each type supports specific list items (IP addresses, ASNs, hostnames or redirects).\nAvailable values: \"ip\", \"redirect\", \"hostname\", \"asn\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

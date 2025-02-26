@@ -29,7 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"value": schema.StringAttribute{
-				Description: "Enables Argo Smart Routing.\navailable values: \"on\", \"off\"",
+				Description: "Enables Argo Smart Routing.\nAvailable values: \"on\", \"off\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),
