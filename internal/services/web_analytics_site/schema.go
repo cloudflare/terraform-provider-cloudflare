@@ -37,8 +37,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.",
 				Optional:    true,
 			},
+			"enabled": schema.BoolAttribute{
+				Description: "Enables or disables RUM. This option can be used only when auto_install is set to true.",
+				Optional:    true,
+			},
 			"host": schema.StringAttribute{
 				Description: "The hostname to use for gray-clouded sites.",
+				Optional:    true,
+			},
+			"lite": schema.BoolAttribute{
+				Description: "If enabled, the JavaScript snippet will not be injected for visitors from the EU.",
 				Optional:    true,
 			},
 			"zone_tag": schema.StringAttribute{
