@@ -33,7 +33,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Record type.\navailable values: \"A\", \"AAAA\", \"CAA\", \"CERT\", \"CNAME\", \"DNSKEY\", \"DS\", \"HTTPS\", \"LOC\", \"MX\", \"NAPTR\", \"NS\", \"OPENPGPKEY\", \"PTR\", \"SMIMEA\", \"SRV\", \"SSHFP\", \"SVCB\", \"TLSA\", \"TXT\", \"URI\"",
+				Description: "Record type.\nAvailable values: \"A\", \"AAAA\", \"CAA\", \"CERT\", \"CNAME\", \"DNSKEY\", \"DS\", \"HTTPS\", \"LOC\", \"MX\", \"NAPTR\", \"NS\", \"OPENPGPKEY\", \"PTR\", \"SMIMEA\", \"SRV\", \"SSHFP\", \"SVCB\", \"TLSA\", \"TXT\", \"URI\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -162,7 +162,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"direction": schema.StringAttribute{
-				Description: "Direction to order DNS records in.\navailable values: \"asc\", \"desc\"",
+				Description: "Direction to order DNS records in.\nAvailable values: \"asc\", \"desc\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -170,7 +170,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"match": schema.StringAttribute{
-				Description: "Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead. Note that the interaction between tag filters is controlled by the `tag-match` parameter instead.\navailable values: \"any\", \"all\"",
+				Description: "Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead. Note that the interaction between tag filters is controlled by the `tag-match` parameter instead.\nAvailable values: \"any\", \"all\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -178,7 +178,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"order": schema.StringAttribute{
-				Description: "Field to order DNS records by.\navailable values: \"type\", \"name\", \"content\", \"ttl\", \"proxied\"",
+				Description: "Field to order DNS records by.\nAvailable values: \"type\", \"name\", \"content\", \"ttl\", \"proxied\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -197,7 +197,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"tag_match": schema.StringAttribute{
-				Description: "Whether to match all tag search requirements or at least one (any). If set to `all`, acts like a logical AND between tag filters. If set to `any`, acts like a logical OR instead. Note that the regular `match` parameter is still used to combine the resulting condition with other filters that aren't related to tags.\navailable values: \"any\", \"all\"",
+				Description: "Whether to match all tag search requirements or at least one (any). If set to `all`, acts like a logical AND between tag filters. If set to `any`, acts like a logical OR instead. Note that the regular `match` parameter is still used to combine the resulting condition with other filters that aren't related to tags.\nAvailable values: \"any\", \"all\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -266,7 +266,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: "Record type.\navailable values: \"A\"",
+							Description: "Record type.\nAvailable values: \"A\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -420,7 +420,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"lat_direction": schema.StringAttribute{
-									Description: "Latitude direction.\navailable values: \"N\", \"S\"",
+									Description: "Latitude direction.\nAvailable values: \"N\", \"S\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("N", "S"),
@@ -448,7 +448,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"long_direction": schema.StringAttribute{
-									Description: "Longitude direction.\navailable values: \"E\", \"W\"",
+									Description: "Longitude direction.\nAvailable values: \"E\", \"W\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("E", "W"),

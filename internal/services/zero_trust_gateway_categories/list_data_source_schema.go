@@ -44,7 +44,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"class": schema.StringAttribute{
-							Description: "Which account types are allowed to create policies based on this category. `blocked` categories are blocked unconditionally for all accounts. `removalPending` categories can be removed from policies but not added. `noBlock` categories cannot be blocked.\navailable values: \"free\", \"premium\", \"blocked\", \"removalPending\", \"noBlock\"",
+							Description: "Which account types are allowed to create policies based on this category. `blocked` categories are blocked unconditionally for all accounts. `removalPending` categories can be removed from policies but not added. `noBlock` categories cannot be blocked.\nAvailable values: \"free\", \"premium\", \"blocked\", \"removalPending\", \"noBlock\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -79,7 +79,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Computed:    true,
 									},
 									"class": schema.StringAttribute{
-										Description: "Which account types are allowed to create policies based on this category. `blocked` categories are blocked unconditionally for all accounts. `removalPending` categories can be removed from policies but not added. `noBlock` categories cannot be blocked.\navailable values: \"free\", \"premium\", \"blocked\", \"removalPending\", \"noBlock\"",
+										Description: "Which account types are allowed to create policies based on this category. `blocked` categories are blocked unconditionally for all accounts. `removalPending` categories can be removed from policies but not added. `noBlock` categories cannot be blocked.\nAvailable values: \"free\", \"premium\", \"blocked\", \"removalPending\", \"noBlock\".",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(

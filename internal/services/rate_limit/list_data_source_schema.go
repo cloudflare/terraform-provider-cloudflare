@@ -48,7 +48,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[RateLimitsActionDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"mode": schema.StringAttribute{
-									Description: "The action to perform.\navailable values: \"simulate\", \"ban\", \"challenge\", \"js_challenge\", \"managed_challenge\"",
+									Description: "The action to perform.\nAvailable values: \"simulate\", \"ban\", \"challenge\", \"js_challenge\", \"managed_challenge\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -91,7 +91,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"name": schema.StringAttribute{
-										Description: "available values: \"url\"",
+										Description: "Available values: \"url\".",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive("url"),
@@ -127,7 +127,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												Computed:    true,
 											},
 											"op": schema.StringAttribute{
-												Description: "The operator used when matching: `eq` means \"equal\" and `ne` means \"not equal\".\navailable values: \"eq\", \"ne\"",
+												Description: "The operator used when matching: `eq` means \"equal\" and `ne` means \"not equal\".\nAvailable values: \"eq\", \"ne\".",
 												Computed:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("eq", "ne"),

@@ -48,7 +48,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:       booldefault.StaticBool(false),
 			},
 			"status": schema.StringAttribute{
-				Description: "Specifies the processing status of the video.\navailable values: \"queued\", \"ready\", \"error\"",
+				Description: "Specifies the processing status of the video.\nAvailable values: \"queued\", \"ready\", \"error\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

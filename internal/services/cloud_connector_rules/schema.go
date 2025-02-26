@@ -61,7 +61,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"cloud_provider": schema.StringAttribute{
-							Description: "Cloud Provider type\navailable values: \"aws_s3\", \"r2\", \"gcp_storage\", \"azure_storage\"",
+							Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"r2\", \"gcp_storage\", \"azure_storage\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -77,7 +77,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"cloud_provider": schema.StringAttribute{
-				Description: "Cloud Provider type\navailable values: \"aws_s3\", \"r2\", \"gcp_storage\", \"azure_storage\"",
+				Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"r2\", \"gcp_storage\", \"azure_storage\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

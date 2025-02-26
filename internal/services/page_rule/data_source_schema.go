@@ -44,7 +44,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "The status of the Page Rule.\navailable values: \"active\", \"disabled\"",
+				Description: "The status of the Page Rule.\nAvailable values: \"active\", \"disabled\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("active", "disabled"),

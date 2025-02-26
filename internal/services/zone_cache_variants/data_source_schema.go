@@ -26,7 +26,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "ID of the zone setting.\navailable values: \"variants\"",
+				Description: "ID of the zone setting.\nAvailable values: \"variants\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("variants"),

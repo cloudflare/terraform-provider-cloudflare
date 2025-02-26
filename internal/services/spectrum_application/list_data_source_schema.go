@@ -23,7 +23,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "Sets the direction by which results are ordered.\navailable values: \"asc\", \"desc\"",
+				Description: "Sets the direction by which results are ordered.\nAvailable values: \"asc\", \"desc\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -31,7 +31,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"order": schema.StringAttribute{
-				Description: "Application field by which results are ordered.\navailable values: \"protocol\", \"app_id\", \"created_on\", \"modified_on\", \"dns\"",
+				Description: "Application field by which results are ordered.\nAvailable values: \"protocol\", \"app_id\", \"created_on\", \"modified_on\", \"dns\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{

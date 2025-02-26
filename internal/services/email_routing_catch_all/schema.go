@@ -36,7 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
-							Description: "Type of action for catch-all rule.\navailable values: \"drop\", \"forward\", \"worker\"",
+							Description: "Type of action for catch-all rule.\nAvailable values: \"drop\", \"forward\", \"worker\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -59,7 +59,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
-							Description: "Type of matcher. Default is 'all'.\navailable values: \"all\"",
+							Description: "Type of matcher. Default is 'all'.\nAvailable values: \"all\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("all"),

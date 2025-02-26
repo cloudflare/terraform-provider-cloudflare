@@ -65,14 +65,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{
-						Description: "The sorting direction.\navailable values: \"asc\", \"desc\"",
+						Description: "The sorting direction.\nAvailable values: \"asc\", \"desc\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 						},
 					},
 					"order": schema.StringAttribute{
-						Description: "The field to sort by.\navailable values: \"name\", \"email\", \"created_at\"",
+						Description: "The field to sort by.\nAvailable values: \"name\", \"email\", \"created_at\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -83,7 +83,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"provenance": schema.StringAttribute{
-						Description: "available values: \"A1S_INTERNAL\", \"SNOOPY-CASB_OFFICE_365\", \"SNOOPY-OFFICE_365\", \"SNOOPY-GOOGLE_DIRECTORY\"",
+						Description: "Available values: \"A1S_INTERNAL\", \"SNOOPY-CASB_OFFICE_365\", \"SNOOPY-OFFICE_365\", \"SNOOPY-GOOGLE_DIRECTORY\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

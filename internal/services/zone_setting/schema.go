@@ -32,7 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"id": schema.StringAttribute{
-				Description: "ID of the zone setting.\navailable values: \"0rtt\"",
+				Description: "ID of the zone setting.\nAvailable values: \"0rtt\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -103,7 +103,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"value": schema.StringAttribute{
-				Description: "Current value of the zone setting.\navailable values: \"on\", \"off\"",
+				Description: "Current value of the zone setting.\nAvailable values: \"on\", \"off\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{

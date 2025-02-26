@@ -46,7 +46,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"tlp": schema.StringAttribute{
-				Description: "The CISA defined Traffic Light Protocol (TLP)\navailable values: \"clear\", \"amber\", \"amber-strict\", \"green\", \"red\"",
+				Description: "The CISA defined Traffic Light Protocol (TLP)\nAvailable values: \"clear\", \"amber\", \"amber-strict\", \"green\", \"red\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -79,7 +79,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Request Status\navailable values: \"open\", \"accepted\", \"reported\", \"approved\", \"completed\", \"declined\"",
+				Description: "Request Status\nAvailable values: \"open\", \"accepted\", \"reported\", \"approved\", \"completed\", \"declined\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

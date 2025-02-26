@@ -42,14 +42,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{
-						Description: "Direction to order namespaces.\navailable values: \"asc\", \"desc\"",
+						Description: "Direction to order namespaces.\nAvailable values: \"asc\", \"desc\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 						},
 					},
 					"order": schema.StringAttribute{
-						Description: "Field to order results by.\navailable values: \"id\", \"title\"",
+						Description: "Field to order results by.\nAvailable values: \"id\", \"title\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("id", "title"),

@@ -35,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"decision": schema.StringAttribute{
-				Description: "The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.\navailable values: \"allow\", \"deny\", \"non_identity\", \"bypass\"",
+				Description: "The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.\nAvailable values: \"allow\", \"deny\", \"non_identity\", \"bypass\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

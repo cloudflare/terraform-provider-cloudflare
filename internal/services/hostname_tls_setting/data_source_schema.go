@@ -18,7 +18,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"setting_id": schema.StringAttribute{
-				Description: "The TLS Setting name.\navailable values: \"ciphers\", \"min_tls_version\", \"http2\"",
+				Description: "The TLS Setting name.\nAvailable values: \"ciphers\", \"min_tls_version\", \"http2\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
