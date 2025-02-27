@@ -1331,6 +1331,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"client_secret": schema.StringAttribute{
 						Description: "The application client secret, only returned on POST request.",
 						Optional:    true,
+						Sensitive:   true,
 					},
 					"custom_claims": schema.ListNestedAttribute{
 						Computed:   true,
