@@ -8,10 +8,12 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustTunnelCloudflaredRoutesDataSource)(nil)
@@ -47,10 +49,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "UUID of the route.",
 				Optional:    true,
 			},
-			"tun_types": schema.StringAttribute{
-				Description: "The types of tunnels to filter separated by a comma.",
-				Optional:    true,
-			},
 			"tunnel_id": schema.StringAttribute{
 				Description: "UUID of the tunnel.",
 				Optional:    true,
@@ -58,6 +56,24 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"virtual_network_id": schema.StringAttribute{
 				Description: "UUID of the virtual network.",
 				Optional:    true,
+			},
+			"tun_types": schema.ListAttribute{
+				Description: "The types of tunnels to filter by, separated by commas.",
+				Optional:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"cfd_tunnel",
+							"warp_connector",
+							"warp",
+							"magic",
+							"ip_sec",
+							"gre",
+							"cni",
+						),
+					),
+				},
+				ElementType: types.StringType,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -95,12 +111,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"tun_type": schema.StringAttribute{
-							Description: "The type of tunnel.\nAvailable values: \"cfd_tunnel\", \"warp_connector\", \"ip_sec\", \"gre\", \"cni\".",
+							Description: "The type of tunnel.\nAvailable values: \"cfd_tunnel\", \"warp_connector\", \"warp\", \"magic\", \"ip_sec\", \"gre\", \"cni\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"cfd_tunnel",
 									"warp_connector",
+									"warp",
+									"magic",
 									"ip_sec",
 									"gre",
 									"cni",

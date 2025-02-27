@@ -6,7 +6,7 @@ data "cloudflare_zero_trust_tunnel_cloudflared_routes" "example_zero_trust_tunne
   network_subset = "172.16.0.0/16"
   network_superset = "172.16.0.0/16"
   route_id = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
-  tun_types = "cfd_tunnel,warp_connector"
+  tun_types = ["cfd_tunnel"]
   tunnel_id = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
   virtual_network_id = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
 }
