@@ -18,11 +18,15 @@ var _ datasource.DataSourceWithConfigValidators = (*HyperdriveConfigDataSource)(
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description: "Identifier",
-				Required:    true,
+				Computed:    true,
 			},
 			"hyperdrive_id": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},
@@ -30,10 +34,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the Hyperdrive configuration was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the Hyperdrive configuration was last modified.",
@@ -76,6 +76,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"password": schema.StringAttribute{
 						Description: "The password required to access your origin database. This value is write-only and never returned by the API.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 					"port": schema.Int64Attribute{
 						Description: "The port (default: 5432 for Postgres) of your origin database.",
