@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -103,6 +104,8 @@ func (r *ZeroTrustAccessIdentityProviderResource) Create(ctx context.Context, re
 
 func (r *ZeroTrustAccessIdentityProviderResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *ZeroTrustAccessIdentityProviderModel
+	secret := types.StringNull()
+	req.State.GetAttribute(ctx, path.Root("scim_config").AtName("secret"), &secret)
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -154,10 +157,15 @@ func (r *ZeroTrustAccessIdentityProviderResource) Update(ctx context.Context, re
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	if !secret.IsNull() {
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("scim_config").AtName("secret"), secret)...)
+	}
 }
 
 func (r *ZeroTrustAccessIdentityProviderResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data *ZeroTrustAccessIdentityProviderModel
+	secret := types.StringNull()
+	req.State.GetAttribute(ctx, path.Root("scim_config").AtName("secret"), &secret)
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -200,6 +208,7 @@ func (r *ZeroTrustAccessIdentityProviderResource) Read(ctx context.Context, req 
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("scim_config").AtName("secret"), secret)...)
 }
 
 func (r *ZeroTrustAccessIdentityProviderResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

@@ -479,24 +479,24 @@ type ZeroTrustAccessApplicationPoliciesRequireServiceTokenModel struct {
 }
 
 type ZeroTrustAccessApplicationSaaSAppModel struct {
-	AuthType                      types.String                                                                             `tfsdk:"auth_type" json:"auth_type,optional"`
+	AuthType                      types.String                                                                             `tfsdk:"auth_type" json:"auth_type,computed_optional"`
 	ConsumerServiceURL            types.String                                                                             `tfsdk:"consumer_service_url" json:"consumer_service_url,optional"`
 	CreatedAt                     timetypes.RFC3339                                                                        `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CustomAttributes              customfield.NestedObjectList[ZeroTrustAccessApplicationSaaSAppCustomAttributesModel]     `tfsdk:"custom_attributes" json:"custom_attributes,computed_optional"`
 	DefaultRelayState             types.String                                                                             `tfsdk:"default_relay_state" json:"default_relay_state,optional"`
-	IdPEntityID                   types.String                                                                             `tfsdk:"idp_entity_id" json:"idp_entity_id,optional"`
+	IdPEntityID                   types.String                                                                             `tfsdk:"idp_entity_id" json:"idp_entity_id,computed_optional"`
 	NameIDFormat                  types.String                                                                             `tfsdk:"name_id_format" json:"name_id_format,optional"`
 	NameIDTransformJsonata        types.String                                                                             `tfsdk:"name_id_transform_jsonata" json:"name_id_transform_jsonata,optional"`
-	PublicKey                     types.String                                                                             `tfsdk:"public_key" json:"public_key,optional"`
+	PublicKey                     types.String                                                                             `tfsdk:"public_key" json:"public_key,computed_optional"`
 	SAMLAttributeTransformJsonata types.String                                                                             `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata,optional"`
 	SPEntityID                    types.String                                                                             `tfsdk:"sp_entity_id" json:"sp_entity_id,optional"`
-	SSOEndpoint                   types.String                                                                             `tfsdk:"sso_endpoint" json:"sso_endpoint,optional"`
+	SSOEndpoint                   types.String                                                                             `tfsdk:"sso_endpoint" json:"sso_endpoint,computed_optional"`
 	UpdatedAt                     timetypes.RFC3339                                                                        `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	AccessTokenLifetime           types.String                                                                             `tfsdk:"access_token_lifetime" json:"access_token_lifetime,optional"`
 	AllowPKCEWithoutClientSecret  types.Bool                                                                               `tfsdk:"allow_pkce_without_client_secret" json:"allow_pkce_without_client_secret,optional"`
 	AppLauncherURL                types.String                                                                             `tfsdk:"app_launcher_url" json:"app_launcher_url,optional"`
-	ClientID                      types.String                                                                             `tfsdk:"client_id" json:"client_id,optional"`
-	ClientSecret                  types.String                                                                             `tfsdk:"client_secret" json:"client_secret,optional"`
+	ClientID                      types.String                                                                             `tfsdk:"client_id" json:"client_id,computed_optional"`
+	ClientSecret                  types.String                                                                             `tfsdk:"client_secret" json:"client_secret,computed_optional"`
 	CustomClaims                  customfield.NestedObjectList[ZeroTrustAccessApplicationSaaSAppCustomClaimsModel]         `tfsdk:"custom_claims" json:"custom_claims,computed_optional"`
 	GrantTypes                    *[]types.String                                                                          `tfsdk:"grant_types" json:"grant_types,optional"`
 	GroupFilterRegex              types.String                                                                             `tfsdk:"group_filter_regex" json:"group_filter_regex,optional"`
