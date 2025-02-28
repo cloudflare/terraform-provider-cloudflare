@@ -38,7 +38,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"status": schema.StringAttribute{
-				Description: "Available values: \"accepted\", \"pending\".",
+				Description: `Available values: "accepted", "pending".`,
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{

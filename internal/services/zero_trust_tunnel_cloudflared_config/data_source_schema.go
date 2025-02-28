@@ -127,7 +127,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 										},
 										"proxy_type": schema.StringAttribute{
-											Description: "cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. Valid options are: \"\" for the regular proxy and \"socks\" for a SOCKS5 proxy.",
+											Description: `cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. Valid options are: "" for the regular proxy and "socks" for a SOCKS5 proxy.`,
 											Computed:    true,
 										},
 										"tcp_keep_alive": schema.Int64Attribute{
@@ -213,7 +213,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"proxy_type": schema.StringAttribute{
-								Description: "cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. Valid options are: \"\" for the regular proxy and \"socks\" for a SOCKS5 proxy.",
+								Description: `cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. Valid options are: "" for the regular proxy and "socks" for a SOCKS5 proxy.`,
 								Computed:    true,
 							},
 							"tcp_keep_alive": schema.Int64Attribute{

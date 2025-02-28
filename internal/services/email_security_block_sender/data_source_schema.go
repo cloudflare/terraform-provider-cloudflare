@@ -49,7 +49,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"pattern_type": schema.StringAttribute{
-				Description: "Available values: \"EMAIL\", \"DOMAIN\", \"IP\", \"UNKNOWN\".",
+				Description: `Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -78,7 +78,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"pattern_type": schema.StringAttribute{
-						Description: "Available values: \"EMAIL\", \"DOMAIN\", \"IP\", \"UNKNOWN\".",
+						Description: `Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".`,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
