@@ -25,6 +25,7 @@ data "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
 ### Required
 
 - `account_id` (String) Identifier
+- `site_id` (String) Identifier
 
 ### Optional
 
@@ -37,7 +38,6 @@ data "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
 - `name` (String)
 - `physport` (Number)
 - `priority` (Number) Priority of WAN for traffic loadbalancing.
-- `site_id` (String) Identifier
 - `static_addressing` (Attributes) (optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode. (see [below for nested schema](#nestedatt--static_addressing))
 - `vlan_tag` (Number) VLAN port number.
 

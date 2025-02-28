@@ -59,4 +59,6 @@ const (
 
 	// Environment variable key for the client base URL.
 	BaseURLEnvVarKey = "CLOUDFLARE_BASE_URL"
+
+	R2JurisdictionHTTPHeaderName = "cf-r2-jurisdiction"
 )

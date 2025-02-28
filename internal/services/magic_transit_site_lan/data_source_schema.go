@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"site_id": schema.StringAttribute{
 				Description: "Identifier",
-				Computed:    true,
+				Required:    true,
 			},
 			"ha_link": schema.BoolAttribute{
 				Description: "mark true to use this LAN for HA probing. only works for site with HA turned on. only one LAN can be set as the ha_link.",

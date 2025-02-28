@@ -46,7 +46,7 @@ data "cloudflare_zero_trust_tunnel_cloudflared_route" "example_zero_trust_tunnel
 Optional:
 
 - `comment` (String) Optional remark describing the route.
-- `existed_at` (String) If provided, include only tunnels that were created (and not deleted) before this time.
+- `existed_at` (String) If provided, include only resources that were created (and not deleted) before this time. URL encoded.
 - `is_deleted` (Boolean) If `true`, only include deleted routes. If `false`, exclude deleted routes. If empty, all routes will be included.
 - `network_subset` (String) If set, only list routes that are contained within this IP range.
 - `network_superset` (String) If set, only list routes that contain this IP range.

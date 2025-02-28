@@ -25,6 +25,10 @@ type MagicNetworkMonitoringRuleDataSourceModel struct {
 	Duration               types.String                   `tfsdk:"duration" json:"duration,computed"`
 	Name                   types.String                   `tfsdk:"name" json:"name,computed"`
 	PacketThreshold        types.Float64                  `tfsdk:"packet_threshold" json:"packet_threshold,computed"`
+	PrefixMatch            types.String                   `tfsdk:"prefix_match" json:"prefix_match,computed"`
+	Type                   types.String                   `tfsdk:"type" json:"type,computed"`
+	ZscoreSensitivity      types.String                   `tfsdk:"zscore_sensitivity" json:"zscore_sensitivity,computed"`
+	ZscoreTarget           types.String                   `tfsdk:"zscore_target" json:"zscore_target,computed"`
 	Prefixes               customfield.List[types.String] `tfsdk:"prefixes" json:"prefixes,computed"`
 }
 

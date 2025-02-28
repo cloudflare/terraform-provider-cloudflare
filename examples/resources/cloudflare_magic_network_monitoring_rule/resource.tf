@@ -1,6 +1,6 @@
 resource "cloudflare_magic_network_monitoring_rule" "example_magic_network_monitoring_rule" {
   account_id = "6f91088a406011ed95aed352566e8d4c"
-  duration = "300s"
+  duration = "1m"
   name = "my_rule_1"
   automatic_advertisement = true
   bandwidth = 1000

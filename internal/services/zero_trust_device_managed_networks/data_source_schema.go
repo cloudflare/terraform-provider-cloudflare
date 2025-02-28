@@ -34,7 +34,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of device managed network.",
+				Description: "The type of device managed network.\nAvailable values: \"tls\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("tls"),
@@ -46,7 +46,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustDeviceManagedNetworksConfigDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"tls_sockaddr": schema.StringAttribute{
-						Description: "A network address of the form \"host:port\" that the WARP client will use to detect the presence of a TLS host.",
+						Description: `A network address of the form "host:port" that the WARP client will use to detect the presence of a TLS host.`,
 						Computed:    true,
 					},
 					"sha256": schema.StringAttribute{

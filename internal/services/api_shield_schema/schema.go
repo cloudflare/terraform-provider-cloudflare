@@ -36,7 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"kind": schema.StringAttribute{
-				Description: "Kind of schema",
+				Description: "Kind of schema\nAvailable values: \"openapi_v3\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("openapi_v3"),
@@ -49,7 +49,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"validation_enabled": schema.StringAttribute{
-				Description: "Flag whether schema is enabled for validation.",
+				Description: "Flag whether schema is enabled for validation.\nAvailable values: \"true\", \"false\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("true", "false"),
@@ -72,7 +72,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType: timetypes.RFC3339Type{},
 					},
 					"kind": schema.StringAttribute{
-						Description: "Kind of schema",
+						Description: "Kind of schema\nAvailable values: \"openapi_v3\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("openapi_v3"),

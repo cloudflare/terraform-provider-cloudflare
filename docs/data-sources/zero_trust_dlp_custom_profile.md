@@ -81,9 +81,8 @@ Read-Only:
 
 Read-Only:
 
-- `ai_context_available` (Boolean)
-- `available` (Boolean) Indicates whether this entry can be made more or less sensitive by setting a confidence threshold.
-Profiles that use an entry with `available` set to true can use confidence thresholds
+- `ai_context_available` (Boolean) Indicates whether this entry has AI remote service validation
+- `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service
 
 
 <a id="nestedatt--entries--pattern"></a>

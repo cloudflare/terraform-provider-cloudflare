@@ -36,7 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of device managed network.",
+				Description: "The type of device managed network.\nAvailable values: \"tls\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("tls"),
@@ -47,7 +47,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"tls_sockaddr": schema.StringAttribute{
-						Description: "A network address of the form \"host:port\" that the WARP client will use to detect the presence of a TLS host.",
+						Description: `A network address of the form "host:port" that the WARP client will use to detect the presence of a TLS host.`,
 						Required:    true,
 					},
 					"sha256": schema.StringAttribute{

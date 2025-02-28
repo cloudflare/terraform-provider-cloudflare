@@ -35,6 +35,7 @@ resource "cloudflare_r2_bucket_event_notification" "example_r2_bucket_event_noti
 
 ### Optional
 
+- `jurisdiction` (String) Jurisdiction of the bucket
 - `queue_id` (String) Queue ID
 - `rules` (Attributes List) Array of rules to drive notifications (see [below for nested schema](#nestedatt--rules))
 

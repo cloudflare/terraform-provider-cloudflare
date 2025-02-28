@@ -14,13 +14,13 @@ var _ datasource.DataSourceWithConfigValidators = (*SnippetsDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"snippet_name": schema.StringAttribute{
+				Description: "Snippet identifying name",
+				Required:    true,
+			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
-			},
-			"snippet_name": schema.StringAttribute{
-				Description: "Snippet identifying name",
-				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "Creation time of the snippet",

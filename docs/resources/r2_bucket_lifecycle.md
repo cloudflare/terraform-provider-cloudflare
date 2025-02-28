@@ -54,6 +54,7 @@ resource "cloudflare_r2_bucket_lifecycle" "example_r2_bucket_lifecycle" {
 
 ### Optional
 
+- `jurisdiction` (String) Jurisdiction of the bucket
 - `rules` (Attributes List) (see [below for nested schema](#nestedatt--rules))
 
 <a id="nestedatt--rules"></a>

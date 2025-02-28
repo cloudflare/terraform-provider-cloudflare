@@ -66,7 +66,7 @@ resource "cloudflare_api_token" "example_api_token" {
 - `issued_on` (String) The time on which the token was created.
 - `last_used_on` (String) Last time the token was used.
 - `modified_on` (String) Last time the token was modified.
-- `value` (String) The token value.
+- `value` (String, Sensitive) The token value.
 
 <a id="nestedatt--policies"></a>
 ### Nested Schema for `policies`

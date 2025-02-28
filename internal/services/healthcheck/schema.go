@@ -131,7 +131,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"expected_codes": schema.ListAttribute{
-						Description: "The expected HTTP response codes (e.g. \"200\") or code ranges (e.g. \"2xx\" for all codes starting with 2) of the health check.",
+						Description: `The expected HTTP response codes (e.g. "200") or code ranges (e.g. "2xx" for all codes starting with 2) of the health check.`,
 						Optional:    true,
 						ElementType: types.StringType,
 					},
@@ -149,7 +149,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"method": schema.StringAttribute{
-						Description: "The HTTP method to use for the health check.",
+						Description: "The HTTP method to use for the health check.\nAvailable values: \"GET\", \"HEAD\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -178,7 +178,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[HealthcheckTCPConfigModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"method": schema.StringAttribute{
-						Description: "The TCP connection method to use for the health check.",
+						Description: "The TCP connection method to use for the health check.\nAvailable values: \"connection_established\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -207,7 +207,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
-				Description: "The current status of the origin server according to the health check.",
+				Description: "The current status of the origin server according to the health check.\nAvailable values: \"unknown\", \"healthy\", \"unhealthy\", \"suspended\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

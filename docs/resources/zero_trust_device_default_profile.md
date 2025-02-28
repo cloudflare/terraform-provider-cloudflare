@@ -20,7 +20,9 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
   auto_connect = 0
   captive_portal = 180
   disable_auto_fallback = true
+  doh_in_tunnel = true
   exclude_office_ips = true
+  register_interface_ip_with_dns = true
   service_mode_v2 = {
     mode = "proxy"
     port = 3000
@@ -46,7 +48,9 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
 - `auto_connect` (Number) The amount of time in seconds to reconnect after having been disabled.
 - `captive_portal` (Number) Turn on the captive portal after the specified amount of time.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
+- `doh_in_tunnel` (Boolean) Determines how the WARP client sends DNS requests to Cloudflare Gateway. When `true`, DNS traffic is sent over DoH inside the WARP tunnel. When `false`, the DoH connection operates outside of the WARP tunnel.
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
+- `register_interface_ip_with_dns` (Boolean) Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.
 - `service_mode_v2` (Attributes) (see [below for nested schema](#nestedatt--service_mode_v2))
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.

@@ -21,6 +21,10 @@ type MagicNetworkMonitoringRuleModel struct {
 	Prefixes               *[]types.String `tfsdk:"prefixes" json:"prefixes,optional"`
 	Duration               types.String    `tfsdk:"duration" json:"duration,computed_optional"`
 	BandwidthThreshold     types.Float64   `tfsdk:"bandwidth_threshold" json:"bandwidth_threshold,computed"`
+	PrefixMatch            types.String    `tfsdk:"prefix_match" json:"prefix_match,computed"`
+	Type                   types.String    `tfsdk:"type" json:"type,computed"`
+	ZscoreSensitivity      types.String    `tfsdk:"zscore_sensitivity" json:"zscore_sensitivity,computed"`
+	ZscoreTarget           types.String    `tfsdk:"zscore_target" json:"zscore_target,computed"`
 }
 
 func (m MagicNetworkMonitoringRuleModel) MarshalJSON() (data []byte, err error) {

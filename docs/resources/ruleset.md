@@ -16,6 +16,8 @@ resource "cloudflare_ruleset" "example_ruleset" {
   kind = "managed"
   name = "My ruleset"
   phase = "ddos_l4"
+  zone_id = "zone_id"
+  description = "My ruleset to execute managed rulesets"
   rules = [{
     id = "3a03d665bac047339bb530ecb439a90d"
     action = "block"
@@ -53,8 +55,6 @@ resource "cloudflare_ruleset" "example_ruleset" {
     }
     ref = "my_ref"
   }]
-  zone_id = "zone_id"
-  description = "My ruleset to execute managed rulesets"
 }
 ```
 
@@ -66,12 +66,12 @@ resource "cloudflare_ruleset" "example_ruleset" {
 - `kind` (String) The kind of the ruleset.
 - `name` (String) The human-readable name of the ruleset.
 - `phase` (String) The phase of the ruleset.
-- `rules` (Attributes List) The list of rules in the ruleset. (see [below for nested schema](#nestedatt--rules))
 
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `description` (String) An informative description of the ruleset.
+- `rules` (Attributes List) The list of rules in the ruleset. (see [below for nested schema](#nestedatt--rules))
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only

@@ -37,7 +37,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"pattern_type": schema.StringAttribute{
-				Required: true,
+				Description: `Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".`,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"EMAIL",

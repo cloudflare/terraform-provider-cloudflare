@@ -17,8 +17,8 @@ type APIShieldSchemaResultDataSourceEnvelope struct {
 }
 
 type APIShieldSchemaDataSourceModel struct {
+	SchemaID          types.String      `tfsdk:"schema_id" path:"schema_id,required"`
 	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
-	SchemaID          types.String      `tfsdk:"schema_id" path:"schema_id,computed"`
 	OmitSource        types.Bool        `tfsdk:"omit_source" query:"omit_source,computed_optional"`
 	CreatedAt         timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Kind              types.String      `tfsdk:"kind" json:"kind,computed"`
@@ -30,6 +30,10 @@ type APIShieldSchemaDataSourceModel struct {
 func (m *APIShieldSchemaDataSourceModel) toReadParams(_ context.Context) (params api_gateway.UserSchemaGetParams, diags diag.Diagnostics) {
 	params = api_gateway.UserSchemaGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	if !m.OmitSource.IsNull() {
+		params.OmitSource = cloudflare.F(m.OmitSource.ValueBool())
 	}
 
 	return

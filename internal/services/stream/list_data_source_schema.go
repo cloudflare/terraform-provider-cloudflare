@@ -45,7 +45,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
-				Description: "Specifies the processing status for all quality levels for a video.",
+				Description: "Specifies the processing status for all quality levels for a video.\nAvailable values: \"pendingupload\", \"downloading\", \"queued\", \"inprogress\", \"ready\", \"error\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -197,7 +197,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"state": schema.StringAttribute{
-									Description: "Specifies the processing status for all quality levels for a video.",
+									Description: "Specifies the processing status for all quality levels for a video.\nAvailable values: \"pendingupload\", \"downloading\", \"queued\", \"inprogress\", \"ready\", \"error\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(

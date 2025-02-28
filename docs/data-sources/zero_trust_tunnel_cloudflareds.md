@@ -15,7 +15,7 @@ description: |-
 data "cloudflare_zero_trust_tunnel_cloudflareds" "example_zero_trust_tunnel_cloudflareds" {
   account_id = "699d98642c564d2e855e9661899b7252"
   exclude_prefix = "vpc1-"
-  existed_at = "2019-10-12T07:20:50.52Z"
+  existed_at = "2019-10-12T07%3A20%3A50.52Z"
   include_prefix = "vpc1-"
   is_deleted = true
   name = "blog"
@@ -36,7 +36,7 @@ data "cloudflare_zero_trust_tunnel_cloudflareds" "example_zero_trust_tunnel_clou
 ### Optional
 
 - `exclude_prefix` (String)
-- `existed_at` (String) If provided, include only tunnels that were created (and not deleted) before this time.
+- `existed_at` (String) If provided, include only resources that were created (and not deleted) before this time. URL encoded.
 - `include_prefix` (String)
 - `is_deleted` (Boolean) If `true`, only include deleted tunnels. If `false`, exclude deleted tunnels. If empty, all tunnels will be included.
 - `max_items` (Number) Max items to fetch, default: 1000

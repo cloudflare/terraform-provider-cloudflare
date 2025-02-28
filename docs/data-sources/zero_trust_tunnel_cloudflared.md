@@ -51,7 +51,7 @@ data "cloudflare_zero_trust_tunnel_cloudflared" "example_zero_trust_tunnel_cloud
 Optional:
 
 - `exclude_prefix` (String)
-- `existed_at` (String) If provided, include only tunnels that were created (and not deleted) before this time.
+- `existed_at` (String) If provided, include only resources that were created (and not deleted) before this time. URL encoded.
 - `include_prefix` (String)
 - `is_deleted` (Boolean) If `true`, only include deleted tunnels. If `false`, exclude deleted tunnels. If empty, all tunnels will be included.
 - `name` (String) A user-friendly name for a tunnel.

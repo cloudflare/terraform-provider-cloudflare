@@ -13,15 +13,16 @@ type R2CustomDomainResultEnvelope struct {
 }
 
 type R2CustomDomainModel struct {
-	AccountID  types.String                                        `tfsdk:"account_id" path:"account_id,required"`
-	BucketName types.String                                        `tfsdk:"bucket_name" path:"bucket_name,required"`
-	DomainName types.String                                        `tfsdk:"domain_name" path:"domain_name,optional"`
-	Domain     types.String                                        `tfsdk:"domain" json:"domain,required"`
-	ZoneID     types.String                                        `tfsdk:"zone_id" json:"zoneId,required"`
-	Enabled    types.Bool                                          `tfsdk:"enabled" json:"enabled,required"`
-	MinTLS     types.String                                        `tfsdk:"min_tls" json:"minTLS,optional"`
-	ZoneName   types.String                                        `tfsdk:"zone_name" json:"zoneName,computed"`
-	Status     customfield.NestedObject[R2CustomDomainStatusModel] `tfsdk:"status" json:"status,computed"`
+	AccountID    types.String                                        `tfsdk:"account_id" path:"account_id,required"`
+	BucketName   types.String                                        `tfsdk:"bucket_name" path:"bucket_name,required"`
+	Jurisdiction types.String                                        `tfsdk:"jurisdiction" json:"-,computed_optional"`
+	DomainName   types.String                                        `tfsdk:"domain_name" path:"domain_name,optional"`
+	Domain       types.String                                        `tfsdk:"domain" json:"domain,required"`
+	ZoneID       types.String                                        `tfsdk:"zone_id" json:"zoneId,required"`
+	Enabled      types.Bool                                          `tfsdk:"enabled" json:"enabled,required"`
+	MinTLS       types.String                                        `tfsdk:"min_tls" json:"minTLS,optional"`
+	ZoneName     types.String                                        `tfsdk:"zone_name" json:"zoneName,computed"`
+	Status       customfield.NestedObject[R2CustomDomainStatusModel] `tfsdk:"status" json:"status,computed"`
 }
 
 func (m R2CustomDomainModel) MarshalJSON() (data []byte, err error) {

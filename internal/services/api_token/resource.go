@@ -149,6 +149,8 @@ func (r *APITokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
+	token := data.Value
+
 	res := new(http.Response)
 	env := APITokenResultEnvelope{*data}
 	_, err := r.client.User.Tokens.Get(
@@ -167,12 +169,13 @@ func (r *APITokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
 	data = &env.Result
+	data.Value = token
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

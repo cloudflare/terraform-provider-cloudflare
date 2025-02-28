@@ -73,7 +73,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "The current status of the origin server according to the health check.",
+				Description: "The current status of the origin server according to the health check.\nAvailable values: \"unknown\", \"healthy\", \"unhealthy\", \"suspended\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -136,7 +136,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"expected_codes": schema.ListAttribute{
-						Description: "The expected HTTP response codes (e.g. \"200\") or code ranges (e.g. \"2xx\" for all codes starting with 2) of the health check.",
+						Description: `The expected HTTP response codes (e.g. "200") or code ranges (e.g. "2xx" for all codes starting with 2) of the health check.`,
 						Computed:    true,
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
@@ -154,7 +154,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"method": schema.StringAttribute{
-						Description: "The HTTP method to use for the health check.",
+						Description: "The HTTP method to use for the health check.\nAvailable values: \"GET\", \"HEAD\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("GET", "HEAD"),
@@ -176,7 +176,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[HealthcheckTCPConfigDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"method": schema.StringAttribute{
-						Description: "The TCP connection method to use for the health check.",
+						Description: "The TCP connection method to use for the health check.\nAvailable values: \"connection_established\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("connection_established"),

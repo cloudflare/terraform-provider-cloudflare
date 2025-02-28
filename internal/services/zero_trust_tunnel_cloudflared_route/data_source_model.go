@@ -38,18 +38,21 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toReadParams(_ context.
 }
 
 func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkRouteListParams, diags diag.Diagnostics) {
-	mFilterExistedAt, errs := m.Filter.ExistedAt.ValueRFC3339Time()
-	diags.Append(errs...)
+	mFilterTunTypes := []zero_trust.NetworkRouteListParamsTunType{}
+	for _, item := range *m.Filter.TunTypes {
+		mFilterTunTypes = append(mFilterTunTypes, zero_trust.NetworkRouteListParamsTunType(item.ValueString()))
+	}
 
 	params = zero_trust.NetworkRouteListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+		TunTypes:  cloudflare.F(mFilterTunTypes),
 	}
 
 	if !m.Filter.Comment.IsNull() {
 		params.Comment = cloudflare.F(m.Filter.Comment.ValueString())
 	}
 	if !m.Filter.ExistedAt.IsNull() {
-		params.ExistedAt = cloudflare.F(mFilterExistedAt)
+		params.ExistedAt = cloudflare.F(m.Filter.ExistedAt.ValueString())
 	}
 	if !m.Filter.IsDeleted.IsNull() {
 		params.IsDeleted = cloudflare.F(m.Filter.IsDeleted.ValueBool())
@@ -63,9 +66,6 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.
 	if !m.Filter.RouteID.IsNull() {
 		params.RouteID = cloudflare.F(m.Filter.RouteID.ValueString())
 	}
-	if !m.Filter.TunTypes.IsNull() {
-		params.TunTypes = cloudflare.F(m.Filter.TunTypes.ValueString())
-	}
 	if !m.Filter.TunnelID.IsNull() {
 		params.TunnelID = cloudflare.F(m.Filter.TunnelID.ValueString())
 	}
@@ -77,13 +77,13 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.
 }
 
 type ZeroTrustTunnelCloudflaredRouteFindOneByDataSourceModel struct {
-	Comment          types.String      `tfsdk:"comment" query:"comment,optional"`
-	ExistedAt        timetypes.RFC3339 `tfsdk:"existed_at" query:"existed_at,optional" format:"date-time"`
-	IsDeleted        types.Bool        `tfsdk:"is_deleted" query:"is_deleted,optional"`
-	NetworkSubset    types.String      `tfsdk:"network_subset" query:"network_subset,optional"`
-	NetworkSuperset  types.String      `tfsdk:"network_superset" query:"network_superset,optional"`
-	RouteID          types.String      `tfsdk:"route_id" query:"route_id,optional"`
-	TunTypes         types.String      `tfsdk:"tun_types" query:"tun_types,optional"`
-	TunnelID         types.String      `tfsdk:"tunnel_id" query:"tunnel_id,optional"`
-	VirtualNetworkID types.String      `tfsdk:"virtual_network_id" query:"virtual_network_id,optional"`
+	Comment          types.String    `tfsdk:"comment" query:"comment,optional"`
+	ExistedAt        types.String    `tfsdk:"existed_at" query:"existed_at,optional"`
+	IsDeleted        types.Bool      `tfsdk:"is_deleted" query:"is_deleted,optional"`
+	NetworkSubset    types.String    `tfsdk:"network_subset" query:"network_subset,optional"`
+	NetworkSuperset  types.String    `tfsdk:"network_superset" query:"network_superset,optional"`
+	RouteID          types.String    `tfsdk:"route_id" query:"route_id,optional"`
+	TunTypes         *[]types.String `tfsdk:"tun_types" query:"tun_types,optional"`
+	TunnelID         types.String    `tfsdk:"tunnel_id" query:"tunnel_id,optional"`
+	VirtualNetworkID types.String    `tfsdk:"virtual_network_id" query:"virtual_network_id,optional"`
 }
