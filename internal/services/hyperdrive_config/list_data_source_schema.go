@@ -58,6 +58,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"password": schema.StringAttribute{
 									Description: "The password required to access your origin database. This value is write-only and never returned by the API.",
 									Computed:    true,
+									Sensitive:   true,
 								},
 								"port": schema.Int64Attribute{
 									Description: "The port (default: 5432 for Postgres) of your origin database.",

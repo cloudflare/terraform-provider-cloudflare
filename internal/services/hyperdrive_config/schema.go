@@ -21,14 +21,14 @@ var _ resource.ResourceWithConfigValidators = (*HyperdriveConfigResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"id": schema.StringAttribute{
 				Description:   "Identifier",
 				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
+			"account_id": schema.StringAttribute{
+				Description:   "Identifier",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
@@ -48,6 +48,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"password": schema.StringAttribute{
 						Description: "The password required to access your origin database. This value is write-only and never returned by the API.",
 						Required:    true,
+						Sensitive:   true,
 					},
 					"port": schema.Int64Attribute{
 						Description: "The port (default: 5432 for Postgres) of your origin database.",

@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/hyperdrive"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*HyperdriveConfigResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*HyperdriveConfigResource)(nil)
+var _ resource.ResourceWithImportState = (*HyperdriveConfigResource)(nil)
 
 func NewResource() resource.Resource {
 	return &HyperdriveConfigResource{}
@@ -202,6 +205,51 @@ func (r *HyperdriveConfigResource) Delete(ctx context.Context, req resource.Dele
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *HyperdriveConfigResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *HyperdriveConfigModel = new(HyperdriveConfigModel)
+
+	path_account_id := ""
+	path_hyperdrive_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<hyperdrive_id>",
+		&path_account_id,
+		&path_hyperdrive_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.ID = types.StringValue(path_hyperdrive_id)
+
+	res := new(http.Response)
+	env := HyperdriveConfigResultEnvelope{*data}
+	_, err := r.client.Hyperdrive.Configs.Get(
+		ctx,
+		path_hyperdrive_id,
+		hyperdrive.ConfigGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
