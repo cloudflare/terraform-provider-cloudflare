@@ -4,9 +4,11 @@ package list_item
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/option"
@@ -14,6 +16,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/tidwall/gjson"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -66,15 +70,18 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+
+	wrappedBytes := data.MarshalSingleToCollectionJSON(dataBytes)
+
 	res := new(http.Response)
-	env := ListItemResultEnvelope{data.Body}
+	createEnv := ListItemResultEnvelope{*data}
 	_, err = r.client.Rules.Lists.Items.New(
 		ctx,
 		data.ListID.ValueString(),
 		rules.ListItemNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
+		option.WithRequestBody("application/json", wrappedBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -83,12 +90,55 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+
+	err = apijson.UnmarshalComputed(bytes, &createEnv)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+
+	searchTerm := getSearchTerm(data)
+	findItemRes := new(http.Response)
+	_, err = r.client.Rules.Lists.Items.List(
+		ctx,
+		data.ListID.ValueString(),
+		rules.ListItemListParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			Search:    cloudflare.F(searchTerm),
+		},
+		option.WithResponseBodyInto(&findItemRes),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
+		return
+	}
+	findListItem, _ := io.ReadAll(findItemRes.Body)
+	itemID := gjson.Get(string(findListItem), "result.0.id")
+	data.ID = types.StringValue(itemID.String())
+
+	env := ListItemResultEnvelope{*data}
+	listItemRes := new(http.Response)
+	_, err = r.client.Rules.Lists.Items.Get(
+		ctx,
+		data.AccountID.ValueString(),
+		data.ListID.ValueString(),
+		data.ID.ValueString(),
+		option.WithResponseBodyInto(&listItemRes),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
+		return
+	}
+	listItem, _ := io.ReadAll(listItemRes.Body)
+	err = apijson.UnmarshalComputed(listItem, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -116,7 +166,7 @@ func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 	res := new(http.Response)
-	env := ListItemResultEnvelope{data.Body}
+	env := ListItemResultEnvelope{*data}
 	_, err = r.client.Rules.Lists.Items.Update(
 		ctx,
 		data.ListID.ValueString(),
@@ -137,7 +187,7 @@ func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateReques
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -152,12 +202,12 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 
 	res := new(http.Response)
-	env := ListItemResultEnvelope{data.Body}
+	env := ListItemResultEnvelope{*data}
 	_, err := r.client.Rules.Lists.Items.Get(
 		ctx,
-		data.AccountIdentifier.ValueString(),
+		data.AccountID.ValueString(),
 		data.ListID.ValueString(),
-		data.ItemID.ValueString(),
+		data.ID.ValueString(),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -176,7 +226,7 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -190,6 +240,13 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
+	deletePayload := bodyDeletePayload{
+		Items: []bodyDeleteItems{{
+			ID: data.ID.ValueString(),
+		}},
+	}
+	deleteBody, _ := json.Marshal(deletePayload)
+
 	_, err := r.client.Rules.Lists.Items.Delete(
 		ctx,
 		data.ListID.ValueString(),
@@ -197,6 +254,7 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestBody("application/json", deleteBody),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -208,4 +266,38 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 
 func (r *ListItemResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
+}
+
+type bodyDeletePayload struct {
+	Items []bodyDeleteItems `json:"items"`
+}
+
+type bodyDeleteItems struct {
+	ID string `json:"id"`
+}
+
+// getSearchTerm takes the schema and works out which "type" we are looking for
+// and returns it.
+func getSearchTerm(d *ListItemModel) string {
+	if d.IP.ValueString() != "" {
+		return d.IP.ValueString()
+	}
+
+	if d.ASN.ValueInt64() > 0 {
+		return strconv.Itoa(int(d.ASN.ValueInt64()))
+	}
+
+	if !d.Hostname.IsNull() {
+		if h, _ := d.Hostname.Value(context.TODO()); h.URLHostname.ValueString() != "" {
+			return h.URLHostname.ValueString()
+		}
+	}
+
+	if !d.Redirect.IsNull() {
+		if r, _ := d.Redirect.Value(context.TODO()); r.SourceURL.ValueString() != "" {
+			return r.SourceURL.ValueString()
+		}
+	}
+
+	return ""
 }
