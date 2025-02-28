@@ -367,7 +367,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"platform": schema.StringAttribute{
-							Description: "Available values: \"windows\", \"mac\", \"linux\", \"android\", \"ios\".",
+							Description: `Available values: "windows", "mac", "linux", "android", "ios".`,
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

@@ -56,7 +56,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												Required: true,
 											},
 											"validation": schema.StringAttribute{
-												Description: "Available values: \"luhn\".",
+												Description: `Available values: "luhn".`,
 												Optional:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("luhn"),
@@ -132,7 +132,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Required: true,
 									},
 									"entry_type": schema.StringAttribute{
-										Description: "Available values: \"custom\".",
+										Description: `Available values: "custom".`,
 										Required:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -218,7 +218,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Required: true,
 								},
 								"validation": schema.StringAttribute{
-									Description: "Available values: \"luhn\".",
+									Description: `Available values: "luhn".`,
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("luhn"),
@@ -247,7 +247,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required: true,
 						},
 						"entry_type": schema.StringAttribute{
-							Description: "Available values: \"custom\".",
+							Description: `Available values: "custom".`,
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -271,7 +271,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Available values: \"custom\".",
+				Description: `Available values: "custom".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

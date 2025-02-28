@@ -230,7 +230,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
-							Description: "Available values: \"public\".",
+							Description: `Available values: "public".`,
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("public", "private"),
@@ -1430,7 +1430,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"scopes": schema.ListAttribute{
-						Description: "Define the user information shared with access, \"offline_access\" scope will be automatically enabled if refresh tokens are enabled",
+						Description: `Define the user information shared with access, "offline_access" scope will be automatically enabled if refresh tokens are enabled`,
 						Optional:    true,
 						Validators: []validator.List{
 							listvalidator.ValueStringsAre(
