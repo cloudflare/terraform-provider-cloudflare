@@ -128,7 +128,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[CustomSSLsGeoRestrictionsDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"label": schema.StringAttribute{
-									Description: "Available values: \"us\", \"eu\", \"highest_security\".",
+									Description: `Available values: "us", "eu", "highest_security".`,
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(

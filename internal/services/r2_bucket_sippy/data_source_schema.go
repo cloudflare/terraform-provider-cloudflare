@@ -46,7 +46,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"provider": schema.StringAttribute{
-						Description: "Available values: \"r2\".",
+						Description: `Available values: "r2".`,
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("r2"),
@@ -64,7 +64,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"provider": schema.StringAttribute{
-						Description: "Available values: \"aws\", \"gcs\".",
+						Description: `Available values: "aws", "gcs".`,
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("aws", "gcs"),

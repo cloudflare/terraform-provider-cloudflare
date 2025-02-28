@@ -40,7 +40,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[ZeroTrustDeviceManagedNetworksListConfigDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"tls_sockaddr": schema.StringAttribute{
-									Description: "A network address of the form \"host:port\" that the WARP client will use to detect the presence of a TLS host.",
+									Description: `A network address of the form "host:port" that the WARP client will use to detect the presence of a TLS host.`,
 									Computed:    true,
 								},
 								"sha256": schema.StringAttribute{

@@ -53,7 +53,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"integration_type": schema.StringAttribute{
-							Description: "Available values: \"Okta\".",
+							Description: `Available values: "Okta".`,
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("Okta"),
@@ -64,11 +64,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"tenant_url": schema.StringAttribute{
-							Description: "The base URL for the tenant. E.g. \"https://tenant.okta.com\"",
+							Description: `The base URL for the tenant. E.g. "https://tenant.okta.com"`,
 							Computed:    true,
 						},
 						"well_known_url": schema.StringAttribute{
-							Description: "The URL for the Shared Signals Framework configuration, e.g. \"/.well-known/sse-configuration/{integration_uuid}/\". https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.6.2.1",
+							Description: `The URL for the Shared Signals Framework configuration, e.g. "/.well-known/sse-configuration/{integration_uuid}/". https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.6.2.1`,
 							Computed:    true,
 						},
 					},
