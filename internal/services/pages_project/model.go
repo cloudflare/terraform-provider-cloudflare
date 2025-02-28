@@ -25,7 +25,7 @@ type PagesProjectModel struct {
 	Domains             customfield.List[types.String]                                 `tfsdk:"domains" json:"domains,computed"`
 	CanonicalDeployment customfield.NestedObject[PagesProjectCanonicalDeploymentModel] `tfsdk:"canonical_deployment" json:"canonical_deployment,computed"`
 	LatestDeployment    customfield.NestedObject[PagesProjectLatestDeploymentModel]    `tfsdk:"latest_deployment" json:"latest_deployment,computed"`
-	Source              customfield.NestedObject[PagesProjectSourceModel]              `tfsdk:"source" json:"source,computed"`
+	Source              customfield.NestedObject[PagesProjectSourceModel]              `tfsdk:"source" json:"source,optional"`
 }
 
 func (m PagesProjectModel) MarshalJSON() (data []byte, err error) {
