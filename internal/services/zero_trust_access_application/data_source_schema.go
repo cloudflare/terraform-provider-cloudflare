@@ -1325,6 +1325,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"client_secret": schema.StringAttribute{
 						Description: "The application client secret, only returned on POST request.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 					"custom_claims": schema.ListNestedAttribute{
 						Computed:   true,
