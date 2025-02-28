@@ -14,8 +14,8 @@ type HyperdriveConfigResultEnvelope struct {
 }
 
 type HyperdriveConfigModel struct {
-	ID         types.String                                           `tfsdk:"id" json:"id,computed"`
 	AccountID  types.String                                           `tfsdk:"account_id" path:"account_id,required"`
+	ID         types.String                                           `tfsdk:"id" json:"id,computed"`
 	Name       types.String                                           `tfsdk:"name" json:"name,required"`
 	Origin     *HyperdriveConfigOriginModel                           `tfsdk:"origin" json:"origin,required"`
 	Caching    customfield.NestedObject[HyperdriveConfigCachingModel] `tfsdk:"caching" json:"caching,computed_optional"`
@@ -43,7 +43,7 @@ type HyperdriveConfigOriginModel struct {
 }
 
 type HyperdriveConfigCachingModel struct {
-	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,optional"`
+	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,computed_optional"`
 	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age,optional"`
 	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate,optional"`
 }

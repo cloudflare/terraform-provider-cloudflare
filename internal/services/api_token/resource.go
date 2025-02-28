@@ -149,6 +149,8 @@ func (r *APITokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
+	token := data.Value
+
 	res := new(http.Response)
 	env := APITokenResultEnvelope{*data}
 	_, err := r.client.User.Tokens.Get(
@@ -173,6 +175,7 @@ func (r *APITokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 	data = &env.Result
+	data.Value = token
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
