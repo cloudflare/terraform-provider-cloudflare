@@ -103,7 +103,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
 							Description: "The unique ID of the rule.",
-							Optional:    true,
+							Computed:    true,
 						},
 						"action": schema.StringAttribute{
 							Description: "The action to perform when the rule matches.\nAvailable values: \"block\".",
@@ -648,6 +648,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"rules": schema.MapAttribute{
 									Description: "A mapping of ruleset IDs to a list of rule IDs in that ruleset to skip the execution of. This option is incompatible with the ruleset option.",
 									Optional:    true,
+									CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 									ElementType: types.ListType{
 										ElemType: types.StringType,
 									},
@@ -867,7 +868,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"default": schema.Int64Attribute{
 											Description: "The TTL (in seconds) if you choose override_origin mode.",
-											Required:    true,
+											Optional:    true,
 											Validators: []validator.Int64{
 												int64validator.Between(0, math.MaxInt64),
 											},
@@ -885,7 +886,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"status_code_ttl": schema.ListNestedAttribute{
 											Description: "List of single status codes, or status code ranges to apply the selected mode",
-											Required:    true,
+											Optional:    true,
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
 													"value": schema.Int64Attribute{
@@ -898,15 +899,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 														Attributes: map[string]schema.Attribute{
 															"from": schema.Int64Attribute{
 																Description: "response status code lower bound",
-																Required:    true,
+																Optional:    true,
 															},
 															"to": schema.Int64Attribute{
 																Description: "response status code upper bound",
-																Required:    true,
+																Optional:    true,
 															},
 														},
 													},
-													"status_code_value": schema.Int64Attribute{
+													"status_code": schema.Int64Attribute{
 														Description: "Set the ttl for responses with this specific status code",
 														Optional:    true,
 													},
@@ -1129,6 +1130,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"ref": schema.StringAttribute{
 							Description: "The reference of the rule (the rule ID by default).",
 							Optional:    true,
+							Computed:    true,
 						},
 					},
 				},
