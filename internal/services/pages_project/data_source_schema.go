@@ -271,7 +271,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										ElementType: types.StringType,
 									},
 									"preview_deployment_setting": schema.StringAttribute{
-										Description: "Available values: \"all\", \"none\", \"custom\".",
+										Description: `Available values: "all", "none", "custom".`,
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -937,7 +937,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										ElementType: types.StringType,
 									},
 									"preview_deployment_setting": schema.StringAttribute{
-										Description: "Available values: \"all\", \"none\", \"custom\".",
+										Description: `Available values: "all", "none", "custom".`,
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -1034,7 +1034,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								ElementType: types.StringType,
 							},
 							"preview_deployment_setting": schema.StringAttribute{
-								Description: "Available values: \"all\", \"none\", \"custom\".",
+								Description: `Available values: "all", "none", "custom".`,
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(

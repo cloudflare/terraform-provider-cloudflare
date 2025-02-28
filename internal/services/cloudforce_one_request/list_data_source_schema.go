@@ -46,7 +46,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"priority": schema.StringAttribute{
-							Description: "Available values: \"routine\", \"high\", \"urgent\".",
+							Description: `Available values: "routine", "high", "urgent".`,
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

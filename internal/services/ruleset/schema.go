@@ -364,7 +364,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"operation": schema.StringAttribute{
-												Description: "Available values: \"remove\".",
+												Description: `Available values: "remove".`,
 												Required:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("remove", "set"),
@@ -889,7 +889,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
 													"value": schema.Int64Attribute{
-														Description: "Time to cache a response (in seconds). A value of 0 is equivalent to setting the Cache-Control header with the value \"no-cache\". A value of -1 is equivalent to setting Cache-Control header with the value of \"no-store\".",
+														Description: `Time to cache a response (in seconds). A value of 0 is equivalent to setting the Cache-Control header with the value "no-cache". A value of -1 is equivalent to setting Cache-Control header with the value of "no-store".`,
 														Required:    true,
 													},
 													"status_code_range": schema.SingleNestedAttribute{
