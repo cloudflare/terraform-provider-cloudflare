@@ -13,7 +13,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
     }
     bindings = [{
       name = "MY_ENV_VAR"
-      type = "plain_text"
+      type = "ai"
     }]
     body_part = "worker.js"
     compatibility_date = "2021-01-01"
