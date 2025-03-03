@@ -24,6 +24,7 @@ data "cloudflare_accounts" "example_accounts" {
 ### Optional
 
 - `direction` (String) Direction to order results.
+Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `name` (String) Name of the account.
 
@@ -57,6 +58,7 @@ See [Custom Nameservers](https://developers.cloudflare.com/dns/additional-option
 for more information.
 
 Deprecated in favor of [DNS Settings](https://developers.cloudflare.com/api/operations/dns-settings-for-an-account-update-dns-settings).
+Available values: "cloudflare.standard", "custom.account", "custom.tenant".
 - `enforce_twofactor` (Boolean) Indicates whether membership in this account requires that
 Two-Factor Authentication is enabled
 - `use_account_custom_ns_by_default` (Boolean) Indicates whether new zones should use the account-level custom

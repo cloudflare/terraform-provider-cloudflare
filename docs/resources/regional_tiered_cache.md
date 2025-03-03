@@ -28,6 +28,7 @@ resource "cloudflare_regional_tiered_cache" "example_regional_tiered_cache" {
 ### Optional
 
 - `value` (String) Value of the Regional Tiered Cache zone setting.
+Available values: "on", "off".
 
 ### Read-Only
 

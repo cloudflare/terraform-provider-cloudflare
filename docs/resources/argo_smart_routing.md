@@ -24,6 +24,7 @@ resource "cloudflare_argo_smart_routing" "example_argo_smart_routing" {
 ### Required
 
 - `value` (String) Enables Argo Smart Routing.
+Available values: "on", "off".
 - `zone_id` (String) Identifier
 
 ### Read-Only

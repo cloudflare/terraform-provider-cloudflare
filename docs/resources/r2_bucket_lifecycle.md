@@ -93,7 +93,7 @@ Optional:
 Required:
 
 - `max_age` (Number)
-- `type` (String)
+- `type` (String) Available values: "Age".
 
 
 
@@ -109,7 +109,7 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) Available values: "Age".
 
 Optional:
 
@@ -124,14 +124,14 @@ Optional:
 Required:
 
 - `condition` (Attributes) Condition for lifecycle transitions to apply after an object reaches an age in seconds (see [below for nested schema](#nestedatt--rules--storage_class_transitions--condition))
-- `storage_class` (String)
+- `storage_class` (String) Available values: "InfrequentAccess".
 
 <a id="nestedatt--rules--storage_class_transitions--condition"></a>
 ### Nested Schema for `rules.storage_class_transitions.condition`
 
 Required:
 
-- `type` (String)
+- `type` (String) Available values: "Age".
 
 Optional:
 

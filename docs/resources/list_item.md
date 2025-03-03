@@ -63,7 +63,7 @@ Optional:
 - `include_subdomains` (Boolean)
 - `preserve_path_suffix` (Boolean)
 - `preserve_query_string` (Boolean)
-- `status_code` (Number)
+- `status_code` (Number) Available values: 301, 302, 307, 308.
 - `subpath_matching` (Boolean)
 
 

@@ -39,7 +39,7 @@ data "cloudflare_zero_trust_dlp_entry" "example_zero_trust_dlp_entry" {
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--pattern))
 - `profile_id` (String)
 - `secret` (Boolean)
-- `type` (String)
+- `type` (String) Available values: "custom".
 - `updated_at` (String)
 - `word_list` (String)
 
@@ -58,6 +58,6 @@ Read-Only:
 Read-Only:
 
 - `regex` (String)
-- `validation` (String)
+- `validation` (String) Available values: "luhn".
 
 

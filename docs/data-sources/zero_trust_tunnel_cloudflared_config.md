@@ -31,6 +31,7 @@ data "cloudflare_zero_trust_tunnel_cloudflared_config" "example_zero_trust_tunne
 - `config` (Attributes) The tunnel configuration and ingress rules. (see [below for nested schema](#nestedatt--config))
 - `created_at` (String)
 - `source` (String) Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel's configuration on the Zero Trust dashboard.
+Available values: "local", "cloudflare".
 - `version` (Number) The version of the Tunnel Configuration.
 
 <a id="nestedatt--config"></a>

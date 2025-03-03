@@ -31,9 +31,11 @@ data "cloudflare_email_security_block_senders" "example_email_security_block_sen
 ### Optional
 
 - `direction` (String) The sorting direction.
+Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) The field to sort by.
-- `pattern_type` (String)
+Available values: "pattern", "created_at".
+- `pattern_type` (String) Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
 - `search` (String) Allows searching in multiple properties of a record simultaneously.
 This parameter is intended for human users, not automation. Its exact
 behavior is intentionally left unspecified and is subject to change
@@ -54,6 +56,6 @@ Read-Only:
 - `is_regex` (Boolean)
 - `last_modified` (String)
 - `pattern` (String)
-- `pattern_type` (String)
+- `pattern_type` (String) Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
 
 

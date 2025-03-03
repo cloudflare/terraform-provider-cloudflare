@@ -36,6 +36,6 @@ Read-Only:
 - `description` (String)
 - `enabled` (Boolean)
 - `name` (String)
-- `risk_level` (String)
+- `risk_level` (String) Available values: "low", "medium", "high".
 
 

@@ -30,7 +30,7 @@ data "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_pred
 
 - `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
-- `confidence_threshold` (String)
+- `confidence_threshold` (String) Available values: "low", "medium", "high", "very_high".
 - `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
 - `created_at` (String) When the profile was created
 - `description` (String) The description of the profile
@@ -39,7 +39,7 @@ data "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_pred
 - `name` (String) The name of the profile
 - `ocr_enabled` (Boolean)
 - `open_access` (Boolean) Whether this profile can be accessed by anyone
-- `type` (String)
+- `type` (String) Available values: "custom".
 - `updated_at` (String) When the profile was lasted updated
 
 <a id="nestedatt--context_awareness"></a>
@@ -72,7 +72,7 @@ Read-Only:
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--entries--pattern))
 - `profile_id` (String)
 - `secret` (Boolean)
-- `type` (String)
+- `type` (String) Available values: "custom".
 - `updated_at` (String)
 - `word_list` (String)
 
@@ -91,6 +91,6 @@ Read-Only:
 Read-Only:
 
 - `regex` (String)
-- `validation` (String)
+- `validation` (String) Available values: "luhn".
 
 

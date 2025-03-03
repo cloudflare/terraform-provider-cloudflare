@@ -297,6 +297,7 @@ Required:
 Optional:
 
 - `type` (String) The type of environment variable.
+Available values: "plain_text", "secret_text".
 
 
 <a id="nestedatt--deployment_configs--preview--hyperdrive_bindings"></a>
@@ -435,6 +436,7 @@ Required:
 Optional:
 
 - `type` (String) The type of environment variable.
+Available values: "plain_text", "secret_text".
 
 
 <a id="nestedatt--deployment_configs--production--hyperdrive_bindings"></a>
@@ -600,7 +602,7 @@ Read-Only:
 - `pr_comments_enabled` (Boolean)
 - `preview_branch_excludes` (List of String)
 - `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String)
+- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
 - `production_branch` (String)
 - `production_deployments_enabled` (Boolean)
 - `repo_name` (String)
@@ -713,7 +715,7 @@ Read-Only:
 - `pr_comments_enabled` (Boolean)
 - `preview_branch_excludes` (List of String)
 - `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String)
+- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
 - `production_branch` (String)
 - `production_deployments_enabled` (Boolean)
 - `repo_name` (String)
@@ -752,7 +754,7 @@ Read-Only:
 - `pr_comments_enabled` (Boolean)
 - `preview_branch_excludes` (List of String)
 - `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String)
+- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
 - `production_branch` (String)
 - `production_deployments_enabled` (Boolean)
 - `repo_name` (String)

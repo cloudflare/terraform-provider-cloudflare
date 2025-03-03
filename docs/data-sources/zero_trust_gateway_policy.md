@@ -32,6 +32,7 @@ data "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_policy" 
 ### Read-Only
 
 - `action` (String) The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.
+Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine".
 - `created_at` (String)
 - `deleted_at` (String) Date of deletion, if any.
 - `description` (String) The description of the rule.
@@ -115,17 +116,24 @@ Read-Only:
 Read-Only:
 
 - `copy` (String) Configure whether copy is enabled or not. When set with "remote_only", copying isolated content from the remote browser to the user's local clipboard is disabled. When absent, copy is enabled. Only applies when `version == "v2"`.
+Available values: "enabled", "disabled", "remote_only".
 - `dcp` (Boolean) Set to false to enable copy-pasting. Only applies when `version == "v1"`.
 - `dd` (Boolean) Set to false to enable downloading. Only applies when `version == "v1"`.
 - `dk` (Boolean) Set to false to enable keyboard usage. Only applies when `version == "v1"`.
 - `download` (String) Configure whether downloading enabled or not. When absent, downloading is enabled. Only applies when `version == "v2"`.
+Available values: "enabled", "disabled".
 - `dp` (Boolean) Set to false to enable printing. Only applies when `version == "v1"`.
 - `du` (Boolean) Set to false to enable uploading. Only applies when `version == "v1"`.
 - `keyboard` (String) Configure whether keyboard usage is enabled or not. When absent, keyboard usage is enabled. Only applies when `version == "v2"`.
+Available values: "enabled", "disabled".
 - `paste` (String) Configure whether pasting is enabled or not. When set with "remote_only", pasting content from the user's local clipboard into isolated pages is disabled. When absent, paste is enabled. Only applies when `version == "v2"`.
+Available values: "enabled", "disabled", "remote_only".
 - `printing` (String) Configure whether printing is enabled or not. When absent, printing is enabled. Only applies when `version == "v2"`.
+Available values: "enabled", "disabled".
 - `upload` (String) Configure whether uploading is enabled or not. When absent, uploading is enabled. Only applies when `version == "v2"`.
+Available values: "enabled", "disabled".
 - `version` (String) Indicates which version of the browser isolation controls should apply.
+Available values: "v1", "v2".
 
 
 <a id="nestedatt--rule_settings--check_session"></a>
@@ -219,6 +227,7 @@ Read-Only:
 Read-Only:
 
 - `fallback` (String) The fallback behavior to apply when the internal DNS response code is different from 'NOERROR' or when the response data only contains CNAME records for 'A' or 'AAAA' queries.
+Available values: "none", "public_dns".
 - `view_id` (String) The internal DNS view identifier that's passed to the internal DNS service.
 
 
@@ -228,6 +237,7 @@ Read-Only:
 Read-Only:
 
 - `action` (String) The action performed when an untrusted certificate is seen. The default action is an error with HTTP code 526.
+Available values: "pass_through", "block", "error".
 
 
 

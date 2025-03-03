@@ -226,6 +226,7 @@ Optional:
 
 - `enabled` (Boolean) Enable sandbox.
 - `fallback_action` (String) Action to take when the file cannot be scanned.
+Available values: "allow", "block".
 
 
 <a id="nestedatt--settings--tls_decrypt"></a>

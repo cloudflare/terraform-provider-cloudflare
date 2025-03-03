@@ -59,6 +59,7 @@ resource "cloudflare_api_token" "example_api_token" {
 - `expires_on` (String) The expiration time on or after which the JWT MUST NOT be accepted for processing.
 - `not_before` (String) The time before which the token MUST NOT be accepted for processing.
 - `status` (String) Status of the token.
+Available values: "active", "disabled", "expired".
 
 ### Read-Only
 
@@ -74,6 +75,7 @@ resource "cloudflare_api_token" "example_api_token" {
 Required:
 
 - `effect` (String) Allow or deny operations against the resources.
+Available values: "allow", "deny".
 - `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
 - `resources` (Map of String) A list of resource names that the policy applies to.
 

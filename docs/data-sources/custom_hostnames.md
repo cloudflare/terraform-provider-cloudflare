@@ -31,11 +31,14 @@ data "cloudflare_custom_hostnames" "example_custom_hostnames" {
 ### Optional
 
 - `direction` (String) Direction to order hostnames.
+Available values: "asc", "desc".
 - `hostname` (String) Fully qualified domain name to match against. This parameter cannot be used with the 'id' parameter.
 - `id` (String) Hostname ID to match against. This ID was generated and returned during the initial custom_hostname creation. This parameter cannot be used with the 'hostname' parameter.
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) Field to order hostnames by.
+Available values: "ssl", "ssl_status".
 - `ssl` (Number) Whether to filter hostnames based on if they have SSL enabled.
+Available values: 0, 1.
 
 ### Read-Only
 
@@ -56,6 +59,7 @@ Read-Only:
 - `ownership_verification_http` (Attributes) This presents the token to be served by the given http url to activate a hostname. (see [below for nested schema](#nestedatt--result--ownership_verification_http))
 - `ssl` (Attributes) (see [below for nested schema](#nestedatt--result--ssl))
 - `status` (String) Status of the hostname's activation.
+Available values: "active", "pending", "active_redeploying", "moved", "pending_deletion", "deleted", "pending_blocked", "pending_migration", "pending_provisioned", "test_pending", "test_active", "test_active_apex", "test_blocked", "test_failed", "provisioned", "blocked".
 - `verification_errors` (List of String) These are errors that were encountered while trying to activate a hostname.
 
 <a id="nestedatt--result--ownership_verification"></a>
@@ -65,6 +69,7 @@ Read-Only:
 
 - `name` (String) DNS Name for record.
 - `type` (String) DNS Record type.
+Available values: "txt".
 - `value` (String) Content for the record.
 
 
@@ -83,7 +88,9 @@ Read-Only:
 Read-Only:
 
 - `bundle_method` (String) A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.
+Available values: "ubiquitous", "optimal", "force".
 - `certificate_authority` (String) The Certificate Authority that will issue the certificate
+Available values: "digicert", "google", "lets_encrypt", "ssl_com".
 - `custom_certificate` (String) If a custom uploaded certificate is used.
 - `custom_csr_id` (String) The identifier for the Custom CSR that was used.
 - `custom_key` (String) The key for a custom uploaded certificate.
@@ -92,11 +99,14 @@ Read-Only:
 - `id` (String) Custom hostname SSL identifier tag.
 - `issuer` (String) The issuer on a custom uploaded certificate.
 - `method` (String) Domain control validation (DCV) method used for this hostname.
+Available values: "http", "txt", "email".
 - `serial_number` (String) The serial number on a custom uploaded certificate.
 - `settings` (Attributes) (see [below for nested schema](#nestedatt--result--ssl--settings))
 - `signature` (String) The signature on a custom uploaded certificate.
 - `status` (String) Status of the hostname's SSL certificates.
+Available values: "initializing", "pending_validation", "deleted", "pending_issuance", "pending_deployment", "pending_deletion", "pending_expiration", "expired", "active", "initializing_timed_out", "validation_timed_out", "issuance_timed_out", "deployment_timed_out", "deletion_timed_out", "pending_cleanup", "staging_deployment", "staging_active", "deactivating", "inactive", "backup_issued", "holding_deployment".
 - `type` (String) Level of validation to be used for this hostname. Domain validation (dv) must be used.
+Available values: "dv".
 - `uploaded_on` (String) The time the custom certificate was uploaded.
 - `validation_errors` (Attributes List) Domain validation errors that have been received by the certificate authority (CA). (see [below for nested schema](#nestedatt--result--ssl--validation_errors))
 - `validation_records` (Attributes List) (see [below for nested schema](#nestedatt--result--ssl--validation_records))
@@ -109,9 +119,13 @@ Read-Only:
 
 - `ciphers` (List of String) An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
 - `early_hints` (String) Whether or not Early Hints is enabled.
+Available values: "on", "off".
 - `http2` (String) Whether or not HTTP2 is enabled.
+Available values: "on", "off".
 - `min_tls_version` (String) The minimum TLS version supported.
+Available values: "1.0", "1.1", "1.2", "1.3".
 - `tls_1_3` (String) Whether or not TLS 1.3 is enabled.
+Available values: "on", "off".
 
 
 <a id="nestedatt--result--ssl--validation_errors"></a>
