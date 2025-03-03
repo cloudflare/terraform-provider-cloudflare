@@ -20,7 +20,7 @@ data "cloudflare_zero_trust_tunnel_cloudflared_routes" "example_zero_trust_tunne
   network_subset = "172.16.0.0/16"
   network_superset = "172.16.0.0/16"
   route_id = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
-  tun_types = "cfd_tunnel,warp_connector"
+  tun_types = ["cfd_tunnel"]
   tunnel_id = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
   virtual_network_id = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
 }
@@ -42,7 +42,7 @@ data "cloudflare_zero_trust_tunnel_cloudflared_routes" "example_zero_trust_tunne
 - `network_subset` (String) If set, only list routes that are contained within this IP range.
 - `network_superset` (String) If set, only list routes that contain this IP range.
 - `route_id` (String) UUID of the route.
-- `tun_types` (String) The types of tunnels to filter separated by a comma.
+- `tun_types` (List of String) The types of tunnels to filter by, separated by commas.
 - `tunnel_id` (String) UUID of the tunnel.
 - `virtual_network_id` (String) UUID of the virtual network.
 
@@ -61,6 +61,7 @@ Read-Only:
 - `id` (String) UUID of the route.
 - `network` (String) The private IPv4 or IPv6 range connected by the route, in CIDR notation.
 - `tun_type` (String) The type of tunnel.
+Available values: "cfd_tunnel", "warp_connector", "warp", "magic", "ip_sec", "gre", "cni".
 - `tunnel_id` (String) UUID of the tunnel.
 - `tunnel_name` (String) A user-friendly name for a tunnel.
 - `virtual_network_id` (String) UUID of the virtual network.

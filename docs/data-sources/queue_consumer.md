@@ -33,7 +33,7 @@ data "cloudflare_queue_consumer" "example_queue_consumer" {
 - `script` (String) Name of a Worker
 - `script_name` (String) Name of a Worker
 - `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))
-- `type` (String)
+- `type` (String) Available values: "worker".
 
 <a id="nestedatt--settings"></a>
 ### Nested Schema for `settings`

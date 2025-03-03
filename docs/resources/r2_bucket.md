@@ -32,7 +32,9 @@ resource "cloudflare_r2_bucket" "example_r2_bucket" {
 
 - `jurisdiction` (String) Jurisdiction of the bucket
 - `location` (String) Location of the bucket
+Available values: "apac", "eeur", "enam", "weur", "wnam".
 - `storage_class` (String) Storage class for newly uploaded objects, unless specified otherwise.
+Available values: "Standard", "InfrequentAccess".
 
 ### Read-Only
 

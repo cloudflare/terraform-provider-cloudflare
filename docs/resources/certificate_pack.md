@@ -37,10 +37,14 @@ resource "cloudflare_certificate_pack" "example_certificate_pack" {
 ### Required
 
 - `certificate_authority` (String) Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details.](https://developers.cloudflare.com/ssl/reference/certificate-authorities)
+Available values: "google", "lets_encrypt", "ssl_com".
 - `hosts` (List of String) Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.
 - `type` (String) Type of certificate pack.
+Available values: "advanced".
 - `validation_method` (String) Validation Method selected for the order.
+Available values: "txt", "http", "email".
 - `validity_days` (Number) Validity Days selected for the order.
+Available values: 14, 30, 90, 365.
 - `zone_id` (String) Identifier
 
 ### Optional
@@ -51,6 +55,7 @@ resource "cloudflare_certificate_pack" "example_certificate_pack" {
 
 - `id` (String) Identifier
 - `status` (String) Status of certificate pack.
+Available values: "initializing", "pending_validation", "deleted", "pending_issuance", "pending_deployment", "pending_deletion", "pending_expiration", "expired", "active", "initializing_timed_out", "validation_timed_out", "issuance_timed_out", "deployment_timed_out", "deletion_timed_out", "pending_cleanup", "staging_deployment", "staging_active", "deactivating", "inactive", "backup_issued", "holding_deployment".
 
 ## Import
 

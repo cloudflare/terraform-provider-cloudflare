@@ -40,7 +40,7 @@ Read-Only:
 - `created_on` (String)
 - `id` (String)
 - `source` (String)
-- `strategy` (String)
+- `strategy` (String) Available values: "percentage".
 - `versions` (Attributes List) (see [below for nested schema](#nestedatt--deployments--versions))
 
 <a id="nestedatt--deployments--annotations"></a>

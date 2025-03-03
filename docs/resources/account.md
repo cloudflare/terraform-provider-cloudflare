@@ -28,6 +28,7 @@ resource "cloudflare_account" "example_account" {
 
 - `name` (String) Account name
 - `type` (String) the type of account being created. For self-serve customers, use standard. for enterprise customers, use enterprise.
+Available values: "standard", "enterprise".
 
 ### Optional
 
@@ -55,6 +56,7 @@ See [Custom Nameservers](https://developers.cloudflare.com/dns/additional-option
 for more information.
 
 Deprecated in favor of [DNS Settings](https://developers.cloudflare.com/api/operations/dns-settings-for-an-account-update-dns-settings).
+Available values: "cloudflare.standard", "custom.account", "custom.tenant".
 - `enforce_twofactor` (Boolean) Indicates whether membership in this account requires that
 Two-Factor Authentication is enabled
 - `use_account_custom_ns_by_default` (Boolean) Indicates whether new zones should use the account-level custom

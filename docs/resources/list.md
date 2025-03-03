@@ -27,6 +27,7 @@ resource "cloudflare_list" "example_list" {
 
 - `account_id` (String) Identifier
 - `kind` (String) The type of the list. Each type supports specific list items (IP addresses, ASNs, hostnames or redirects).
+Available values: "ip", "redirect", "hostname", "asn".
 - `name` (String) An informative name for the list. Use this name in filter and rule expressions.
 
 ### Optional

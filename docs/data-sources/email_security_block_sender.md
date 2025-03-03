@@ -38,7 +38,7 @@ data "cloudflare_email_security_block_sender" "example_email_security_block_send
 - `is_regex` (Boolean)
 - `last_modified` (String)
 - `pattern` (String)
-- `pattern_type` (String)
+- `pattern_type` (String) Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -46,8 +46,10 @@ data "cloudflare_email_security_block_sender" "example_email_security_block_send
 Optional:
 
 - `direction` (String) The sorting direction.
+Available values: "asc", "desc".
 - `order` (String) The field to sort by.
-- `pattern_type` (String)
+Available values: "pattern", "created_at".
+- `pattern_type` (String) Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
 - `search` (String) Allows searching in multiple properties of a record simultaneously.
 This parameter is intended for human users, not automation. Its exact
 behavior is intentionally left unspecified and is subject to change
