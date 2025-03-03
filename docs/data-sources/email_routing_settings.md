@@ -33,6 +33,7 @@ data "cloudflare_email_routing_settings" "example_email_routing_settings" {
 - `name` (String) Domain of your zone.
 - `skip_wizard` (Boolean) Flag to check if the user skipped the configuration wizard.
 - `status` (String) Show the state of your account, and the type or configuration error.
+Available values: "ready", "unconfigured", "misconfigured", "misconfigured/locked", "unlocked".
 - `tag` (String) Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)
 
 

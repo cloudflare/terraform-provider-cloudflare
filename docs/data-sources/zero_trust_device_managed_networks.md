@@ -35,6 +35,7 @@ data "cloudflare_zero_trust_device_managed_networks" "example_zero_trust_device_
 - `id` (String) API UUID.
 - `name` (String) The name of the device managed network. This name must be unique.
 - `type` (String) The type of device managed network.
+Available values: "tls".
 
 <a id="nestedatt--config"></a>
 ### Nested Schema for `config`

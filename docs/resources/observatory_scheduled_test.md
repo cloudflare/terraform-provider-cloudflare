@@ -29,8 +29,10 @@ resource "cloudflare_observatory_scheduled_test" "example_observatory_scheduled_
 ### Read-Only
 
 - `frequency` (String) The frequency of the test.
+Available values: "DAILY", "WEEKLY".
 - `id` (String) A URL.
 - `region` (String) A test region.
+Available values: "asia-east1", "asia-northeast1", "asia-northeast2", "asia-south1", "asia-southeast1", "australia-southeast1", "europe-north1", "europe-southwest1", "europe-west1", "europe-west2", "europe-west3", "europe-west4", "europe-west8", "europe-west9", "me-west1", "southamerica-east1", "us-central1", "us-east1", "us-east4", "us-south1", "us-west1".
 - `schedule` (Attributes) The test schedule. (see [below for nested schema](#nestedatt--schedule))
 - `test` (Attributes) (see [below for nested schema](#nestedatt--test))
 
@@ -40,7 +42,9 @@ resource "cloudflare_observatory_scheduled_test" "example_observatory_scheduled_
 Read-Only:
 
 - `frequency` (String) The frequency of the test.
+Available values: "DAILY", "WEEKLY".
 - `region` (String) A test region.
+Available values: "asia-east1", "asia-northeast1", "asia-northeast2", "asia-south1", "asia-southeast1", "australia-southeast1", "europe-north1", "europe-southwest1", "europe-west1", "europe-west2", "europe-west3", "europe-west4", "europe-west8", "europe-west9", "me-west1", "southamerica-east1", "us-central1", "us-east1", "us-east4", "us-south1", "us-west1".
 - `url` (String) A URL.
 
 
@@ -55,6 +59,7 @@ Read-Only:
 - `mobile_report` (Attributes) The Lighthouse report. (see [below for nested schema](#nestedatt--test--mobile_report))
 - `region` (Attributes) A test region with a label. (see [below for nested schema](#nestedatt--test--region))
 - `schedule_frequency` (String) The frequency of the test.
+Available values: "DAILY", "WEEKLY".
 - `url` (String) A URL.
 
 <a id="nestedatt--test--desktop_report"></a>
@@ -64,6 +69,7 @@ Read-Only:
 
 - `cls` (Number) Cumulative Layout Shift.
 - `device_type` (String) The type of device.
+Available values: "DESKTOP", "MOBILE".
 - `error` (Attributes) (see [below for nested schema](#nestedatt--test--desktop_report--error))
 - `fcp` (Number) First Contentful Paint.
 - `json_report_url` (String) The URL to the full Lighthouse JSON report.
@@ -71,6 +77,7 @@ Read-Only:
 - `performance_score` (Number) The Lighthouse performance score.
 - `si` (Number) Speed Index.
 - `state` (String) The state of the Lighthouse report.
+Available values: "RUNNING", "COMPLETE", "FAILED".
 - `tbt` (Number) Total Blocking Time.
 - `ttfb` (Number) Time To First Byte.
 - `tti` (Number) Time To Interactive.
@@ -81,6 +88,7 @@ Read-Only:
 Read-Only:
 
 - `code` (String) The error code of the Lighthouse result.
+Available values: "NOT_REACHABLE", "DNS_FAILURE", "NOT_HTML", "LIGHTHOUSE_TIMEOUT", "UNKNOWN".
 - `detail` (String) Detailed error message.
 - `final_displayed_url` (String) The final URL displayed to the user.
 
@@ -93,6 +101,7 @@ Read-Only:
 
 - `cls` (Number) Cumulative Layout Shift.
 - `device_type` (String) The type of device.
+Available values: "DESKTOP", "MOBILE".
 - `error` (Attributes) (see [below for nested schema](#nestedatt--test--mobile_report--error))
 - `fcp` (Number) First Contentful Paint.
 - `json_report_url` (String) The URL to the full Lighthouse JSON report.
@@ -100,6 +109,7 @@ Read-Only:
 - `performance_score` (Number) The Lighthouse performance score.
 - `si` (Number) Speed Index.
 - `state` (String) The state of the Lighthouse report.
+Available values: "RUNNING", "COMPLETE", "FAILED".
 - `tbt` (Number) Total Blocking Time.
 - `ttfb` (Number) Time To First Byte.
 - `tti` (Number) Time To Interactive.
@@ -110,6 +120,7 @@ Read-Only:
 Read-Only:
 
 - `code` (String) The error code of the Lighthouse result.
+Available values: "NOT_REACHABLE", "DNS_FAILURE", "NOT_HTML", "LIGHTHOUSE_TIMEOUT", "UNKNOWN".
 - `detail` (String) Detailed error message.
 - `final_displayed_url` (String) The final URL displayed to the user.
 
@@ -122,6 +133,7 @@ Read-Only:
 
 - `label` (String)
 - `value` (String) A test region.
+Available values: "asia-east1", "asia-northeast1", "asia-northeast2", "asia-south1", "asia-southeast1", "australia-southeast1", "europe-north1", "europe-southwest1", "europe-west1", "europe-west2", "europe-west3", "europe-west4", "europe-west8", "europe-west9", "me-west1", "southamerica-east1", "us-central1", "us-east1", "us-east4", "us-south1", "us-west1".
 
 ## Import
 

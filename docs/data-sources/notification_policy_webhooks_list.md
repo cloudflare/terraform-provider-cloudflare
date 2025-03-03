@@ -44,6 +44,7 @@ Read-Only:
 - `name` (String) The name of the webhook destination. This will be included in the request body when you receive a webhook notification.
 - `secret` (String) Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.
 - `type` (String) Type of webhook endpoint.
+Available values: "slack", "generic", "gchat".
 - `url` (String) The POST endpoint to call when dispatching a notification.
 
 

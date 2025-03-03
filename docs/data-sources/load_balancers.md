@@ -52,6 +52,7 @@ Optional:
 - `"least_outstanding_requests"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of outstanding requests. Pools with more pending requests are weighted proportionately less relative to others.
 - `"least_connections"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of open connections. Pools with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.
 - `""`: Will map to `"geo"` if you use `region_pools`/`country_pools`/`pop_pools` otherwise `"off"`.
+Available values: "off", "geo", "random", "dynamic_latency", "proximity", "least_outstanding_requests", "least_connections", "".
 - `ttl` (Number) Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.
 
 Read-Only:
@@ -77,6 +78,7 @@ Read-Only:
 - `"cookie"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.
 - `"ip_cookie"`: Behaves the same as `"cookie"` except the initial origin selection is stable and based on the client's ip address.
 - `"header"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.
+Available values: "none", "cookie", "ip_cookie", "header".
 - `session_affinity_attributes` (Attributes) Configures attributes for session affinity. (see [below for nested schema](#nestedatt--result--session_affinity_attributes))
 - `zone_name` (String)
 
@@ -96,11 +98,13 @@ Read-Only:
 - `mode` (String) Determines the authoritative location when ECS is not preferred, does not exist in the request, or its GeoIP lookup is unsuccessful.
 - `"pop"`: Use the Cloudflare PoP location.
 - `"resolver_ip"`: Use the DNS resolver GeoIP location. If the GeoIP lookup is unsuccessful, use the Cloudflare PoP location.
+Available values: "pop", "resolver_ip".
 - `prefer_ecs` (String) Whether the EDNS Client Subnet (ECS) GeoIP should be preferred as the authoritative location.
 - `"always"`: Always prefer ECS.
 - `"never"`: Never prefer ECS.
 - `"proximity"`: Prefer ECS only when `steering_policy="proximity"`.
 - `"geo"`: Prefer ECS only when `steering_policy="geo"`.
+Available values: "always", "never", "proximity", "geo".
 
 
 <a id="nestedatt--result--random_steering"></a>
@@ -156,6 +160,7 @@ Optional:
 - `"least_outstanding_requests"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of outstanding requests. Pools with more pending requests are weighted proportionately less relative to others.
 - `"least_connections"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of open connections. Pools with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.
 - `""`: Will map to `"geo"` if you use `region_pools`/`country_pools`/`pop_pools` otherwise `"off"`.
+Available values: "off", "geo", "random", "dynamic_latency", "proximity", "least_outstanding_requests", "least_connections", "".
 - `ttl` (Number) Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.
 
 Read-Only:
@@ -172,6 +177,7 @@ Read-Only:
 - `"cookie"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.
 - `"ip_cookie"`: Behaves the same as `"cookie"` except the initial origin selection is stable and based on the client's ip address.
 - `"header"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.
+Available values: "none", "cookie", "ip_cookie", "header".
 - `session_affinity_attributes` (Attributes) Configures attributes for session affinity. (see [below for nested schema](#nestedatt--result--rules--overrides--session_affinity_attributes))
 
 <a id="nestedatt--result--rules--overrides--adaptive_routing"></a>
@@ -190,11 +196,13 @@ Read-Only:
 - `mode` (String) Determines the authoritative location when ECS is not preferred, does not exist in the request, or its GeoIP lookup is unsuccessful.
 - `"pop"`: Use the Cloudflare PoP location.
 - `"resolver_ip"`: Use the DNS resolver GeoIP location. If the GeoIP lookup is unsuccessful, use the Cloudflare PoP location.
+Available values: "pop", "resolver_ip".
 - `prefer_ecs` (String) Whether the EDNS Client Subnet (ECS) GeoIP should be preferred as the authoritative location.
 - `"always"`: Always prefer ECS.
 - `"never"`: Never prefer ECS.
 - `"proximity"`: Prefer ECS only when `steering_policy="proximity"`.
 - `"geo"`: Prefer ECS only when `steering_policy="geo"`.
+Available values: "always", "never", "proximity", "geo".
 
 
 <a id="nestedatt--result--rules--overrides--random_steering"></a>
@@ -220,11 +228,14 @@ Read-Only:
 - `"true"`: Load balancing requests must contain *all* of the HTTP headers specified by the `headers` session affinity attribute, otherwise sessions aren't created.
 - `"false"`: Load balancing requests must contain *at least one* of the HTTP headers specified by the `headers` session affinity attribute, otherwise sessions aren't created.
 - `samesite` (String) Configures the SameSite attribute on session affinity cookie. Value "Auto" will be translated to "Lax" or "None" depending if Always Use HTTPS is enabled. Note: when using value "None", the secure attribute can not be set to "Never".
+Available values: "Auto", "Lax", "None", "Strict".
 - `secure` (String) Configures the Secure attribute on session affinity cookie. Value "Always" indicates the Secure attribute will be set in the Set-Cookie header, "Never" indicates the Secure attribute will not be set, and "Auto" will set the Secure attribute depending if Always Use HTTPS is enabled.
+Available values: "Auto", "Always", "Never".
 - `zero_downtime_failover` (String) Configures the zero-downtime failover between origins within a pool when session affinity is enabled. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. The supported values are:
 - `"none"`: No failover takes place for sessions pinned to the origin (default).
 - `"temporary"`: Traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping.
 - `"sticky"`: The session affinity cookie is updated and subsequent requests are sent to the new origin. Note: Zero-downtime failover with sticky sessions is currently not supported for session affinity by header.
+Available values: "none", "temporary", "sticky".
 
 
 
@@ -243,10 +254,13 @@ Read-Only:
 - `"true"`: Load balancing requests must contain *all* of the HTTP headers specified by the `headers` session affinity attribute, otherwise sessions aren't created.
 - `"false"`: Load balancing requests must contain *at least one* of the HTTP headers specified by the `headers` session affinity attribute, otherwise sessions aren't created.
 - `samesite` (String) Configures the SameSite attribute on session affinity cookie. Value "Auto" will be translated to "Lax" or "None" depending if Always Use HTTPS is enabled. Note: when using value "None", the secure attribute can not be set to "Never".
+Available values: "Auto", "Lax", "None", "Strict".
 - `secure` (String) Configures the Secure attribute on session affinity cookie. Value "Always" indicates the Secure attribute will be set in the Set-Cookie header, "Never" indicates the Secure attribute will not be set, and "Auto" will set the Secure attribute depending if Always Use HTTPS is enabled.
+Available values: "Auto", "Always", "Never".
 - `zero_downtime_failover` (String) Configures the zero-downtime failover between origins within a pool when session affinity is enabled. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. The supported values are:
 - `"none"`: No failover takes place for sessions pinned to the origin (default).
 - `"temporary"`: Traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping.
 - `"sticky"`: The session affinity cookie is updated and subsequent requests are sent to the new origin. Note: Zero-downtime failover with sticky sessions is currently not supported for session affinity by header.
+Available values: "none", "temporary", "sticky".
 
 

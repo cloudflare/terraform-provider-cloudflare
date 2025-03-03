@@ -40,5 +40,6 @@ Read-Only:
 
 - `name` (String) The name of the characteristic field, i.e., the header or cookie name.
 - `type` (String) The type of characteristic.
+Available values: "header", "cookie".
 
 

@@ -37,7 +37,7 @@ resource "cloudflare_zero_trust_dlp_entry" "example_zero_trust_dlp_entry" {
 
 ### Optional
 
-- `type` (String)
+- `type` (String) Available values: "custom".
 
 ### Read-Only
 
@@ -57,7 +57,7 @@ Required:
 
 Optional:
 
-- `validation` (String)
+- `validation` (String) Available values: "luhn".
 
 
 <a id="nestedatt--confidence"></a>

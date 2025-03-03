@@ -41,6 +41,7 @@ resource "cloudflare_cloud_connector_rules" "example_cloud_connector_rules" {
 ### Read-Only
 
 - `cloud_provider` (String) Cloud Provider type
+Available values: "aws_s3", "r2", "gcp_storage", "azure_storage".
 - `description` (String)
 - `enabled` (Boolean)
 - `expression` (String)
@@ -53,6 +54,7 @@ resource "cloudflare_cloud_connector_rules" "example_cloud_connector_rules" {
 Optional:
 
 - `cloud_provider` (String) Cloud Provider type
+Available values: "aws_s3", "r2", "gcp_storage", "azure_storage".
 - `description` (String)
 - `enabled` (Boolean)
 - `expression` (String)

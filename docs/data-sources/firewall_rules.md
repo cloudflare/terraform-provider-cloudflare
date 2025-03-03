@@ -46,6 +46,7 @@ data "cloudflare_firewall_rules" "example_firewall_rules" {
 Read-Only:
 
 - `action` (String) The action to apply to a matched request. The `log` action is only available on an Enterprise plan.
+Available values: "block", "challenge", "js_challenge", "managed_challenge", "allow", "log", "bypass".
 - `description` (String) An informative summary of the firewall rule.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--result--filter))
 - `id` (String) The unique identifier of the firewall rule.

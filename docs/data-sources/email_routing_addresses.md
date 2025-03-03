@@ -27,6 +27,7 @@ data "cloudflare_email_routing_addresses" "example_email_routing_addresses" {
 ### Optional
 
 - `direction` (String) Sorts results in an ascending or descending order.
+Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `verified` (Boolean) Filter by verified destination addresses.
 

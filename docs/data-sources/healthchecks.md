@@ -51,6 +51,7 @@ Read-Only:
 - `name` (String) A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.
 - `retries` (Number) The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.
 - `status` (String) The current status of the origin server according to the health check.
+Available values: "unknown", "healthy", "unhealthy", "suspended".
 - `suspended` (Boolean) If suspended, no health checks are sent to the origin.
 - `tcp_config` (Attributes) Parameters specific to TCP health check. (see [below for nested schema](#nestedatt--result--tcp_config))
 - `timeout` (Number) The timeout (in seconds) before marking the health check as failed.
@@ -67,6 +68,7 @@ Read-Only:
 - `follow_redirects` (Boolean) Follow redirects if the origin returns a 3xx status code.
 - `header` (Map of List of String) The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden.
 - `method` (String) The HTTP method to use for the health check.
+Available values: "GET", "HEAD".
 - `path` (String) The endpoint path to health check against.
 - `port` (Number) Port number to connect to for the health check. Defaults to 80 if type is HTTP or 443 if type is HTTPS.
 
@@ -77,6 +79,7 @@ Read-Only:
 Read-Only:
 
 - `method` (String) The TCP connection method to use for the health check.
+Available values: "connection_established".
 - `port` (Number) Port number to connect to for the health check. Defaults to 80.
 
 

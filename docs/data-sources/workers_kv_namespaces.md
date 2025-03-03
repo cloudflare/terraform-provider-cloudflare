@@ -29,8 +29,10 @@ data "cloudflare_workers_kv_namespaces" "example_workers_kv_namespaces" {
 ### Optional
 
 - `direction` (String) Direction to order namespaces.
+Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) Field to order results by.
+Available values: "id", "title".
 
 ### Read-Only
 

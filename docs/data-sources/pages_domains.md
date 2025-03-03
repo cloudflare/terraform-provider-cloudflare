@@ -39,12 +39,12 @@ data "cloudflare_pages_domains" "example_pages_domains" {
 
 Read-Only:
 
-- `certificate_authority` (String)
+- `certificate_authority` (String) Available values: "google", "lets_encrypt".
 - `created_on` (String)
 - `domain_id` (String)
 - `id` (String)
 - `name` (String)
-- `status` (String)
+- `status` (String) Available values: "initializing", "pending", "active", "deactivated", "blocked", "error".
 - `validation_data` (Attributes) (see [below for nested schema](#nestedatt--result--validation_data))
 - `verification_data` (Attributes) (see [below for nested schema](#nestedatt--result--verification_data))
 - `zone_tag` (String)
@@ -55,8 +55,8 @@ Read-Only:
 Read-Only:
 
 - `error_message` (String)
-- `method` (String)
-- `status` (String)
+- `method` (String) Available values: "http", "txt".
+- `status` (String) Available values: "initializing", "pending", "active", "deactivated", "error".
 - `txt_name` (String)
 - `txt_value` (String)
 
@@ -67,6 +67,6 @@ Read-Only:
 Read-Only:
 
 - `error_message` (String)
-- `status` (String)
+- `status` (String) Available values: "pending", "active", "deactivated", "blocked", "error".
 
 

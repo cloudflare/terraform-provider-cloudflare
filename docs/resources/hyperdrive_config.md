@@ -55,8 +55,9 @@ Required:
 
 - `database` (String) The name of your origin database.
 - `host` (String) The host (hostname or IP) of your origin database.
-- `password` (String) The password required to access your origin database. This value is write-only and never returned by the API.
+- `password` (String, Sensitive) The password required to access your origin database. This value is write-only and never returned by the API.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
+Available values: "postgres", "postgresql".
 - `user` (String) The user of your origin database.
 
 Optional:
@@ -75,4 +76,10 @@ Optional:
 - `max_age` (Number) When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)
 - `stale_while_revalidate` (Number) When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_hyperdrive_config.example '<account_id>/<hyperdrive_id>'
+```

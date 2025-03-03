@@ -26,7 +26,7 @@ resource "cloudflare_zero_trust_risk_scoring_integration" "example_zero_trust_ri
 ### Required
 
 - `account_id` (String)
-- `integration_type` (String)
+- `integration_type` (String) Available values: "Okta".
 - `tenant_url` (String) The base url of the tenant, e.g. "https://tenant.okta.com"
 
 ### Optional

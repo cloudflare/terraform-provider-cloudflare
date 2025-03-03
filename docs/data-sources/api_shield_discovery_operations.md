@@ -36,18 +36,22 @@ data "cloudflare_api_shield_discovery_operations" "example_api_shield_discovery_
 
 - `diff` (Boolean) When `true`, only return API Discovery results that are not saved into API Shield Endpoint Management
 - `direction` (String) Direction to order results.
+Available values: "asc", "desc".
 - `endpoint` (String) Filter results to only include endpoints containing this pattern.
 - `host` (List of String) Filter results to only include the specified hosts.
 - `max_items` (Number) Max items to fetch, default: 1000
 - `method` (List of String) Filter results to only include the specified HTTP methods.
 - `order` (String) Field to order by
+Available values: "host", "method", "endpoint", "traffic_stats.requests", "traffic_stats.last_updated".
 - `origin` (String) Filter results to only include discovery results sourced from a particular discovery engine
   * `ML` - Discovered operations that were sourced using ML API Discovery
   * `SessionIdentifier` - Discovered operations that were sourced using Session Identifier API Discovery
+Available values: "ML", "SessionIdentifier".
 - `state` (String) Filter results to only include discovery results in a particular state. States are as follows
   * `review` - Discovered operations that are not saved into API Shield Endpoint Management
   * `saved` - Discovered operations that are already saved into API Shield Endpoint Management
   * `ignored` - Discovered operations that have been marked as ignored
+Available values: "review", "saved", "ignored".
 
 ### Read-Only
 
@@ -64,11 +68,13 @@ Read-Only:
 - `id` (String) UUID
 - `last_updated` (String)
 - `method` (String) The HTTP method used to access the endpoint.
+Available values: "GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "CONNECT", "PATCH", "TRACE".
 - `origin` (List of String) API discovery engine(s) that discovered this operation
 - `state` (String) State of operation in API Discovery
   * `review` - Operation is not saved into API Shield Endpoint Management
   * `saved` - Operation is saved into API Shield Endpoint Management
   * `ignored` - Operation is marked as ignored
+Available values: "review", "saved", "ignored".
 
 <a id="nestedatt--result--features"></a>
 ### Nested Schema for `result.features`

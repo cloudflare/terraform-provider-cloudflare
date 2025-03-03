@@ -33,7 +33,7 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
 
 - `account_id` (String) Identifier
 - `script_name` (String) Name of the script.
-- `strategy` (String)
+- `strategy` (String) Available values: "percentage".
 - `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))
 
 ### Optional
@@ -75,7 +75,7 @@ Read-Only:
 - `created_on` (String)
 - `id` (String)
 - `source` (String)
-- `strategy` (String)
+- `strategy` (String) Available values: "percentage".
 - `versions` (Attributes List) (see [below for nested schema](#nestedatt--deployments--versions))
 
 <a id="nestedatt--deployments--annotations"></a>
