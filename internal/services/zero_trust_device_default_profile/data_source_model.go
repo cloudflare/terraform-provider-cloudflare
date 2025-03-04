@@ -25,7 +25,6 @@ type ZeroTrustDeviceDefaultProfileDataSourceModel struct {
 	CaptivePortal              types.Float64                                                                             `tfsdk:"captive_portal" json:"captive_portal,computed"`
 	Default                    types.Bool                                                                                `tfsdk:"default" json:"default,computed"`
 	DisableAutoFallback        types.Bool                                                                                `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,computed"`
-	DOHInTunnel                types.Bool                                                                                `tfsdk:"doh_in_tunnel" json:"doh_in_tunnel,computed"`
 	Enabled                    types.Bool                                                                                `tfsdk:"enabled" json:"enabled,computed"`
 	ExcludeOfficeIPs           types.Bool                                                                                `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed"`
 	GatewayUniqueID            types.String                                                                              `tfsdk:"gateway_unique_id" json:"gateway_unique_id,computed"`

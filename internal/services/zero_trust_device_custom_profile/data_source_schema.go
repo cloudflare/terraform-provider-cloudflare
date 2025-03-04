@@ -60,10 +60,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.",
 				Computed:    true,
 			},
-			"doh_in_tunnel": schema.BoolAttribute{
-				Description: "Determines how the WARP client sends DNS requests to Cloudflare Gateway. When `true`, DNS traffic is sent over DoH inside the WARP tunnel. When `false`, the DoH connection operates outside of the WARP tunnel.",
-				Computed:    true,
-			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether the policy will be applied to matching devices.",
 				Computed:    true,

@@ -10,7 +10,6 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
   captive_portal = 180
   description = "Policy for test teams."
   disable_auto_fallback = true
-  doh_in_tunnel = true
   enabled = true
   exclude_office_ips = true
   lan_allow_minutes = 30
