@@ -18,8 +18,7 @@ type R2BucketEventNotificationResultDataSourceEnvelope struct {
 
 type R2BucketEventNotificationDataSourceModel struct {
 	AccountID  types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
-	BucketName types.String                                                                 `tfsdk:"bucket_name" path:"bucket_name,required"`
-	BucketName types.String                                                                 `tfsdk:"bucket_name" json:"bucketName,computed"`
+	BucketName types.String                                                                 `tfsdk:"bucket_name" path:"bucket_name,required" json:"bucketName"`
 	Queues     customfield.NestedObjectList[R2BucketEventNotificationQueuesDataSourceModel] `tfsdk:"queues" json:"queues,computed"`
 }
 

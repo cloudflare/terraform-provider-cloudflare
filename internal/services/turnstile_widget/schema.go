@@ -67,6 +67,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"bot_fight_mode": schema.BoolAttribute{
 				Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).",
 				Optional:    true,
+				Computed:    true,
 			},
 			"clearance_level": schema.StringAttribute{
 				Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\nAvailable values: \"no_clearance\", \"jschallenge\", \"managed\", \"interactive\".",
@@ -87,6 +88,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"offlabel": schema.BoolAttribute{
 				Description: "Do not show any Cloudflare branding on the widget (ENT only).",
 				Optional:    true,
+				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the widget was created.",

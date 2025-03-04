@@ -50,10 +50,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hostname": schema.StringAttribute{
 				Description:   "The hostname for which the tls settings are set.",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"value": schema.Float64Attribute{
+			"value": schema.DynamicAttribute{
 				Description: "The tls setting value.",
 				Required:    true,
 			},
