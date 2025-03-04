@@ -20,8 +20,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Device ID.",
-				Computed:    true,
+				Description:   "Device ID.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"policy_id": schema.StringAttribute{
 				Description:   "Device ID.",

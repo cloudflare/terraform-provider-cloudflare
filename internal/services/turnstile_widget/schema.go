@@ -22,8 +22,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Widget item identifier tag.",
-				Computed:    true,
+				Description:   "Widget item identifier tag.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"sitekey": schema.StringAttribute{
 				Description:   "Widget item identifier tag.",
