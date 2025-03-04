@@ -6,7 +6,6 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
   auto_connect = 0
   captive_portal = 180
   disable_auto_fallback = true
-  doh_in_tunnel = true
   exclude_office_ips = true
   register_interface_ip_with_dns = true
   service_mode_v2 = {

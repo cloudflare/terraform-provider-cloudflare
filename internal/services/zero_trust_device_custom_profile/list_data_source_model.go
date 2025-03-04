@@ -39,7 +39,6 @@ type ZeroTrustDeviceCustomProfilesResultDataSourceModel struct {
 	Default                    types.Bool                                                                                `tfsdk:"default" json:"default,computed"`
 	Description                types.String                                                                              `tfsdk:"description" json:"description,computed"`
 	DisableAutoFallback        types.Bool                                                                                `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,computed"`
-	DOHInTunnel                types.Bool                                                                                `tfsdk:"doh_in_tunnel" json:"doh_in_tunnel,computed"`
 	Enabled                    types.Bool                                                                                `tfsdk:"enabled" json:"enabled,computed"`
 	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfilesExcludeDataSourceModel]         `tfsdk:"exclude" json:"exclude,computed"`
 	ExcludeOfficeIPs           types.Bool                                                                                `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed"`
