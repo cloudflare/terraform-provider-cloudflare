@@ -20,8 +20,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "The Web Analytics site identifier.",
-				Computed:    true,
+				Description:   "The Web Analytics site identifier.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"site_tag": schema.StringAttribute{
 				Description:   "The Web Analytics site identifier.",

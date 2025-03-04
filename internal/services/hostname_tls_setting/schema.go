@@ -29,7 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"http2",
 					),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"setting_id": schema.StringAttribute{
 				Description: "The TLS Setting name.\nAvailable values: \"ciphers\", \"min_tls_version\", \"http2\".",
