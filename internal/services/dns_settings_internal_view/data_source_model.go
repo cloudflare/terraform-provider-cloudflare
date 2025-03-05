@@ -77,17 +77,10 @@ func (m *DNSSettingsInternalViewDataSourceModel) toListParams(_ context.Context)
 }
 
 type DNSSettingsInternalViewFindOneByDataSourceModel struct {
-	Direction types.String                                `tfsdk:"direction" query:"direction,computed_optional"`
-	Match     types.String                                `tfsdk:"match" query:"match,computed_optional"`
-	Name      *DNSSettingsInternalViewNameDataSourceModel `tfsdk:"name" query:"name,optional"`
-	Order     types.String                                `tfsdk:"order" query:"order,optional"`
-	ZoneID    types.String                                `tfsdk:"zone_id" query:"zone_id,optional"`
-	ZoneName  types.String                                `tfsdk:"zone_name" query:"zone_name,optional"`
-}
-
-type DNSSettingsInternalViewNameDataSourceModel struct {
-	Contains   types.String `tfsdk:"contains" json:"contains,optional"`
-	Endswith   types.String `tfsdk:"endswith" json:"endswith,optional"`
-	Exact      types.String `tfsdk:"exact" json:"exact,optional"`
-	Startswith types.String `tfsdk:"startswith" json:"startswith,optional"`
+	Direction types.String                                 `tfsdk:"direction" query:"direction,computed_optional"`
+	Match     types.String                                 `tfsdk:"match" query:"match,computed_optional"`
+	Name      *DNSSettingsInternalViewsNameDataSourceModel `tfsdk:"name" query:"name,optional"`
+	Order     types.String                                 `tfsdk:"order" query:"order,optional"`
+	ZoneID    types.String                                 `tfsdk:"zone_id" query:"zone_id,optional"`
+	ZoneName  types.String                                 `tfsdk:"zone_name" query:"zone_name,optional"`
 }
