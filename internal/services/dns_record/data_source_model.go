@@ -202,47 +202,15 @@ type DNSRecordSettingsDataSourceModel struct {
 }
 
 type DNSRecordFindOneByDataSourceModel struct {
-	Comment   *DNSRecordCommentDataSourceModel `tfsdk:"comment" query:"comment,optional"`
-	Content   *DNSRecordContentDataSourceModel `tfsdk:"content" query:"content,optional"`
-	Direction types.String                     `tfsdk:"direction" query:"direction,computed_optional"`
-	Match     types.String                     `tfsdk:"match" query:"match,computed_optional"`
-	Name      *DNSRecordNameDataSourceModel    `tfsdk:"name" query:"name,optional"`
-	Order     types.String                     `tfsdk:"order" query:"order,computed_optional"`
-	Proxied   types.Bool                       `tfsdk:"proxied" query:"proxied,computed_optional"`
-	Search    types.String                     `tfsdk:"search" query:"search,optional"`
-	Tag       *DNSRecordTagDataSourceModel     `tfsdk:"tag" query:"tag,optional"`
-	TagMatch  types.String                     `tfsdk:"tag_match" query:"tag_match,computed_optional"`
-	Type      types.String                     `tfsdk:"type" query:"type,optional"`
-}
-
-type DNSRecordCommentDataSourceModel struct {
-	Absent     types.String `tfsdk:"absent" json:"absent,optional"`
-	Contains   types.String `tfsdk:"contains" json:"contains,optional"`
-	Endswith   types.String `tfsdk:"endswith" json:"endswith,optional"`
-	Exact      types.String `tfsdk:"exact" json:"exact,optional"`
-	Present    types.String `tfsdk:"present" json:"present,optional"`
-	Startswith types.String `tfsdk:"startswith" json:"startswith,optional"`
-}
-
-type DNSRecordContentDataSourceModel struct {
-	Contains   types.String `tfsdk:"contains" json:"contains,optional"`
-	Endswith   types.String `tfsdk:"endswith" json:"endswith,optional"`
-	Exact      types.String `tfsdk:"exact" json:"exact,optional"`
-	Startswith types.String `tfsdk:"startswith" json:"startswith,optional"`
-}
-
-type DNSRecordNameDataSourceModel struct {
-	Contains   types.String `tfsdk:"contains" json:"contains,optional"`
-	Endswith   types.String `tfsdk:"endswith" json:"endswith,optional"`
-	Exact      types.String `tfsdk:"exact" json:"exact,optional"`
-	Startswith types.String `tfsdk:"startswith" json:"startswith,optional"`
-}
-
-type DNSRecordTagDataSourceModel struct {
-	Absent     types.String `tfsdk:"absent" json:"absent,optional"`
-	Contains   types.String `tfsdk:"contains" json:"contains,optional"`
-	Endswith   types.String `tfsdk:"endswith" json:"endswith,optional"`
-	Exact      types.String `tfsdk:"exact" json:"exact,optional"`
-	Present    types.String `tfsdk:"present" json:"present,optional"`
-	Startswith types.String `tfsdk:"startswith" json:"startswith,optional"`
+	Comment   *DNSRecordsCommentDataSourceModel `tfsdk:"comment" query:"comment,optional"`
+	Content   *DNSRecordsContentDataSourceModel `tfsdk:"content" query:"content,optional"`
+	Direction types.String                      `tfsdk:"direction" query:"direction,computed_optional"`
+	Match     types.String                      `tfsdk:"match" query:"match,computed_optional"`
+	Name      *DNSRecordsNameDataSourceModel    `tfsdk:"name" query:"name,optional"`
+	Order     types.String                      `tfsdk:"order" query:"order,computed_optional"`
+	Proxied   types.Bool                        `tfsdk:"proxied" query:"proxied,computed_optional"`
+	Search    types.String                      `tfsdk:"search" query:"search,optional"`
+	Tag       *DNSRecordsTagDataSourceModel     `tfsdk:"tag" query:"tag,optional"`
+	TagMatch  types.String                      `tfsdk:"tag_match" query:"tag_match,computed_optional"`
+	Type      types.String                      `tfsdk:"type" query:"type,optional"`
 }
