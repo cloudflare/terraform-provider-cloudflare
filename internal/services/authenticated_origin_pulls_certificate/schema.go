@@ -26,8 +26,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"certificate_id": schema.StringAttribute{
 				Description:   "Identifier",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"certificate": schema.StringAttribute{
 				Description:   "The zone's leaf certificate.",

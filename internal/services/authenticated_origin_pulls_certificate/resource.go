@@ -88,6 +88,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Create(ctx context.Context
 		return
 	}
 	data = &env.Result
+	data.CertificateID = data.ID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -136,6 +137,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Update(ctx context.Context
 		return
 	}
 	data = &env.Result
+	data.CertificateID = data.ID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -176,6 +178,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Read(ctx context.Context, 
 		return
 	}
 	data = &env.Result
+	data.CertificateID = data.ID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
