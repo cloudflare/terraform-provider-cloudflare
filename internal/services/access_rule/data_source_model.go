@@ -83,8 +83,8 @@ func (m *AccessRuleDataSourceModel) toListParams(_ context.Context) (params fire
 }
 
 type AccessRuleConfigurationDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target,optional"`
-	Value  types.String `tfsdk:"value" json:"value,optional"`
+	Target types.String `tfsdk:"target" json:"target,computed"`
+	Value  types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type AccessRuleScopeDataSourceModel struct {
@@ -94,10 +94,10 @@ type AccessRuleScopeDataSourceModel struct {
 }
 
 type AccessRuleFindOneByDataSourceModel struct {
-	Configuration *AccessRuleConfigurationDataSourceModel `tfsdk:"configuration" query:"configuration,optional"`
-	Direction     types.String                            `tfsdk:"direction" query:"direction,optional"`
-	Match         types.String                            `tfsdk:"match" query:"match,computed_optional"`
-	Mode          types.String                            `tfsdk:"mode" query:"mode,optional"`
-	Notes         types.String                            `tfsdk:"notes" query:"notes,optional"`
-	Order         types.String                            `tfsdk:"order" query:"order,optional"`
+	Configuration *AccessRulesConfigurationDataSourceModel `tfsdk:"configuration" query:"configuration,optional"`
+	Direction     types.String                             `tfsdk:"direction" query:"direction,optional"`
+	Match         types.String                             `tfsdk:"match" query:"match,computed_optional"`
+	Mode          types.String                             `tfsdk:"mode" query:"mode,optional"`
+	Notes         types.String                             `tfsdk:"notes" query:"notes,optional"`
+	Order         types.String                             `tfsdk:"order" query:"order,optional"`
 }
