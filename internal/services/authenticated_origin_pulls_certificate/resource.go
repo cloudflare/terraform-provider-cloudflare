@@ -61,6 +61,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Create(ctx context.Context
 		return
 	}
 
+	privateKey := data.PrivateKey
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -89,6 +90,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Create(ctx context.Context
 	}
 	data = &env.Result
 	data.CertificateID = data.ID
+	data.PrivateKey = privateKey
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -138,6 +140,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Update(ctx context.Context
 	}
 	data = &env.Result
 	data.CertificateID = data.ID
+	data.PrivateKey = state.PrivateKey
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -150,7 +153,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Read(ctx context.Context, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
+	privateKey := data.PrivateKey
 	res := new(http.Response)
 	env := AuthenticatedOriginPullsCertificateResultEnvelope{*data}
 	_, err := r.client.OriginTLSClientAuth.Get(
@@ -179,6 +182,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Read(ctx context.Context, 
 	}
 	data = &env.Result
 	data.CertificateID = data.ID
+	data.PrivateKey = privateKey
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
