@@ -37,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"private_key": schema.StringAttribute{
 				Description:   "The zone's private key.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Indicates whether zone-level authenticated origin pulls is enabled.",
