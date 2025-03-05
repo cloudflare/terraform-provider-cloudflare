@@ -110,6 +110,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"dns",
 							"l4",
 							"egress",
+							"dns_resolver",
 						),
 					),
 				},
