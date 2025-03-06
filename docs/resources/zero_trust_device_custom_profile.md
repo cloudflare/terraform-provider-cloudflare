@@ -24,7 +24,6 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
   captive_portal = 180
   description = "Policy for test teams."
   disable_auto_fallback = true
-  doh_in_tunnel = true
   enabled = true
   exclude_office_ips = true
   lan_allow_minutes = 30
@@ -59,7 +58,6 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 - `captive_portal` (Number) Turn on the captive portal after the specified amount of time.
 - `description` (String) A description of the policy.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
-- `doh_in_tunnel` (Boolean) Determines how the WARP client sends DNS requests to Cloudflare Gateway. When `true`, DNS traffic is sent over DoH inside the WARP tunnel. When `false`, the DoH connection operates outside of the WARP tunnel.
 - `enabled` (Boolean) Whether the policy will be applied to matching devices.
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
 - `lan_allow_minutes` (Number) The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.
