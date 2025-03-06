@@ -63,6 +63,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"meta": schema.SingleNestedAttribute{
 										Description: "Attributes associated to the permission group.",
 										Optional:    true,
+										Computed:    true,
 										Attributes: map[string]schema.Attribute{
 											"key": schema.StringAttribute{
 												Optional: true,
