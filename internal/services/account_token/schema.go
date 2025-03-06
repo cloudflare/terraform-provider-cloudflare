@@ -149,9 +149,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"value": schema.StringAttribute{
-				Description: "The token value.",
-				Computed:    true,
-				Sensitive:   true,
+				Description:   "The token value.",
+				Computed:      true,
+				Sensitive:     true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}
