@@ -82,6 +82,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"access_client_secret": schema.StringAttribute{
 									Description: "The Client Secret of the Access token to use when connecting to the origin database. This value is write-only and never returned by the API.",
 									Computed:    true,
+									Sensitive:   true,
 								},
 							},
 						},
