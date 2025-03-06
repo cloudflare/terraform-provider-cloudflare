@@ -81,12 +81,9 @@ resource "cloudflare_authenticated_origin_pulls_certificate" "example_authentica
 - `private_key` (String) The zone's private key.
 - `zone_id` (String) Identifier
 
-### Optional
-
-- `certificate_id` (String) Identifier
-
 ### Read-Only
 
+- `certificate_id` (String) Identifier
 - `enabled` (Boolean) Indicates whether zone-level authenticated origin pulls is enabled.
 - `expires_on` (String) When the certificate from the authority expires.
 - `id` (String) Identifier

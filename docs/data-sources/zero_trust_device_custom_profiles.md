@@ -45,7 +45,6 @@ Read-Only:
 - `default` (Boolean) Whether the policy is the default policy for an account.
 - `description` (String) A description of the policy.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
-- `doh_in_tunnel` (Boolean) Determines how the WARP client sends DNS requests to Cloudflare Gateway. When `true`, DNS traffic is sent over DoH inside the WARP tunnel. When `false`, the DoH connection operates outside of the WARP tunnel.
 - `enabled` (Boolean) Whether the policy will be applied to matching devices.
 - `exclude` (Attributes List) (see [below for nested schema](#nestedatt--result--exclude))
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
