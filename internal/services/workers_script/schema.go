@@ -89,6 +89,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"jwt": schema.StringAttribute{
 								Description: "Token provided upon successful upload of all files from a registered manifest.",
 								Optional:    true,
+								Sensitive:   true,
 							},
 						},
 					},
@@ -192,6 +193,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"text": schema.StringAttribute{
 									Description: "The text value to use.",
 									Optional:    true,
+									Sensitive:   true,
 								},
 								"queue_name": schema.StringAttribute{
 									Description: "Name of the Queue to bind to.",
