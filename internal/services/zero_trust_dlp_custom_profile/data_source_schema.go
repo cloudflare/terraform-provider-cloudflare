@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -32,9 +31,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"allowed_match_count": schema.Int64Attribute{
 				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
 				Computed:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(0, 1000),
-				},
 			},
 			"confidence_threshold": schema.StringAttribute{
 				Description: `Available values: "low", "medium", "high", "very_high".`,

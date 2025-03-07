@@ -87,9 +87,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"ttl": schema.Float64Attribute{
 				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
 				Computed:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(30, 86400),
-				},
 			},
 			"type": schema.StringAttribute{
 				Description: "Record type.\nAvailable values: \"A\".",
@@ -168,7 +165,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Type.",
 						Computed:    true,
 						Validators: []validator.Float64{
-							float64validator.Between(0, 65535),
+							float64validator.AtLeast(0),
 						},
 					},
 					"protocol": schema.Float64Attribute{
