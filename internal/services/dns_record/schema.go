@@ -95,9 +95,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
 				Computed:    true,
 				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(30, 86400),
-				},
 			},
 			"tags": schema.ListAttribute{
 				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
@@ -149,7 +146,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Type.",
 						Optional:    true,
 						Validators: []validator.Float64{
-							float64validator.Between(0, 65535),
+							float64validator.AtLeast(0),
 						},
 					},
 					"protocol": schema.Float64Attribute{
