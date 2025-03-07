@@ -5,6 +5,7 @@ package api_shield_schema
 import (
 	"bytes"
 	"mime/multipart"
+	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -33,6 +34,7 @@ func (r APIShieldSchemaModel) MarshalMultipart() (data []byte, contentType strin
 	buf := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(buf)
 	err = apiform.MarshalRoot(r, writer)
+
 	if err != nil {
 		writer.Close()
 		return nil, "", err
@@ -41,7 +43,10 @@ func (r APIShieldSchemaModel) MarshalMultipart() (data []byte, contentType strin
 	if err != nil {
 		return nil, "", err
 	}
-	return buf.Bytes(), writer.FormDataContentType(), nil
+
+	ret := strings.Replace(string(buf.Bytes()), `name="file"`, `name="file"; filename="openapi.json"`, 1)
+
+	return []byte(ret), writer.FormDataContentType(), nil
 }
 
 type APIShieldSchemaSchemaModel struct {
