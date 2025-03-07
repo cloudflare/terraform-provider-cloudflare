@@ -19,7 +19,7 @@ type APIShieldSchemaResultEnvelope struct {
 
 type APIShieldSchemaModel struct {
 	ZoneID            types.String                                                `tfsdk:"zone_id" path:"zone_id,required"`
-	SchemaID          types.String                                                `tfsdk:"schema_id" path:"schema_id,optional"`
+	ID                types.String                                                `tfsdk:"id" path:"schema_id,computed"`
 	File              types.String                                                `tfsdk:"file" json:"file,required"`
 	Kind              types.String                                                `tfsdk:"kind" json:"kind,required"`
 	Name              types.String                                                `tfsdk:"name" json:"name,optional"`

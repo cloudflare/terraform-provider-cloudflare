@@ -26,9 +26,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"schema_id": schema.StringAttribute{
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"file": schema.StringAttribute{
 				Description:   "Schema file bytes",

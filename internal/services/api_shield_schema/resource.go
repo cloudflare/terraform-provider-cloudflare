@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -87,7 +88,12 @@ func (r *APIShieldSchemaResource) Create(ctx context.Context, req resource.Creat
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+
 	data = &env.Result
+
+	var inner APIShieldSchemaSchemaModel
+	data.Schema.As(ctx, &inner, basetypes.ObjectAsOptions{})
+	data.ID = inner.SchemaID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -118,7 +124,7 @@ func (r *APIShieldSchemaResource) Update(ctx context.Context, req resource.Updat
 	env := APIShieldSchemaResultEnvelope{*data}
 	_, err = r.client.APIGateway.UserSchemas.Edit(
 		ctx,
-		data.SchemaID.ValueString(),
+		data.ID.ValueString(),
 		api_gateway.UserSchemaEditParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -150,11 +156,15 @@ func (r *APIShieldSchemaResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
+	var inner APIShieldSchemaSchemaModel
+	data.Schema.As(ctx, &inner, basetypes.ObjectAsOptions{})
+	data.ID = inner.SchemaID
+
 	res := new(http.Response)
 	env := APIShieldSchemaResultEnvelope{*data}
 	_, err := r.client.APIGateway.UserSchemas.Get(
 		ctx,
-		data.SchemaID.ValueString(),
+		data.ID.ValueString(),
 		api_gateway.UserSchemaGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -177,6 +187,7 @@ func (r *APIShieldSchemaResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 	data = &env.Result
+	data.ID = inner.SchemaID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -190,9 +201,13 @@ func (r *APIShieldSchemaResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
+	var inner APIShieldSchemaSchemaModel
+	data.Schema.As(ctx, &inner, basetypes.ObjectAsOptions{})
+
+	data.ID = inner.SchemaID
 	_, err := r.client.APIGateway.UserSchemas.Delete(
 		ctx,
-		data.SchemaID.ValueString(),
+		data.ID.ValueString(),
 		api_gateway.UserSchemaDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
