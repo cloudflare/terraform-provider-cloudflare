@@ -84,6 +84,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"ownership_challenge": schema.StringAttribute{
 				Description: "Ownership challenge token to prove destination ownership.",
 				Optional:    true,
+				Sensitive:   true,
 			},
 			"frequency": schema.StringAttribute{
 				Description: "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.\nAvailable values: \"high\", \"low\".",
