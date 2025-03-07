@@ -35,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"location": schema.StringAttribute{
-				Description: "Location of the bucket\nAvailable values: \"apac\", \"eeur\", \"enam\", \"weur\", \"wnam\".",
+				Description: "Location of the bucket\nAvailable values: \"apac\", \"eeur\", \"enam\", \"weur\", \"wnam\", \"oc\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -44,6 +44,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"enam",
 						"weur",
 						"wnam",
+						"oc",
 					),
 				},
 			},
