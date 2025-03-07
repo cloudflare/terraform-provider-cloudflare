@@ -100,9 +100,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										"ttl": schema.Float64Attribute{
 											Description: "Time to live, in seconds, of the DNS record. Must be between 60 and 86400, or 1 for 'automatic'.",
 											Computed:    true,
-											Validators: []validator.Float64{
-												float64validator.Between(1, 86400),
-											},
 										},
 										"type": schema.StringAttribute{
 											Description: "DNS record type.\nAvailable values: \"A\", \"AAAA\", \"CNAME\", \"HTTPS\", \"TXT\", \"SRV\", \"LOC\", \"MX\", \"NS\", \"CERT\", \"DNSKEY\", \"DS\", \"NAPTR\", \"SMIMEA\", \"SSHFP\", \"SVCB\", \"TLSA\", \"URI\".",
@@ -158,9 +155,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								"ttl": schema.Float64Attribute{
 									Description: "Time to live, in seconds, of the DNS record. Must be between 60 and 86400, or 1 for 'automatic'.",
 									Computed:    true,
-									Validators: []validator.Float64{
-										float64validator.Between(1, 86400),
-									},
 								},
 								"type": schema.StringAttribute{
 									Description: "DNS record type.\nAvailable values: \"A\", \"AAAA\", \"CNAME\", \"HTTPS\", \"TXT\", \"SRV\", \"LOC\", \"MX\", \"NS\", \"CERT\", \"DNSKEY\", \"DS\", \"NAPTR\", \"SMIMEA\", \"SSHFP\", \"SVCB\", \"TLSA\", \"URI\".",
@@ -209,9 +203,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"ttl": schema.Float64Attribute{
 						Description: "Time to live, in seconds, of the DNS record. Must be between 60 and 86400, or 1 for 'automatic'.",
 						Computed:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(1, 86400),
-						},
 					},
 					"type": schema.StringAttribute{
 						Description: "DNS record type.\nAvailable values: \"A\", \"AAAA\", \"CNAME\", \"HTTPS\", \"TXT\", \"SRV\", \"LOC\", \"MX\", \"NS\", \"CERT\", \"DNSKEY\", \"DS\", \"NAPTR\", \"SMIMEA\", \"SSHFP\", \"SVCB\", \"TLSA\", \"URI\".",
