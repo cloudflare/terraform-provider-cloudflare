@@ -50,6 +50,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"secret_access_key": schema.StringAttribute{
 						Description: "Value of a Cloudflare API token.\nThis is the value labelled \"Secret Access Key\" when creating an API\ntoken from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).\n\nSippy will use this token when writing objects to R2, so it is\nbest to scope this token to the bucket you're enabling Sippy for.",
 						Optional:    true,
+						Sensitive:   true,
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
@@ -82,6 +83,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"secret_access_key": schema.StringAttribute{
 						Description: "Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket)",
 						Optional:    true,
+						Sensitive:   true,
 					},
 					"client_email": schema.StringAttribute{
 						Description: "Client email of an IAM credential (ideally scoped to a single GCS bucket)",
@@ -90,6 +92,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"private_key": schema.StringAttribute{
 						Description: "Private Key of an IAM credential (ideally scoped to a single GCS bucket)",
 						Optional:    true,
+						Sensitive:   true,
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
