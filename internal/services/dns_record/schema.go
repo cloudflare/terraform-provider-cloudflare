@@ -155,7 +155,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Type.",
 						Optional:    true,
 						Validators: []validator.Float64{
-							float64validator.Between(0, 65535),
+							float64validator.AtLeast(0),
 						},
 					},
 					"protocol": schema.Float64Attribute{
