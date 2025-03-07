@@ -6,20 +6,22 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 var _ resource.ResourceWithConfigValidators = (*DNSRecordResource)(nil)
@@ -37,17 +39,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"comment": schema.StringAttribute{
-				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
-				Optional:    true,
-			},
 			"content": schema.StringAttribute{
 				Description: "A valid IPv4 address.",
 				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "DNS record name (or @ for the zone apex) in Punycode.",
-				Optional:    true,
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.All(
+						stringvalidator.ConflictsWith(path.MatchRoot("data")),
+					),
+				},
 			},
 			"priority": schema.Float64Attribute{
 				Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
@@ -57,8 +57,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"type": schema.StringAttribute{
+				Required:    true,
 				Description: "Record type.\nAvailable values: \"A\".",
-				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"A",
@@ -84,6 +84,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"URI",
 					),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"proxied": schema.BoolAttribute{
 				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
@@ -93,10 +94,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"ttl": schema.Float64Attribute{
 				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 				Validators: []validator.Float64{
-					float64validator.Between(30, 86400),
+					float64validator.Any(
+						float64validator.Between(1, 1),
+						float64validator.Between(30, 86400),
+					),
 				},
 			},
 			"tags": schema.ListAttribute{
@@ -105,19 +108,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
+				Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 			},
 			"data": schema.SingleNestedAttribute{
 				Description: "Components of a CAA record.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[DNSRecordDataModel](ctx),
+				Validators: []validator.Object{
+					objectvalidator.All(
+						objectvalidator.ConflictsWith(path.MatchRoot("content")),
+					),
+				},
+				CustomType: customfield.NewNestedObjectType[DNSRecordDataModel](ctx),
 				Attributes: map[string]schema.Attribute{
-					"flags": schema.DynamicAttribute{
+					"flags": schema.Float64Attribute{
 						Description: "Flags for the CAA record.",
 						Optional:    true,
-						Validators: []validator.Dynamic{
-							customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
-						},
 					},
 					"tag": schema.StringAttribute{
 						Description: "Name of the property controlled by this record (e.g.: issue, issuewild, iodef).",
@@ -360,21 +366,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "When enabled, only A records will be generated, and AAAA records will not be created. This setting is intended for exceptional cases. Note that this option only applies to proxied records and it has no effect on whether Cloudflare communicates with the origin using IPv4 or IPv6.",
 						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"ipv6_only": schema.BoolAttribute{
 						Description: "When enabled, only AAAA records will be generated, and A records will not be created. This setting is intended for exceptional cases. Note that this option only applies to proxied records and it has no effect on whether Cloudflare communicates with the origin using IPv4 or IPv6.",
 						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"flatten_cname": schema.BoolAttribute{
 						Description: "If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting is unavailable for proxied records, since they are always flattened.",
 						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 				},
+			},
+			"comment": schema.StringAttribute{
+				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
+				Optional:    true,
+				Computed:    true,
 			},
 			"comment_modified_on": schema.StringAttribute{
 				Description: "When the record comment was last modified. Omitted if there is no comment.",
@@ -390,6 +398,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the record was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"name": schema.StringAttribute{
+				Description: "DNS record name (or @ for the zone apex) in Punycode.",
+				Required:    true,
 			},
 			"proxiable": schema.BoolAttribute{
 				Description: "Whether the record can be proxied by Cloudflare or not.",
