@@ -23,8 +23,8 @@ type WorkersScriptModel struct {
 	Metadata        *WorkersScriptMetadataModel                                   `tfsdk:"metadata" json:"metadata,required"`
 	CreatedOn       timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Etag            types.String                                                  `tfsdk:"etag" json:"etag,computed"`
-	HasAssets       types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed"`
-	HasModules      types.Bool                                                    `tfsdk:"has_modules" json:"has_modules,computed"`
+	HAsAssets       types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed"`
+	HAsModules      types.Bool                                                    `tfsdk:"has_modules" json:"has_modules,computed"`
 	Logpush         types.Bool                                                    `tfsdk:"logpush" json:"logpush,computed"`
 	ModifiedOn      timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	PlacementMode   types.String                                                  `tfsdk:"placement_mode" json:"placement_mode,computed"`
