@@ -16,7 +16,7 @@ type MagicTransitSiteLANModel struct {
 	ID               types.String                                                        `tfsdk:"id" json:"id,computed"`
 	AccountID        types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	SiteID           types.String                                                        `tfsdk:"site_id" path:"site_id,required"`
-	HaLink           types.Bool                                                          `tfsdk:"ha_link" json:"ha_link,optional"`
+	HALink           types.Bool                                                          `tfsdk:"ha_link" json:"ha_link,optional"`
 	Physport         types.Int64                                                         `tfsdk:"physport" json:"physport,required"`
 	VlanTag          types.Int64                                                         `tfsdk:"vlan_tag" json:"vlan_tag,required"`
 	Name             types.String                                                        `tfsdk:"name" json:"name,optional"`
