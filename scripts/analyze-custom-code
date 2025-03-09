@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+#
+# This script finds the correct "merge-base" between custom and generated
+# branches based on the PR description and provides the correct cherry-pick
+# command so you can apply it on top of master.
+#
+# One use-case is to take your changes from a generated dev branch and apply
+# them on top of next so you can run acceptance tests. To do that, just change
+# GENERATED_BRANCH to the branch you're testing.
+#
+# This command also shows a diff of all the "service code" (e.g. resources,
+# schemas, models) that diverges from what's generated. So that could be
+# useful for eyeballing whether there was a bad merge making models
+# and schemas not consistent with each other, etc.  note that any args passed
+# to this script are passed to the `git diff` command (e.g. `--stat`).
+
+CUSTOM_CODE_BRANCH=origin/next
+GENERATED_BRANCH=HEAD # could also be generated, or a dev branch, etc
+
+# first look for the last generated commit that was applied to the custom code
+# branch (e.g. "(#2343)")
+LAST_GENERATED_CODE_ON_NEXT_DESC=$(git log "$CUSTOM_CODE_BRANCH" --grep '(#\d\+)' -n 1 --pretty=format:%s)
+
+if [[ -z "$LAST_GENERATED_CODE_ON_NEXT_DESC" ]]; then
+  echo "No generated PR found in $CUSTOM_CODE_BRANCH"
+  exit 1
+fi
+
+# find that same commit on generated based on the description
+GENERATED_SHA=$(git log "$GENERATED_BRANCH" --grep "$LAST_GENERATED_CODE_ON_NEXT_DESC" -n 1 --pretty=format:%H)
+
+if [[ -z "$GENERATED_SHA" ]]; then
+  echo "No commit found in generated with description '$LAST_GENERATED_CODE_ON_NEXT_DESC'"
+  exit 1
+fi
+
+# list the commits between the last generated commit and generated HEAD
+COMMITS=$(git log "$GENERATED_SHA..$GENERATED_BRANCH" --oneline)
+
+echo "last generated commit on custom code branch: '$LAST_GENERATED_CODE_ON_NEXT_DESC'"
+echo "sha of this commit on generated branch: $GENERATED_SHA"
+printf "\n"
+
+echo "found the following generated code to cherry-pick onto next:"
+echo "$COMMITS"
+
+printf "\n"
+
+echo "run the following command on $CUSTOM_CODE_BRANCH to apply the changes:"
+echo "- git checkout $CUSTOM_CODE_BRANCH"
+echo "- git cherry-pick $GENERATED_SHA..$GENERATED_BRANCH"
+
+printf "\n"
+echo "hit enter to see the custom service code diff:"
+read -r
+git diff "$GENERATED_SHA".."$CUSTOM_CODE_BRANCH" "$@" -- './internal/services/*.go' ':!*_test.go'
