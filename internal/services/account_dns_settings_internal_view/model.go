@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_settings_internal_view
+package account_dns_settings_internal_view
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
@@ -8,11 +8,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type DNSSettingsInternalViewResultEnvelope struct {
-	Result DNSSettingsInternalViewModel `json:"result"`
+type AccountDNSSettingsInternalViewResultEnvelope struct {
+	Result AccountDNSSettingsInternalViewModel `json:"result"`
 }
 
-type DNSSettingsInternalViewModel struct {
+type AccountDNSSettingsInternalViewModel struct {
 	ID           types.String      `tfsdk:"id" json:"id,computed"`
 	AccountID    types.String      `tfsdk:"account_id" path:"account_id,required"`
 	Name         types.String      `tfsdk:"name" json:"name,required"`
@@ -21,10 +21,10 @@ type DNSSettingsInternalViewModel struct {
 	ModifiedTime timetypes.RFC3339 `tfsdk:"modified_time" json:"modified_time,computed" format:"date-time"`
 }
 
-func (m DNSSettingsInternalViewModel) MarshalJSON() (data []byte, err error) {
+func (m AccountDNSSettingsInternalViewModel) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(m)
 }
 
-func (m DNSSettingsInternalViewModel) MarshalJSONForUpdate(state DNSSettingsInternalViewModel) (data []byte, err error) {
+func (m AccountDNSSettingsInternalViewModel) MarshalJSONForUpdate(state AccountDNSSettingsInternalViewModel) (data []byte, err error) {
 	return apijson.MarshalForPatch(m, state)
 }

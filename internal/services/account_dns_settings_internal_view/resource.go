@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_settings_internal_view
+package account_dns_settings_internal_view
 
 import (
 	"context"
@@ -19,24 +19,24 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*DNSSettingsInternalViewResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*DNSSettingsInternalViewResource)(nil)
-var _ resource.ResourceWithImportState = (*DNSSettingsInternalViewResource)(nil)
+var _ resource.ResourceWithConfigure = (*AccountDNSSettingsInternalViewResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*AccountDNSSettingsInternalViewResource)(nil)
+var _ resource.ResourceWithImportState = (*AccountDNSSettingsInternalViewResource)(nil)
 
 func NewResource() resource.Resource {
-	return &DNSSettingsInternalViewResource{}
+	return &AccountDNSSettingsInternalViewResource{}
 }
 
-// DNSSettingsInternalViewResource defines the resource implementation.
-type DNSSettingsInternalViewResource struct {
+// AccountDNSSettingsInternalViewResource defines the resource implementation.
+type AccountDNSSettingsInternalViewResource struct {
 	client *cloudflare.Client
 }
 
-func (r *DNSSettingsInternalViewResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_dns_settings_internal_view"
+func (r *AccountDNSSettingsInternalViewResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_account_dns_settings_internal_view"
 }
 
-func (r *DNSSettingsInternalViewResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *AccountDNSSettingsInternalViewResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -55,8 +55,8 @@ func (r *DNSSettingsInternalViewResource) Configure(ctx context.Context, req res
 	r.client = client
 }
 
-func (r *DNSSettingsInternalViewResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *DNSSettingsInternalViewModel
+func (r *AccountDNSSettingsInternalViewResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *AccountDNSSettingsInternalViewModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -70,10 +70,10 @@ func (r *DNSSettingsInternalViewResource) Create(ctx context.Context, req resour
 		return
 	}
 	res := new(http.Response)
-	env := DNSSettingsInternalViewResultEnvelope{*data}
-	_, err = r.client.DNS.Settings.Views.New(
+	env := AccountDNSSettingsInternalViewResultEnvelope{*data}
+	_, err = r.client.DNS.Settings.Zone.Views.New(
 		ctx,
-		dns.SettingViewNewParams{
+		dns.SettingZoneViewNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -95,8 +95,8 @@ func (r *DNSSettingsInternalViewResource) Create(ctx context.Context, req resour
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSSettingsInternalViewResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *DNSSettingsInternalViewModel
+func (r *AccountDNSSettingsInternalViewResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *AccountDNSSettingsInternalViewModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -104,7 +104,7 @@ func (r *DNSSettingsInternalViewResource) Update(ctx context.Context, req resour
 		return
 	}
 
-	var state *DNSSettingsInternalViewModel
+	var state *AccountDNSSettingsInternalViewModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -118,11 +118,11 @@ func (r *DNSSettingsInternalViewResource) Update(ctx context.Context, req resour
 		return
 	}
 	res := new(http.Response)
-	env := DNSSettingsInternalViewResultEnvelope{*data}
-	_, err = r.client.DNS.Settings.Views.Edit(
+	env := AccountDNSSettingsInternalViewResultEnvelope{*data}
+	_, err = r.client.DNS.Settings.Zone.Views.Edit(
 		ctx,
 		data.ID.ValueString(),
-		dns.SettingViewEditParams{
+		dns.SettingZoneViewEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -144,8 +144,8 @@ func (r *DNSSettingsInternalViewResource) Update(ctx context.Context, req resour
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSSettingsInternalViewResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *DNSSettingsInternalViewModel
+func (r *AccountDNSSettingsInternalViewResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *AccountDNSSettingsInternalViewModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -154,11 +154,11 @@ func (r *DNSSettingsInternalViewResource) Read(ctx context.Context, req resource
 	}
 
 	res := new(http.Response)
-	env := DNSSettingsInternalViewResultEnvelope{*data}
-	_, err := r.client.DNS.Settings.Views.Get(
+	env := AccountDNSSettingsInternalViewResultEnvelope{*data}
+	_, err := r.client.DNS.Settings.Zone.Views.Get(
 		ctx,
 		data.ID.ValueString(),
-		dns.SettingViewGetParams{
+		dns.SettingZoneViewGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -184,8 +184,8 @@ func (r *DNSSettingsInternalViewResource) Read(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSSettingsInternalViewResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *DNSSettingsInternalViewModel
+func (r *AccountDNSSettingsInternalViewResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *AccountDNSSettingsInternalViewModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -193,10 +193,10 @@ func (r *DNSSettingsInternalViewResource) Delete(ctx context.Context, req resour
 		return
 	}
 
-	_, err := r.client.DNS.Settings.Views.Delete(
+	_, err := r.client.DNS.Settings.Zone.Views.Delete(
 		ctx,
 		data.ID.ValueString(),
-		dns.SettingViewDeleteParams{
+		dns.SettingZoneViewDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -209,8 +209,8 @@ func (r *DNSSettingsInternalViewResource) Delete(ctx context.Context, req resour
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSSettingsInternalViewResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *DNSSettingsInternalViewModel = new(DNSSettingsInternalViewModel)
+func (r *AccountDNSSettingsInternalViewResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *AccountDNSSettingsInternalViewModel = new(AccountDNSSettingsInternalViewModel)
 
 	path_account_id := ""
 	path_view_id := ""
@@ -229,11 +229,11 @@ func (r *DNSSettingsInternalViewResource) ImportState(ctx context.Context, req r
 	data.ID = types.StringValue(path_view_id)
 
 	res := new(http.Response)
-	env := DNSSettingsInternalViewResultEnvelope{*data}
-	_, err := r.client.DNS.Settings.Views.Get(
+	env := AccountDNSSettingsInternalViewResultEnvelope{*data}
+	_, err := r.client.DNS.Settings.Zone.Views.Get(
 		ctx,
 		path_view_id,
-		dns.SettingViewGetParams{
+		dns.SettingZoneViewGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
 		option.WithResponseBodyInto(&res),
@@ -254,6 +254,6 @@ func (r *DNSSettingsInternalViewResource) ImportState(ctx context.Context, req r
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSSettingsInternalViewResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *AccountDNSSettingsInternalViewResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }
