@@ -30,13 +30,13 @@ func (m ManagedTransformsModel) MarshalJSONForUpdate(state ManagedTransformsMode
 type ManagedTransformsManagedRequestHeadersModel struct {
 	ID            types.String                   `tfsdk:"id" json:"id,required"`
 	Enabled       types.Bool                     `tfsdk:"enabled" json:"enabled,required"`
-	HasConflict   types.Bool                     `tfsdk:"has_conflict" json:"has_conflict,computed"`
+	HAsConflict   types.Bool                     `tfsdk:"has_conflict" json:"has_conflict,computed"`
 	ConflictsWith customfield.List[types.String] `tfsdk:"conflicts_with" json:"conflicts_with,computed"`
 }
 
 type ManagedTransformsManagedResponseHeadersModel struct {
 	ID            types.String                   `tfsdk:"id" json:"id,required"`
 	Enabled       types.Bool                     `tfsdk:"enabled" json:"enabled,required"`
-	HasConflict   types.Bool                     `tfsdk:"has_conflict" json:"has_conflict,computed"`
+	HAsConflict   types.Bool                     `tfsdk:"has_conflict" json:"has_conflict,computed"`
 	ConflictsWith customfield.List[types.String] `tfsdk:"conflicts_with" json:"conflicts_with,computed"`
 }
