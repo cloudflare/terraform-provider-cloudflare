@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_settings_internal_view
+package account_dns_settings_internal_view
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*DNSSettingsInternalViewsDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*AccountDNSSettingsInternalViewsDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -90,7 +90,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[DNSSettingsInternalViewsResultDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectListType[AccountDNSSettingsInternalViewsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -124,10 +124,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *DNSSettingsInternalViewsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccountDNSSettingsInternalViewsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = ListDataSourceSchema(ctx)
 }
 
-func (d *DNSSettingsInternalViewsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *AccountDNSSettingsInternalViewsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
 }

@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_settings_internal_view
+package account_dns_settings_internal_view
 
 import (
 	"context"
@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type DNSSettingsInternalViewDataSource struct {
+type AccountDNSSettingsInternalViewDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*DNSSettingsInternalViewDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*AccountDNSSettingsInternalViewDataSource)(nil)
 
-func NewDNSSettingsInternalViewDataSource() datasource.DataSource {
-	return &DNSSettingsInternalViewDataSource{}
+func NewAccountDNSSettingsInternalViewDataSource() datasource.DataSource {
+	return &AccountDNSSettingsInternalViewDataSource{}
 }
 
-func (d *DNSSettingsInternalViewDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_dns_settings_internal_view"
+func (d *AccountDNSSettingsInternalViewDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_account_dns_settings_internal_view"
 }
 
-func (d *DNSSettingsInternalViewDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccountDNSSettingsInternalViewDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *DNSSettingsInternalViewDataSource) Configure(ctx context.Context, req d
 	d.client = client
 }
 
-func (d *DNSSettingsInternalViewDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *DNSSettingsInternalViewDataSourceModel
+func (d *AccountDNSSettingsInternalViewDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *AccountDNSSettingsInternalViewDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -64,8 +64,8 @@ func (d *DNSSettingsInternalViewDataSource) Read(ctx context.Context, req dataso
 			return
 		}
 
-		env := DNSSettingsInternalViewsResultListDataSourceEnvelope{}
-		page, err := d.client.DNS.Settings.Views.List(ctx, params)
+		env := AccountDNSSettingsInternalViewsResultListDataSourceEnvelope{}
+		page, err := d.client.DNS.Settings.Zone.Views.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return
@@ -94,8 +94,8 @@ func (d *DNSSettingsInternalViewDataSource) Read(ctx context.Context, req dataso
 	}
 
 	res := new(http.Response)
-	env := DNSSettingsInternalViewResultDataSourceEnvelope{*data}
-	_, err := d.client.DNS.Settings.Views.Get(
+	env := AccountDNSSettingsInternalViewResultDataSourceEnvelope{*data}
+	_, err := d.client.DNS.Settings.Zone.Views.Get(
 		ctx,
 		data.ViewID.ValueString(),
 		params,

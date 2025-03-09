@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_settings_internal_view
+package account_dns_settings_internal_view
 
 import (
 	"context"
@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*DNSSettingsInternalViewDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*AccountDNSSettingsInternalViewDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -118,11 +118,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *DNSSettingsInternalViewDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccountDNSSettingsInternalViewDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = DataSourceSchema(ctx)
 }
 
-func (d *DNSSettingsInternalViewDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *AccountDNSSettingsInternalViewDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
 		datasourcevalidator.ExactlyOneOf(path.MatchRoot("view_id"), path.MatchRoot("filter")),
 	}
