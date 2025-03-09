@@ -764,7 +764,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		r2_bucket.NewR2BucketDataSource,
 		r2_bucket_lifecycle.NewR2BucketLifecycleDataSource,
 		r2_bucket_cors.NewR2BucketCORSDataSource,
-		r2_custom_domain.NewR2CustomDomainDataSource,
 		r2_bucket_event_notification.NewR2BucketEventNotificationDataSource,
 		r2_bucket_lock.NewR2BucketLockDataSource,
 		r2_bucket_sippy.NewR2BucketSippyDataSource,
