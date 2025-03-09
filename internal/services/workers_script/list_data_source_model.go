@@ -35,8 +35,8 @@ type WorkersScriptsResultDataSourceModel struct {
 	ID              types.String                                                             `tfsdk:"id" json:"id,computed"`
 	CreatedOn       timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Etag            types.String                                                             `tfsdk:"etag" json:"etag,computed"`
-	HAsAssets       types.Bool                                                               `tfsdk:"has_assets" json:"has_assets,computed"`
-	HAsModules      types.Bool                                                               `tfsdk:"has_modules" json:"has_modules,computed"`
+	HasAssets       types.Bool                                                               `tfsdk:"has_assets" json:"has_assets,computed"`
+	HasModules      types.Bool                                                               `tfsdk:"has_modules" json:"has_modules,computed"`
 	Logpush         types.Bool                                                               `tfsdk:"logpush" json:"logpush,computed"`
 	ModifiedOn      timetypes.RFC3339                                                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Placement       customfield.NestedObject[WorkersScriptsPlacementDataSourceModel]         `tfsdk:"placement" json:"placement,computed"`

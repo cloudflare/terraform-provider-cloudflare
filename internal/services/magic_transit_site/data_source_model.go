@@ -22,7 +22,7 @@ type MagicTransitSiteDataSourceModel struct {
 	AccountID            types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	ConnectorID          types.String                                                      `tfsdk:"connector_id" json:"connector_id,computed"`
 	Description          types.String                                                      `tfsdk:"description" json:"description,computed"`
-	HAMode               types.Bool                                                        `tfsdk:"ha_mode" json:"ha_mode,computed"`
+	HaMode               types.Bool                                                        `tfsdk:"ha_mode" json:"ha_mode,computed"`
 	Name                 types.String                                                      `tfsdk:"name" json:"name,computed"`
 	SecondaryConnectorID types.String                                                      `tfsdk:"secondary_connector_id" json:"secondary_connector_id,computed"`
 	Location             customfield.NestedObject[MagicTransitSiteLocationDataSourceModel] `tfsdk:"location" json:"location,computed"`
