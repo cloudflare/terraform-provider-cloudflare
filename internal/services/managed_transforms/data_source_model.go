@@ -33,13 +33,13 @@ func (m *ManagedTransformsDataSourceModel) toReadParams(_ context.Context) (para
 type ManagedTransformsManagedRequestHeadersDataSourceModel struct {
 	ID            types.String                   `tfsdk:"id" json:"id,computed"`
 	Enabled       types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
-	HAsConflict   types.Bool                     `tfsdk:"has_conflict" json:"has_conflict,computed"`
+	HasConflict   types.Bool                     `tfsdk:"has_conflict" json:"has_conflict,computed"`
 	ConflictsWith customfield.List[types.String] `tfsdk:"conflicts_with" json:"conflicts_with,computed"`
 }
 
 type ManagedTransformsManagedResponseHeadersDataSourceModel struct {
 	ID            types.String                   `tfsdk:"id" json:"id,computed"`
 	Enabled       types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
-	HAsConflict   types.Bool                     `tfsdk:"has_conflict" json:"has_conflict,computed"`
+	HasConflict   types.Bool                     `tfsdk:"has_conflict" json:"has_conflict,computed"`
 	ConflictsWith customfield.List[types.String] `tfsdk:"conflicts_with" json:"conflicts_with,computed"`
 }

@@ -15,7 +15,7 @@ type MagicTransitSiteResultEnvelope struct {
 type MagicTransitSiteModel struct {
 	ID                   types.String                                            `tfsdk:"id" json:"id,computed"`
 	AccountID            types.String                                            `tfsdk:"account_id" path:"account_id,required"`
-	HAMode               types.Bool                                              `tfsdk:"ha_mode" json:"ha_mode,optional"`
+	HaMode               types.Bool                                              `tfsdk:"ha_mode" json:"ha_mode,optional"`
 	Name                 types.String                                            `tfsdk:"name" json:"name,required"`
 	ConnectorID          types.String                                            `tfsdk:"connector_id" json:"connector_id,optional"`
 	Description          types.String                                            `tfsdk:"description" json:"description,optional"`
