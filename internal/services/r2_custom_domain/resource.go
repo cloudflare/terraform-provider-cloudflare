@@ -159,7 +159,7 @@ func (r *R2CustomDomainResource) Read(ctx context.Context, req resource.ReadRequ
 	_, err := r.client.R2.Buckets.Domains.Custom.Get(
 		ctx,
 		data.BucketName.ValueString(),
-		data.DomainName.ValueString(),
+		data.Domain.ValueString(),
 		r2.BucketDomainCustomGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -199,7 +199,7 @@ func (r *R2CustomDomainResource) Delete(ctx context.Context, req resource.Delete
 	_, err := r.client.R2.Buckets.Domains.Custom.Delete(
 		ctx,
 		data.BucketName.ValueString(),
-		data.DomainName.ValueString(),
+		data.Domain.ValueString(),
 		r2.BucketDomainCustomDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
