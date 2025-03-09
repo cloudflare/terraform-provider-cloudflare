@@ -39,7 +39,7 @@ type MagicTransitSitesResultDataSourceModel struct {
 	ID                   types.String                                                       `tfsdk:"id" json:"id,computed"`
 	ConnectorID          types.String                                                       `tfsdk:"connector_id" json:"connector_id,computed"`
 	Description          types.String                                                       `tfsdk:"description" json:"description,computed"`
-	HaMode               types.Bool                                                         `tfsdk:"ha_mode" json:"ha_mode,computed"`
+	HAMode               types.Bool                                                         `tfsdk:"ha_mode" json:"ha_mode,computed"`
 	Location             customfield.NestedObject[MagicTransitSitesLocationDataSourceModel] `tfsdk:"location" json:"location,computed"`
 	Name                 types.String                                                       `tfsdk:"name" json:"name,computed"`
 	SecondaryConnectorID types.String                                                       `tfsdk:"secondary_connector_id" json:"secondary_connector_id,computed"`
