@@ -119,11 +119,10 @@ func (r *R2CustomDomainResource) Update(ctx context.Context, req resource.Update
 	}
 	res := new(http.Response)
 	env := R2CustomDomainResultEnvelope{*data}
-	_, err = r.client.R2.Buckets.Domains.Custom.Update(
+	_, err = r.client.R2.Buckets.Domains.Custom.New(
 		ctx,
 		data.BucketName.ValueString(),
-		data.DomainName.ValueString(),
-		r2.BucketDomainCustomUpdateParams{
+		r2.BucketDomainCustomNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
