@@ -11,7 +11,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_dns_settings_internal_view"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_member"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_permission_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_role"
@@ -343,7 +342,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		dns_firewall.NewResource,
 		zone_dnssec.NewResource,
 		dns_record.NewResource,
-		account_dns_settings_internal_view.NewResource,
 		dns_zone_transfers_incoming.NewResource,
 		dns_zone_transfers_outgoing.NewResource,
 		dns_zone_transfers_acl.NewResource,
@@ -551,8 +549,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zone_dnssec.NewZoneDNSSECDataSource,
 		dns_record.NewDNSRecordDataSource,
 		dns_record.NewDNSRecordsDataSource,
-		account_dns_settings_internal_view.NewAccountDNSSettingsInternalViewDataSource,
-		account_dns_settings_internal_view.NewAccountDNSSettingsInternalViewsDataSource,
 		dns_zone_transfers_incoming.NewDNSZoneTransfersIncomingDataSource,
 		dns_zone_transfers_outgoing.NewDNSZoneTransfersOutgoingDataSource,
 		dns_zone_transfers_acl.NewDNSZoneTransfersACLDataSource,
