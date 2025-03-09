@@ -1,4 +1,4 @@
-data "cloudflare_dns_settings_internal_views" "example_dns_settings_internal_views" {
+data "cloudflare_account_dns_settings_internal_views" "example_account_dns_settings_internal_views" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   name = {
     contains = "view"
