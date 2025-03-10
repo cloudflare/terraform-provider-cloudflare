@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_dns_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_member"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_permission_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_role"
@@ -201,6 +202,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_reserve"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_variants"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dns_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dnssec"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_hold"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_lockdown"
@@ -342,6 +344,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		dns_firewall.NewResource,
 		zone_dnssec.NewResource,
 		dns_record.NewResource,
+		zone_dns_settings.NewResource,
+		account_dns_settings.NewResource,
 		dns_zone_transfers_incoming.NewResource,
 		dns_zone_transfers_outgoing.NewResource,
 		dns_zone_transfers_acl.NewResource,
@@ -549,6 +553,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zone_dnssec.NewZoneDNSSECDataSource,
 		dns_record.NewDNSRecordDataSource,
 		dns_record.NewDNSRecordsDataSource,
+		zone_dns_settings.NewZoneDNSSettingsDataSource,
+		account_dns_settings.NewAccountDNSSettingsDataSource,
 		dns_zone_transfers_incoming.NewDNSZoneTransfersIncomingDataSource,
 		dns_zone_transfers_outgoing.NewDNSZoneTransfersOutgoingDataSource,
 		dns_zone_transfers_acl.NewDNSZoneTransfersACLDataSource,
