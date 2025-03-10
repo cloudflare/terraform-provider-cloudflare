@@ -18,6 +18,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
   body_part = "worker.js"
   compatibility_date = "2021-01-01"
   compatibility_flags = ["nodejs_compat"]
+  content = file("worker.js")
   keep_assets = false
   keep_bindings = ["string"]
   logpush = false
