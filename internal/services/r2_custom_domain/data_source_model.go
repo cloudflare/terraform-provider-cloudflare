@@ -19,8 +19,7 @@ type R2CustomDomainResultDataSourceEnvelope struct {
 type R2CustomDomainDataSourceModel struct {
 	AccountID  types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
 	BucketName types.String                                                  `tfsdk:"bucket_name" path:"bucket_name,required"`
-	DomainName types.String                                                  `tfsdk:"domain_name" path:"domain_name,required"`
-	Domain     types.String                                                  `tfsdk:"domain" json:"domain,computed"`
+	Domain     types.String                                                  `tfsdk:"domain" path:"domain,required"`
 	Enabled    types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed"`
 	MinTLS     types.String                                                  `tfsdk:"min_tls" json:"minTLS,computed"`
 	ZoneID     types.String                                                  `tfsdk:"zone_id" json:"zoneId,computed"`

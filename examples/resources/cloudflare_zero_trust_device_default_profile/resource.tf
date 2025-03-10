@@ -7,6 +7,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
   captive_portal = 180
   disable_auto_fallback = true
   exclude_office_ips = true
+  register_interface_ip_with_dns = true
   service_mode_v2 = {
     mode = "proxy"
     port = 3000

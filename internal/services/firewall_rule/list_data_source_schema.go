@@ -59,7 +59,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"action": schema.StringAttribute{
-							Description: "The action to apply to a matched request. The `log` action is only available on an Enterprise plan.",
+							Description: "The action to apply to a matched request. The `log` action is only available on an Enterprise plan.\nAvailable values: \"block\", \"challenge\", \"js_challenge\", \"managed_challenge\", \"allow\", \"log\", \"bypass\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

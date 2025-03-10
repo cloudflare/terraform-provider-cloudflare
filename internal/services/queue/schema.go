@@ -20,7 +20,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"queue_id": schema.StringAttribute{
 				Computed:      true,
@@ -116,7 +117,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Computed: true,
+							Description: `Available values: "worker".`,
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("worker", "http_pull"),
 							},
@@ -133,7 +135,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"type": schema.StringAttribute{
-							Computed: true,
+							Description: `Available values: "worker".`,
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("worker", "r2_bucket"),
 							},

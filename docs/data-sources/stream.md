@@ -79,6 +79,7 @@ Read-Only:
 - `error_reason_text` (String) Specifies why the video failed to encode using a human readable error message in English. This field is empty if the video is not in an `error` state.
 - `pct_complete` (String) Indicates the size of the entire upload in bytes. The value must be a non-negative integer.
 - `state` (String) Specifies the processing status for all quality levels for a video.
+Available values: "pendingupload", "downloading", "queued", "inprogress", "ready", "error".
 
 
 <a id="nestedatt--watermark"></a>

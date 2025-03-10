@@ -24,7 +24,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "UUID",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"operation_id": schema.StringAttribute{
 				Description:   "UUID",
@@ -47,7 +47,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"method": schema.StringAttribute{
-				Description: "The HTTP method used to access the endpoint.",
+				Description: "The HTTP method used to access the endpoint.\nAvailable values: \"GET\", \"POST\", \"HEAD\", \"OPTIONS\", \"PUT\", \"DELETE\", \"CONNECT\", \"PATCH\", \"TRACE\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -260,7 +260,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"mitigation_action": schema.StringAttribute{
-								Description: "Action taken on requests failing validation.",
+								Description: "Action taken on requests failing validation.\nAvailable values: \"none\", \"log\", \"block\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(

@@ -28,9 +28,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"existed_at": schema.StringAttribute{
-				Description: "If provided, include only tunnels that were created (and not deleted) before this time.",
+				Description: "If provided, include only resources that were created (and not deleted) before this time. URL encoded.",
 				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"include_prefix": schema.StringAttribute{
 				Optional: true,
@@ -44,7 +43,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).",
+				Description: "The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).\nAvailable values: \"inactive\", \"degraded\", \"healthy\", \"down\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -164,7 +163,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"status": schema.StringAttribute{
-							Description: "The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).",
+							Description: "The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).\nAvailable values: \"inactive\", \"degraded\", \"healthy\", \"down\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -176,12 +175,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"tun_type": schema.StringAttribute{
-							Description: "The type of tunnel.",
+							Description: "The type of tunnel.\nAvailable values: \"cfd_tunnel\", \"warp_connector\", \"warp\", \"magic\", \"ip_sec\", \"gre\", \"cni\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"cfd_tunnel",
 									"warp_connector",
+									"warp",
+									"magic",
 									"ip_sec",
 									"gre",
 									"cni",

@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/r2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -22,8 +23,6 @@ import (
 var _ resource.ResourceWithConfigure = (*R2BucketResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*R2BucketResource)(nil)
 var _ resource.ResourceWithImportState = (*R2BucketResource)(nil)
-
-const jurisdictionHTTPHeaderName = "cf-r2-jurisdiction"
 
 func NewResource() resource.Resource {
 	return &R2BucketResource{}
@@ -78,7 +77,7 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
 		r2.BucketNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithHeader(jurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -128,7 +127,7 @@ func (r *R2BucketResource) Update(ctx context.Context, req resource.UpdateReques
 		r2.BucketNewParams{
 			AccountID: cloudflare.F(data.Name.ValueString()),
 		},
-		option.WithHeader(jurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -166,7 +165,7 @@ func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, r
 		r2.BucketGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithHeader(jurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -180,7 +179,7 @@ func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -206,7 +205,7 @@ func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteReques
 		r2.BucketDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithHeader(jurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
@@ -253,7 +252,7 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 		r2.BucketGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
-		option.WithHeader(jurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

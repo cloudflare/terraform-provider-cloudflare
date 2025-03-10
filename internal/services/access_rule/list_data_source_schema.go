@@ -32,14 +32,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "The direction used to sort returned rules.",
+				Description: "The direction used to sort returned rules.\nAvailable values: \"asc\", \"desc\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 				},
 			},
 			"mode": schema.StringAttribute{
-				Description: "The action to apply to a matched request.",
+				Description: "The action to apply to a matched request.\nAvailable values: \"block\", \"challenge\", \"whitelist\", \"js_challenge\", \"managed_challenge\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -56,7 +56,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"order": schema.StringAttribute{
-				Description: "The field used to sort returned rules.",
+				Description: "The field used to sort returned rules.\nAvailable values: \"configuration.target\", \"configuration.value\", \"mode\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -70,7 +70,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"target": schema.StringAttribute{
-						Description: "The target to search in existing rules.",
+						Description: "The target to search in existing rules.\nAvailable values: \"ip\", \"ip_range\", \"asn\", \"country\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -88,7 +88,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"match": schema.StringAttribute{
-				Description: "When set to `all`, all the search requirements must match. When set to `any`, only one of the search requirements has to match.",
+				Description: "When set to `all`, all the search requirements must match. When set to `any`, only one of the search requirements has to match.\nAvailable values: \"any\", \"all\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -135,7 +135,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[AccessRulesConfigurationDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"target": schema.StringAttribute{
-									Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the rule.",
+									Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the rule.\nAvailable values: \"ip\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -154,7 +154,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"mode": schema.StringAttribute{
-							Description: "The action to apply to a matched request.",
+							Description: "The action to apply to a matched request.\nAvailable values: \"block\", \"challenge\", \"whitelist\", \"js_challenge\", \"managed_challenge\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -194,7 +194,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"type": schema.StringAttribute{
-									Description: "The scope of the rule.",
+									Description: "The scope of the rule.\nAvailable values: \"user\", \"organization\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("user", "organization"),

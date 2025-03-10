@@ -32,6 +32,7 @@ resource "cloudflare_api_shield_discovery_operation" "example_api_shield_discove
 - `state` (String) Mark state of operation in API Discovery
   * `review` - Mark operation as for review
   * `ignored` - Mark operation as ignored
+Available values: "review", "ignored".
 
 ### Read-Only
 

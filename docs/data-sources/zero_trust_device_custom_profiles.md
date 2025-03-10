@@ -57,6 +57,7 @@ Read-Only:
 - `name` (String) The name of the device settings profile.
 - `policy_id` (String) Device ID.
 - `precedence` (Number) The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.
+- `register_interface_ip_with_dns` (Boolean) Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.
 - `service_mode_v2` (Attributes) (see [below for nested schema](#nestedatt--result--service_mode_v2))
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.

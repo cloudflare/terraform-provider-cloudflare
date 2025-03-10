@@ -71,7 +71,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"mode": schema.StringAttribute{
-							Description: "The action to apply to a matched request.",
+							Description: "The action to apply to a matched request.\nAvailable values: \"block\", \"challenge\", \"js_challenge\", \"managed_challenge\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

@@ -47,6 +47,6 @@ Read-Only:
 
 - `date` (String)
 - `max_age_seconds` (Number)
-- `type` (String)
+- `type` (String) Available values: "Age".
 
 

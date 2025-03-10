@@ -21,7 +21,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "The unique ID of the zone.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "The unique ID of the zone.",
@@ -29,14 +29,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"scope": schema.StringAttribute{
-				Description: "The scope of the URL normalization.",
+				Description: "The scope of the URL normalization.\nAvailable values: \"incoming\", \"both\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("incoming", "both"),
 				},
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of URL normalization performed by Cloudflare.",
+				Description: "The type of URL normalization performed by Cloudflare.\nAvailable values: \"cloudflare\", \"rfc3986\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("cloudflare", "rfc3986"),

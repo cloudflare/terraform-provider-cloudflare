@@ -32,7 +32,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "A member's status in the account.",
+				Description: "A member's status in the account.\nAvailable values: \"accepted\", \"pending\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
@@ -49,7 +49,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"access": schema.StringAttribute{
-							Description: "Allow or deny operations against the resources.",
+							Description: "Allow or deny operations against the resources.\nAvailable values: \"allow\", \"deny\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
@@ -346,14 +346,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{
-						Description: "Direction to order results.",
+						Description: "Direction to order results.\nAvailable values: \"asc\", \"desc\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 						},
 					},
 					"order": schema.StringAttribute{
-						Description: "Field to order results by.",
+						Description: "Field to order results by.\nAvailable values: \"user.first_name\", \"user.last_name\", \"user.email\", \"status\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -365,7 +365,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"status": schema.StringAttribute{
-						Description: "A member's status in the account.",
+						Description: "A member's status in the account.\nAvailable values: \"accepted\", \"pending\", \"rejected\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

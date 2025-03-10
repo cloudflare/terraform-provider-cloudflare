@@ -21,7 +21,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
 				Required:      true,
@@ -38,7 +38,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"certificate_authority": schema.StringAttribute{
-				Computed: true,
+				Description: `Available values: "google", "lets_encrypt".`,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt"),
 				},
@@ -50,7 +51,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"status": schema.StringAttribute{
-				Computed: true,
+				Description: `Available values: "initializing", "pending", "active", "deactivated", "blocked", "error".`,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"initializing",
@@ -73,13 +75,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"method": schema.StringAttribute{
-						Computed: true,
+						Description: `Available values: "http", "txt".`,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("http", "txt"),
 						},
 					},
 					"status": schema.StringAttribute{
-						Computed: true,
+						Description: `Available values: "initializing", "pending", "active", "deactivated", "error".`,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"initializing",
@@ -106,7 +110,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"status": schema.StringAttribute{
-						Computed: true,
+						Description: `Available values: "pending", "active", "deactivated", "blocked", "error".`,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"pending",

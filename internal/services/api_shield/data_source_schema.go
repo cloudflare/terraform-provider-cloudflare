@@ -43,7 +43,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The type of characteristic.",
+							Description: "The type of characteristic.\nAvailable values: \"header\", \"cookie\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

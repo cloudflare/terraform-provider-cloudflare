@@ -20,7 +20,7 @@ type CustomSSLResultDataSourceEnvelope struct {
 type CustomSSLDataSourceModel struct {
 	ID                  types.String                                                      `tfsdk:"id" json:"-,computed"`
 	CustomCertificateID types.String                                                      `tfsdk:"custom_certificate_id" path:"custom_certificate_id,optional"`
-	ZoneID              types.String                                                      `tfsdk:"zone_id" path:"zone_id,computed"`
+	ZoneID              types.String                                                      `tfsdk:"zone_id" path:"zone_id,required"`
 	BundleMethod        types.String                                                      `tfsdk:"bundle_method" json:"bundle_method,computed"`
 	ExpiresOn           timetypes.RFC3339                                                 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Issuer              types.String                                                      `tfsdk:"issuer" json:"issuer,computed"`

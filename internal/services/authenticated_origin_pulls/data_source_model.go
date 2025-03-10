@@ -17,8 +17,8 @@ type AuthenticatedOriginPullsResultDataSourceEnvelope struct {
 }
 
 type AuthenticatedOriginPullsDataSourceModel struct {
+	Hostname       types.String      `tfsdk:"hostname" path:"hostname,required"`
 	ZoneID         types.String      `tfsdk:"zone_id" path:"zone_id,required"`
-	Hostname       types.String      `tfsdk:"hostname" path:"hostname,computed"`
 	CERTID         types.String      `tfsdk:"cert_id" json:"cert_id,computed"`
 	CERTStatus     types.String      `tfsdk:"cert_status" json:"cert_status,computed"`
 	CERTUpdatedAt  timetypes.RFC3339 `tfsdk:"cert_updated_at" json:"cert_updated_at,computed" format:"date-time"`

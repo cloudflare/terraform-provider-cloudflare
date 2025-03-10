@@ -50,9 +50,11 @@ triggering a Spoof disposition.
 Optional:
 
 - `direction` (String) The sorting direction.
+Available values: "asc", "desc".
 - `is_recent` (Boolean)
 - `is_similarity` (Boolean)
 - `order` (String) The field to sort by.
+Available values: "pattern", "created_at".
 - `search` (String) Allows searching in multiple properties of a record simultaneously.
 This parameter is intended for human users, not automation. Its exact
 behavior is intentionally left unspecified and is subject to change

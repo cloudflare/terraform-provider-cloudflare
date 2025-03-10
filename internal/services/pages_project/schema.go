@@ -24,7 +24,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Name of the project.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
 				Description:   "Name of the project.",
@@ -167,7 +167,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Required:    true,
 										},
 										"type": schema.StringAttribute{
-											Description: "The type of environment variable.",
+											Description: "The type of environment variable.\nAvailable values: \"plain_text\", \"secret_text\".",
 											Optional:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
@@ -386,7 +386,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Required:    true,
 										},
 										"type": schema.StringAttribute{
-											Description: "The type of environment variable.",
+											Description: "The type of environment variable.\nAvailable values: \"plain_text\", \"secret_text\".",
 											Optional:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
@@ -719,7 +719,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										ElementType: types.StringType,
 									},
 									"preview_deployment_setting": schema.StringAttribute{
-										Computed: true,
+										Description: `Available values: "all", "none", "custom".`,
+										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
 												"all",
@@ -963,7 +964,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										ElementType: types.StringType,
 									},
 									"preview_deployment_setting": schema.StringAttribute{
-										Computed: true,
+										Description: `Available values: "all", "none", "custom".`,
+										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
 												"all",
@@ -1059,7 +1061,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								ElementType: types.StringType,
 							},
 							"preview_deployment_setting": schema.StringAttribute{
-								Computed: true,
+								Description: `Available values: "all", "none", "custom".`,
+								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
 										"all",

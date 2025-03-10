@@ -31,9 +31,11 @@ data "cloudflare_zone_setting" "example_zone_setting" {
 - `editable` (Boolean) Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).
 - `enabled` (Boolean) ssl-recommender enrollment setting.
 - `id` (String) ID of the zone setting.
+Available values: "0rtt".
 - `modified_on` (String) last time this setting was modified.
 - `time_remaining` (Number) Value of the zone setting.
 Notes: The interval (in seconds) from when development mode expires (positive integer) or last expired (negative integer) for the domain. If development mode has never been enabled, this value is false.
 - `value` (String) Current value of the zone setting.
+Available values: "on", "off".
 
 

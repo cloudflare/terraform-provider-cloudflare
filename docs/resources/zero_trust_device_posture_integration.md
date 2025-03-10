@@ -36,6 +36,7 @@ resource "cloudflare_zero_trust_device_posture_integration" "example_zero_trust_
 - `interval` (String) The interval between each posture check with the third-party API. Use `m` for minutes (e.g. `5m`) and `h` for hours (e.g. `12h`).
 - `name` (String) The name of the device posture integration.
 - `type` (String) The type of device posture integration.
+Available values: "workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolide", "tanium", "sentinelone_s2s", "custom_s2s".
 
 ### Read-Only
 

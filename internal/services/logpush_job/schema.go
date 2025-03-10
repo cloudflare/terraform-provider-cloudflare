@@ -60,7 +60,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"kind": schema.StringAttribute{
-				Description: "The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs. Currently, Edge Log Delivery is only supported for the `http_requests` dataset.",
+				Description: "The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs. Currently, Edge Log Delivery is only supported for the `http_requests` dataset.\nAvailable values: \"edge\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("edge"),
@@ -84,9 +84,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"ownership_challenge": schema.StringAttribute{
 				Description: "Ownership challenge token to prove destination ownership.",
 				Optional:    true,
+				Sensitive:   true,
 			},
 			"frequency": schema.StringAttribute{
-				Description: "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.",
+				Description: "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.\nAvailable values: \"high\", \"low\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -148,7 +149,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 					"output_type": schema.StringAttribute{
-						Description: "Specifies the output type, such as `ndjson` or `csv`. This sets default values for the rest of the settings, depending on the chosen output type. Some formatting rules, like string quoting, are different between output types.",
+						Description: "Specifies the output type, such as `ndjson` or `csv`. This sets default values for the rest of the settings, depending on the chosen output type. Some formatting rules, like string quoting, are different between output types.\nAvailable values: \"ndjson\", \"csv\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -190,7 +191,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: float64default.StaticFloat64(1),
 					},
 					"timestamp_format": schema.StringAttribute{
-						Description: "String to specify the format for timestamps, such as `unixnano`, `unix`, or `rfc3339`.",
+						Description: "String to specify the format for timestamps, such as `unixnano`, `unix`, or `rfc3339`.\nAvailable values: \"unixnano\", \"unix\", \"rfc3339\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{

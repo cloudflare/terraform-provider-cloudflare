@@ -35,7 +35,7 @@ data "cloudflare_zero_trust_risk_scoring_integration" "example_zero_trust_risk_s
 - `active` (Boolean) Whether this integration is enabled and should export changes in risk score.
 - `created_at` (String) When the integration was created in RFC3339 format.
 - `id` (String) The ID of this resource.
-- `integration_type` (String)
+- `integration_type` (String) Available values: "Okta".
 - `reference_id` (String) A reference ID defined by the client.
 Should be set to the Access-Okta IDP integration ID.
 Useful when the risk-score integration needs to be associated with a secondary asset and recalled using that ID.

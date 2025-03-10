@@ -48,8 +48,10 @@ resource "cloudflare_image_variant" "example_image_variant" {
 Required:
 
 - `fit` (String) The fit property describes how the width and height dimensions should be interpreted.
+Available values: "scale-down", "contain", "cover", "crop", "pad".
 - `height` (Number) Maximum height in image pixels.
 - `metadata` (String) What EXIF data should be preserved in the output image.
+Available values: "keep", "copyright", "none".
 - `width` (Number) Maximum width in image pixels.
 
 
@@ -68,8 +70,10 @@ Read-Only:
 Read-Only:
 
 - `fit` (String) The fit property describes how the width and height dimensions should be interpreted.
+Available values: "scale-down", "contain", "cover", "crop", "pad".
 - `height` (Number) Maximum height in image pixels.
 - `metadata` (String) What EXIF data should be preserved in the output image.
+Available values: "keep", "copyright", "none".
 - `width` (Number) Maximum width in image pixels.
 
 ## Import

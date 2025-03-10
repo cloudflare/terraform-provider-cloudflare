@@ -147,7 +147,7 @@ Read-Only:
 - `pr_comments_enabled` (Boolean)
 - `preview_branch_excludes` (List of String)
 - `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String)
+- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
 - `production_branch` (String)
 - `production_deployments_enabled` (Boolean)
 - `repo_name` (String)
@@ -238,6 +238,7 @@ Read-Only:
 Read-Only:
 
 - `type` (String) The type of environment variable.
+Available values: "plain_text", "secret_text".
 - `value` (String) Environment variable value.
 
 
@@ -373,6 +374,7 @@ Read-Only:
 Read-Only:
 
 - `type` (String) The type of environment variable.
+Available values: "plain_text", "secret_text".
 - `value` (String) Environment variable value.
 
 
@@ -539,7 +541,7 @@ Read-Only:
 - `pr_comments_enabled` (Boolean)
 - `preview_branch_excludes` (List of String)
 - `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String)
+- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
 - `production_branch` (String)
 - `production_deployments_enabled` (Boolean)
 - `repo_name` (String)
@@ -578,7 +580,7 @@ Read-Only:
 - `pr_comments_enabled` (Boolean)
 - `preview_branch_excludes` (List of String)
 - `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String)
+- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
 - `production_branch` (String)
 - `production_deployments_enabled` (Boolean)
 - `repo_name` (String)

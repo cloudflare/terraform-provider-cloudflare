@@ -32,6 +32,7 @@ resource "cloudflare_zero_trust_list" "example_zero_trust_list" {
 - `account_id` (String)
 - `name` (String) The name of the list.
 - `type` (String) The type of list.
+Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 
 ### Optional
 

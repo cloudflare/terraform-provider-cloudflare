@@ -20,7 +20,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Required:      true,
@@ -52,6 +52,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"exclude_office_ips": schema.BoolAttribute{
 				Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
+				Optional:    true,
+			},
+			"register_interface_ip_with_dns": schema.BoolAttribute{
+				Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
 				Optional:    true,
 			},
 			"support_url": schema.StringAttribute{

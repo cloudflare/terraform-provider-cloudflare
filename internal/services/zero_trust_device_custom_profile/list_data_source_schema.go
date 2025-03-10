@@ -163,6 +163,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.",
 							Computed:    true,
 						},
+						"register_interface_ip_with_dns": schema.BoolAttribute{
+							Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
+							Computed:    true,
+						},
 						"service_mode_v2": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustDeviceCustomProfilesServiceModeV2DataSourceModel](ctx),

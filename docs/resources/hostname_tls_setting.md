@@ -25,18 +25,17 @@ resource "cloudflare_hostname_tls_setting" "example_hostname_tls_setting" {
 
 ### Required
 
+- `hostname` (String) The hostname for which the tls settings are set.
 - `setting_id` (String) The TLS Setting name.
+Available values: "ciphers", "min_tls_version", "http2".
 - `value` (Dynamic) The tls setting value.
 - `zone_id` (String) Identifier
-
-### Optional
-
-- `hostname` (String) The hostname for which the tls settings are set.
 
 ### Read-Only
 
 - `created_at` (String) This is the time the tls setting was originally created for this hostname.
 - `id` (String) The TLS Setting name.
+Available values: "ciphers", "min_tls_version", "http2".
 - `status` (String) Deployment status for the given tls setting.
 - `updated_at` (String) This is the time the tls setting was updated.
 

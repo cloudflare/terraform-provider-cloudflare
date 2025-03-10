@@ -46,6 +46,7 @@ data "cloudflare_rate_limit" "example_rate_limit" {
 Read-Only:
 
 - `mode` (String) The action to perform.
+Available values: "simulate", "ban", "challenge", "js_challenge", "managed_challenge".
 - `response` (Attributes) A custom content type and reponse to return when the threshold is exceeded. The custom response configured in this object will override the custom error for the zone. This object is optional.
 Notes: If you omit this object, Cloudflare will use the default HTML error page. If "mode" is "challenge", "managed_challenge", or "js_challenge", Cloudflare will use the zone challenge pages and you should not provide the "response" object. (see [below for nested schema](#nestedatt--action--response))
 - `timeout` (Number) The time in seconds during which Cloudflare will perform the mitigation action. Must be an integer value greater than or equal to the period.
@@ -66,7 +67,7 @@ Read-Only:
 
 Read-Only:
 
-- `name` (String)
+- `name` (String) Available values: "url".
 - `value` (String) The URL to bypass.
 
 
@@ -86,6 +87,7 @@ Read-Only:
 
 - `name` (String) The name of the response header to match.
 - `op` (String) The operator used when matching: `eq` means "equal" and `ne` means "not equal".
+Available values: "eq", "ne".
 - `value` (String) The value of the response header, which must match exactly.
 
 

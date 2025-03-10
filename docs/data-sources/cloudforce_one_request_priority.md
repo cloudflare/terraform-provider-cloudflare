@@ -37,8 +37,10 @@ data "cloudflare_cloudforce_one_request_priority" "example_cloudforce_one_reques
 - `readable_id` (String) Readable Request ID
 - `request` (String) Requested information from request
 - `status` (String) Request Status
+Available values: "open", "accepted", "reported", "approved", "completed", "declined".
 - `summary` (String) Brief description of the request
 - `tlp` (String) The CISA defined Traffic Light Protocol (TLP)
+Available values: "clear", "amber", "amber-strict", "green", "red".
 - `tokens` (Number) Tokens for the request
 - `updated` (String)
 

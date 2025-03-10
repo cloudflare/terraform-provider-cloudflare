@@ -64,7 +64,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											Computed: true,
 										},
 										"type": schema.StringAttribute{
-											Computed: true,
+											Description: `Available values: "Age".`,
+											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("Age"),
 											},
@@ -87,7 +88,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											Computed: true,
 										},
 										"type": schema.StringAttribute{
-											Computed: true,
+											Description: `Available values: "Age".`,
+											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("Age", "Date"),
 											},
@@ -115,7 +117,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 												Computed: true,
 											},
 											"type": schema.StringAttribute{
-												Computed: true,
+												Description: `Available values: "Age".`,
+												Computed:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("Age", "Date"),
 												},
@@ -127,7 +130,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"storage_class": schema.StringAttribute{
-										Computed: true,
+										Description: `Available values: "InfrequentAccess".`,
+										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive("InfrequentAccess"),
 										},

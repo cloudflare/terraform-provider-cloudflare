@@ -28,6 +28,7 @@ data "cloudflare_zone_cache_variants" "example_zone_cache_variants" {
 
 - `editable` (Boolean) Whether the setting is editable
 - `id` (String) ID of the zone setting.
+Available values: "variants".
 - `modified_on` (String) Last time this setting was modified.
 - `value` (String) The value of the feature
 

@@ -61,6 +61,7 @@ resource "cloudflare_load_balancer_monitor" "example_load_balancer_monitor" {
 - `retries` (Number) The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.
 - `timeout` (Number) The timeout (in seconds) before marking the health check as failed.
 - `type` (String) The protocol to use for the health check. Currently supported protocols are 'HTTP','HTTPS', 'TCP', 'ICMP-PING', 'UDP-ICMP', and 'SMTP'.
+Available values: "http", "https", "tcp", "udp_icmp", "icmp_ping", "smtp".
 
 ### Read-Only
 

@@ -100,7 +100,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Computed: true,
+							Description: `Available values: "worker".`,
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("worker", "http_pull"),
 							},
@@ -117,7 +118,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"type": schema.StringAttribute{
-							Computed: true,
+							Description: `Available values: "worker".`,
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("worker", "r2_bucket"),
 							},
