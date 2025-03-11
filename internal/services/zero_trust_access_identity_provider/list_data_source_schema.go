@@ -64,6 +64,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"client_secret": schema.StringAttribute{
 									Description: "Your OAuth Client Secret",
 									Computed:    true,
+									Sensitive:   true,
 								},
 								"conditional_access_enabled": schema.BoolAttribute{
 									Description: "Should Cloudflare try to load authentication contexts from your account",

@@ -1489,6 +1489,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"token": schema.StringAttribute{
 								Description: "Token used to authenticate with the remote SCIM service.",
 								Optional:    true,
+								Sensitive:   true,
 							},
 							"authorization_url": schema.StringAttribute{
 								Description: "URL used to generate the auth code used during token generation.",
@@ -1501,6 +1502,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"client_secret": schema.StringAttribute{
 								Description: "Secret used to authenticate when generating a token for authenticating with the remove SCIM service.",
 								Optional:    true,
+								Sensitive:   true,
 							},
 							"token_url": schema.StringAttribute{
 								Description: "URL used to generate the token used to authenticate with the remote SCIM service.",
