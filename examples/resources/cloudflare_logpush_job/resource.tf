@@ -13,7 +13,7 @@ resource "cloudflare_logpush_job" "example_logpush_job" {
   output_options = {
     batch_prefix = "batch_prefix"
     batch_suffix = "batch_suffix"
-    cve_2021_4428 = true
+    cve_2021_44228 = true
     field_delimiter = "field_delimiter"
     field_names = ["ClientIP", "EdgeStartTimestamp", "RayID"]
     output_type = "ndjson"

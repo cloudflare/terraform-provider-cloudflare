@@ -125,7 +125,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "String to be appended after each batch.",
 						Computed:    true,
 					},
-					"cve_2021_4428": schema.BoolAttribute{
+					"cve_2021_44228": schema.BoolAttribute{
 						Description: "If set to true, will cause all occurrences of `${` in the generated files to be replaced with `x{`.",
 						Computed:    true,
 					},
