@@ -53,7 +53,7 @@ func (m *LogpushDatasetJobDataSourceModel) toReadParams(_ context.Context) (para
 type LogpushDatasetJobOutputOptionsDataSourceModel struct {
 	BatchPrefix     types.String                   `tfsdk:"batch_prefix" json:"batch_prefix,computed"`
 	BatchSuffix     types.String                   `tfsdk:"batch_suffix" json:"batch_suffix,computed"`
-	Cve2021_4428    types.Bool                     `tfsdk:"cve_2021_4428" json:"CVE-2021-4428,computed"`
+	Cve2021_44228   types.Bool                     `tfsdk:"cve_2021_44228" json:"CVE-2021-44228,computed"`
 	FieldDelimiter  types.String                   `tfsdk:"field_delimiter" json:"field_delimiter,computed"`
 	FieldNames      customfield.List[types.String] `tfsdk:"field_names" json:"field_names,computed"`
 	OutputType      types.String                   `tfsdk:"output_type" json:"output_type,computed"`
