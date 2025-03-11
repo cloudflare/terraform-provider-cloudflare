@@ -106,6 +106,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"stream_key": schema.StringAttribute{
 						Description: "The secret key to use when streaming via RTMPS to a live input.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 					"url": schema.StringAttribute{
 						Description: "The RTMPS URL you provide to the broadcaster, which they stream live video to.",
@@ -121,6 +122,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"stream_key": schema.StringAttribute{
 						Description: "The secret key to use for playback via RTMPS.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 					"url": schema.StringAttribute{
 						Description: "The URL used to play live video over RTMPS.",
@@ -136,6 +138,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"passphrase": schema.StringAttribute{
 						Description: "The secret key to use when streaming via SRT to a live input.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 					"stream_id": schema.StringAttribute{
 						Description: "The identifier of the live input to use when streaming via SRT.",
@@ -155,6 +158,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"passphrase": schema.StringAttribute{
 						Description: "The secret key to use for playback via SRT.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 					"stream_id": schema.StringAttribute{
 						Description: "The identifier of the live input to use for playback via SRT.",
