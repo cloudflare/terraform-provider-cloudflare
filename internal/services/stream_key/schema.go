@@ -35,10 +35,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"jwk": schema.StringAttribute{
 				Description: "The signing key in JWK format.",
 				Computed:    true,
+				Sensitive:   true,
 			},
 			"pem": schema.StringAttribute{
 				Description: "The signing key in PEM format.",
 				Computed:    true,
+				Sensitive:   true,
 			},
 		},
 	}
