@@ -84,7 +84,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"security_header",
 						"security_level",
 						"server_side_exclude",
-						"sha1_support",
 						"sort_query_string_for_cache",
 						"ssl",
 						"ssl_recommender",
