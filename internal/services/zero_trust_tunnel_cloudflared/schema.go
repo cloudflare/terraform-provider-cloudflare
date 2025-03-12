@@ -49,6 +49,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"tunnel_secret": schema.StringAttribute{
 				Description: "Sets the password required to run a locally-managed tunnel. Must be at least 32 bytes and encoded as a base64 string.",
 				Optional:    true,
+				Sensitive:   true,
 			},
 			"account_tag": schema.StringAttribute{
 				Description: "Cloudflare account ID",
