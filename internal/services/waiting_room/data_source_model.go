@@ -18,7 +18,8 @@ type WaitingRoomResultDataSourceEnvelope struct {
 }
 
 type WaitingRoomDataSourceModel struct {
-	WaitingRoomID              types.String                                                             `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
+	ID                         types.String                                                             `tfsdk:"id" json:"-,computed"`
+	WaitingRoomID              types.String                                                             `tfsdk:"waiting_room_id" path:"waiting_room_id,optional"`
 	ZoneID                     types.String                                                             `tfsdk:"zone_id" path:"zone_id,required"`
 	CookieSuffix               types.String                                                             `tfsdk:"cookie_suffix" json:"cookie_suffix,computed"`
 	CreatedOn                  timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -27,7 +28,6 @@ type WaitingRoomDataSourceModel struct {
 	Description                types.String                                                             `tfsdk:"description" json:"description,computed"`
 	DisableSessionRenewal      types.Bool                                                               `tfsdk:"disable_session_renewal" json:"disable_session_renewal,computed"`
 	Host                       types.String                                                             `tfsdk:"host" json:"host,computed"`
-	ID                         types.String                                                             `tfsdk:"id" json:"id,computed"`
 	JsonResponseEnabled        types.Bool                                                               `tfsdk:"json_response_enabled" json:"json_response_enabled,computed"`
 	ModifiedOn                 timetypes.RFC3339                                                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                       types.String                                                             `tfsdk:"name" json:"name,computed"`
@@ -51,6 +51,20 @@ type WaitingRoomDataSourceModel struct {
 func (m *WaitingRoomDataSourceModel) toReadParams(_ context.Context) (params waiting_rooms.WaitingRoomGetParams, diags diag.Diagnostics) {
 	params = waiting_rooms.WaitingRoomGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
+}
+
+func (m *WaitingRoomDataSourceModel) toListParams(_ context.Context) (params waiting_rooms.WaitingRoomListParams, diags diag.Diagnostics) {
+	params = waiting_rooms.WaitingRoomListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return
