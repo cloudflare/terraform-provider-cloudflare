@@ -667,6 +667,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		rate_limit.NewRateLimitDataSource,
 		rate_limit.NewRateLimitsDataSource,
 		waiting_room.NewWaitingRoomDataSource,
+		waiting_room.NewWaitingRoomsDataSource,
 		waiting_room_event.NewWaitingRoomEventDataSource,
 		waiting_room_event.NewWaitingRoomEventsDataSource,
 		waiting_room_rules.NewWaitingRoomRulesDataSource,
