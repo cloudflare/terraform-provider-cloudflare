@@ -3,17 +3,17 @@
 package web3_hostname_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/web3_hostname"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/web3_hostname"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestWeb3HostnameModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*web3_hostname.Web3HostnameModel)(nil)
-  schema := web3_hostname.ResourceSchema(context.TODO())
-  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*web3_hostname.Web3HostnameModel)(nil)
+	schema := web3_hostname.ResourceSchema(context.TODO())
+	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

@@ -3,17 +3,17 @@
 package account_permission_group_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_permission_group"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_permission_group"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestAccountPermissionGroupDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*account_permission_group.AccountPermissionGroupDataSourceModel)(nil)
-  schema := account_permission_group.DataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*account_permission_group.AccountPermissionGroupDataSourceModel)(nil)
+	schema := account_permission_group.DataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

@@ -3,17 +3,17 @@
 package email_routing_address_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestEmailRoutingAddressModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*email_routing_address.EmailRoutingAddressModel)(nil)
-  schema := email_routing_address.ResourceSchema(context.TODO())
-  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*email_routing_address.EmailRoutingAddressModel)(nil)
+	schema := email_routing_address.ResourceSchema(context.TODO())
+	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

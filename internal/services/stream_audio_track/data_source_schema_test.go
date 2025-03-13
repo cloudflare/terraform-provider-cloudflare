@@ -3,17 +3,17 @@
 package stream_audio_track_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_audio_track"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_audio_track"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestStreamAudioTrackDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*stream_audio_track.StreamAudioTrackDataSourceModel)(nil)
-  schema := stream_audio_track.DataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*stream_audio_track.StreamAudioTrackDataSourceModel)(nil)
+	schema := stream_audio_track.DataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

@@ -3,13 +3,13 @@
 package zero_trust_access_short_lived_certificate
 
 import (
-  "context"
+	"context"
 
-  "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 var _ resource.ResourceWithUpgradeState = (*ZeroTrustAccessShortLivedCertificateResource)(nil)
 
-func (r *ZeroTrustAccessShortLivedCertificateResource) UpgradeState(ctx context.Context) (map[int64]resource.StateUpgrader) {
-  return map[int64]resource.StateUpgrader{}
+func (r *ZeroTrustAccessShortLivedCertificateResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	return map[int64]resource.StateUpgrader{}
 }

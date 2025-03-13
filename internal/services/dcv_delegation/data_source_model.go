@@ -3,27 +3,27 @@
 package dcv_delegation
 
 import (
-  "context"
+	"context"
 
-  "github.com/cloudflare/cloudflare-go/v4"
-  "github.com/cloudflare/cloudflare-go/v4/dcv_delegation"
-  "github.com/hashicorp/terraform-plugin-framework/diag"
-  "github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/dcv_delegation"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type DCVDelegationResultDataSourceEnvelope struct {
-Result DCVDelegationDataSourceModel `json:"result,computed"`
+	Result DCVDelegationDataSourceModel `json:"result,computed"`
 }
 
 type DCVDelegationDataSourceModel struct {
-ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
-UUID types.String `tfsdk:"uuid" json:"uuid,computed"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	UUID   types.String `tfsdk:"uuid" json:"uuid,computed"`
 }
 
 func (m *DCVDelegationDataSourceModel) toReadParams(_ context.Context) (params dcv_delegation.DCVDelegationGetParams, diags diag.Diagnostics) {
-  params = dcv_delegation.DCVDelegationGetParams{
-    ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-  }
+	params = dcv_delegation.DCVDelegationGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
 
-  return
+	return
 }

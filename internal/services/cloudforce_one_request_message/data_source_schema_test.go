@@ -3,17 +3,17 @@
 package cloudforce_one_request_message_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_message"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_message"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestCloudforceOneRequestMessageDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*cloudforce_one_request_message.CloudforceOneRequestMessageDataSourceModel)(nil)
-  schema := cloudforce_one_request_message.DataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*cloudforce_one_request_message.CloudforceOneRequestMessageDataSourceModel)(nil)
+	schema := cloudforce_one_request_message.DataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

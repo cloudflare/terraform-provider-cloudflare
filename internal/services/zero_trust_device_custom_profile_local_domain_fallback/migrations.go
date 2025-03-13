@@ -3,13 +3,13 @@
 package zero_trust_device_custom_profile_local_domain_fallback
 
 import (
-  "context"
+	"context"
 
-  "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 var _ resource.ResourceWithUpgradeState = (*ZeroTrustDeviceCustomProfileLocalDomainFallbackResource)(nil)
 
-func (r *ZeroTrustDeviceCustomProfileLocalDomainFallbackResource) UpgradeState(ctx context.Context) (map[int64]resource.StateUpgrader) {
-  return map[int64]resource.StateUpgrader{}
+func (r *ZeroTrustDeviceCustomProfileLocalDomainFallbackResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	return map[int64]resource.StateUpgrader{}
 }

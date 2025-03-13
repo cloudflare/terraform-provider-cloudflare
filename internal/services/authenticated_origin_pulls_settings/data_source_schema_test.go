@@ -3,17 +3,17 @@
 package authenticated_origin_pulls_settings_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_settings"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestAuthenticatedOriginPullsSettingsDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*authenticated_origin_pulls_settings.AuthenticatedOriginPullsSettingsDataSourceModel)(nil)
-  schema := authenticated_origin_pulls_settings.DataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*authenticated_origin_pulls_settings.AuthenticatedOriginPullsSettingsDataSourceModel)(nil)
+	schema := authenticated_origin_pulls_settings.DataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

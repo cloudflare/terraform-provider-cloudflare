@@ -3,17 +3,17 @@
 package workers_for_platforms_dispatch_namespace_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_dispatch_namespace"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_dispatch_namespace"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestWorkersForPlatformsDispatchNamespaceDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*workers_for_platforms_dispatch_namespace.WorkersForPlatformsDispatchNamespaceDataSourceModel)(nil)
-  schema := workers_for_platforms_dispatch_namespace.DataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*workers_for_platforms_dispatch_namespace.WorkersForPlatformsDispatchNamespaceDataSourceModel)(nil)
+	schema := workers_for_platforms_dispatch_namespace.DataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

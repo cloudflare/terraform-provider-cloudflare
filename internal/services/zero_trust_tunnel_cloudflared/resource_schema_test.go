@@ -3,17 +3,17 @@
 package zero_trust_tunnel_cloudflared_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestZeroTrustTunnelCloudflaredModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*zero_trust_tunnel_cloudflared.ZeroTrustTunnelCloudflaredModel)(nil)
-  schema := zero_trust_tunnel_cloudflared.ResourceSchema(context.TODO())
-  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*zero_trust_tunnel_cloudflared.ZeroTrustTunnelCloudflaredModel)(nil)
+	schema := zero_trust_tunnel_cloudflared.ResourceSchema(context.TODO())
+	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

@@ -3,17 +3,17 @@
 package mtls_certificate_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestMTLSCertificateModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*mtls_certificate.MTLSCertificateModel)(nil)
-  schema := mtls_certificate.ResourceSchema(context.TODO())
-  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*mtls_certificate.MTLSCertificateModel)(nil)
+	schema := mtls_certificate.ResourceSchema(context.TODO())
+	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }
