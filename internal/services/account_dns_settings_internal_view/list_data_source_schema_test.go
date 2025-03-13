@@ -3,17 +3,17 @@
 package account_dns_settings_internal_view_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_dns_settings_internal_view"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_dns_settings_internal_view"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestAccountDNSSettingsInternalViewsDataSourceModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*account_dns_settings_internal_view.AccountDNSSettingsInternalViewsDataSourceModel)(nil)
-	schema := account_dns_settings_internal_view.ListDataSourceSchema(context.TODO())
-	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*account_dns_settings_internal_view.AccountDNSSettingsInternalViewsDataSourceModel)(nil)
+  schema := account_dns_settings_internal_view.ListDataSourceSchema(context.TODO())
+  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

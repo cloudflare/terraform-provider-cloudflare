@@ -3,19 +3,19 @@
 package address_map
 
 import (
-	"context"
-	"fmt"
-	"io"
-	"net/http"
+  "context"
+  "fmt"
+  "io"
+  "net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/addressing"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+  "github.com/cloudflare/cloudflare-go/v4"
+  "github.com/cloudflare/cloudflare-go/v4/addressing"
+  "github.com/cloudflare/cloudflare-go/v4/option"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+  "github.com/hashicorp/terraform-plugin-framework/resource"
+  "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -24,234 +24,234 @@ var _ resource.ResourceWithModifyPlan = (*AddressMapResource)(nil)
 var _ resource.ResourceWithImportState = (*AddressMapResource)(nil)
 
 func NewResource() resource.Resource {
-	return &AddressMapResource{}
+  return &AddressMapResource{}
 }
 
 // AddressMapResource defines the resource implementation.
 type AddressMapResource struct {
-	client *cloudflare.Client
+  client *cloudflare.Client
 }
 
 func (r *AddressMapResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_address_map"
+  resp.TypeName = req.ProviderTypeName + "_address_map"
 }
 
 func (r *AddressMapResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
+  if req.ProviderData == nil {
+    return
+  }
 
-	client, ok := req.ProviderData.(*cloudflare.Client)
+  client, ok := req.ProviderData.(*cloudflare.Client)
 
-	if !ok {
-		resp.Diagnostics.AddError(
-			"unexpected resource configure type",
-			fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
+  if !ok {
+    resp.Diagnostics.AddError(
+      "unexpected resource configure type",
+      fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+    )
 
-		return
-	}
+    return
+  }
 
-	r.client = client
+  r.client = client
 }
 
 func (r *AddressMapResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *AddressMapModel
+  var data *AddressMapModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
-	dataBytes, err := data.MarshalJSON()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := AddressMapResultEnvelope{*data}
-	_, err = r.client.Addressing.AddressMaps.New(
-		ctx,
-		addressing.AddressMapNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
+  dataBytes, err := data.MarshalJSON()
+  if err != nil {
+    resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+    return
+  }
+  res := new(http.Response)
+  env := AddressMapResultEnvelope{*data}
+  _, err = r.client.Addressing.AddressMaps.New(
+    ctx,
+    addressing.AddressMapNewParams{
+      AccountID: cloudflare.F(data.AccountID.ValueString()),
+    },
+    option.WithRequestBody("application/json", dataBytes),
+    option.WithResponseBodyInto(&res),
+    option.WithMiddleware(logging.Middleware(ctx)),
+  )
+  if err != nil {
+    resp.Diagnostics.AddError("failed to make http request", err.Error())
+    return
+  }
+  bytes, _ := io.ReadAll(res.Body)
+  err = apijson.UnmarshalComputed(bytes, &env)
+  if err != nil {
+    resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+    return
+  }
+  data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *AddressMapResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *AddressMapModel
+  var data  *AddressMapModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
-	var state *AddressMapModel
+  var state  *AddressMapModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+  resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := AddressMapResultEnvelope{*data}
-	_, err = r.client.Addressing.AddressMaps.Edit(
-		ctx,
-		data.ID.ValueString(),
-		addressing.AddressMapEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
+  dataBytes, err := data.MarshalJSONForUpdate(*state)
+  if err != nil {
+    resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+    return
+  }
+  res := new(http.Response)
+  env := AddressMapResultEnvelope{*data}
+  _, err = r.client.Addressing.AddressMaps.Edit(
+    ctx,
+    data.ID.ValueString(),
+    addressing.AddressMapEditParams{
+      AccountID: cloudflare.F(data.AccountID.ValueString()),
+    },
+    option.WithRequestBody("application/json", dataBytes),
+    option.WithResponseBodyInto(&res),
+    option.WithMiddleware(logging.Middleware(ctx)),
+  )
+  if err != nil {
+    resp.Diagnostics.AddError("failed to make http request", err.Error())
+    return
+  }
+  bytes, _ := io.ReadAll(res.Body)
+  err = apijson.UnmarshalComputed(bytes, &env)
+  if err != nil {
+    resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+    return
+  }
+  data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *AddressMapResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *AddressMapModel
+  var data  *AddressMapModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
-	res := new(http.Response)
-	env := AddressMapResultEnvelope{*data}
-	_, err := r.client.Addressing.AddressMaps.Get(
-		ctx,
-		data.ID.ValueString(),
-		addressing.AddressMapGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if res != nil && res.StatusCode == 404 {
-		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
-		resp.State.RemoveResource(ctx)
-		return
-	}
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
+  res := new(http.Response)
+  env := AddressMapResultEnvelope{*data}
+  _, err := r.client.Addressing.AddressMaps.Get(
+    ctx,
+    data.ID.ValueString(),
+    addressing.AddressMapGetParams{
+      AccountID: cloudflare.F(data.AccountID.ValueString()),
+    },
+    option.WithResponseBodyInto(&res),
+    option.WithMiddleware(logging.Middleware(ctx)),
+  )
+  if res != nil && res.StatusCode == 404 {
+  resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
+    resp.State.RemoveResource(ctx)
+    return
+  }
+  if err != nil {
+    resp.Diagnostics.AddError("failed to make http request", err.Error())
+    return
+  }
+  bytes, _ := io.ReadAll(res.Body)
+  err = apijson.Unmarshal(bytes, &env)
+  if err != nil {
+    resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+    return
+  }
+  data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *AddressMapResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *AddressMapModel
+  var data  *AddressMapModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
-	_, err := r.client.Addressing.AddressMaps.Delete(
-		ctx,
-		data.ID.ValueString(),
-		addressing.AddressMapDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+  _, err := r.client.Addressing.AddressMaps.Delete(
+    ctx,
+    data.ID.ValueString(),
+    addressing.AddressMapDeleteParams{
+      AccountID: cloudflare.F(data.AccountID.ValueString()),
+    },
+    option.WithMiddleware(logging.Middleware(ctx)),
+  )
+  if err != nil {
+    resp.Diagnostics.AddError("failed to make http request", err.Error())
+    return
+  }
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *AddressMapResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *AddressMapModel = new(AddressMapModel)
+  var data *AddressMapModel = new(AddressMapModel)
 
-	path_account_id := ""
-	path_address_map_id := ""
-	diags := importpath.ParseImportID(
-		req.ID,
-		"<account_id>/<address_map_id>",
-		&path_account_id,
-		&path_address_map_id,
-	)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  path_account_id := ""
+  path_address_map_id := ""
+  diags := importpath.ParseImportID(
+    req.ID,
+    "<account_id>/<address_map_id>",
+    &path_account_id,
+    &path_address_map_id,
+  )
+  resp.Diagnostics.Append(diags...)
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
-	data.AccountID = types.StringValue(path_account_id)
-	data.ID = types.StringValue(path_address_map_id)
+  data.AccountID = types.StringValue(path_account_id)
+  data.ID = types.StringValue(path_address_map_id)
 
-	res := new(http.Response)
-	env := AddressMapResultEnvelope{*data}
-	_, err := r.client.Addressing.AddressMaps.Get(
-		ctx,
-		path_address_map_id,
-		addressing.AddressMapGetParams{
-			AccountID: cloudflare.F(path_account_id),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
+  res := new(http.Response)
+  env := AddressMapResultEnvelope{*data}
+  _, err := r.client.Addressing.AddressMaps.Get(
+    ctx,
+    path_address_map_id,
+    addressing.AddressMapGetParams{
+      AccountID: cloudflare.F(path_account_id),
+    },
+    option.WithResponseBodyInto(&res),
+    option.WithMiddleware(logging.Middleware(ctx)),
+  )
+  if err != nil {
+    resp.Diagnostics.AddError("failed to make http request", err.Error())
+    return
+  }
+  bytes, _ := io.ReadAll(res.Body)
+  err = apijson.Unmarshal(bytes, &env)
+  if err != nil {
+    resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+    return
+  }
+  data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *AddressMapResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {

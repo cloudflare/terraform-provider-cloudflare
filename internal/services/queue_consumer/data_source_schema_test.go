@@ -3,17 +3,17 @@
 package queue_consumer_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestQueueConsumerDataSourceModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*queue_consumer.QueueConsumerDataSourceModel)(nil)
-	schema := queue_consumer.DataSourceSchema(context.TODO())
-	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*queue_consumer.QueueConsumerDataSourceModel)(nil)
+  schema := queue_consumer.DataSourceSchema(context.TODO())
+  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

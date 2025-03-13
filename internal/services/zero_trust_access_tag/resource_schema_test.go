@@ -3,17 +3,17 @@
 package zero_trust_access_tag_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_tag"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_tag"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestZeroTrustAccessTagModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*zero_trust_access_tag.ZeroTrustAccessTagModel)(nil)
-	schema := zero_trust_access_tag.ResourceSchema(context.TODO())
-	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*zero_trust_access_tag.ZeroTrustAccessTagModel)(nil)
+  schema := zero_trust_access_tag.ResourceSchema(context.TODO())
+  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

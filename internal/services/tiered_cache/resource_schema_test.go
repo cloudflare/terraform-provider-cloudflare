@@ -3,17 +3,17 @@
 package tiered_cache_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestTieredCacheModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*tiered_cache.TieredCacheModel)(nil)
-	schema := tiered_cache.ResourceSchema(context.TODO())
-	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*tiered_cache.TieredCacheModel)(nil)
+  schema := tiered_cache.ResourceSchema(context.TODO())
+  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

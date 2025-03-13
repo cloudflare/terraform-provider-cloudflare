@@ -3,17 +3,17 @@
 package keyless_certificate_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/keyless_certificate"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/keyless_certificate"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestKeylessCertificatesDataSourceModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*keyless_certificate.KeylessCertificatesDataSourceModel)(nil)
-	schema := keyless_certificate.ListDataSourceSchema(context.TODO())
-	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*keyless_certificate.KeylessCertificatesDataSourceModel)(nil)
+  schema := keyless_certificate.ListDataSourceSchema(context.TODO())
+  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

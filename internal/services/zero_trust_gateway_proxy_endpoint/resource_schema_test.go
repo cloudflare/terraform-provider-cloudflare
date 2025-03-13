@@ -3,17 +3,17 @@
 package zero_trust_gateway_proxy_endpoint_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_proxy_endpoint"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_proxy_endpoint"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestZeroTrustGatewayProxyEndpointModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*zero_trust_gateway_proxy_endpoint.ZeroTrustGatewayProxyEndpointModel)(nil)
-	schema := zero_trust_gateway_proxy_endpoint.ResourceSchema(context.TODO())
-	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*zero_trust_gateway_proxy_endpoint.ZeroTrustGatewayProxyEndpointModel)(nil)
+  schema := zero_trust_gateway_proxy_endpoint.ResourceSchema(context.TODO())
+  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }
