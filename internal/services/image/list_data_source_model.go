@@ -3,44 +3,44 @@
 package image
 
 import (
-  "context"
+	"context"
 
-  "github.com/cloudflare/cloudflare-go/v4"
-  "github.com/cloudflare/cloudflare-go/v4/images"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-  "github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-  "github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-  "github.com/hashicorp/terraform-plugin-framework/diag"
-  "github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/images"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ImagesItemsListDataSourceEnvelope struct {
-Items customfield.NestedObjectList[ImagesResultDataSourceModel] `json:"items,computed"`
+	Items customfield.NestedObjectList[ImagesResultDataSourceModel] `json:"items,computed"`
 }
 
 type ImagesDataSourceModel struct {
-AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
-MaxItems types.Int64 `tfsdk:"max_items"`
-Result customfield.NestedObjectList[ImagesResultDataSourceModel] `tfsdk:"result"`
+	AccountID types.String                                              `tfsdk:"account_id" path:"account_id,required"`
+	MaxItems  types.Int64                                               `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ImagesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ImagesDataSourceModel) toListParams(_ context.Context) (params images.V1ListParams, diags diag.Diagnostics) {
-  params = images.V1ListParams{
-    AccountID: cloudflare.F(m.AccountID.ValueString()),
-  }
+	params = images.V1ListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
 
-  return
+	return
 }
 
 type ImagesResultDataSourceModel struct {
-Images customfield.NestedObjectList[ImagesImagesDataSourceModel] `tfsdk:"images" json:"images,computed"`
+	Images customfield.NestedObjectList[ImagesImagesDataSourceModel] `tfsdk:"images" json:"images,computed"`
 }
 
 type ImagesImagesDataSourceModel struct {
-ID types.String `tfsdk:"id" json:"id,computed"`
-Filename types.String `tfsdk:"filename" json:"filename,computed"`
-Meta jsontypes.Normalized `tfsdk:"meta" json:"meta,computed"`
-RequireSignedURLs types.Bool `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed"`
-Uploaded timetypes.RFC3339 `tfsdk:"uploaded" json:"uploaded,computed" format:"date-time"`
-Variants customfield.List[types.String] `tfsdk:"variants" json:"variants,computed"`
+	ID                types.String                   `tfsdk:"id" json:"id,computed"`
+	Filename          types.String                   `tfsdk:"filename" json:"filename,computed"`
+	Meta              jsontypes.Normalized           `tfsdk:"meta" json:"meta,computed"`
+	RequireSignedURLs types.Bool                     `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed"`
+	Uploaded          timetypes.RFC3339              `tfsdk:"uploaded" json:"uploaded,computed" format:"date-time"`
+	Variants          customfield.List[types.String] `tfsdk:"variants" json:"variants,computed"`
 }

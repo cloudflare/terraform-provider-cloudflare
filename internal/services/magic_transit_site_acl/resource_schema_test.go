@@ -3,17 +3,17 @@
 package magic_transit_site_acl_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_site_acl"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_site_acl"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestMagicTransitSiteACLModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*magic_transit_site_acl.MagicTransitSiteACLModel)(nil)
-  schema := magic_transit_site_acl.ResourceSchema(context.TODO())
-  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*magic_transit_site_acl.MagicTransitSiteACLModel)(nil)
+	schema := magic_transit_site_acl.ResourceSchema(context.TODO())
+	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

@@ -3,47 +3,47 @@
 package zero_trust_device_posture_integration
 
 import (
-  "context"
+	"context"
 
-  "github.com/cloudflare/cloudflare-go/v4"
-  "github.com/cloudflare/cloudflare-go/v4/zero_trust"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-  "github.com/hashicorp/terraform-plugin-framework/diag"
-  "github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustDevicePostureIntegrationResultDataSourceEnvelope struct {
-Result ZeroTrustDevicePostureIntegrationDataSourceModel `json:"result,computed"`
+	Result ZeroTrustDevicePostureIntegrationDataSourceModel `json:"result,computed"`
 }
 
 type ZeroTrustDevicePostureIntegrationDataSourceModel struct {
-ID types.String `tfsdk:"id" json:"-,computed"`
-IntegrationID types.String `tfsdk:"integration_id" path:"integration_id,optional"`
-AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
-Interval types.String `tfsdk:"interval" json:"interval,computed"`
-Name types.String `tfsdk:"name" json:"name,computed"`
-Type types.String `tfsdk:"type" json:"type,computed"`
-Config customfield.NestedObject[ZeroTrustDevicePostureIntegrationConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
+	ID            types.String                                                                     `tfsdk:"id" json:"-,computed"`
+	IntegrationID types.String                                                                     `tfsdk:"integration_id" path:"integration_id,optional"`
+	AccountID     types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
+	Interval      types.String                                                                     `tfsdk:"interval" json:"interval,computed"`
+	Name          types.String                                                                     `tfsdk:"name" json:"name,computed"`
+	Type          types.String                                                                     `tfsdk:"type" json:"type,computed"`
+	Config        customfield.NestedObject[ZeroTrustDevicePostureIntegrationConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
 }
 
 func (m *ZeroTrustDevicePostureIntegrationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePostureIntegrationGetParams, diags diag.Diagnostics) {
-  params = zero_trust.DevicePostureIntegrationGetParams{
-    AccountID: cloudflare.F(m.AccountID.ValueString()),
-  }
+	params = zero_trust.DevicePostureIntegrationGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
 
-  return
+	return
 }
 
 func (m *ZeroTrustDevicePostureIntegrationDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePostureIntegrationListParams, diags diag.Diagnostics) {
-  params = zero_trust.DevicePostureIntegrationListParams{
-    AccountID: cloudflare.F(m.AccountID.ValueString()),
-  }
+	params = zero_trust.DevicePostureIntegrationListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
 
-  return
+	return
 }
 
 type ZeroTrustDevicePostureIntegrationConfigDataSourceModel struct {
-APIURL types.String `tfsdk:"api_url" json:"api_url,computed"`
-AuthURL types.String `tfsdk:"auth_url" json:"auth_url,computed"`
-ClientID types.String `tfsdk:"client_id" json:"client_id,computed"`
+	APIURL   types.String `tfsdk:"api_url" json:"api_url,computed"`
+	AuthURL  types.String `tfsdk:"auth_url" json:"auth_url,computed"`
+	ClientID types.String `tfsdk:"client_id" json:"client_id,computed"`
 }

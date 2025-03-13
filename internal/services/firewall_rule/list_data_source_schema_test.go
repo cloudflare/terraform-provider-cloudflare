@@ -3,17 +3,17 @@
 package firewall_rule_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestFirewallRulesDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*firewall_rule.FirewallRulesDataSourceModel)(nil)
-  schema := firewall_rule.ListDataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*firewall_rule.FirewallRulesDataSourceModel)(nil)
+	schema := firewall_rule.ListDataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

@@ -3,17 +3,17 @@
 package managed_transforms_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/managed_transforms"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/managed_transforms"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestManagedTransformsDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*managed_transforms.ManagedTransformsDataSourceModel)(nil)
-  schema := managed_transforms.DataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*managed_transforms.ManagedTransformsDataSourceModel)(nil)
+	schema := managed_transforms.DataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }
