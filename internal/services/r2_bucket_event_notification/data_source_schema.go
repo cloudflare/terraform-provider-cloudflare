@@ -3,15 +3,15 @@
 package r2_bucket_event_notification
 
 import (
-  "context"
+	"context"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-  "github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
-  "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-  "github.com/hashicorp/terraform-plugin-framework/datasource"
-  "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-  "github.com/hashicorp/terraform-plugin-framework/schema/validator"
-  "github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*R2BucketEventNotificationDataSource)(nil)
@@ -94,10 +94,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (d *R2BucketEventNotificationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-  resp.Schema = DataSourceSchema(ctx)
+	resp.Schema = DataSourceSchema(ctx)
 }
 
-func (d *R2BucketEventNotificationDataSource) ConfigValidators(_ context.Context) ([]datasource.ConfigValidator) {
-  return []datasource.ConfigValidator{
-  }
+func (d *R2BucketEventNotificationDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+	return []datasource.ConfigValidator{}
 }

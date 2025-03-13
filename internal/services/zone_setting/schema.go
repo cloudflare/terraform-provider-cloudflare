@@ -3,7 +3,7 @@
 package zone_setting
 
 import (
-  "context"
+	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -118,10 +118,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *ZoneSettingResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-  resp.Schema = ResourceSchema(ctx)
+	resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *ZoneSettingResource) ConfigValidators(_ context.Context) ([]resource.ConfigValidator) {
-  return []resource.ConfigValidator{
-  }
+func (r *ZoneSettingResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+	return []resource.ConfigValidator{}
 }

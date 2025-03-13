@@ -3,13 +3,13 @@
 package zone_setting
 
 import (
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-  "github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-  "github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZoneSettingResultEnvelope struct {
-Result ZoneSettingModel `json:"result"`
+	Result ZoneSettingModel `json:"result"`
 }
 
 type ZoneSettingModel struct {
@@ -23,9 +23,9 @@ type ZoneSettingModel struct {
 }
 
 func (m ZoneSettingModel) MarshalJSON() (data []byte, err error) {
-  return apijson.MarshalRoot(m)
+	return apijson.MarshalRoot(m)
 }
 
 func (m ZoneSettingModel) MarshalJSONForUpdate(state ZoneSettingModel) (data []byte, err error) {
-  return apijson.MarshalForPatch(m, state)
+	return apijson.MarshalForPatch(m, state)
 }

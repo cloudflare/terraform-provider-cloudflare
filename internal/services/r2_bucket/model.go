@@ -3,12 +3,12 @@
 package r2_bucket
 
 import (
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-  "github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type R2BucketResultEnvelope struct {
-Result R2BucketModel `json:"result"`
+	Result R2BucketModel `json:"result"`
 }
 
 type R2BucketModel struct {
@@ -22,9 +22,9 @@ type R2BucketModel struct {
 }
 
 func (m R2BucketModel) MarshalJSON() (data []byte, err error) {
-  return apijson.MarshalRoot(m)
+	return apijson.MarshalRoot(m)
 }
 
 func (m R2BucketModel) MarshalJSONForUpdate(state R2BucketModel) (data []byte, err error) {
-  return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForUpdate(m, state)
 }

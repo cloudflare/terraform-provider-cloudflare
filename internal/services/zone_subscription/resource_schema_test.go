@@ -3,17 +3,17 @@
 package zone_subscription_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestZoneSubscriptionModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*zone_subscription.ZoneSubscriptionModel)(nil)
-  schema := zone_subscription.ResourceSchema(context.TODO())
-  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*zone_subscription.ZoneSubscriptionModel)(nil)
+	schema := zone_subscription.ResourceSchema(context.TODO())
+	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

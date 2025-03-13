@@ -3,14 +3,14 @@
 package zero_trust_access_service_token
 
 import (
-  "context"
+	"context"
 
-  "github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-  "github.com/hashicorp/terraform-plugin-framework/resource"
-  "github.com/hashicorp/terraform-plugin-framework/resource/schema"
-  "github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-  "github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
-  "github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessServiceTokenResource)(nil)
@@ -74,10 +74,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *ZeroTrustAccessServiceTokenResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-  resp.Schema = ResourceSchema(ctx)
+	resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *ZeroTrustAccessServiceTokenResource) ConfigValidators(_ context.Context) ([]resource.ConfigValidator) {
-  return []resource.ConfigValidator{
-  }
+func (r *ZeroTrustAccessServiceTokenResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+	return []resource.ConfigValidator{}
 }

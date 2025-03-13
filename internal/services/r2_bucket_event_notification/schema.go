@@ -3,7 +3,7 @@
 package r2_bucket_event_notification
 
 import (
-  "context"
+	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -157,10 +157,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *R2BucketEventNotificationResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-  resp.Schema = ResourceSchema(ctx)
+	resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *R2BucketEventNotificationResource) ConfigValidators(_ context.Context) ([]resource.ConfigValidator) {
-  return []resource.ConfigValidator{
-  }
+func (r *R2BucketEventNotificationResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+	return []resource.ConfigValidator{}
 }

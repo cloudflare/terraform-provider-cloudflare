@@ -3,13 +3,13 @@
 package authenticated_origin_pulls_settings
 
 import (
-  "context"
+	"context"
 
-  "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 var _ resource.ResourceWithUpgradeState = (*AuthenticatedOriginPullsSettingsResource)(nil)
 
-func (r *AuthenticatedOriginPullsSettingsResource) UpgradeState(ctx context.Context) (map[int64]resource.StateUpgrader) {
-  return map[int64]resource.StateUpgrader{}
+func (r *AuthenticatedOriginPullsSettingsResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	return map[int64]resource.StateUpgrader{}
 }

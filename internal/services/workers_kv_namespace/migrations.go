@@ -3,13 +3,13 @@
 package workers_kv_namespace
 
 import (
-  "context"
+	"context"
 
-  "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 var _ resource.ResourceWithUpgradeState = (*WorkersKVNamespaceResource)(nil)
 
-func (r *WorkersKVNamespaceResource) UpgradeState(ctx context.Context) (map[int64]resource.StateUpgrader) {
-  return map[int64]resource.StateUpgrader{}
+func (r *WorkersKVNamespaceResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	return map[int64]resource.StateUpgrader{}
 }

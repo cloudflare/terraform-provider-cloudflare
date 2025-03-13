@@ -3,13 +3,13 @@
 package snippets
 
 import (
-  "context"
+	"context"
 
-  "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 var _ resource.ResourceWithUpgradeState = (*SnippetsResource)(nil)
 
-func (r *SnippetsResource) UpgradeState(ctx context.Context) (map[int64]resource.StateUpgrader) {
-  return map[int64]resource.StateUpgrader{}
+func (r *SnippetsResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	return map[int64]resource.StateUpgrader{}
 }

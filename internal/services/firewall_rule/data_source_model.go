@@ -3,17 +3,17 @@
 package firewall_rule
 
 import (
-  "context"
+	"context"
 
-  "github.com/cloudflare/cloudflare-go/v4"
-  "github.com/cloudflare/cloudflare-go/v4/firewall"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-  "github.com/hashicorp/terraform-plugin-framework/diag"
-  "github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/firewall"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type FirewallRuleResultDataSourceEnvelope struct {
-Result FirewallRuleDataSourceModel `json:"result,computed"`
+	Result FirewallRuleDataSourceModel `json:"result,computed"`
 }
 
 type FirewallRuleDataSourceModel struct {
@@ -29,17 +29,17 @@ type FirewallRuleDataSourceModel struct {
 }
 
 func (m *FirewallRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.RuleGetParams, diags diag.Diagnostics) {
-  params = firewall.RuleGetParams{
-    ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-  }
+	params = firewall.RuleGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
 
-  return
+	return
 }
 
 func (m *FirewallRuleDataSourceModel) toListParams(_ context.Context) (params firewall.RuleListParams, diags diag.Diagnostics) {
-  params = firewall.RuleListParams{
-    ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-  }
+	params = firewall.RuleListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
 
-  return
+	return
 }

@@ -3,13 +3,13 @@
 package workers_cron_trigger
 
 import (
-  "context"
+	"context"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-  "github.com/hashicorp/terraform-plugin-framework/resource"
-  "github.com/hashicorp/terraform-plugin-framework/resource/schema"
-  "github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-  "github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
 var _ resource.ResourceWithConfigValidators = (*WorkersCronTriggerResource)(nil)
@@ -48,10 +48,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *WorkersCronTriggerResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-  resp.Schema = ResourceSchema(ctx)
+	resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *WorkersCronTriggerResource) ConfigValidators(_ context.Context) ([]resource.ConfigValidator) {
-  return []resource.ConfigValidator{
-  }
+func (r *WorkersCronTriggerResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+	return []resource.ConfigValidator{}
 }

@@ -3,17 +3,17 @@
 package account_token
 
 import (
-  "context"
+	"context"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-  "github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-  "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-  "github.com/hashicorp/terraform-plugin-framework/resource"
-  "github.com/hashicorp/terraform-plugin-framework/resource/schema"
-  "github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-  "github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-  "github.com/hashicorp/terraform-plugin-framework/schema/validator"
-  "github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*AccountTokenResource)(nil)
@@ -160,10 +160,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *AccountTokenResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-  resp.Schema = ResourceSchema(ctx)
+	resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *AccountTokenResource) ConfigValidators(_ context.Context) ([]resource.ConfigValidator) {
-  return []resource.ConfigValidator{
-  }
+func (r *AccountTokenResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+	return []resource.ConfigValidator{}
 }

@@ -3,13 +3,13 @@
 package zone
 
 import (
-  "context"
+	"context"
 
-  "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 var _ resource.ResourceWithUpgradeState = (*ZoneResource)(nil)
 
-func (r *ZoneResource) UpgradeState(ctx context.Context) (map[int64]resource.StateUpgrader) {
-  return map[int64]resource.StateUpgrader{}
+func (r *ZoneResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	return map[int64]resource.StateUpgrader{}
 }

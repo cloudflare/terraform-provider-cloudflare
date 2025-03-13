@@ -3,10 +3,10 @@
 package r2_bucket
 
 import (
-  "context"
-  "fmt"
-  "io"
-  "net/http"
+	"context"
+	"fmt"
+	"io"
+	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/option"
@@ -25,45 +25,45 @@ var _ resource.ResourceWithModifyPlan = (*R2BucketResource)(nil)
 var _ resource.ResourceWithImportState = (*R2BucketResource)(nil)
 
 func NewResource() resource.Resource {
-  return &R2BucketResource{}
+	return &R2BucketResource{}
 }
 
 // R2BucketResource defines the resource implementation.
 type R2BucketResource struct {
-  client *cloudflare.Client
+	client *cloudflare.Client
 }
 
 func (r *R2BucketResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-  resp.TypeName = req.ProviderTypeName + "_r2_bucket"
+	resp.TypeName = req.ProviderTypeName + "_r2_bucket"
 }
 
 func (r *R2BucketResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-  if req.ProviderData == nil {
-    return
-  }
+	if req.ProviderData == nil {
+		return
+	}
 
-  client, ok := req.ProviderData.(*cloudflare.Client)
+	client, ok := req.ProviderData.(*cloudflare.Client)
 
-  if !ok {
-    resp.Diagnostics.AddError(
-      "unexpected resource configure type",
-      fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-    )
+	if !ok {
+		resp.Diagnostics.AddError(
+			"unexpected resource configure type",
+			fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
 
-    return
-  }
+		return
+	}
 
-  r.client = client
+	r.client = client
 }
 
 func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-  var data *R2BucketModel
+	var data *R2BucketModel
 
-  resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-  if resp.Diagnostics.HasError() {
-    return
-  }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -95,25 +95,25 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
 	data = &env.Result
 	data.ID = data.Name
 
-  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2BucketResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-  var data  *R2BucketModel
+	var data *R2BucketModel
 
-  resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-  if resp.Diagnostics.HasError() {
-    return
-  }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-  var state  *R2BucketModel
+	var state *R2BucketModel
 
-  resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
-  if resp.Diagnostics.HasError() {
-    return
-  }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -145,17 +145,17 @@ func (r *R2BucketResource) Update(ctx context.Context, req resource.UpdateReques
 	data = &env.Result
 	data.ID = data.Name
 
-  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-  var data  *R2BucketModel
+	var data *R2BucketModel
 
-  resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
-  if resp.Diagnostics.HasError() {
-    return
-  }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	res := new(http.Response)
 	env := R2BucketResultEnvelope{*data}
@@ -187,17 +187,17 @@ func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, r
 	data = &env.Result
 	data.ID = data.Name
 
-  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-  var data  *R2BucketModel
+	var data *R2BucketModel
 
-  resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
-  if resp.Diagnostics.HasError() {
-    return
-  }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	_, err := r.client.R2.Buckets.Delete(
 		ctx,
@@ -214,11 +214,11 @@ func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 	data.ID = data.Name
 
-  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-  var data *R2BucketModel = new(R2BucketModel)
+	var data *R2BucketModel = new(R2BucketModel)
 
 	path_account_id := ""
 	path_bucket_name := ""
@@ -235,8 +235,8 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 		return
 	}
 
-  data.AccountID = types.StringValue(path_account_id)
-  data.Name = types.StringValue(path_bucket_name)
+	data.AccountID = types.StringValue(path_account_id)
+	data.Name = types.StringValue(path_bucket_name)
 
 	if jurisdiction == "default" {
 		data.Jurisdiction = types.StringValue("default")
@@ -269,7 +269,7 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 	data = &env.Result
 	data.ID = data.Name
 
-  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2BucketResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {

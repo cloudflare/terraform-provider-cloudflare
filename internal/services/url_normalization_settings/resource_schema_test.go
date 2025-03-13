@@ -3,17 +3,17 @@
 package url_normalization_settings_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/url_normalization_settings"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/url_normalization_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestURLNormalizationSettingsModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*url_normalization_settings.URLNormalizationSettingsModel)(nil)
-  schema := url_normalization_settings.ResourceSchema(context.TODO())
-  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*url_normalization_settings.URLNormalizationSettingsModel)(nil)
+	schema := url_normalization_settings.ResourceSchema(context.TODO())
+	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

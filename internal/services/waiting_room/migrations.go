@@ -3,13 +3,13 @@
 package waiting_room
 
 import (
-  "context"
+	"context"
 
-  "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 var _ resource.ResourceWithUpgradeState = (*WaitingRoomResource)(nil)
 
-func (r *WaitingRoomResource) UpgradeState(ctx context.Context) (map[int64]resource.StateUpgrader) {
-  return map[int64]resource.StateUpgrader{}
+func (r *WaitingRoomResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+	return map[int64]resource.StateUpgrader{}
 }

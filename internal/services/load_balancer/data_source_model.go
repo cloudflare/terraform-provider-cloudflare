@@ -3,17 +3,17 @@
 package load_balancer
 
 import (
-  "context"
+	"context"
 
-  "github.com/cloudflare/cloudflare-go/v4"
-  "github.com/cloudflare/cloudflare-go/v4/load_balancers"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-  "github.com/hashicorp/terraform-plugin-framework/diag"
-  "github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/load_balancers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type LoadBalancerResultDataSourceEnvelope struct {
-Result LoadBalancerDataSourceModel `json:"result,computed"`
+	Result LoadBalancerDataSourceModel `json:"result,computed"`
 }
 
 type LoadBalancerDataSourceModel struct {
@@ -44,50 +44,50 @@ type LoadBalancerDataSourceModel struct {
 }
 
 func (m *LoadBalancerDataSourceModel) toReadParams(_ context.Context) (params load_balancers.LoadBalancerGetParams, diags diag.Diagnostics) {
-  params = load_balancers.LoadBalancerGetParams{
-    ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-  }
+	params = load_balancers.LoadBalancerGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
 
-  return
+	return
 }
 
 func (m *LoadBalancerDataSourceModel) toListParams(_ context.Context) (params load_balancers.LoadBalancerListParams, diags diag.Diagnostics) {
-  params = load_balancers.LoadBalancerListParams{
-    ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-  }
+	params = load_balancers.LoadBalancerListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
 
-  return
+	return
 }
 
 type LoadBalancerAdaptiveRoutingDataSourceModel struct {
-FailoverAcrossPools types.Bool `tfsdk:"failover_across_pools" json:"failover_across_pools,computed"`
+	FailoverAcrossPools types.Bool `tfsdk:"failover_across_pools" json:"failover_across_pools,computed"`
 }
 
 type LoadBalancerLocationStrategyDataSourceModel struct {
-Mode types.String `tfsdk:"mode" json:"mode,computed"`
-PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed"`
+	Mode      types.String `tfsdk:"mode" json:"mode,computed"`
+	PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed"`
 }
 
 type LoadBalancerRandomSteeringDataSourceModel struct {
-DefaultWeight types.Float64 `tfsdk:"default_weight" json:"default_weight,computed"`
-PoolWeights customfield.Map[types.Float64] `tfsdk:"pool_weights" json:"pool_weights,computed"`
+	DefaultWeight types.Float64                  `tfsdk:"default_weight" json:"default_weight,computed"`
+	PoolWeights   customfield.Map[types.Float64] `tfsdk:"pool_weights" json:"pool_weights,computed"`
 }
 
 type LoadBalancerRulesDataSourceModel struct {
-Condition types.String `tfsdk:"condition" json:"condition,computed"`
-Disabled types.Bool `tfsdk:"disabled" json:"disabled,computed"`
-FixedResponse customfield.NestedObject[LoadBalancerRulesFixedResponseDataSourceModel] `tfsdk:"fixed_response" json:"fixed_response,computed"`
-Name types.String `tfsdk:"name" json:"name,computed"`
-Overrides customfield.NestedObject[LoadBalancerRulesOverridesDataSourceModel] `tfsdk:"overrides" json:"overrides,computed"`
-Priority types.Int64 `tfsdk:"priority" json:"priority,computed"`
-Terminates types.Bool `tfsdk:"terminates" json:"terminates,computed"`
+	Condition     types.String                                                            `tfsdk:"condition" json:"condition,computed"`
+	Disabled      types.Bool                                                              `tfsdk:"disabled" json:"disabled,computed"`
+	FixedResponse customfield.NestedObject[LoadBalancerRulesFixedResponseDataSourceModel] `tfsdk:"fixed_response" json:"fixed_response,computed"`
+	Name          types.String                                                            `tfsdk:"name" json:"name,computed"`
+	Overrides     customfield.NestedObject[LoadBalancerRulesOverridesDataSourceModel]     `tfsdk:"overrides" json:"overrides,computed"`
+	Priority      types.Int64                                                             `tfsdk:"priority" json:"priority,computed"`
+	Terminates    types.Bool                                                              `tfsdk:"terminates" json:"terminates,computed"`
 }
 
 type LoadBalancerRulesFixedResponseDataSourceModel struct {
-ContentType types.String `tfsdk:"content_type" json:"content_type,computed"`
-Location types.String `tfsdk:"location" json:"location,computed"`
-MessageBody types.String `tfsdk:"message_body" json:"message_body,computed"`
-StatusCode types.Int64 `tfsdk:"status_code" json:"status_code,computed"`
+	ContentType types.String `tfsdk:"content_type" json:"content_type,computed"`
+	Location    types.String `tfsdk:"location" json:"location,computed"`
+	MessageBody types.String `tfsdk:"message_body" json:"message_body,computed"`
+	StatusCode  types.Int64  `tfsdk:"status_code" json:"status_code,computed"`
 }
 
 type LoadBalancerRulesOverridesDataSourceModel struct {
@@ -107,17 +107,17 @@ type LoadBalancerRulesOverridesDataSourceModel struct {
 }
 
 type LoadBalancerRulesOverridesAdaptiveRoutingDataSourceModel struct {
-FailoverAcrossPools types.Bool `tfsdk:"failover_across_pools" json:"failover_across_pools,computed"`
+	FailoverAcrossPools types.Bool `tfsdk:"failover_across_pools" json:"failover_across_pools,computed"`
 }
 
 type LoadBalancerRulesOverridesLocationStrategyDataSourceModel struct {
-Mode types.String `tfsdk:"mode" json:"mode,computed"`
-PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed"`
+	Mode      types.String `tfsdk:"mode" json:"mode,computed"`
+	PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed"`
 }
 
 type LoadBalancerRulesOverridesRandomSteeringDataSourceModel struct {
-DefaultWeight types.Float64 `tfsdk:"default_weight" json:"default_weight,computed"`
-PoolWeights customfield.Map[types.Float64] `tfsdk:"pool_weights" json:"pool_weights,computed"`
+	DefaultWeight types.Float64                  `tfsdk:"default_weight" json:"default_weight,computed"`
+	PoolWeights   customfield.Map[types.Float64] `tfsdk:"pool_weights" json:"pool_weights,computed"`
 }
 
 type LoadBalancerRulesOverridesSessionAffinityAttributesDataSourceModel struct {
