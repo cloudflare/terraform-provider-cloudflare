@@ -3,7 +3,7 @@
 package r2_managed_domain
 
 import (
-	"context"
+  "context"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -61,9 +61,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *R2ManagedDomainResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = ResourceSchema(ctx)
+  resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *R2ManagedDomainResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
-	return []resource.ConfigValidator{}
+func (r *R2ManagedDomainResource) ConfigValidators(_ context.Context) ([]resource.ConfigValidator) {
+  return []resource.ConfigValidator{
+  }
 }

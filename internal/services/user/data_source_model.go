@@ -2,8 +2,12 @@
 
 package user
 
+import (
+
+)
+
 type UserResultDataSourceEnvelope struct {
-	Result UserDataSourceModel `json:"result,computed"`
+Result UserDataSourceModel `json:"result,computed"`
 }
 
 type UserDataSourceModel struct {

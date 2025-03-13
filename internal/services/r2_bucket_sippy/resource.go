@@ -3,10 +3,10 @@
 package r2_bucket_sippy
 
 import (
-	"context"
-	"fmt"
-	"io"
-	"net/http"
+  "context"
+  "fmt"
+  "io"
+  "net/http"
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/option"
@@ -22,45 +22,45 @@ var _ resource.ResourceWithConfigure = (*R2BucketSippyResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*R2BucketSippyResource)(nil)
 
 func NewResource() resource.Resource {
-	return &R2BucketSippyResource{}
+  return &R2BucketSippyResource{}
 }
 
 // R2BucketSippyResource defines the resource implementation.
 type R2BucketSippyResource struct {
-	client *cloudflare.Client
+  client *cloudflare.Client
 }
 
 func (r *R2BucketSippyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_r2_bucket_sippy"
+  resp.TypeName = req.ProviderTypeName + "_r2_bucket_sippy"
 }
 
 func (r *R2BucketSippyResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
+  if req.ProviderData == nil {
+    return
+  }
 
-	client, ok := req.ProviderData.(*cloudflare.Client)
+  client, ok := req.ProviderData.(*cloudflare.Client)
 
-	if !ok {
-		resp.Diagnostics.AddError(
-			"unexpected resource configure type",
-			fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
+  if !ok {
+    resp.Diagnostics.AddError(
+      "unexpected resource configure type",
+      fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+    )
 
-		return
-	}
+    return
+  }
 
-	r.client = client
+  r.client = client
 }
 
 func (r *R2BucketSippyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *R2BucketSippyModel
+  var data *R2BucketSippyModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -92,25 +92,25 @@ func (r *R2BucketSippyResource) Create(ctx context.Context, req resource.CreateR
 	}
 	data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2BucketSippyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *R2BucketSippyModel
+  var data  *R2BucketSippyModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
-	var state *R2BucketSippyModel
+  var state  *R2BucketSippyModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+  resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -142,17 +142,17 @@ func (r *R2BucketSippyResource) Update(ctx context.Context, req resource.UpdateR
 	}
 	data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2BucketSippyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *R2BucketSippyModel
+  var data  *R2BucketSippyModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
 	res := new(http.Response)
 	env := R2BucketSippyResultEnvelope{*data}
@@ -183,17 +183,17 @@ func (r *R2BucketSippyResource) Read(ctx context.Context, req resource.ReadReque
 	}
 	data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2BucketSippyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *R2BucketSippyModel
+  var data  *R2BucketSippyModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
 	_, err := r.client.R2.Buckets.Sippy.Delete(
 		ctx,
@@ -209,7 +209,7 @@ func (r *R2BucketSippyResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2BucketSippyResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {

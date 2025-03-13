@@ -3,12 +3,12 @@
 package r2_managed_domain
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+  "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type R2ManagedDomainResultEnvelope struct {
-	Result R2ManagedDomainModel `json:"result"`
+Result R2ManagedDomainModel `json:"result"`
 }
 
 type R2ManagedDomainModel struct {
@@ -21,9 +21,9 @@ type R2ManagedDomainModel struct {
 }
 
 func (m R2ManagedDomainModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m)
+  return apijson.MarshalRoot(m)
 }
 
 func (m R2ManagedDomainModel) MarshalJSONForUpdate(state R2ManagedDomainModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+  return apijson.MarshalForUpdate(m, state)
 }

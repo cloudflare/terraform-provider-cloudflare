@@ -3,17 +3,17 @@
 package ip_ranges_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ip_ranges"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/ip_ranges"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestIPRangesDataSourceModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*ip_ranges.IPRangesDataSourceModel)(nil)
-	schema := ip_ranges.DataSourceSchema(context.TODO())
-	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*ip_ranges.IPRangesDataSourceModel)(nil)
+  schema := ip_ranges.DataSourceSchema(context.TODO())
+  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

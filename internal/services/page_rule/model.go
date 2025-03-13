@@ -8,7 +8,7 @@ import (
 )
 
 type PageRuleResultEnvelope struct {
-	Result PageRuleModel `json:"result"`
+Result PageRuleModel `json:"result"`
 }
 
 type PageRuleModel struct {

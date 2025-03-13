@@ -3,7 +3,7 @@
 package r2_bucket_sippy
 
 import (
-	"context"
+  "context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -120,9 +120,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *R2BucketSippyResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = ResourceSchema(ctx)
+  resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *R2BucketSippyResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
-	return []resource.ConfigValidator{}
+func (r *R2BucketSippyResource) ConfigValidators(_ context.Context) ([]resource.ConfigValidator) {
+  return []resource.ConfigValidator{
+  }
 }

@@ -3,17 +3,17 @@
 package turnstile_widget
 
 import (
-	"context"
+  "context"
 
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+  "github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+  "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+  "github.com/hashicorp/terraform-plugin-framework/resource"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+  "github.com/hashicorp/terraform-plugin-framework/schema/validator"
+  "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*TurnstileWidgetResource)(nil)
@@ -110,9 +110,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *TurnstileWidgetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = ResourceSchema(ctx)
+  resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *TurnstileWidgetResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
-	return []resource.ConfigValidator{}
+func (r *TurnstileWidgetResource) ConfigValidators(_ context.Context) ([]resource.ConfigValidator) {
+  return []resource.ConfigValidator{
+  }
 }

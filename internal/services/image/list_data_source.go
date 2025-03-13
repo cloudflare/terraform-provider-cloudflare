@@ -3,48 +3,48 @@
 package image
 
 import (
-	"context"
-	"fmt"
+  "context"
+  "fmt"
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
 type ImagesDataSource struct {
-	client *cloudflare.Client
+  client *cloudflare.Client
 }
 
 var _ datasource.DataSourceWithConfigure = (*ImagesDataSource)(nil)
 
 func NewImagesDataSource() datasource.DataSource {
-	return &ImagesDataSource{}
+  return &ImagesDataSource{}
 }
 
 func (d *ImagesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_images"
+  resp.TypeName = req.ProviderTypeName + "_images"
 }
 
 func (d *ImagesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
+  if req.ProviderData == nil {
+    return
+  }
 
-	client, ok := req.ProviderData.(*cloudflare.Client)
+  client, ok := req.ProviderData.(*cloudflare.Client)
 
-	if !ok {
-		resp.Diagnostics.AddError(
-			"unexpected resource configure type",
-			fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
+  if !ok {
+    resp.Diagnostics.AddError(
+      "unexpected resource configure type",
+      fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+    )
 
-		return
-	}
+    return
+  }
 
-	d.client = client
+  d.client = client
 }
 
 func (d *ImagesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *ImagesDataSourceModel
+  var data *ImagesDataSourceModel
 
 	// resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -93,5 +93,5 @@ func (d *ImagesDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	// resp.Diagnostics.Append(diags...)
 	// data.Result = result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

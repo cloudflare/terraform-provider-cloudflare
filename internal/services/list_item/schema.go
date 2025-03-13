@@ -3,17 +3,17 @@
 package list_item
 
 import (
-	"context"
+  "context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+  "github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+  "github.com/hashicorp/terraform-plugin-framework/resource"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+  "github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ListItemResource)(nil)
@@ -122,9 +122,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = ResourceSchema(ctx)
+  resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *ListItemResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
-	return []resource.ConfigValidator{}
+func (r *ListItemResource) ConfigValidators(_ context.Context) ([]resource.ConfigValidator) {
+  return []resource.ConfigValidator{
+  }
 }

@@ -3,10 +3,10 @@
 package r2_custom_domain
 
 import (
-	"context"
-	"fmt"
-	"io"
-	"net/http"
+  "context"
+  "fmt"
+  "io"
+  "net/http"
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/option"
@@ -22,45 +22,45 @@ var _ resource.ResourceWithConfigure = (*R2CustomDomainResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*R2CustomDomainResource)(nil)
 
 func NewResource() resource.Resource {
-	return &R2CustomDomainResource{}
+  return &R2CustomDomainResource{}
 }
 
 // R2CustomDomainResource defines the resource implementation.
 type R2CustomDomainResource struct {
-	client *cloudflare.Client
+  client *cloudflare.Client
 }
 
 func (r *R2CustomDomainResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_r2_custom_domain"
+  resp.TypeName = req.ProviderTypeName + "_r2_custom_domain"
 }
 
 func (r *R2CustomDomainResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
+  if req.ProviderData == nil {
+    return
+  }
 
-	client, ok := req.ProviderData.(*cloudflare.Client)
+  client, ok := req.ProviderData.(*cloudflare.Client)
 
-	if !ok {
-		resp.Diagnostics.AddError(
-			"unexpected resource configure type",
-			fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
+  if !ok {
+    resp.Diagnostics.AddError(
+      "unexpected resource configure type",
+      fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+    )
 
-		return
-	}
+    return
+  }
 
-	r.client = client
+  r.client = client
 }
 
 func (r *R2CustomDomainResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *R2CustomDomainModel
+  var data *R2CustomDomainModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -92,25 +92,25 @@ func (r *R2CustomDomainResource) Create(ctx context.Context, req resource.Create
 	}
 	data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2CustomDomainResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *R2CustomDomainModel
+  var data  *R2CustomDomainModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
-	var state *R2CustomDomainModel
+  var state  *R2CustomDomainModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+  resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -143,17 +143,17 @@ func (r *R2CustomDomainResource) Update(ctx context.Context, req resource.Update
 	}
 	data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2CustomDomainResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *R2CustomDomainModel
+  var data  *R2CustomDomainModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
 	res := new(http.Response)
 	env := R2CustomDomainResultEnvelope{*data}
@@ -185,17 +185,17 @@ func (r *R2CustomDomainResource) Read(ctx context.Context, req resource.ReadRequ
 	}
 	data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2CustomDomainResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *R2CustomDomainModel
+  var data  *R2CustomDomainModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
 	_, err := r.client.R2.Buckets.Domains.Custom.Delete(
 		ctx,
@@ -212,7 +212,7 @@ func (r *R2CustomDomainResource) Delete(ctx context.Context, req resource.Delete
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2CustomDomainResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {

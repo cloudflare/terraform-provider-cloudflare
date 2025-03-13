@@ -3,27 +3,27 @@
 package leaked_credential_check
 
 import (
-	"context"
+  "context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/leaked_credential_checks"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+  "github.com/cloudflare/cloudflare-go/v4"
+  "github.com/cloudflare/cloudflare-go/v4/leaked_credential_checks"
+  "github.com/hashicorp/terraform-plugin-framework/diag"
+  "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type LeakedCredentialCheckResultDataSourceEnvelope struct {
-	Result LeakedCredentialCheckDataSourceModel `json:"result,computed"`
+Result LeakedCredentialCheckDataSourceModel `json:"result,computed"`
 }
 
 type LeakedCredentialCheckDataSourceModel struct {
-	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
-	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
+Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 func (m *LeakedCredentialCheckDataSourceModel) toReadParams(_ context.Context) (params leaked_credential_checks.LeakedCredentialCheckGetParams, diags diag.Diagnostics) {
-	params = leaked_credential_checks.LeakedCredentialCheckGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+  params = leaked_credential_checks.LeakedCredentialCheckGetParams{
+    ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+  }
 
-	return
+  return
 }

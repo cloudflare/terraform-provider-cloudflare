@@ -3,13 +3,13 @@
 package load_balancer
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+  "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type LoadBalancerResultEnvelope struct {
-	Result LoadBalancerModel `json:"result"`
+Result LoadBalancerModel `json:"result"`
 }
 
 type LoadBalancerModel struct {
@@ -40,42 +40,42 @@ type LoadBalancerModel struct {
 }
 
 func (m LoadBalancerModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m)
+  return apijson.MarshalRoot(m)
 }
 
 func (m LoadBalancerModel) MarshalJSONForUpdate(state LoadBalancerModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+  return apijson.MarshalForUpdate(m, state)
 }
 
 type LoadBalancerAdaptiveRoutingModel struct {
-	FailoverAcrossPools types.Bool `tfsdk:"failover_across_pools" json:"failover_across_pools,computed_optional"`
+FailoverAcrossPools types.Bool `tfsdk:"failover_across_pools" json:"failover_across_pools,computed_optional"`
 }
 
 type LoadBalancerLocationStrategyModel struct {
-	Mode      types.String `tfsdk:"mode" json:"mode,computed_optional"`
-	PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed_optional"`
+Mode types.String `tfsdk:"mode" json:"mode,computed_optional"`
+PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed_optional"`
 }
 
 type LoadBalancerRandomSteeringModel struct {
-	DefaultWeight types.Float64             `tfsdk:"default_weight" json:"default_weight,computed_optional"`
-	PoolWeights   *map[string]types.Float64 `tfsdk:"pool_weights" json:"pool_weights,optional"`
+DefaultWeight types.Float64 `tfsdk:"default_weight" json:"default_weight,computed_optional"`
+PoolWeights *map[string]types.Float64 `tfsdk:"pool_weights" json:"pool_weights,optional"`
 }
 
 type LoadBalancerRulesModel struct {
-	Condition     types.String                                                  `tfsdk:"condition" json:"condition,optional"`
-	Disabled      types.Bool                                                    `tfsdk:"disabled" json:"disabled,computed_optional"`
-	FixedResponse customfield.NestedObject[LoadBalancerRulesFixedResponseModel] `tfsdk:"fixed_response" json:"fixed_response,computed_optional"`
-	Name          types.String                                                  `tfsdk:"name" json:"name,optional"`
-	Overrides     customfield.NestedObject[LoadBalancerRulesOverridesModel]     `tfsdk:"overrides" json:"overrides,computed_optional"`
-	Priority      types.Int64                                                   `tfsdk:"priority" json:"priority,computed_optional"`
-	Terminates    types.Bool                                                    `tfsdk:"terminates" json:"terminates,computed_optional"`
+Condition types.String `tfsdk:"condition" json:"condition,optional"`
+Disabled types.Bool `tfsdk:"disabled" json:"disabled,computed_optional"`
+FixedResponse customfield.NestedObject[LoadBalancerRulesFixedResponseModel] `tfsdk:"fixed_response" json:"fixed_response,computed_optional"`
+Name types.String `tfsdk:"name" json:"name,optional"`
+Overrides customfield.NestedObject[LoadBalancerRulesOverridesModel] `tfsdk:"overrides" json:"overrides,computed_optional"`
+Priority types.Int64 `tfsdk:"priority" json:"priority,computed_optional"`
+Terminates types.Bool `tfsdk:"terminates" json:"terminates,computed_optional"`
 }
 
 type LoadBalancerRulesFixedResponseModel struct {
-	ContentType types.String `tfsdk:"content_type" json:"content_type,optional"`
-	Location    types.String `tfsdk:"location" json:"location,optional"`
-	MessageBody types.String `tfsdk:"message_body" json:"message_body,optional"`
-	StatusCode  types.Int64  `tfsdk:"status_code" json:"status_code,optional"`
+ContentType types.String `tfsdk:"content_type" json:"content_type,optional"`
+Location types.String `tfsdk:"location" json:"location,optional"`
+MessageBody types.String `tfsdk:"message_body" json:"message_body,optional"`
+StatusCode types.Int64 `tfsdk:"status_code" json:"status_code,optional"`
 }
 
 type LoadBalancerRulesOverridesModel struct {
@@ -95,17 +95,17 @@ type LoadBalancerRulesOverridesModel struct {
 }
 
 type LoadBalancerRulesOverridesAdaptiveRoutingModel struct {
-	FailoverAcrossPools types.Bool `tfsdk:"failover_across_pools" json:"failover_across_pools,computed_optional"`
+FailoverAcrossPools types.Bool `tfsdk:"failover_across_pools" json:"failover_across_pools,computed_optional"`
 }
 
 type LoadBalancerRulesOverridesLocationStrategyModel struct {
-	Mode      types.String `tfsdk:"mode" json:"mode,computed_optional"`
-	PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed_optional"`
+Mode types.String `tfsdk:"mode" json:"mode,computed_optional"`
+PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed_optional"`
 }
 
 type LoadBalancerRulesOverridesRandomSteeringModel struct {
-	DefaultWeight types.Float64             `tfsdk:"default_weight" json:"default_weight,computed_optional"`
-	PoolWeights   *map[string]types.Float64 `tfsdk:"pool_weights" json:"pool_weights,optional"`
+DefaultWeight types.Float64 `tfsdk:"default_weight" json:"default_weight,computed_optional"`
+PoolWeights *map[string]types.Float64 `tfsdk:"pool_weights" json:"pool_weights,optional"`
 }
 
 type LoadBalancerRulesOverridesSessionAffinityAttributesModel struct {

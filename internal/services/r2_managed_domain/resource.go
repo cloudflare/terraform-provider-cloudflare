@@ -3,10 +3,10 @@
 package r2_managed_domain
 
 import (
-	"context"
-	"fmt"
-	"io"
-	"net/http"
+  "context"
+  "fmt"
+  "io"
+  "net/http"
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/option"
@@ -22,45 +22,45 @@ var _ resource.ResourceWithConfigure = (*R2ManagedDomainResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*R2ManagedDomainResource)(nil)
 
 func NewResource() resource.Resource {
-	return &R2ManagedDomainResource{}
+  return &R2ManagedDomainResource{}
 }
 
 // R2ManagedDomainResource defines the resource implementation.
 type R2ManagedDomainResource struct {
-	client *cloudflare.Client
+  client *cloudflare.Client
 }
 
 func (r *R2ManagedDomainResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_r2_managed_domain"
+  resp.TypeName = req.ProviderTypeName + "_r2_managed_domain"
 }
 
 func (r *R2ManagedDomainResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
+  if req.ProviderData == nil {
+    return
+  }
 
-	client, ok := req.ProviderData.(*cloudflare.Client)
+  client, ok := req.ProviderData.(*cloudflare.Client)
 
-	if !ok {
-		resp.Diagnostics.AddError(
-			"unexpected resource configure type",
-			fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
+  if !ok {
+    resp.Diagnostics.AddError(
+      "unexpected resource configure type",
+      fmt.Sprintf("Expected *cloudflare.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+    )
 
-		return
-	}
+    return
+  }
 
-	r.client = client
+  r.client = client
 }
 
 func (r *R2ManagedDomainResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *R2ManagedDomainModel
+  var data *R2ManagedDomainModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -92,25 +92,25 @@ func (r *R2ManagedDomainResource) Create(ctx context.Context, req resource.Creat
 	}
 	data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2ManagedDomainResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *R2ManagedDomainModel
+  var data  *R2ManagedDomainModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+  resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
-	var state *R2ManagedDomainModel
+  var state  *R2ManagedDomainModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+  resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+  if resp.Diagnostics.HasError() {
+    return
+  }
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -142,7 +142,7 @@ func (r *R2ManagedDomainResource) Update(ctx context.Context, req resource.Updat
 	}
 	data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+  resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2ManagedDomainResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -154,19 +154,19 @@ func (r *R2ManagedDomainResource) Delete(ctx context.Context, req resource.Delet
 }
 
 func (r *R2ManagedDomainResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	if req.State.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
-				"present in the API until manually deleted.",
-		)
-	}
-	if req.Plan.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"Applying this resource destruction will remove the resource from the Terraform state "+
-				"but will not change it in the API. If you would like to destroy or reset this resource "+
-				"in the API, refer to the documentation for how to do it manually.",
-		)
-	}
+  if req.State.Raw.IsNull() {
+      resp.Diagnostics.AddWarning(
+          "Resource Destruction Considerations",
+          "This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
+          "present in the API until manually deleted.",
+      )
+  }
+  if req.Plan.Raw.IsNull() {
+      resp.Diagnostics.AddWarning(
+          "Resource Destruction Considerations",
+          "Applying this resource destruction will remove the resource from the Terraform state "+
+              "but will not change it in the API. If you would like to destroy or reset this resource "+
+              "in the API, refer to the documentation for how to do it manually.",
+      )
+  }
 }

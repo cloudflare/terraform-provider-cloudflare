@@ -3,13 +3,13 @@
 package turnstile_widget
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+  "github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+  "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type TurnstileWidgetResultEnvelope struct {
-	Result TurnstileWidgetModel `json:"result"`
+Result TurnstileWidgetModel `json:"result"`
 }
 
 type TurnstileWidgetModel struct {
@@ -30,9 +30,9 @@ type TurnstileWidgetModel struct {
 }
 
 func (m TurnstileWidgetModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m)
+  return apijson.MarshalRoot(m)
 }
 
 func (m TurnstileWidgetModel) MarshalJSONForUpdate(state TurnstileWidgetModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+  return apijson.MarshalForUpdate(m, state)
 }

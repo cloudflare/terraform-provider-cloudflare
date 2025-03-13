@@ -3,8 +3,8 @@
 package workers_script
 
 import (
-	"bytes"
-	"mime/multipart"
+  "bytes"
+  "mime/multipart"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -14,7 +14,7 @@ import (
 )
 
 type WorkersScriptResultEnvelope struct {
-	Result WorkersScriptModel `json:"result"`
+Result WorkersScriptModel `json:"result"`
 }
 
 type WorkersScriptModel struct {
@@ -80,111 +80,111 @@ type WorkersScriptMetadataModel struct {
 }
 
 type WorkersScriptMetadataAssetsModel struct {
-	Config *WorkersScriptMetadataAssetsConfigModel `tfsdk:"config" json:"config,optional"`
-	JWT    types.String                            `tfsdk:"jwt" json:"jwt,optional"`
+Config *WorkersScriptMetadataAssetsConfigModel `tfsdk:"config" json:"config,optional"`
+JWT types.String `tfsdk:"jwt" json:"jwt,optional"`
 }
 
 type WorkersScriptMetadataAssetsConfigModel struct {
-	HTMLHandling     types.String `tfsdk:"html_handling" json:"html_handling,optional"`
-	NotFoundHandling types.String `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
-	RunWorkerFirst   types.Bool   `tfsdk:"run_worker_first" json:"run_worker_first,computed_optional"`
-	ServeDirectly    types.Bool   `tfsdk:"serve_directly" json:"serve_directly,computed_optional"`
+HTMLHandling types.String `tfsdk:"html_handling" json:"html_handling,optional"`
+NotFoundHandling types.String `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
+RunWorkerFirst types.Bool `tfsdk:"run_worker_first" json:"run_worker_first,computed_optional"`
+ServeDirectly types.Bool `tfsdk:"serve_directly" json:"serve_directly,computed_optional"`
 }
 
 type WorkersScriptMetadataBindingsModel struct {
-	Name          types.String                                `tfsdk:"name" json:"name,required"`
-	Type          types.String                                `tfsdk:"type" json:"type,required"`
-	Dataset       types.String                                `tfsdk:"dataset" json:"dataset,optional"`
-	ID            types.String                                `tfsdk:"id" json:"id,optional"`
-	Namespace     types.String                                `tfsdk:"namespace" json:"namespace,optional"`
-	Outbound      *WorkersScriptMetadataBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
-	ClassName     types.String                                `tfsdk:"class_name" json:"class_name,optional"`
-	Environment   types.String                                `tfsdk:"environment" json:"environment,optional"`
-	NamespaceID   types.String                                `tfsdk:"namespace_id" json:"namespace_id,optional"`
-	ScriptName    types.String                                `tfsdk:"script_name" json:"script_name,optional"`
-	Json          types.String                                `tfsdk:"json" json:"json,optional"`
-	CertificateID types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
-	Text          types.String                                `tfsdk:"text" json:"text,optional"`
-	QueueName     types.String                                `tfsdk:"queue_name" json:"queue_name,optional"`
-	BucketName    types.String                                `tfsdk:"bucket_name" json:"bucket_name,optional"`
-	Service       types.String                                `tfsdk:"service" json:"service,optional"`
-	IndexName     types.String                                `tfsdk:"index_name" json:"index_name,optional"`
+Name types.String `tfsdk:"name" json:"name,required"`
+Type types.String `tfsdk:"type" json:"type,required"`
+Dataset types.String `tfsdk:"dataset" json:"dataset,optional"`
+ID types.String `tfsdk:"id" json:"id,optional"`
+Namespace types.String `tfsdk:"namespace" json:"namespace,optional"`
+Outbound *WorkersScriptMetadataBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
+ClassName types.String `tfsdk:"class_name" json:"class_name,optional"`
+Environment types.String `tfsdk:"environment" json:"environment,optional"`
+NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,optional"`
+ScriptName types.String `tfsdk:"script_name" json:"script_name,optional"`
+Json types.String `tfsdk:"json" json:"json,optional"`
+CertificateID types.String `tfsdk:"certificate_id" json:"certificate_id,optional"`
+Text types.String `tfsdk:"text" json:"text,optional"`
+QueueName types.String `tfsdk:"queue_name" json:"queue_name,optional"`
+BucketName types.String `tfsdk:"bucket_name" json:"bucket_name,optional"`
+Service types.String `tfsdk:"service" json:"service,optional"`
+IndexName types.String `tfsdk:"index_name" json:"index_name,optional"`
 }
 
 type WorkersScriptMetadataBindingsOutboundModel struct {
-	Params *[]types.String                                   `tfsdk:"params" json:"params,optional"`
-	Worker *WorkersScriptMetadataBindingsOutboundWorkerModel `tfsdk:"worker" json:"worker,optional"`
+Params *[]types.String `tfsdk:"params" json:"params,optional"`
+Worker *WorkersScriptMetadataBindingsOutboundWorkerModel `tfsdk:"worker" json:"worker,optional"`
 }
 
 type WorkersScriptMetadataBindingsOutboundWorkerModel struct {
-	Environment types.String `tfsdk:"environment" json:"environment,optional"`
-	Service     types.String `tfsdk:"service" json:"service,optional"`
+Environment types.String `tfsdk:"environment" json:"environment,optional"`
+Service types.String `tfsdk:"service" json:"service,optional"`
 }
 
 type WorkersScriptMetadataMigrationsModel struct {
-	DeletedClasses     *[]types.String                                            `tfsdk:"deleted_classes" json:"deleted_classes,optional"`
-	NewClasses         *[]types.String                                            `tfsdk:"new_classes" json:"new_classes,optional"`
-	NewSqliteClasses   *[]types.String                                            `tfsdk:"new_sqlite_classes" json:"new_sqlite_classes,optional"`
-	NewTag             types.String                                               `tfsdk:"new_tag" json:"new_tag,optional"`
-	OldTag             types.String                                               `tfsdk:"old_tag" json:"old_tag,optional"`
-	RenamedClasses     *[]*WorkersScriptMetadataMigrationsRenamedClassesModel     `tfsdk:"renamed_classes" json:"renamed_classes,optional"`
-	TransferredClasses *[]*WorkersScriptMetadataMigrationsTransferredClassesModel `tfsdk:"transferred_classes" json:"transferred_classes,optional"`
-	Steps              *[]*WorkersScriptMetadataMigrationsStepsModel              `tfsdk:"steps" json:"steps,optional"`
+DeletedClasses *[]types.String `tfsdk:"deleted_classes" json:"deleted_classes,optional"`
+NewClasses *[]types.String `tfsdk:"new_classes" json:"new_classes,optional"`
+NewSqliteClasses *[]types.String `tfsdk:"new_sqlite_classes" json:"new_sqlite_classes,optional"`
+NewTag types.String `tfsdk:"new_tag" json:"new_tag,optional"`
+OldTag types.String `tfsdk:"old_tag" json:"old_tag,optional"`
+RenamedClasses *[]*WorkersScriptMetadataMigrationsRenamedClassesModel `tfsdk:"renamed_classes" json:"renamed_classes,optional"`
+TransferredClasses *[]*WorkersScriptMetadataMigrationsTransferredClassesModel `tfsdk:"transferred_classes" json:"transferred_classes,optional"`
+Steps *[]*WorkersScriptMetadataMigrationsStepsModel `tfsdk:"steps" json:"steps,optional"`
 }
 
 type WorkersScriptMetadataMigrationsRenamedClassesModel struct {
-	From types.String `tfsdk:"from" json:"from,optional"`
-	To   types.String `tfsdk:"to" json:"to,optional"`
+From types.String `tfsdk:"from" json:"from,optional"`
+To types.String `tfsdk:"to" json:"to,optional"`
 }
 
 type WorkersScriptMetadataMigrationsTransferredClassesModel struct {
-	From       types.String `tfsdk:"from" json:"from,optional"`
-	FromScript types.String `tfsdk:"from_script" json:"from_script,optional"`
-	To         types.String `tfsdk:"to" json:"to,optional"`
+From types.String `tfsdk:"from" json:"from,optional"`
+FromScript types.String `tfsdk:"from_script" json:"from_script,optional"`
+To types.String `tfsdk:"to" json:"to,optional"`
 }
 
 type WorkersScriptMetadataMigrationsStepsModel struct {
-	DeletedClasses     *[]types.String                                                 `tfsdk:"deleted_classes" json:"deleted_classes,optional"`
-	NewClasses         *[]types.String                                                 `tfsdk:"new_classes" json:"new_classes,optional"`
-	NewSqliteClasses   *[]types.String                                                 `tfsdk:"new_sqlite_classes" json:"new_sqlite_classes,optional"`
-	RenamedClasses     *[]*WorkersScriptMetadataMigrationsStepsRenamedClassesModel     `tfsdk:"renamed_classes" json:"renamed_classes,optional"`
-	TransferredClasses *[]*WorkersScriptMetadataMigrationsStepsTransferredClassesModel `tfsdk:"transferred_classes" json:"transferred_classes,optional"`
+DeletedClasses *[]types.String `tfsdk:"deleted_classes" json:"deleted_classes,optional"`
+NewClasses *[]types.String `tfsdk:"new_classes" json:"new_classes,optional"`
+NewSqliteClasses *[]types.String `tfsdk:"new_sqlite_classes" json:"new_sqlite_classes,optional"`
+RenamedClasses *[]*WorkersScriptMetadataMigrationsStepsRenamedClassesModel `tfsdk:"renamed_classes" json:"renamed_classes,optional"`
+TransferredClasses *[]*WorkersScriptMetadataMigrationsStepsTransferredClassesModel `tfsdk:"transferred_classes" json:"transferred_classes,optional"`
 }
 
 type WorkersScriptMetadataMigrationsStepsRenamedClassesModel struct {
-	From types.String `tfsdk:"from" json:"from,optional"`
-	To   types.String `tfsdk:"to" json:"to,optional"`
+From types.String `tfsdk:"from" json:"from,optional"`
+To types.String `tfsdk:"to" json:"to,optional"`
 }
 
 type WorkersScriptMetadataMigrationsStepsTransferredClassesModel struct {
-	From       types.String `tfsdk:"from" json:"from,optional"`
-	FromScript types.String `tfsdk:"from_script" json:"from_script,optional"`
-	To         types.String `tfsdk:"to" json:"to,optional"`
+From types.String `tfsdk:"from" json:"from,optional"`
+FromScript types.String `tfsdk:"from_script" json:"from_script,optional"`
+To types.String `tfsdk:"to" json:"to,optional"`
 }
 
 type WorkersScriptMetadataObservabilityModel struct {
-	Enabled          types.Bool    `tfsdk:"enabled" json:"enabled,required"`
-	HeadSamplingRate types.Float64 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+Enabled types.Bool `tfsdk:"enabled" json:"enabled,required"`
+HeadSamplingRate types.Float64 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
 }
 
 type WorkersScriptMetadataPlacementModel struct {
-	Mode   types.String `tfsdk:"mode" json:"mode,optional"`
-	Status types.String `tfsdk:"status" json:"status,computed"`
+Mode types.String `tfsdk:"mode" json:"mode,optional"`
+Status types.String `tfsdk:"status" json:"status,computed"`
 }
 
 type WorkersScriptMetadataTailConsumersModel struct {
-	Service     types.String `tfsdk:"service" json:"service,required"`
-	Environment types.String `tfsdk:"environment" json:"environment,optional"`
-	Namespace   types.String `tfsdk:"namespace" json:"namespace,optional"`
+Service types.String `tfsdk:"service" json:"service,required"`
+Environment types.String `tfsdk:"environment" json:"environment,optional"`
+Namespace types.String `tfsdk:"namespace" json:"namespace,optional"`
 }
 
 type WorkersScriptPlacementModel struct {
-	Mode   types.String `tfsdk:"mode" json:"mode,computed"`
-	Status types.String `tfsdk:"status" json:"status,computed"`
+Mode types.String `tfsdk:"mode" json:"mode,computed"`
+Status types.String `tfsdk:"status" json:"status,computed"`
 }
 
 type WorkersScriptTailConsumersModel struct {
-	Service     types.String `tfsdk:"service" json:"service,computed"`
-	Environment types.String `tfsdk:"environment" json:"environment,computed"`
-	Namespace   types.String `tfsdk:"namespace" json:"namespace,computed"`
+Service types.String `tfsdk:"service" json:"service,computed"`
+Environment types.String `tfsdk:"environment" json:"environment,computed"`
+Namespace types.String `tfsdk:"namespace" json:"namespace,computed"`
 }

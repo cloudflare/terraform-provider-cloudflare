@@ -3,54 +3,54 @@
 package account_dns_settings
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+  "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type AccountDNSSettingsResultEnvelope struct {
-	Result AccountDNSSettingsModel `json:"result"`
+Result AccountDNSSettingsModel `json:"result"`
 }
 
 type AccountDNSSettingsModel struct {
-	AccountID    types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
-	ZoneDefaults customfield.NestedObject[AccountDNSSettingsZoneDefaultsModel] `tfsdk:"zone_defaults" json:"zone_defaults,computed_optional"`
+AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+ZoneDefaults customfield.NestedObject[AccountDNSSettingsZoneDefaultsModel] `tfsdk:"zone_defaults" json:"zone_defaults,computed_optional"`
 }
 
 func (m AccountDNSSettingsModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m)
+  return apijson.MarshalRoot(m)
 }
 
 func (m AccountDNSSettingsModel) MarshalJSONForUpdate(state AccountDNSSettingsModel) (data []byte, err error) {
-	return apijson.MarshalForPatch(m, state)
+  return apijson.MarshalForPatch(m, state)
 }
 
 type AccountDNSSettingsZoneDefaultsModel struct {
-	FlattenAllCNAMEs   types.Bool                                                               `tfsdk:"flatten_all_cnames" json:"flatten_all_cnames,optional"`
-	FoundationDNS      types.Bool                                                               `tfsdk:"foundation_dns" json:"foundation_dns,optional"`
-	InternalDNS        customfield.NestedObject[AccountDNSSettingsZoneDefaultsInternalDNSModel] `tfsdk:"internal_dns" json:"internal_dns,computed_optional"`
-	MultiProvider      types.Bool                                                               `tfsdk:"multi_provider" json:"multi_provider,optional"`
-	Nameservers        customfield.NestedObject[AccountDNSSettingsZoneDefaultsNameserversModel] `tfsdk:"nameservers" json:"nameservers,computed_optional"`
-	NSTTL              types.Float64                                                            `tfsdk:"ns_ttl" json:"ns_ttl,optional"`
-	SecondaryOverrides types.Bool                                                               `tfsdk:"secondary_overrides" json:"secondary_overrides,optional"`
-	SOA                customfield.NestedObject[AccountDNSSettingsZoneDefaultsSOAModel]         `tfsdk:"soa" json:"soa,computed_optional"`
-	ZoneMode           types.String                                                             `tfsdk:"zone_mode" json:"zone_mode,optional"`
+FlattenAllCNAMEs types.Bool `tfsdk:"flatten_all_cnames" json:"flatten_all_cnames,optional"`
+FoundationDNS types.Bool `tfsdk:"foundation_dns" json:"foundation_dns,optional"`
+InternalDNS customfield.NestedObject[AccountDNSSettingsZoneDefaultsInternalDNSModel] `tfsdk:"internal_dns" json:"internal_dns,computed_optional"`
+MultiProvider types.Bool `tfsdk:"multi_provider" json:"multi_provider,optional"`
+Nameservers customfield.NestedObject[AccountDNSSettingsZoneDefaultsNameserversModel] `tfsdk:"nameservers" json:"nameservers,computed_optional"`
+NSTTL types.Float64 `tfsdk:"ns_ttl" json:"ns_ttl,optional"`
+SecondaryOverrides types.Bool `tfsdk:"secondary_overrides" json:"secondary_overrides,optional"`
+SOA customfield.NestedObject[AccountDNSSettingsZoneDefaultsSOAModel] `tfsdk:"soa" json:"soa,computed_optional"`
+ZoneMode types.String `tfsdk:"zone_mode" json:"zone_mode,optional"`
 }
 
 type AccountDNSSettingsZoneDefaultsInternalDNSModel struct {
-	ReferenceZoneID types.String `tfsdk:"reference_zone_id" json:"reference_zone_id,optional"`
+ReferenceZoneID types.String `tfsdk:"reference_zone_id" json:"reference_zone_id,optional"`
 }
 
 type AccountDNSSettingsZoneDefaultsNameserversModel struct {
-	Type types.String `tfsdk:"type" json:"type,required"`
+Type types.String `tfsdk:"type" json:"type,required"`
 }
 
 type AccountDNSSettingsZoneDefaultsSOAModel struct {
-	Expire  types.Float64 `tfsdk:"expire" json:"expire,required"`
-	MinTTL  types.Float64 `tfsdk:"min_ttl" json:"min_ttl,required"`
-	MNAME   types.String  `tfsdk:"mname" json:"mname,required"`
-	Refresh types.Float64 `tfsdk:"refresh" json:"refresh,required"`
-	Retry   types.Float64 `tfsdk:"retry" json:"retry,required"`
-	RNAME   types.String  `tfsdk:"rname" json:"rname,required"`
-	TTL     types.Float64 `tfsdk:"ttl" json:"ttl,required"`
+Expire types.Float64 `tfsdk:"expire" json:"expire,required"`
+MinTTL types.Float64 `tfsdk:"min_ttl" json:"min_ttl,required"`
+MNAME types.String `tfsdk:"mname" json:"mname,required"`
+Refresh types.Float64 `tfsdk:"refresh" json:"refresh,required"`
+Retry types.Float64 `tfsdk:"retry" json:"retry,required"`
+RNAME types.String `tfsdk:"rname" json:"rname,required"`
+TTL types.Float64 `tfsdk:"ttl" json:"ttl,required"`
 }

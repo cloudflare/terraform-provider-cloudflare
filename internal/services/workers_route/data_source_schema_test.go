@@ -3,17 +3,17 @@
 package workers_route_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_route"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_route"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestWorkersRouteDataSourceModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*workers_route.WorkersRouteDataSourceModel)(nil)
-	schema := workers_route.DataSourceSchema(context.TODO())
-	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*workers_route.WorkersRouteDataSourceModel)(nil)
+  schema := workers_route.DataSourceSchema(context.TODO())
+  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

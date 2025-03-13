@@ -3,16 +3,16 @@
 package load_balancer
 
 import (
-	"context"
+  "context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+  "github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+  "github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+  "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+  "github.com/hashicorp/terraform-plugin-framework/datasource"
+  "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+  "github.com/hashicorp/terraform-plugin-framework/schema/validator"
+  "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*LoadBalancersDataSource)(nil)
@@ -518,9 +518,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (d *LoadBalancersDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = ListDataSourceSchema(ctx)
+  resp.Schema = ListDataSourceSchema(ctx)
 }
 
-func (d *LoadBalancersDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+func (d *LoadBalancersDataSource) ConfigValidators(_ context.Context) ([]datasource.ConfigValidator) {
+  return []datasource.ConfigValidator{
+  }
 }

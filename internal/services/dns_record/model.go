@@ -3,15 +3,15 @@
 package dns_record
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+  "github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+  "github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+  "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type DNSRecordResultEnvelope struct {
-	Result DNSRecordModel `json:"result"`
+Result DNSRecordModel `json:"result"`
 }
 
 type DNSRecordModel struct {
@@ -36,11 +36,11 @@ type DNSRecordModel struct {
 }
 
 func (m DNSRecordModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m)
+  return apijson.MarshalRoot(m)
 }
 
 func (m DNSRecordModel) MarshalJSONForUpdate(state DNSRecordModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+  return apijson.MarshalForUpdate(m, state)
 }
 
 type DNSRecordDataModel struct {
@@ -83,7 +83,7 @@ type DNSRecordDataModel struct {
 }
 
 type DNSRecordSettingsModel struct {
-	IPV4Only     types.Bool `tfsdk:"ipv4_only" json:"ipv4_only,computed_optional"`
-	IPV6Only     types.Bool `tfsdk:"ipv6_only" json:"ipv6_only,computed_optional"`
-	FlattenCNAME types.Bool `tfsdk:"flatten_cname" json:"flatten_cname,computed_optional"`
+IPV4Only types.Bool `tfsdk:"ipv4_only" json:"ipv4_only,computed_optional"`
+IPV6Only types.Bool `tfsdk:"ipv6_only" json:"ipv6_only,computed_optional"`
+FlattenCNAME types.Bool `tfsdk:"flatten_cname" json:"flatten_cname,computed_optional"`
 }
