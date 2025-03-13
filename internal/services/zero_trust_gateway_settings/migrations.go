@@ -3,13 +3,13 @@
 package zero_trust_gateway_settings
 
 import (
-	"context"
+  "context"
 
-	"github.com/hashicorp/terraform-plugin-framework/resource"
+  "github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 var _ resource.ResourceWithUpgradeState = (*ZeroTrustGatewaySettingsResource)(nil)
 
-func (r *ZeroTrustGatewaySettingsResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	return map[int64]resource.StateUpgrader{}
+func (r *ZeroTrustGatewaySettingsResource) UpgradeState(ctx context.Context) (map[int64]resource.StateUpgrader) {
+  return map[int64]resource.StateUpgrader{}
 }

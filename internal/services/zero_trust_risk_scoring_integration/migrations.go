@@ -3,13 +3,13 @@
 package zero_trust_risk_scoring_integration
 
 import (
-	"context"
+  "context"
 
-	"github.com/hashicorp/terraform-plugin-framework/resource"
+  "github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 var _ resource.ResourceWithUpgradeState = (*ZeroTrustRiskScoringIntegrationResource)(nil)
 
-func (r *ZeroTrustRiskScoringIntegrationResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	return map[int64]resource.StateUpgrader{}
+func (r *ZeroTrustRiskScoringIntegrationResource) UpgradeState(ctx context.Context) (map[int64]resource.StateUpgrader) {
+  return map[int64]resource.StateUpgrader{}
 }

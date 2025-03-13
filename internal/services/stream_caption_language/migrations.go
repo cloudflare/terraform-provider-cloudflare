@@ -3,13 +3,13 @@
 package stream_caption_language
 
 import (
-	"context"
+  "context"
 
-	"github.com/hashicorp/terraform-plugin-framework/resource"
+  "github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 var _ resource.ResourceWithUpgradeState = (*StreamCaptionLanguageResource)(nil)
 
-func (r *StreamCaptionLanguageResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	return map[int64]resource.StateUpgrader{}
+func (r *StreamCaptionLanguageResource) UpgradeState(ctx context.Context) (map[int64]resource.StateUpgrader) {
+  return map[int64]resource.StateUpgrader{}
 }

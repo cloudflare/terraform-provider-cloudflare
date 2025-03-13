@@ -3,64 +3,69 @@
 package calls_sfu_app
 
 import (
-	"context"
+  "context"
 
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+  "github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+  "github.com/hashicorp/terraform-plugin-framework/resource"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
+  "github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
 var _ resource.ResourceWithConfigValidators = (*CallsSFUAppResource)(nil)
 
-func ResourceSchema(ctx context.Context) schema.Schema {
-	return schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description:   "The account identifier tag.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"app_id": schema.StringAttribute{
-				Description:   "A Cloudflare-generated unique identifier for a item.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"name": schema.StringAttribute{
-				Description: "A short description of Calls app, not shown to end users.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString(""),
-			},
-			"created": schema.StringAttribute{
-				Description: "The date and time the item was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"modified": schema.StringAttribute{
-				Description: "The date and time the item was last modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"secret": schema.StringAttribute{
-				Description: "Bearer token",
-				Computed:    true,
-				Sensitive:   true,
-			},
-			"uid": schema.StringAttribute{
-				Description: "A Cloudflare-generated unique identifier for a item.",
-				Computed:    true,
-			},
-		},
-	}
+func ResourceSchema(ctx context.Context) (schema.Schema) {
+  return schema.Schema{
+    Attributes: map[string]schema.Attribute{
+      "account_id": schema.StringAttribute{
+        Description: "The account identifier tag.",
+        Required: true,
+        PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+      },
+      "app_id": schema.StringAttribute{
+        Description: "A Cloudflare-generated unique identifier for a item.",
+        Optional: true,
+        PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+      },
+      "name": schema.StringAttribute{
+        Description: "A short description of Calls app, not shown to end users.",
+        Computed: true,
+        Optional: true,
+        Default: stringdefault.  StaticString(""),
+      },
+      "created": schema.StringAttribute{
+        Description: "The date and time the item was created.",
+        Computed: true,
+        CustomType: timetypes.RFC3339Type{
+
+        },
+      },
+      "modified": schema.StringAttribute{
+        Description: "The date and time the item was last modified.",
+        Computed: true,
+        CustomType: timetypes.RFC3339Type{
+
+        },
+      },
+      "secret": schema.StringAttribute{
+        Description: "Bearer token",
+        Computed: true,
+        Sensitive: true,
+      },
+      "uid": schema.StringAttribute{
+        Description: "A Cloudflare-generated unique identifier for a item.",
+        Computed: true,
+      },
+    },
+  }
 }
 
 func (r *CallsSFUAppResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = ResourceSchema(ctx)
+  resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *CallsSFUAppResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
-	return []resource.ConfigValidator{}
+func (r *CallsSFUAppResource) ConfigValidators(_ context.Context) ([]resource.ConfigValidator) {
+  return []resource.ConfigValidator{
+  }
 }

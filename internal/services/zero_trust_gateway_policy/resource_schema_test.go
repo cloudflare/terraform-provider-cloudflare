@@ -3,17 +3,17 @@
 package zero_trust_gateway_policy_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_policy"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_policy"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestZeroTrustGatewayPolicyModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*zero_trust_gateway_policy.ZeroTrustGatewayPolicyModel)(nil)
-	schema := zero_trust_gateway_policy.ResourceSchema(context.TODO())
-	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*zero_trust_gateway_policy.ZeroTrustGatewayPolicyModel)(nil)
+  schema := zero_trust_gateway_policy.ResourceSchema(context.TODO())
+  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

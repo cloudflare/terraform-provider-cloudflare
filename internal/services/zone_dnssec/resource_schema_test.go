@@ -3,17 +3,17 @@
 package zone_dnssec_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dnssec"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dnssec"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestZoneDNSSECModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*zone_dnssec.ZoneDNSSECModel)(nil)
-	schema := zone_dnssec.ResourceSchema(context.TODO())
-	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*zone_dnssec.ZoneDNSSECModel)(nil)
+  schema := zone_dnssec.ResourceSchema(context.TODO())
+  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

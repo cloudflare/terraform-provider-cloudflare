@@ -3,26 +3,26 @@
 package argo_smart_routing
 
 import (
-	"context"
+  "context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/argo"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+  "github.com/cloudflare/cloudflare-go/v4"
+  "github.com/cloudflare/cloudflare-go/v4/argo"
+  "github.com/hashicorp/terraform-plugin-framework/diag"
+  "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ArgoSmartRoutingResultDataSourceEnvelope struct {
-	Result ArgoSmartRoutingDataSourceModel `json:"result,computed"`
+Result ArgoSmartRoutingDataSourceModel `json:"result,computed"`
 }
 
 type ArgoSmartRoutingDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
+ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }
 
 func (m *ArgoSmartRoutingDataSourceModel) toReadParams(_ context.Context) (params argo.SmartRoutingGetParams, diags diag.Diagnostics) {
-	params = argo.SmartRoutingGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+  params = argo.SmartRoutingGetParams{
+    ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+  }
 
-	return
+  return
 }

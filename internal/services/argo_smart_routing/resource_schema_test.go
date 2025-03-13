@@ -3,17 +3,17 @@
 package argo_smart_routing_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/argo_smart_routing"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/argo_smart_routing"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestArgoSmartRoutingModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*argo_smart_routing.ArgoSmartRoutingModel)(nil)
-	schema := argo_smart_routing.ResourceSchema(context.TODO())
-	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*argo_smart_routing.ArgoSmartRoutingModel)(nil)
+  schema := argo_smart_routing.ResourceSchema(context.TODO())
+  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

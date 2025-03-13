@@ -3,26 +3,26 @@
 package stream_webhook
 
 import (
-	"context"
+  "context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/stream"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+  "github.com/cloudflare/cloudflare-go/v4"
+  "github.com/cloudflare/cloudflare-go/v4/stream"
+  "github.com/hashicorp/terraform-plugin-framework/diag"
+  "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type StreamWebhookResultDataSourceEnvelope struct {
-	Result StreamWebhookDataSourceModel `json:"result,computed"`
+Result StreamWebhookDataSourceModel `json:"result,computed"`
 }
 
 type StreamWebhookDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }
 
 func (m *StreamWebhookDataSourceModel) toReadParams(_ context.Context) (params stream.WebhookGetParams, diags diag.Diagnostics) {
-	params = stream.WebhookGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+  params = stream.WebhookGetParams{
+    AccountID: cloudflare.F(m.AccountID.ValueString()),
+  }
 
-	return
+  return
 }
