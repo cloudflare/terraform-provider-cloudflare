@@ -34,12 +34,12 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	SupportURL                 types.String                                                                   `tfsdk:"support_url" json:"support_url,optional"`
 	SwitchLocked               types.Bool                                                                     `tfsdk:"switch_locked" json:"switch_locked,optional"`
 	TunnelProtocol             types.String                                                                   `tfsdk:"tunnel_protocol" json:"tunnel_protocol,optional"`
+	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileExcludeModel]         `tfsdk:"exclude" json:"exclude,computed_optional"`
+	Include                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileIncludeModel]         `tfsdk:"include" json:"include,computed_optional"`
 	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceCustomProfileServiceModeV2Model]       `tfsdk:"service_mode_v2" json:"service_mode_v2,computed_optional"`
 	Default                    types.Bool                                                                     `tfsdk:"default" json:"default,computed"`
 	GatewayUniqueID            types.String                                                                   `tfsdk:"gateway_unique_id" json:"gateway_unique_id,computed"`
-	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileExcludeModel]         `tfsdk:"exclude" json:"exclude,computed"`
 	FallbackDomains            customfield.NestedObjectList[ZeroTrustDeviceCustomProfileFallbackDomainsModel] `tfsdk:"fallback_domains" json:"fallback_domains,computed"`
-	Include                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileIncludeModel]         `tfsdk:"include" json:"include,computed"`
 	TargetTests                customfield.NestedObjectList[ZeroTrustDeviceCustomProfileTargetTestsModel]     `tfsdk:"target_tests" json:"target_tests,computed"`
 }
 
@@ -51,27 +51,27 @@ func (m ZeroTrustDeviceCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustD
 	return apijson.MarshalForPatch(m, state)
 }
 
+type ZeroTrustDeviceCustomProfileExcludeModel struct {
+	Address     types.String `tfsdk:"address" json:"address,required"`
+	Description types.String `tfsdk:"description" json:"description,required"`
+	Host        types.String `tfsdk:"host" json:"host,optional"`
+}
+
+type ZeroTrustDeviceCustomProfileIncludeModel struct {
+	Address     types.String `tfsdk:"address" json:"address,required"`
+	Description types.String `tfsdk:"description" json:"description,required"`
+	Host        types.String `tfsdk:"host" json:"host,optional"`
+}
+
 type ZeroTrustDeviceCustomProfileServiceModeV2Model struct {
 	Mode types.String  `tfsdk:"mode" json:"mode,optional"`
 	Port types.Float64 `tfsdk:"port" json:"port,optional"`
-}
-
-type ZeroTrustDeviceCustomProfileExcludeModel struct {
-	Address     types.String `tfsdk:"address" json:"address,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Host        types.String `tfsdk:"host" json:"host,computed"`
 }
 
 type ZeroTrustDeviceCustomProfileFallbackDomainsModel struct {
 	Suffix      types.String                   `tfsdk:"suffix" json:"suffix,computed"`
 	Description types.String                   `tfsdk:"description" json:"description,computed"`
 	DNSServer   customfield.List[types.String] `tfsdk:"dns_server" json:"dns_server,computed"`
-}
-
-type ZeroTrustDeviceCustomProfileIncludeModel struct {
-	Address     types.String `tfsdk:"address" json:"address,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Host        types.String `tfsdk:"host" json:"host,computed"`
 }
 
 type ZeroTrustDeviceCustomProfileTargetTestsModel struct {

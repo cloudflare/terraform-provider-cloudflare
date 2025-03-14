@@ -70,6 +70,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"client_secret": schema.StringAttribute{
 						Description: "The Workspace One client secret provided in the Workspace One Admin Dashboard.",
 						Optional:    true,
+						Sensitive:   true,
 					},
 					"customer_id": schema.StringAttribute{
 						Description: "The Crowdstrike customer ID.",
@@ -86,6 +87,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"access_client_secret": schema.StringAttribute{
 						Description: "If present, this secret will be passed in the `CF-Access-Client-Secret` header when hitting the `api_url`",
 						Optional:    true,
+						Sensitive:   true,
 					},
 				},
 			},
