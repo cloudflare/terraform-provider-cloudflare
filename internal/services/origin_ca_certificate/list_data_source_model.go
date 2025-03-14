@@ -17,16 +17,14 @@ type OriginCACertificatesResultListDataSourceEnvelope struct {
 }
 
 type OriginCACertificatesDataSourceModel struct {
-	ZoneID   types.String                                                            `tfsdk:"zone_id" query:"zone_id,optional"`
+	ZoneID   types.String                                                            `tfsdk:"zone_id" query:"zone_id,required"`
 	MaxItems types.Int64                                                             `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[OriginCACertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *OriginCACertificatesDataSourceModel) toListParams(_ context.Context) (params origin_ca_certificates.OriginCACertificateListParams, diags diag.Diagnostics) {
-	params = origin_ca_certificates.OriginCACertificateListParams{}
-
-	if !m.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = origin_ca_certificates.OriginCACertificateListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	return

@@ -82,6 +82,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"custom_key": schema.StringAttribute{
 									Description: "The key for a custom uploaded certificate.",
 									Required:    true,
+									Sensitive:   true,
 								},
 							},
 						},
@@ -93,6 +94,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"custom_key": schema.StringAttribute{
 						Description: "The key for a custom uploaded certificate.",
 						Optional:    true,
+						Sensitive:   true,
 					},
 					"method": schema.StringAttribute{
 						Description: "Domain control validation (DCV) method used for this hostname.\nAvailable values: \"http\", \"txt\", \"email\".",
