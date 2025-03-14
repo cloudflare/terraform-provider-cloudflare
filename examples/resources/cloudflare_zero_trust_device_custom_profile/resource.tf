@@ -11,7 +11,17 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
   description = "Policy for test teams."
   disable_auto_fallback = true
   enabled = true
+  exclude = [{
+    address = "192.0.2.0/24"
+    description = "Exclude testing domains from the tunnel"
+    host = "*.example.com"
+  }]
   exclude_office_ips = true
+  include = [{
+    address = "192.0.2.0/24"
+    description = "Exclude testing domains from the tunnel"
+    host = "*.example.com"
+  }]
   lan_allow_minutes = 30
   lan_allow_subnet_size = 24
   register_interface_ip_with_dns = true

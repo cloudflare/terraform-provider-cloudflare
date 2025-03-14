@@ -71,8 +71,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"exclude": schema.ListNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfilesExcludeDataSourceModel](ctx),
+							Description: "List of routes excluded in the WARP client's tunnel.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfilesExcludeDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"address": schema.StringAttribute{
@@ -120,8 +121,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"include": schema.ListNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfilesIncludeDataSourceModel](ctx),
+							Description: "List of routes included in the WARP client's tunnel.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfilesIncludeDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"address": schema.StringAttribute{
