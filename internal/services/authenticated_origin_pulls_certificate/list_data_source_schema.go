@@ -84,6 +84,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"private_key": schema.StringAttribute{
 							Description: "The zone's private key.",
 							Computed:    true,
+							Sensitive:   true,
 						},
 					},
 				},

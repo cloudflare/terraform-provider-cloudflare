@@ -118,6 +118,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"custom_key": schema.StringAttribute{
 									Description: "The key for a custom uploaded certificate.",
 									Computed:    true,
+									Sensitive:   true,
 								},
 								"expires_on": schema.StringAttribute{
 									Description: "The time the custom certificate expires on.",

@@ -29,15 +29,13 @@ type OriginCACertificateDataSourceModel struct {
 }
 
 func (m *OriginCACertificateDataSourceModel) toListParams(_ context.Context) (params origin_ca_certificates.OriginCACertificateListParams, diags diag.Diagnostics) {
-	params = origin_ca_certificates.OriginCACertificateListParams{}
-
-	if !m.Filter.ZoneID.IsNull() {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	params = origin_ca_certificates.OriginCACertificateListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
 	}
 
 	return
 }
 
 type OriginCACertificateFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" query:"zone_id,optional"`
+	ZoneID types.String `tfsdk:"zone_id" query:"zone_id,required"`
 }
