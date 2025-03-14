@@ -108,6 +108,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"private_key": schema.StringAttribute{
 				Description: "The hostname certificate's private key.",
 				Computed:    true,
+				Sensitive:   true,
 			},
 			"serial_number": schema.StringAttribute{
 				Description: "The serial number on the uploaded certificate.",

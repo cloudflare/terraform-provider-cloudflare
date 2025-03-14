@@ -37,6 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"private_key": schema.StringAttribute{
 				Description:   "The zone's private key.",
 				Required:      true,
+				Sensitive:     true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"enabled": schema.BoolAttribute{
