@@ -26,6 +26,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Namespace identifier tag.",
 				Required:    true,
 			},
+			"value": schema.StringAttribute{
+				Description: "A byte sequence that was stored, up to 25 MiB in length.",
+				Computed:    true,
+			},
+			"metadata": schema.StringAttribute{
+				Description: "Arbitrary JSON associated with the key/value pair.",
+				Computed:    true,
+			},
 		},
 	}
 }
