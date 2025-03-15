@@ -34,7 +34,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"certificate_authority": schema.StringAttribute{
-				Computed: true,
+				Description: `Available values: "google", "lets_encrypt".`,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt"),
 				},
@@ -49,7 +50,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"status": schema.StringAttribute{
-				Computed: true,
+				Description: `Available values: "initializing", "pending", "active", "deactivated", "blocked", "error".`,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"initializing",
@@ -72,13 +74,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"method": schema.StringAttribute{
-						Computed: true,
+						Description: `Available values: "http", "txt".`,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("http", "txt"),
 						},
 					},
 					"status": schema.StringAttribute{
-						Computed: true,
+						Description: `Available values: "initializing", "pending", "active", "deactivated", "error".`,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"initializing",
@@ -105,7 +109,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"status": schema.StringAttribute{
-						Computed: true,
+						Description: `Available values: "pending", "active", "deactivated", "blocked", "error".`,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"pending",

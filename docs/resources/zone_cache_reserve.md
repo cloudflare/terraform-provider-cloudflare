@@ -28,6 +28,7 @@ resource "cloudflare_zone_cache_reserve" "example_zone_cache_reserve" {
 ### Optional
 
 - `value` (String) Value of the Cache Reserve zone setting.
+Available values: "on", "off".
 
 ### Read-Only
 

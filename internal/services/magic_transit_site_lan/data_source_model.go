@@ -20,7 +20,7 @@ type MagicTransitSiteLANDataSourceModel struct {
 	ID               types.String                                                                  `tfsdk:"id" json:"-,computed"`
 	LANID            types.String                                                                  `tfsdk:"lan_id" path:"lan_id,optional"`
 	AccountID        types.String                                                                  `tfsdk:"account_id" path:"account_id,required"`
-	SiteID           types.String                                                                  `tfsdk:"site_id" path:"site_id,computed"`
+	SiteID           types.String                                                                  `tfsdk:"site_id" path:"site_id,required"`
 	HaLink           types.Bool                                                                    `tfsdk:"ha_link" json:"ha_link,computed"`
 	Name             types.String                                                                  `tfsdk:"name" json:"name,computed"`
 	Physport         types.Int64                                                                   `tfsdk:"physport" json:"physport,computed"`

@@ -38,5 +38,6 @@ data "cloudflare_workers_secret" "example_workers_secret" {
 - `id` (String) A JavaScript variable name for the secret binding.
 - `name` (String) The name of this secret, this is what will be used to access it inside the Worker.
 - `type` (String) The type of secret.
+Available values: "secret_text".
 
 

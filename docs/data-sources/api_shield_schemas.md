@@ -42,6 +42,7 @@ Read-Only:
 
 - `created_at` (String)
 - `kind` (String) Kind of schema
+Available values: "openapi_v3".
 - `name` (String) Name of the schema
 - `schema_id` (String) UUID
 - `source` (String) Source of the schema

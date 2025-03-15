@@ -44,6 +44,8 @@ Read-Only:
 - `modified_on` (String)
 - `name` (String) The hostname that will point to the target gateway via CNAME.
 - `status` (String) Status of the hostname's activation.
+Available values: "active", "pending", "deleting", "error".
 - `target` (String) Target gateway of the hostname.
+Available values: "ethereum", "ipfs", "ipfs_universal_path".
 
 

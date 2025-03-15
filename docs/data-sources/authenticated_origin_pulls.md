@@ -23,23 +23,25 @@ data "cloudflare_authenticated_origin_pulls" "example_authenticated_origin_pulls
 
 ### Required
 
+- `hostname` (String) The hostname on the origin for which the client certificate uploaded will be used.
 - `zone_id` (String) Identifier
 
 ### Read-Only
 
 - `cert_id` (String) Identifier
 - `cert_status` (String) Status of the certificate or the association.
+Available values: "initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out".
 - `cert_updated_at` (String) The time when the certificate was updated.
 - `cert_uploaded_on` (String) The time when the certificate was uploaded.
 - `certificate` (String) The hostname certificate.
 - `created_at` (String) The time when the certificate was created.
 - `enabled` (Boolean) Indicates whether hostname-level authenticated origin pulls is enabled. A null value voids the association.
 - `expires_on` (String) The date when the certificate expires.
-- `hostname` (String) The hostname on the origin for which the client certificate uploaded will be used.
 - `issuer` (String) The certificate authority that issued the certificate.
 - `serial_number` (String) The serial number on the uploaded certificate.
 - `signature` (String) The type of hash used for the certificate.
 - `status` (String) Status of the certificate or the association.
+Available values: "initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out".
 - `updated_at` (String) The time when the certificate was updated.
 
 

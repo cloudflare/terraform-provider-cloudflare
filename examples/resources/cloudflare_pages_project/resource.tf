@@ -39,8 +39,8 @@ resource "cloudflare_pages_project" "example_pages_project" {
       }
       env_vars = {
         foo = {
-          value = "hello world"
           type = "plain_text"
+          value = "hello world"
         }
       }
       hyperdrive_bindings = {
@@ -115,8 +115,8 @@ resource "cloudflare_pages_project" "example_pages_project" {
       }
       env_vars = {
         foo = {
-          value = "hello world"
           type = "plain_text"
+          value = "hello world"
         }
       }
       hyperdrive_bindings = {

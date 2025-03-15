@@ -34,7 +34,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "ID of the zone setting.",
+				Description: "ID of the zone setting.\nAvailable values: \"0rtt\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -108,7 +108,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"value": schema.StringAttribute{
-				Description: "Current value of the zone setting.",
+				Description: "Current value of the zone setting.\nAvailable values: \"on\", \"off\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),

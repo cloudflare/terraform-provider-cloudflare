@@ -139,14 +139,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[RegistrarDomainsTransferInDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"accept_foa": schema.StringAttribute{
-									Description: "Form of authorization has been accepted by the registrant.",
+									Description: "Form of authorization has been accepted by the registrant.\nAvailable values: \"needed\", \"ok\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("needed", "ok"),
 									},
 								},
 								"approve_transfer": schema.StringAttribute{
-									Description: "Shows transfer status with the registry.",
+									Description: "Shows transfer status with the registry.\nAvailable values: \"needed\", \"ok\", \"pending\", \"trying\", \"rejected\", \"unknown\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -164,7 +164,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"disable_privacy": schema.StringAttribute{
-									Description: "Privacy guards are disabled at the foreign registrar.",
+									Description: "Privacy guards are disabled at the foreign registrar.\nAvailable values: \"needed\", \"ok\", \"unknown\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -175,7 +175,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"enter_auth_code": schema.StringAttribute{
-									Description: "Auth code has been entered and verified.",
+									Description: "Auth code has been entered and verified.\nAvailable values: \"needed\", \"ok\", \"pending\", \"trying\", \"rejected\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -188,7 +188,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"unlock_domain": schema.StringAttribute{
-									Description: "Domain is unlocked at the foreign registrar.",
+									Description: "Domain is unlocked at the foreign registrar.\nAvailable values: \"needed\", \"ok\", \"pending\", \"trying\", \"unknown\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(

@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
@@ -30,6 +31,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"jurisdiction": schema.StringAttribute{
+				Description: "Jurisdiction of the bucket",
+				Optional:    true,
+				Computed:    true,
+				Default:     stringdefault.StaticString("default"),
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"default",
+						"eu",
+						"fedramp",
+					),
+				},
+			},
 			"destination": schema.SingleNestedAttribute{
 				Description: "R2 bucket to copy objects to",
 				Computed:    true,
@@ -37,18 +51,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[R2BucketSippyDestinationModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"access_key_id": schema.StringAttribute{
-						Description: "ID of a Cloudflare API token.\nThis is the value labelled \"Access Key ID\" when creating an API\ntoken from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).\n\nSippy will use this token when writing objects to R2, so it is\nbest to scope this token to the bucket you're enabling Sippy for.\n",
+						Description: "ID of a Cloudflare API token.\nThis is the value labelled \"Access Key ID\" when creating an API\ntoken from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).\n\nSippy will use this token when writing objects to R2, so it is\nbest to scope this token to the bucket you're enabling Sippy for.",
 						Optional:    true,
 					},
 					"provider": schema.StringAttribute{
-						Optional: true,
+						Description: `Available values: "r2".`,
+						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("r2"),
 						},
 					},
 					"secret_access_key": schema.StringAttribute{
-						Description: "Value of a Cloudflare API token.\nThis is the value labelled \"Secret Access Key\" when creating an API\ntoken from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).\n\nSippy will use this token when writing objects to R2, so it is\nbest to scope this token to the bucket you're enabling Sippy for.\n",
+						Description: "Value of a Cloudflare API token.\nThis is the value labelled \"Secret Access Key\" when creating an API\ntoken from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).\n\nSippy will use this token when writing objects to R2, so it is\nbest to scope this token to the bucket you're enabling Sippy for.",
 						Optional:    true,
+						Sensitive:   true,
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
@@ -68,7 +84,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"provider": schema.StringAttribute{
-						Optional: true,
+						Description: `Available values: "aws".`,
+						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("aws", "gcs"),
 						},
@@ -80,6 +97,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"secret_access_key": schema.StringAttribute{
 						Description: "Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket)",
 						Optional:    true,
+						Sensitive:   true,
 					},
 					"client_email": schema.StringAttribute{
 						Description: "Client email of an IAM credential (ideally scoped to a single GCS bucket)",
@@ -88,6 +106,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"private_key": schema.StringAttribute{
 						Description: "Private Key of an IAM credential (ideally scoped to a single GCS bucket)",
 						Optional:    true,
+						Sensitive:   true,
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},

@@ -119,8 +119,10 @@ Optional:
 
 - `default_percent` (Number) The percent of traffic to shed from the pool, according to the default policy. Applies to new sessions and traffic without session affinity.
 - `default_policy` (String) The default policy to use when load shedding. A random policy randomly sheds a given percent of requests. A hash policy computes a hash over the CF-Connecting-IP address and sheds all requests originating from a percent of IPs.
+Available values: "random", "hash".
 - `session_percent` (Number) The percent of existing sessions to shed from the pool, according to the session policy.
 - `session_policy` (String) Only the hash policy is supported for existing sessions (to avoid exponential decay).
+Available values: "hash".
 
 
 <a id="nestedatt--notification_filter"></a>
@@ -160,6 +162,7 @@ Optional:
 - `"hash"`: Select an origin by computing a hash over the CF-Connecting-IP address.
 - `"least_outstanding_requests"`: Select an origin by taking into consideration origin weights, as well as each origin's number of outstanding requests. Origins with more pending requests are weighted proportionately less relative to others.
 - `"least_connections"`: Select an origin by taking into consideration origin weights, as well as each origin's number of open connections. Origins with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.
+Available values: "random", "hash", "least_outstanding_requests", "least_connections".
 
 ## Import
 

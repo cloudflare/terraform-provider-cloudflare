@@ -31,7 +31,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "List of Cloud Connector rules",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[CloudConnectorRulesRulesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -48,7 +50,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"parameters": schema.SingleNestedAttribute{
 							Description: "Parameters of Cloud Connector Rule",
+							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[CloudConnectorRulesRulesParametersModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"host": schema.StringAttribute{
 									Description: "Host to perform Cloud Connection to",
@@ -57,7 +61,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"cloud_provider": schema.StringAttribute{
-							Description: "Cloud Provider type",
+							Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"r2\", \"gcp_storage\", \"azure_storage\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -73,7 +77,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"cloud_provider": schema.StringAttribute{
-				Description: "Cloud Provider type",
+				Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"r2\", \"gcp_storage\", \"azure_storage\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

@@ -26,7 +26,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "The direction used to sort returned cookies.'",
+				Description: "The direction used to sort returned cookies.'\nAvailable values: \"asc\", \"desc\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
@@ -37,14 +37,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"export": schema.StringAttribute{
-				Description: "Export the list of cookies as a file.",
+				Description: "Export the list of cookies as a file.\nAvailable values: \"csv\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("csv"),
 				},
 			},
 			"hosts": schema.StringAttribute{
-				Description: "Includes cookies that match one or more URL-encoded hostnames separated by commas.\n\nWildcards are supported at the start and end of each hostname to support starts with, ends with\nand contains. If no wildcards are used, results will be filtered by exact match\n",
+				Description: "Includes cookies that match one or more URL-encoded hostnames separated by commas.\n\nWildcards are supported at the start and end of each hostname to support starts with, ends with\nand contains. If no wildcards are used, results will be filtered by exact match",
 				Optional:    true,
 			},
 			"http_only": schema.BoolAttribute{
@@ -52,22 +52,22 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "Filters the returned cookies that match the specified name.\nWildcards are supported at the start and end to support starts with, ends with\nand contains. e.g. session*\n",
+				Description: "Filters the returned cookies that match the specified name.\nWildcards are supported at the start and end to support starts with, ends with\nand contains. e.g. session*",
 				Optional:    true,
 			},
 			"order_by": schema.StringAttribute{
-				Description: "The field used to sort returned cookies.",
+				Description: "The field used to sort returned cookies.\nAvailable values: \"first_seen_at\", \"last_seen_at\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("first_seen_at", "last_seen_at"),
 				},
 			},
 			"page": schema.StringAttribute{
-				Description: "The current page number of the paginated results.\n\nWe additionally support a special value \"all\". When \"all\" is used, the API will return all the cookies\nwith the applied filters in a single page. This feature is best-effort and it may only work for zones with \na low number of cookies\n",
+				Description: "The current page number of the paginated results.\n\nWe additionally support a special value \"all\". When \"all\" is used, the API will return all the cookies\nwith the applied filters in a single page. This feature is best-effort and it may only work for zones with \na low number of cookies",
 				Optional:    true,
 			},
 			"page_url": schema.StringAttribute{
-				Description: "Includes connections that match one or more page URLs (separated by commas) where they were last seen\n\nWildcards are supported at the start and end of each page URL to support starts with, ends with\nand contains. If no wildcards are used, results will be filtered by exact match\n",
+				Description: "Includes connections that match one or more page URLs (separated by commas) where they were last seen\n\nWildcards are supported at the start and end of each page URL to support starts with, ends with\nand contains. If no wildcards are used, results will be filtered by exact match",
 				Optional:    true,
 			},
 			"path": schema.StringAttribute{
@@ -82,7 +82,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"same_site": schema.StringAttribute{
-				Description: "Filters the returned cookies that match the specified same_site attribute",
+				Description: "Filters the returned cookies that match the specified same_site attribute\nAvailable values: \"lax\", \"strict\", \"none\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -97,7 +97,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Filters the returned cookies that match the specified type attribute",
+				Description: "Filters the returned cookies that match the specified type attribute\nAvailable values: \"first_party\", \"unknown\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("first_party", "unknown"),
@@ -135,7 +135,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"type": schema.StringAttribute{
-							Computed: true,
+							Description: `Available values: "first_party", "unknown".`,
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("first_party", "unknown"),
 							},
@@ -162,7 +163,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"same_site_attribute": schema.StringAttribute{
-							Computed: true,
+							Description: `Available values: "lax", "strict", "none".`,
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"lax",

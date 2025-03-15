@@ -38,6 +38,7 @@ resource "cloudflare_authenticated_origin_pulls" "example_authenticated_origin_p
 
 - `cert_id` (String) Identifier
 - `cert_status` (String) Status of the certificate or the association.
+Available values: "initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out".
 - `cert_updated_at` (String) The time when the certificate was updated.
 - `cert_uploaded_on` (String) The time when the certificate was uploaded.
 - `certificate` (String) The hostname certificate.
@@ -50,6 +51,7 @@ resource "cloudflare_authenticated_origin_pulls" "example_authenticated_origin_p
 - `serial_number` (String) The serial number on the uploaded certificate.
 - `signature` (String) The type of hash used for the certificate.
 - `status` (String) Status of the certificate or the association.
+Available values: "initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out".
 - `updated_at` (String) The time when the certificate was updated.
 
 <a id="nestedatt--config"></a>

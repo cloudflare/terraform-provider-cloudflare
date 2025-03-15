@@ -38,6 +38,7 @@ data "cloudflare_zero_trust_list" "example_zero_trust_list" {
 - `list_count` (Number) The number of items in the list.
 - `name` (String) The name of the list.
 - `type` (String) The type of list.
+Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 - `updated_at` (String)
 
 <a id="nestedatt--filter"></a>
@@ -46,5 +47,6 @@ data "cloudflare_zero_trust_list" "example_zero_trust_list" {
 Optional:
 
 - `type` (String) The type of list.
+Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 
 

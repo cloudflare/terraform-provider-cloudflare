@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -32,12 +31,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"allowed_match_count": schema.Int64Attribute{
 				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
 				Computed:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(0, 1000),
-				},
 			},
 			"confidence_threshold": schema.StringAttribute{
-				Computed: true,
+				Description: `Available values: "low", "medium", "high", "very_high".`,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"low",
@@ -72,7 +69,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Computed: true,
+				Description: `Available values: "custom".`,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"custom",
@@ -134,7 +132,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed: true,
 								},
 								"validation": schema.StringAttribute{
-									Computed: true,
+									Description: `Available values: "luhn".`,
+									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("luhn"),
 									},
@@ -142,7 +141,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Computed: true,
+							Description: `Available values: "custom".`,
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"custom",
@@ -165,10 +165,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[ZeroTrustDLPPredefinedProfileEntriesConfidenceDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"ai_context_available": schema.BoolAttribute{
-									Computed: true,
+									Description: "Indicates whether this entry has AI remote service validation",
+									Computed:    true,
 								},
 								"available": schema.BoolAttribute{
-									Description: "Indicates whether this entry can be made more or less sensitive by setting a confidence threshold.\nProfiles that use an entry with `available` set to true can use confidence thresholds",
+									Description: "Indicates whether this entry has any form of validation that is not an AI remote service",
 									Computed:    true,
 								},
 							},

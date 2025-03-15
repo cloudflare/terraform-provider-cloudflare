@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/r2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -74,6 +75,7 @@ func (r *R2CustomDomainResource) Create(ctx context.Context, req resource.Create
 		r2.BucketDomainCustomNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
+		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -120,10 +122,11 @@ func (r *R2CustomDomainResource) Update(ctx context.Context, req resource.Update
 	_, err = r.client.R2.Buckets.Domains.Custom.Update(
 		ctx,
 		data.BucketName.ValueString(),
-		data.DomainName.ValueString(),
+		data.Domain.ValueString(),
 		r2.BucketDomainCustomUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
+		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -157,10 +160,11 @@ func (r *R2CustomDomainResource) Read(ctx context.Context, req resource.ReadRequ
 	_, err := r.client.R2.Buckets.Domains.Custom.Get(
 		ctx,
 		data.BucketName.ValueString(),
-		data.DomainName.ValueString(),
+		data.Domain.ValueString(),
 		r2.BucketDomainCustomGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
+		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -174,7 +178,7 @@ func (r *R2CustomDomainResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -196,10 +200,11 @@ func (r *R2CustomDomainResource) Delete(ctx context.Context, req resource.Delete
 	_, err := r.client.R2.Buckets.Domains.Custom.Delete(
 		ctx,
 		data.BucketName.ValueString(),
-		data.DomainName.ValueString(),
+		data.Domain.ValueString(),
 		r2.BucketDomainCustomDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
+		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

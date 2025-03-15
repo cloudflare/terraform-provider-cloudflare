@@ -30,6 +30,7 @@ resource "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_c
 - `custom_html` (String) Custom page HTML.
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
+Available values: "identity_denied", "forbidden".
 
 ### Optional
 

@@ -15,7 +15,7 @@ description: |-
 data "cloudflare_zero_trust_tunnel_cloudflareds" "example_zero_trust_tunnel_cloudflareds" {
   account_id = "699d98642c564d2e855e9661899b7252"
   exclude_prefix = "vpc1-"
-  existed_at = "2019-10-12T07:20:50.52Z"
+  existed_at = "2019-10-12T07%3A20%3A50.52Z"
   include_prefix = "vpc1-"
   is_deleted = true
   name = "blog"
@@ -36,12 +36,13 @@ data "cloudflare_zero_trust_tunnel_cloudflareds" "example_zero_trust_tunnel_clou
 ### Optional
 
 - `exclude_prefix` (String)
-- `existed_at` (String) If provided, include only tunnels that were created (and not deleted) before this time.
+- `existed_at` (String) If provided, include only resources that were created (and not deleted) before this time. URL encoded.
 - `include_prefix` (String)
 - `is_deleted` (Boolean) If `true`, only include deleted tunnels. If `false`, exclude deleted tunnels. If empty, all tunnels will be included.
 - `max_items` (Number) Max items to fetch, default: 1000
 - `name` (String) A user-friendly name for a tunnel.
 - `status` (String) The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).
+Available values: "inactive", "degraded", "healthy", "down".
 - `uuid` (String) UUID of the tunnel.
 - `was_active_at` (String)
 - `was_inactive_at` (String)
@@ -66,7 +67,9 @@ Read-Only:
 - `name` (String) A user-friendly name for a tunnel.
 - `remote_config` (Boolean) If `true`, the tunnel can be configured remotely from the Zero Trust dashboard. If `false`, the tunnel must be configured locally on the origin machine.
 - `status` (String) The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).
+Available values: "inactive", "degraded", "healthy", "down".
 - `tun_type` (String) The type of tunnel.
+Available values: "cfd_tunnel", "warp_connector", "warp", "magic", "ip_sec", "gre", "cni".
 
 <a id="nestedatt--result--connections"></a>
 ### Nested Schema for `result.connections`

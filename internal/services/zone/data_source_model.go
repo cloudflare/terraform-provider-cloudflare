@@ -81,8 +81,8 @@ func (m *ZoneDataSourceModel) toListParams(_ context.Context) (params zones.Zone
 }
 
 type ZoneAccountDataSourceModel struct {
-	ID   types.String `tfsdk:"id" json:"id,optional"`
-	Name types.String `tfsdk:"name" json:"name,optional"`
+	ID   types.String `tfsdk:"id" json:"id,computed"`
+	Name types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type ZoneMetaDataSourceModel struct {
@@ -102,10 +102,10 @@ type ZoneOwnerDataSourceModel struct {
 }
 
 type ZoneFindOneByDataSourceModel struct {
-	Account   *ZoneAccountDataSourceModel `tfsdk:"account" query:"account,optional"`
-	Direction types.String                `tfsdk:"direction" query:"direction,optional"`
-	Match     types.String                `tfsdk:"match" query:"match,computed_optional"`
-	Name      types.String                `tfsdk:"name" query:"name,optional"`
-	Order     types.String                `tfsdk:"order" query:"order,optional"`
-	Status    types.String                `tfsdk:"status" query:"status,optional"`
+	Account   *ZonesAccountDataSourceModel `tfsdk:"account" query:"account,optional"`
+	Direction types.String                 `tfsdk:"direction" query:"direction,optional"`
+	Match     types.String                 `tfsdk:"match" query:"match,computed_optional"`
+	Name      types.String                 `tfsdk:"name" query:"name,optional"`
+	Order     types.String                 `tfsdk:"order" query:"order,optional"`
+	Status    types.String                 `tfsdk:"status" query:"status,optional"`
 }

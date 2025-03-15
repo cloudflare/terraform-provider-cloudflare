@@ -32,7 +32,7 @@ resource "cloudflare_account_member" "example_account_member" {
 
 - `policies` (Attributes List) Array of policies associated with this member. (see [below for nested schema](#nestedatt--policies))
 - `roles` (List of String) Array of roles associated with this member.
-- `status` (String)
+- `status` (String) Available values: "accepted", "pending".
 
 ### Read-Only
 
@@ -45,6 +45,7 @@ resource "cloudflare_account_member" "example_account_member" {
 Required:
 
 - `access` (String) Allow or deny operations against the resources.
+Available values: "allow", "deny".
 - `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
 - `resource_groups` (Attributes List) A list of resource groups that the policy applies to. (see [below for nested schema](#nestedatt--policies--resource_groups))
 

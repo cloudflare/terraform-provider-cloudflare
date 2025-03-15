@@ -47,6 +47,7 @@ data "cloudflare_zero_trust_access_infrastructure_targets" "example_zero_trust_a
 - `created_after` (String) Date and time at which the target was created after (inclusive)
 - `created_before` (String) Date and time at which the target was created before (inclusive)
 - `direction` (String) The sorting direction.
+Available values: "asc", "desc".
 - `hostname` (String) Hostname of a target
 - `hostname_contains` (String) Partial match to the hostname of a target
 - `ip_like` (String) Filters for targets whose IP addresses look like the specified string.
@@ -67,6 +68,7 @@ Supports `*` as a wildcard character
 - `modified_after` (String) Date and time at which the target was modified after (inclusive)
 - `modified_before` (String) Date and time at which the target was modified before (inclusive)
 - `order` (String) The field to sort by.
+Available values: "hostname", "created_at".
 - `target_ids` (List of String) Filters for targets that have any of the following UUIDs. Specify
 `target_ids` multiple times in query parameter to build list of
 candidates.

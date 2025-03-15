@@ -42,6 +42,7 @@ Read-Only:
 - `approval_required` (Boolean) Requires the user to request access from an administrator at the start of each session.
 - `created_at` (String)
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
+Available values: "allow", "deny", "non_identity", "bypass".
 - `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--result--exclude))
 - `id` (String) The UUID of the policy
 - `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--result--include))

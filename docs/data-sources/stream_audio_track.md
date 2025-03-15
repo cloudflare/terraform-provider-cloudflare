@@ -31,6 +31,7 @@ data "cloudflare_stream_audio_track" "example_stream_audio_track" {
 - `default` (Boolean) Denotes whether the audio track will be played by default in a player.
 - `label` (String) A string to uniquely identify the track amongst other audio track labels for the specified video.
 - `status` (String) Specifies the processing status of the video.
+Available values: "queued", "ready", "error".
 - `uid` (String) A Cloudflare-generated unique identifier for a media item.
 
 

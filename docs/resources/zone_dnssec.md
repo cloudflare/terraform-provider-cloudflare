@@ -42,6 +42,7 @@ Cloudflare to sign any records on the fly.
 Note that this feature has some limitations.
 See [Cloudflare as Secondary](https://developers.cloudflare.com/dns/zone-setups/zone-transfers/cloudflare-as-secondary/setup/#dnssec) for details.
 - `status` (String) Status of DNSSEC, based on user-desired state and presence of necessary records.
+Available values: "active", "disabled".
 
 ### Read-Only
 

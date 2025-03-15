@@ -40,6 +40,7 @@ data "cloudflare_streams" "example_streams" {
 - `search` (String) Searches over the `name` key in the `meta` field. This field can be set with or after the upload request.
 - `start` (String) Lists videos created after the specified date.
 - `status` (String) Specifies the processing status for all quality levels for a video.
+Available values: "pendingupload", "downloading", "queued", "inprogress", "ready", "error".
 - `type` (String) Specifies whether the video is `vod` or `live`.
 
 ### Read-Only
@@ -102,6 +103,7 @@ Read-Only:
 - `error_reason_text` (String) Specifies why the video failed to encode using a human readable error message in English. This field is empty if the video is not in an `error` state.
 - `pct_complete` (String) Indicates the size of the entire upload in bytes. The value must be a non-negative integer.
 - `state` (String) Specifies the processing status for all quality levels for a video.
+Available values: "pendingupload", "downloading", "queued", "inprogress", "ready", "error".
 
 
 <a id="nestedatt--result--watermark"></a>

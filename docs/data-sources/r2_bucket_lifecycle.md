@@ -55,7 +55,7 @@ Read-Only:
 Read-Only:
 
 - `max_age` (Number)
-- `type` (String)
+- `type` (String) Available values: "Age".
 
 
 
@@ -81,7 +81,7 @@ Read-Only:
 
 - `date` (String)
 - `max_age` (Number)
-- `type` (String)
+- `type` (String) Available values: "Age".
 
 
 
@@ -91,7 +91,7 @@ Read-Only:
 Read-Only:
 
 - `condition` (Attributes) Condition for lifecycle transitions to apply after an object reaches an age in seconds (see [below for nested schema](#nestedatt--rules--storage_class_transitions--condition))
-- `storage_class` (String)
+- `storage_class` (String) Available values: "InfrequentAccess".
 
 <a id="nestedatt--rules--storage_class_transitions--condition"></a>
 ### Nested Schema for `rules.storage_class_transitions.condition`
@@ -100,6 +100,6 @@ Read-Only:
 
 - `date` (String)
 - `max_age` (Number)
-- `type` (String)
+- `type` (String) Available values: "Age".
 
 

@@ -29,6 +29,7 @@ data "cloudflare_zero_trust_lists" "example_zero_trust_lists" {
 
 - `max_items` (Number) Max items to fetch, default: 1000
 - `type` (String) The type of list.
+Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 
 ### Read-Only
 
@@ -45,6 +46,7 @@ Read-Only:
 - `list_count` (Number) The number of items in the list.
 - `name` (String) The name of the list.
 - `type` (String) The type of list.
+Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 - `updated_at` (String)
 
 

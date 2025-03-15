@@ -12,12 +12,12 @@ resource "cloudflare_workers_script" "example_workers_script" {
   }
   bindings = [{
     name = "MY_ENV_VAR"
-    text = "my_data"
     type = "plain_text"
   }]
   body_part = "worker.js"
   compatibility_date = "2021-01-01"
   compatibility_flags = ["nodejs_compat"]
+  content = file("worker.js")
   keep_assets = false
   keep_bindings = ["string"]
   logpush = false

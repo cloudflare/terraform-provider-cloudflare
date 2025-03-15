@@ -37,5 +37,6 @@ if you have a catch-all Page Rule (rule A: `/images/*`) but want a more
 specific Page Rule to take precedence (rule B: `/images/special/*`),
 specify a higher priority for rule B so it overrides rule A.
 - `status` (String) The status of the Page Rule.
+Available values: "active", "disabled".
 
 

@@ -67,7 +67,7 @@ Read-Only:
 - `preserve_path_suffix` (Boolean)
 - `preserve_query_string` (Boolean)
 - `source_url` (String)
-- `status_code` (Number)
+- `status_code` (Number) Available values: 301, 302, 307, 308.
 - `subpath_matching` (Boolean)
 - `target_url` (String)
 

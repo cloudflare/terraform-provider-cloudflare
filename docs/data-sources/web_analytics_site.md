@@ -47,6 +47,7 @@ data "cloudflare_web_analytics_site" "example_web_analytics_site" {
 Optional:
 
 - `order_by` (String) The property used to sort the list of results.
+Available values: "host", "created".
 
 
 <a id="nestedatt--rules"></a>

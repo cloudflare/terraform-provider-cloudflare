@@ -57,8 +57,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"type": schema.StringAttribute{
-				Description: "Record type.",
 				Required:    true,
+				Description: "Record type.\nAvailable values: \"A\".",
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"A",
@@ -124,9 +124,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"flags": schema.Float64Attribute{
 						Description: "Flags for the CAA record.",
 						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(0, 255),
-						},
 					},
 					"tag": schema.StringAttribute{
 						Description: "Name of the property controlled by this record (e.g.: issue, issuewild, iodef).",
@@ -158,7 +155,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Type.",
 						Optional:    true,
 						Validators: []validator.Float64{
-							float64validator.Between(0, 65535),
+							float64validator.AtLeast(0),
 						},
 					},
 					"protocol": schema.Float64Attribute{
@@ -209,7 +206,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"lat_direction": schema.StringAttribute{
-						Description: "Latitude direction.",
+						Description: "Latitude direction.\nAvailable values: \"N\", \"S\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("N", "S"),
@@ -241,7 +238,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"long_direction": schema.StringAttribute{
-						Description: "Longitude direction.",
+						Description: "Longitude direction.\nAvailable values: \"E\", \"W\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("E", "W"),

@@ -27,8 +27,10 @@ data "cloudflare_spectrum_applications" "example_spectrum_applications" {
 ### Optional
 
 - `direction` (String) Sets the direction by which results are ordered.
+Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) Application field by which results are ordered.
+Available values: "protocol", "app_id", "created_on", "modified_on", "dns".
 
 ### Read-Only
 

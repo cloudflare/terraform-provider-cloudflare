@@ -28,6 +28,7 @@ resource "cloudflare_api_shield_operation" "example_api_shield_operation" {
 - `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.
 - `host` (String) RFC3986-compliant host.
 - `method` (String) The HTTP method used to access the endpoint.
+Available values: "GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "CONNECT", "PATCH", "TRACE".
 - `zone_id` (String) Identifier
 
 ### Read-Only
@@ -138,6 +139,7 @@ Read-Only:
 - `active_schema` (Attributes) Schema active on endpoint. (see [below for nested schema](#nestedatt--features--schema_info--active_schema))
 - `learned_available` (Boolean) True if a Cloudflare-provided learned schema is available for this endpoint.
 - `mitigation_action` (String) Action taken on requests failing validation.
+Available values: "none", "log", "block".
 
 <a id="nestedatt--features--schema_info--active_schema"></a>
 ### Nested Schema for `features.schema_info.active_schema`

@@ -59,15 +59,20 @@ data "cloudflare_dns_records" "example_dns_records" {
 - `comment` (Attributes) (see [below for nested schema](#nestedatt--comment))
 - `content` (Attributes) (see [below for nested schema](#nestedatt--content))
 - `direction` (String) Direction to order DNS records in.
+Available values: "asc", "desc".
 - `match` (String) Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead. Note that the interaction between tag filters is controlled by the `tag-match` parameter instead.
+Available values: "any", "all".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `name` (Attributes) (see [below for nested schema](#nestedatt--name))
 - `order` (String) Field to order DNS records by.
+Available values: "type", "name", "content", "ttl", "proxied".
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `search` (String) Allows searching in multiple properties of a DNS record simultaneously. This parameter is intended for human users, not automation. Its exact behavior is intentionally left unspecified and is subject to change in the future. This parameter works independently of the `match` setting. For automated searches, please use the other available parameters.
 - `tag` (Attributes) (see [below for nested schema](#nestedatt--tag))
 - `tag_match` (String) Whether to match all tag search requirements or at least one (any). If set to `all`, acts like a logical AND between tag filters. If set to `any`, acts like a logical OR instead. Note that the regular `match` parameter is still used to combine the resulting condition with other filters that aren't related to tags.
+Available values: "any", "all".
 - `type` (String) Record type.
+Available values: "A", "AAAA", "CAA", "CERT", "CNAME", "DNSKEY", "DS", "HTTPS", "LOC", "MX", "NAPTR", "NS", "OPENPGPKEY", "PTR", "SMIMEA", "SRV", "SSHFP", "SVCB", "TLSA", "TXT", "URI".
 
 ### Read-Only
 
@@ -143,6 +148,7 @@ Read-Only:
 - `tags_modified_on` (String) When the record tags were last modified. Omitted if there are no tags.
 - `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
 - `type` (String) Record type.
+Available values: "A".
 
 <a id="nestedatt--result--data"></a>
 ### Nested Schema for `result.data`
@@ -159,10 +165,12 @@ Read-Only:
 - `key_tag` (Number) Key Tag.
 - `lat_degrees` (Number) Degrees of latitude.
 - `lat_direction` (String) Latitude direction.
+Available values: "N", "S".
 - `lat_minutes` (Number) Minutes of latitude.
 - `lat_seconds` (Number) Seconds of latitude.
 - `long_degrees` (Number) Degrees of longitude.
 - `long_direction` (String) Longitude direction.
+Available values: "E", "W".
 - `long_minutes` (Number) Minutes of longitude.
 - `long_seconds` (Number) Seconds of longitude.
 - `matching_type` (Number) Matching Type.

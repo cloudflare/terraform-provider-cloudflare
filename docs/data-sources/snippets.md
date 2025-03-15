@@ -23,12 +23,12 @@ data "cloudflare_snippets" "example_snippets" {
 
 ### Required
 
+- `snippet_name` (String) Snippet identifying name
 - `zone_id` (String) Identifier
 
 ### Read-Only
 
 - `created_on` (String) Creation time of the snippet
 - `modified_on` (String) Modification time of the snippet
-- `snippet_name` (String) Snippet identifying name
 
 

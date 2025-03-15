@@ -36,10 +36,13 @@ data "cloudflare_dns_settings_internal_views" "example_dns_settings_internal_vie
 ### Optional
 
 - `direction` (String) Direction to order DNS views in.
+Available values: "asc", "desc".
 - `match` (String) Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead.
+Available values: "any", "all".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `name` (Attributes) (see [below for nested schema](#nestedatt--name))
 - `order` (String) Field to order DNS views by.
+Available values: "name", "created_on", "modified_on".
 - `zone_id` (String) A zone ID that exists in the zones list for the view.
 - `zone_name` (String) A zone name that exists in the zones list for the view.
 

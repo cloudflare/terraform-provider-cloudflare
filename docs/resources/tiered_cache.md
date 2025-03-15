@@ -24,6 +24,7 @@ resource "cloudflare_tiered_cache" "example_tiered_cache" {
 ### Required
 
 - `value` (String) Enable or disable the Smart Tiered Cache
+Available values: "on", "off".
 - `zone_id` (String) Identifier
 
 ### Read-Only

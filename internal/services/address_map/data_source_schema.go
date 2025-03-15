@@ -94,7 +94,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"kind": schema.StringAttribute{
-							Description: "The type of the membership.",
+							Description: "The type of the membership.\nAvailable values: \"zone\", \"account\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("zone", "account"),

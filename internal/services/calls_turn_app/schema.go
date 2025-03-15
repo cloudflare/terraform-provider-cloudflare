@@ -42,6 +42,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"key": schema.StringAttribute{
 				Description: "Bearer token",
 				Computed:    true,
+				Sensitive:   true,
 			},
 			"modified": schema.StringAttribute{
 				Description: "The date and time the item was last modified.",

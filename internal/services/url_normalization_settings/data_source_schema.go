@@ -21,14 +21,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"scope": schema.StringAttribute{
-				Description: "The scope of the URL normalization.",
+				Description: "The scope of the URL normalization.\nAvailable values: \"incoming\", \"both\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("incoming", "both"),
 				},
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of URL normalization performed by Cloudflare.",
+				Description: "The type of URL normalization performed by Cloudflare.\nAvailable values: \"cloudflare\", \"rfc3986\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("cloudflare", "rfc3986"),

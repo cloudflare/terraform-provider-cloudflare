@@ -40,7 +40,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"binding_status": schema.StringAttribute{
-							Description: "The deployment status of the certificate on Cloudflare's edge. Certificates in the 'available' (previously called 'active') state may be used for Gateway TLS interception.",
+							Description: "The deployment status of the certificate on Cloudflare's edge. Certificates in the 'available' (previously called 'active') state may be used for Gateway TLS interception.\nAvailable values: \"pending_deployment\", \"available\", \"pending_deletion\", \"inactive\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -80,7 +80,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The type of certificate, either BYO-PKI (custom) or Gateway-managed.",
+							Description: "The type of certificate, either BYO-PKI (custom) or Gateway-managed.\nAvailable values: \"custom\", \"gateway_managed\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("custom", "gateway_managed"),

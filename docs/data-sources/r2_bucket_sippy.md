@@ -41,7 +41,7 @@ Read-Only:
 bucket
 - `account` (String)
 - `bucket` (String) Name of the bucket on the provider
-- `provider` (String)
+- `provider` (String) Available values: "r2".
 
 
 <a id="nestedatt--source"></a>
@@ -50,7 +50,7 @@ bucket
 Read-Only:
 
 - `bucket` (String) Name of the bucket on the provider
-- `provider` (String)
+- `provider` (String) Available values: "aws", "gcs".
 - `region` (String) Region where the bucket resides (AWS only)
 
 

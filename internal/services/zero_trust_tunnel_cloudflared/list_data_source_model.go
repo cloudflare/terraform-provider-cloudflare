@@ -21,7 +21,7 @@ type ZeroTrustTunnelCloudflaredsResultListDataSourceEnvelope struct {
 type ZeroTrustTunnelCloudflaredsDataSourceModel struct {
 	AccountID     types.String                                                                   `tfsdk:"account_id" path:"account_id,required"`
 	ExcludePrefix types.String                                                                   `tfsdk:"exclude_prefix" query:"exclude_prefix,optional"`
-	ExistedAt     timetypes.RFC3339                                                              `tfsdk:"existed_at" query:"existed_at,optional" format:"date-time"`
+	ExistedAt     types.String                                                                   `tfsdk:"existed_at" query:"existed_at,optional"`
 	IncludePrefix types.String                                                                   `tfsdk:"include_prefix" query:"include_prefix,optional"`
 	IsDeleted     types.Bool                                                                     `tfsdk:"is_deleted" query:"is_deleted,optional"`
 	Name          types.String                                                                   `tfsdk:"name" query:"name,optional"`
@@ -33,15 +33,13 @@ type ZeroTrustTunnelCloudflaredsDataSourceModel struct {
 	Result        customfield.NestedObjectList[ZeroTrustTunnelCloudflaredsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelListParams, diags diag.Diagnostics) {
-	mExistedAt, errs := m.ExistedAt.ValueRFC3339Time()
-	diags.Append(errs...)
+func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelCloudflaredListParams, diags diag.Diagnostics) {
 	mWasActiveAt, errs := m.WasActiveAt.ValueRFC3339Time()
 	diags.Append(errs...)
 	mWasInactiveAt, errs := m.WasInactiveAt.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = zero_trust.TunnelListParams{
+	params = zero_trust.TunnelCloudflaredListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
@@ -49,7 +47,7 @@ func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Cont
 		params.ExcludePrefix = cloudflare.F(m.ExcludePrefix.ValueString())
 	}
 	if !m.ExistedAt.IsNull() {
-		params.ExistedAt = cloudflare.F(mExistedAt)
+		params.ExistedAt = cloudflare.F(m.ExistedAt.ValueString())
 	}
 	if !m.IncludePrefix.IsNull() {
 		params.IncludePrefix = cloudflare.F(m.IncludePrefix.ValueString())
@@ -61,7 +59,7 @@ func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Cont
 		params.Name = cloudflare.F(m.Name.ValueString())
 	}
 	if !m.Status.IsNull() {
-		params.Status = cloudflare.F(zero_trust.TunnelListParamsStatus(m.Status.ValueString()))
+		params.Status = cloudflare.F(zero_trust.TunnelCloudflaredListParamsStatus(m.Status.ValueString()))
 	}
 	if !m.UUID.IsNull() {
 		params.UUID = cloudflare.F(m.UUID.ValueString())

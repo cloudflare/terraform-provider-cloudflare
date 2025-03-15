@@ -63,9 +63,10 @@ Read-Only:
 - `access_client_secret` (String) The Client Secret of the Access token to use when connecting to the origin database. This value is write-only and never returned by the API.
 - `database` (String) The name of your origin database.
 - `host` (String) The host (hostname or IP) of your origin database.
-- `password` (String) The password required to access your origin database. This value is write-only and never returned by the API.
+- `password` (String, Sensitive) The password required to access your origin database. This value is write-only and never returned by the API.
 - `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
+Available values: "postgres", "postgresql".
 - `user` (String) The user of your origin database.
 
 

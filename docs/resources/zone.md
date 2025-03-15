@@ -34,6 +34,7 @@ resource "cloudflare_zone" "example_zone" {
 
 - `type` (String) A full zone implies that DNS is hosted with Cloudflare. A partial zone is
 typically a partner-hosted zone or a CNAME setup.
+Available values: "full", "partial", "secondary".
 - `vanity_name_servers` (List of String) An array of domains used for custom name servers. This is only
 available for Business and Enterprise plans.
 
@@ -57,6 +58,7 @@ domain. If development mode has never been enabled, this value is 0.
 true value means the zone will not receive security or performance
 benefits.
 - `status` (String) The zone status on Cloudflare.
+Available values: "initializing", "pending", "active", "moved".
 - `verification_key` (String) Verification key for partial zone setup.
 
 <a id="nestedatt--account"></a>

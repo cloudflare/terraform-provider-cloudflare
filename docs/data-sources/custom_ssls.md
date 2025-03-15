@@ -28,8 +28,10 @@ data "cloudflare_custom_ssls" "example_custom_ssls" {
 ### Optional
 
 - `match` (String) Whether to match all search requirements or at least one (any).
+Available values: "any", "all".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `status` (String) Status of the zone's custom SSL.
+Available values: "active", "expired", "deleted", "pending", "initializing".
 
 ### Read-Only
 
@@ -41,6 +43,7 @@ data "cloudflare_custom_ssls" "example_custom_ssls" {
 Read-Only:
 
 - `bundle_method` (String) A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.
+Available values: "ubiquitous", "optimal", "force".
 - `expires_on` (String) When the certificate from the authority expires.
 - `geo_restrictions` (Attributes) Specify the region where your private key can be held locally for optimal TLS performance. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Options allow distribution to only to U.S. data centers, only to E.U. data centers, or only to highest security data centers. Default distribution is to all Cloudflare datacenters, for optimal performance. (see [below for nested schema](#nestedatt--result--geo_restrictions))
 - `hosts` (List of String)
@@ -52,6 +55,7 @@ Read-Only:
 - `priority` (Number) The order/priority in which the certificate will be used in a request. The higher priority will break ties across overlapping 'legacy_custom' certificates, but 'legacy_custom' certificates will always supercede 'sni_custom' certificates.
 - `signature` (String) The type of hash used for the certificate.
 - `status` (String) Status of the zone's custom SSL.
+Available values: "active", "expired", "deleted", "pending", "initializing".
 - `uploaded_on` (String) When the certificate was uploaded to Cloudflare.
 - `zone_id` (String) Identifier
 
@@ -60,7 +64,7 @@ Read-Only:
 
 Read-Only:
 
-- `label` (String)
+- `label` (String) Available values: "us", "eu", "highest_security".
 
 
 <a id="nestedatt--result--keyless_server"></a>
@@ -77,6 +81,7 @@ Read-Only:
 - `permissions` (List of String) Available permissions for the Keyless SSL for the current user requesting the item.
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `status` (String) Status of the Keyless SSL.
+Available values: "active", "deleted".
 - `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--result--keyless_server--tunnel))
 
 <a id="nestedatt--result--keyless_server--tunnel"></a>

@@ -70,7 +70,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 					"mode": schema.StringAttribute{
-						Description: "Specifies the recording behavior for the live input. Set this value to `off` to prevent a recording. Set the value to `automatic` to begin a recording and transition to on-demand after Stream Live stops receiving input.",
+						Description: "Specifies the recording behavior for the live input. Set this value to `off` to prevent a recording. Set the value to `automatic` to begin a recording and transition to on-demand after Stream Live stops receiving input.\nAvailable values: \"off\", \"automatic\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -103,7 +103,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
-				Description: "The connection status of a live input.",
+				Description: "The connection status of a live input.\nAvailable values: \"connected\", \"reconnected\", \"reconnecting\", \"client_disconnect\", \"ttl_exceeded\", \"failed_to_connect\", \"failed_to_reconnect\", \"new_configuration_accepted\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -130,6 +130,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"stream_key": schema.StringAttribute{
 						Description: "The secret key to use when streaming via RTMPS to a live input.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 					"url": schema.StringAttribute{
 						Description: "The RTMPS URL you provide to the broadcaster, which they stream live video to.",
@@ -145,6 +146,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"stream_key": schema.StringAttribute{
 						Description: "The secret key to use for playback via RTMPS.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 					"url": schema.StringAttribute{
 						Description: "The URL used to play live video over RTMPS.",
@@ -160,6 +162,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"passphrase": schema.StringAttribute{
 						Description: "The secret key to use when streaming via SRT to a live input.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 					"stream_id": schema.StringAttribute{
 						Description: "The identifier of the live input to use when streaming via SRT.",
@@ -179,6 +182,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"passphrase": schema.StringAttribute{
 						Description: "The secret key to use for playback via SRT.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 					"stream_id": schema.StringAttribute{
 						Description: "The identifier of the live input to use for playback via SRT.",

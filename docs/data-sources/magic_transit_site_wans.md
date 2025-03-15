@@ -40,6 +40,7 @@ data "cloudflare_magic_transit_site_wans" "example_magic_transit_site_wans" {
 Read-Only:
 
 - `health_check_rate` (String) Magic WAN health check rate for tunnels created on this link. The default value is `mid`.
+Available values: "low", "mid", "high".
 - `id` (String) Identifier
 - `name` (String)
 - `physport` (Number)

@@ -30,9 +30,12 @@ data "cloudflare_account_members" "example_account_members" {
 ### Optional
 
 - `direction` (String) Direction to order results.
+Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) Field to order results by.
+Available values: "user.first_name", "user.last_name", "user.email", "status".
 - `status` (String) A member's status in the account.
+Available values: "accepted", "pending", "rejected".
 
 ### Read-Only
 
@@ -47,6 +50,7 @@ Read-Only:
 - `policies` (Attributes List) Access policy for the membership (see [below for nested schema](#nestedatt--result--policies))
 - `roles` (Attributes List) Roles assigned to this Member. (see [below for nested schema](#nestedatt--result--roles))
 - `status` (String) A member's status in the account.
+Available values: "accepted", "pending".
 - `user` (Attributes) Details of the user associated to the membership. (see [below for nested schema](#nestedatt--result--user))
 
 <a id="nestedatt--result--policies"></a>
@@ -55,6 +59,7 @@ Read-Only:
 Read-Only:
 
 - `access` (String) Allow or deny operations against the resources.
+Available values: "allow", "deny".
 - `id` (String) Policy identifier.
 - `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--result--policies--permission_groups))
 - `resource_groups` (Attributes List) A list of resource groups that the policy applies to. (see [below for nested schema](#nestedatt--result--policies--resource_groups))

@@ -21,7 +21,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "The name of this secret, this is what will be used to access it inside the Worker.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
 				Description:   "The name of this secret, this is what will be used to access it inside the Worker.",
@@ -46,9 +46,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"text": schema.StringAttribute{
 				Description: "The value of the secret.",
 				Optional:    true,
+				Sensitive:   true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of secret to put.",
+				Description: "The type of secret to put.\nAvailable values: \"secret_text\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("secret_text"),

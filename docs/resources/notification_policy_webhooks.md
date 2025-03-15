@@ -40,6 +40,7 @@ resource "cloudflare_notification_policy_webhooks" "example_notification_policy_
 - `last_failure` (String) Timestamp of the last time an attempt to dispatch a notification to this webhook failed.
 - `last_success` (String) Timestamp of the last time Cloudflare was able to successfully dispatch a notification using this webhook.
 - `type` (String) Type of webhook endpoint.
+Available values: "slack", "generic", "gchat".
 
 ## Import
 

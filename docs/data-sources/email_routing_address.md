@@ -45,6 +45,7 @@ data "cloudflare_email_routing_address" "example_email_routing_address" {
 Optional:
 
 - `direction` (String) Sorts results in an ascending or descending order.
+Available values: "asc", "desc".
 - `verified` (Boolean) Filter by verified destination addresses.
 
 

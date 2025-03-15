@@ -31,9 +31,11 @@ data "cloudflare_email_security_impersonation_registries" "example_email_securit
 ### Optional
 
 - `direction` (String) The sorting direction.
+Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) The field to sort by.
-- `provenance` (String)
+Available values: "name", "email", "created_at".
+- `provenance` (String) Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".
 - `search` (String) Allows searching in multiple properties of a record simultaneously.
 This parameter is intended for human users, not automation. Its exact
 behavior is intentionally left unspecified and is subject to change

@@ -29,8 +29,10 @@ data "cloudflare_turnstile_widgets" "example_turnstile_widgets" {
 ### Optional
 
 - `direction` (String) Direction to order widgets.
+Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) Field to order widgets by.
+Available values: "id", "sitekey", "name", "created_on", "modified_on".
 
 ### Read-Only
 
@@ -45,16 +47,19 @@ Read-Only:
 expensive challenges in response to malicious bots (ENT only).
 - `clearance_level` (String) If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,
 this setting can determine the clearance level to be set
+Available values: "no_clearance", "jschallenge", "managed", "interactive".
 - `created_on` (String) When the widget was created.
 - `domains` (List of String)
 - `ephemeral_id` (Boolean) Return the Ephemeral ID in /siteverify (ENT only).
 - `mode` (String) Widget Mode
+Available values: "non-interactive", "invisible", "managed".
 - `modified_on` (String) When the widget was modified.
 - `name` (String) Human readable widget name. Not unique. Cloudflare suggests that you
 set this to a meaningful string to make it easier to identify your
 widget, and where it is used.
 - `offlabel` (Boolean) Do not show any Cloudflare branding on the widget (ENT only).
 - `region` (String) Region where this widget can be used.
+Available values: "world".
 - `sitekey` (String) Widget item identifier tag.
 
 

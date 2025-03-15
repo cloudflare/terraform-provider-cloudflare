@@ -75,6 +75,7 @@ resource "cloudflare_healthcheck" "example_healthcheck" {
 - `id` (String) Identifier
 - `modified_on` (String)
 - `status` (String) The current status of the origin server according to the health check.
+Available values: "unknown", "healthy", "unhealthy", "suspended".
 
 <a id="nestedatt--http_config"></a>
 ### Nested Schema for `http_config`
@@ -87,6 +88,7 @@ Optional:
 - `follow_redirects` (Boolean) Follow redirects if the origin returns a 3xx status code.
 - `header` (Map of List of String) The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden.
 - `method` (String) The HTTP method to use for the health check.
+Available values: "GET", "HEAD".
 - `path` (String) The endpoint path to health check against.
 - `port` (Number) Port number to connect to for the health check. Defaults to 80 if type is HTTP or 443 if type is HTTPS.
 
@@ -97,6 +99,7 @@ Optional:
 Optional:
 
 - `method` (String) The TCP connection method to use for the health check.
+Available values: "connection_established".
 - `port` (Number) Port number to connect to for the health check. Defaults to 80.
 
 ## Import

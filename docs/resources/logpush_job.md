@@ -55,7 +55,9 @@ resource "cloudflare_logpush_job" "example_logpush_job" {
 - `dataset` (String) Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).
 - `enabled` (Boolean) Flag that indicates if the job is enabled.
 - `frequency` (String) This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.
+Available values: "high", "low".
 - `kind` (String) The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs. Currently, Edge Log Delivery is only supported for the `http_requests` dataset.
+Available values: "edge".
 - `logpull_options` (String) This field is deprecated. Use `output_options` instead. Configuration string. It specifies things like requested fields and timestamp formats. If migrating from the logpull api, copy the url (full url or just the query string) of your call here, and logpush will keep on making this call for you, setting start and end times appropriately.
 - `max_upload_bytes` (Number) The maximum uncompressed file size of a batch of logs. This setting value must be between `5 MB` and `1 GB`, or `0` to disable it. Note that you cannot set a minimum file size; this means that log files may be much smaller than this batch size. This parameter is not available for jobs with `edge` as its kind.
 - `max_upload_interval_seconds` (Number) The maximum interval in seconds for log batches. This setting must be between 30 and 300 seconds (5 minutes), or `0` to disable it. Note that you cannot specify a minimum interval for log batches; this means that log files may be sent in shorter intervals than this. This parameter is only used for jobs with `edge` as its kind.
@@ -83,12 +85,14 @@ Optional:
 - `field_delimiter` (String) String to join fields. This field be ignored when `record_template` is set.
 - `field_names` (List of String) List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.
 - `output_type` (String) Specifies the output type, such as `ndjson` or `csv`. This sets default values for the rest of the settings, depending on the chosen output type. Some formatting rules, like string quoting, are different between output types.
+Available values: "ndjson", "csv".
 - `record_delimiter` (String) String to be inserted in-between the records as separator.
 - `record_prefix` (String) String to be prepended before each record.
 - `record_suffix` (String) String to be appended after each record.
 - `record_template` (String) String to use as template for each record instead of the default comma-separated list. All fields used in the template must be present in `field_names` as well, otherwise they will end up as null. Format as a Go `text/template` without any standard functions, like conditionals, loops, sub-templates, etc.
 - `sample_rate` (Number) Floating number to specify sampling rate. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.
 - `timestamp_format` (String) String to specify the format for timestamps, such as `unixnano`, `unix`, or `rfc3339`.
+Available values: "unixnano", "unix", "rfc3339".
 
 ## Import
 

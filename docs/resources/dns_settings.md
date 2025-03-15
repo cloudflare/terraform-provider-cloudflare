@@ -63,6 +63,7 @@ Optional:
 - `secondary_overrides` (Boolean) Allows a Secondary DNS zone to use (proxied) override records and CNAME flattening at the zone apex.
 - `soa` (Attributes) Components of the zone's SOA record. (see [below for nested schema](#nestedatt--zone_defaults--soa))
 - `zone_mode` (String) Whether the zone mode is a regular or CDN/DNS only zone.
+Available values: "standard", "cdn_only", "dns_only".
 
 <a id="nestedatt--zone_defaults--internal_dns"></a>
 ### Nested Schema for `zone_defaults.internal_dns`
@@ -78,6 +79,7 @@ Optional:
 Required:
 
 - `type` (String) Nameserver type
+Available values: "cloudflare.standard", "cloudflare.standard.random", "custom.account", "custom.tenant".
 
 
 <a id="nestedatt--zone_defaults--soa"></a>

@@ -37,6 +37,7 @@ data "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_custo
 - `id` (String) UUID
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
+Available values: "identity_denied", "forbidden".
 - `uid` (String) UUID
 - `updated_at` (String)
 

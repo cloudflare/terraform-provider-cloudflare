@@ -12,11 +12,12 @@ type R2ManagedDomainResultEnvelope struct {
 }
 
 type R2ManagedDomainModel struct {
-	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
-	BucketName types.String `tfsdk:"bucket_name" path:"bucket_name,required"`
-	Enabled    types.Bool   `tfsdk:"enabled" json:"enabled,required"`
-	BucketID   types.String `tfsdk:"bucket_id" json:"bucketId,computed"`
-	Domain     types.String `tfsdk:"domain" json:"domain,computed"`
+	AccountID    types.String `tfsdk:"account_id" path:"account_id,required"`
+	BucketName   types.String `tfsdk:"bucket_name" path:"bucket_name,required"`
+	Jurisdiction types.String `tfsdk:"jurisdiction" json:"-,computed_optional"`
+	Enabled      types.Bool   `tfsdk:"enabled" json:"enabled,required"`
+	BucketID     types.String `tfsdk:"bucket_id" json:"bucketId,computed"`
+	Domain       types.String `tfsdk:"domain" json:"domain,computed"`
 }
 
 func (m R2ManagedDomainModel) MarshalJSON() (data []byte, err error) {

@@ -25,7 +25,9 @@ resource "cloudflare_url_normalization_settings" "example_url_normalization_sett
 ### Required
 
 - `scope` (String) The scope of the URL normalization.
+Available values: "incoming", "both".
 - `type` (String) The type of URL normalization performed by Cloudflare.
+Available values: "cloudflare", "rfc3986".
 - `zone_id` (String) The unique ID of the zone.
 
 ### Read-Only

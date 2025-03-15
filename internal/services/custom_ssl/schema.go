@@ -34,7 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
-				Description: "The type 'legacy_custom' enables support for legacy clients which do not include SNI in the TLS handshake.",
+				Description: "The type 'legacy_custom' enables support for legacy clients which do not include SNI in the TLS handshake.\nAvailable values: \"legacy_custom\", \"sni_custom\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -50,13 +50,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"private_key": schema.StringAttribute{
 				Description: "The zone's private key.",
 				Required:    true,
+				Sensitive:   true,
 			},
 			"policy": schema.StringAttribute{
 				Description: "Specify the policy that determines the region where your private key will be held locally. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Any combination of countries, specified by their two letter country code (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) can be chosen, such as 'country: IN', as well as 'region: EU' which refers to the EU region. If there are too few data centers satisfying the policy, it will be rejected.",
 				Optional:    true,
 			},
 			"bundle_method": schema.StringAttribute{
-				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
+				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.\nAvailable values: \"ubiquitous\", \"optimal\", \"force\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -75,7 +76,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[CustomSSLGeoRestrictionsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"label": schema.StringAttribute{
-						Optional: true,
+						Description: `Available values: "us", "eu", "highest_security".`,
+						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"us",
@@ -110,7 +112,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of the zone's custom SSL.",
+				Description: "Status of the zone's custom SSL.\nAvailable values: \"active\", \"expired\", \"deleted\", \"pending\", \"initializing\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -174,7 +176,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     float64default.StaticFloat64(24008),
 					},
 					"status": schema.StringAttribute{
-						Description: "Status of the Keyless SSL.",
+						Description: "Status of the Keyless SSL.\nAvailable values: \"active\", \"deleted\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("active", "deleted"),

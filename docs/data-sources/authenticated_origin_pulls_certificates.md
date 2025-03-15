@@ -45,6 +45,7 @@ Read-Only:
 - `private_key` (String) The zone's private key.
 - `signature` (String) The type of hash used for the certificate.
 - `status` (String) Status of the certificate activation.
+Available values: "initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out".
 - `uploaded_on` (String) This is the time the certificate was uploaded.
 
 

@@ -71,8 +71,8 @@ type PagesProjectsDeploymentTriggerMetadataDataSourceModel struct {
 }
 
 type PagesProjectsEnvVarsDataSourceModel struct {
-	Value types.String `tfsdk:"value" json:"value,computed"`
 	Type  types.String `tfsdk:"type" json:"type,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type PagesProjectsLatestStageDataSourceModel struct {

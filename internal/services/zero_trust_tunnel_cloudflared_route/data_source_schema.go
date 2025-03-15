@@ -7,9 +7,13 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustTunnelCloudflaredRouteDataSource)(nil)
@@ -63,9 +67,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"existed_at": schema.StringAttribute{
-						Description: "If provided, include only tunnels that were created (and not deleted) before this time.",
+						Description: "If provided, include only resources that were created (and not deleted) before this time. URL encoded.",
 						Optional:    true,
-						CustomType:  timetypes.RFC3339Type{},
 					},
 					"is_deleted": schema.BoolAttribute{
 						Description: "If `true`, only include deleted routes. If `false`, exclude deleted routes. If empty, all routes will be included.",
@@ -83,9 +86,23 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "UUID of the route.",
 						Optional:    true,
 					},
-					"tun_types": schema.StringAttribute{
-						Description: "The types of tunnels to filter separated by a comma.",
+					"tun_types": schema.ListAttribute{
+						Description: "The types of tunnels to filter by, separated by commas.",
 						Optional:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"cfd_tunnel",
+									"warp_connector",
+									"warp",
+									"magic",
+									"ip_sec",
+									"gre",
+									"cni",
+								),
+							),
+						},
+						ElementType: types.StringType,
 					},
 					"tunnel_id": schema.StringAttribute{
 						Description: "UUID of the tunnel.",

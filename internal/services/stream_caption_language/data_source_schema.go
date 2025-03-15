@@ -26,7 +26,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"language": schema.StringAttribute{
 				Description: "The language tag in BCP 47 format.",
-				Computed:    true,
+				Required:    true,
 			},
 			"generated": schema.BoolAttribute{
 				Description: "Whether the caption was generated via AI.",
@@ -37,7 +37,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "The status of a generated caption.",
+				Description: "The status of a generated caption.\nAvailable values: \"ready\", \"inprogress\", \"error\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

@@ -35,7 +35,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"risk_level": schema.StringAttribute{
-							Computed: true,
+							Description: `Available values: "low", "medium", "high".`,
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"low",

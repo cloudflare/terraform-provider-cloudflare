@@ -28,6 +28,7 @@ data "cloudflare_account_tokens" "example_account_tokens" {
 ### Optional
 
 - `direction` (String) Direction to order results.
+Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only
@@ -49,6 +50,7 @@ Read-Only:
 - `not_before` (String) The time before which the token MUST NOT be accepted for processing.
 - `policies` (Attributes List) List of access policies assigned to the token. (see [below for nested schema](#nestedatt--result--policies))
 - `status` (String) Status of the token.
+Available values: "active", "disabled", "expired".
 
 <a id="nestedatt--result--condition"></a>
 ### Nested Schema for `result.condition`
@@ -73,6 +75,7 @@ Read-Only:
 Read-Only:
 
 - `effect` (String) Allow or deny operations against the resources.
+Available values: "allow", "deny".
 - `id` (String) Policy identifier.
 - `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--result--policies--permission_groups))
 - `resources` (Map of String) A list of resource names that the policy applies to.

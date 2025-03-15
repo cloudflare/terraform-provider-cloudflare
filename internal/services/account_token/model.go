@@ -45,7 +45,7 @@ type AccountTokenPoliciesModel struct {
 
 type AccountTokenPoliciesPermissionGroupsModel struct {
 	ID   types.String                                   `tfsdk:"id" json:"id,required"`
-	Meta *AccountTokenPoliciesPermissionGroupsMetaModel `tfsdk:"meta" json:"meta,optional"`
+	Meta *AccountTokenPoliciesPermissionGroupsMetaModel `tfsdk:"meta" json:"meta,computed_optional"`
 	Name types.String                                   `tfsdk:"name" json:"name,computed"`
 }
 

@@ -26,7 +26,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "The direction used to sort returned connections.",
+				Description: "The direction used to sort returned connections.\nAvailable values: \"asc\", \"desc\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
@@ -37,33 +37,33 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"exclude_urls": schema.StringAttribute{
-				Description: "Excludes connections whose URL contains one of the URL-encoded URLs separated by commas.\n",
+				Description: "Excludes connections whose URL contains one of the URL-encoded URLs separated by commas.",
 				Optional:    true,
 			},
 			"export": schema.StringAttribute{
-				Description: "Export the list of connections as a file.",
+				Description: "Export the list of connections as a file.\nAvailable values: \"csv\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("csv"),
 				},
 			},
 			"hosts": schema.StringAttribute{
-				Description: "Includes connections that match one or more URL-encoded hostnames separated by commas.\n\nWildcards are supported at the start and end of each hostname to support starts with, ends with\nand contains. If no wildcards are used, results will be filtered by exact match\n",
+				Description: "Includes connections that match one or more URL-encoded hostnames separated by commas.\n\nWildcards are supported at the start and end of each hostname to support starts with, ends with\nand contains. If no wildcards are used, results will be filtered by exact match",
 				Optional:    true,
 			},
 			"order_by": schema.StringAttribute{
-				Description: "The field used to sort returned connections.",
+				Description: "The field used to sort returned connections.\nAvailable values: \"first_seen_at\", \"last_seen_at\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("first_seen_at", "last_seen_at"),
 				},
 			},
 			"page": schema.StringAttribute{
-				Description: "The current page number of the paginated results.\n\nWe additionally support a special value \"all\". When \"all\" is used, the API will return all the connections\nwith the applied filters in a single page. This feature is best-effort and it may only work for zones with\na low number of connections\n",
+				Description: "The current page number of the paginated results.\n\nWe additionally support a special value \"all\". When \"all\" is used, the API will return all the connections\nwith the applied filters in a single page. This feature is best-effort and it may only work for zones with\na low number of connections",
 				Optional:    true,
 			},
 			"page_url": schema.StringAttribute{
-				Description: "Includes connections that match one or more page URLs (separated by commas) where they were last seen\n\nWildcards are supported at the start and end of each page URL to support starts with, ends with\nand contains. If no wildcards are used, results will be filtered by exact match\n",
+				Description: "Includes connections that match one or more page URLs (separated by commas) where they were last seen\n\nWildcards are supported at the start and end of each page URL to support starts with, ends with\nand contains. If no wildcards are used, results will be filtered by exact match",
 				Optional:    true,
 			},
 			"per_page": schema.Float64Attribute{
@@ -82,7 +82,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"urls": schema.StringAttribute{
-				Description: "Includes connections whose URL contain one or more URL-encoded URLs separated by commas.\n",
+				Description: "Includes connections whose URL contain one or more URL-encoded URLs separated by commas.",
 				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{

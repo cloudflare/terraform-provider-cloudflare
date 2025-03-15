@@ -39,15 +39,18 @@ data "cloudflare_page_shield_connections_list" "example_page_shield_connections_
 ### Optional
 
 - `direction` (String) The direction used to sort returned connections.
+Available values: "asc", "desc".
 - `exclude_cdn_cgi` (Boolean) When true, excludes connections seen in a `/cdn-cgi` path from the returned connections. The default value is true.
 - `exclude_urls` (String) Excludes connections whose URL contains one of the URL-encoded URLs separated by commas.
 - `export` (String) Export the list of connections as a file.
+Available values: "csv".
 - `hosts` (String) Includes connections that match one or more URL-encoded hostnames separated by commas.
 
 Wildcards are supported at the start and end of each hostname to support starts with, ends with
 and contains. If no wildcards are used, results will be filtered by exact match
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order_by` (String) The field used to sort returned connections.
+Available values: "first_seen_at", "last_seen_at".
 - `page` (String) The current page number of the paginated results.
 
 We additionally support a special value "all". When "all" is used, the API will return all the connections

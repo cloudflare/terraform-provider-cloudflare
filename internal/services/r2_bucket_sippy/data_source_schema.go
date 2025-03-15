@@ -35,7 +35,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[R2BucketSippyDestinationDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"access_key_id": schema.StringAttribute{
-						Description: "ID of the Cloudflare API token used when writing objects to this\nbucket\n",
+						Description: "ID of the Cloudflare API token used when writing objects to this\nbucket",
 						Computed:    true,
 					},
 					"account": schema.StringAttribute{
@@ -46,7 +46,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"provider": schema.StringAttribute{
-						Computed: true,
+						Description: `Available values: "r2".`,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("r2"),
 						},
@@ -63,7 +64,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"provider": schema.StringAttribute{
-						Computed: true,
+						Description: `Available values: "aws", "gcs".`,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("aws", "gcs"),
 						},

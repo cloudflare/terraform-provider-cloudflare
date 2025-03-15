@@ -33,6 +33,7 @@ resource "cloudflare_turnstile_widget" "example_turnstile_widget" {
 - `account_id` (String) Identifier
 - `domains` (List of String)
 - `mode` (String) Widget Mode
+Available values: "non-interactive", "invisible", "managed".
 - `name` (String) Human readable widget name. Not unique. Cloudflare suggests that you
 set this to a meaningful string to make it easier to identify your
 widget, and where it is used.
@@ -43,9 +44,11 @@ widget, and where it is used.
 expensive challenges in response to malicious bots (ENT only).
 - `clearance_level` (String) If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,
 this setting can determine the clearance level to be set
+Available values: "no_clearance", "jschallenge", "managed", "interactive".
 - `ephemeral_id` (Boolean) Return the Ephemeral ID in /siteverify (ENT only).
 - `offlabel` (Boolean) Do not show any Cloudflare branding on the widget (ENT only).
 - `region` (String) Region where this widget can be used.
+Available values: "world".
 
 ### Read-Only
 

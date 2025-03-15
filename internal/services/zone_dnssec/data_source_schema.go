@@ -71,7 +71,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of DNSSEC, based on user-desired state and presence of necessary records.",
+				Description: "Status of DNSSEC, based on user-desired state and presence of necessary records.\nAvailable values: \"active\", \"pending\", \"disabled\", \"pending-disabled\", \"error\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

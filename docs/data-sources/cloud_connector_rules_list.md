@@ -38,6 +38,7 @@ data "cloudflare_cloud_connector_rules_list" "example_cloud_connector_rules_list
 Read-Only:
 
 - `cloud_provider` (String) Cloud Provider type
+Available values: "aws_s3", "r2", "gcp_storage", "azure_storage".
 - `description` (String)
 - `enabled` (Boolean)
 - `expression` (String)

@@ -30,7 +30,9 @@ resource "cloudflare_web_analytics_site" "example_web_analytics_site" {
 ### Optional
 
 - `auto_install` (Boolean) If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.
+- `enabled` (Boolean) Enables or disables RUM. This option can be used only when auto_install is set to true.
 - `host` (String) The hostname to use for gray-clouded sites.
+- `lite` (Boolean) If enabled, the JavaScript snippet will not be injected for visitors from the EU.
 - `zone_tag` (String) The zone identifier.
 
 ### Read-Only

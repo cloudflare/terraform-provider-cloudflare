@@ -17,20 +17,20 @@ var _ datasource.DataSourceWithConfigValidators = (*AuthenticatedOriginPullsData
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"hostname": schema.StringAttribute{
+				Description: "The hostname on the origin for which the client certificate uploaded will be used.",
+				Required:    true,
+			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
-			},
-			"hostname": schema.StringAttribute{
-				Description: "The hostname on the origin for which the client certificate uploaded will be used.",
-				Computed:    true,
 			},
 			"cert_id": schema.StringAttribute{
 				Description: "Identifier",
 				Computed:    true,
 			},
 			"cert_status": schema.StringAttribute{
-				Description: "Status of the certificate or the association.",
+				Description: "Status of the certificate or the association.\nAvailable values: \"initializing\", \"pending_deployment\", \"pending_deletion\", \"active\", \"deleted\", \"deployment_timed_out\", \"deletion_timed_out\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -85,7 +85,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of the certificate or the association.",
+				Description: "Status of the certificate or the association.\nAvailable values: \"initializing\", \"pending_deployment\", \"pending_deletion\", \"active\", \"deleted\", \"deployment_timed_out\", \"deletion_timed_out\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

@@ -40,6 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"secret": schema.StringAttribute{
 				Description: "Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.",
 				Optional:    true,
+				Sensitive:   true,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "Timestamp of when the webhook destination was created.",
@@ -57,7 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"type": schema.StringAttribute{
-				Description: "Type of webhook endpoint.",
+				Description: "Type of webhook endpoint.\nAvailable values: \"slack\", \"generic\", \"gchat\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

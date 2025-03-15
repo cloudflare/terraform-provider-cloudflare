@@ -67,6 +67,7 @@ Read-Only:
 - `record` (Attributes List) (see [below for nested schema](#nestedatt--result--record))
 - `ttl` (Number) Time to live, in seconds, of the DNS record. Must be between 60 and 86400, or 1 for 'automatic'.
 - `type` (String) DNS record type.
+Available values: "A", "AAAA", "CNAME", "HTTPS", "TXT", "SRV", "LOC", "MX", "NS", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "SVCB", "TLSA", "URI".
 
 <a id="nestedatt--result--errors"></a>
 ### Nested Schema for `result.errors`
@@ -86,6 +87,7 @@ Read-Only:
 - `priority` (Number) Required for MX, SRV and URI records. Unused by other record types. Records with lower priorities are preferred.
 - `ttl` (Number) Time to live, in seconds, of the DNS record. Must be between 60 and 86400, or 1 for 'automatic'.
 - `type` (String) DNS record type.
+Available values: "A", "AAAA", "CNAME", "HTTPS", "TXT", "SRV", "LOC", "MX", "NS", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "SVCB", "TLSA", "URI".
 
 
 
@@ -99,6 +101,7 @@ Read-Only:
 - `priority` (Number) Required for MX, SRV and URI records. Unused by other record types. Records with lower priorities are preferred.
 - `ttl` (Number) Time to live, in seconds, of the DNS record. Must be between 60 and 86400, or 1 for 'automatic'.
 - `type` (String) DNS record type.
+Available values: "A", "AAAA", "CNAME", "HTTPS", "TXT", "SRV", "LOC", "MX", "NS", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "SVCB", "TLSA", "URI".
 
 
 

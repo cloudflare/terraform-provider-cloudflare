@@ -25,7 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"action": schema.StringAttribute{
-				Description: "The action to take when the expression matches.",
+				Description: "The action to take when the expression matches.\nAvailable values: \"bypass_waiting_room\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("bypass_waiting_room"),

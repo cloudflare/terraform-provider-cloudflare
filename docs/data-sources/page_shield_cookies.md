@@ -39,8 +39,8 @@ data "cloudflare_page_shield_cookies" "example_page_shield_cookies" {
 - `name` (String)
 - `page_urls` (List of String)
 - `path_attribute` (String)
-- `same_site_attribute` (String)
+- `same_site_attribute` (String) Available values: "lax", "strict", "none".
 - `secure_attribute` (Boolean)
-- `type` (String)
+- `type` (String) Available values: "first_party", "unknown".
 
 

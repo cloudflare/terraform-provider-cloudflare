@@ -49,5 +49,6 @@ See [Cloudflare as Secondary](https://developers.cloudflare.com/dns/zone-setups/
 - `modified_on` (String) When DNSSEC was last modified.
 - `public_key` (String) Public key for DS record.
 - `status` (String) Status of DNSSEC, based on user-desired state and presence of necessary records.
+Available values: "active", "pending", "disabled", "pending-disabled", "error".
 
 

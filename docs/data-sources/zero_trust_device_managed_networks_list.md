@@ -41,6 +41,7 @@ Read-Only:
 - `name` (String) The name of the device managed network. This name must be unique.
 - `network_id` (String) API UUID.
 - `type` (String) The type of device managed network.
+Available values: "tls".
 
 <a id="nestedatt--result--config"></a>
 ### Nested Schema for `result.config`

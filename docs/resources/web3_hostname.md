@@ -28,6 +28,7 @@ resource "cloudflare_web3_hostname" "example_web3_hostname" {
 
 - `name` (String) The hostname that will point to the target gateway via CNAME.
 - `target` (String) Target gateway of the hostname.
+Available values: "ethereum", "ipfs", "ipfs_universal_path".
 - `zone_id` (String) Identifier
 
 ### Optional
@@ -41,6 +42,7 @@ resource "cloudflare_web3_hostname" "example_web3_hostname" {
 - `id` (String) Identifier
 - `modified_on` (String)
 - `status` (String) Status of the hostname's activation.
+Available values: "active", "pending", "deleting", "error".
 
 ## Import
 

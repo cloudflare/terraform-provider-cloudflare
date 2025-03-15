@@ -24,6 +24,7 @@ resource "cloudflare_argo_tiered_caching" "example_argo_tiered_caching" {
 ### Required
 
 - `value` (String) Enables Tiered Caching.
+Available values: "on", "off".
 - `zone_id` (String) Identifier
 
 ### Read-Only

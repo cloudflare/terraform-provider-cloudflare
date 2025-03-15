@@ -59,6 +59,7 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
 
 - `account_id` (String) Identifier
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
+Available values: "allow", "deny", "non_identity", "bypass".
 - `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--include))
 - `name` (String) The name of the Access policy.
 

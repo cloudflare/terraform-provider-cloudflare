@@ -41,8 +41,10 @@ data "cloudflare_page_shield_cookies_list" "example_page_shield_cookies_list" {
 ### Optional
 
 - `direction` (String) The direction used to sort returned cookies.'
+Available values: "asc", "desc".
 - `domain` (String) Filters the returned cookies that match the specified domain attribute
 - `export` (String) Export the list of cookies as a file.
+Available values: "csv".
 - `hosts` (String) Includes cookies that match one or more URL-encoded hostnames separated by commas.
 
 Wildcards are supported at the start and end of each hostname to support starts with, ends with
@@ -53,6 +55,7 @@ and contains. If no wildcards are used, results will be filtered by exact match
 Wildcards are supported at the start and end to support starts with, ends with
 and contains. e.g. session*
 - `order_by` (String) The field used to sort returned cookies.
+Available values: "first_seen_at", "last_seen_at".
 - `page` (String) The current page number of the paginated results.
 
 We additionally support a special value "all". When "all" is used, the API will return all the cookies
@@ -65,8 +68,10 @@ and contains. If no wildcards are used, results will be filtered by exact match
 - `path` (String) Filters the returned cookies that match the specified path attribute
 - `per_page` (Number) The number of results per page.
 - `same_site` (String) Filters the returned cookies that match the specified same_site attribute
+Available values: "lax", "strict", "none".
 - `secure` (Boolean) Filters the returned cookies that are set with Secure
 - `type` (String) Filters the returned cookies that match the specified type attribute
+Available values: "first_party", "unknown".
 
 ### Read-Only
 
@@ -88,8 +93,8 @@ Read-Only:
 - `name` (String)
 - `page_urls` (List of String)
 - `path_attribute` (String)
-- `same_site_attribute` (String)
+- `same_site_attribute` (String) Available values: "lax", "strict", "none".
 - `secure_attribute` (Boolean)
-- `type` (String)
+- `type` (String) Available values: "first_party", "unknown".
 
 

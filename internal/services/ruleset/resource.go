@@ -189,7 +189,7 @@ func (r *RulesetResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -304,13 +304,28 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 	}
 
 	ruleIDsByRef := make(map[string]types.String)
-	for _, rule := range *state.Rules {
+
+	stateElements := make([]RulesetRulesModel, 0, len(state.Rules.Elements()))
+	diags := state.Rules.ElementsAs(ctx, &stateElements, false)
+	if diags != nil {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+
+	for _, rule := range stateElements {
 		if ref := rule.Ref.ValueString(); ref != "" {
 			ruleIDsByRef[ref] = rule.ID
 		}
 	}
 
-	for _, rule := range *plan.Rules {
+	planElements := make([]RulesetRulesModel, 0, len(state.Rules.Elements()))
+	diags = state.Rules.ElementsAs(ctx, &planElements, false)
+	if diags != nil {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+
+	for _, rule := range planElements {
 		// Do nothing if the rule's ID is a known planned value.
 		if !rule.ID.IsUnknown() {
 			continue

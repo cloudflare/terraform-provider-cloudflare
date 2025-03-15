@@ -29,6 +29,7 @@ data "cloudflare_certificate_packs" "example_certificate_packs" {
 
 - `max_items` (Number) Max items to fetch, default: 1000
 - `status` (String) Include Certificate Packs of all statuses, not just active ones.
+Available values: "all".
 
 ### Read-Only
 

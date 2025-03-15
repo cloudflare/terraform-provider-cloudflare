@@ -46,6 +46,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"private_key": schema.StringAttribute{
 				Description:   "The private key for the certificate",
 				Optional:      true,
+				Sensitive:     true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"expires_on": schema.StringAttribute{

@@ -32,6 +32,7 @@ resource "cloudflare_zero_trust_device_managed_networks" "example_zero_trust_dev
 - `config` (Attributes) The configuration object containing information for the WARP client to detect the managed network. (see [below for nested schema](#nestedatt--config))
 - `name` (String) The name of the device managed network. This name must be unique.
 - `type` (String) The type of device managed network.
+Available values: "tls".
 
 ### Read-Only
 

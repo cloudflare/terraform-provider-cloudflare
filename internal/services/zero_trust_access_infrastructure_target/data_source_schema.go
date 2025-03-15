@@ -98,7 +98,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  timetypes.RFC3339Type{},
 					},
 					"direction": schema.StringAttribute{
-						Description: "The sorting direction.",
+						Description: "The sorting direction.\nAvailable values: \"asc\", \"desc\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
@@ -156,7 +156,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  timetypes.RFC3339Type{},
 					},
 					"order": schema.StringAttribute{
-						Description: "The field to sort by.",
+						Description: "The field to sort by.\nAvailable values: \"hostname\", \"created_at\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("hostname", "created_at"),

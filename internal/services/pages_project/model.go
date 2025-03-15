@@ -89,8 +89,8 @@ type PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesModel struct {
 }
 
 type PagesProjectDeploymentConfigsPreviewEnvVarsModel struct {
+	Type  types.String `tfsdk:"type" json:"type,required"`
 	Value types.String `tfsdk:"value" json:"value,required"`
-	Type  types.String `tfsdk:"type" json:"type,optional"`
 }
 
 type PagesProjectDeploymentConfigsPreviewHyperdriveBindingsModel struct {
@@ -167,8 +167,8 @@ type PagesProjectDeploymentConfigsProductionDurableObjectNamespacesModel struct 
 }
 
 type PagesProjectDeploymentConfigsProductionEnvVarsModel struct {
+	Type  types.String `tfsdk:"type" json:"type,required"`
 	Value types.String `tfsdk:"value" json:"value,required"`
-	Type  types.String `tfsdk:"type" json:"type,optional"`
 }
 
 type PagesProjectDeploymentConfigsProductionHyperdriveBindingsModel struct {
@@ -246,8 +246,8 @@ type PagesProjectCanonicalDeploymentDeploymentTriggerMetadataModel struct {
 }
 
 type PagesProjectCanonicalDeploymentEnvVarsModel struct {
-	Value types.String `tfsdk:"value" json:"value,computed"`
 	Type  types.String `tfsdk:"type" json:"type,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type PagesProjectCanonicalDeploymentLatestStageModel struct {
@@ -323,8 +323,8 @@ type PagesProjectLatestDeploymentDeploymentTriggerMetadataModel struct {
 }
 
 type PagesProjectLatestDeploymentEnvVarsModel struct {
-	Value types.String `tfsdk:"value" json:"value,computed"`
 	Type  types.String `tfsdk:"type" json:"type,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type PagesProjectLatestDeploymentLatestStageModel struct {

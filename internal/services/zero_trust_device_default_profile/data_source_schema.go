@@ -58,6 +58,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"gateway_unique_id": schema.StringAttribute{
 				Computed: true,
 			},
+			"register_interface_ip_with_dns": schema.BoolAttribute{
+				Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
+				Computed:    true,
+			},
 			"support_url": schema.StringAttribute{
 				Description: "The URL to launch when the Send Feedback button is clicked.",
 				Computed:    true,
@@ -71,8 +75,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"exclude": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileExcludeDataSourceModel](ctx),
+				Description: "List of routes excluded in the WARP client's tunnel.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileExcludeDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
@@ -113,8 +118,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"include": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileIncludeDataSourceModel](ctx),
+				Description: "List of routes included in the WARP client's tunnel.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileIncludeDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{

@@ -40,6 +40,8 @@ Read-Only:
 - `hostnames` (List of String) Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.
 - `id` (String) Identifier
 - `request_type` (String) Signature type desired on certificate ("origin-rsa" (rsa), "origin-ecc" (ecdsa), or "keyless-certificate" (for Keyless SSL servers).
+Available values: "origin-rsa", "origin-ecc", "keyless-certificate".
 - `requested_validity` (Number) The number of days for which the certificate should be valid.
+Available values: 7, 30, 90, 365, 730, 1095, 5475.
 
 

@@ -76,10 +76,15 @@ Read-Only:
 Read-Only:
 
 - `accept_foa` (String) Form of authorization has been accepted by the registrant.
+Available values: "needed", "ok".
 - `approve_transfer` (String) Shows transfer status with the registry.
+Available values: "needed", "ok", "pending", "trying", "rejected", "unknown".
 - `can_cancel_transfer` (Boolean) Indicates if cancellation is still possible.
 - `disable_privacy` (String) Privacy guards are disabled at the foreign registrar.
+Available values: "needed", "ok", "unknown".
 - `enter_auth_code` (String) Auth code has been entered and verified.
+Available values: "needed", "ok", "pending", "trying", "rejected".
 - `unlock_domain` (String) Domain is unlocked at the foreign registrar.
+Available values: "needed", "ok", "pending", "trying", "unknown".
 
 
