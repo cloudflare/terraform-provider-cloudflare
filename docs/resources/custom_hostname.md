@@ -118,7 +118,7 @@ Available values: "digicert", "google", "lets_encrypt", "ssl_com".
 - `cloudflare_branding` (Boolean) Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true
 - `custom_cert_bundle` (Attributes List) Array of custom certificate and key pairs (1 or 2 pairs allowed) (see [below for nested schema](#nestedatt--ssl--custom_cert_bundle))
 - `custom_certificate` (String) If a custom uploaded certificate is used.
-- `custom_key` (String) The key for a custom uploaded certificate.
+- `custom_key` (String, Sensitive) The key for a custom uploaded certificate.
 - `method` (String) Domain control validation (DCV) method used for this hostname.
 Available values: "http", "txt", "email".
 - `settings` (Attributes) SSL specific settings. (see [below for nested schema](#nestedatt--ssl--settings))
@@ -132,7 +132,7 @@ Available values: "dv".
 Required:
 
 - `custom_certificate` (String) If a custom uploaded certificate is used.
-- `custom_key` (String) The key for a custom uploaded certificate.
+- `custom_key` (String, Sensitive) The key for a custom uploaded certificate.
 
 
 <a id="nestedatt--ssl--settings"></a>

@@ -91,7 +91,7 @@ Available values: "ubiquitous", "optimal", "force".
 Available values: "digicert", "google", "lets_encrypt", "ssl_com".
 - `custom_certificate` (String) If a custom uploaded certificate is used.
 - `custom_csr_id` (String) The identifier for the Custom CSR that was used.
-- `custom_key` (String) The key for a custom uploaded certificate.
+- `custom_key` (String, Sensitive) The key for a custom uploaded certificate.
 - `expires_on` (String) The time the custom certificate expires on.
 - `hosts` (List of String) A list of Hostnames on a custom uploaded certificate.
 - `id` (String) Custom hostname SSL identifier tag.

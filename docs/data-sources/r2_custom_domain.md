@@ -15,7 +15,7 @@ description: |-
 data "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   bucket_name = "example-bucket"
-  domain_name = "example-domain/custom-domain.com"
+  domain = "example-domain/custom-domain.com"
 }
 ```
 
@@ -26,11 +26,10 @@ data "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 
 - `account_id` (String) Account ID
 - `bucket_name` (String) Name of the bucket
-- `domain_name` (String) Name of the custom domain
+- `domain` (String) Name of the custom domain
 
 ### Read-Only
 
-- `domain` (String) Domain name of the custom domain to be added
 - `enabled` (Boolean) Whether this bucket is publicly accessible at the specified custom domain
 - `min_tls` (String) Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.
 Available values: "1.0", "1.1", "1.2", "1.3".

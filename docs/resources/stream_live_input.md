@@ -76,7 +76,7 @@ Available values: "off", "automatic".
 
 Read-Only:
 
-- `stream_key` (String) The secret key to use when streaming via RTMPS to a live input.
+- `stream_key` (String, Sensitive) The secret key to use when streaming via RTMPS to a live input.
 - `url` (String) The RTMPS URL you provide to the broadcaster, which they stream live video to.
 
 
@@ -85,7 +85,7 @@ Read-Only:
 
 Read-Only:
 
-- `stream_key` (String) The secret key to use for playback via RTMPS.
+- `stream_key` (String, Sensitive) The secret key to use for playback via RTMPS.
 - `url` (String) The URL used to play live video over RTMPS.
 
 
@@ -94,7 +94,7 @@ Read-Only:
 
 Read-Only:
 
-- `passphrase` (String) The secret key to use when streaming via SRT to a live input.
+- `passphrase` (String, Sensitive) The secret key to use when streaming via SRT to a live input.
 - `stream_id` (String) The identifier of the live input to use when streaming via SRT.
 - `url` (String) The SRT URL you provide to the broadcaster, which they stream live video to.
 
@@ -104,7 +104,7 @@ Read-Only:
 
 Read-Only:
 
-- `passphrase` (String) The secret key to use for playback via SRT.
+- `passphrase` (String, Sensitive) The secret key to use for playback via SRT.
 - `stream_id` (String) The identifier of the live input to use for playback via SRT.
 - `url` (String) The URL used to play live video over SRT.
 

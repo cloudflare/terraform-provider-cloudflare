@@ -31,7 +31,7 @@ resource "cloudflare_notification_policy_webhooks" "example_notification_policy_
 
 ### Optional
 
-- `secret` (String) Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.
+- `secret` (String, Sensitive) Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.
 
 ### Read-Only
 

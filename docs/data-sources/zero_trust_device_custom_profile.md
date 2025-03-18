@@ -40,12 +40,12 @@ data "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_device_cu
 - `description` (String) A description of the policy.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
 - `enabled` (Boolean) Whether the policy will be applied to matching devices.
-- `exclude` (Attributes List) (see [below for nested schema](#nestedatt--exclude))
+- `exclude` (Attributes List) List of routes excluded in the WARP client's tunnel. (see [below for nested schema](#nestedatt--exclude))
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
 - `fallback_domains` (Attributes List) (see [below for nested schema](#nestedatt--fallback_domains))
 - `gateway_unique_id` (String)
 - `id` (String) Device ID.
-- `include` (Attributes List) (see [below for nested schema](#nestedatt--include))
+- `include` (Attributes List) List of routes included in the WARP client's tunnel. (see [below for nested schema](#nestedatt--include))
 - `lan_allow_minutes` (Number) The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.
 - `lan_allow_subnet_size` (Number) The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.
 - `match` (String) The wirefilter expression to match devices.

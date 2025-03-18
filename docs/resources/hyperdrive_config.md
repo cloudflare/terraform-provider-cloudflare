@@ -63,7 +63,7 @@ Available values: "postgres", "postgresql".
 Optional:
 
 - `access_client_id` (String) The Client ID of the Access token to use when connecting to the origin database.
-- `access_client_secret` (String) The Client Secret of the Access token to use when connecting to the origin database. This value is write-only and never returned by the API.
+- `access_client_secret` (String, Sensitive) The Client Secret of the Access token to use when connecting to the origin database. This value is write-only and never returned by the API.
 - `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 
 

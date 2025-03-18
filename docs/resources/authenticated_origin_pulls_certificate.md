@@ -78,7 +78,7 @@ resource "cloudflare_authenticated_origin_pulls_certificate" "example_authentica
 ### Required
 
 - `certificate` (String) The zone's leaf certificate.
-- `private_key` (String) The zone's private key.
+- `private_key` (String, Sensitive) The zone's private key.
 - `zone_id` (String) Identifier
 
 ### Read-Only
