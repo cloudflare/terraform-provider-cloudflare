@@ -46,11 +46,11 @@ type NotificationPolicyMechanismsEmailModel struct {
 }
 
 type NotificationPolicyMechanismsPagerdutyModel struct {
-	ID types.String `tfsdk:"id" json:"id,computed"`
+	ID types.String `tfsdk:"id" json:"id,optional"`
 }
 
 type NotificationPolicyMechanismsWebhooksModel struct {
-	ID types.String `tfsdk:"id" json:"id,computed"`
+	ID types.String `tfsdk:"id" json:"id,optional"`
 }
 
 type NotificationPolicyFiltersModel struct {
