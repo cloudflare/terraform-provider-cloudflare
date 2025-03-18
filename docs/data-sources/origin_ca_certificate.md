@@ -40,7 +40,7 @@ Available values: 7, 30, 90, 365, 730, 1095, 5475.
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
 
-Optional:
+Required:
 
 - `zone_id` (String) Identifier
 

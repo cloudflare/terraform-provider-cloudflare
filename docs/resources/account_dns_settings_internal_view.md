@@ -1,18 +1,18 @@
 ---
-page_title: "cloudflare_dns_settings_internal_view Resource - Cloudflare"
+page_title: "cloudflare_account_dns_settings_internal_view Resource - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_dns_settings_internal_view (Resource)
+# cloudflare_account_dns_settings_internal_view (Resource)
 
 
 
 ## Example Usage
 
 ```terraform
-resource "cloudflare_dns_settings_internal_view" "example_dns_settings_internal_view" {
+resource "cloudflare_account_dns_settings_internal_view" "example_account_dns_settings_internal_view" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   name = "my view"
   zones = ["372e67954025e0ba6aaa6d586b9e0b59"]
@@ -39,5 +39,5 @@ resource "cloudflare_dns_settings_internal_view" "example_dns_settings_internal_
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_dns_settings_internal_view.example '<account_id>/<view_id>'
+$ terraform import cloudflare_account_dns_settings_internal_view.example '<account_id>/<view_id>'
 ```

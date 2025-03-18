@@ -991,10 +991,10 @@ Optional:
 
 - `authorization_url` (String) URL used to generate the auth code used during token generation.
 - `client_id` (String) Client ID used to authenticate when generating a token for authenticating with the remote SCIM service.
-- `client_secret` (String) Secret used to authenticate when generating a token for authenticating with the remove SCIM service.
+- `client_secret` (String, Sensitive) Secret used to authenticate when generating a token for authenticating with the remove SCIM service.
 - `password` (String) Password used to authenticate with the remote SCIM service.
 - `scopes` (List of String) The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.
-- `token` (String) Token used to authenticate with the remote SCIM service.
+- `token` (String, Sensitive) Token used to authenticate with the remote SCIM service.
 - `token_url` (String) URL used to generate the token used to authenticate with the remote SCIM service.
 - `user` (String) User name used to authenticate with the remote SCIM service.
 

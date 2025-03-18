@@ -84,7 +84,7 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
 ### Required
 
 - `certificate` (String) The zone's SSL certificate or certificate and the intermediate(s).
-- `private_key` (String) The zone's private key.
+- `private_key` (String, Sensitive) The zone's private key.
 - `zone_id` (String) Identifier
 
 ### Optional

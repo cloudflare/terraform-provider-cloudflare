@@ -27,7 +27,7 @@ resource "cloudflare_logpush_job" "example_logpush_job" {
   output_options = {
     batch_prefix = "batch_prefix"
     batch_suffix = "batch_suffix"
-    cve_2021_4428 = true
+    cve_2021_44228 = true
     field_delimiter = "field_delimiter"
     field_names = ["ClientIP", "EdgeStartTimestamp", "RayID"]
     output_type = "ndjson"
@@ -64,7 +64,7 @@ Available values: "edge".
 - `max_upload_records` (Number) The maximum number of log lines per batch. This setting must be between 1000 and 1,000,000 lines, or `0` to disable it. Note that you cannot specify a minimum number of log lines per batch; this means that log files may contain many fewer lines than this. This parameter is not available for jobs with `edge` as its kind.
 - `name` (String) Optional human readable job name. Not unique. Cloudflare suggests that you set this to a meaningful string, like the domain name, to make it easier to identify your job.
 - `output_options` (Attributes) The structured replacement for `logpull_options`. When including this field, the `logpull_option` field will be ignored. (see [below for nested schema](#nestedatt--output_options))
-- `ownership_challenge` (String) Ownership challenge token to prove destination ownership.
+- `ownership_challenge` (String, Sensitive) Ownership challenge token to prove destination ownership.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
@@ -81,7 +81,7 @@ Optional:
 
 - `batch_prefix` (String) String to be prepended before each batch.
 - `batch_suffix` (String) String to be appended after each batch.
-- `cve_2021_4428` (Boolean) If set to true, will cause all occurrences of `${` in the generated files to be replaced with `x{`.
+- `cve_2021_44228` (Boolean) If set to true, will cause all occurrences of `${` in the generated files to be replaced with `x{`.
 - `field_delimiter` (String) String to join fields. This field be ignored when `record_template` is set.
 - `field_names` (List of String) List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.
 - `output_type` (String) Specifies the output type, such as `ndjson` or `csv`. This sets default values for the rest of the settings, depending on the chosen output type. Some formatting rules, like string quoting, are different between output types.

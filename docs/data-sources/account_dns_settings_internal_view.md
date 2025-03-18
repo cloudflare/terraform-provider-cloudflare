@@ -1,18 +1,18 @@
 ---
-page_title: "cloudflare_dns_settings_internal_view Data Source - Cloudflare"
+page_title: "cloudflare_account_dns_settings_internal_view Data Source - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_dns_settings_internal_view (Data Source)
+# cloudflare_account_dns_settings_internal_view (Data Source)
 
 
 
 ## Example Usage
 
 ```terraform
-data "cloudflare_dns_settings_internal_view" "example_dns_settings_internal_view" {
+data "cloudflare_account_dns_settings_internal_view" "example_account_dns_settings_internal_view" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   view_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }

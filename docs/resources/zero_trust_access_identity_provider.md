@@ -69,7 +69,7 @@ Optional:
 - `certs_url` (String) The jwks_uri endpoint of your IdP to allow the IdP keys to sign the tokens
 - `claims` (List of String) Custom claims
 - `client_id` (String) Your OAuth Client ID
-- `client_secret` (String) Your OAuth Client Secret
+- `client_secret` (String, Sensitive) Your OAuth Client Secret
 - `conditional_access_enabled` (Boolean) Should Cloudflare try to load authentication contexts from your account
 - `directory_id` (String) Your Azure directory uuid
 - `email_attribute_name` (String) The attribute name for email in the SAML response.

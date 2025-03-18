@@ -47,7 +47,7 @@ Available values: "initializing", "pending_deployment", "pending_deletion", "act
 - `expires_on` (String) The date when the certificate expires.
 - `id` (String) Identifier
 - `issuer` (String) The certificate authority that issued the certificate.
-- `private_key` (String) The hostname certificate's private key.
+- `private_key` (String, Sensitive) The hostname certificate's private key.
 - `serial_number` (String) The serial number on the uploaded certificate.
 - `signature` (String) The type of hash used for the certificate.
 - `status` (String) Status of the certificate or the association.

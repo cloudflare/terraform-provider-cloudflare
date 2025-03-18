@@ -61,7 +61,7 @@ Read-Only:
 
 - `batch_prefix` (String) String to be prepended before each batch.
 - `batch_suffix` (String) String to be appended after each batch.
-- `cve_2021_4428` (Boolean) If set to true, will cause all occurrences of `${` in the generated files to be replaced with `x{`.
+- `cve_2021_44228` (Boolean) If set to true, will cause all occurrences of `${` in the generated files to be replaced with `x{`.
 - `field_delimiter` (String) String to join fields. This field be ignored when `record_template` is set.
 - `field_names` (List of String) List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.
 - `output_type` (String) Specifies the output type, such as `ndjson` or `csv`. This sets default values for the rest of the settings, depending on the chosen output type. Some formatting rules, like string quoting, are different between output types.

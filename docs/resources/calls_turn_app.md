@@ -33,7 +33,7 @@ resource "cloudflare_calls_turn_app" "example_calls_turn_app" {
 ### Read-Only
 
 - `created` (String) The date and time the item was created.
-- `key` (String) Bearer token
+- `key` (String, Sensitive) Bearer token
 - `modified` (String) The date and time the item was last modified.
 - `uid` (String) A Cloudflare-generated unique identifier for a item.
 

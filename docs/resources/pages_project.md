@@ -57,8 +57,8 @@ resource "cloudflare_pages_project" "example_pages_project" {
       }
       env_vars = {
         foo = {
-          value = "hello world"
           type = "plain_text"
+          value = "hello world"
         }
       }
       hyperdrive_bindings = {
@@ -133,8 +133,8 @@ resource "cloudflare_pages_project" "example_pages_project" {
       }
       env_vars = {
         foo = {
-          value = "hello world"
           type = "plain_text"
+          value = "hello world"
         }
       }
       hyperdrive_bindings = {
@@ -218,7 +218,7 @@ Optional:
 - `destination_dir` (String) Output directory of the build.
 - `root_dir` (String) Directory to run the command.
 - `web_analytics_tag` (String) The classifying tag for analytics.
-- `web_analytics_token` (String) The auth token for analytics.
+- `web_analytics_token` (String, Sensitive) The auth token for analytics.
 
 
 <a id="nestedatt--deployment_configs"></a>
@@ -240,8 +240,8 @@ Optional:
 - `compatibility_date` (String) Compatibility date used for Pages Functions.
 - `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
 - `d1_databases` (Attributes Map) D1 databases used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--d1_databases))
-- `durable_object_namespaces` (Attributes Map) Durabble Object namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--durable_object_namespaces))
-- `env_vars` (Attributes Map) Environment variables for build configs. (see [below for nested schema](#nestedatt--deployment_configs--preview--env_vars))
+- `durable_object_namespaces` (Attributes Map) Durable Object namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--durable_object_namespaces))
+- `env_vars` (Attributes Map) Environment variables used for builds and Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--env_vars))
 - `hyperdrive_bindings` (Attributes Map) Hyperdrive bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--hyperdrive_bindings))
 - `kv_namespaces` (Attributes Map) KV namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--kv_namespaces))
 - `mtls_certificates` (Attributes Map) mTLS bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--preview--mtls_certificates))
@@ -284,7 +284,7 @@ Optional:
 
 Optional:
 
-- `namespace_id` (String) ID of the Durabble Object namespace.
+- `namespace_id` (String) ID of the Durable Object namespace.
 
 
 <a id="nestedatt--deployment_configs--preview--env_vars"></a>
@@ -292,12 +292,8 @@ Optional:
 
 Required:
 
-- `value` (String) Environment variable value.
-
-Optional:
-
-- `type` (String) The type of environment variable.
-Available values: "plain_text", "secret_text".
+- `type` (String) Available values: "plain_text".
+- `value` (String, Sensitive) Environment variable value.
 
 
 <a id="nestedatt--deployment_configs--preview--hyperdrive_bindings"></a>
@@ -379,8 +375,8 @@ Optional:
 - `compatibility_date` (String) Compatibility date used for Pages Functions.
 - `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
 - `d1_databases` (Attributes Map) D1 databases used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--d1_databases))
-- `durable_object_namespaces` (Attributes Map) Durabble Object namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--durable_object_namespaces))
-- `env_vars` (Attributes Map) Environment variables for build configs. (see [below for nested schema](#nestedatt--deployment_configs--production--env_vars))
+- `durable_object_namespaces` (Attributes Map) Durable Object namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--durable_object_namespaces))
+- `env_vars` (Attributes Map) Environment variables used for builds and Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--env_vars))
 - `hyperdrive_bindings` (Attributes Map) Hyperdrive bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--hyperdrive_bindings))
 - `kv_namespaces` (Attributes Map) KV namespaces used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--kv_namespaces))
 - `mtls_certificates` (Attributes Map) mTLS bindings used for Pages Functions. (see [below for nested schema](#nestedatt--deployment_configs--production--mtls_certificates))
@@ -423,7 +419,7 @@ Optional:
 
 Optional:
 
-- `namespace_id` (String) ID of the Durabble Object namespace.
+- `namespace_id` (String) ID of the Durable Object namespace.
 
 
 <a id="nestedatt--deployment_configs--production--env_vars"></a>
@@ -431,12 +427,8 @@ Optional:
 
 Required:
 
-- `value` (String) Environment variable value.
-
-Optional:
-
-- `type` (String) The type of environment variable.
-Available values: "plain_text", "secret_text".
+- `type` (String) Available values: "plain_text".
+- `value` (String, Sensitive) Environment variable value.
 
 
 <a id="nestedatt--deployment_configs--production--hyperdrive_bindings"></a>
@@ -517,8 +509,9 @@ Read-Only:
 - `build_config` (Attributes) Configs for the project build process. (see [below for nested schema](#nestedatt--canonical_deployment--build_config))
 - `created_on` (String) When the deployment was created.
 - `deployment_trigger` (Attributes) Info about what caused the deployment. (see [below for nested schema](#nestedatt--canonical_deployment--deployment_trigger))
-- `env_vars` (Attributes Map) A dict of env variables to build this deploy. (see [below for nested schema](#nestedatt--canonical_deployment--env_vars))
+- `env_vars` (Attributes Map) Environment variables used for builds and Pages Functions. (see [below for nested schema](#nestedatt--canonical_deployment--env_vars))
 - `environment` (String) Type of deploy.
+Available values: "preview", "production".
 - `id` (String) Id of the deployment.
 - `is_skipped` (Boolean) If the deployment has been skipped.
 - `latest_stage` (Attributes) The status of the deployment. (see [below for nested schema](#nestedatt--canonical_deployment--latest_stage))
@@ -540,7 +533,7 @@ Read-Only:
 - `destination_dir` (String) Output directory of the build.
 - `root_dir` (String) Directory to run the command.
 - `web_analytics_tag` (String) The classifying tag for analytics.
-- `web_analytics_token` (String) The auth token for analytics.
+- `web_analytics_token` (String, Sensitive) The auth token for analytics.
 
 
 <a id="nestedatt--canonical_deployment--deployment_trigger"></a>
@@ -550,6 +543,7 @@ Read-Only:
 
 - `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--canonical_deployment--deployment_trigger--metadata))
 - `type` (String) What caused the deployment.
+Available values: "push", "ad_hoc".
 
 <a id="nestedatt--canonical_deployment--deployment_trigger--metadata"></a>
 ### Nested Schema for `canonical_deployment.deployment_trigger.metadata`
@@ -567,8 +561,8 @@ Read-Only:
 
 Read-Only:
 
-- `type` (String) The type of environment variable.
-- `value` (String) Environment variable value.
+- `type` (String) Available values: "plain_text".
+- `value` (String, Sensitive) Environment variable value.
 
 
 <a id="nestedatt--canonical_deployment--latest_stage"></a>
@@ -578,8 +572,10 @@ Read-Only:
 
 - `ended_on` (String) When the stage ended.
 - `name` (String) The current build stage.
+Available values: "queued", "initialize", "clone_repo", "build", "deploy".
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
+Available values: "success", "idle", "active", "failure", "canceled".
 
 
 <a id="nestedatt--canonical_deployment--source"></a>
@@ -616,8 +612,10 @@ Read-Only:
 
 - `ended_on` (String) When the stage ended.
 - `name` (String) The current build stage.
+Available values: "queued", "initialize", "clone_repo", "build", "deploy".
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
+Available values: "success", "idle", "active", "failure", "canceled".
 
 
 
@@ -630,8 +628,9 @@ Read-Only:
 - `build_config` (Attributes) Configs for the project build process. (see [below for nested schema](#nestedatt--latest_deployment--build_config))
 - `created_on` (String) When the deployment was created.
 - `deployment_trigger` (Attributes) Info about what caused the deployment. (see [below for nested schema](#nestedatt--latest_deployment--deployment_trigger))
-- `env_vars` (Attributes Map) A dict of env variables to build this deploy. (see [below for nested schema](#nestedatt--latest_deployment--env_vars))
+- `env_vars` (Attributes Map) Environment variables used for builds and Pages Functions. (see [below for nested schema](#nestedatt--latest_deployment--env_vars))
 - `environment` (String) Type of deploy.
+Available values: "preview", "production".
 - `id` (String) Id of the deployment.
 - `is_skipped` (Boolean) If the deployment has been skipped.
 - `latest_stage` (Attributes) The status of the deployment. (see [below for nested schema](#nestedatt--latest_deployment--latest_stage))
@@ -653,7 +652,7 @@ Read-Only:
 - `destination_dir` (String) Output directory of the build.
 - `root_dir` (String) Directory to run the command.
 - `web_analytics_tag` (String) The classifying tag for analytics.
-- `web_analytics_token` (String) The auth token for analytics.
+- `web_analytics_token` (String, Sensitive) The auth token for analytics.
 
 
 <a id="nestedatt--latest_deployment--deployment_trigger"></a>
@@ -663,6 +662,7 @@ Read-Only:
 
 - `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--latest_deployment--deployment_trigger--metadata))
 - `type` (String) What caused the deployment.
+Available values: "push", "ad_hoc".
 
 <a id="nestedatt--latest_deployment--deployment_trigger--metadata"></a>
 ### Nested Schema for `latest_deployment.deployment_trigger.metadata`
@@ -680,8 +680,8 @@ Read-Only:
 
 Read-Only:
 
-- `type` (String) The type of environment variable.
-- `value` (String) Environment variable value.
+- `type` (String) Available values: "plain_text".
+- `value` (String, Sensitive) Environment variable value.
 
 
 <a id="nestedatt--latest_deployment--latest_stage"></a>
@@ -691,8 +691,10 @@ Read-Only:
 
 - `ended_on` (String) When the stage ended.
 - `name` (String) The current build stage.
+Available values: "queued", "initialize", "clone_repo", "build", "deploy".
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
+Available values: "success", "idle", "active", "failure", "canceled".
 
 
 <a id="nestedatt--latest_deployment--source"></a>
@@ -729,8 +731,10 @@ Read-Only:
 
 - `ended_on` (String) When the stage ended.
 - `name` (String) The current build stage.
+Available values: "queued", "initialize", "clone_repo", "build", "deploy".
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
+Available values: "success", "idle", "active", "failure", "canceled".
 
 
 
