@@ -131,7 +131,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"id": schema.StringAttribute{
 									Description: "UUID",
-									Computed:    true,
+									Optional:    true,
 								},
 							},
 						},
@@ -142,7 +142,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"id": schema.StringAttribute{
 									Description: "UUID",
-									Computed:    true,
+									Optional:    true,
 								},
 							},
 						},
