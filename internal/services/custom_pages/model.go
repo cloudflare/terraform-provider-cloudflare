@@ -12,6 +12,7 @@ type CustomPagesResultEnvelope struct {
 }
 
 type CustomPagesModel struct {
+	ID         types.String `tfsdk:"id" json:"-,computed"`
 	Identifier types.String `tfsdk:"identifier" path:"identifier,required"`
 	AccountID  types.String `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID     types.String `tfsdk:"zone_id" path:"zone_id,optional"`
