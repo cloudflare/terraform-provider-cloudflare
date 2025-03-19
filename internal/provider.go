@@ -46,6 +46,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning_expression"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/d1_database"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dcv_delegation"
@@ -502,6 +503,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		leaked_credential_check.NewResource,
 		leaked_credential_check_rule.NewResource,
 		content_scanning_expression.NewResource,
+		custom_pages.NewResource,
 	}
 }
 
@@ -813,6 +815,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		leaked_credential_check.NewLeakedCredentialCheckDataSource,
 		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
 		content_scanning_expression.NewContentScanningExpressionsDataSource,
+		custom_pages.NewCustomPagesDataSource,
+		custom_pages.NewCustomPagesListDataSource,
 	}
 }
 
