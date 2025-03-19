@@ -19,7 +19,7 @@ package logpush_job_test
 // 	resourceDataMap := map[string]interface{}{
 // 		"output_options": []interface{}{
 // 			map[string]interface{}{
-// 				"cve20214428":      *testData.CVE202144228,
+// 				"cve202144228":      *testData.CVE202144228,
 // 				"batch_prefix":     testData.BatchPrefix,
 // 				"batch_suffix":     testData.BatchSuffix,
 // 				"field_delimiter":  testData.FieldDelimiter,
