@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/custom_pages"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*CustomPagesResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*CustomPagesResource)(nil)
+var _ resource.ResourceWithImportState = (*CustomPagesResource)(nil)
 
 func NewResource() resource.Resource {
 	return &CustomPagesResource{}
@@ -95,6 +98,7 @@ func (r *CustomPagesResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.Identifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -150,6 +154,7 @@ func (r *CustomPagesResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.Identifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -196,12 +201,68 @@ func (r *CustomPagesResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 	data = &env.Result
+	data.ID = data.Identifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *CustomPagesResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 
+}
+
+func (r *CustomPagesResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *CustomPagesModel = new(CustomPagesModel)
+	params := custom_pages.CustomPageGetParams{}
+
+	path_accounts_or_zones, path_account_id_or_zone_id := "", ""
+	path_identifier := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<{accounts|zones}/{account_id|zone_id}>/<identifier>",
+		&path_accounts_or_zones,
+		&path_account_id_or_zone_id,
+		&path_identifier,
+	)
+	resp.Diagnostics.Append(diags...)
+	switch path_accounts_or_zones {
+	case "accounts":
+		params.AccountID = cloudflare.F(path_account_id_or_zone_id)
+		data.AccountID = types.StringValue(path_account_id_or_zone_id)
+	case "zones":
+		params.ZoneID = cloudflare.F(path_account_id_or_zone_id)
+		data.ZoneID = types.StringValue(path_account_id_or_zone_id)
+	default:
+		resp.Diagnostics.AddError("invalid discriminator segment - <{accounts|zones}/{account_id|zone_id}>", "expected discriminator to be one of {accounts|zones}")
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.Identifier = types.StringValue(path_identifier)
+
+	res := new(http.Response)
+	env := CustomPagesResultEnvelope{*data}
+	_, err := r.client.CustomPages.Get(
+		ctx,
+		path_identifier,
+		params,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.Identifier
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *CustomPagesResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
