@@ -59,4 +59,10 @@ const (
 
 	// Environment variable key for the client base URL.
 	BaseURLEnvVarKey = "CLOUDFLARE_BASE_URL"
+
+	// Key for the max_retries attribute in the schema
+	MaxRetriesSchemaKey = "max_retries"
+
+	// Environment variable for max_retries
+    	MaxRetriesEnvVarKey = "CLOUDFLARE_MAX_RETRIES"
 )
