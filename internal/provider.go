@@ -238,6 +238,7 @@ type CloudflareProviderModel struct {
 	APIToken                types.String `tfsdk:"api_token" json:"api_token"`
 	UserAgentOperatorSuffix types.String `tfsdk:"user_agent_operator_suffix" json:"user_agent_operator_suffix"`
 	BaseURL                 types.String `tfsdk:"base_url" json:"base_url"`
+	MaxRetries              types.Int64  `tfsdk:"max_retries" json:"max_retries"`
 }
 
 func (p *CloudflareProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -293,6 +294,11 @@ func ProviderSchema(ctx context.Context) schema.Schema {
 				Optional:            true,
 				MarkdownDescription: fmt.Sprintf("Value to override the default HTTP client base URL. Alternatively, can be configured using the `%s` environment variable.", consts.BaseURLSchemaKey),
 			},
+
+			consts.MaxRetriesSchemaKey: schema.Int64Attribute{
+                		Optional:            true,
+                		MarkdownDescription: fmt.Sprintf("The maximum number of retries for API requests. Defaults to the Cloudflare SDK's internal retry logic. Alternatively, can be configured using the `%s` environment variable.", consts.MaxRetriesEnvVarKey),
+            		},
 		},
 	}
 }
@@ -359,6 +365,14 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 	if pluginVersion != nil {
 		opts = append(opts, option.WithHeader("x-stainless-runtime-version", *pluginVersion))
 	}
+
+	if !data.MaxRetries.IsNull() {
+        	opts = append(opts, option.WithMaxRetries(int(data.MaxRetries.ValueInt64())))
+    	} else if o, ok := os.LookupEnv("CLOUDFLARE_MAX_RETRIES"); ok {
+        	if retries, err := strconv.Atoi(o); err == nil {
+			opts = append(opts, option.WithMaxRetries(retries))
+        	}
+    	}
 
 	client := cloudflare.NewClient(
 		opts...,
