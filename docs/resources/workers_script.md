@@ -75,6 +75,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
 ### Required
 
 - `account_id` (String) Identifier
+- `content` (String) Module or Service Worker contents of the Worker.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 
 ### Optional
@@ -91,7 +92,6 @@ resource "cloudflare_workers_script" "example_workers_script" {
 - `migrations` (Attributes) Migrations to apply for Durable Objects associated with this Worker. (see [below for nested schema](#nestedatt--migrations))
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--observability))
 - `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). (see [below for nested schema](#nestedatt--placement))
-- `tags` (List of String) List of strings to use as tags for this Worker.
 - `tail_consumers` (Attributes List) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--tail_consumers))
 - `usage_model` (String) Usage model for the Worker invocations.
 Available values: "standard".
@@ -104,10 +104,6 @@ Available values: "standard".
 - `has_modules` (Boolean) Whether a Worker contains modules.
 - `id` (String) Name of the script, used in URLs and route configuration.
 - `modified_on` (String) When the script was last modified.
-- `placement_mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
-Available values: "smart".
-- `placement_status` (String) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
-Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
 - `startup_time_ms` (Number)
 
 <a id="nestedatt--assets"></a>
