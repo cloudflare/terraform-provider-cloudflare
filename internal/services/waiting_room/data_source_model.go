@@ -61,11 +61,11 @@ func (m *WaitingRoomDataSourceModel) toListParams(_ context.Context) (params wai
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
+	// if !m.AccountID.IsNull() {
+	// 	params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	// } else {
+	// 	params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	// }
 
 	return
 }
