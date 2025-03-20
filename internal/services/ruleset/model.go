@@ -5,7 +5,6 @@ package ruleset
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -22,7 +21,6 @@ type RulesetModel struct {
 	Phase       types.String                                    `tfsdk:"phase" json:"phase,required"`
 	Description types.String                                    `tfsdk:"description" json:"description,computed_optional"`
 	Rules       customfield.NestedObjectList[RulesetRulesModel] `tfsdk:"rules" json:"rules,computed_optional"`
-	LastUpdated timetypes.RFC3339                               `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 }
 
 func (m RulesetModel) MarshalJSON() (data []byte, err error) {
