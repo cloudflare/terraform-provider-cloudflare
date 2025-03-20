@@ -46,7 +46,7 @@ Available values: "host", "method", "endpoint", "traffic_stats.requests", "traff
 - `origin` (String) Filter results to only include discovery results sourced from a particular discovery engine
   * `ML` - Discovered operations that were sourced using ML API Discovery
   * `SessionIdentifier` - Discovered operations that were sourced using Session Identifier API Discovery
-Available values: "ML", "SessionIdentifier".
+Available values: "ML", "SessionIdentifier", "LabelDiscovery".
 - `state` (String) Filter results to only include discovery results in a particular state. States are as follows
   * `review` - Discovered operations that are not saved into API Shield Endpoint Management
   * `saved` - Discovered operations that are already saved into API Shield Endpoint Management
