@@ -15,6 +15,7 @@ description: |-
 resource "cloudflare_bot_management" "example_bot_management" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   ai_bots_protection = "block"
+  crawler_protection = "enabled"
   enable_js = true
   fight_mode = true
 }
@@ -32,6 +33,8 @@ resource "cloudflare_bot_management" "example_bot_management" {
 - `ai_bots_protection` (String) Enable rule to block AI Scrapers and Crawlers.
 Available values: "block", "disabled".
 - `auto_update_model` (Boolean) Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)
+- `crawler_protection` (String) Enable rule to punish AI Scrapers and Crawlers via a link maze.
+Available values: "enabled", "disabled".
 - `enable_js` (Boolean) Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).
 - `fight_mode` (Boolean) Whether to enable Bot Fight Mode.
 - `optimize_wordpress` (Boolean) Whether to optimize Super Bot Fight Mode protections for Wordpress.
