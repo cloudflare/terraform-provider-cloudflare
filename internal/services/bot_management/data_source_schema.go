@@ -22,7 +22,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"ai_bots_protection": schema.StringAttribute{
-				Description: "Enable rule to block AI Scrapers and Crawlers.",
+				Description: "Enable rule to block AI Scrapers and Crawlers.\nAvailable values: \"block\", \"disabled\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("block", "disabled"),
@@ -31,6 +31,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"auto_update_model": schema.BoolAttribute{
 				Description: "Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)",
 				Computed:    true,
+			},
+			"crawler_protection": schema.StringAttribute{
+				Description: "Enable rule to punish AI Scrapers and Crawlers via a link maze.\nAvailable values: \"enabled\", \"disabled\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
+				},
 			},
 			"enable_js": schema.BoolAttribute{
 				Description: "Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).",
@@ -45,7 +52,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"sbfm_definitely_automated": schema.StringAttribute{
-				Description: "Super Bot Fight Mode (SBFM) action to take on definitely automated requests.",
+				Description: "Super Bot Fight Mode (SBFM) action to take on definitely automated requests.\nAvailable values: \"allow\", \"block\", \"managed_challenge\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -56,7 +63,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"sbfm_likely_automated": schema.StringAttribute{
-				Description: "Super Bot Fight Mode (SBFM) action to take on likely automated requests.",
+				Description: "Super Bot Fight Mode (SBFM) action to take on likely automated requests.\nAvailable values: \"allow\", \"block\", \"managed_challenge\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -67,11 +74,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"sbfm_static_resource_protection": schema.BoolAttribute{
-				Description: "Super Bot Fight Mode (SBFM) to enable static resource protection.\nEnable if static resources on your application need bot protection.\nNote: Static resource protection can also result in legitimate traffic being blocked.\n",
+				Description: "Super Bot Fight Mode (SBFM) to enable static resource protection.\nEnable if static resources on your application need bot protection.\nNote: Static resource protection can also result in legitimate traffic being blocked.",
 				Computed:    true,
 			},
 			"sbfm_verified_bots": schema.StringAttribute{
-				Description: "Super Bot Fight Mode (SBFM) action to take on verified bots requests.",
+				Description: "Super Bot Fight Mode (SBFM) action to take on verified bots requests.\nAvailable values: \"allow\", \"block\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("allow", "block"),
@@ -82,7 +89,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"using_latest_model": schema.BoolAttribute{
-				Description: "A read-only field that indicates whether the zone currently is running the latest ML model.\n",
+				Description: "A read-only field that indicates whether the zone currently is running the latest ML model.",
 				Computed:    true,
 			},
 			"stale_zone_configuration": schema.SingleNestedAttribute{

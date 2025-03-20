@@ -22,7 +22,7 @@ data "cloudflare_magic_transit_connectors" "example_magic_transit_connectors" {
 
 ### Required
 
-- `account_id` (String) Account identifier
+- `account_id` (String)
 
 ### Optional
 

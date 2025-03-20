@@ -29,7 +29,7 @@ resource "cloudflare_email_security_block_sender" "example_email_security_block_
 - `account_id` (String) Account Identifier
 - `is_regex` (Boolean)
 - `pattern` (String)
-- `pattern_type` (String)
+- `pattern_type` (String) Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
 
 ### Optional
 

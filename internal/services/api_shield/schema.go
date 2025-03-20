@@ -23,7 +23,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Identifier",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -39,7 +39,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The type of characteristic.",
+							Description: "The type of characteristic.\nAvailable values: \"header\", \"cookie\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

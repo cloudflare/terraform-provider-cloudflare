@@ -43,7 +43,9 @@ data "cloudflare_zero_trust_tunnel_cloudflared" "example_zero_trust_tunnel_cloud
 - `name` (String) A user-friendly name for a tunnel.
 - `remote_config` (Boolean) If `true`, the tunnel can be configured remotely from the Zero Trust dashboard. If `false`, the tunnel must be configured locally on the origin machine.
 - `status` (String) The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).
+Available values: "inactive", "degraded", "healthy", "down".
 - `tun_type` (String) The type of tunnel.
+Available values: "cfd_tunnel", "warp_connector", "warp", "magic", "ip_sec", "gre", "cni".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -51,11 +53,12 @@ data "cloudflare_zero_trust_tunnel_cloudflared" "example_zero_trust_tunnel_cloud
 Optional:
 
 - `exclude_prefix` (String)
-- `existed_at` (String) If provided, include only tunnels that were created (and not deleted) before this time.
+- `existed_at` (String) If provided, include only resources that were created (and not deleted) before this time. URL encoded.
 - `include_prefix` (String)
 - `is_deleted` (Boolean) If `true`, only include deleted tunnels. If `false`, exclude deleted tunnels. If empty, all tunnels will be included.
 - `name` (String) A user-friendly name for a tunnel.
 - `status` (String) The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).
+Available values: "inactive", "degraded", "healthy", "down".
 - `uuid` (String) UUID of the tunnel.
 - `was_active_at` (String)
 - `was_inactive_at` (String)

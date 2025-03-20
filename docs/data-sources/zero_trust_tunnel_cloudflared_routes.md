@@ -15,12 +15,12 @@ description: |-
 data "cloudflare_zero_trust_tunnel_cloudflared_routes" "example_zero_trust_tunnel_cloudflared_routes" {
   account_id = "699d98642c564d2e855e9661899b7252"
   comment = "Example comment for this route."
-  existed_at = "2019-10-12T07:20:50.52Z"
+  existed_at = "2019-10-12T07%3A20%3A50.52Z"
   is_deleted = true
   network_subset = "172.16.0.0/16"
   network_superset = "172.16.0.0/16"
   route_id = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
-  tun_types = "cfd_tunnel,warp_connector"
+  tun_types = ["cfd_tunnel"]
   tunnel_id = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
   virtual_network_id = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
 }
@@ -36,13 +36,13 @@ data "cloudflare_zero_trust_tunnel_cloudflared_routes" "example_zero_trust_tunne
 ### Optional
 
 - `comment` (String) Optional remark describing the route.
-- `existed_at` (String) If provided, include only tunnels that were created (and not deleted) before this time.
+- `existed_at` (String) If provided, include only resources that were created (and not deleted) before this time. URL encoded.
 - `is_deleted` (Boolean) If `true`, only include deleted routes. If `false`, exclude deleted routes. If empty, all routes will be included.
 - `max_items` (Number) Max items to fetch, default: 1000
 - `network_subset` (String) If set, only list routes that are contained within this IP range.
 - `network_superset` (String) If set, only list routes that contain this IP range.
 - `route_id` (String) UUID of the route.
-- `tun_types` (String) The types of tunnels to filter separated by a comma.
+- `tun_types` (List of String) The types of tunnels to filter by, separated by commas.
 - `tunnel_id` (String) UUID of the tunnel.
 - `virtual_network_id` (String) UUID of the virtual network.
 
@@ -61,6 +61,7 @@ Read-Only:
 - `id` (String) UUID of the route.
 - `network` (String) The private IPv4 or IPv6 range connected by the route, in CIDR notation.
 - `tun_type` (String) The type of tunnel.
+Available values: "cfd_tunnel", "warp_connector", "warp", "magic", "ip_sec", "gre", "cni".
 - `tunnel_id` (String) UUID of the tunnel.
 - `tunnel_name` (String) A user-friendly name for a tunnel.
 - `virtual_network_id` (String) UUID of the virtual network.

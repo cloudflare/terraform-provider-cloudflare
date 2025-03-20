@@ -32,6 +32,7 @@ resource "cloudflare_zero_trust_gateway_certificate" "example_zero_trust_gateway
 ### Read-Only
 
 - `binding_status` (String) The deployment status of the certificate on Cloudflare's edge. Certificates in the 'available' (previously called 'active') state may be used for Gateway TLS interception.
+Available values: "pending_deployment", "available", "pending_deletion", "inactive".
 - `certificate` (String) The CA certificate
 - `created_at` (String)
 - `expires_on` (String)
@@ -41,6 +42,7 @@ resource "cloudflare_zero_trust_gateway_certificate" "example_zero_trust_gateway
 - `issuer_org` (String) The organization that issued the certificate.
 - `issuer_raw` (String) The entire issuer field of the certificate.
 - `type` (String) The type of certificate, either BYO-PKI (custom) or Gateway-managed.
+Available values: "custom", "gateway_managed".
 - `updated_at` (String)
 - `uploaded_on` (String)
 

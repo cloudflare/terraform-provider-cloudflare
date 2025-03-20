@@ -81,7 +81,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"decision": schema.StringAttribute{
-							Description: "The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.",
+							Description: "The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.\nAvailable values: \"allow\", \"deny\", \"non_identity\", \"bypass\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

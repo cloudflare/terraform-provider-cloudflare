@@ -60,5 +60,6 @@ Read-Only:
 - `created_at` (String)
 - `identifier` (String) The identifier for the membership (eg. a zone or account tag).
 - `kind` (String) The type of the membership.
+Available values: "zone", "account".
 
 

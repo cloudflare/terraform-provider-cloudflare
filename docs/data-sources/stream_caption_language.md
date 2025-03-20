@@ -26,12 +26,13 @@ data "cloudflare_stream_caption_language" "example_stream_caption_language" {
 
 - `account_id` (String) Identifier
 - `identifier` (String) A Cloudflare-generated unique identifier for a media item.
+- `language` (String) The language tag in BCP 47 format.
 
 ### Read-Only
 
 - `generated` (Boolean) Whether the caption was generated via AI.
 - `label` (String) The language label displayed in the native language to users.
-- `language` (String) The language tag in BCP 47 format.
 - `status` (String) The status of a generated caption.
+Available values: "ready", "inprogress", "error".
 
 

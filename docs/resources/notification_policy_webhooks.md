@@ -31,7 +31,7 @@ resource "cloudflare_notification_policy_webhooks" "example_notification_policy_
 
 ### Optional
 
-- `secret` (String) Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.
+- `secret` (String, Sensitive) Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.
 
 ### Read-Only
 
@@ -40,6 +40,7 @@ resource "cloudflare_notification_policy_webhooks" "example_notification_policy_
 - `last_failure` (String) Timestamp of the last time an attempt to dispatch a notification to this webhook failed.
 - `last_success` (String) Timestamp of the last time Cloudflare was able to successfully dispatch a notification using this webhook.
 - `type` (String) Type of webhook endpoint.
+Available values: "slack", "generic", "gchat".
 
 ## Import
 

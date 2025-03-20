@@ -103,6 +103,7 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
 - `ownership_verification` (Attributes) This is a record which can be placed to activate a hostname. (see [below for nested schema](#nestedatt--ownership_verification))
 - `ownership_verification_http` (Attributes) This presents the token to be served by the given http url to activate a hostname. (see [below for nested schema](#nestedatt--ownership_verification_http))
 - `status` (String) Status of the hostname's activation.
+Available values: "active", "pending", "active_redeploying", "moved", "pending_deletion", "deleted", "pending_blocked", "pending_migration", "pending_provisioned", "test_pending", "test_active", "test_active_apex", "test_blocked", "test_failed", "provisioned", "blocked".
 - `verification_errors` (List of String) These are errors that were encountered while trying to activate a hostname.
 
 <a id="nestedatt--ssl"></a>
@@ -111,14 +112,18 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
 Optional:
 
 - `bundle_method` (String) A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.
+Available values: "ubiquitous", "optimal", "force".
 - `certificate_authority` (String) The Certificate Authority that will issue the certificate
+Available values: "digicert", "google", "lets_encrypt", "ssl_com".
 - `cloudflare_branding` (Boolean) Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true
 - `custom_cert_bundle` (Attributes List) Array of custom certificate and key pairs (1 or 2 pairs allowed) (see [below for nested schema](#nestedatt--ssl--custom_cert_bundle))
 - `custom_certificate` (String) If a custom uploaded certificate is used.
-- `custom_key` (String) The key for a custom uploaded certificate.
+- `custom_key` (String, Sensitive) The key for a custom uploaded certificate.
 - `method` (String) Domain control validation (DCV) method used for this hostname.
+Available values: "http", "txt", "email".
 - `settings` (Attributes) SSL specific settings. (see [below for nested schema](#nestedatt--ssl--settings))
 - `type` (String) Level of validation to be used for this hostname. Domain validation (dv) must be used.
+Available values: "dv".
 - `wildcard` (Boolean) Indicates whether the certificate covers a wildcard.
 
 <a id="nestedatt--ssl--custom_cert_bundle"></a>
@@ -127,7 +132,7 @@ Optional:
 Required:
 
 - `custom_certificate` (String) If a custom uploaded certificate is used.
-- `custom_key` (String) The key for a custom uploaded certificate.
+- `custom_key` (String, Sensitive) The key for a custom uploaded certificate.
 
 
 <a id="nestedatt--ssl--settings"></a>
@@ -137,9 +142,13 @@ Optional:
 
 - `ciphers` (List of String) An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
 - `early_hints` (String) Whether or not Early Hints is enabled.
+Available values: "on", "off".
 - `http2` (String) Whether or not HTTP2 is enabled.
+Available values: "on", "off".
 - `min_tls_version` (String) The minimum TLS version supported.
+Available values: "1.0", "1.1", "1.2", "1.3".
 - `tls_1_3` (String) Whether or not TLS 1.3 is enabled.
+Available values: "on", "off".
 
 
 
@@ -150,6 +159,7 @@ Read-Only:
 
 - `name` (String) DNS Name for record.
 - `type` (String) DNS Record type.
+Available values: "txt".
 - `value` (String) Content for the record.
 
 

@@ -37,7 +37,7 @@ resource "cloudflare_zero_trust_dlp_entry" "example_zero_trust_dlp_entry" {
 
 ### Optional
 
-- `type` (String)
+- `type` (String) Available values: "custom".
 
 ### Read-Only
 
@@ -57,7 +57,7 @@ Required:
 
 Optional:
 
-- `validation` (String)
+- `validation` (String) Available values: "luhn".
 
 
 <a id="nestedatt--confidence"></a>
@@ -65,9 +65,8 @@ Optional:
 
 Read-Only:
 
-- `ai_context_available` (Boolean)
-- `available` (Boolean) Indicates whether this entry can be made more or less sensitive by setting a confidence threshold.
-Profiles that use an entry with `available` set to true can use confidence thresholds
+- `ai_context_available` (Boolean) Indicates whether this entry has AI remote service validation
+- `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service
 
 ## Import
 

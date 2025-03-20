@@ -6,11 +6,14 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,8 +23,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Device ID.",
-				Computed:    true,
+				Description:   "Device ID.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"policy_id": schema.StringAttribute{
 				Description:   "Device ID.",
@@ -90,6 +94,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
 				Optional:    true,
 			},
+			"register_interface_ip_with_dns": schema.BoolAttribute{
+				Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
+				Optional:    true,
+			},
 			"support_url": schema.StringAttribute{
 				Description: "The URL to launch when the Send Feedback button is clicked.",
 				Optional:    true,
@@ -101,6 +109,56 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"tunnel_protocol": schema.StringAttribute{
 				Description: "Determines which tunnel protocol to use.",
 				Optional:    true,
+			},
+			"exclude": schema.ListNestedAttribute{
+				Description: "List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileExcludeModel](ctx),
+				Validators: []validator.List{
+					listvalidator.ConflictsWith(path.MatchRoot("include")),
+				},
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"address": schema.StringAttribute{
+							Description: "The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.",
+							Required:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the Split Tunnel item, displayed in the client UI.",
+							Required:    true,
+						},
+						"host": schema.StringAttribute{
+							Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"include": schema.ListNestedAttribute{
+				Description: "List of routes included in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileIncludeModel](ctx),
+				Validators: []validator.List{
+					listvalidator.ConflictsWith(path.MatchRoot("exclude")),
+				},
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"address": schema.StringAttribute{
+							Description: "The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.",
+							Required:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the Split Tunnel item, displayed in the client UI.",
+							Required:    true,
+						},
+						"host": schema.StringAttribute{
+							Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",
+							Optional:    true,
+						},
+					},
+				},
 			},
 			"service_mode_v2": schema.SingleNestedAttribute{
 				Computed:   true,
@@ -124,26 +182,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"gateway_unique_id": schema.StringAttribute{
 				Computed: true,
 			},
-			"exclude": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileExcludeModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"address": schema.StringAttribute{
-							Description: "The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.",
-							Computed:    true,
-						},
-						"description": schema.StringAttribute{
-							Description: "A description of the Split Tunnel item, displayed in the client UI.",
-							Computed:    true,
-						},
-						"host": schema.StringAttribute{
-							Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",
-							Computed:    true,
-						},
-					},
-				},
-			},
 			"fallback_domains": schema.ListNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileFallbackDomainsModel](ctx),
@@ -162,26 +200,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
-						},
-					},
-				},
-			},
-			"include": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileIncludeModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"address": schema.StringAttribute{
-							Description: "The address in CIDR format to include in the tunnel. If address is present, host must not be present.",
-							Computed:    true,
-						},
-						"description": schema.StringAttribute{
-							Description: "A description of the split tunnel item, displayed in the client UI.",
-							Computed:    true,
-						},
-						"host": schema.StringAttribute{
-							Description: "The domain name to include in the tunnel. If host is present, address must not be present.",
-							Computed:    true,
 						},
 					},
 				},

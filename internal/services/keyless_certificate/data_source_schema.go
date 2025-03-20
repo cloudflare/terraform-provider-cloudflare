@@ -58,7 +58,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of the Keyless SSL.",
+				Description: "Status of the Keyless SSL.\nAvailable values: \"active\", \"deleted\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("active", "deleted"),

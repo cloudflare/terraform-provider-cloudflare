@@ -40,6 +40,7 @@ data "cloudflare_keyless_certificate" "example_keyless_certificate" {
 - `permissions` (List of String) Available permissions for the Keyless SSL for the current user requesting the item.
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `status` (String) Status of the Keyless SSL.
+Available values: "active", "deleted".
 - `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--tunnel))
 
 <a id="nestedatt--tunnel"></a>

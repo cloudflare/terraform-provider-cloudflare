@@ -51,6 +51,7 @@ resource "cloudflare_email_routing_catch_all" "example_email_routing_catch_all" 
 Required:
 
 - `type` (String) Type of action for catch-all rule.
+Available values: "drop", "forward", "worker".
 
 Optional:
 
@@ -63,6 +64,7 @@ Optional:
 Required:
 
 - `type` (String) Type of matcher. Default is 'all'.
+Available values: "all".
 
 ## Import
 

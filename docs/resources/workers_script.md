@@ -26,12 +26,12 @@ resource "cloudflare_workers_script" "example_workers_script" {
   }
   bindings = [{
     name = "MY_ENV_VAR"
-    text = "my_data"
     type = "plain_text"
   }]
   body_part = "worker.js"
   compatibility_date = "2021-01-01"
   compatibility_flags = ["nodejs_compat"]
+  content = file("worker.js")
   keep_assets = false
   keep_bindings = ["string"]
   logpush = false
@@ -87,11 +87,14 @@ resource "cloudflare_workers_script" "example_workers_script" {
 - `compatibility_flags` (List of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
 - `keep_assets` (Boolean) Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.
 - `keep_bindings` (List of String) List of binding types to keep from previous_upload.
+- `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `main_module` (String) Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.
 - `migrations` (Attributes) Migrations to apply for Durable Objects associated with this Worker. (see [below for nested schema](#nestedatt--migrations))
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--observability))
 - `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). (see [below for nested schema](#nestedatt--placement))
 - `tail_consumers` (Attributes List) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--tail_consumers))
+- `usage_model` (String) Usage model for the Worker invocations.
+Available values: "standard".
 
 ### Read-Only
 
@@ -100,10 +103,8 @@ resource "cloudflare_workers_script" "example_workers_script" {
 - `has_assets` (Boolean) Whether a Worker contains assets.
 - `has_modules` (Boolean) Whether a Worker contains modules.
 - `id` (String) Name of the script, used in URLs and route configuration.
-- `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `modified_on` (String) When the script was last modified.
 - `startup_time_ms` (Number)
-- `usage_model` (String) Usage model for the Worker invocations.
 
 <a id="nestedatt--assets"></a>
 ### Nested Schema for `assets`
@@ -111,7 +112,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
 Optional:
 
 - `config` (Attributes) Configuration for assets within a Worker. (see [below for nested schema](#nestedatt--assets--config))
-- `jwt` (String) Token provided upon successful upload of all files from a registered manifest.
+- `jwt` (String, Sensitive) Token provided upon successful upload of all files from a registered manifest.
 
 <a id="nestedatt--assets--config"></a>
 ### Nested Schema for `assets.config`
@@ -119,7 +120,9 @@ Optional:
 Optional:
 
 - `html_handling` (String) Determines the redirects and rewrites of requests for HTML content.
+Available values: "auto-trailing-slash", "force-trailing-slash", "drop-trailing-slash", "none".
 - `not_found_handling` (String) Determines the response when a request does not match a static asset, and there is no Worker script.
+Available values: "none", "404-page", "single-page-application".
 - `run_worker_first` (Boolean) When true, requests will always invoke the Worker script. Otherwise, attempt to serve an asset matching the request, falling back to the Worker script.
 - `serve_directly` (Boolean) When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.
 
@@ -132,13 +135,14 @@ Required:
 
 - `name` (String) A JavaScript variable name for the binding.
 - `type` (String) The kind of resource that the binding provides.
+Available values: "ai", "analytics_engine", "assets", "browser_rendering", "d1", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "json", "kv_namespace", "mtls_certificate", "plain_text", "queue", "r2_bucket", "secret_text", "service", "tail_consumer", "vectorize", "version_metadata".
 
 Optional:
 
 - `bucket_name` (String) R2 bucket to bind to.
 - `certificate_id` (String) Identifier of the certificate to bind to.
 - `class_name` (String) The exported class name of the Durable Object.
-- `dataset` (String) The dataset name to bind to.
+- `dataset` (String) The name of the dataset to bind to.
 - `environment` (String) The environment of the script_name to bind to.
 - `id` (String) Identifier of the D1 database to bind to.
 - `index_name` (String) Name of the Vectorize index to bind to.
@@ -149,7 +153,7 @@ Optional:
 - `queue_name` (String) Name of the Queue to bind to.
 - `script_name` (String) The script where the Durable Object is defined, if it is external to this Worker.
 - `service` (String) Name of Worker to bind to.
-- `text` (String) The text value to use.
+- `text` (String, Sensitive) The text value to use.
 
 <a id="nestedatt--bindings--outbound"></a>
 ### Nested Schema for `bindings.outbound`
@@ -253,10 +257,12 @@ Optional:
 Optional:
 
 - `mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+Available values: "smart".
 
 Read-Only:
 
 - `status` (String) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
 
 
 <a id="nestedatt--tail_consumers"></a>

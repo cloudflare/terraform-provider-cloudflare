@@ -15,7 +15,7 @@ description: |-
 data "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   bucket_name = "example-bucket"
-  domain_name = "example-domain/custom-domain.com"
+  domain = "example-domain/custom-domain.com"
 }
 ```
 
@@ -26,13 +26,13 @@ data "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 
 - `account_id` (String) Account ID
 - `bucket_name` (String) Name of the bucket
-- `domain_name` (String) Name of the custom domain
+- `domain` (String) Name of the custom domain
 
 ### Read-Only
 
-- `domain` (String) Domain name of the custom domain to be added
 - `enabled` (Boolean) Whether this bucket is publicly accessible at the specified custom domain
 - `min_tls` (String) Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.
+Available values: "1.0", "1.1", "1.2", "1.3".
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
 - `zone_id` (String) Zone ID of the custom domain resides in
 - `zone_name` (String) Zone that the custom domain resides in
@@ -43,6 +43,8 @@ data "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 Read-Only:
 
 - `ownership` (String) Ownership status of the domain
+Available values: "pending", "active", "deactivated", "blocked", "error", "unknown".
 - `ssl` (String) SSL certificate status
+Available values: "initializing", "pending", "active", "deactivated", "error", "unknown".
 
 

@@ -109,7 +109,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"session_affinity": schema.StringAttribute{
-				Description: "Specifies the type of session affinity the load balancer should use unless specified as `\"none\"`. The supported types are:\n- `\"cookie\"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.\n- `\"ip_cookie\"`: Behaves the same as `\"cookie\"` except the initial origin selection is stable and based on the client's ip address.\n- `\"header\"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.",
+				Description: "Specifies the type of session affinity the load balancer should use unless specified as `\"none\"`. The supported types are:\n- `\"cookie\"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.\n- `\"ip_cookie\"`: Behaves the same as `\"cookie\"` except the initial origin selection is stable and based on the client's ip address.\n- `\"header\"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.\nAvailable values: \"none\", \"cookie\", \"ip_cookie\", \"header\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -123,7 +123,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: stringdefault.StaticString("none"),
 			},
 			"steering_policy": schema.StringAttribute{
-				Description: "Steering Policy for this load balancer.\n- `\"off\"`: Use `default_pools`.\n- `\"geo\"`: Use `region_pools`/`country_pools`/`pop_pools`. For non-proxied requests, the country for `country_pools` is determined by `location_strategy`.\n- `\"random\"`: Select a pool randomly.\n- `\"dynamic_latency\"`: Use round trip time to select the closest pool in default_pools (requires pool health checks).\n- `\"proximity\"`: Use the pools' latitude and longitude to select the closest pool using the Cloudflare PoP location for proxied requests or the location determined by `location_strategy` for non-proxied requests.\n- `\"least_outstanding_requests\"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of outstanding requests. Pools with more pending requests are weighted proportionately less relative to others.\n- `\"least_connections\"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of open connections. Pools with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.\n- `\"\"`: Will map to `\"geo\"` if you use `region_pools`/`country_pools`/`pop_pools` otherwise `\"off\"`.",
+				Description: "Steering Policy for this load balancer.\n- `\"off\"`: Use `default_pools`.\n- `\"geo\"`: Use `region_pools`/`country_pools`/`pop_pools`. For non-proxied requests, the country for `country_pools` is determined by `location_strategy`.\n- `\"random\"`: Select a pool randomly.\n- `\"dynamic_latency\"`: Use round trip time to select the closest pool in default_pools (requires pool health checks).\n- `\"proximity\"`: Use the pools' latitude and longitude to select the closest pool using the Cloudflare PoP location for proxied requests or the location determined by `location_strategy` for non-proxied requests.\n- `\"least_outstanding_requests\"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of outstanding requests. Pools with more pending requests are weighted proportionately less relative to others.\n- `\"least_connections\"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of open connections. Pools with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.\n- `\"\"`: Will map to `\"geo\"` if you use `region_pools`/`country_pools`/`pop_pools` otherwise `\"off\"`.\nAvailable values: \"off\", \"geo\", \"random\", \"dynamic_latency\", \"proximity\", \"least_outstanding_requests\", \"least_connections\", \"\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -161,7 +161,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[LoadBalancerLocationStrategyModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
-						Description: "Determines the authoritative location when ECS is not preferred, does not exist in the request, or its GeoIP lookup is unsuccessful.\n- `\"pop\"`: Use the Cloudflare PoP location.\n- `\"resolver_ip\"`: Use the DNS resolver GeoIP location. If the GeoIP lookup is unsuccessful, use the Cloudflare PoP location.",
+						Description: "Determines the authoritative location when ECS is not preferred, does not exist in the request, or its GeoIP lookup is unsuccessful.\n- `\"pop\"`: Use the Cloudflare PoP location.\n- `\"resolver_ip\"`: Use the DNS resolver GeoIP location. If the GeoIP lookup is unsuccessful, use the Cloudflare PoP location.\nAvailable values: \"pop\", \"resolver_ip\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -170,7 +170,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("pop"),
 					},
 					"prefer_ecs": schema.StringAttribute{
-						Description: "Whether the EDNS Client Subnet (ECS) GeoIP should be preferred as the authoritative location.\n- `\"always\"`: Always prefer ECS.\n- `\"never\"`: Never prefer ECS.\n- `\"proximity\"`: Prefer ECS only when `steering_policy=\"proximity\"`.\n- `\"geo\"`: Prefer ECS only when `steering_policy=\"geo\"`.",
+						Description: "Whether the EDNS Client Subnet (ECS) GeoIP should be preferred as the authoritative location.\n- `\"always\"`: Always prefer ECS.\n- `\"never\"`: Never prefer ECS.\n- `\"proximity\"`: Prefer ECS only when `steering_policy=\"proximity\"`.\n- `\"geo\"`: Prefer ECS only when `steering_policy=\"geo\"`.\nAvailable values: \"always\", \"never\", \"proximity\", \"geo\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -298,7 +298,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewNestedObjectType[LoadBalancerRulesOverridesLocationStrategyModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"mode": schema.StringAttribute{
-											Description: "Determines the authoritative location when ECS is not preferred, does not exist in the request, or its GeoIP lookup is unsuccessful.\n- `\"pop\"`: Use the Cloudflare PoP location.\n- `\"resolver_ip\"`: Use the DNS resolver GeoIP location. If the GeoIP lookup is unsuccessful, use the Cloudflare PoP location.",
+											Description: "Determines the authoritative location when ECS is not preferred, does not exist in the request, or its GeoIP lookup is unsuccessful.\n- `\"pop\"`: Use the Cloudflare PoP location.\n- `\"resolver_ip\"`: Use the DNS resolver GeoIP location. If the GeoIP lookup is unsuccessful, use the Cloudflare PoP location.\nAvailable values: \"pop\", \"resolver_ip\".",
 											Computed:    true,
 											Optional:    true,
 											Validators: []validator.String{
@@ -307,7 +307,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											// Default: stringdefault.StaticString("pop"), // TODO: clean up schemas to remove this...or fix the service response
 										},
 										"prefer_ecs": schema.StringAttribute{
-											Description: "Whether the EDNS Client Subnet (ECS) GeoIP should be preferred as the authoritative location.\n- `\"always\"`: Always prefer ECS.\n- `\"never\"`: Never prefer ECS.\n- `\"proximity\"`: Prefer ECS only when `steering_policy=\"proximity\"`.\n- `\"geo\"`: Prefer ECS only when `steering_policy=\"geo\"`.",
+											Description: "Whether the EDNS Client Subnet (ECS) GeoIP should be preferred as the authoritative location.\n- `\"always\"`: Always prefer ECS.\n- `\"never\"`: Never prefer ECS.\n- `\"proximity\"`: Prefer ECS only when `steering_policy=\"proximity\"`.\n- `\"geo\"`: Prefer ECS only when `steering_policy=\"geo\"`.\nAvailable values: \"always\", \"never\", \"proximity\", \"geo\".",
 											Computed:    true,
 											Optional:    true,
 											Validators: []validator.String{
@@ -363,7 +363,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"session_affinity": schema.StringAttribute{
-									Description: "Specifies the type of session affinity the load balancer should use unless specified as `\"none\"`. The supported types are:\n- `\"cookie\"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.\n- `\"ip_cookie\"`: Behaves the same as `\"cookie\"` except the initial origin selection is stable and based on the client's ip address.\n- `\"header\"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.",
+									Description: "Specifies the type of session affinity the load balancer should use unless specified as `\"none\"`. The supported types are:\n- `\"cookie\"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.\n- `\"ip_cookie\"`: Behaves the same as `\"cookie\"` except the initial origin selection is stable and based on the client's ip address.\n- `\"header\"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.\nAvailable values: \"none\", \"cookie\", \"ip_cookie\", \"header\".",
 									Computed:    true,
 									Optional:    true,
 									Validators: []validator.String{
@@ -399,7 +399,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Default:     booldefault.StaticBool(false),
 										},
 										"samesite": schema.StringAttribute{
-											Description: "Configures the SameSite attribute on session affinity cookie. Value \"Auto\" will be translated to \"Lax\" or \"None\" depending if Always Use HTTPS is enabled. Note: when using value \"None\", the secure attribute can not be set to \"Never\".",
+											Description: "Configures the SameSite attribute on session affinity cookie. Value \"Auto\" will be translated to \"Lax\" or \"None\" depending if Always Use HTTPS is enabled. Note: when using value \"None\", the secure attribute can not be set to \"Never\".\nAvailable values: \"Auto\", \"Lax\", \"None\", \"Strict\".",
 											Computed:    true,
 											Optional:    true,
 											Validators: []validator.String{
@@ -413,7 +413,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Default: stringdefault.StaticString("Auto"),
 										},
 										"secure": schema.StringAttribute{
-											Description: "Configures the Secure attribute on session affinity cookie. Value \"Always\" indicates the Secure attribute will be set in the Set-Cookie header, \"Never\" indicates the Secure attribute will not be set, and \"Auto\" will set the Secure attribute depending if Always Use HTTPS is enabled.",
+											Description: "Configures the Secure attribute on session affinity cookie. Value \"Always\" indicates the Secure attribute will be set in the Set-Cookie header, \"Never\" indicates the Secure attribute will not be set, and \"Auto\" will set the Secure attribute depending if Always Use HTTPS is enabled.\nAvailable values: \"Auto\", \"Always\", \"Never\".",
 											Computed:    true,
 											Optional:    true,
 											Validators: []validator.String{
@@ -426,7 +426,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Default: stringdefault.StaticString("Auto"),
 										},
 										"zero_downtime_failover": schema.StringAttribute{
-											Description: "Configures the zero-downtime failover between origins within a pool when session affinity is enabled. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. The supported values are:\n- `\"none\"`: No failover takes place for sessions pinned to the origin (default).\n- `\"temporary\"`: Traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping.\n- `\"sticky\"`: The session affinity cookie is updated and subsequent requests are sent to the new origin. Note: Zero-downtime failover with sticky sessions is currently not supported for session affinity by header.",
+											Description: "Configures the zero-downtime failover between origins within a pool when session affinity is enabled. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. The supported values are:\n- `\"none\"`: No failover takes place for sessions pinned to the origin (default).\n- `\"temporary\"`: Traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping.\n- `\"sticky\"`: The session affinity cookie is updated and subsequent requests are sent to the new origin. Note: Zero-downtime failover with sticky sessions is currently not supported for session affinity by header.\nAvailable values: \"none\", \"temporary\", \"sticky\".",
 											Computed:    true,
 											Optional:    true,
 											Validators: []validator.String{
@@ -446,7 +446,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 								},
 								"steering_policy": schema.StringAttribute{
-									Description: "Steering Policy for this load balancer.\n- `\"off\"`: Use `default_pools`.\n- `\"geo\"`: Use `region_pools`/`country_pools`/`pop_pools`. For non-proxied requests, the country for `country_pools` is determined by `location_strategy`.\n- `\"random\"`: Select a pool randomly.\n- `\"dynamic_latency\"`: Use round trip time to select the closest pool in default_pools (requires pool health checks).\n- `\"proximity\"`: Use the pools' latitude and longitude to select the closest pool using the Cloudflare PoP location for proxied requests or the location determined by `location_strategy` for non-proxied requests.\n- `\"least_outstanding_requests\"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of outstanding requests. Pools with more pending requests are weighted proportionately less relative to others.\n- `\"least_connections\"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of open connections. Pools with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.\n- `\"\"`: Will map to `\"geo\"` if you use `region_pools`/`country_pools`/`pop_pools` otherwise `\"off\"`.",
+									Description: "Steering Policy for this load balancer.\n- `\"off\"`: Use `default_pools`.\n- `\"geo\"`: Use `region_pools`/`country_pools`/`pop_pools`. For non-proxied requests, the country for `country_pools` is determined by `location_strategy`.\n- `\"random\"`: Select a pool randomly.\n- `\"dynamic_latency\"`: Use round trip time to select the closest pool in default_pools (requires pool health checks).\n- `\"proximity\"`: Use the pools' latitude and longitude to select the closest pool using the Cloudflare PoP location for proxied requests or the location determined by `location_strategy` for non-proxied requests.\n- `\"least_outstanding_requests\"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of outstanding requests. Pools with more pending requests are weighted proportionately less relative to others.\n- `\"least_connections\"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of open connections. Pools with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.\n- `\"\"`: Will map to `\"geo\"` if you use `region_pools`/`country_pools`/`pop_pools` otherwise `\"off\"`.\nAvailable values: \"off\", \"geo\", \"random\", \"dynamic_latency\", \"proximity\", \"least_outstanding_requests\", \"least_connections\", \"\".",
 									Computed:    true,
 									Optional:    true,
 									Validators: []validator.String{
@@ -511,7 +511,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						// Default:     booldefault.StaticBool(false), // TODO: clean up schemas to remove this...or fix the service response
 					},
 					"samesite": schema.StringAttribute{
-						Description: "Configures the SameSite attribute on session affinity cookie. Value \"Auto\" will be translated to \"Lax\" or \"None\" depending if Always Use HTTPS is enabled. Note: when using value \"None\", the secure attribute can not be set to \"Never\".",
+						Description: "Configures the SameSite attribute on session affinity cookie. Value \"Auto\" will be translated to \"Lax\" or \"None\" depending if Always Use HTTPS is enabled. Note: when using value \"None\", the secure attribute can not be set to \"Never\".\nAvailable values: \"Auto\", \"Lax\", \"None\", \"Strict\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -525,7 +525,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						// Default: stringdefault.StaticString("Auto"), // TODO: clean up schemas to remove this...or fix the service response
 					},
 					"secure": schema.StringAttribute{
-						Description: "Configures the Secure attribute on session affinity cookie. Value \"Always\" indicates the Secure attribute will be set in the Set-Cookie header, \"Never\" indicates the Secure attribute will not be set, and \"Auto\" will set the Secure attribute depending if Always Use HTTPS is enabled.",
+						Description: "Configures the Secure attribute on session affinity cookie. Value \"Always\" indicates the Secure attribute will be set in the Set-Cookie header, \"Never\" indicates the Secure attribute will not be set, and \"Auto\" will set the Secure attribute depending if Always Use HTTPS is enabled.\nAvailable values: \"Auto\", \"Always\", \"Never\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -538,7 +538,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						// Default: stringdefault.StaticString("Auto"), // TODO: clean up schemas to remove this...or fix the service response
 					},
 					"zero_downtime_failover": schema.StringAttribute{
-						Description: "Configures the zero-downtime failover between origins within a pool when session affinity is enabled. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. The supported values are:\n- `\"none\"`: No failover takes place for sessions pinned to the origin (default).\n- `\"temporary\"`: Traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping.\n- `\"sticky\"`: The session affinity cookie is updated and subsequent requests are sent to the new origin. Note: Zero-downtime failover with sticky sessions is currently not supported for session affinity by header.",
+						Description: "Configures the zero-downtime failover between origins within a pool when session affinity is enabled. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. The supported values are:\n- `\"none\"`: No failover takes place for sessions pinned to the origin (default).\n- `\"temporary\"`: Traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping.\n- `\"sticky\"`: The session affinity cookie is updated and subsequent requests are sent to the new origin. Note: Zero-downtime failover with sticky sessions is currently not supported for session affinity by header.\nAvailable values: \"none\", \"temporary\", \"sticky\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -556,6 +556,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"modified_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"zone_name": schema.StringAttribute{
 				Computed: true,
 			},
 		},

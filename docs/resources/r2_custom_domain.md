@@ -35,8 +35,8 @@ resource "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 
 ### Optional
 
-- `domain_name` (String) Name of the custom domain
 - `min_tls` (String) Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.
+Available values: "1.0", "1.1", "1.2", "1.3".
 
 ### Read-Only
 
@@ -49,6 +49,8 @@ resource "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 Read-Only:
 
 - `ownership` (String) Ownership status of the domain
+Available values: "pending", "active", "deactivated", "blocked", "error", "unknown".
 - `ssl` (String) SSL certificate status
+Available values: "initializing", "pending", "active", "deactivated", "error", "unknown".
 
 

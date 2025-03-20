@@ -30,7 +30,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "Direction to order results.",
+				Description: "Direction to order results.\nAvailable values: \"asc\", \"desc\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
@@ -41,7 +41,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"order": schema.StringAttribute{
-				Description: "Field to order by",
+				Description: "Field to order by\nAvailable values: \"host\", \"method\", \"endpoint\", \"traffic_stats.requests\", \"traffic_stats.last_updated\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -54,14 +54,18 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"origin": schema.StringAttribute{
-				Description: "Filter results to only include discovery results sourced from a particular discovery engine\n  * `ML` - Discovered operations that were sourced using ML API Discovery\n  * `SessionIdentifier` - Discovered operations that were sourced using Session Identifier API Discovery\n",
+				Description: "Filter results to only include discovery results sourced from a particular discovery engine\n  * `ML` - Discovered operations that were sourced using ML API Discovery\n  * `SessionIdentifier` - Discovered operations that were sourced using Session Identifier API Discovery\nAvailable values: \"ML\", \"SessionIdentifier\", \"LabelDiscovery\".",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ML", "SessionIdentifier"),
+					stringvalidator.OneOfCaseInsensitive(
+						"ML",
+						"SessionIdentifier",
+						"LabelDiscovery",
+					),
 				},
 			},
 			"state": schema.StringAttribute{
-				Description: "Filter results to only include discovery results in a particular state. States are as follows\n  * `review` - Discovered operations that are not saved into API Shield Endpoint Management\n  * `saved` - Discovered operations that are already saved into API Shield Endpoint Management\n  * `ignored` - Discovered operations that have been marked as ignored\n",
+				Description: "Filter results to only include discovery results in a particular state. States are as follows\n  * `review` - Discovered operations that are not saved into API Shield Endpoint Management\n  * `saved` - Discovered operations that are already saved into API Shield Endpoint Management\n  * `ignored` - Discovered operations that have been marked as ignored\nAvailable values: \"review\", \"saved\", \"ignored\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -111,7 +115,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"method": schema.StringAttribute{
-							Description: "The HTTP method used to access the endpoint.",
+							Description: "The HTTP method used to access the endpoint.\nAvailable values: \"GET\", \"POST\", \"HEAD\", \"OPTIONS\", \"PUT\", \"DELETE\", \"CONNECT\", \"PATCH\", \"TRACE\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -132,14 +136,18 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							Validators: []validator.List{
 								listvalidator.ValueStringsAre(
-									stringvalidator.OneOfCaseInsensitive("ML", "SessionIdentifier"),
+									stringvalidator.OneOfCaseInsensitive(
+										"ML",
+										"SessionIdentifier",
+										"LabelDiscovery",
+									),
 								),
 							},
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"state": schema.StringAttribute{
-							Description: "State of operation in API Discovery\n  * `review` - Operation is not saved into API Shield Endpoint Management\n  * `saved` - Operation is saved into API Shield Endpoint Management\n  * `ignored` - Operation is marked as ignored\n",
+							Description: "State of operation in API Discovery\n  * `review` - Operation is not saved into API Shield Endpoint Management\n  * `saved` - Operation is saved into API Shield Endpoint Management\n  * `ignored` - Operation is marked as ignored\nAvailable values: \"review\", \"saved\", \"ignored\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

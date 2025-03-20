@@ -16,6 +16,8 @@ resource "cloudflare_ruleset" "example_ruleset" {
   kind = "managed"
   name = "My ruleset"
   phase = "ddos_l4"
+  zone_id = "zone_id"
+  description = "My ruleset to execute managed rulesets"
   rules = [{
     id = "3a03d665bac047339bb530ecb439a90d"
     action = "block"
@@ -53,8 +55,6 @@ resource "cloudflare_ruleset" "example_ruleset" {
     }
     ref = "my_ref"
   }]
-  zone_id = "zone_id"
-  description = "My ruleset to execute managed rulesets"
 }
 ```
 
@@ -64,14 +64,16 @@ resource "cloudflare_ruleset" "example_ruleset" {
 ### Required
 
 - `kind` (String) The kind of the ruleset.
+Available values: "managed", "custom", "root", "zone".
 - `name` (String) The human-readable name of the ruleset.
 - `phase` (String) The phase of the ruleset.
-- `rules` (Attributes List) The list of rules in the ruleset. (see [below for nested schema](#nestedatt--rules))
+Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_transform", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed", "magic_transit_ratelimit".
 
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `description` (String) An informative description of the ruleset.
+- `rules` (Attributes List) The list of rules in the ruleset. (see [below for nested schema](#nestedatt--rules))
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
@@ -84,6 +86,7 @@ resource "cloudflare_ruleset" "example_ruleset" {
 Optional:
 
 - `action` (String) The action to perform when the rule matches.
+Available values: "block".
 - `action_parameters` (Attributes) The parameters configuring the rule's action. (see [below for nested schema](#nestedatt--rules--action_parameters))
 - `description` (String) An informative description of the rule.
 - `enabled` (Boolean) Whether the rule should be executed.
@@ -114,6 +117,7 @@ Optional:
 - `cache_reserve` (Attributes) Mark whether the request's response from origin is eligible for Cache Reserve (requires a Cache Reserve add-on plan). (see [below for nested schema](#nestedatt--rules--action_parameters--cache_reserve))
 - `content` (String) Error response content.
 - `content_type` (String) Content-type header to set with the response.
+Available values: "application/json", "text/xml", "text/plain", "text/html".
 - `cookie_fields` (Attributes List) The cookie fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--cookie_fields))
 - `disable_apps` (Boolean) Turn off all active Cloudflare Apps.
 - `disable_rum` (Boolean) Turn off Real User Monitoring (RUM).
@@ -137,23 +141,29 @@ Optional:
 - `overrides` (Attributes) A set of overrides to apply to the target ruleset. (see [below for nested schema](#nestedatt--rules--action_parameters--overrides))
 - `phases` (List of String) A list of phases to skip the execution of. This option is incompatible with the ruleset and rulesets options.
 - `polish` (String) Configure the Polish level.
+Available values: "off", "lossless", "lossy".
 - `products` (List of String) A list of legacy security products to skip the execution of.
+- `raw_response_fields` (Attributes List) The raw response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--raw_response_fields))
 - `read_timeout` (Number) Define a timeout value between two successive read operations to your origin server. Historically, the timeout value between two read options from Cloudflare to an origin server is 100 seconds. If you are attempting to reduce HTTP 524 errors because of timeouts from an origin server, try increasing this timeout value.
-- `request_fields` (Attributes List) The request fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--request_fields))
+- `request_fields` (Attributes List) The raw request fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--request_fields))
 - `respect_strong_etags` (Boolean) Specify whether or not Cloudflare should respect strong ETag (entity tag) headers. When off, Cloudflare converts strong ETag headers to weak ETag headers.
 - `response` (Attributes) The response to show when the block is applied. (see [below for nested schema](#nestedatt--rules--action_parameters--response))
-- `response_fields` (Attributes List) The response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--response_fields))
+- `response_fields` (Attributes List) The transformed response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--response_fields))
 - `rocket_loader` (Boolean) Turn on or off Rocket Loader
 - `rules` (Map of List of String) A mapping of ruleset IDs to a list of rule IDs in that ruleset to skip the execution of. This option is incompatible with the ruleset option.
 - `ruleset` (String) A ruleset to skip the execution of. This option is incompatible with the rulesets, rules and phases options.
+Available values: "current".
 - `rulesets` (List of String) A list of ruleset IDs to skip the execution of. This option is incompatible with the ruleset and phases options.
 - `security_level` (String) Configure the Security Level.
+Available values: "off", "essentially_off", "low", "medium", "high", "under_attack".
 - `serve_stale` (Attributes) Define if Cloudflare should serve stale content while getting the latest content from the origin. If on, Cloudflare will not serve stale content while getting the latest content from the origin. (see [below for nested schema](#nestedatt--rules--action_parameters--serve_stale))
 - `server_side_excludes` (Boolean) Turn on or off Server Side Excludes.
 - `sni` (Attributes) Override the Server Name Indication (SNI). (see [below for nested schema](#nestedatt--rules--action_parameters--sni))
 - `ssl` (String) Configure the SSL level.
+Available values: "off", "flexible", "full", "strict", "origin_pull".
 - `status_code` (Number) The status code to use for the error.
 - `sxg` (Boolean) Turn on or off Signed Exchanges (SXG).
+- `transformed_request_fields` (Attributes List) The transformed request fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--transformed_request_fields))
 - `uri` (Attributes) URI to rewrite the request to. (see [below for nested schema](#nestedatt--rules--action_parameters--uri))
 
 <a id="nestedatt--rules--action_parameters--algorithms"></a>
@@ -162,6 +172,7 @@ Optional:
 Optional:
 
 - `name` (String) Name of compression algorithm to enable.
+Available values: "none", "auto", "default", "gzip", "brotli".
 
 
 <a id="nestedatt--rules--action_parameters--autominify"></a>
@@ -180,6 +191,7 @@ Optional:
 Required:
 
 - `mode` (String) Determines which browser ttl mode to use.
+Available values: "respect_origin", "bypass_by_default", "override_origin".
 
 Optional:
 
@@ -297,6 +309,7 @@ Required:
 Required:
 
 - `mode` (String) edge ttl options
+Available values: "respect_origin", "bypass_by_default", "override_origin".
 
 Optional:
 
@@ -342,6 +355,7 @@ Optional:
 
 - `preserve_query_string` (Boolean) Keep the query string of the original request.
 - `status_code` (Number) The status code to be used for the redirect.
+Available values: 301, 302, 303, 307, 308.
 - `target_url` (Attributes) The URL to redirect the request to. (see [below for nested schema](#nestedatt--rules--action_parameters--from_value--target_url))
 
 <a id="nestedatt--rules--action_parameters--from_value--target_url"></a>
@@ -359,7 +373,7 @@ Optional:
 
 Required:
 
-- `operation` (String)
+- `operation` (String) Available values: "remove".
 
 Optional:
 
@@ -394,6 +408,7 @@ Optional:
 - `enabled` (Boolean) Whether to enable execution of all rules. This option has lower precedence than rule and category overrides.
 - `rules` (Attributes List) A list of rule-level overrides. This option has the highest precedence. (see [below for nested schema](#nestedatt--rules--action_parameters--overrides--rules))
 - `sensitivity_level` (String) A sensitivity level to set for all rules. This option has lower precedence than rule and category overrides and is only applicable for DDoS phases.
+Available values: "default", "medium", "low", "eoff".
 
 <a id="nestedatt--rules--action_parameters--overrides--categories"></a>
 ### Nested Schema for `rules.action_parameters.overrides.categories`
@@ -407,6 +422,7 @@ Optional:
 - `action` (String) The action to override rules in the category with.
 - `enabled` (Boolean) Whether to enable execution of rules in the category.
 - `sensitivity_level` (String) The sensitivity level to use for rules in the category.
+Available values: "default", "medium", "low", "eoff".
 
 
 <a id="nestedatt--rules--action_parameters--overrides--rules"></a>
@@ -422,7 +438,20 @@ Optional:
 - `enabled` (Boolean) Whether to enable execution of the rule.
 - `score_threshold` (Number) The score threshold to use for the rule.
 - `sensitivity_level` (String) The sensitivity level to use for the rule.
+Available values: "default", "medium", "low", "eoff".
 
+
+
+<a id="nestedatt--rules--action_parameters--raw_response_fields"></a>
+### Nested Schema for `rules.action_parameters.raw_response_fields`
+
+Required:
+
+- `name` (String) The name of the field.
+
+Optional:
+
+- `preserve_duplicates` (Boolean) Whether to log duplicate values of the same header.
 
 
 <a id="nestedatt--rules--action_parameters--request_fields"></a>
@@ -450,6 +479,10 @@ Required:
 
 - `name` (String) The name of the field.
 
+Optional:
+
+- `preserve_duplicates` (Boolean) Whether to log duplicate values of the same header.
+
 
 <a id="nestedatt--rules--action_parameters--serve_stale"></a>
 ### Nested Schema for `rules.action_parameters.serve_stale`
@@ -465,6 +498,14 @@ Required:
 Required:
 
 - `value` (String) The SNI override.
+
+
+<a id="nestedatt--rules--action_parameters--transformed_request_fields"></a>
+### Nested Schema for `rules.action_parameters.transformed_request_fields`
+
+Required:
+
+- `name` (String) The name of the field.
 
 
 <a id="nestedatt--rules--action_parameters--uri"></a>
@@ -519,6 +560,7 @@ Required:
 
 - `characteristics` (List of String) Characteristics of the request on which the ratelimiter counter will be incremented.
 - `period` (Number) Period in seconds over which the counter is being incremented.
+Available values: 10, 60, 600, 3600.
 
 Optional:
 

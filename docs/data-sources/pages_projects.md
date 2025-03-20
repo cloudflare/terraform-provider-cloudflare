@@ -41,8 +41,9 @@ Read-Only:
 - `build_config` (Attributes) Configs for the project build process. (see [below for nested schema](#nestedatt--result--build_config))
 - `created_on` (String) When the deployment was created.
 - `deployment_trigger` (Attributes) Info about what caused the deployment. (see [below for nested schema](#nestedatt--result--deployment_trigger))
-- `env_vars` (Attributes Map) A dict of env variables to build this deploy. (see [below for nested schema](#nestedatt--result--env_vars))
+- `env_vars` (Attributes Map) Environment variables used for builds and Pages Functions. (see [below for nested schema](#nestedatt--result--env_vars))
 - `environment` (String) Type of deploy.
+Available values: "preview", "production".
 - `id` (String) Id of the deployment.
 - `is_skipped` (Boolean) If the deployment has been skipped.
 - `latest_stage` (Attributes) The status of the deployment. (see [below for nested schema](#nestedatt--result--latest_stage))
@@ -64,7 +65,7 @@ Read-Only:
 - `destination_dir` (String) Output directory of the build.
 - `root_dir` (String) Directory to run the command.
 - `web_analytics_tag` (String) The classifying tag for analytics.
-- `web_analytics_token` (String) The auth token for analytics.
+- `web_analytics_token` (String, Sensitive) The auth token for analytics.
 
 
 <a id="nestedatt--result--deployment_trigger"></a>
@@ -74,6 +75,7 @@ Read-Only:
 
 - `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--result--deployment_trigger--metadata))
 - `type` (String) What caused the deployment.
+Available values: "push", "ad_hoc".
 
 <a id="nestedatt--result--deployment_trigger--metadata"></a>
 ### Nested Schema for `result.deployment_trigger.metadata`
@@ -91,8 +93,8 @@ Read-Only:
 
 Read-Only:
 
-- `type` (String) The type of environment variable.
-- `value` (String) Environment variable value.
+- `type` (String) Available values: "plain_text".
+- `value` (String, Sensitive) Environment variable value.
 
 
 <a id="nestedatt--result--latest_stage"></a>
@@ -102,8 +104,10 @@ Read-Only:
 
 - `ended_on` (String) When the stage ended.
 - `name` (String) The current build stage.
+Available values: "queued", "initialize", "clone_repo", "build", "deploy".
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
+Available values: "success", "idle", "active", "failure", "canceled".
 
 
 <a id="nestedatt--result--source"></a>
@@ -126,7 +130,7 @@ Read-Only:
 - `pr_comments_enabled` (Boolean)
 - `preview_branch_excludes` (List of String)
 - `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String)
+- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
 - `production_branch` (String)
 - `production_deployments_enabled` (Boolean)
 - `repo_name` (String)
@@ -140,7 +144,9 @@ Read-Only:
 
 - `ended_on` (String) When the stage ended.
 - `name` (String) The current build stage.
+Available values: "queued", "initialize", "clone_repo", "build", "deploy".
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
+Available values: "success", "idle", "active", "failure", "canceled".
 
 

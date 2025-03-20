@@ -68,7 +68,7 @@ func (d *R2CustomDomainDataSource) Read(ctx context.Context, req datasource.Read
 	_, err := d.client.R2.Buckets.Domains.Custom.Get(
 		ctx,
 		data.BucketName.ValueString(),
-		data.DomainName.ValueString(),
+		data.Domain.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

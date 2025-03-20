@@ -29,7 +29,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"location": schema.StringAttribute{
-				Description: "Location of the bucket",
+				Description: "Location of the bucket\nAvailable values: \"apac\", \"eeur\", \"enam\", \"weur\", \"wnam\", \"oc\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -38,6 +38,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"enam",
 						"weur",
 						"wnam",
+						"oc",
 					),
 				},
 			},
@@ -46,7 +47,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"storage_class": schema.StringAttribute{
-				Description: "Storage class for newly uploaded objects, unless specified otherwise.",
+				Description: "Storage class for newly uploaded objects, unless specified otherwise.\nAvailable values: \"Standard\", \"InfrequentAccess\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("Standard", "InfrequentAccess"),

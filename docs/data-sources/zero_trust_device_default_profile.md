@@ -34,11 +34,12 @@ data "cloudflare_zero_trust_device_default_profile" "example_zero_trust_device_d
 - `default` (Boolean) Whether the policy will be applied to matching devices.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
 - `enabled` (Boolean) Whether the policy will be applied to matching devices.
-- `exclude` (Attributes List) (see [below for nested schema](#nestedatt--exclude))
+- `exclude` (Attributes List) List of routes excluded in the WARP client's tunnel. (see [below for nested schema](#nestedatt--exclude))
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
 - `fallback_domains` (Attributes List) (see [below for nested schema](#nestedatt--fallback_domains))
 - `gateway_unique_id` (String)
-- `include` (Attributes List) (see [below for nested schema](#nestedatt--include))
+- `include` (Attributes List) List of routes included in the WARP client's tunnel. (see [below for nested schema](#nestedatt--include))
+- `register_interface_ip_with_dns` (Boolean) Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.
 - `service_mode_v2` (Attributes) (see [below for nested schema](#nestedatt--service_mode_v2))
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.

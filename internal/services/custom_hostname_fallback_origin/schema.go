@@ -24,7 +24,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Identifier",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -41,7 +41,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
-				Description: "Status of the fallback origin's activation.",
+				Description: "Status of the fallback origin's activation.\nAvailable values: \"initializing\", \"pending_deployment\", \"pending_deletion\", \"active\", \"deployment_timed_out\", \"deletion_timed_out\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

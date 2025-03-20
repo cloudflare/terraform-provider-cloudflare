@@ -20,8 +20,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "UUID",
-				Computed:    true,
+				Description:   "UUID",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"uid": schema.StringAttribute{
 				Description:   "UUID",
@@ -42,7 +43,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Custom page type.",
+				Description: "Custom page type.\nAvailable values: \"identity_denied\", \"forbidden\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("identity_denied", "forbidden"),

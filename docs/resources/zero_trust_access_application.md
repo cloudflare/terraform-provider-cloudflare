@@ -176,8 +176,9 @@ Optional:
 - `cidr` (String) The CIDR range of the destination. Single IPs will be computed as /32.
 - `hostname` (String) The hostname of the destination. Matches a valid SNI served by an HTTPS origin.
 - `l4_protocol` (String) The L4 protocol of the destination. When omitted, both UDP and TCP traffic will match.
+Available values: "tcp", "udp".
 - `port_range` (String) The port range of the destination. Can be a single port or a range of ports. When omitted, all ports will match.
-- `type` (String)
+- `type` (String) Available values: "public".
 - `uri` (String) The URI of the destination. Public destinations' URIs can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/).
 - `vnet_id` (String) The VNET ID to match the destination. When omitted, all VNETs will match.
 
@@ -210,6 +211,7 @@ Optional:
 
 - `connection_rules` (Attributes) The rules that define how users may connect to the targets secured by your application. (see [below for nested schema](#nestedatt--policies--connection_rules))
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
+Available values: "allow", "deny", "non_identity", "bypass".
 - `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--policies--exclude))
 - `id` (String) The UUID of the policy
 - `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--policies--include))
@@ -865,8 +867,9 @@ Optional:
 - `allow_pkce_without_client_secret` (Boolean) If client secret should be required on the token endpoint when authorization_code_with_pkce grant is used.
 - `app_launcher_url` (String) The URL where this applications tile redirects users
 - `auth_type` (String) Optional identifier indicating the authentication protocol used for the saas app. Required for OIDC. Default if unset is "saml"
+Available values: "saml", "oidc".
 - `client_id` (String) The application client id
-- `client_secret` (String) The application client secret, only returned on POST request.
+- `client_secret` (String, Sensitive) The application client secret, only returned on POST request.
 - `consumer_service_url` (String) The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.
 - `custom_attributes` (Attributes List) (see [below for nested schema](#nestedatt--saas_app--custom_attributes))
 - `custom_claims` (Attributes List) (see [below for nested schema](#nestedatt--saas_app--custom_claims))
@@ -876,6 +879,7 @@ Optional:
 - `hybrid_and_implicit_options` (Attributes) (see [below for nested schema](#nestedatt--saas_app--hybrid_and_implicit_options))
 - `idp_entity_id` (String) The unique identifier for your SaaS application.
 - `name_id_format` (String) The format of the name identifier sent to the SaaS application.
+Available values: "id", "email".
 - `name_id_transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.
 - `public_key` (String) The Access public certificate that will be used to verify your identity.
 - `redirect_uris` (List of String) The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens
@@ -898,6 +902,7 @@ Optional:
 - `friendly_name` (String) The SAML FriendlyName of the attribute.
 - `name` (String) The name of the attribute.
 - `name_format` (String) A globally unique name for an identity or service provider.
+Available values: "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", "urn:oasis:names:tc:SAML:2.0:attrname-format:uri".
 - `required` (Boolean) If the attribute is required when building a SAML assertion.
 - `source` (Attributes) (see [below for nested schema](#nestedatt--saas_app--custom_attributes--source))
 
@@ -928,6 +933,7 @@ Optional:
 - `name` (String) The name of the claim.
 - `required` (Boolean) If the claim is required when building an OIDC token.
 - `scope` (String) The scope of the claim.
+Available values: "groups", "profile", "email", "openid".
 - `source` (Attributes) (see [below for nested schema](#nestedatt--saas_app--custom_claims--source))
 
 <a id="nestedatt--saas_app--custom_claims--source"></a>
@@ -979,15 +985,16 @@ Optional:
 Required:
 
 - `scheme` (String) The authentication scheme to use when making SCIM requests to this application.
+Available values: "httpbasic".
 
 Optional:
 
 - `authorization_url` (String) URL used to generate the auth code used during token generation.
 - `client_id` (String) Client ID used to authenticate when generating a token for authenticating with the remote SCIM service.
-- `client_secret` (String) Secret used to authenticate when generating a token for authenticating with the remove SCIM service.
+- `client_secret` (String, Sensitive) Secret used to authenticate when generating a token for authenticating with the remove SCIM service.
 - `password` (String) Password used to authenticate with the remote SCIM service.
 - `scopes` (List of String) The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.
-- `token` (String) Token used to authenticate with the remote SCIM service.
+- `token` (String, Sensitive) Token used to authenticate with the remote SCIM service.
 - `token_url` (String) URL used to generate the token used to authenticate with the remote SCIM service.
 - `user` (String) User name used to authenticate with the remote SCIM service.
 
@@ -1005,6 +1012,7 @@ Optional:
 - `filter` (String) A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.
 - `operations` (Attributes) Whether or not this mapping applies to creates, updates, or deletes. (see [below for nested schema](#nestedatt--scim_config--mappings--operations))
 - `strictness` (String) The level of adherence to outbound resource schemas when provisioning to this mapping. ‘Strict’ removes unknown values, while ‘passthrough’ passes unknown values to the target.
+Available values: "strict", "passthrough".
 - `transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.
 
 <a id="nestedatt--scim_config--mappings--operations"></a>
@@ -1026,6 +1034,7 @@ Required:
 
 - `port` (Number) The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.
 - `protocol` (String) The communication protocol your application secures.
+Available values: "ssh".
 - `target_attributes` (Map of List of String) Contains a map of target attribute keys to target attribute values.
 
 ## Import

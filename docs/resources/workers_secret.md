@@ -34,8 +34,9 @@ resource "cloudflare_workers_secret" "example_workers_secret" {
 
 ### Optional
 
-- `text` (String) The value of the secret.
+- `text` (String, Sensitive) The value of the secret.
 - `type` (String) The type of secret to put.
+Available values: "secret_text".
 
 ### Read-Only
 

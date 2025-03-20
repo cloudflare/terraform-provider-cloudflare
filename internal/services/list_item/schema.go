@@ -97,8 +97,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:  booldefault.StaticBool(false),
 					},
 					"status_code": schema.Int64Attribute{
-						Computed: true,
-						Optional: true,
+						Description: "Available values: 301, 302, 307, 308.",
+						Computed:    true,
+						Optional:    true,
 						Validators: []validator.Int64{
 							int64validator.OneOf(
 								301,

@@ -41,6 +41,7 @@ resource "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
 ### Optional
 
 - `destination` (Attributes) R2 bucket to copy objects to (see [below for nested schema](#nestedatt--destination))
+- `jurisdiction` (String) Jurisdiction of the bucket
 - `source` (Attributes) AWS S3 bucket to copy objects from (see [below for nested schema](#nestedatt--source))
 
 ### Read-Only
@@ -58,8 +59,8 @@ token from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-t
 
 Sippy will use this token when writing objects to R2, so it is
 best to scope this token to the bucket you're enabling Sippy for.
-- `provider` (String)
-- `secret_access_key` (String) Value of a Cloudflare API token.
+- `provider` (String) Available values: "r2".
+- `secret_access_key` (String, Sensitive) Value of a Cloudflare API token.
 This is the value labelled "Secret Access Key" when creating an API
 token from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).
 
@@ -75,9 +76,9 @@ Optional:
 - `access_key_id` (String) Access Key ID of an IAM credential (ideally scoped to a single S3 bucket)
 - `bucket` (String) Name of the AWS S3 bucket
 - `client_email` (String) Client email of an IAM credential (ideally scoped to a single GCS bucket)
-- `private_key` (String) Private Key of an IAM credential (ideally scoped to a single GCS bucket)
-- `provider` (String)
+- `private_key` (String, Sensitive) Private Key of an IAM credential (ideally scoped to a single GCS bucket)
+- `provider` (String) Available values: "aws".
 - `region` (String) Name of the AWS availability zone
-- `secret_access_key` (String) Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket)
+- `secret_access_key` (String, Sensitive) Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket)
 
 

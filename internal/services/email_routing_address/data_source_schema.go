@@ -58,7 +58,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{
-						Description: "Sorts results in an ascending or descending order.",
+						Description: "Sorts results in an ascending or descending order.\nAvailable values: \"asc\", \"desc\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{

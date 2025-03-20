@@ -28,8 +28,8 @@ resource "cloudflare_stream_key" "example_stream_key" {
 
 - `created` (String) The date and time a signing key was created.
 - `id` (String) Identifier
-- `jwk` (String) The signing key in JWK format.
-- `pem` (String) The signing key in PEM format.
+- `jwk` (String, Sensitive) The signing key in JWK format.
+- `pem` (String, Sensitive) The signing key in PEM format.
 
 ## Import
 

@@ -25,7 +25,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"script_name": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",
@@ -51,7 +51,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"html_handling": schema.StringAttribute{
-								Description: "Determines the redirects and rewrites of requests for HTML content.",
+								Description: "Determines the redirects and rewrites of requests for HTML content.\nAvailable values: \"auto-trailing-slash\", \"force-trailing-slash\", \"drop-trailing-slash\", \"none\".",
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -63,7 +63,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"not_found_handling": schema.StringAttribute{
-								Description: "Determines the response when a request does not match a static asset, and there is no Worker script.",
+								Description: "Determines the response when a request does not match a static asset, and there is no Worker script.\nAvailable values: \"none\", \"404-page\", \"single-page-application\".",
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -90,6 +90,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"jwt": schema.StringAttribute{
 						Description: "Token provided upon successful upload of all files from a registered manifest.",
 						Optional:    true,
+						Sensitive:   true,
 					},
 				},
 			},
@@ -105,11 +106,34 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser_rendering\", \"d1\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"queue\", \"r2_bucket\", \"secret_text\", \"service\", \"tail_consumer\", \"vectorize\", \"version_metadata\".",
 							Required:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"ai",
+									"analytics_engine",
+									"assets",
+									"browser_rendering",
+									"d1",
+									"dispatch_namespace",
+									"durable_object_namespace",
+									"hyperdrive",
+									"json",
+									"kv_namespace",
+									"mtls_certificate",
+									"plain_text",
+									"queue",
+									"r2_bucket",
+									"secret_text",
+									"service",
+									"tail_consumer",
+									"vectorize",
+									"version_metadata",
+								),
+							},
 						},
 						"dataset": schema.StringAttribute{
-							Description: "The dataset name to bind to.",
+							Description: "The name of the dataset to bind to.",
 							Optional:    true,
 						},
 						"id": schema.StringAttribute{
@@ -172,6 +196,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"text": schema.StringAttribute{
 							Description: "The text value to use.",
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"queue_name": schema.StringAttribute{
 							Description: "Name of the Queue to bind to.",
@@ -213,6 +238,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "List of binding types to keep from previous_upload.",
 				Optional:    true,
 				ElementType: types.StringType,
+			},
+			"logpush": schema.BoolAttribute{
+				Description: "Whether Logpush is turned on for the Worker.",
+				Optional:    true,
+				Computed:    true,
 			},
 			"main_module": schema.StringAttribute{
 				Description: "Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
@@ -350,42 +380,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"etag": schema.StringAttribute{
-				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
-				Computed:    true,
-			},
-			"has_assets": schema.BoolAttribute{
-				Description: "Whether a Worker contains assets.",
-				Computed:    true,
-			},
-			"has_modules": schema.BoolAttribute{
-				Description: "Whether a Worker contains modules.",
-				Computed:    true,
-			},
-			"logpush": schema.BoolAttribute{
-				Description: "Whether Logpush is turned on for the Worker.",
-				Computed:    true,
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "When the script was last modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"created_on": schema.StringAttribute{
-				Description: "When the script was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"startup_time_ms": schema.Int64Attribute{
-				Computed: true,
-			},
-			"usage_model": schema.StringAttribute{
-				Description: "Usage model for the Worker invocations.",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("standard"),
-				},
-			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
 				Optional:    true,
@@ -393,16 +387,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataPlacementModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
-						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"smart",
-							),
+							stringvalidator.OneOfCaseInsensitive("smart"),
 						},
 					},
 					"status": schema.StringAttribute{
-						Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -435,6 +427,39 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"usage_model": schema.StringAttribute{
+				Description: "Usage model for the Worker invocations.\nAvailable values: \"standard\".",
+				Optional:    true,
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("standard"),
+				},
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the script was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"etag": schema.StringAttribute{
+				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
+				Computed:    true,
+			},
+			"has_assets": schema.BoolAttribute{
+				Description: "Whether a Worker contains assets.",
+				Computed:    true,
+			},
+			"has_modules": schema.BoolAttribute{
+				Description: "Whether a Worker contains modules.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the script was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"startup_time_ms": schema.Int64Attribute{
+				Computed: true,
 			},
 		},
 	}

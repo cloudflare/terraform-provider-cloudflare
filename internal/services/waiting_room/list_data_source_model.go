@@ -18,14 +18,19 @@ type WaitingRoomsResultListDataSourceEnvelope struct {
 }
 
 type WaitingRoomsDataSourceModel struct {
-	ZoneID   types.String                                                    `tfsdk:"zone_id" path:"zone_id,required"`
-	MaxItems types.Int64                                                     `tfsdk:"max_items"`
-	Result   customfield.NestedObjectList[WaitingRoomsResultDataSourceModel] `tfsdk:"result"`
+	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String                                                    `tfsdk:"zone_id" path:"zone_id,optional"`
+	MaxItems  types.Int64                                                     `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[WaitingRoomsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WaitingRoomsDataSourceModel) toListParams(_ context.Context) (params waiting_rooms.WaitingRoomListParams, diags diag.Diagnostics) {
-	params = waiting_rooms.WaitingRoomListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	params = waiting_rooms.WaitingRoomListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
 	}
 
 	return

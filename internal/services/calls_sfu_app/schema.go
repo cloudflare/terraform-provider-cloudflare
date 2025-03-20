@@ -47,6 +47,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"secret": schema.StringAttribute{
 				Description: "Bearer token",
 				Computed:    true,
+				Sensitive:   true,
 			},
 			"uid": schema.StringAttribute{
 				Description: "A Cloudflare-generated unique identifier for a item.",

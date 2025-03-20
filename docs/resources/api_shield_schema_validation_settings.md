@@ -32,6 +32,7 @@ Mitigation actions are as follows:
   * `block` - deny access to the site when request does not conform to schema
 
 A special value of of `none` will skip running schema validation entirely for the request when there is no mitigation action defined on the operation
+Available values: "none", "log", "block".
 - `zone_id` (String) Identifier
 
 ### Optional
@@ -42,6 +43,7 @@ A special value of of `none` will skip running schema validation entirely for th
   - `null` indicates that no override is in place
 
 To clear any override, use the special value `disable_override` or `null`
+Available values: "none", "disable_override".
 
 ### Read-Only
 

@@ -34,7 +34,7 @@ resource "cloudflare_calls_sfu_app" "example_calls_sfu_app" {
 
 - `created` (String) The date and time the item was created.
 - `modified` (String) The date and time the item was last modified.
-- `secret` (String) Bearer token
+- `secret` (String, Sensitive) Bearer token
 - `uid` (String) A Cloudflare-generated unique identifier for a item.
 
 

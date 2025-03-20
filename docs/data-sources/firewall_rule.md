@@ -15,7 +15,6 @@ description: |-
 data "cloudflare_firewall_rule" "example_firewall_rule" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   rule_id = "372e67954025e0ba6aaa6d586b9e0b60"
-  id = "372e67954025e0ba6aaa6d586b9e0b60"
 }
 ```
 
@@ -33,6 +32,7 @@ data "cloudflare_firewall_rule" "example_firewall_rule" {
 ### Read-Only
 
 - `action` (String) The action to apply to a matched request. The `log` action is only available on an Enterprise plan.
+Available values: "block", "challenge", "js_challenge", "managed_challenge", "allow", "log", "bypass".
 - `description` (String) An informative summary of the firewall rule.
 - `id` (String) The unique identifier of the firewall rule.
 - `paused` (Boolean) When true, indicates that the firewall rule is currently paused.

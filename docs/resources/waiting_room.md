@@ -70,6 +70,7 @@ resource "cloudflare_waiting_room" "example_waiting_room" {
 
 To view the full list of variables, look at the `cfWaitingRoom` object described under the `json_response_enabled` property in other Waiting Room API calls.
 - `default_template_language` (String) The language of the default page template. If no default_template_language is provided, then `en-US` (English) will be used.
+Available values: "en-US", "es-ES", "de-DE", "fr-FR", "it-IT", "ja-JP", "ko-KR", "pt-BR", "zh-CN", "zh-TW", "nl-NL", "pl-PL", "id-ID", "tr-TR", "ar-EG", "ru-RU", "fa-IR", "bg-BG", "hr-HR", "cs-CZ", "da-DK", "fi-FI", "lt-LT", "ms-MY", "nb-NO", "ro-RO", "el-GR", "he-IL", "hi-IN", "hu-HU", "sr-BA", "sk-SK", "sl-SI", "sv-SE", "tl-PH", "th-TH", "uk-UA", "vi-VN".
 - `description` (String) A note that you can use to add more details about the waiting room.
 - `disable_session_renewal` (Boolean) Only available for the Waiting Room Advanced subscription. Disables automatic renewal of session cookies. If `true`, an accepted user will have session_duration minutes to browse the site. After that, they will have to go through the waiting room again. If `false`, a user's session cookie will be automatically renewed on every request.
 - `enabled_origin_commands` (List of String) A list of enabled origin commands.
@@ -169,7 +170,9 @@ If `json_response_enabled` is **true** and the request hits the waiting room, an
 2. `random`: Random queue where customers gain access randomly, regardless of arrival time.
 3. `passthrough`: Users will pass directly through the waiting room and into the origin website. As a result, any configured limits will not be respected while this is enabled. This method can be used as an alternative to disabling a waiting room (with `suspended`) so that analytics are still reported. This can be used if you wish to allow all traffic normally, but want to restrict traffic during a waiting room event, or vice versa.
 4. `reject`: Users will be immediately rejected from the waiting room. As a result, no users will reach the origin website while this is enabled. This can be used if you wish to reject all traffic while performing maintenance, block traffic during a specified period of time (an event), or block traffic while events are not occurring. Consider a waiting room used for vaccine distribution that only allows traffic during sign-up events, and otherwise blocks all traffic. For this case, the waiting room uses `reject`, and its events override this with `fifo`, `random`, or `passthrough`. When this queueing method is enabled and neither `queueAll` is enabled nor an event is prequeueing, the waiting room page **will not refresh automatically**.
+Available values: "fifo", "random", "passthrough", "reject".
 - `queueing_status_code` (Number) HTTP status code returned to a user while in the queue.
+Available values: 200, 202, 429.
 - `session_duration` (Number) Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the route. If a user is not seen by Cloudflare again in that time period, they will be treated as a new user that visits the route.
 - `suspended` (Boolean) Suspends or allows traffic going to the waiting room. If set to `true`, the traffic will not go to the waiting room.
 - `turnstile_action` (String) Which action to take when a bot is detected using Turnstile. `log` will
@@ -177,11 +180,13 @@ have no impact on queueing behavior, simply keeping track of how many
 bots are detected in Waiting Room Analytics. `infinite_queue` will send
 bots to a false queueing state, where they will never reach your
 origin. `infinite_queue` requires Advanced Waiting Room.
+Available values: "log", "infinite_queue".
 - `turnstile_mode` (String) Which Turnstile widget type to use for detecting bot traffic. See
 [the Turnstile documentation](https://developers.cloudflare.com/turnstile/concepts/widget/#widget-types)
 for the definitions of these widget types. Set to `off` to disable the
 Turnstile integration entirely. Setting this to anything other than
 `off` or `invisible` requires Advanced Waiting Room.
+Available values: "off", "invisible", "visible_non_interactive", "visible_managed".
 
 ### Read-Only
 
@@ -206,7 +211,9 @@ Optional:
 Optional:
 
 - `samesite` (String) Configures the SameSite attribute on the waiting room cookie. Value `auto` will be translated to `lax` or `none` depending if **Always Use HTTPS** is enabled. Note that when using value `none`, the secure attribute cannot be set to `never`.
+Available values: "auto", "lax", "none", "strict".
 - `secure` (String) Configures the Secure attribute on the waiting room cookie. Value `always` indicates that the Secure attribute will be set in the Set-Cookie header, `never` indicates that the Secure attribute will not be set, and `auto` will set the Secure attribute depending if **Always Use HTTPS** is enabled.
+Available values: "auto", "always", "never".
 
 ## Import
 

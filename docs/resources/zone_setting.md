@@ -32,6 +32,7 @@ resource "cloudflare_zone_setting" "example_zone_setting" {
 ### Optional
 
 - `id` (String) ID of the zone setting.
+Available values: "0rtt".
 
 ### Read-Only
 
