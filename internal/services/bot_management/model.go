@@ -17,6 +17,7 @@ type BotManagementModel struct {
 	ZoneID                       types.String                                                       `tfsdk:"zone_id" path:"zone_id,required"`
 	AIBotsProtection             types.String                                                       `tfsdk:"ai_bots_protection" json:"ai_bots_protection,optional"`
 	AutoUpdateModel              types.Bool                                                         `tfsdk:"auto_update_model" json:"auto_update_model,optional"`
+	CrawlerProtection            types.String                                                       `tfsdk:"crawler_protection" json:"crawler_protection,optional"`
 	EnableJS                     types.Bool                                                         `tfsdk:"enable_js" json:"enable_js,optional"`
 	FightMode                    types.Bool                                                         `tfsdk:"fight_mode" json:"fight_mode,optional"`
 	OptimizeWordpress            types.Bool                                                         `tfsdk:"optimize_wordpress" json:"optimize_wordpress,optional"`
