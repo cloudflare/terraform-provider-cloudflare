@@ -54,14 +54,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"origin": schema.StringAttribute{
-				Description: "Filter results to only include discovery results sourced from a particular discovery engine\n  * `ML` - Discovered operations that were sourced using ML API Discovery\n  * `SessionIdentifier` - Discovered operations that were sourced using Session Identifier API Discovery\nAvailable values: \"ML\", \"SessionIdentifier\", \"LabelDiscovery\".",
+				Description: "Filter results to only include discovery results sourced from a particular discovery engine\n  * `ML` - Discovered operations that were sourced using ML API Discovery\n  * `SessionIdentifier` - Discovered operations that were sourced using Session Identifier API Discovery\nAvailable values: \"ML\", \"SessionIdentifier\".",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"ML",
-						"SessionIdentifier",
-						"LabelDiscovery",
-					),
+					stringvalidator.OneOfCaseInsensitive("ML", "SessionIdentifier"),
 				},
 			},
 			"state": schema.StringAttribute{
@@ -136,11 +132,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							Validators: []validator.List{
 								listvalidator.ValueStringsAre(
-									stringvalidator.OneOfCaseInsensitive(
-										"ML",
-										"SessionIdentifier",
-										"LabelDiscovery",
-									),
+									stringvalidator.OneOfCaseInsensitive("ML", "SessionIdentifier"),
 								),
 							},
 							CustomType:  customfield.NewListType[types.String](ctx),
