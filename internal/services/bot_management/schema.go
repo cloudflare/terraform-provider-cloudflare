@@ -41,6 +41,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)",
 				Optional:    true,
 			},
+			"crawler_protection": schema.StringAttribute{
+				Description: "Enable rule to punish AI Scrapers and Crawlers via a link maze.\nAvailable values: \"enabled\", \"disabled\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
+				},
+			},
 			"enable_js": schema.BoolAttribute{
 				Description: "Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).",
 				Optional:    true,
