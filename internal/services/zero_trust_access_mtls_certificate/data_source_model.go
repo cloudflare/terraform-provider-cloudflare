@@ -18,7 +18,7 @@ type ZeroTrustAccessMTLSCertificateResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessMTLSCertificateDataSourceModel struct {
-	ID                  types.String                   `tfsdk:"id" json:"-,computed"`
+	ID                  types.String                   `tfsdk:"id" path:"certificate_id,computed"`
 	CertificateID       types.String                   `tfsdk:"certificate_id" path:"certificate_id,optional"`
 	AccountID           types.String                   `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID              types.String                   `tfsdk:"zone_id" path:"zone_id,optional"`

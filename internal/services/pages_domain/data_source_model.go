@@ -17,7 +17,7 @@ type PagesDomainResultDataSourceEnvelope struct {
 }
 
 type PagesDomainDataSourceModel struct {
-	ID                   types.String                                                         `tfsdk:"id" json:"-,computed"`
+	ID                   types.String                                                         `tfsdk:"id" path:"domain_name,computed"`
 	DomainName           types.String                                                         `tfsdk:"domain_name" path:"domain_name,optional"`
 	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	ProjectName          types.String                                                         `tfsdk:"project_name" path:"project_name,required"`

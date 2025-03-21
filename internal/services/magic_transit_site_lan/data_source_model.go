@@ -17,7 +17,7 @@ type MagicTransitSiteLANResultDataSourceEnvelope struct {
 }
 
 type MagicTransitSiteLANDataSourceModel struct {
-	ID               types.String                                                                  `tfsdk:"id" json:"-,computed"`
+	ID               types.String                                                                  `tfsdk:"id" path:"lan_id,computed"`
 	LANID            types.String                                                                  `tfsdk:"lan_id" path:"lan_id,optional"`
 	AccountID        types.String                                                                  `tfsdk:"account_id" path:"account_id,required"`
 	SiteID           types.String                                                                  `tfsdk:"site_id" path:"site_id,required"`

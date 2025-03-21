@@ -17,7 +17,7 @@ type LoadBalancerResultDataSourceEnvelope struct {
 }
 
 type LoadBalancerDataSourceModel struct {
-	ID                        types.String                                                                   `tfsdk:"id" json:"-,computed"`
+	ID                        types.String                                                                   `tfsdk:"id" path:"load_balancer_id,computed"`
 	LoadBalancerID            types.String                                                                   `tfsdk:"load_balancer_id" path:"load_balancer_id,optional"`
 	ZoneID                    types.String                                                                   `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedOn                 types.String                                                                   `tfsdk:"created_on" json:"created_on,computed"`

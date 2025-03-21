@@ -17,7 +17,7 @@ type MagicTransitSiteACLResultDataSourceEnvelope struct {
 }
 
 type MagicTransitSiteACLDataSourceModel struct {
-	ID             types.String                                                     `tfsdk:"id" json:"-,computed"`
+	ID             types.String                                                     `tfsdk:"id" path:"acl_id,computed"`
 	ACLID          types.String                                                     `tfsdk:"acl_id" path:"acl_id,optional"`
 	AccountID      types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
 	SiteID         types.String                                                     `tfsdk:"site_id" path:"site_id,required"`

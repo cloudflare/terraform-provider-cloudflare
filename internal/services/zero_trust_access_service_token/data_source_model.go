@@ -17,7 +17,7 @@ type ZeroTrustAccessServiceTokenResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessServiceTokenDataSourceModel struct {
-	ID             types.String                                         `tfsdk:"id" json:"-,computed"`
+	ID             types.String                                         `tfsdk:"id" path:"service_token_id,computed"`
 	ServiceTokenID types.String                                         `tfsdk:"service_token_id" path:"service_token_id,optional"`
 	AccountID      types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID         types.String                                         `tfsdk:"zone_id" path:"zone_id,optional"`

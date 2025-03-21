@@ -16,7 +16,7 @@ type DNSZoneTransfersPeerResultDataSourceEnvelope struct {
 }
 
 type DNSZoneTransfersPeerDataSourceModel struct {
-	ID         types.String  `tfsdk:"id" json:"-,computed"`
+	ID         types.String  `tfsdk:"id" path:"peer_id,computed"`
 	PeerID     types.String  `tfsdk:"peer_id" path:"peer_id,optional"`
 	AccountID  types.String  `tfsdk:"account_id" path:"account_id,required"`
 	IP         types.String  `tfsdk:"ip" json:"ip,computed"`

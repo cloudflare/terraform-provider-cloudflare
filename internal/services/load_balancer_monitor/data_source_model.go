@@ -17,7 +17,7 @@ type LoadBalancerMonitorResultDataSourceEnvelope struct {
 }
 
 type LoadBalancerMonitorDataSourceModel struct {
-	ID              types.String                                    `tfsdk:"id" json:"-,computed"`
+	ID              types.String                                    `tfsdk:"id" path:"monitor_id,computed"`
 	MonitorID       types.String                                    `tfsdk:"monitor_id" path:"monitor_id,optional"`
 	AccountID       types.String                                    `tfsdk:"account_id" path:"account_id,required"`
 	AllowInsecure   types.Bool                                      `tfsdk:"allow_insecure" json:"allow_insecure,computed"`

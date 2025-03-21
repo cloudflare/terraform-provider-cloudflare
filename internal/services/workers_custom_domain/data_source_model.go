@@ -16,7 +16,7 @@ type WorkersCustomDomainResultDataSourceEnvelope struct {
 }
 
 type WorkersCustomDomainDataSourceModel struct {
-	ID          types.String                                 `tfsdk:"id" json:"-,computed"`
+	ID          types.String                                 `tfsdk:"id" path:"domain_id,computed"`
 	DomainID    types.String                                 `tfsdk:"domain_id" path:"domain_id,optional"`
 	AccountID   types.String                                 `tfsdk:"account_id" path:"account_id,required"`
 	Environment types.String                                 `tfsdk:"environment" json:"environment,computed"`
