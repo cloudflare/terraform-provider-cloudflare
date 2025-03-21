@@ -39,11 +39,3 @@ func (m *MagicNetworkMonitoringRuleDataSourceModel) toReadParams(_ context.Conte
 
 	return
 }
-
-func (m *MagicNetworkMonitoringRuleDataSourceModel) toListParams(_ context.Context) (params magic_network_monitoring.RuleListParams, diags diag.Diagnostics) {
-	params = magic_network_monitoring.RuleListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}

@@ -31,11 +31,3 @@ func (m *RegionalHostnameDataSourceModel) toReadParams(_ context.Context) (param
 
 	return
 }
-
-func (m *RegionalHostnameDataSourceModel) toListParams(_ context.Context) (params addressing.RegionalHostnameListParams, diags diag.Diagnostics) {
-	params = addressing.RegionalHostnameListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}

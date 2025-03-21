@@ -36,11 +36,3 @@ func (m *Web3HostnameDataSourceModel) toReadParams(_ context.Context) (params we
 
 	return
 }
-
-func (m *Web3HostnameDataSourceModel) toListParams(_ context.Context) (params web3.HostnameListParams, diags diag.Diagnostics) {
-	params = web3.HostnameListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}

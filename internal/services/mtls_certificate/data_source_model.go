@@ -37,11 +37,3 @@ func (m *MTLSCertificateDataSourceModel) toReadParams(_ context.Context) (params
 
 	return
 }
-
-func (m *MTLSCertificateDataSourceModel) toListParams(_ context.Context) (params mtls_certificates.MTLSCertificateListParams, diags diag.Diagnostics) {
-	params = mtls_certificates.MTLSCertificateListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}

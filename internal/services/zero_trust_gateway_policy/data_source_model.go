@@ -47,14 +47,6 @@ func (m *ZeroTrustGatewayPolicyDataSourceModel) toReadParams(_ context.Context) 
 	return
 }
 
-func (m *ZeroTrustGatewayPolicyDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayRuleListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayRuleListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type ZeroTrustGatewayPolicyExpirationDataSourceModel struct {
 	ExpiresAt timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
 	Duration  types.Int64       `tfsdk:"duration" json:"duration,computed"`

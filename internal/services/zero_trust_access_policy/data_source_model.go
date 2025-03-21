@@ -46,14 +46,6 @@ func (m *ZeroTrustAccessPolicyDataSourceModel) toReadParams(_ context.Context) (
 	return
 }
 
-func (m *ZeroTrustAccessPolicyDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessPolicyListParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessPolicyListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type ZeroTrustAccessPolicyApprovalGroupsDataSourceModel struct {
 	ApprovalsNeeded types.Float64                  `tfsdk:"approvals_needed" json:"approvals_needed,computed"`
 	EmailAddresses  customfield.List[types.String] `tfsdk:"email_addresses" json:"email_addresses,computed"`

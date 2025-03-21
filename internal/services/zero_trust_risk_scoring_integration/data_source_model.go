@@ -36,11 +36,3 @@ func (m *ZeroTrustRiskScoringIntegrationDataSourceModel) toReadParams(_ context.
 
 	return
 }
-
-func (m *ZeroTrustRiskScoringIntegrationDataSourceModel) toListParams(_ context.Context) (params zero_trust.RiskScoringIntegrationListParams, diags diag.Diagnostics) {
-	params = zero_trust.RiskScoringIntegrationListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}

@@ -35,11 +35,3 @@ func (m *FirewallRuleDataSourceModel) toReadParams(_ context.Context) (params fi
 
 	return
 }
-
-func (m *FirewallRuleDataSourceModel) toListParams(_ context.Context) (params firewall.RuleListParams, diags diag.Diagnostics) {
-	params = firewall.RuleListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}

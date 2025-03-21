@@ -40,11 +40,3 @@ func (m *ZeroTrustGatewayCertificateDataSourceModel) toReadParams(_ context.Cont
 
 	return
 }
-
-func (m *ZeroTrustGatewayCertificateDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayCertificateListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayCertificateListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}

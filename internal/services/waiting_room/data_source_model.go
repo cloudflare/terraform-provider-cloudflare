@@ -56,20 +56,6 @@ func (m *WaitingRoomDataSourceModel) toReadParams(_ context.Context) (params wai
 	return
 }
 
-func (m *WaitingRoomDataSourceModel) toListParams(_ context.Context) (params waiting_rooms.WaitingRoomListParams, diags diag.Diagnostics) {
-	params = waiting_rooms.WaitingRoomListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
-
-	return
-}
-
 type WaitingRoomAdditionalRoutesDataSourceModel struct {
 	Host types.String `tfsdk:"host" json:"host,computed"`
 	Path types.String `tfsdk:"path" json:"path,computed"`

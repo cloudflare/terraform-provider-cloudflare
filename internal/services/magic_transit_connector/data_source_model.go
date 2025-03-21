@@ -39,14 +39,6 @@ func (m *MagicTransitConnectorDataSourceModel) toReadParams(_ context.Context) (
 	return
 }
 
-func (m *MagicTransitConnectorDataSourceModel) toListParams(_ context.Context) (params magic_transit.ConnectorListParams, diags diag.Diagnostics) {
-	params = magic_transit.ConnectorListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type MagicTransitConnectorDeviceDataSourceModel struct {
 	ID           types.String `tfsdk:"id" json:"id,computed"`
 	SerialNumber types.String `tfsdk:"serial_number" json:"serial_number,computed"`

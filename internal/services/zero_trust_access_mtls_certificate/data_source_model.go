@@ -41,15 +41,3 @@ func (m *ZeroTrustAccessMTLSCertificateDataSourceModel) toReadParams(_ context.C
 
 	return
 }
-
-func (m *ZeroTrustAccessMTLSCertificateDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessCertificateListParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessCertificateListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
-
-	return
-}

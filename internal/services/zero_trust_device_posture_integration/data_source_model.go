@@ -34,14 +34,6 @@ func (m *ZeroTrustDevicePostureIntegrationDataSourceModel) toReadParams(_ contex
 	return
 }
 
-func (m *ZeroTrustDevicePostureIntegrationDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePostureIntegrationListParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePostureIntegrationListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type ZeroTrustDevicePostureIntegrationConfigDataSourceModel struct {
 	APIURL   types.String `tfsdk:"api_url" json:"api_url,computed"`
 	AuthURL  types.String `tfsdk:"auth_url" json:"auth_url,computed"`
