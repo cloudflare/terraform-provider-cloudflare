@@ -7,7 +7,6 @@ import (
 	"math"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -102,15 +101,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[RulesetRulesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"last_updated": schema.StringAttribute{
-							Description: "The timestamp of when the rule was last modified.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
-						"version": schema.StringAttribute{
-							Description: "The version of the rule.",
-							Computed:    true,
-						},
 						"id": schema.StringAttribute{
 							Description: "The unique ID of the rule.",
 							Optional:    true,
@@ -1142,11 +1132,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"last_updated": schema.StringAttribute{
-				Description: "The timestamp of when the ruleset was last modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}
