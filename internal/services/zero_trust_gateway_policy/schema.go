@@ -34,7 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"action": schema.StringAttribute{
-				Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\".",
+				Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\", \"redirect\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -53,6 +53,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"egress",
 						"resolve",
 						"quarantine",
+						"redirect",
 					),
 				},
 			},
@@ -446,6 +447,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									),
 								},
 								ElementType: types.StringType,
+							},
+						},
+					},
+					"redirect": schema.SingleNestedAttribute{
+						Description: "Settings that apply to redirect rules",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsRedirectModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"target_uri": schema.StringAttribute{
+								Description: "URI to which the user will be redirected",
+								Required:    true,
+							},
+							"preserve_path_and_query": schema.BoolAttribute{
+								Description: "If true, the path and query parameters from the original request will be appended to target_uri",
+								Optional:    true,
 							},
 						},
 					},
