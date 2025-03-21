@@ -38,14 +38,6 @@ func (m *QueueDataSourceModel) toReadParams(_ context.Context) (params queues.Qu
 	return
 }
 
-func (m *QueueDataSourceModel) toListParams(_ context.Context) (params queues.QueueListParams, diags diag.Diagnostics) {
-	params = queues.QueueListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type QueueConsumersDataSourceModel struct {
 	ConsumerID types.String                                                    `tfsdk:"consumer_id" json:"consumer_id,computed"`
 	CreatedOn  types.String                                                    `tfsdk:"created_on" json:"created_on,computed"`

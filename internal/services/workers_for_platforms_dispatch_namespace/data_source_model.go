@@ -36,11 +36,3 @@ func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toReadParams(_ con
 
 	return
 }
-
-func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toListParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceListParams, diags diag.Diagnostics) {
-	params = workers_for_platforms.DispatchNamespaceListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}

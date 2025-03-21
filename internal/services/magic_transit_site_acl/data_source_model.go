@@ -38,14 +38,6 @@ func (m *MagicTransitSiteACLDataSourceModel) toReadParams(_ context.Context) (pa
 	return
 }
 
-func (m *MagicTransitSiteACLDataSourceModel) toListParams(_ context.Context) (params magic_transit.SiteACLListParams, diags diag.Diagnostics) {
-	params = magic_transit.SiteACLListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type MagicTransitSiteACLLAN1DataSourceModel struct {
 	LANID      types.String                   `tfsdk:"lan_id" json:"lan_id,computed"`
 	LANName    types.String                   `tfsdk:"lan_name" json:"lan_name,computed"`

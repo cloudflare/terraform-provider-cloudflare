@@ -40,14 +40,6 @@ func (m *NotificationPolicyDataSourceModel) toReadParams(_ context.Context) (par
 	return
 }
 
-func (m *NotificationPolicyDataSourceModel) toListParams(_ context.Context) (params alerting.PolicyListParams, diags diag.Diagnostics) {
-	params = alerting.PolicyListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type NotificationPolicyFiltersDataSourceModel struct {
 	Actions                      customfield.List[types.String] `tfsdk:"actions" json:"actions,computed"`
 	AffectedASNs                 customfield.List[types.String] `tfsdk:"affected_asns" json:"affected_asns,computed"`

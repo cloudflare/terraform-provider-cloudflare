@@ -52,14 +52,6 @@ func (m *LoadBalancerDataSourceModel) toReadParams(_ context.Context) (params lo
 	return
 }
 
-func (m *LoadBalancerDataSourceModel) toListParams(_ context.Context) (params load_balancers.LoadBalancerListParams, diags diag.Diagnostics) {
-	params = load_balancers.LoadBalancerListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}
-
 type LoadBalancerAdaptiveRoutingDataSourceModel struct {
 	FailoverAcrossPools types.Bool `tfsdk:"failover_across_pools" json:"failover_across_pools,computed"`
 }

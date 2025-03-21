@@ -50,18 +50,6 @@ func (m *LogpushJobDataSourceModel) toReadParams(_ context.Context) (params logp
 	return
 }
 
-func (m *LogpushJobDataSourceModel) toListParams(_ context.Context) (params logpush.JobListParams, diags diag.Diagnostics) {
-	params = logpush.JobListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
-
-	return
-}
-
 type LogpushJobOutputOptionsDataSourceModel struct {
 	BatchPrefix     types.String                   `tfsdk:"batch_prefix" json:"batch_prefix,computed"`
 	BatchSuffix     types.String                   `tfsdk:"batch_suffix" json:"batch_suffix,computed"`

@@ -44,14 +44,6 @@ func (m *ZeroTrustDNSLocationDataSourceModel) toReadParams(_ context.Context) (p
 	return
 }
 
-func (m *ZeroTrustDNSLocationDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayLocationListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type ZeroTrustDNSLocationEndpointsDataSourceModel struct {
 	DOH  customfield.NestedObject[ZeroTrustDNSLocationEndpointsDOHDataSourceModel]  `tfsdk:"doh" json:"doh,computed"`
 	DOT  customfield.NestedObject[ZeroTrustDNSLocationEndpointsDOTDataSourceModel]  `tfsdk:"dot" json:"dot,computed"`

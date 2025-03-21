@@ -33,14 +33,6 @@ func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toReadParams(_ context.C
 	return
 }
 
-func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toListParams(_ context.Context) (params zero_trust.DeviceNetworkListParams, diags diag.Diagnostics) {
-	params = zero_trust.DeviceNetworkListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type ZeroTrustDeviceManagedNetworksConfigDataSourceModel struct {
 	TLSSockaddr types.String `tfsdk:"tls_sockaddr" json:"tls_sockaddr,computed"`
 	Sha256      types.String `tfsdk:"sha256" json:"sha256,computed"`

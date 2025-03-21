@@ -36,14 +36,6 @@ func (m *HyperdriveConfigDataSourceModel) toReadParams(_ context.Context) (param
 	return
 }
 
-func (m *HyperdriveConfigDataSourceModel) toListParams(_ context.Context) (params hyperdrive.ConfigListParams, diags diag.Diagnostics) {
-	params = hyperdrive.ConfigListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type HyperdriveConfigCachingDataSourceModel struct {
 	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,computed"`
 	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age,computed"`

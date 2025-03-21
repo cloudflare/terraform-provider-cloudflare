@@ -32,11 +32,3 @@ func (m *WorkersSecretDataSourceModel) toReadParams(_ context.Context) (params w
 
 	return
 }
-
-func (m *WorkersSecretDataSourceModel) toListParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceScriptSecretListParams, diags diag.Diagnostics) {
-	params = workers_for_platforms.DispatchNamespaceScriptSecretListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}

@@ -39,14 +39,6 @@ func (m *PagesDomainDataSourceModel) toReadParams(_ context.Context) (params pag
 	return
 }
 
-func (m *PagesDomainDataSourceModel) toListParams(_ context.Context) (params pages.ProjectDomainListParams, diags diag.Diagnostics) {
-	params = pages.ProjectDomainListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type PagesDomainValidationDataDataSourceModel struct {
 	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
 	Method       types.String `tfsdk:"method" json:"method,computed"`

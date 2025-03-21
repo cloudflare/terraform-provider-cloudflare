@@ -40,14 +40,6 @@ func (m *AddressMapDataSourceModel) toReadParams(_ context.Context) (params addr
 	return
 }
 
-func (m *AddressMapDataSourceModel) toListParams(_ context.Context) (params addressing.AddressMapListParams, diags diag.Diagnostics) {
-	params = addressing.AddressMapListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type AddressMapIPsDataSourceModel struct {
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IP        types.String      `tfsdk:"ip" json:"ip,computed"`

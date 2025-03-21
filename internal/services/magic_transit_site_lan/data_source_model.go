@@ -38,14 +38,6 @@ func (m *MagicTransitSiteLANDataSourceModel) toReadParams(_ context.Context) (pa
 	return
 }
 
-func (m *MagicTransitSiteLANDataSourceModel) toListParams(_ context.Context) (params magic_transit.SiteLANListParams, diags diag.Diagnostics) {
-	params = magic_transit.SiteLANListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type MagicTransitSiteLANNatDataSourceModel struct {
 	StaticPrefix types.String `tfsdk:"static_prefix" json:"static_prefix,computed"`
 }

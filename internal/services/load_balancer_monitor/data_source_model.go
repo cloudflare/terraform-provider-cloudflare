@@ -47,11 +47,3 @@ func (m *LoadBalancerMonitorDataSourceModel) toReadParams(_ context.Context) (pa
 
 	return
 }
-
-func (m *LoadBalancerMonitorDataSourceModel) toListParams(_ context.Context) (params load_balancers.MonitorListParams, diags diag.Diagnostics) {
-	params = load_balancers.MonitorListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}

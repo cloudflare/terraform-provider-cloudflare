@@ -36,11 +36,3 @@ func (m *NotificationPolicyWebhooksDataSourceModel) toReadParams(_ context.Conte
 
 	return
 }
-
-func (m *NotificationPolicyWebhooksDataSourceModel) toListParams(_ context.Context) (params alerting.DestinationWebhookListParams, diags diag.Diagnostics) {
-	params = alerting.DestinationWebhookListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}

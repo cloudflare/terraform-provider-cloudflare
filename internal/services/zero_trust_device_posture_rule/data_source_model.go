@@ -37,14 +37,6 @@ func (m *ZeroTrustDevicePostureRuleDataSourceModel) toReadParams(_ context.Conte
 	return
 }
 
-func (m *ZeroTrustDevicePostureRuleDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePostureListParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePostureListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type ZeroTrustDevicePostureRuleInputDataSourceModel struct {
 	OperatingSystem  types.String                                                                      `tfsdk:"operating_system" json:"operating_system,computed"`
 	Path             types.String                                                                      `tfsdk:"path" json:"path,computed"`

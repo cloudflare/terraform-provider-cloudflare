@@ -38,14 +38,6 @@ func (m *ZeroTrustDEXTestDataSourceModel) toReadParams(_ context.Context) (param
 	return
 }
 
-func (m *ZeroTrustDEXTestDataSourceModel) toListParams(_ context.Context) (params zero_trust.DeviceDEXTestListParams, diags diag.Diagnostics) {
-	params = zero_trust.DeviceDEXTestListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type ZeroTrustDEXTestDataDataSourceModel struct {
 	Host   types.String `tfsdk:"host" json:"host,computed"`
 	Kind   types.String `tfsdk:"kind" json:"kind,computed"`

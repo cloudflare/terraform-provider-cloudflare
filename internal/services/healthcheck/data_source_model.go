@@ -48,14 +48,6 @@ func (m *HealthcheckDataSourceModel) toReadParams(_ context.Context) (params hea
 	return
 }
 
-func (m *HealthcheckDataSourceModel) toListParams(_ context.Context) (params healthchecks.HealthcheckListParams, diags diag.Diagnostics) {
-	params = healthchecks.HealthcheckListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}
-
 type HealthcheckHTTPConfigDataSourceModel struct {
 	AllowInsecure   types.Bool                                      `tfsdk:"allow_insecure" json:"allow_insecure,computed"`
 	ExpectedBody    types.String                                    `tfsdk:"expected_body" json:"expected_body,computed"`
