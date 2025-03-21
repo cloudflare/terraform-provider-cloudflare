@@ -82,6 +82,10 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
     quarantine = {
       file_types = ["exe"]
     }
+    redirect = {
+      target_uri = "https://example.com"
+      preserve_path_and_query = true
+    }
     resolve_dns_internally = {
       fallback = "none"
       view_id = "view_id"
