@@ -17,7 +17,7 @@ type MagicTransitConnectorResultDataSourceEnvelope struct {
 }
 
 type MagicTransitConnectorDataSourceModel struct {
-	ID                           types.String                                                         `tfsdk:"id" json:"-,computed"`
+	ID                           types.String                                                         `tfsdk:"id" path:"connector_id,computed"`
 	ConnectorID                  types.String                                                         `tfsdk:"connector_id" path:"connector_id,optional"`
 	AccountID                    types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	Activated                    types.Bool                                                           `tfsdk:"activated" json:"activated,computed"`

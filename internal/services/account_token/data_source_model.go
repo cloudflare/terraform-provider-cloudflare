@@ -18,7 +18,7 @@ type AccountTokenResultDataSourceEnvelope struct {
 }
 
 type AccountTokenDataSourceModel struct {
-	ID         types.String                                                      `tfsdk:"id" json:"-,computed"`
+	ID         types.String                                                      `tfsdk:"id" path:"token_id,computed"`
 	TokenID    types.String                                                      `tfsdk:"token_id" path:"token_id,optional"`
 	AccountID  types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	ExpiresOn  timetypes.RFC3339                                                 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`

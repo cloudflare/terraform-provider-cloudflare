@@ -17,7 +17,7 @@ type WorkersForPlatformsDispatchNamespaceResultDataSourceEnvelope struct {
 }
 
 type WorkersForPlatformsDispatchNamespaceDataSourceModel struct {
-	ID                types.String      `tfsdk:"id" json:"-,computed"`
+	ID                types.String      `tfsdk:"id" path:"dispatch_namespace,computed"`
 	DispatchNamespace types.String      `tfsdk:"dispatch_namespace" path:"dispatch_namespace,optional"`
 	AccountID         types.String      `tfsdk:"account_id" path:"account_id,required"`
 	CreatedBy         types.String      `tfsdk:"created_by" json:"created_by,computed"`

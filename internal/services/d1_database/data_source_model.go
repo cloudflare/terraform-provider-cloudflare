@@ -17,7 +17,7 @@ type D1DatabaseResultDataSourceEnvelope struct {
 }
 
 type D1DatabaseDataSourceModel struct {
-	ID         types.String                        `tfsdk:"id" json:"-,computed"`
+	ID         types.String                        `tfsdk:"id" path:"database_id,computed"`
 	DatabaseID types.String                        `tfsdk:"database_id" path:"database_id,optional"`
 	AccountID  types.String                        `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAt  timetypes.RFC3339                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

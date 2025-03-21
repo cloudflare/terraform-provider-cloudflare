@@ -18,7 +18,7 @@ type LogpushJobResultDataSourceEnvelope struct {
 }
 
 type LogpushJobDataSourceModel struct {
-	ID                       types.Int64                                                      `tfsdk:"id" json:"-,computed"`
+	ID                       types.Int64                                                      `tfsdk:"id" path:"job_id,computed"`
 	JobID                    types.Int64                                                      `tfsdk:"job_id" path:"job_id,optional"`
 	AccountID                types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID                   types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`

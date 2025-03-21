@@ -18,7 +18,7 @@ type AccessRuleResultDataSourceEnvelope struct {
 }
 
 type AccessRuleDataSourceModel struct {
-	ID            types.String                                                     `tfsdk:"id" json:"-,computed"`
+	ID            types.String                                                     `tfsdk:"id" path:"rule_id,computed"`
 	RuleID        types.String                                                     `tfsdk:"rule_id" path:"rule_id,optional"`
 	AccountID     types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID        types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
