@@ -17,7 +17,7 @@ type ZeroTrustDEXTestResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDEXTestDataSourceModel struct {
-	ID             types.String                                                                `tfsdk:"id" json:"-,computed"`
+	ID             types.String                                                                `tfsdk:"id" path:"dex_test_id,computed"`
 	DEXTestID      types.String                                                                `tfsdk:"dex_test_id" path:"dex_test_id,optional"`
 	AccountID      types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
 	Description    types.String                                                                `tfsdk:"description" json:"description,computed"`

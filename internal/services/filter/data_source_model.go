@@ -16,7 +16,7 @@ type FilterResultDataSourceEnvelope struct {
 }
 
 type FilterDataSourceModel struct {
-	ID          types.String                    `tfsdk:"id" json:"-,computed"`
+	ID          types.String                    `tfsdk:"id" path:"filter_id,computed"`
 	FilterID    types.String                    `tfsdk:"filter_id" path:"filter_id,optional"`
 	ZoneID      types.String                    `tfsdk:"zone_id" path:"zone_id,required"`
 	Description types.String                    `tfsdk:"description" json:"description,computed"`

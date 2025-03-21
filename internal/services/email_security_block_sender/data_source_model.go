@@ -17,7 +17,7 @@ type EmailSecurityBlockSenderResultDataSourceEnvelope struct {
 }
 
 type EmailSecurityBlockSenderDataSourceModel struct {
-	ID           types.Int64                                       `tfsdk:"id" json:"-,computed"`
+	ID           types.Int64                                       `tfsdk:"id" path:"pattern_id,computed"`
 	PatternID    types.Int64                                       `tfsdk:"pattern_id" path:"pattern_id,optional"`
 	AccountID    types.String                                      `tfsdk:"account_id" path:"account_id,required"`
 	Comments     types.String                                      `tfsdk:"comments" json:"comments,computed"`

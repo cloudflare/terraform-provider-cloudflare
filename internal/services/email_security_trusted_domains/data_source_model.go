@@ -17,7 +17,7 @@ type EmailSecurityTrustedDomainsResultDataSourceEnvelope struct {
 }
 
 type EmailSecurityTrustedDomainsDataSourceModel struct {
-	ID              types.Int64                                          `tfsdk:"id" json:"-,computed"`
+	ID              types.Int64                                          `tfsdk:"id" path:"trusted_domain_id,computed"`
 	TrustedDomainID types.Int64                                          `tfsdk:"trusted_domain_id" path:"trusted_domain_id,optional"`
 	AccountID       types.String                                         `tfsdk:"account_id" path:"account_id,required"`
 	Comments        types.String                                         `tfsdk:"comments" json:"comments,computed"`

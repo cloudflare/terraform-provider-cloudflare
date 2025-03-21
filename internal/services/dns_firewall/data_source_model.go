@@ -18,7 +18,7 @@ type DNSFirewallResultDataSourceEnvelope struct {
 }
 
 type DNSFirewallDataSourceModel struct {
-	ID                   types.String                                                         `tfsdk:"id" json:"-,computed"`
+	ID                   types.String                                                         `tfsdk:"id" path:"dns_firewall_id,computed"`
 	DNSFirewallID        types.String                                                         `tfsdk:"dns_firewall_id" path:"dns_firewall_id,optional"`
 	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	DeprecateAnyRequests types.Bool                                                           `tfsdk:"deprecate_any_requests" json:"deprecate_any_requests,computed"`

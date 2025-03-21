@@ -18,7 +18,7 @@ type AccountResultDataSourceEnvelope struct {
 }
 
 type AccountDataSourceModel struct {
-	ID        types.String                                             `tfsdk:"id" json:"-,computed"`
+	ID        types.String                                             `tfsdk:"id" path:"account_id,computed"`
 	AccountID types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedOn timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Name      types.String                                             `tfsdk:"name" json:"name,computed"`

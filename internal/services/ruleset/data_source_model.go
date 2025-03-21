@@ -17,7 +17,7 @@ type RulesetResultDataSourceEnvelope struct {
 }
 
 type RulesetDataSourceModel struct {
-	ID          types.String                                              `tfsdk:"id" json:"-,computed"`
+	ID          types.String                                              `tfsdk:"id" path:"ruleset_id,computed"`
 	RulesetID   types.String                                              `tfsdk:"ruleset_id" path:"ruleset_id,optional"`
 	AccountID   types.String                                              `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID      types.String                                              `tfsdk:"zone_id" path:"zone_id,optional"`

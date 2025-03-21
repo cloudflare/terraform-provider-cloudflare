@@ -17,7 +17,7 @@ type ZeroTrustDevicePostureIntegrationResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDevicePostureIntegrationDataSourceModel struct {
-	ID            types.String                                                                     `tfsdk:"id" json:"-,computed"`
+	ID            types.String                                                                     `tfsdk:"id" path:"integration_id,computed"`
 	IntegrationID types.String                                                                     `tfsdk:"integration_id" path:"integration_id,optional"`
 	AccountID     types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
 	Interval      types.String                                                                     `tfsdk:"interval" json:"interval,computed"`

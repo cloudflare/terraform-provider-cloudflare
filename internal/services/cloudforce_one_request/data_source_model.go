@@ -12,7 +12,7 @@ type CloudforceOneRequestResultDataSourceEnvelope struct {
 }
 
 type CloudforceOneRequestDataSourceModel struct {
-	ID                types.String      `tfsdk:"id" json:"-,computed"`
+	ID                types.String      `tfsdk:"id" path:"request_identifier,computed"`
 	RequestIdentifier types.String      `tfsdk:"request_identifier" path:"request_identifier,optional"`
 	AccountIdentifier types.String      `tfsdk:"account_identifier" path:"account_identifier,required"`
 	Completed         timetypes.RFC3339 `tfsdk:"completed" json:"completed,computed" format:"date-time"`

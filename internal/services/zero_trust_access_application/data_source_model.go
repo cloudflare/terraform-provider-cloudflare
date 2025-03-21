@@ -18,7 +18,7 @@ type ZeroTrustAccessApplicationResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessApplicationDataSourceModel struct {
-	ID                       types.String                                                                          `tfsdk:"id" json:"-,computed"`
+	ID                       types.String                                                                          `tfsdk:"id" path:"app_id,computed"`
 	AppID                    types.String                                                                          `tfsdk:"app_id" path:"app_id,optional"`
 	AccountID                types.String                                                                          `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID                   types.String                                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
