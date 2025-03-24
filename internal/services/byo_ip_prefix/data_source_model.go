@@ -40,11 +40,3 @@ func (m *ByoIPPrefixDataSourceModel) toReadParams(_ context.Context) (params add
 
 	return
 }
-
-func (m *ByoIPPrefixDataSourceModel) toListParams(_ context.Context) (params addressing.PrefixListParams, diags diag.Diagnostics) {
-	params = addressing.PrefixListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}

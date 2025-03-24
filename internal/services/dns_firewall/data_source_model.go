@@ -43,14 +43,6 @@ func (m *DNSFirewallDataSourceModel) toReadParams(_ context.Context) (params dns
 	return
 }
 
-func (m *DNSFirewallDataSourceModel) toListParams(_ context.Context) (params dns_firewall.DNSFirewallListParams, diags diag.Diagnostics) {
-	params = dns_firewall.DNSFirewallListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type DNSFirewallAttackMitigationDataSourceModel struct {
 	Enabled                   types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 	OnlyWhenUpstreamUnhealthy types.Bool `tfsdk:"only_when_upstream_unhealthy" json:"only_when_upstream_unhealthy,computed"`

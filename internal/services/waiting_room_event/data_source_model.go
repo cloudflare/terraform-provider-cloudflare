@@ -45,11 +45,3 @@ func (m *WaitingRoomEventDataSourceModel) toReadParams(_ context.Context) (param
 
 	return
 }
-
-func (m *WaitingRoomEventDataSourceModel) toListParams(_ context.Context) (params waiting_rooms.EventListParams, diags diag.Diagnostics) {
-	params = waiting_rooms.EventListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}

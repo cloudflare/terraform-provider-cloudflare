@@ -40,18 +40,6 @@ func (m *RulesetDataSourceModel) toReadParams(_ context.Context) (params ruleset
 	return
 }
 
-func (m *RulesetDataSourceModel) toListParams(_ context.Context) (params rulesets.RulesetListParams, diags diag.Diagnostics) {
-	params = rulesets.RulesetListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
-
-	return
-}
-
 type RulesetRulesDataSourceModel struct {
 	ID                     types.String                                                                `tfsdk:"id" json:"id,computed"`
 	Action                 types.String                                                                `tfsdk:"action" json:"action,computed"`

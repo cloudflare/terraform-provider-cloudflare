@@ -36,11 +36,3 @@ func (m *ZeroTrustAccessCustomPageDataSourceModel) toReadParams(_ context.Contex
 
 	return
 }
-
-func (m *ZeroTrustAccessCustomPageDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessCustomPageListParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessCustomPageListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}

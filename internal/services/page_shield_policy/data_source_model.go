@@ -33,11 +33,3 @@ func (m *PageShieldPolicyDataSourceModel) toReadParams(_ context.Context) (param
 
 	return
 }
-
-func (m *PageShieldPolicyDataSourceModel) toListParams(_ context.Context) (params page_shield.PolicyListParams, diags diag.Diagnostics) {
-	params = page_shield.PolicyListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}

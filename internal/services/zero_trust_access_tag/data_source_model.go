@@ -33,11 +33,3 @@ func (m *ZeroTrustAccessTagDataSourceModel) toReadParams(_ context.Context) (par
 
 	return
 }
-
-func (m *ZeroTrustAccessTagDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessTagListParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessTagListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}

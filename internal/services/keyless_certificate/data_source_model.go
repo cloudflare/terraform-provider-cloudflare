@@ -40,14 +40,6 @@ func (m *KeylessCertificateDataSourceModel) toReadParams(_ context.Context) (par
 	return
 }
 
-func (m *KeylessCertificateDataSourceModel) toListParams(_ context.Context) (params keyless_certificates.KeylessCertificateListParams, diags diag.Diagnostics) {
-	params = keyless_certificates.KeylessCertificateListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}
-
 type KeylessCertificateTunnelDataSourceModel struct {
 	PrivateIP types.String `tfsdk:"private_ip" json:"private_ip,computed"`
 	VnetID    types.String `tfsdk:"vnet_id" json:"vnet_id,computed"`

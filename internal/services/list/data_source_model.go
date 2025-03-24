@@ -35,11 +35,3 @@ func (m *ListDataSourceModel) toReadParams(_ context.Context) (params rules.List
 
 	return
 }
-
-func (m *ListDataSourceModel) toListParams(_ context.Context) (params rules.ListListParams, diags diag.Diagnostics) {
-	params = rules.ListListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}

@@ -42,14 +42,6 @@ func (m *ZeroTrustDLPEntryDataSourceModel) toReadParams(_ context.Context) (para
 	return
 }
 
-func (m *ZeroTrustDLPEntryDataSourceModel) toListParams(_ context.Context) (params zero_trust.DLPEntryListParams, diags diag.Diagnostics) {
-	params = zero_trust.DLPEntryListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type ZeroTrustDLPEntryConfidenceDataSourceModel struct {
 	AIContextAvailable types.Bool `tfsdk:"ai_context_available" json:"ai_context_available,computed"`
 	Available          types.Bool `tfsdk:"available" json:"available,computed"`

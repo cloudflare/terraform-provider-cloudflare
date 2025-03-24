@@ -37,14 +37,6 @@ func (m *RateLimitDataSourceModel) toReadParams(_ context.Context) (params rate_
 	return
 }
 
-func (m *RateLimitDataSourceModel) toListParams(_ context.Context) (params rate_limits.RateLimitListParams, diags diag.Diagnostics) {
-	params = rate_limits.RateLimitListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}
-
 type RateLimitActionDataSourceModel struct {
 	Mode     types.String                                                     `tfsdk:"mode" json:"mode,computed"`
 	Response customfield.NestedObject[RateLimitActionResponseDataSourceModel] `tfsdk:"response" json:"response,computed"`

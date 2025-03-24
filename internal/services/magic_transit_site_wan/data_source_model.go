@@ -37,14 +37,6 @@ func (m *MagicTransitSiteWANDataSourceModel) toReadParams(_ context.Context) (pa
 	return
 }
 
-func (m *MagicTransitSiteWANDataSourceModel) toListParams(_ context.Context) (params magic_transit.SiteWANListParams, diags diag.Diagnostics) {
-	params = magic_transit.SiteWANListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type MagicTransitSiteWANStaticAddressingDataSourceModel struct {
 	Address          types.String `tfsdk:"address" json:"address,computed"`
 	GatewayAddress   types.String `tfsdk:"gateway_address" json:"gateway_address,computed"`

@@ -55,14 +55,6 @@ func (m *ZeroTrustDeviceCustomProfileDataSourceModel) toReadParams(_ context.Con
 	return
 }
 
-func (m *ZeroTrustDeviceCustomProfileDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePolicyCustomListParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePolicyCustomListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
 type ZeroTrustDeviceCustomProfileExcludeDataSourceModel struct {
 	Address     types.String `tfsdk:"address" json:"address,computed"`
 	Description types.String `tfsdk:"description" json:"description,computed"`

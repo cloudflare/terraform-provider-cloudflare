@@ -33,11 +33,3 @@ func (m *DNSZoneTransfersPeerDataSourceModel) toReadParams(_ context.Context) (p
 
 	return
 }
-
-func (m *DNSZoneTransfersPeerDataSourceModel) toListParams(_ context.Context) (params dns.ZoneTransferPeerListParams, diags diag.Diagnostics) {
-	params = dns.ZoneTransferPeerListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
