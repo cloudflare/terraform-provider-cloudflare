@@ -51,6 +51,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The Client Secret for the service token. Access will check for this value in the `CF-Access-Client-Secret` request header.",
 				Computed:    true,
 				Sensitive:   true,
+        PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,

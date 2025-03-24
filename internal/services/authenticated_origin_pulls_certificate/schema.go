@@ -26,8 +26,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"certificate_id": schema.StringAttribute{
 				Description:   "Identifier",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"certificate": schema.StringAttribute{
 				Description:   "The zone's leaf certificate.",
@@ -38,7 +38,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "The zone's private key.",
 				Required:      true,
 				Sensitive:     true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Indicates whether zone-level authenticated origin pulls is enabled.",
