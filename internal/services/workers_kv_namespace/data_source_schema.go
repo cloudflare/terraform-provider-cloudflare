@@ -30,6 +30,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Required:    true,
 			},
+			"beta": schema.BoolAttribute{
+				Description: "True if new beta namespace, with additional preview features.",
+				Computed:    true,
+			},
 			"supports_url_encoding": schema.BoolAttribute{
 				Description: `True if keys written on the URL will be URL-decoded before storing. For example, if set to "true", a key written on the URL as "%3F" will be stored as "?".`,
 				Computed:    true,
