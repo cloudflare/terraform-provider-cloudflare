@@ -64,6 +64,14 @@ func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
+	if data.Proxied.ValueBool() && data.TTL.ValueFloat64() != 1 {
+		resp.Diagnostics.AddError(
+			"ttl must be set to 1 when `proxied` is true",
+			"When a DNS record is marked as `proxied` the TTL must be 1 as Cloudflare will control the TTL internally.",
+		)
+		return
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -254,6 +262,9 @@ func (r *DNSRecordResource) ImportState(ctx context.Context, req resource.Import
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSRecordResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
+func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	// If the entire plan is null, the resource is planned for destruction.
+	if req.Plan.Raw.IsNull() {
+		return
+	}
 }

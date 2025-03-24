@@ -48,6 +48,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"jurisdiction": schema.StringAttribute{
+				Description: "Jurisdiction of the bucket",
+				Optional:    true,
+				Computed:    true,
+				Default:     stringdefault.StaticString("default"),
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"default",
+						"eu",
+						"fedramp",
+					),
+				},
+			},
 			"storage_class": schema.StringAttribute{
 				Description: "Storage class for newly uploaded objects, unless specified otherwise.\nAvailable values: \"Standard\", \"InfrequentAccess\".",
 				Computed:    true,
