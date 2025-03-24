@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v4/option"
@@ -30,11 +31,18 @@ func Middleware(ctx context.Context) option.Middleware {
 }
 
 func LogRequest(ctx context.Context, req *http.Request) error {
+	sensitiveHeaderNames := []string{"x-auth-email", "x-auth-key", "x-auth-user-service-key", "authorization"}
+
 	lines := []string{fmt.Sprintf("\n%s %s %s", req.Method, req.URL.Path, req.Proto)}
 
 	// Log headers
 	for name, values := range req.Header {
 		for _, value := range values {
+
+			if slices.Contains(sensitiveHeaderNames, strings.ToLower(name)) {
+				value = "[redacted]"
+			}
+
 			lines = append(lines, fmt.Sprintf("> %s: %s", strings.ToLower(name), value))
 		}
 	}
