@@ -52,7 +52,7 @@ type LogpushJobOutputOptionsModel struct {
 	RecordDelimiter types.String    `tfsdk:"record_delimiter" json:"record_delimiter,computed_optional"`
 	RecordPrefix    types.String    `tfsdk:"record_prefix" json:"record_prefix,computed_optional"`
 	RecordSuffix    types.String    `tfsdk:"record_suffix" json:"record_suffix,computed_optional"`
-	RecordTemplate  types.String    `tfsdk:"record_template" json:"record_template,computed_optional"`
+	RecordTemplate  types.String    `tfsdk:"record_template" json:"record_template,optional"`
 	SampleRate      types.Float64   `tfsdk:"sample_rate" json:"sample_rate,computed_optional"`
 	TimestampFormat types.String    `tfsdk:"timestamp_format" json:"timestamp_format,computed_optional"`
 }
