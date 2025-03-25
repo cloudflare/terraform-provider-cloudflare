@@ -177,9 +177,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"record_template": schema.StringAttribute{
 						Description: "String to use as template for each record instead of the default comma-separated list. All fields used in the template must be present in `field_names` as well, otherwise they will end up as null. Format as a Go `text/template` without any standard functions, like conditionals, loops, sub-templates, etc.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString(""),
 					},
 					"sample_rate": schema.Float64Attribute{
 						Description: "Floating number to specify sampling rate. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.",
