@@ -69,5 +69,6 @@ type QueuesProducersDataSourceModel struct {
 
 type QueuesSettingsDataSourceModel struct {
 	DeliveryDelay          types.Float64 `tfsdk:"delivery_delay" json:"delivery_delay,computed"`
+	DeliveryPaused         types.Bool    `tfsdk:"delivery_paused" json:"delivery_paused,computed"`
 	MessageRetentionPeriod types.Float64 `tfsdk:"message_retention_period" json:"message_retention_period,computed"`
 }

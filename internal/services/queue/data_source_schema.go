@@ -138,6 +138,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Number of seconds to delay delivery of all messages to consumers.",
 						Computed:    true,
 					},
+					"delivery_paused": schema.BoolAttribute{
+						Description: "Indicates if message delivery to consumers is currently paused.",
+						Computed:    true,
+					},
 					"message_retention_period": schema.Float64Attribute{
 						Description: "Number of seconds after which an unconsumed message will be delayed.",
 						Computed:    true,
