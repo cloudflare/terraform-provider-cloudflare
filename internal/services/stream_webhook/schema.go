@@ -22,9 +22,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"notification_url": schema.StringAttribute{
-				Description:   "The URL where webhooks will be sent.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "The URL where webhooks will be sent.",
+				Required:    true,
 			},
 		},
 	}

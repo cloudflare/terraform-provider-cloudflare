@@ -7,8 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
 var _ resource.ResourceWithConfigValidators = (*UserResource)(nil)
@@ -17,29 +15,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"country": schema.StringAttribute{
-				Description:   "The country in which the user lives.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "The country in which the user lives.",
+				Optional:    true,
 			},
 			"first_name": schema.StringAttribute{
-				Description:   "User's first name",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "User's first name",
+				Optional:    true,
 			},
 			"last_name": schema.StringAttribute{
-				Description:   "User's last name",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "User's last name",
+				Optional:    true,
 			},
 			"telephone": schema.StringAttribute{
-				Description:   "User's telephone number",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "User's telephone number",
+				Optional:    true,
 			},
 			"zipcode": schema.StringAttribute{
-				Description:   "The zipcode or postal code where the user lives.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "The zipcode or postal code where the user lives.",
+				Optional:    true,
 			},
 		},
 	}
