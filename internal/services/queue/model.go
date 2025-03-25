@@ -36,6 +36,7 @@ func (m QueueModel) MarshalJSONForUpdate(state QueueModel) (data []byte, err err
 
 type QueueSettingsModel struct {
 	DeliveryDelay          types.Float64 `tfsdk:"delivery_delay" json:"delivery_delay,optional"`
+	DeliveryPaused         types.Bool    `tfsdk:"delivery_paused" json:"delivery_paused,optional"`
 	MessageRetentionPeriod types.Float64 `tfsdk:"message_retention_period" json:"message_retention_period,optional"`
 }
 

@@ -44,6 +44,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Number of seconds to delay delivery of all messages to consumers.",
 						Optional:    true,
 					},
+					"delivery_paused": schema.BoolAttribute{
+						Description: "Indicates if message delivery to consumers is currently paused.",
+						Optional:    true,
+					},
 					"message_retention_period": schema.Float64Attribute{
 						Description: "Number of seconds after which an unconsumed message will be delayed.",
 						Optional:    true,
