@@ -119,6 +119,8 @@ Optional:
 
 Optional:
 
+- `_headers` (String) The contents of a _headers file (used to attach custom headers on asset responses)
+- `_redirects` (String) The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving)
 - `html_handling` (String) Determines the redirects and rewrites of requests for HTML content.
 Available values: "auto-trailing-slash", "force-trailing-slash", "drop-trailing-slash", "none".
 - `not_found_handling` (String) Determines the response when a request does not match a static asset, and there is no Worker script.

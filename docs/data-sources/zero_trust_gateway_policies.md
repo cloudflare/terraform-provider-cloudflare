@@ -38,7 +38,7 @@ data "cloudflare_zero_trust_gateway_policies" "example_zero_trust_gateway_polici
 Read-Only:
 
 - `action` (String) The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.
-Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine".
+Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine", "redirect".
 - `created_at` (String)
 - `deleted_at` (String) Date of deletion, if any.
 - `description` (String) The description of the rule.
@@ -104,6 +104,7 @@ Read-Only:
 - `override_ips` (List of String) Override matching DNS queries with an IP or set of IPs.
 - `payload_log` (Attributes) Configure DLP payload logging. (see [below for nested schema](#nestedatt--result--rule_settings--payload_log))
 - `quarantine` (Attributes) Settings that apply to quarantine rules (see [below for nested schema](#nestedatt--result--rule_settings--quarantine))
+- `redirect` (Attributes) Settings that apply to redirect rules (see [below for nested schema](#nestedatt--result--rule_settings--redirect))
 - `resolve_dns_internally` (Attributes) Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action is set to 'resolve'. (see [below for nested schema](#nestedatt--result--rule_settings--resolve_dns_internally))
 - `resolve_dns_through_cloudflare` (Boolean) Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_internally' is set. Only valid when a rule's action is set to 'resolve'.
 - `untrusted_cert` (Attributes) Configure behavior when an upstream cert is invalid or an SSL error occurs. (see [below for nested schema](#nestedatt--result--rule_settings--untrusted_cert))
@@ -225,6 +226,15 @@ Read-Only:
 Read-Only:
 
 - `file_types` (List of String) Types of files to sandbox.
+
+
+<a id="nestedatt--result--rule_settings--redirect"></a>
+### Nested Schema for `result.rule_settings.redirect`
+
+Read-Only:
+
+- `preserve_path_and_query` (Boolean) If true, the path and query parameters from the original request will be appended to target_uri
+- `target_uri` (String) URI to which the user will be redirected
 
 
 <a id="nestedatt--result--rule_settings--resolve_dns_internally"></a>

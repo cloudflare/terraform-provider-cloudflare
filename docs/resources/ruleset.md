@@ -88,6 +88,7 @@ Optional:
 - `action` (String) The action to perform when the rule matches.
 Available values: "block".
 - `action_parameters` (Attributes) The parameters configuring the rule's action. (see [below for nested schema](#nestedatt--rules--action_parameters))
+- `categories` (List of String) The categories of the rule.
 - `description` (String) An informative description of the rule.
 - `enabled` (Boolean) Whether the rule should be executed.
 - `exposed_credential_check` (Attributes) Configure checks for exposed credentials. (see [below for nested schema](#nestedatt--rules--exposed_credential_check))
@@ -98,7 +99,6 @@ Available values: "block".
 
 Read-Only:
 
-- `categories` (List of String) The categories of the rule.
 - `id` (String) The unique ID of the rule.
 
 <a id="nestedatt--rules--action_parameters"></a>
