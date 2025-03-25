@@ -1,0 +1,215 @@
+language json
+
+pattern cloudflare_terraform_v5_attribute_renames_state() {
+  any {
+    // clear out any previously defined schema bumps
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: r"^cloudflare_.*",
+        $instances <: any {
+          contains `"schema_version": $version`=> `"schema_version": 0`
+        }
+    },
+
+    // cloudflare_api_token
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_api_token`,
+        $instances <: any {
+          contains `"policy": $policy` => `"policies": $policy`
+        }
+    },
+
+    // cloudflare_account_member
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_account_member`,
+        $instances <: any {
+          contains `"role_ids": $roles` => `"roles": $roles`,
+          contains `"email_address": $ea` => `"email": $ea`,
+        }
+    },
+
+    // cloudflare_byo_ip_prefix
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_byo_ip_prefix`,
+        $instances <: any {
+          contains `"advertisement": $ad` => `"advertised": $ad`
+        }
+    },
+
+    // cloudflare_hostname_tls_setting
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_hostname_tls_setting`,
+        $instances <: any {
+          contains `"setting": $setting` => `"setting_id": $setting`
+        }
+    },
+
+    // cloudflare_load_balancer
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_load_balancer`,
+        $instances <: any {
+          contains `"fallback_pool_id": $fp` => `"fallback_pool": $fp`,
+          contains `"default_pool_ids": $dp` => `"default_pools": $dp`,
+        }
+    },
+
+    // cloudflare_queue
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_queue`,
+        $instances <: any {
+          contains `"name": $q` => `"queue_name": $q`
+        }
+    },
+
+    // cloudflare_r2_bucket
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_r2_bucket`,
+        $instances <: any {
+          contains `"location_hint": $lh` => `"location": $lh`
+        }
+    },
+
+    // cloudflare_worker_kv
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_worker_kv`,
+        $instances <: any {
+          contains `"key": $key` => `"key_name": $key`
+        }
+    },
+
+    // cloudflare_logpull_retention
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_logpull_retention`,
+        $instances <: any {
+          contains `"enabled": $flag` => `"flag": $flag`
+        }
+    },
+
+    // cloudflare_logpush_ownership_challenge
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_logpush_ownership_challenge`,
+        $instances <: any {
+          contains `"ownership_challenge_filename": $ocf` => `"filename": $ocf`
+        }
+    },
+
+    // cloudflare_zero_trust_tunnel_cloudflared
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_zero_trust_tunnel_cloudflared`,
+        $instances <: any {
+          contains `"secret": $ts` => `"tunnel_secret": $ts`
+        }
+    },
+
+    // cloudflare_zero_trust_access_short_lived_certificate
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_zero_trust_access_short_lived_certificate`,
+        $instances <: any {
+          contains `"application_id": $app_id` => `"app_id": $app_id`
+        }
+    },
+
+    // cloudflare_workers_secret
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_workers_secret`,
+        $instances <: any {
+          contains `"secret_text": $st` => `"text": $st`
+        }
+    },
+
+    // cloudflare_workers_kv
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_workers_kv`,
+        $instances <: any {
+          contains `"key": $kn` => `"key_name": $kn`
+        }
+    },
+
+    // cloudflare_tiered_cache
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_tiered_cache`,
+        $instances <: any {
+          contains `"cache_type": $ct` => `"value": $ct`
+        }
+    },
+
+    // cloudflare_zone
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_zone`,
+        $instances <: any {
+            contains `"zone": $z` => `"name": $z`,
+            contains `"account_id": $av` => `"account": {
+                "id": $av
+            }`,
+            contains `"jump_start": $_` => .,
+            contains `"plan": $_` => .
+        }
+    },
+
+    // cloudflare_access_policy & cloudflare_zero_trust_access_group
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_access_policy`,
+        $instances <: any {
+          contains `"application_id": $_` => .,
+          contains `"precedence": $_` => .,
+        }
+    },
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_zero_trust_access_group`,
+        $instances <: any {
+          contains `"application_id": $_` => .,
+          contains `"precedence": $_` => .,
+        }
+    },
+
+    // cloudflare_access_service_token & cloudflare_zero_trust_access_service_token
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_access_service_token`,
+        $instances <: any {
+          contains `"min_days_for_renewal": $_` => .,
+        }
+    },
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_zero_trust_access_service_token`,
+        $instances <: any {
+          contains `"min_days_for_renewal": $_` => .,
+        }
+    },
+
+    // cloudflare_tunnel & zero_trust_tunnel_cloudflared
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_tunnel`,
+        $instances <: any {
+          contains `"secret": $_` => .,
+          contains `"cname": $_` => .,
+        }
+    },
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `zero_trust_tunnel_cloudflared`,
+        $instances <: any {
+          contains `"secret": $_` => .,
+          contains `"cname": $_` => .,
+        }
+    },
+
+    // cloudflare_record
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_record`,
+        $instances <: any {
+          contains `"data": [{$obj}]` => `"data": {
+              $obj
+          }`,
+          contains `"data": []` => `"data": {}`,
+          contains `"hostname": $_` => .,
+          contains `"allow_overwrite": $_` => .,
+        }
+    },
+
+    // cloudflare_origin_ca_certificate
+    `{ "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_origin_ca_certificate`,
+        $instances <: any {
+          contains `"min_days_for_renewal": $_` => .
+        }
+    },
+  }
+}

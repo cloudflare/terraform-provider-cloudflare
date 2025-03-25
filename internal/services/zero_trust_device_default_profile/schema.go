@@ -6,10 +6,13 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -75,6 +78,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileExcludeModel](ctx),
+				Validators: []validator.List{
+					listvalidator.ConflictsWith(path.MatchRoot("include")),
+				},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
@@ -97,6 +103,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileIncludeModel](ctx),
+				Validators: []validator.List{
+					listvalidator.ConflictsWith(path.MatchRoot("exclude")),
+				},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
