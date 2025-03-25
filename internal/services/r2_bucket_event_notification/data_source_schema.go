@@ -27,10 +27,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Name of the bucket",
 				Required:    true,
 			},
-			"bucket_name": schema.StringAttribute{
-				Description: "Name of the bucket.",
-				Computed:    true,
-			},
 			"queues": schema.ListNestedAttribute{
 				Description: "List of queues associated with the bucket.",
 				Computed:    true,
