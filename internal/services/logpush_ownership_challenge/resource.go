@@ -99,57 +99,7 @@ func (r *LogpushOwnershipChallengeResource) Create(ctx context.Context, req reso
 }
 
 func (r *LogpushOwnershipChallengeResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *LogpushOwnershipChallengeModel
-
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	var state *LogpushOwnershipChallengeModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := LogpushOwnershipChallengeResultEnvelope{*data}
-	params := logpush.OwnershipNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err = r.client.Logpush.Ownership.New(
-		ctx,
-		params,
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	// Update is not supported for this resource
 }
 
 func (r *LogpushOwnershipChallengeResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {

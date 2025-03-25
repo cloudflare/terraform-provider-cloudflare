@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -29,9 +28,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"files": schema.StringAttribute{
-				Description:   "Content files of uploaded snippet",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "Content files of uploaded snippet",
+				Optional:    true,
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Computed:   true,
@@ -43,7 +41,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"created_on": schema.StringAttribute{
 				Description: "Creation time of the snippet",

@@ -9,8 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -25,9 +23,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"redact_pii": schema.BoolAttribute{
-				Description:   "Redact personally identifiable information from activity logging (PII fields are: source IP, user email, user ID, device ID, URL, referrer, user agent).",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Redact personally identifiable information from activity logging (PII fields are: source IP, user email, user ID, device ID, URL, referrer, user agent).",
+				Optional:    true,
 			},
 			"settings_by_rule_type": schema.SingleNestedAttribute{
 				Description: "Logging settings by rule type.",
@@ -51,7 +48,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  jsontypes.NormalizedType{},
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 		},
 	}
