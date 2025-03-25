@@ -313,32 +313,34 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 	opts := []option.RequestOption{}
 
-	if !data.BaseURL.IsNull() {
+	if !data.BaseURL.IsNull() && !data.BaseURL.IsUnknown() {
 		opts = append(opts, option.WithBaseURL(data.BaseURL.ValueString()))
+	} else if o, ok := os.LookupEnv("CLOUDFLARE_BASE_URL"); ok {
+		opts = append(opts, option.WithBaseURL(o))
 	}
-	if o, ok := os.LookupEnv("CLOUDFLARE_API_TOKEN"); ok {
+
+	if !data.APIToken.IsNull() && !data.APIToken.IsUnknown() {
+		opts = append(opts, option.WithAPIToken(data.APIToken.ValueString()))
+	} else if o, ok := os.LookupEnv("CLOUDFLARE_API_TOKEN"); ok {
 		opts = append(opts, option.WithAPIToken(o))
 	}
-	if o, ok := os.LookupEnv("CLOUDFLARE_API_KEY"); ok {
+
+	if !data.APIKey.IsNull() && !data.APIKey.IsUnknown() {
+		opts = append(opts, option.WithAPIKey(data.APIKey.ValueString()))
+	} else if o, ok := os.LookupEnv("CLOUDFLARE_API_KEY"); ok {
 		opts = append(opts, option.WithAPIKey(o))
 	}
-	if o, ok := os.LookupEnv("CLOUDFLARE_EMAIL"); ok {
+
+	if !data.Email.IsNull() && !data.Email.IsUnknown() {
+		opts = append(opts, option.WithAPIEmail(data.Email.ValueString()))
+	} else if o, ok := os.LookupEnv("CLOUDFLARE_EMAIL"); ok {
 		opts = append(opts, option.WithAPIEmail(o))
 	}
-	if o, ok := os.LookupEnv("CLOUDFLARE_API_USER_SERVICE_KEY"); ok {
-		opts = append(opts, option.WithUserServiceKey(o))
-	}
-	if !data.APIToken.IsNull() {
-		opts = append(opts, option.WithAPIToken(data.APIToken.ValueString()))
-	}
-	if !data.APIKey.IsNull() {
-		opts = append(opts, option.WithAPIKey(data.APIKey.ValueString()))
-	}
-	if !data.Email.IsNull() {
-		opts = append(opts, option.WithAPIEmail(data.Email.ValueString()))
-	}
-	if !data.APIUserServiceKey.IsNull() {
+
+	if !data.APIUserServiceKey.IsNull() && !data.APIUserServiceKey.IsUnknown() {
 		opts = append(opts, option.WithUserServiceKey(data.APIUserServiceKey.ValueString()))
+	} else if o, ok := os.LookupEnv("CLOUDFLARE_API_USER_SERVICE_KEY"); ok {
+		opts = append(opts, option.WithUserServiceKey(o))
 	}
 
 	pluginVersion := utils.FindGoModuleVersion("github.com/hashicorp/terraform-plugin-framework")
