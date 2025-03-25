@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -28,19 +27,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"auto_renew": schema.BoolAttribute{
-				Description:   "Auto-renew controls whether subscription is automatically renewed upon domain expiration.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Auto-renew controls whether subscription is automatically renewed upon domain expiration.",
+				Optional:    true,
 			},
 			"locked": schema.BoolAttribute{
-				Description:   "Shows whether a registrar lock is in place for a domain.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Shows whether a registrar lock is in place for a domain.",
+				Optional:    true,
 			},
 			"privacy": schema.BoolAttribute{
-				Description:   "Privacy option controls redacting WHOIS information.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Privacy option controls redacting WHOIS information.",
+				Optional:    true,
 			},
 		},
 	}
