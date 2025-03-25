@@ -82,15 +82,19 @@ Read-Only:
 
 Read-Only:
 
-- `background_color` (String) Block page background color in #rrggbb format.
+- `background_color` (String) If mode is customized_block_page: block page background color in #rrggbb format.
 - `enabled` (Boolean) Enable only cipher suites and TLS versions compliant with FIPS 140-2.
-- `footer_text` (String) Block page footer text.
-- `header_text` (String) Block page header text.
-- `logo_path` (String) Full URL to the logo file.
-- `mailto_address` (String) Admin email for users to contact.
-- `mailto_subject` (String) Subject line for emails created from block page.
-- `name` (String) Block page title.
-- `suppress_footer` (Boolean) Suppress detailed info at the bottom of the block page.
+- `footer_text` (String) If mode is customized_block_page: block page footer text.
+- `header_text` (String) If mode is customized_block_page: block page header text.
+- `include_context` (Boolean) If mode is redirect_uri: when enabled, context will be appended to target_uri as query parameters.
+- `logo_path` (String) If mode is customized_block_page: full URL to the logo file.
+- `mailto_address` (String) If mode is customized_block_page: admin email for users to contact.
+- `mailto_subject` (String) If mode is customized_block_page: subject line for emails created from block page.
+- `mode` (String) Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.
+Available values: "customized_block_page", "redirect_uri".
+- `name` (String) If mode is customized_block_page: block page title.
+- `suppress_footer` (Boolean) If mode is customized_block_page: suppress detailed info at the bottom of the block page.
+- `target_uri` (String) If mode is redirect_uri: URI to which the user should be redirected.
 
 
 <a id="nestedatt--settings--body_scanning"></a>

@@ -90,6 +90,7 @@ Read-Only:
 Read-Only:
 
 - `delivery_delay` (Number) Number of seconds to delay delivery of all messages to consumers.
+- `delivery_paused` (Boolean) Indicates if message delivery to consumers is currently paused.
 - `message_retention_period` (Number) Number of seconds after which an unconsumed message will be delayed.
 
 
