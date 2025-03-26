@@ -1069,12 +1069,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									ElementType: types.StringType,
 								},
 								"period": schema.Int64Attribute{
-									Description: "Period in seconds over which the counter is being incremented.\nAvailable values: 10, 60, 600, 3600.",
+									Description: "Period in seconds over which the counter is being incremented.\nAvailable values: 10, 60, 120, 300, 600, 3600.",
 									Computed:    true,
 									Validators: []validator.Int64{
 										int64validator.OneOf(
 											10,
 											60,
+											120,
+											300,
 											600,
 											3600,
 										),
