@@ -560,7 +560,7 @@ Required:
 
 - `characteristics` (List of String) Characteristics of the request on which the ratelimiter counter will be incremented.
 - `period` (Number) Period in seconds over which the counter is being incremented.
-Available values: 10, 60, 600, 3600.
+Available values: 10, 60, 120, 300, 600, 3600.
 
 Optional:
 
