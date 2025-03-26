@@ -121,15 +121,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"batch_prefix": schema.StringAttribute{
 						Description: "String to be prepended before each batch.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString(""),
 					},
 					"batch_suffix": schema.StringAttribute{
 						Description: "String to be appended after each batch.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString(""),
 					},
 					"cve_2021_44228": schema.BoolAttribute{
 						Description: "If set to true, will cause all occurrences of `${` in the generated files to be replaced with `x{`.",
@@ -139,9 +135,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"field_delimiter": schema.StringAttribute{
 						Description: "String to join fields. This field be ignored when `record_template` is set.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString(","),
 					},
 					"field_names": schema.ListAttribute{
 						Description: "List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.",
@@ -159,24 +153,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"record_delimiter": schema.StringAttribute{
 						Description: "String to be inserted in-between the records as separator.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString(""),
 					},
 					"record_prefix": schema.StringAttribute{
 						Description: "String to be prepended before each record.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString("{"),
 					},
 					"record_suffix": schema.StringAttribute{
 						Description: "String to be appended after each record.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString("}\n"),
 					},
 					"record_template": schema.StringAttribute{
-						Description: "String to use as template for each record instead of the default comma-separated list. All fields used in the template must be present in `field_names` as well, otherwise they will end up as null. Format as a Go `text/template` without any standard functions, like conditionals, loops, sub-templates, etc.",
+						Description: "String to use as template for each record instead of the default json key value mapping. All fields used in the template must be present in `field_names` as well, otherwise they will end up as null. Format as a Go `text/template` without any standard functions, like conditionals, loops, sub-templates, etc.",
 						Optional:    true,
 					},
 					"sample_rate": schema.Float64Attribute{
