@@ -497,7 +497,7 @@ Read-Only:
 - `counting_expression` (String) Defines when the ratelimit counter should be incremented. It is optional and defaults to the same as the rule's expression.
 - `mitigation_timeout` (Number) Period of time in seconds after which the action will be disabled following its first execution.
 - `period` (Number) Period in seconds over which the counter is being incremented.
-Available values: 10, 60, 600, 3600.
+Available values: 10, 60, 120, 300, 600, 3600.
 - `requests_per_period` (Number) The threshold of requests per period after which the action will be executed for the first time.
 - `requests_to_origin` (Boolean) Defines if ratelimit counting is only done when an origin is reached.
 - `score_per_period` (Number) The score threshold per period for which the action will be executed the first time.
