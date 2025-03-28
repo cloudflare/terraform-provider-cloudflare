@@ -19,9 +19,9 @@ type ZeroTrustAccessPolicyModel struct {
 	Decision                     types.String                                                           `tfsdk:"decision" json:"decision,required"`
 	Name                         types.String                                                           `tfsdk:"name" json:"name,required"`
 	Include                      *[]*ZeroTrustAccessPolicyIncludeModel                                  `tfsdk:"include" json:"include,required"`
+	ApprovalRequired             types.Bool                                                             `tfsdk:"approval_required" json:"approval_required,optional"`
+	IsolationRequired            types.Bool                                                             `tfsdk:"isolation_required" json:"isolation_required,optional"`
 	PurposeJustificationPrompt   types.String                                                           `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,optional"`
-	ApprovalRequired             types.Bool                                                             `tfsdk:"approval_required" json:"approval_required,computed_optional"`
-	IsolationRequired            types.Bool                                                             `tfsdk:"isolation_required" json:"isolation_required,computed_optional"`
 	PurposeJustificationRequired types.Bool                                                             `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed_optional"`
 	SessionDuration              types.String                                                           `tfsdk:"session_duration" json:"session_duration,computed_optional"`
 	ApprovalGroups               customfield.NestedObjectList[ZeroTrustAccessPolicyApprovalGroupsModel] `tfsdk:"approval_groups" json:"approval_groups,computed_optional"`

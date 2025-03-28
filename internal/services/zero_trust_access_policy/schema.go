@@ -283,21 +283,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"purpose_justification_prompt": schema.StringAttribute{
-				Description: "A custom message that will appear on the purpose justification screen.",
-				Optional:    true,
-			},
 			"approval_required": schema.BoolAttribute{
 				Description: "Requires the user to request access from an administrator at the start of each session.",
-				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 			"isolation_required": schema.BoolAttribute{
 				Description: "Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.",
-				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(false),
+			},
+			"purpose_justification_prompt": schema.StringAttribute{
+				Description: "A custom message that will appear on the purpose justification screen.",
+				Optional:    true,
 			},
 			"purpose_justification_required": schema.BoolAttribute{
 				Description: "Require users to enter a justification when they log in to the application.",
