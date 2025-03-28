@@ -22,7 +22,7 @@ type ZeroTrustAccessPolicyModel struct {
 	ApprovalRequired             types.Bool                                                             `tfsdk:"approval_required" json:"approval_required,optional"`
 	IsolationRequired            types.Bool                                                             `tfsdk:"isolation_required" json:"isolation_required,optional"`
 	PurposeJustificationPrompt   types.String                                                           `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,optional"`
-	PurposeJustificationRequired types.Bool                                                             `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed_optional"`
+	PurposeJustificationRequired types.Bool                                                             `tfsdk:"purpose_justification_required" json:"purpose_justification_required,optional"`
 	SessionDuration              types.String                                                           `tfsdk:"session_duration" json:"session_duration,computed_optional"`
 	ApprovalGroups               customfield.NestedObjectList[ZeroTrustAccessPolicyApprovalGroupsModel] `tfsdk:"approval_groups" json:"approval_groups,computed_optional"`
 	Exclude                      customfield.NestedObjectList[ZeroTrustAccessPolicyExcludeModel]        `tfsdk:"exclude" json:"exclude,computed_optional"`
