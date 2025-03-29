@@ -49,10 +49,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"jurisdiction": schema.StringAttribute{
-				Description: "Jurisdiction of the bucket",
-				Optional:    true,
-				Computed:    true,
-				Default:     stringdefault.StaticString("default"),
+				Description:   "Jurisdiction of the bucket",
+				Optional:      true,
+				Computed:      true,
+				Default:       stringdefault.StaticString("default"),
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"default",
@@ -62,9 +63,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"storage_class": schema.StringAttribute{
-				Description: "Storage class for newly uploaded objects, unless specified otherwise.\nAvailable values: \"Standard\", \"InfrequentAccess\".",
-				Computed:    true,
-				Optional:    true,
+				Description:   "Storage class for newly uploaded objects, unless specified otherwise.\nAvailable values: \"Standard\", \"InfrequentAccess\".",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("Standard", "InfrequentAccess"),
 				},

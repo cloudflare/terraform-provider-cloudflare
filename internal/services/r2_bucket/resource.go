@@ -115,20 +115,21 @@ func (r *R2BucketResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
+	// For R2 buckets, we cannot update jurisdiction or storage_class after creation
+	// These are immutable properties that require recreation of the bucket (enforced with RequiresReplace)
+	// Skip making API calls and just return the current state
+	data.ID = data.Name
+
+	// Instead of trying to update the bucket, read it to ensure we have the latest data
 	res := new(http.Response)
 	env := R2BucketResultEnvelope{*data}
-	_, err = r.client.R2.Buckets.New(
+	_, err := r.client.R2.Buckets.Get(
 		ctx,
-		r2.BucketNewParams{
-			AccountID: cloudflare.F(data.Name.ValueString()),
+		data.Name.ValueString(),
+		r2.BucketGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
-		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -137,7 +138,7 @@ func (r *R2BucketResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
