@@ -5,7 +5,6 @@ package zone_cache_reserve
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -48,10 +47,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Last time this setting was modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"zone_setting_id": schema.StringAttribute{
-				Computed:   true,
-				CustomType: jsontypes.NormalizedType{},
 			},
 		},
 	}

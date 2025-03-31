@@ -5,7 +5,6 @@ package magic_wan_ipsec_tunnel
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -42,9 +41,9 @@ func (m MagicWANIPSECTunnelModel) MarshalJSONForUpdate(state MagicWANIPSECTunnel
 type MagicWANIPSECTunnelHealthCheckModel struct {
 	Direction types.String                                                        `tfsdk:"direction" json:"direction,computed_optional"`
 	Enabled   types.Bool                                                          `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Rate      jsontypes.Normalized                                                `tfsdk:"rate" json:"rate,optional"`
+	Rate      types.String                                                        `tfsdk:"rate" json:"rate,computed_optional"`
 	Target    customfield.NestedObject[MagicWANIPSECTunnelHealthCheckTargetModel] `tfsdk:"target" json:"target,computed_optional"`
-	Type      jsontypes.Normalized                                                `tfsdk:"type" json:"type,optional"`
+	Type      types.String                                                        `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANIPSECTunnelHealthCheckTargetModel struct {
@@ -70,9 +69,9 @@ type MagicWANIPSECTunnelIPSECTunnelModel struct {
 type MagicWANIPSECTunnelIPSECTunnelHealthCheckModel struct {
 	Direction types.String                                                                   `tfsdk:"direction" json:"direction,computed"`
 	Enabled   types.Bool                                                                     `tfsdk:"enabled" json:"enabled,computed"`
-	Rate      jsontypes.Normalized                                                           `tfsdk:"rate" json:"rate,computed"`
+	Rate      types.String                                                                   `tfsdk:"rate" json:"rate,computed"`
 	Target    customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelHealthCheckTargetModel] `tfsdk:"target" json:"target,computed"`
-	Type      jsontypes.Normalized                                                           `tfsdk:"type" json:"type,computed"`
+	Type      types.String                                                                   `tfsdk:"type" json:"type,computed"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelHealthCheckTargetModel struct {
@@ -102,9 +101,9 @@ type MagicWANIPSECTunnelIPSECTunnelsModel struct {
 type MagicWANIPSECTunnelIPSECTunnelsHealthCheckModel struct {
 	Direction types.String                                                                    `tfsdk:"direction" json:"direction,computed"`
 	Enabled   types.Bool                                                                      `tfsdk:"enabled" json:"enabled,computed"`
-	Rate      jsontypes.Normalized                                                            `tfsdk:"rate" json:"rate,computed"`
+	Rate      types.String                                                                    `tfsdk:"rate" json:"rate,computed"`
 	Target    customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelsHealthCheckTargetModel] `tfsdk:"target" json:"target,computed"`
-	Type      jsontypes.Normalized                                                            `tfsdk:"type" json:"type,computed"`
+	Type      types.String                                                                    `tfsdk:"type" json:"type,computed"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelsHealthCheckTargetModel struct {
@@ -134,9 +133,9 @@ type MagicWANIPSECTunnelModifiedIPSECTunnelModel struct {
 type MagicWANIPSECTunnelModifiedIPSECTunnelHealthCheckModel struct {
 	Direction types.String                                                                           `tfsdk:"direction" json:"direction,computed"`
 	Enabled   types.Bool                                                                             `tfsdk:"enabled" json:"enabled,computed"`
-	Rate      jsontypes.Normalized                                                                   `tfsdk:"rate" json:"rate,computed"`
+	Rate      types.String                                                                           `tfsdk:"rate" json:"rate,computed"`
 	Target    customfield.NestedObject[MagicWANIPSECTunnelModifiedIPSECTunnelHealthCheckTargetModel] `tfsdk:"target" json:"target,computed"`
-	Type      jsontypes.Normalized                                                                   `tfsdk:"type" json:"type,computed"`
+	Type      types.String                                                                           `tfsdk:"type" json:"type,computed"`
 }
 
 type MagicWANIPSECTunnelModifiedIPSECTunnelHealthCheckTargetModel struct {

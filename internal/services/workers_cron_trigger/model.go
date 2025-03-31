@@ -5,20 +5,19 @@ package workers_cron_trigger
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type WorkersCronTriggerResultEnvelope struct {
-	Result *[]jsontypes.Normalized `json:"result"`
+	Result *[]*WorkersCronTriggerBodyModel `json:"result"`
 }
 
 type WorkersCronTriggerModel struct {
-	ID         types.String                           `tfsdk:"id" json:"-,computed"`
-	ScriptName types.String                           `tfsdk:"script_name" path:"script_name,required"`
-	AccountID  types.String                           `tfsdk:"account_id" path:"account_id,required"`
-	Body       *[]jsontypes.Normalized                `tfsdk:"body" json:"body,required"`
-	Schedules  customfield.List[jsontypes.Normalized] `tfsdk:"schedules" json:"schedules,computed"`
+	ID         types.String                                                   `tfsdk:"id" json:"-,computed"`
+	ScriptName types.String                                                   `tfsdk:"script_name" path:"script_name,required"`
+	AccountID  types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
+	Body       *[]*WorkersCronTriggerBodyModel                                `tfsdk:"body" json:"body,required"`
+	Schedules  customfield.NestedObjectList[WorkersCronTriggerSchedulesModel] `tfsdk:"schedules" json:"schedules,computed"`
 }
 
 func (m WorkersCronTriggerModel) MarshalJSON() (data []byte, err error) {
@@ -27,4 +26,16 @@ func (m WorkersCronTriggerModel) MarshalJSON() (data []byte, err error) {
 
 func (m WorkersCronTriggerModel) MarshalJSONForUpdate(state WorkersCronTriggerModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m.Body, state.Body)
+}
+
+type WorkersCronTriggerBodyModel struct {
+	CreatedOn  types.String `tfsdk:"created_on" json:"created_on,computed"`
+	Cron       types.String `tfsdk:"cron" json:"cron,optional"`
+	ModifiedOn types.String `tfsdk:"modified_on" json:"modified_on,computed"`
+}
+
+type WorkersCronTriggerSchedulesModel struct {
+	CreatedOn  types.String `tfsdk:"created_on" json:"created_on,computed"`
+	Cron       types.String `tfsdk:"cron" json:"cron,computed"`
+	ModifiedOn types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 }

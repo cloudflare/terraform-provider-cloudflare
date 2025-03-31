@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -39,14 +38,14 @@ func (m *ZeroTrustDevicePostureRuleDataSourceModel) toReadParams(_ context.Conte
 }
 
 type ZeroTrustDevicePostureRuleInputDataSourceModel struct {
-	OperatingSystem  jsontypes.Normalized                                                              `tfsdk:"operating_system" json:"operating_system,computed"`
+	OperatingSystem  types.String                                                                      `tfsdk:"operating_system" json:"operating_system,computed"`
 	Path             types.String                                                                      `tfsdk:"path" json:"path,computed"`
 	Exists           types.Bool                                                                        `tfsdk:"exists" json:"exists,computed"`
 	Sha256           types.String                                                                      `tfsdk:"sha256" json:"sha256,computed"`
 	Thumbprint       types.String                                                                      `tfsdk:"thumbprint" json:"thumbprint,computed"`
 	ID               types.String                                                                      `tfsdk:"id" json:"id,computed"`
 	Domain           types.String                                                                      `tfsdk:"domain" json:"domain,computed"`
-	Operator         jsontypes.Normalized                                                              `tfsdk:"operator" json:"operator,computed"`
+	Operator         types.String                                                                      `tfsdk:"operator" json:"operator,computed"`
 	Version          types.String                                                                      `tfsdk:"version" json:"version,computed"`
 	OSDistroName     types.String                                                                      `tfsdk:"os_distro_name" json:"os_distro_name,computed"`
 	OSDistroRevision types.String                                                                      `tfsdk:"os_distro_revision" json:"os_distro_revision,computed"`

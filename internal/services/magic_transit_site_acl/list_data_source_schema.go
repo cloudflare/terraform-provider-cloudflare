@@ -6,8 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -121,9 +122,18 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"protocols": schema.ListAttribute{
-							Computed:    true,
-							CustomType:  customfield.NewListType[jsontypes.Normalized](ctx),
-							ElementType: jsontypes.NormalizedType{},
+							Computed: true,
+							Validators: []validator.List{
+								listvalidator.ValueStringsAre(
+									stringvalidator.OneOfCaseInsensitive(
+										"tcp",
+										"udp",
+										"icmp",
+									),
+								),
+							},
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
 						},
 						"unidirectional": schema.BoolAttribute{
 							Description: `The desired traffic direction for this ACL policy. If set to "false", the policy will allow bidirectional traffic. If set to "true", the policy will only allow traffic in one direction. If not included in request, will default to false.`,

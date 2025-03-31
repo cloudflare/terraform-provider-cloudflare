@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -134,8 +133,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"bundle_method": schema.StringAttribute{
-						Computed:   true,
-						CustomType: jsontypes.NormalizedType{},
+						Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.\nAvailable values: \"ubiquitous\", \"optimal\", \"force\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"ubiquitous",
+								"optimal",
+								"force",
+							),
+						},
 					},
 					"certificate_authority": schema.StringAttribute{
 						Description: "The Certificate Authority that will issue the certificate\nAvailable values: \"digicert\", \"google\", \"lets_encrypt\", \"ssl_com\".",
@@ -178,8 +184,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"method": schema.StringAttribute{
-						Computed:   true,
-						CustomType: jsontypes.NormalizedType{},
+						Description: "Domain control validation (DCV) method used for this hostname.\nAvailable values: \"http\", \"txt\", \"email\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"http",
+								"txt",
+								"email",
+							),
+						},
 					},
 					"serial_number": schema.StringAttribute{
 						Description: "The serial number on a custom uploaded certificate.",
@@ -264,8 +277,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Computed:   true,
-						CustomType: jsontypes.NormalizedType{},
+						Description: "Level of validation to be used for this hostname. Domain validation (dv) must be used.\nAvailable values: \"dv\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("dv"),
+						},
 					},
 					"uploaded_on": schema.StringAttribute{
 						Description: "The time the custom certificate was uploaded.",

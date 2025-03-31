@@ -5,7 +5,6 @@ package zero_trust_access_application
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -486,7 +485,7 @@ type ZeroTrustAccessApplicationSaaSAppModel struct {
 	CustomAttributes              customfield.NestedObjectList[ZeroTrustAccessApplicationSaaSAppCustomAttributesModel]     `tfsdk:"custom_attributes" json:"custom_attributes,computed_optional"`
 	DefaultRelayState             types.String                                                                             `tfsdk:"default_relay_state" json:"default_relay_state,optional"`
 	IdPEntityID                   types.String                                                                             `tfsdk:"idp_entity_id" json:"idp_entity_id,optional"`
-	NameIDFormat                  jsontypes.Normalized                                                                     `tfsdk:"name_id_format" json:"name_id_format,optional"`
+	NameIDFormat                  types.String                                                                             `tfsdk:"name_id_format" json:"name_id_format,optional"`
 	NameIDTransformJsonata        types.String                                                                             `tfsdk:"name_id_transform_jsonata" json:"name_id_transform_jsonata,optional"`
 	PublicKey                     types.String                                                                             `tfsdk:"public_key" json:"public_key,optional"`
 	SAMLAttributeTransformJsonata types.String                                                                             `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata,optional"`

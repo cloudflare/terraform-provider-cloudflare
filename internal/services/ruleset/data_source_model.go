@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -50,7 +49,7 @@ type RulesetRulesDataSourceModel struct {
 	Enabled                types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed"`
 	ExposedCredentialCheck customfield.NestedObject[RulesetRulesExposedCredentialCheckDataSourceModel] `tfsdk:"exposed_credential_check" json:"exposed_credential_check,computed"`
 	Expression             types.String                                                                `tfsdk:"expression" json:"expression,computed"`
-	Logging                jsontypes.Normalized                                                        `tfsdk:"logging" json:"logging,computed"`
+	Logging                customfield.NestedObject[RulesetRulesLoggingDataSourceModel]                `tfsdk:"logging" json:"logging,computed"`
 	Ratelimit              customfield.NestedObject[RulesetRulesRatelimitDataSourceModel]              `tfsdk:"ratelimit" json:"ratelimit,computed"`
 	Ref                    types.String                                                                `tfsdk:"ref" json:"ref,computed"`
 }
@@ -309,6 +308,10 @@ type RulesetRulesActionParametersTransformedRequestFieldsDataSourceModel struct 
 type RulesetRulesExposedCredentialCheckDataSourceModel struct {
 	PasswordExpression types.String `tfsdk:"password_expression" json:"password_expression,computed"`
 	UsernameExpression types.String `tfsdk:"username_expression" json:"username_expression,computed"`
+}
+
+type RulesetRulesLoggingDataSourceModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 type RulesetRulesRatelimitDataSourceModel struct {
