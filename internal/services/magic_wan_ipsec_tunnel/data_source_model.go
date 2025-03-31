@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -49,9 +50,9 @@ type MagicWANIPSECTunnelIPSECTunnelDataSourceModel struct {
 type MagicWANIPSECTunnelIPSECTunnelHealthCheckDataSourceModel struct {
 	Direction types.String                                                                             `tfsdk:"direction" json:"direction,computed"`
 	Enabled   types.Bool                                                                               `tfsdk:"enabled" json:"enabled,computed"`
-	Rate      types.String                                                                             `tfsdk:"rate" json:"rate,computed"`
+	Rate      jsontypes.Normalized                                                                     `tfsdk:"rate" json:"rate,computed"`
 	Target    customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelHealthCheckTargetDataSourceModel] `tfsdk:"target" json:"target,computed"`
-	Type      types.String                                                                             `tfsdk:"type" json:"type,computed"`
+	Type      jsontypes.Normalized                                                                     `tfsdk:"type" json:"type,computed"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelHealthCheckTargetDataSourceModel struct {

@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -34,7 +35,7 @@ type WorkersDeploymentDeploymentsDataSourceModel struct {
 	Strategy    types.String                                                                      `tfsdk:"strategy" json:"strategy,computed"`
 	Versions    customfield.NestedObjectList[WorkersDeploymentDeploymentsVersionsDataSourceModel] `tfsdk:"versions" json:"versions,computed"`
 	ID          types.String                                                                      `tfsdk:"id" json:"id,computed"`
-	Annotations customfield.NestedObject[WorkersDeploymentDeploymentsAnnotationsDataSourceModel]  `tfsdk:"annotations" json:"annotations,computed"`
+	Annotations jsontypes.Normalized                                                              `tfsdk:"annotations" json:"annotations,computed"`
 	AuthorEmail types.String                                                                      `tfsdk:"author_email" json:"author_email,computed"`
 	CreatedOn   types.String                                                                      `tfsdk:"created_on" json:"created_on,computed"`
 	Source      types.String                                                                      `tfsdk:"source" json:"source,computed"`
@@ -43,8 +44,4 @@ type WorkersDeploymentDeploymentsDataSourceModel struct {
 type WorkersDeploymentDeploymentsVersionsDataSourceModel struct {
 	Percentage types.Float64 `tfsdk:"percentage" json:"percentage,computed"`
 	VersionID  types.String  `tfsdk:"version_id" json:"version_id,computed"`
-}
-
-type WorkersDeploymentDeploymentsAnnotationsDataSourceModel struct {
-	WorkersMessage types.String `tfsdk:"workers_message" json:"workers/message,computed"`
 }

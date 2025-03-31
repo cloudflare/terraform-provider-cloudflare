@@ -4,6 +4,7 @@ package magic_transit_site_acl
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,7 +22,7 @@ type MagicTransitSiteACLModel struct {
 	Description    types.String                  `tfsdk:"description" json:"description,optional"`
 	ForwardLocally types.Bool                    `tfsdk:"forward_locally" json:"forward_locally,optional"`
 	Unidirectional types.Bool                    `tfsdk:"unidirectional" json:"unidirectional,optional"`
-	Protocols      *[]types.String               `tfsdk:"protocols" json:"protocols,optional"`
+	Protocols      *[]jsontypes.Normalized       `tfsdk:"protocols" json:"protocols,optional"`
 }
 
 func (m MagicTransitSiteACLModel) MarshalJSON() (data []byte, err error) {
