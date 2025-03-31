@@ -101,8 +101,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: float64default.StaticFloat64(0),
 			},
 			"tag": schema.StringAttribute{
-				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
-				Computed:    true,
+				Description:        "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 			},
 		},
 	}

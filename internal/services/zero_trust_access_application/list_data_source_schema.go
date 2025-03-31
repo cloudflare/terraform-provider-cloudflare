@@ -1258,10 +1258,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"self_hosted_domains": schema.ListAttribute{
-							Description: "List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.",
-							Computed:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
-							ElementType: types.StringType,
+							Description:        "List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.",
+							Computed:           true,
+							DeprecationMessage: "This attribute is deprecated.",
+							CustomType:         customfield.NewListType[types.String](ctx),
+							ElementType:        types.StringType,
 						},
 						"service_auth_401_redirect": schema.BoolAttribute{
 							Description: "Returns a 401 status code when the request is blocked by a Service Auth policy.",

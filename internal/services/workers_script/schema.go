@@ -87,10 +87,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Default:     booldefault.StaticBool(false),
 									},
 									"serve_directly": schema.BoolAttribute{
-										Description: "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
-										Computed:    true,
-										Optional:    true,
-										Default:     booldefault.StaticBool(true),
+										Description:        "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
+										Computed:           true,
+										Optional:           true,
+										DeprecationMessage: "This attribute is deprecated.",
+										Default:            booldefault.StaticBool(true),
 									},
 								},
 							},
@@ -465,15 +466,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"placement_mode": schema.StringAttribute{
-				Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
-				Computed:    true,
+				Description:        "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("smart"),
 				},
 			},
 			"placement_status": schema.StringAttribute{
-				Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\".",
-				Computed:    true,
+				Description:        "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\".",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"SUCCESS",
