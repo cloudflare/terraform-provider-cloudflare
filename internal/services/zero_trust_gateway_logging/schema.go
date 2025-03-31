@@ -5,7 +5,6 @@ package zero_trust_gateway_logging
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -26,28 +25,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Redact personally identifiable information from activity logging (PII fields are: source IP, user email, user ID, device ID, URL, referrer, user agent).",
 				Optional:    true,
 			},
-			"settings_by_rule_type": schema.SingleNestedAttribute{
-				Description: "Logging settings by rule type.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayLoggingSettingsByRuleTypeModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"dns": schema.StringAttribute{
-						Description: "Logging settings for DNS firewall.",
-						Optional:    true,
-						CustomType:  jsontypes.NormalizedType{},
-					},
-					"http": schema.StringAttribute{
-						Description: "Logging settings for HTTP/HTTPS firewall.",
-						Optional:    true,
-						CustomType:  jsontypes.NormalizedType{},
-					},
-					"l4": schema.StringAttribute{
-						Description: "Logging settings for Network firewall.",
-						Optional:    true,
-						CustomType:  jsontypes.NormalizedType{},
-					},
-				},
+			"settings_by_rule_type": schema.StringAttribute{
+				Optional:   true,
+				CustomType: jsontypes.NormalizedType{},
 			},
 		},
 	}

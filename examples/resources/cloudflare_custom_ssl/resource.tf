@@ -55,7 +55,9 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
   -----END RSA PRIVATE KEY-----
 
   EOT
-  bundle_method = "ubiquitous"
+  bundle_method = {
+
+  }
   geo_restrictions = {
     label = "us"
   }

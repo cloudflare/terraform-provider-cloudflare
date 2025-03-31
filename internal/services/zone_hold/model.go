@@ -16,7 +16,6 @@ type ZoneHoldModel struct {
 	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	HoldAfter         types.String `tfsdk:"hold_after" json:"hold_after,computed_optional"`
 	IncludeSubdomains types.Bool   `tfsdk:"include_subdomains" json:"include_subdomains,computed_optional"`
-	Hold              types.Bool   `tfsdk:"hold" json:"hold,computed"`
 }
 
 func (m ZoneHoldModel) MarshalJSON() (data []byte, err error) {

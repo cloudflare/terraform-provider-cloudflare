@@ -4,7 +4,7 @@ package zero_trust_access_identity_provider
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,13 +13,13 @@ type ZeroTrustAccessIdentityProviderResultEnvelope struct {
 }
 
 type ZeroTrustAccessIdentityProviderModel struct {
-	ID         types.String                                                             `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String                                                             `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID     types.String                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
-	Name       types.String                                                             `tfsdk:"name" json:"name,required"`
-	Type       types.String                                                             `tfsdk:"type" json:"type,required"`
-	Config     *ZeroTrustAccessIdentityProviderConfigModel                              `tfsdk:"config" json:"config,required"`
-	SCIMConfig customfield.NestedObject[ZeroTrustAccessIdentityProviderSCIMConfigModel] `tfsdk:"scim_config" json:"scim_config,computed_optional"`
+	ID         types.String                                `tfsdk:"id" json:"id,computed"`
+	AccountID  types.String                                `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID     types.String                                `tfsdk:"zone_id" path:"zone_id,optional"`
+	Name       types.String                                `tfsdk:"name" json:"name,required"`
+	Config     *ZeroTrustAccessIdentityProviderConfigModel `tfsdk:"config" json:"config,required"`
+	Type       jsontypes.Normalized                        `tfsdk:"type" json:"type,required"`
+	SCIMConfig jsontypes.Normalized                        `tfsdk:"scim_config" json:"scim_config,optional"`
 }
 
 func (m ZeroTrustAccessIdentityProviderModel) MarshalJSON() (data []byte, err error) {
@@ -64,13 +64,4 @@ type ZeroTrustAccessIdentityProviderConfigModel struct {
 type ZeroTrustAccessIdentityProviderConfigHeaderAttributesModel struct {
 	AttributeName types.String `tfsdk:"attribute_name" json:"attribute_name,optional"`
 	HeaderName    types.String `tfsdk:"header_name" json:"header_name,optional"`
-}
-
-type ZeroTrustAccessIdentityProviderSCIMConfigModel struct {
-	Enabled                types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
-	IdentityUpdateBehavior types.String `tfsdk:"identity_update_behavior" json:"identity_update_behavior,optional"`
-	SCIMBaseURL            types.String `tfsdk:"scim_base_url" json:"scim_base_url,computed"`
-	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision,optional"`
-	Secret                 types.String `tfsdk:"secret" json:"secret,computed"`
-	UserDeprovision        types.Bool   `tfsdk:"user_deprovision" json:"user_deprovision,optional"`
 }

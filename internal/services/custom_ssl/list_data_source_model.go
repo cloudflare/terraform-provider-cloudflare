@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/custom_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -42,7 +43,7 @@ func (m *CustomSSLsDataSourceModel) toListParams(_ context.Context) (params cust
 
 type CustomSSLsResultDataSourceModel struct {
 	ID              types.String                                                       `tfsdk:"id" json:"id,computed"`
-	BundleMethod    types.String                                                       `tfsdk:"bundle_method" json:"bundle_method,computed"`
+	BundleMethod    jsontypes.Normalized                                               `tfsdk:"bundle_method" json:"bundle_method,computed"`
 	ExpiresOn       timetypes.RFC3339                                                  `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Hosts           customfield.List[types.String]                                     `tfsdk:"hosts" json:"hosts,computed"`
 	Issuer          types.String                                                       `tfsdk:"issuer" json:"issuer,computed"`

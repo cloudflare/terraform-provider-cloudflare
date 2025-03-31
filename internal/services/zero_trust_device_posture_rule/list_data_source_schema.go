@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -54,18 +55,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[ZeroTrustDevicePostureRulesInputDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"operating_system": schema.StringAttribute{
-									Description: "Operating system\nAvailable values: \"windows\", \"linux\", \"mac\".",
-									Computed:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"windows",
-											"linux",
-											"mac",
-											"android",
-											"ios",
-											"chromeos",
-										),
-									},
+									Computed:   true,
+									CustomType: jsontypes.NormalizedType{},
 								},
 								"path": schema.StringAttribute{
 									Description: "File path.",
@@ -92,17 +83,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"operator": schema.StringAttribute{
-									Description: "operator\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
-									Computed:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"<",
-											"<=",
-											">",
-											">=",
-											"==",
-										),
-									},
+									Computed:   true,
+									CustomType: jsontypes.NormalizedType{},
 								},
 								"version": schema.StringAttribute{
 									Description: "Version of OS",

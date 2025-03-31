@@ -16,10 +16,7 @@ type ZoneHoldResultDataSourceEnvelope struct {
 }
 
 type ZoneHoldDataSourceModel struct {
-	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id,required"`
-	Hold              types.Bool   `tfsdk:"hold" json:"hold,computed"`
-	HoldAfter         types.String `tfsdk:"hold_after" json:"hold_after,computed"`
-	IncludeSubdomains types.String `tfsdk:"include_subdomains" json:"include_subdomains,computed"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }
 
 func (m *ZoneHoldDataSourceModel) toReadParams(_ context.Context) (params zones.HoldGetParams, diags diag.Diagnostics) {

@@ -7,6 +7,6 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
     version_id = "bcf48806-b317-4351-9ee7-36e7d557d4de"
   }]
   annotations = {
-    workers_message = "Deploy bug fix."
+
   }
 }

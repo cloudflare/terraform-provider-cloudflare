@@ -4,6 +4,7 @@ package zone_cache_reserve
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -13,11 +14,12 @@ type ZoneCacheReserveResultEnvelope struct {
 }
 
 type ZoneCacheReserveModel struct {
-	ID         types.String      `tfsdk:"id" json:"-,computed"`
-	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
-	Value      types.String      `tfsdk:"value" json:"value,computed_optional"`
-	Editable   types.Bool        `tfsdk:"editable" json:"editable,computed"`
-	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ID            types.String         `tfsdk:"id" json:"-,computed"`
+	ZoneID        types.String         `tfsdk:"zone_id" path:"zone_id,required"`
+	Value         types.String         `tfsdk:"value" json:"value,computed_optional"`
+	Editable      types.Bool           `tfsdk:"editable" json:"editable,computed"`
+	ModifiedOn    timetypes.RFC3339    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ZoneSettingID jsontypes.Normalized `tfsdk:"zone_setting_id" json:"id,computed"`
 }
 
 func (m ZoneCacheReserveModel) MarshalJSON() (data []byte, err error) {

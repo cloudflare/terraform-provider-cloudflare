@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/custom_hostnames"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -68,7 +69,7 @@ type CustomHostnamesResultDataSourceModel struct {
 
 type CustomHostnamesSSLDataSourceModel struct {
 	ID                   types.String                                                                     `tfsdk:"id" json:"id,computed"`
-	BundleMethod         types.String                                                                     `tfsdk:"bundle_method" json:"bundle_method,computed"`
+	BundleMethod         jsontypes.Normalized                                                             `tfsdk:"bundle_method" json:"bundle_method,computed"`
 	CertificateAuthority types.String                                                                     `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
 	CustomCertificate    types.String                                                                     `tfsdk:"custom_certificate" json:"custom_certificate,computed"`
 	CustomCsrID          types.String                                                                     `tfsdk:"custom_csr_id" json:"custom_csr_id,computed"`
@@ -76,12 +77,12 @@ type CustomHostnamesSSLDataSourceModel struct {
 	ExpiresOn            timetypes.RFC3339                                                                `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Hosts                customfield.List[types.String]                                                   `tfsdk:"hosts" json:"hosts,computed"`
 	Issuer               types.String                                                                     `tfsdk:"issuer" json:"issuer,computed"`
-	Method               types.String                                                                     `tfsdk:"method" json:"method,computed"`
+	Method               jsontypes.Normalized                                                             `tfsdk:"method" json:"method,computed"`
 	SerialNumber         types.String                                                                     `tfsdk:"serial_number" json:"serial_number,computed"`
 	Settings             customfield.NestedObject[CustomHostnamesSSLSettingsDataSourceModel]              `tfsdk:"settings" json:"settings,computed"`
 	Signature            types.String                                                                     `tfsdk:"signature" json:"signature,computed"`
 	Status               types.String                                                                     `tfsdk:"status" json:"status,computed"`
-	Type                 types.String                                                                     `tfsdk:"type" json:"type,computed"`
+	Type                 jsontypes.Normalized                                                             `tfsdk:"type" json:"type,computed"`
 	UploadedOn           timetypes.RFC3339                                                                `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
 	ValidationErrors     customfield.NestedObjectList[CustomHostnamesSSLValidationErrorsDataSourceModel]  `tfsdk:"validation_errors" json:"validation_errors,computed"`
 	ValidationRecords    customfield.NestedObjectList[CustomHostnamesSSLValidationRecordsDataSourceModel] `tfsdk:"validation_records" json:"validation_records,computed"`

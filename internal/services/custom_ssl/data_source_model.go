@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/custom_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -21,7 +22,6 @@ type CustomSSLDataSourceModel struct {
 	ID                  types.String                                                      `tfsdk:"id" path:"custom_certificate_id,computed"`
 	CustomCertificateID types.String                                                      `tfsdk:"custom_certificate_id" path:"custom_certificate_id,optional"`
 	ZoneID              types.String                                                      `tfsdk:"zone_id" path:"zone_id,required"`
-	BundleMethod        types.String                                                      `tfsdk:"bundle_method" json:"bundle_method,computed"`
 	ExpiresOn           timetypes.RFC3339                                                 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Issuer              types.String                                                      `tfsdk:"issuer" json:"issuer,computed"`
 	ModifiedOn          timetypes.RFC3339                                                 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
@@ -33,6 +33,7 @@ type CustomSSLDataSourceModel struct {
 	Hosts               customfield.List[types.String]                                    `tfsdk:"hosts" json:"hosts,computed"`
 	GeoRestrictions     customfield.NestedObject[CustomSSLGeoRestrictionsDataSourceModel] `tfsdk:"geo_restrictions" json:"geo_restrictions,computed"`
 	KeylessServer       customfield.NestedObject[CustomSSLKeylessServerDataSourceModel]   `tfsdk:"keyless_server" json:"keyless_server,computed"`
+	BundleMethod        jsontypes.Normalized                                              `tfsdk:"bundle_method" json:"bundle_method,computed"`
 	Filter              *CustomSSLFindOneByDataSourceModel                                `tfsdk:"filter"`
 }
 
