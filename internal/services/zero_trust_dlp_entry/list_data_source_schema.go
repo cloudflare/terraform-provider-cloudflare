@@ -57,8 +57,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed: true,
 								},
 								"validation": schema.StringAttribute{
-									Description: `Available values: "luhn".`,
-									Computed:    true,
+									Description:        `Available values: "luhn".`,
+									Computed:           true,
+									DeprecationMessage: "This attribute is deprecated.",
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("luhn"),
 									},

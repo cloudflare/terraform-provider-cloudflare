@@ -46,8 +46,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"tag": schema.StringAttribute{
-				Description: "Destination address tag. (Deprecated, replaced by destination address identifier)",
-				Computed:    true,
+				Description:        "Destination address tag. (Deprecated, replaced by destination address identifier)",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 			},
 			"verified": schema.StringAttribute{
 				Description: "The date and time the destination address has been verified. Null means not verified yet.",

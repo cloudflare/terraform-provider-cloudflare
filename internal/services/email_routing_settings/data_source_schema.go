@@ -61,8 +61,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"tag": schema.StringAttribute{
-				Description: "Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)",
-				Computed:    true,
+				Description:        "Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 			},
 		},
 	}

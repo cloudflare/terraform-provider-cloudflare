@@ -64,9 +64,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"default_nameservers": schema.StringAttribute{
-						Description: "Specifies the default nameservers to be used for new zones added to this account.\n\n- `cloudflare.standard` for Cloudflare-branded nameservers\n- `custom.account` for account custom nameservers\n- `custom.tenant` for tenant custom nameservers\n\nSee [Custom Nameservers](https://developers.cloudflare.com/dns/additional-options/custom-nameservers/)\nfor more information.\n\nDeprecated in favor of [DNS Settings](https://developers.cloudflare.com/api/operations/dns-settings-for-an-account-update-dns-settings).\nAvailable values: \"cloudflare.standard\", \"custom.account\", \"custom.tenant\".",
-						Computed:    true,
-						Optional:    true,
+						Description:        "Specifies the default nameservers to be used for new zones added to this account.\n\n- `cloudflare.standard` for Cloudflare-branded nameservers\n- `custom.account` for account custom nameservers\n- `custom.tenant` for tenant custom nameservers\n\nSee [Custom Nameservers](https://developers.cloudflare.com/dns/additional-options/custom-nameservers/)\nfor more information.\n\nDeprecated in favor of [DNS Settings](https://developers.cloudflare.com/api/operations/dns-settings-for-an-account-update-dns-settings).\nAvailable values: \"cloudflare.standard\", \"custom.account\", \"custom.tenant\".",
+						Computed:           true,
+						Optional:           true,
+						DeprecationMessage: "This attribute is deprecated.",
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"cloudflare.standard",
@@ -83,10 +84,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 					"use_account_custom_ns_by_default": schema.BoolAttribute{
-						Description: "Indicates whether new zones should use the account-level custom\nnameservers by default.\n\nDeprecated in favor of [DNS Settings](https://developers.cloudflare.com/api/operations/dns-settings-for-an-account-update-dns-settings).",
-						Computed:    true,
-						Optional:    true,
-						Default:     booldefault.StaticBool(false),
+						Description:        "Indicates whether new zones should use the account-level custom\nnameservers by default.\n\nDeprecated in favor of [DNS Settings](https://developers.cloudflare.com/api/operations/dns-settings-for-an-account-update-dns-settings).",
+						Computed:           true,
+						Optional:           true,
+						DeprecationMessage: "This attribute is deprecated.",
+						Default:            booldefault.StaticBool(false),
 					},
 				},
 			},

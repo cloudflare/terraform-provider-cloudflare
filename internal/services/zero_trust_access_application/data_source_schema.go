@@ -152,10 +152,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"self_hosted_domains": schema.ListAttribute{
-				Description: "List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.",
-				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
+				Description:        "List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				CustomType:         customfield.NewListType[types.String](ctx),
+				ElementType:        types.StringType,
 			},
 			"tags": schema.ListAttribute{
 				Description: "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",

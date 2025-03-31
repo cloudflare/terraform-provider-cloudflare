@@ -50,7 +50,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"external_directory_node_id": schema.StringAttribute{
-				Computed: true,
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 			},
 			"last_modified": schema.StringAttribute{
 				Computed:   true,

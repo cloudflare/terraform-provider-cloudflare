@@ -72,8 +72,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"tag": schema.StringAttribute{
-				Description: "Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)",
-				Computed:    true,
+				Description:        "Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 			},
 			"errors": schema.ListNestedAttribute{
 				Computed:   true,

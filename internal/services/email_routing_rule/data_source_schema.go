@@ -49,8 +49,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"tag": schema.StringAttribute{
-				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
-				Computed:    true,
+				Description:        "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 			},
 			"actions": schema.ListNestedAttribute{
 				Description: "List actions patterns.",

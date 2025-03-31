@@ -92,15 +92,17 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"placement_mode": schema.StringAttribute{
-							Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
-							Computed:    true,
+							Description:        "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
+							Computed:           true,
+							DeprecationMessage: "This attribute is deprecated.",
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("smart"),
 							},
 						},
 						"placement_status": schema.StringAttribute{
-							Description: "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\".",
-							Computed:    true,
+							Description:        "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\".",
+							Computed:           true,
+							DeprecationMessage: "This attribute is deprecated.",
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"SUCCESS",
