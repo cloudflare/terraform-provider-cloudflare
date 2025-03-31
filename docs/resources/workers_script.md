@@ -104,6 +104,10 @@ Available values: "standard".
 - `has_modules` (Boolean) Whether a Worker contains modules.
 - `id` (String) Name of the script, used in URLs and route configuration.
 - `modified_on` (String) When the script was last modified.
+- `placement_mode` (String, Deprecated) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+Available values: "smart".
+- `placement_status` (String, Deprecated) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
 - `startup_time_ms` (Number)
 
 <a id="nestedatt--assets"></a>
@@ -126,7 +130,7 @@ Available values: "auto-trailing-slash", "force-trailing-slash", "drop-trailing-
 - `not_found_handling` (String) Determines the response when a request does not match a static asset, and there is no Worker script.
 Available values: "none", "404-page", "single-page-application".
 - `run_worker_first` (Boolean) When true, requests will always invoke the Worker script. Otherwise, attempt to serve an asset matching the request, falling back to the Worker script.
-- `serve_directly` (Boolean) When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.
+- `serve_directly` (Boolean, Deprecated) When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.
 
 
 

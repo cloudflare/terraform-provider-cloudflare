@@ -38,7 +38,7 @@ data "cloudflare_email_routing_rule" "example_email_routing_rule" {
 - `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--matchers))
 - `name` (String) Routing rule name.
 - `priority` (Number) Priority of the routing rule.
-- `tag` (String) Routing rule tag. (Deprecated, replaced by routing rule identifier)
+- `tag` (String, Deprecated) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

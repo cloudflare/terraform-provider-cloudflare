@@ -37,7 +37,7 @@ data "cloudflare_email_security_impersonation_registry" "example_email_security_
 - `directory_id` (Number)
 - `directory_node_id` (Number)
 - `email` (String)
-- `external_directory_node_id` (String)
+- `external_directory_node_id` (String, Deprecated)
 - `id` (Number) The ID of this resource.
 - `is_email_regex` (Boolean)
 - `last_modified` (String)

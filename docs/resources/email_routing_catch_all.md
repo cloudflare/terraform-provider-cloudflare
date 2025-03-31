@@ -43,7 +43,7 @@ resource "cloudflare_email_routing_catch_all" "example_email_routing_catch_all" 
 ### Read-Only
 
 - `id` (String) Identifier
-- `tag` (String) Routing rule tag. (Deprecated, replaced by routing rule identifier)
+- `tag` (String, Deprecated) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 
 <a id="nestedatt--actions"></a>
 ### Nested Schema for `actions`

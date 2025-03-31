@@ -39,7 +39,7 @@ resource "cloudflare_keyless_certificate" "example_keyless_certificate" {
 
 - `bundle_method` (String) A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.
 Available values: "ubiquitous", "optimal", "force".
-- `enabled` (Boolean) Whether or not the Keyless SSL is on or off.
+- `enabled` (Boolean, Deprecated) Whether or not the Keyless SSL is on or off.
 - `name` (String) The keyless SSL name.
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--tunnel))

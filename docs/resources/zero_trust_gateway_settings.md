@@ -104,7 +104,7 @@ Optional:
 - `body_scanning` (Attributes) DLP body scanning settings. (see [below for nested schema](#nestedatt--settings--body_scanning))
 - `browser_isolation` (Attributes) Browser isolation settings. (see [below for nested schema](#nestedatt--settings--browser_isolation))
 - `certificate` (Attributes) Certificate settings for Gateway TLS interception. If not specified, the Cloudflare Root CA will be used. (see [below for nested schema](#nestedatt--settings--certificate))
-- `custom_certificate` (Attributes) Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`) (see [below for nested schema](#nestedatt--settings--custom_certificate))
+- `custom_certificate` (Attributes, Deprecated) Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`) (see [below for nested schema](#nestedatt--settings--custom_certificate))
 - `extended_email_matching` (Attributes) Extended e-mail matching settings. (see [below for nested schema](#nestedatt--settings--extended_email_matching))
 - `fips` (Attributes) FIPS settings. (see [below for nested schema](#nestedatt--settings--fips))
 - `protocol_detection` (Attributes) Protocol Detection settings. (see [below for nested schema](#nestedatt--settings--protocol_detection))

@@ -91,6 +91,6 @@ Read-Only:
 Read-Only:
 
 - `regex` (String)
-- `validation` (String) Available values: "luhn".
+- `validation` (String, Deprecated) Available values: "luhn".
 
 
