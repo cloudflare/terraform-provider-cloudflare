@@ -8,15 +8,11 @@ resource "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
   health_check = {
     direction = "unidirectional"
     enabled = true
-    rate = {
-
-    }
+    rate = "low"
     target = {
       saved = "203.0.113.1"
     }
-    type = {
-
-    }
+    type = "reply"
   }
   psk = "O3bwKSjnaoCxDoUxjcq4Rk8ZKkezQUiy"
   replay_protection = false

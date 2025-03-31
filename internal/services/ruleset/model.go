@@ -5,7 +5,6 @@ package ruleset
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -41,7 +40,7 @@ type RulesetRulesModel struct {
 	Enabled                types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	ExposedCredentialCheck customfield.NestedObject[RulesetRulesExposedCredentialCheckModel] `tfsdk:"exposed_credential_check" json:"exposed_credential_check,computed_optional"`
 	Expression             types.String                                                      `tfsdk:"expression" json:"expression,optional"`
-	Logging                jsontypes.Normalized                                              `tfsdk:"logging" json:"logging,optional"`
+	Logging                customfield.NestedObject[RulesetRulesLoggingModel]                `tfsdk:"logging" json:"logging,computed_optional"`
 	Ratelimit              customfield.NestedObject[RulesetRulesRatelimitModel]              `tfsdk:"ratelimit" json:"ratelimit,computed_optional"`
 	Ref                    types.String                                                      `tfsdk:"ref" json:"ref,optional"`
 }
@@ -300,6 +299,10 @@ type RulesetRulesActionParametersTransformedRequestFieldsModel struct {
 type RulesetRulesExposedCredentialCheckModel struct {
 	PasswordExpression types.String `tfsdk:"password_expression" json:"password_expression,required"`
 	UsernameExpression types.String `tfsdk:"username_expression" json:"username_expression,required"`
+}
+
+type RulesetRulesLoggingModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,required"`
 }
 
 type RulesetRulesRatelimitModel struct {

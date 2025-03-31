@@ -7,7 +7,6 @@ import (
 	"math"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -1032,9 +1031,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The expression defining which traffic will match the rule.",
 							Computed:    true,
 						},
-						"logging": schema.StringAttribute{
-							Computed:   true,
-							CustomType: jsontypes.NormalizedType{},
+						"logging": schema.SingleNestedAttribute{
+							Description: "An object configuring the rule's logging behavior.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[RulesetRulesLoggingDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"enabled": schema.BoolAttribute{
+									Description: "Whether to generate a log when the rule matches.",
+									Computed:    true,
+								},
+							},
 						},
 						"ratelimit": schema.SingleNestedAttribute{
 							Description: "An object configuring the rule's ratelimit behavior.",

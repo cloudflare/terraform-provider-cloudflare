@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -87,8 +86,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(true),
 					},
 					"rate": schema.StringAttribute{
-						Optional:   true,
-						CustomType: jsontypes.NormalizedType{},
+						Description: "How frequent the health check is run. The default value is `mid`.\nAvailable values: \"low\", \"mid\", \"high\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"low",
+								"mid",
+								"high",
+							),
+						},
+						Default: stringdefault.StaticString("mid"),
 					},
 					"target": schema.SingleNestedAttribute{
 						Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target. Must be in object form if the x-magic-new-hc-target header is set to true and string form if x-magic-new-hc-target is absent or set to false.",
@@ -107,8 +115,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Optional:   true,
-						CustomType: jsontypes.NormalizedType{},
+						Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\nAvailable values: \"reply\", \"request\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("reply", "request"),
+						},
+						Default: stringdefault.StaticString("reply"),
 					},
 				},
 			},
@@ -166,8 +179,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(true),
 							},
 							"rate": schema.StringAttribute{
-								Computed:   true,
-								CustomType: jsontypes.NormalizedType{},
+								Description: "How frequent the health check is run. The default value is `mid`.\nAvailable values: \"low\", \"mid\", \"high\".",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"low",
+										"mid",
+										"high",
+									),
+								},
+								Default: stringdefault.StaticString("mid"),
 							},
 							"target": schema.SingleNestedAttribute{
 								Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target. Must be in object form if the x-magic-new-hc-target header is set to true and string form if x-magic-new-hc-target is absent or set to false.",
@@ -185,8 +206,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"type": schema.StringAttribute{
-								Computed:   true,
-								CustomType: jsontypes.NormalizedType{},
+								Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\nAvailable values: \"reply\", \"request\".",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("reply", "request"),
+								},
+								Default: stringdefault.StaticString("reply"),
 							},
 						},
 					},
@@ -259,8 +284,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Default:     booldefault.StaticBool(true),
 								},
 								"rate": schema.StringAttribute{
-									Computed:   true,
-									CustomType: jsontypes.NormalizedType{},
+									Description: "How frequent the health check is run. The default value is `mid`.\nAvailable values: \"low\", \"mid\", \"high\".",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"low",
+											"mid",
+											"high",
+										),
+									},
+									Default: stringdefault.StaticString("mid"),
 								},
 								"target": schema.SingleNestedAttribute{
 									Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target. Must be in object form if the x-magic-new-hc-target header is set to true and string form if x-magic-new-hc-target is absent or set to false.",
@@ -278,8 +311,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"type": schema.StringAttribute{
-									Computed:   true,
-									CustomType: jsontypes.NormalizedType{},
+									Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\nAvailable values: \"reply\", \"request\".",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("reply", "request"),
+									},
+									Default: stringdefault.StaticString("reply"),
 								},
 							},
 						},
@@ -352,8 +389,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(true),
 							},
 							"rate": schema.StringAttribute{
-								Computed:   true,
-								CustomType: jsontypes.NormalizedType{},
+								Description: "How frequent the health check is run. The default value is `mid`.\nAvailable values: \"low\", \"mid\", \"high\".",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"low",
+										"mid",
+										"high",
+									),
+								},
+								Default: stringdefault.StaticString("mid"),
 							},
 							"target": schema.SingleNestedAttribute{
 								Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target. Must be in object form if the x-magic-new-hc-target header is set to true and string form if x-magic-new-hc-target is absent or set to false.",
@@ -371,8 +416,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"type": schema.StringAttribute{
-								Computed:   true,
-								CustomType: jsontypes.NormalizedType{},
+								Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\nAvailable values: \"reply\", \"request\".",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("reply", "request"),
+								},
+								Default: stringdefault.StaticString("reply"),
 							},
 						},
 					},

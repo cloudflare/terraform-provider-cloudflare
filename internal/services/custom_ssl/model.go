@@ -5,7 +5,6 @@ package custom_ssl
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,7 +20,7 @@ type CustomSSLModel struct {
 	Certificate     types.String                                            `tfsdk:"certificate" json:"certificate,required"`
 	PrivateKey      types.String                                            `tfsdk:"private_key" json:"private_key,required"`
 	Policy          types.String                                            `tfsdk:"policy" json:"policy,optional"`
-	BundleMethod    jsontypes.Normalized                                    `tfsdk:"bundle_method" json:"bundle_method,optional"`
+	BundleMethod    types.String                                            `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
 	GeoRestrictions customfield.NestedObject[CustomSSLGeoRestrictionsModel] `tfsdk:"geo_restrictions" json:"geo_restrictions,computed_optional"`
 	ExpiresOn       timetypes.RFC3339                                       `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Issuer          types.String                                            `tfsdk:"issuer" json:"issuer,computed"`
