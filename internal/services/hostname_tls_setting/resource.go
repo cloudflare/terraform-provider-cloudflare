@@ -125,7 +125,7 @@ func (r *HostnameTLSSettingResource) Update(ctx context.Context, req resource.Up
 	_, err = r.client.Hostnames.Settings.TLS.Update(
 		ctx,
 		hostnames.SettingTLSUpdateParamsSettingID(data.SettingID.ValueString()),
-		data.SettingID.ValueString(),
+		data.Hostname.ValueString(),
 		hostnames.SettingTLSUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
