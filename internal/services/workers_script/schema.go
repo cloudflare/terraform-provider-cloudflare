@@ -88,10 +88,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(false),
 							},
 							"serve_directly": schema.BoolAttribute{
-								Description: "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(true),
+								Description:        "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
+								Computed:           true,
+								Optional:           true,
+								DeprecationMessage: "This attribute is deprecated.",
+								Default:            booldefault.StaticBool(true),
 							},
 						},
 					},
@@ -388,6 +389,46 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"etag": schema.StringAttribute{
+				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
+				Computed:    true,
+			},
+			"has_assets": schema.BoolAttribute{
+				Description: "Whether a Worker contains assets.",
+				Computed:    true,
+			},
+			"has_modules": schema.BoolAttribute{
+				Description: "Whether a Worker contains modules.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the script was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"placement_mode": schema.StringAttribute{
+				Description:        "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("smart"),
+				},
+			},
+			"placement_status": schema.StringAttribute{
+				Description:        "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\".",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"SUCCESS",
+						"UNSUPPORTED_APPLICATION",
+						"INSUFFICIENT_INVOCATIONS",
+					),
+				},
+			},
+			"startup_time_ms": schema.Int64Attribute{
+				Computed: true,
+			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
 				Optional:    true,
@@ -448,26 +489,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the script was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"etag": schema.StringAttribute{
-				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
-				Computed:    true,
-			},
-			"has_assets": schema.BoolAttribute{
-				Description: "Whether a Worker contains assets.",
-				Computed:    true,
-			},
-			"has_modules": schema.BoolAttribute{
-				Description: "Whether a Worker contains modules.",
-				Computed:    true,
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "When the script was last modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"startup_time_ms": schema.Int64Attribute{
-				Computed: true,
 			},
 		},
 	}

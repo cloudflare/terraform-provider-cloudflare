@@ -179,9 +179,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"custom_certificate": schema.SingleNestedAttribute{
-						Description: "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`)",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCustomCertificateDataSourceModel](ctx),
+						Description:        "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`)",
+						Computed:           true,
+						DeprecationMessage: "This attribute is deprecated.",
+						CustomType:         customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCustomCertificateDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable use of custom certificate authority for signing Gateway traffic.",

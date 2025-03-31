@@ -16,6 +16,7 @@ var _ datasource.DataSourceWithConfigValidators = (*FiltersDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		DeprecationMessage: "The Filters API is deprecated in favour of using the Ruleset Engine. See https://developers.cloudflare.com/fundamentals/api/reference/deprecations/#firewall-rules-api-and-filters-api for full details.",
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
