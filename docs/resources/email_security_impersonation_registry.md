@@ -36,7 +36,7 @@ resource "cloudflare_email_security_impersonation_registry" "example_email_secur
 - `created_at` (String)
 - `directory_id` (Number)
 - `directory_node_id` (Number)
-- `external_directory_node_id` (String)
+- `external_directory_node_id` (String, Deprecated)
 - `id` (Number) The ID of this resource.
 - `last_modified` (String)
 - `provenance` (String)

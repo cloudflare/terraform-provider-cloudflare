@@ -31,7 +31,7 @@ data "cloudflare_email_routing_catch_all" "example_email_routing_catch_all" {
 - `id` (String) Routing rule identifier.
 - `matchers` (Attributes List) List of matchers for the catch-all routing rule. (see [below for nested schema](#nestedatt--matchers))
 - `name` (String) Routing rule name.
-- `tag` (String) Routing rule tag. (Deprecated, replaced by routing rule identifier)
+- `tag` (String, Deprecated) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 
 <a id="nestedatt--actions"></a>
 ### Nested Schema for `actions`
