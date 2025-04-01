@@ -5,7 +5,6 @@ package r2_bucket_sippy
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -31,9 +30,9 @@ func (m R2BucketSippyModel) MarshalJSONForUpdate(state R2BucketSippyModel) (data
 }
 
 type R2BucketSippyDestinationModel struct {
-	AccessKeyID     types.String         `tfsdk:"access_key_id" json:"accessKeyId,optional"`
-	Provider        jsontypes.Normalized `tfsdk:"provider" json:"provider,optional"`
-	SecretAccessKey types.String         `tfsdk:"secret_access_key" json:"secretAccessKey,optional"`
+	AccessKeyID     types.String `tfsdk:"access_key_id" json:"accessKeyId,optional"`
+	Provider        types.String `tfsdk:"provider" json:"provider,optional"`
+	SecretAccessKey types.String `tfsdk:"secret_access_key" json:"secretAccessKey,optional"`
 }
 
 type R2BucketSippySourceModel struct {

@@ -6,12 +6,12 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -42,8 +42,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"bundle_method": schema.StringAttribute{
-						Optional:   true,
-						CustomType: jsontypes.NormalizedType{},
+						Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.\nAvailable values: \"ubiquitous\", \"optimal\", \"force\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"ubiquitous",
+								"optimal",
+								"force",
+							),
+						},
+						Default: stringdefault.StaticString("ubiquitous"),
 					},
 					"certificate_authority": schema.StringAttribute{
 						Description: "The Certificate Authority that will issue the certificate\nAvailable values: \"digicert\", \"google\", \"lets_encrypt\", \"ssl_com\".",
@@ -89,8 +98,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Sensitive:   true,
 					},
 					"method": schema.StringAttribute{
-						Optional:   true,
-						CustomType: jsontypes.NormalizedType{},
+						Description: "Domain control validation (DCV) method used for this hostname.\nAvailable values: \"http\", \"txt\", \"email\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"http",
+								"txt",
+								"email",
+							),
+						},
 					},
 					"settings": schema.SingleNestedAttribute{
 						Description: "SSL specific settings.",
@@ -137,8 +153,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Optional:   true,
-						CustomType: jsontypes.NormalizedType{},
+						Description: "Level of validation to be used for this hostname. Domain validation (dv) must be used.\nAvailable values: \"dv\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("dv"),
+						},
 					},
 					"wildcard": schema.BoolAttribute{
 						Description: "Indicates whether the certificate covers a wildcard.",

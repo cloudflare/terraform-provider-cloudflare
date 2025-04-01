@@ -5,7 +5,6 @@ package ruleset
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -300,6 +299,10 @@ type RulesetRulesActionParametersTransformedRequestFieldsModel struct {
 type RulesetRulesExposedCredentialCheckModel struct {
 	PasswordExpression types.String `tfsdk:"password_expression" json:"password_expression,required"`
 	UsernameExpression types.String `tfsdk:"username_expression" json:"username_expression,required"`
+}
+
+type RulesetRulesLoggingModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,required"`
 }
 
 type RulesetRulesRatelimitModel struct {

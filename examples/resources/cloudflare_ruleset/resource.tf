@@ -27,7 +27,7 @@ resource "cloudflare_ruleset" "example_ruleset" {
     }
     expression = "ip.src ne 1.1.1.1"
     logging = {
-
+      enabled = true
     }
     ratelimit = {
       characteristics = ["ip.src"]

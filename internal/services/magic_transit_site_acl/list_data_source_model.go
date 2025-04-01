@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -39,7 +38,7 @@ type MagicTransitSiteACLsResultDataSourceModel struct {
 	LAN1           customfield.NestedObject[MagicTransitSiteACLsLAN1DataSourceModel] `tfsdk:"lan_1" json:"lan_1,computed"`
 	LAN2           customfield.NestedObject[MagicTransitSiteACLsLAN2DataSourceModel] `tfsdk:"lan_2" json:"lan_2,computed"`
 	Name           types.String                                                      `tfsdk:"name" json:"name,computed"`
-	Protocols      customfield.List[jsontypes.Normalized]                            `tfsdk:"protocols" json:"protocols,computed"`
+	Protocols      customfield.List[types.String]                                    `tfsdk:"protocols" json:"protocols,computed"`
 	Unidirectional types.Bool                                                        `tfsdk:"unidirectional" json:"unidirectional,computed"`
 }
 

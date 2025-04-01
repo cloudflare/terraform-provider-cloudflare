@@ -6,12 +6,12 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -61,9 +61,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
-			"annotations": schema.StringAttribute{
+			"annotations": schema.SingleNestedAttribute{
+				Computed:   true,
 				Optional:   true,
-				CustomType: jsontypes.NormalizedType{},
+				CustomType: customfield.NewNestedObjectType[WorkersDeploymentAnnotationsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"workers_message": schema.StringAttribute{
+						Description: "Human-readable message about the deployment. Truncated to 100 bytes.",
+						Optional:    true,
+					},
+				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"author_email": schema.StringAttribute{
 				Computed: true,
@@ -106,9 +114,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Computed: true,
 						},
-						"annotations": schema.StringAttribute{
+						"annotations": schema.SingleNestedAttribute{
 							Computed:   true,
-							CustomType: jsontypes.NormalizedType{},
+							CustomType: customfield.NewNestedObjectType[WorkersDeploymentDeploymentsAnnotationsModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"workers_message": schema.StringAttribute{
+									Description: "Human-readable message about the deployment. Truncated to 100 bytes.",
+									Computed:    true,
+								},
+							},
 						},
 						"author_email": schema.StringAttribute{
 							Computed: true,

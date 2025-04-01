@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -40,6 +39,28 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"name": schema.StringAttribute{
 				Description: "The name of the identity provider, shown to users on the login page.",
 				Computed:    true,
+			},
+			"type": schema.StringAttribute{
+				Description: "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).\nAvailable values: \"onetimepin\", \"azureAD\", \"saml\", \"centrify\", \"facebook\", \"github\", \"google-apps\", \"google\", \"linkedin\", \"oidc\", \"okta\", \"onelogin\", \"pingone\", \"yandex\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"onetimepin",
+						"azureAD",
+						"saml",
+						"centrify",
+						"facebook",
+						"github",
+						"google-apps",
+						"google",
+						"linkedin",
+						"oidc",
+						"okta",
+						"onelogin",
+						"pingone",
+						"yandex",
+					),
+				},
 			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The configuration parameters for the identity provider. To view the required parameters for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).",
@@ -188,13 +209,44 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"scim_config": schema.StringAttribute{
-				Computed:   true,
-				CustomType: jsontypes.NormalizedType{},
-			},
-			"type": schema.StringAttribute{
-				Computed:   true,
-				CustomType: jsontypes.NormalizedType{},
+			"scim_config": schema.SingleNestedAttribute{
+				Description: "The configuration settings for enabling a System for Cross-Domain Identity Management (SCIM) with the identity provider.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessIdentityProviderSCIMConfigDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Description: "A flag to enable or disable SCIM for the identity provider.",
+						Computed:    true,
+					},
+					"identity_update_behavior": schema.StringAttribute{
+						Description: "Indicates how a SCIM event updates a user identity used for policy evaluation. Use \"automatic\" to automatically update a user's identity and augment it with fields from the SCIM user resource. Use \"reauth\" to force re-authentication on group membership updates, user identity update will only occur after successful re-authentication. With \"reauth\" identities will not contain fields from the SCIM user resource. With \"no_action\" identities will not be changed by SCIM updates in any way and users will not be prompted to reauthenticate.\nAvailable values: \"automatic\", \"reauth\", \"no_action\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"automatic",
+								"reauth",
+								"no_action",
+							),
+						},
+					},
+					"scim_base_url": schema.StringAttribute{
+						Description: "The base URL of Cloudflare's SCIM V2.0 API endpoint.",
+						Computed:    true,
+					},
+					"seat_deprovision": schema.BoolAttribute{
+						Description: "A flag to remove a user's seat in Zero Trust when they have been deprovisioned in the Identity Provider.  This cannot be enabled unless user_deprovision is also enabled.",
+						Computed:    true,
+					},
+					"secret": schema.StringAttribute{
+						Description: "A read-only token generated when the SCIM integration is enabled for the first time.  It is redacted on subsequent requests.  If you lose this you will need to refresh it at /access/identity_providers/:idpID/refresh_scim_secret.",
+						Computed:    true,
+						Sensitive:   true,
+					},
+					"user_deprovision": schema.BoolAttribute{
+						Description: "A flag to enable revoking a user's session in Access and Gateway when they have been deprovisioned in the Identity Provider.",
+						Computed:    true,
+					},
+				},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

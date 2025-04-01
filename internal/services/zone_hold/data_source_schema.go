@@ -18,6 +18,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Required:    true,
 			},
+			"hold": schema.BoolAttribute{
+				Computed: true,
+			},
+			"hold_after": schema.StringAttribute{
+				Computed: true,
+			},
+			"include_subdomains": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

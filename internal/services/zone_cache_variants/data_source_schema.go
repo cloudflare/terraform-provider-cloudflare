@@ -5,10 +5,11 @@ package zone_cache_variants
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZoneCacheVariantsDataSource)(nil)
@@ -24,6 +25,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether the setting is editable",
 				Computed:    true,
 			},
+			"id": schema.StringAttribute{
+				Description: "ID of the zone setting.\nAvailable values: \"variants\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("variants"),
+				},
+			},
 			"modified_on": schema.StringAttribute{
 				Description: "Last time this setting was modified.",
 				Computed:    true,
@@ -32,10 +40,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"value": schema.StringAttribute{
 				Description: "The value of the feature",
 				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Computed:   true,
-				CustomType: jsontypes.NormalizedType{},
 			},
 		},
 	}
