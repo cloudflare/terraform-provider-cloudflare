@@ -36,6 +36,8 @@ type WaitingRoomEventDataSourceModel struct {
 	ShuffleAtEventStart   types.Bool        `tfsdk:"shuffle_at_event_start" json:"shuffle_at_event_start,computed"`
 	Suspended             types.Bool        `tfsdk:"suspended" json:"suspended,computed"`
 	TotalActiveUsers      types.Int64       `tfsdk:"total_active_users" json:"total_active_users,computed"`
+	TurnstileAction       types.String      `tfsdk:"turnstile_action" json:"turnstile_action,computed"`
+	TurnstileMode         types.String      `tfsdk:"turnstile_mode" json:"turnstile_mode,computed"`
 }
 
 func (m *WaitingRoomEventDataSourceModel) toReadParams(_ context.Context) (params waiting_rooms.EventGetParams, diags diag.Diagnostics) {
