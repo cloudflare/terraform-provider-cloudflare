@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -32,20 +31,50 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayLoggingSettingsByRuleTypeModel](ctx),
 				Attributes: map[string]schema.Attribute{
-					"dns": schema.StringAttribute{
-						Description: "Logging settings for DNS firewall.",
-						Optional:    true,
-						CustomType:  jsontypes.NormalizedType{},
+					"dns": schema.SingleNestedAttribute{
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustGatewayLoggingSettingsByRuleTypeDNSModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"log_all": schema.BoolAttribute{
+								Description: "Log all requests to this service.",
+								Optional:    true,
+							},
+							"log_blocks": schema.BoolAttribute{
+								Description: "Log only blocking requests to this service.",
+								Optional:    true,
+							},
+						},
 					},
-					"http": schema.StringAttribute{
-						Description: "Logging settings for HTTP/HTTPS firewall.",
-						Optional:    true,
-						CustomType:  jsontypes.NormalizedType{},
+					"http": schema.SingleNestedAttribute{
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustGatewayLoggingSettingsByRuleTypeHTTPModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"log_all": schema.BoolAttribute{
+								Description: "Log all requests to this service.",
+								Optional:    true,
+							},
+							"log_blocks": schema.BoolAttribute{
+								Description: "Log only blocking requests to this service.",
+								Optional:    true,
+							},
+						},
 					},
-					"l4": schema.StringAttribute{
-						Description: "Logging settings for Network firewall.",
-						Optional:    true,
-						CustomType:  jsontypes.NormalizedType{},
+					"l4": schema.SingleNestedAttribute{
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustGatewayLoggingSettingsByRuleTypeL4Model](ctx),
+						Attributes: map[string]schema.Attribute{
+							"log_all": schema.BoolAttribute{
+								Description: "Log all requests to this service.",
+								Optional:    true,
+							},
+							"log_blocks": schema.BoolAttribute{
+								Description: "Log only blocking requests to this service.",
+								Optional:    true,
+							},
+						},
 					},
 				},
 			},

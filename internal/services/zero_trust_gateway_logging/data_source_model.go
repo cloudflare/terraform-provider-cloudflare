@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -32,7 +31,22 @@ func (m *ZeroTrustGatewayLoggingDataSourceModel) toReadParams(_ context.Context)
 }
 
 type ZeroTrustGatewayLoggingSettingsByRuleTypeDataSourceModel struct {
-	DNS  jsontypes.Normalized `tfsdk:"dns" json:"dns,computed"`
-	HTTP jsontypes.Normalized `tfsdk:"http" json:"http,computed"`
-	L4   jsontypes.Normalized `tfsdk:"l4" json:"l4,computed"`
+	DNS  customfield.NestedObject[ZeroTrustGatewayLoggingSettingsByRuleTypeDNSDataSourceModel]  `tfsdk:"dns" json:"dns,computed"`
+	HTTP customfield.NestedObject[ZeroTrustGatewayLoggingSettingsByRuleTypeHTTPDataSourceModel] `tfsdk:"http" json:"http,computed"`
+	L4   customfield.NestedObject[ZeroTrustGatewayLoggingSettingsByRuleTypeL4DataSourceModel]   `tfsdk:"l4" json:"l4,computed"`
+}
+
+type ZeroTrustGatewayLoggingSettingsByRuleTypeDNSDataSourceModel struct {
+	LogAll    types.Bool `tfsdk:"log_all" json:"log_all,computed"`
+	LogBlocks types.Bool `tfsdk:"log_blocks" json:"log_blocks,computed"`
+}
+
+type ZeroTrustGatewayLoggingSettingsByRuleTypeHTTPDataSourceModel struct {
+	LogAll    types.Bool `tfsdk:"log_all" json:"log_all,computed"`
+	LogBlocks types.Bool `tfsdk:"log_blocks" json:"log_blocks,computed"`
+}
+
+type ZeroTrustGatewayLoggingSettingsByRuleTypeL4DataSourceModel struct {
+	LogAll    types.Bool `tfsdk:"log_all" json:"log_all,computed"`
+	LogBlocks types.Bool `tfsdk:"log_blocks" json:"log_blocks,computed"`
 }
