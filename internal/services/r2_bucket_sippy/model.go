@@ -14,11 +14,12 @@ type R2BucketSippyResultEnvelope struct {
 }
 
 type R2BucketSippyModel struct {
-	AccountID   types.String                                            `tfsdk:"account_id" path:"account_id,required"`
-	BucketName  types.String                                            `tfsdk:"bucket_name" path:"bucket_name,required"`
-	Destination customfield.NestedObject[R2BucketSippyDestinationModel] `tfsdk:"destination" json:"destination,computed_optional"`
-	Source      customfield.NestedObject[R2BucketSippySourceModel]      `tfsdk:"source" json:"source,computed_optional"`
-	Enabled     types.Bool                                              `tfsdk:"enabled" json:"enabled,computed"`
+	AccountID    types.String                                            `tfsdk:"account_id" path:"account_id,required"`
+	BucketName   types.String                                            `tfsdk:"bucket_name" path:"bucket_name,required"`
+	Jurisdiction types.String                                            `tfsdk:"jurisdiction" json:"-,computed_optional"`
+	Destination  customfield.NestedObject[R2BucketSippyDestinationModel] `tfsdk:"destination" json:"destination,computed_optional"`
+	Source       customfield.NestedObject[R2BucketSippySourceModel]      `tfsdk:"source" json:"source,computed_optional"`
+	Enabled      types.Bool                                              `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 func (m R2BucketSippyModel) MarshalJSON() (data []byte, err error) {
