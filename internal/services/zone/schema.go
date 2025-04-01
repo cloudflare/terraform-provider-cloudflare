@@ -50,7 +50,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"type": schema.StringAttribute{
-				Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\nAvailable values: \"full\", \"partial\", \"secondary\".",
+				Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\nAvailable values: \"full\", \"partial\", \"secondary\", \"internal\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -58,6 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"full",
 						"partial",
 						"secondary",
+						"internal",
 					),
 				},
 				Default: stringdefault.StaticString("full"),
