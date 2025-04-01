@@ -35,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Token name.",
 				Required:    true,
 			},
-			"policies": schema.ListNestedAttribute{
+			"policies": schema.SetNestedAttribute{
 				Description: "List of access policies assigned to the token.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -64,6 +64,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Description: "Attributes associated to the permission group.",
 										Optional:    true,
 										Computed:    true,
+										CustomType:  customfield.NewNestedObjectType[AccountTokenPoliciesPermissionGroupsMetaModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"key": schema.StringAttribute{
 												Optional: true,
@@ -100,7 +101,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the token.\nAvailable values: \"active\", \"disabled\", \"expired\".",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"active",
