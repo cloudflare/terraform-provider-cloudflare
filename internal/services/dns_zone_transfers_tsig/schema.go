@@ -35,6 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"secret": schema.StringAttribute{
 				Description: "TSIG secret.",
 				Required:    true,
+				Sensitive:   true,
 			},
 		},
 	}

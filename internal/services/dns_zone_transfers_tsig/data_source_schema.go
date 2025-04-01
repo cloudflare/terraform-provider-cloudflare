@@ -34,6 +34,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"secret": schema.StringAttribute{
 				Description: "TSIG secret.",
 				Computed:    true,
+				Sensitive:   true,
 			},
 		},
 	}
