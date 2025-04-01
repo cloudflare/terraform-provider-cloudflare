@@ -48,6 +48,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"certificate_authority": schema.StringAttribute{
 						Description: "The Certificate Authority that will issue the certificate\nAvailable values: \"digicert\", \"google\", \"lets_encrypt\", \"ssl_com\".",
 						Optional:    true,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"digicert",
