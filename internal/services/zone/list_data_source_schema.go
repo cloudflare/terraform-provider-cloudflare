@@ -221,13 +221,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\nAvailable values: \"full\", \"partial\", \"secondary\".",
+							Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\nAvailable values: \"full\", \"partial\", \"secondary\", \"internal\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"full",
 									"partial",
 									"secondary",
+									"internal",
 								),
 							},
 						},
