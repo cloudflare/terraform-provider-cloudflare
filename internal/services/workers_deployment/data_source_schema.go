@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -58,15 +59,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Computed: true,
 						},
-						"annotations": schema.SingleNestedAttribute{
+						"annotations": schema.StringAttribute{
 							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[WorkersDeploymentDeploymentsAnnotationsDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"workers_message": schema.StringAttribute{
-									Description: "Human-readable message about the deployment. Truncated to 100 bytes.",
-									Computed:    true,
-								},
-							},
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"author_email": schema.StringAttribute{
 							Computed: true,

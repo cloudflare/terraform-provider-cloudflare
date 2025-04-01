@@ -2,7 +2,9 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   hostname = "app.example.com"
   ssl = {
-    bundle_method = "ubiquitous"
+    bundle_method = {
+
+    }
     certificate_authority = "digicert"
     cloudflare_branding = false
     custom_cert_bundle = [{
@@ -50,7 +52,9 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
     -----END RSA PRIVATE KEY-----
 
     EOT
-    method = "http"
+    method = {
+
+    }
     settings = {
       ciphers = ["ECDHE-RSA-AES128-GCM-SHA256", "AES128-SHA"]
       early_hints = "on"
@@ -58,7 +62,9 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
       min_tls_version = "1.0"
       tls_1_3 = "on"
     }
-    type = "dv"
+    type = {
+
+    }
     wildcard = false
   }
   custom_metadata = {

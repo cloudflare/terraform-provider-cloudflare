@@ -5,6 +5,7 @@ package keyless_certificate
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,7 +18,7 @@ type KeylessCertificateModel struct {
 	ID           types.String                                            `tfsdk:"id" json:"id,computed"`
 	ZoneID       types.String                                            `tfsdk:"zone_id" path:"zone_id,required"`
 	Certificate  types.String                                            `tfsdk:"certificate" json:"certificate,required"`
-	BundleMethod types.String                                            `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
+	BundleMethod jsontypes.Normalized                                    `tfsdk:"bundle_method" json:"bundle_method,optional"`
 	Host         types.String                                            `tfsdk:"host" json:"host,required"`
 	Enabled      types.Bool                                              `tfsdk:"enabled" json:"enabled,optional"`
 	Name         types.String                                            `tfsdk:"name" json:"name,optional"`

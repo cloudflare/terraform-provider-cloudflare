@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -552,7 +553,7 @@ type ZeroTrustAccessApplicationsSaaSAppDataSourceModel struct {
 	CustomAttributes              customfield.NestedObjectList[ZeroTrustAccessApplicationsSaaSAppCustomAttributesDataSourceModel]     `tfsdk:"custom_attributes" json:"custom_attributes,computed"`
 	DefaultRelayState             types.String                                                                                        `tfsdk:"default_relay_state" json:"default_relay_state,computed"`
 	IdPEntityID                   types.String                                                                                        `tfsdk:"idp_entity_id" json:"idp_entity_id,computed"`
-	NameIDFormat                  types.String                                                                                        `tfsdk:"name_id_format" json:"name_id_format,computed"`
+	NameIDFormat                  jsontypes.Normalized                                                                                `tfsdk:"name_id_format" json:"name_id_format,computed"`
 	NameIDTransformJsonata        types.String                                                                                        `tfsdk:"name_id_transform_jsonata" json:"name_id_transform_jsonata,computed"`
 	PublicKey                     types.String                                                                                        `tfsdk:"public_key" json:"public_key,computed"`
 	SAMLAttributeTransformJsonata types.String                                                                                        `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata,computed"`

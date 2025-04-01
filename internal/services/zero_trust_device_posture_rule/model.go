@@ -5,6 +5,7 @@ package zero_trust_device_posture_rule
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -33,14 +34,14 @@ func (m ZeroTrustDevicePostureRuleModel) MarshalJSONForUpdate(state ZeroTrustDev
 }
 
 type ZeroTrustDevicePostureRuleInputModel struct {
-	OperatingSystem  types.String                                                            `tfsdk:"operating_system" json:"operating_system,optional"`
+	OperatingSystem  jsontypes.Normalized                                                    `tfsdk:"operating_system" json:"operating_system,optional"`
 	Path             types.String                                                            `tfsdk:"path" json:"path,optional"`
 	Exists           types.Bool                                                              `tfsdk:"exists" json:"exists,optional"`
 	Sha256           types.String                                                            `tfsdk:"sha256" json:"sha256,optional"`
 	Thumbprint       types.String                                                            `tfsdk:"thumbprint" json:"thumbprint,optional"`
 	ID               types.String                                                            `tfsdk:"id" json:"id,optional"`
 	Domain           types.String                                                            `tfsdk:"domain" json:"domain,optional"`
-	Operator         types.String                                                            `tfsdk:"operator" json:"operator,optional"`
+	Operator         jsontypes.Normalized                                                    `tfsdk:"operator" json:"operator,optional"`
 	Version          types.String                                                            `tfsdk:"version" json:"version,optional"`
 	OSDistroName     types.String                                                            `tfsdk:"os_distro_name" json:"os_distro_name,optional"`
 	OSDistroRevision types.String                                                            `tfsdk:"os_distro_revision" json:"os_distro_revision,optional"`

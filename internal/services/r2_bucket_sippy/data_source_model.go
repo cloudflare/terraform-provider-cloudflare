@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/r2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -33,10 +34,10 @@ func (m *R2BucketSippyDataSourceModel) toReadParams(_ context.Context) (params r
 }
 
 type R2BucketSippyDestinationDataSourceModel struct {
-	AccessKeyID types.String `tfsdk:"access_key_id" json:"accessKeyId,computed"`
-	Account     types.String `tfsdk:"account" json:"account,computed"`
-	Bucket      types.String `tfsdk:"bucket" json:"bucket,computed"`
-	Provider    types.String `tfsdk:"provider" json:"provider,computed"`
+	AccessKeyID types.String         `tfsdk:"access_key_id" json:"accessKeyId,computed"`
+	Account     types.String         `tfsdk:"account" json:"account,computed"`
+	Bucket      types.String         `tfsdk:"bucket" json:"bucket,computed"`
+	Provider    jsontypes.Normalized `tfsdk:"provider" json:"provider,computed"`
 }
 
 type R2BucketSippySourceDataSourceModel struct {

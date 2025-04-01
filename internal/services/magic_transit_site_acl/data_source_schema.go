@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -52,18 +50,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"protocols": schema.ListAttribute{
-				Computed: true,
-				Validators: []validator.List{
-					listvalidator.ValueStringsAre(
-						stringvalidator.OneOfCaseInsensitive(
-							"tcp",
-							"udp",
-							"icmp",
-						),
-					),
-				},
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
+				Computed:    true,
+				CustomType:  customfield.NewListType[jsontypes.Normalized](ctx),
+				ElementType: jsontypes.NormalizedType{},
 			},
 			"lan_1": schema.SingleNestedAttribute{
 				Computed:   true,

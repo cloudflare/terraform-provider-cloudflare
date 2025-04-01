@@ -40,9 +40,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
-			"hold": schema.BoolAttribute{
-				Computed: true,
-			},
 		},
 	}
 }

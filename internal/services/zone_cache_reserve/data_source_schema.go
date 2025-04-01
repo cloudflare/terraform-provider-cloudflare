@@ -5,6 +5,7 @@ package zone_cache_reserve
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -25,13 +26,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether the setting is editable",
 				Computed:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "ID of the zone setting.\nAvailable values: \"cache_reserve\".",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("cache_reserve"),
-				},
-			},
 			"modified_on": schema.StringAttribute{
 				Description: "Last time this setting was modified.",
 				Computed:    true,
@@ -43,6 +37,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),
 				},
+			},
+			"zone_setting_id": schema.StringAttribute{
+				Computed:   true,
+				CustomType: jsontypes.NormalizedType{},
 			},
 		},
 	}

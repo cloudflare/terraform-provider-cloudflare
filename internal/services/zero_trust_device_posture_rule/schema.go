@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -82,18 +83,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustDevicePostureRuleInputModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"operating_system": schema.StringAttribute{
-						Description: "Operating system\nAvailable values: \"windows\", \"linux\", \"mac\".",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"windows",
-								"linux",
-								"mac",
-								"android",
-								"ios",
-								"chromeos",
-							),
-						},
+						Optional:   true,
+						CustomType: jsontypes.NormalizedType{},
 					},
 					"path": schema.StringAttribute{
 						Description: "File path.",
@@ -120,17 +111,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"operator": schema.StringAttribute{
-						Description: "operator\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"<",
-								"<=",
-								">",
-								">=",
-								"==",
-							),
-						},
+						Optional:   true,
+						CustomType: jsontypes.NormalizedType{},
 					},
 					"version": schema.StringAttribute{
 						Description: "Version of OS",
