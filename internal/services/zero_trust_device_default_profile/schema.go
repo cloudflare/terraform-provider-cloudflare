@@ -79,11 +79,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
 							Description: "The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.",
-							Required:    true,
+							Optional:    true,
 						},
 						"description": schema.StringAttribute{
 							Description: "A description of the Split Tunnel item, displayed in the client UI.",
-							Required:    true,
+							Optional:    true,
 						},
 						"host": schema.StringAttribute{
 							Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",
@@ -101,11 +101,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
 							Description: "The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.",
-							Required:    true,
+							Optional:    true,
 						},
 						"description": schema.StringAttribute{
 							Description: "A description of the Split Tunnel item, displayed in the client UI.",
-							Required:    true,
+							Optional:    true,
 						},
 						"host": schema.StringAttribute{
 							Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",

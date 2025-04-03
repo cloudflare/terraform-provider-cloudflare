@@ -52,14 +52,14 @@ func (m ZeroTrustDeviceCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustD
 }
 
 type ZeroTrustDeviceCustomProfileExcludeModel struct {
-	Address     types.String `tfsdk:"address" json:"address,required"`
-	Description types.String `tfsdk:"description" json:"description,required"`
+	Address     types.String `tfsdk:"address" json:"address,optional"`
+	Description types.String `tfsdk:"description" json:"description,optional"`
 	Host        types.String `tfsdk:"host" json:"host,optional"`
 }
 
 type ZeroTrustDeviceCustomProfileIncludeModel struct {
-	Address     types.String `tfsdk:"address" json:"address,required"`
-	Description types.String `tfsdk:"description" json:"description,required"`
+	Address     types.String `tfsdk:"address" json:"address,optional"`
+	Description types.String `tfsdk:"description" json:"description,optional"`
 	Host        types.String `tfsdk:"host" json:"host,optional"`
 }
 
