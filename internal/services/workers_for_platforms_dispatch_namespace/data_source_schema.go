@@ -24,11 +24,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Identifier",
 				Required:    true,
 			},
 			"created_by": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Identifier",
 				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{
@@ -37,7 +37,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified_by": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Identifier",
 				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{

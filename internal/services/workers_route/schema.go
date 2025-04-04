@@ -20,12 +20,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description:   "Identifier.",
+				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"route_id": schema.StringAttribute{
-				Description:   "Identifier.",
+				Description:   "Identifier",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -37,11 +37,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Identifier",
 				Computed:    true,
 			},
 			"success": schema.BoolAttribute{
-				Description: "Whether the API call was successful.",
+				Description: "Whether the API call was successful",
 				Computed:    true,
 			},
 			"errors": schema.ListNestedAttribute{
@@ -57,18 +57,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"message": schema.StringAttribute{
 							Computed: true,
-						},
-						"documentation_url": schema.StringAttribute{
-							Computed: true,
-						},
-						"source": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[WorkersRouteErrorsSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"pointer": schema.StringAttribute{
-									Computed: true,
-								},
-							},
 						},
 					},
 				},
@@ -86,18 +74,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"message": schema.StringAttribute{
 							Computed: true,
-						},
-						"documentation_url": schema.StringAttribute{
-							Computed: true,
-						},
-						"source": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[WorkersRouteMessagesSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"pointer": schema.StringAttribute{
-									Computed: true,
-								},
-							},
 						},
 					},
 				},
