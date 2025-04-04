@@ -32,23 +32,11 @@ func (m WorkersRouteModel) MarshalJSONForUpdate(state WorkersRouteModel) (data [
 }
 
 type WorkersRouteErrorsModel struct {
-	Code             types.Int64                                             `tfsdk:"code" json:"code,computed"`
-	Message          types.String                                            `tfsdk:"message" json:"message,computed"`
-	DocumentationURL types.String                                            `tfsdk:"documentation_url" json:"documentation_url,computed"`
-	Source           customfield.NestedObject[WorkersRouteErrorsSourceModel] `tfsdk:"source" json:"source,computed"`
-}
-
-type WorkersRouteErrorsSourceModel struct {
-	Pointer types.String `tfsdk:"pointer" json:"pointer,computed"`
+	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type WorkersRouteMessagesModel struct {
-	Code             types.Int64                                               `tfsdk:"code" json:"code,computed"`
-	Message          types.String                                              `tfsdk:"message" json:"message,computed"`
-	DocumentationURL types.String                                              `tfsdk:"documentation_url" json:"documentation_url,computed"`
-	Source           customfield.NestedObject[WorkersRouteMessagesSourceModel] `tfsdk:"source" json:"source,computed"`
-}
-
-type WorkersRouteMessagesSourceModel struct {
-	Pointer types.String `tfsdk:"pointer" json:"pointer,computed"`
+	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }
