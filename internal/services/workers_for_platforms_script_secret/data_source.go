@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package workers_secret
+package workers_for_platforms_script_secret
 
 import (
 	"context"
@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type WorkersSecretDataSource struct {
+type WorkersForPlatformsScriptSecretDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*WorkersSecretDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*WorkersForPlatformsScriptSecretDataSource)(nil)
 
-func NewWorkersSecretDataSource() datasource.DataSource {
-	return &WorkersSecretDataSource{}
+func NewWorkersForPlatformsScriptSecretDataSource() datasource.DataSource {
+	return &WorkersForPlatformsScriptSecretDataSource{}
 }
 
-func (d *WorkersSecretDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_workers_secret"
+func (d *WorkersForPlatformsScriptSecretDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_workers_for_platforms_script_secret"
 }
 
-func (d *WorkersSecretDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WorkersForPlatformsScriptSecretDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *WorkersSecretDataSource) Configure(ctx context.Context, req datasource.
 	d.client = client
 }
 
-func (d *WorkersSecretDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *WorkersSecretDataSourceModel
+func (d *WorkersForPlatformsScriptSecretDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *WorkersForPlatformsScriptSecretDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -64,7 +64,7 @@ func (d *WorkersSecretDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	res := new(http.Response)
-	env := WorkersSecretResultDataSourceEnvelope{*data}
+	env := WorkersForPlatformsScriptSecretResultDataSourceEnvelope{*data}
 	_, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.Get(
 		ctx,
 		data.DispatchNamespace.ValueString(),
