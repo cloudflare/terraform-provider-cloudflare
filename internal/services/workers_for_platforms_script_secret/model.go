@@ -1,17 +1,17 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package workers_secret
+package workers_for_platforms_script_secret
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type WorkersSecretResultEnvelope struct {
-	Result WorkersSecretModel `json:"result"`
+type WorkersForPlatformsScriptSecretResultEnvelope struct {
+	Result WorkersForPlatformsScriptSecretModel `json:"result"`
 }
 
-type WorkersSecretModel struct {
+type WorkersForPlatformsScriptSecretModel struct {
 	ID                types.String `tfsdk:"id" json:"-,computed"`
 	Name              types.String `tfsdk:"name" json:"name,required"`
 	AccountID         types.String `tfsdk:"account_id" path:"account_id,required"`
@@ -21,10 +21,10 @@ type WorkersSecretModel struct {
 	Type              types.String `tfsdk:"type" json:"type,optional"`
 }
 
-func (m WorkersSecretModel) MarshalJSON() (data []byte, err error) {
+func (m WorkersForPlatformsScriptSecretModel) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(m)
 }
 
-func (m WorkersSecretModel) MarshalJSONForUpdate(state WorkersSecretModel) (data []byte, err error) {
+func (m WorkersForPlatformsScriptSecretModel) MarshalJSONForUpdate(state WorkersForPlatformsScriptSecretModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
 }
