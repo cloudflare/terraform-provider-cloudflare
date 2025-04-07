@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package workers_secret
+package workers_for_platforms_script_secret
 
 import (
 	"context"
@@ -19,24 +19,24 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*WorkersSecretResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*WorkersSecretResource)(nil)
-var _ resource.ResourceWithImportState = (*WorkersSecretResource)(nil)
+var _ resource.ResourceWithConfigure = (*WorkersForPlatformsScriptSecretResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*WorkersForPlatformsScriptSecretResource)(nil)
+var _ resource.ResourceWithImportState = (*WorkersForPlatformsScriptSecretResource)(nil)
 
 func NewResource() resource.Resource {
-	return &WorkersSecretResource{}
+	return &WorkersForPlatformsScriptSecretResource{}
 }
 
-// WorkersSecretResource defines the resource implementation.
-type WorkersSecretResource struct {
+// WorkersForPlatformsScriptSecretResource defines the resource implementation.
+type WorkersForPlatformsScriptSecretResource struct {
 	client *cloudflare.Client
 }
 
-func (r *WorkersSecretResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_workers_secret"
+func (r *WorkersForPlatformsScriptSecretResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_workers_for_platforms_script_secret"
 }
 
-func (r *WorkersSecretResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *WorkersForPlatformsScriptSecretResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -55,8 +55,8 @@ func (r *WorkersSecretResource) Configure(ctx context.Context, req resource.Conf
 	r.client = client
 }
 
-func (r *WorkersSecretResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *WorkersSecretModel
+func (r *WorkersForPlatformsScriptSecretResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *WorkersForPlatformsScriptSecretModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -70,7 +70,7 @@ func (r *WorkersSecretResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	res := new(http.Response)
-	env := WorkersSecretResultEnvelope{*data}
+	env := WorkersForPlatformsScriptSecretResultEnvelope{*data}
 	_, err = r.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.Update(
 		ctx,
 		data.DispatchNamespace.ValueString(),
@@ -98,8 +98,8 @@ func (r *WorkersSecretResource) Create(ctx context.Context, req resource.CreateR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WorkersSecretResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *WorkersSecretModel
+func (r *WorkersForPlatformsScriptSecretResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *WorkersForPlatformsScriptSecretModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -107,7 +107,7 @@ func (r *WorkersSecretResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	var state *WorkersSecretModel
+	var state *WorkersForPlatformsScriptSecretModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -121,7 +121,7 @@ func (r *WorkersSecretResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 	res := new(http.Response)
-	env := WorkersSecretResultEnvelope{*data}
+	env := WorkersForPlatformsScriptSecretResultEnvelope{*data}
 	_, err = r.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.Update(
 		ctx,
 		data.DispatchNamespace.ValueString(),
@@ -149,8 +149,8 @@ func (r *WorkersSecretResource) Update(ctx context.Context, req resource.UpdateR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WorkersSecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *WorkersSecretModel
+func (r *WorkersForPlatformsScriptSecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *WorkersForPlatformsScriptSecretModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -159,7 +159,7 @@ func (r *WorkersSecretResource) Read(ctx context.Context, req resource.ReadReque
 	}
 
 	res := new(http.Response)
-	env := WorkersSecretResultEnvelope{*data}
+	env := WorkersForPlatformsScriptSecretResultEnvelope{*data}
 	_, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.Get(
 		ctx,
 		data.DispatchNamespace.ValueString(),
@@ -192,8 +192,8 @@ func (r *WorkersSecretResource) Read(ctx context.Context, req resource.ReadReque
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WorkersSecretResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *WorkersSecretModel
+func (r *WorkersForPlatformsScriptSecretResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *WorkersForPlatformsScriptSecretModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -220,8 +220,8 @@ func (r *WorkersSecretResource) Delete(ctx context.Context, req resource.DeleteR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WorkersSecretResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *WorkersSecretModel = new(WorkersSecretModel)
+func (r *WorkersForPlatformsScriptSecretResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *WorkersForPlatformsScriptSecretModel = new(WorkersForPlatformsScriptSecretModel)
 
 	path_account_id := ""
 	path_dispatch_namespace := ""
@@ -246,7 +246,7 @@ func (r *WorkersSecretResource) ImportState(ctx context.Context, req resource.Im
 	data.Name = types.StringValue(path_secret_name)
 
 	res := new(http.Response)
-	env := WorkersSecretResultEnvelope{*data}
+	env := WorkersForPlatformsScriptSecretResultEnvelope{*data}
 	_, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.Get(
 		ctx,
 		path_dispatch_namespace,
@@ -274,6 +274,6 @@ func (r *WorkersSecretResource) ImportState(ctx context.Context, req resource.Im
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WorkersSecretResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *WorkersForPlatformsScriptSecretResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }

@@ -156,12 +156,12 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_custom_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_deployment"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_dispatch_namespace"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_script_secret"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv_namespace"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script_subdomain"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_secret"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_custom_page"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_group"
@@ -506,7 +506,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		r2_bucket_lock.NewResource,
 		r2_bucket_sippy.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
-		workers_secret.NewResource,
+		workers_for_platforms_script_secret.NewResource,
 		zero_trust_dex_test.NewResource,
 		zero_trust_device_managed_networks.NewResource,
 		zero_trust_device_default_profile.NewResource,
@@ -777,8 +777,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		r2_bucket_sippy.NewR2BucketSippyDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespaceDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespacesDataSource,
-		workers_secret.NewWorkersSecretDataSource,
-		workers_secret.NewWorkersSecretsDataSource,
+		workers_for_platforms_script_secret.NewWorkersForPlatformsScriptSecretDataSource,
+		workers_for_platforms_script_secret.NewWorkersForPlatformsScriptSecretsDataSource,
 		zero_trust_dex_test.NewZeroTrustDEXTestDataSource,
 		zero_trust_dex_test.NewZeroTrustDEXTestsDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksDataSource,
