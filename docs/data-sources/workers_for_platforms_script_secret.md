@@ -1,18 +1,18 @@
 ---
-page_title: "cloudflare_workers_secret Data Source - Cloudflare"
+page_title: "cloudflare_workers_for_platforms_script_secret Data Source - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_workers_secret (Data Source)
+# cloudflare_workers_for_platforms_script_secret (Data Source)
 
 
 
 ## Example Usage
 
 ```terraform
-data "cloudflare_workers_secret" "example_workers_secret" {
+data "cloudflare_workers_for_platforms_script_secret" "example_workers_for_platforms_script_secret" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   dispatch_namespace = "my-dispatch-namespace"
   script_name = "this-is_my_script-01"
@@ -25,7 +25,7 @@ data "cloudflare_workers_secret" "example_workers_secret" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `dispatch_namespace` (String) Name of the Workers for Platforms dispatch namespace.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 

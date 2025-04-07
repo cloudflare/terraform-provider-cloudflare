@@ -23,12 +23,12 @@ data "cloudflare_workers_route" "example_workers_route" {
 
 ### Required
 
-- `route_id` (String) Identifier
-- `zone_id` (String) Identifier
+- `route_id` (String) Identifier.
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `pattern` (String)
 - `script` (String) Name of the script, used in URLs and route configuration.
 

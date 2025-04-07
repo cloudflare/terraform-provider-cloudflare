@@ -40,6 +40,6 @@ Read-Only:
 - `algo` (String) TSIG algorithm.
 - `id` (String)
 - `name` (String) TSIG key name.
-- `secret` (String) TSIG secret.
+- `secret` (String, Sensitive) TSIG secret.
 
 

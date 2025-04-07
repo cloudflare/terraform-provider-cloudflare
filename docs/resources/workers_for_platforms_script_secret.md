@@ -1,18 +1,18 @@
 ---
-page_title: "cloudflare_workers_secret Resource - Cloudflare"
+page_title: "cloudflare_workers_for_platforms_script_secret Resource - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_workers_secret (Resource)
+# cloudflare_workers_for_platforms_script_secret (Resource)
 
 
 
 ## Example Usage
 
 ```terraform
-resource "cloudflare_workers_secret" "example_workers_secret" {
+resource "cloudflare_workers_for_platforms_script_secret" "example_workers_for_platforms_script_secret" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   dispatch_namespace = "my-dispatch-namespace"
   script_name = "this-is_my_script-01"
@@ -27,7 +27,7 @@ resource "cloudflare_workers_secret" "example_workers_secret" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `dispatch_namespace` (String) Name of the Workers for Platforms dispatch namespace.
 - `name` (String) The name of this secret, this is what will be used to access it inside the Worker.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
@@ -47,5 +47,5 @@ Available values: "secret_text".
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_workers_secret.example '<account_id>/<dispatch_namespace>/<script_name>/<secret_name>'
+$ terraform import cloudflare_workers_for_platforms_script_secret.example '<account_id>/<dispatch_namespace>/<script_name>/<secret_name>'
 ```

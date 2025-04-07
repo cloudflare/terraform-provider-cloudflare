@@ -35,7 +35,7 @@ resource "cloudflare_dns_firewall" "example_dns_firewall" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `name` (String) DNS Firewall cluster name
 - `upstream_ips` (List of String)
 
@@ -53,7 +53,7 @@ resource "cloudflare_dns_firewall" "example_dns_firewall" {
 ### Read-Only
 
 - `dns_firewall_ips` (List of String)
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `modified_on` (String) Last modification of DNS Firewall cluster
 
 <a id="nestedatt--attack_mitigation"></a>
