@@ -17,13 +17,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Device ID.",
-				Computed:    true,
+				Computed: true,
 			},
 			"policy_id": schema.StringAttribute{
-				Description: "Device ID.",
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
 				Required: true,
@@ -157,7 +155,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
-							Description: "The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.",
+							Description: "The address in CIDR format to include in the tunnel. If `address` is present, `host` must not be present.",
 							Computed:    true,
 						},
 						"description": schema.StringAttribute{
@@ -165,7 +163,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"host": schema.StringAttribute{
-							Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",
+							Description: "The domain name to include in the tunnel. If `host` is present, `address` must not be present.",
 							Computed:    true,
 						},
 					},

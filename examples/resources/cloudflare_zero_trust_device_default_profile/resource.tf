@@ -13,7 +13,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
   exclude_office_ips = true
   include = [{
     address = "192.0.2.0/24"
-    description = "Exclude testing domains from the tunnel"
+    description = "Include testing domains in the tunnel"
   }]
   register_interface_ip_with_dns = true
   service_mode_v2 = {

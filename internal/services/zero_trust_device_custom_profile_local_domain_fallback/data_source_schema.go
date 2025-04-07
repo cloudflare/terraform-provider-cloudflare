@@ -20,8 +20,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"policy_id": schema.StringAttribute{
-				Description: "Device ID.",
-				Required:    true,
+				Required: true,
 			},
 			"description": schema.StringAttribute{
 				Description: "A description of the fallback domain, displayed in the client UI.",
