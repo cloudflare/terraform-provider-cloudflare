@@ -60,15 +60,15 @@ type DNSRecordDataModel struct {
 	Altitude      types.Float64 `tfsdk:"altitude" json:"altitude,optional"`
 	LatDegrees    types.Float64 `tfsdk:"lat_degrees" json:"lat_degrees,optional"`
 	LatDirection  types.String  `tfsdk:"lat_direction" json:"lat_direction,optional"`
-	LatMinutes    types.Float64 `tfsdk:"lat_minutes" json:"lat_minutes,computed_optional"`
-	LatSeconds    types.Float64 `tfsdk:"lat_seconds" json:"lat_seconds,computed_optional"`
+	LatMinutes    types.Float64 `tfsdk:"lat_minutes" json:"lat_minutes,optional"`
+	LatSeconds    types.Float64 `tfsdk:"lat_seconds" json:"lat_seconds,optional"`
 	LongDegrees   types.Float64 `tfsdk:"long_degrees" json:"long_degrees,optional"`
 	LongDirection types.String  `tfsdk:"long_direction" json:"long_direction,optional"`
-	LongMinutes   types.Float64 `tfsdk:"long_minutes" json:"long_minutes,computed_optional"`
-	LongSeconds   types.Float64 `tfsdk:"long_seconds" json:"long_seconds,computed_optional"`
-	PrecisionHorz types.Float64 `tfsdk:"precision_horz" json:"precision_horz,computed_optional"`
-	PrecisionVert types.Float64 `tfsdk:"precision_vert" json:"precision_vert,computed_optional"`
-	Size          types.Float64 `tfsdk:"size" json:"size,computed_optional"`
+	LongMinutes   types.Float64 `tfsdk:"long_minutes" json:"long_minutes,optional"`
+	LongSeconds   types.Float64 `tfsdk:"long_seconds" json:"long_seconds,optional"`
+	PrecisionHorz types.Float64 `tfsdk:"precision_horz" json:"precision_horz,optional"`
+	PrecisionVert types.Float64 `tfsdk:"precision_vert" json:"precision_vert,optional"`
+	Size          types.Float64 `tfsdk:"size" json:"size,optional"`
 	Order         types.Float64 `tfsdk:"order" json:"order,optional"`
 	Preference    types.Float64 `tfsdk:"preference" json:"preference,optional"`
 	Regex         types.String  `tfsdk:"regex" json:"regex,optional"`

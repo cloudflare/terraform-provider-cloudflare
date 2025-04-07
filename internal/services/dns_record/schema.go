@@ -16,7 +16,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -214,21 +213,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"lat_minutes": schema.Float64Attribute{
 						Description: "Minutes of latitude.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 59),
 						},
-						Default: float64default.StaticFloat64(0),
 					},
 					"lat_seconds": schema.Float64Attribute{
 						Description: "Seconds of latitude.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 59.999),
 						},
-						Default: float64default.StaticFloat64(0),
 					},
 					"long_degrees": schema.Float64Attribute{
 						Description: "Degrees of longitude.",
@@ -246,48 +241,38 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"long_minutes": schema.Float64Attribute{
 						Description: "Minutes of longitude.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 59),
 						},
-						Default: float64default.StaticFloat64(0),
 					},
 					"long_seconds": schema.Float64Attribute{
 						Description: "Seconds of longitude.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 59.999),
 						},
-						Default: float64default.StaticFloat64(0),
 					},
 					"precision_horz": schema.Float64Attribute{
 						Description: "Horizontal precision of location.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 90000000),
 						},
-						Default: float64default.StaticFloat64(0),
 					},
 					"precision_vert": schema.Float64Attribute{
 						Description: "Vertical precision of location.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 90000000),
 						},
-						Default: float64default.StaticFloat64(0),
 					},
 					"size": schema.Float64Attribute{
 						Description: "Size of location in meters.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 90000000),
 						},
-						Default: float64default.StaticFloat64(0),
 					},
 					"order": schema.Float64Attribute{
 						Description: "Order.",
