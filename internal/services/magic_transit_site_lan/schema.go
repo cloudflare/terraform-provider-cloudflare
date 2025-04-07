@@ -42,12 +42,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"physport": schema.Int64Attribute{
 				Required: true,
 			},
-			"vlan_tag": schema.Int64Attribute{
-				Description: "VLAN port number.",
-				Required:    true,
-			},
 			"name": schema.StringAttribute{
 				Optional: true,
+			},
+			"vlan_tag": schema.Int64Attribute{
+				Description: "VLAN ID. Use zero for untagged.",
+				Optional:    true,
 			},
 			"nat": schema.SingleNestedAttribute{
 				Computed:   true,

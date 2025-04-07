@@ -88,7 +88,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"vlan_tag": schema.Int64Attribute{
-							Description: "VLAN port number.",
+							Description: "VLAN ID. Use zero for untagged.",
 							Computed:    true,
 						},
 					},
