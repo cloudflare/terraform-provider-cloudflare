@@ -23,11 +23,11 @@ data "cloudflare_dns_firewall" "example_dns_firewall" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
-- `dns_firewall_id` (String) Identifier
+- `dns_firewall_id` (String) Identifier.
 
 ### Read-Only
 
@@ -35,7 +35,7 @@ data "cloudflare_dns_firewall" "example_dns_firewall" {
 - `deprecate_any_requests` (Boolean) Whether to refuse to answer queries for the ANY type
 - `dns_firewall_ips` (List of String)
 - `ecs_fallback` (Boolean) Whether to forward client IP (resolver) subnet if no EDNS Client Subnet is sent
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `maximum_cache_ttl` (Number) Maximum DNS cache TTL This setting sets an upper bound on DNS TTLs for purposes of caching between DNS Firewall and the upstream servers. Higher TTLs will be decreased to the maximum defined here for caching purposes.
 - `minimum_cache_ttl` (Number) Minimum DNS cache TTL This setting sets a lower bound on DNS TTLs for purposes of caching between DNS Firewall and the upstream servers. Lower TTLs will be increased to the minimum defined here for caching purposes.
 - `modified_on` (String) Last modification of DNS Firewall cluster

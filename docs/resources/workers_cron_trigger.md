@@ -26,7 +26,7 @@ resource "cloudflare_workers_cron_trigger" "example_workers_cron_trigger" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 

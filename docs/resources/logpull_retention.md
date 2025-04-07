@@ -23,7 +23,7 @@ resource "cloudflare_logpull_retention" "example_logpull_retention" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 

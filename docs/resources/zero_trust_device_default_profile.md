@@ -23,13 +23,11 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
   exclude = [{
     address = "192.0.2.0/24"
     description = "Exclude testing domains from the tunnel"
-    host = "*.example.com"
   }]
   exclude_office_ips = true
   include = [{
     address = "192.0.2.0/24"
     description = "Exclude testing domains from the tunnel"
-    host = "*.example.com"
   }]
   register_interface_ip_with_dns = true
   service_mode_v2 = {
@@ -77,26 +75,20 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
 <a id="nestedatt--exclude"></a>
 ### Nested Schema for `exclude`
 
-Required:
+Optional:
 
 - `address` (String) The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.
 - `description` (String) A description of the Split Tunnel item, displayed in the client UI.
-
-Optional:
-
 - `host` (String) The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.
 
 
 <a id="nestedatt--include"></a>
 ### Nested Schema for `include`
 
-Required:
+Optional:
 
 - `address` (String) The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.
 - `description` (String) A description of the Split Tunnel item, displayed in the client UI.
-
-Optional:
-
 - `host` (String) The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.
 
 

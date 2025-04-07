@@ -34,8 +34,34 @@ data "cloudflare_zero_trust_gateway_logging" "example_zero_trust_gateway_logging
 
 Read-Only:
 
-- `dns` (String) Logging settings for DNS firewall.
-- `http` (String) Logging settings for HTTP/HTTPS firewall.
-- `l4` (String) Logging settings for Network firewall.
+- `dns` (Attributes) (see [below for nested schema](#nestedatt--settings_by_rule_type--dns))
+- `http` (Attributes) (see [below for nested schema](#nestedatt--settings_by_rule_type--http))
+- `l4` (Attributes) (see [below for nested schema](#nestedatt--settings_by_rule_type--l4))
+
+<a id="nestedatt--settings_by_rule_type--dns"></a>
+### Nested Schema for `settings_by_rule_type.dns`
+
+Read-Only:
+
+- `log_all` (Boolean) Log all requests to this service.
+- `log_blocks` (Boolean) Log only blocking requests to this service.
+
+
+<a id="nestedatt--settings_by_rule_type--http"></a>
+### Nested Schema for `settings_by_rule_type.http`
+
+Read-Only:
+
+- `log_all` (Boolean) Log all requests to this service.
+- `log_blocks` (Boolean) Log only blocking requests to this service.
+
+
+<a id="nestedatt--settings_by_rule_type--l4"></a>
+### Nested Schema for `settings_by_rule_type.l4`
+
+Read-Only:
+
+- `log_all` (Boolean) Log all requests to this service.
+- `log_blocks` (Boolean) Log only blocking requests to this service.
 
 

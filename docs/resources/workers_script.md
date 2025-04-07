@@ -74,7 +74,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `content` (String) Module or Service Worker contents of the Worker.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 
@@ -104,10 +104,6 @@ Available values: "standard".
 - `has_modules` (Boolean) Whether a Worker contains modules.
 - `id` (String) Name of the script, used in URLs and route configuration.
 - `modified_on` (String) When the script was last modified.
-- `placement_mode` (String, Deprecated) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
-Available values: "smart".
-- `placement_status` (String, Deprecated) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
-Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
 - `startup_time_ms` (Number)
 
 <a id="nestedatt--assets"></a>

@@ -23,7 +23,7 @@ data "cloudflare_workers_deployment" "example_workers_deployment" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `script_name` (String) Name of the script.
 
 ### Read-Only

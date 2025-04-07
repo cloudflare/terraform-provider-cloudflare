@@ -22,7 +22,7 @@ data "cloudflare_workers_scripts" "example_workers_scripts" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
