@@ -127,7 +127,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"address": schema.StringAttribute{
-										Description: "The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.",
+										Description: "The address in CIDR format to include in the tunnel. If `address` is present, `host` must not be present.",
 										Computed:    true,
 									},
 									"description": schema.StringAttribute{
@@ -135,7 +135,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Computed:    true,
 									},
 									"host": schema.StringAttribute{
-										Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",
+										Description: "The domain name to include in the tunnel. If `host` is present, `address` must not be present.",
 										Computed:    true,
 									},
 								},
@@ -158,8 +158,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"policy_id": schema.StringAttribute{
-							Description: "Device ID.",
-							Computed:    true,
+							Computed: true,
 						},
 						"precedence": schema.Float64Attribute{
 							Description: "The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.",
