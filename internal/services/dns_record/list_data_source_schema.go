@@ -25,7 +25,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"search": schema.StringAttribute{
@@ -292,7 +292,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"id": schema.StringAttribute{
-							Description: "Identifier",
+							Description: "Identifier.",
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{

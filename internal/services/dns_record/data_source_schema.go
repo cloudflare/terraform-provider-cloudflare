@@ -26,15 +26,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Computed:    true,
 			},
 			"dns_record_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"comment": schema.StringAttribute{
