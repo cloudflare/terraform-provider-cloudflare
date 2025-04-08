@@ -17,7 +17,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"app_id": schema.StringAttribute{
-				Description: "UUID",
+				Description: "UUID.",
 				Required:    true,
 			},
 			"account_id": schema.StringAttribute{

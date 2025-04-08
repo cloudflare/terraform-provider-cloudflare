@@ -58,6 +58,7 @@ resource "cloudflare_zero_trust_access_application" "example_zero_trust_access_a
     id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
     precedence = 0
   }]
+  read_service_tokens_from_header = "Authorization"
   same_site_cookie_attribute = "strict"
   scim_config = {
     idp_uid = "idp_uid"
