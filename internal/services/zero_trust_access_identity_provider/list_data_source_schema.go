@@ -217,7 +217,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"id": schema.StringAttribute{
-							Description: "UUID",
+							Description: "UUID.",
 							Computed:    true,
 						},
 						"scim_config": schema.SingleNestedAttribute{
