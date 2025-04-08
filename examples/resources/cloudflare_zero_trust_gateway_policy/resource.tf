@@ -84,6 +84,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
     }
     redirect = {
       target_uri = "https://example.com"
+      include_context = true
       preserve_path_and_query = true
     }
     resolve_dns_internally = {
