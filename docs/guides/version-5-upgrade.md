@@ -265,6 +265,10 @@ cloudflare_terraform_v5()
 
 - Renamed to `cloudflare_workers_custom_domain`
 
+## cloudflare_worker_route
+
+- Renamed to `cloudflare_workers_route`
+
 ## cloudflare_worker_script
 
 - Renamed to `cloudflare_workers_script`
