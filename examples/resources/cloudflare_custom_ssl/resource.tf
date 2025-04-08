@@ -60,5 +60,5 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
     label = "us"
   }
   policy = "(country: US) or (region: EU)"
-  type = "legacy_custom"
+  type = "sni_custom"
 }

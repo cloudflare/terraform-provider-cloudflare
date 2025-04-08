@@ -2,7 +2,7 @@ resource "cloudflare_healthcheck" "example_healthcheck" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   address = "www.example.com"
   name = "server-1"
-  check_regions = ["WNAM", "ENAM"]
+  check_regions = ["WEU", "ENAM"]
   consecutive_fails = 0
   consecutive_successes = 0
   description = "Health check for www.example.com"

@@ -16,7 +16,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
         /news/* /blog/:splat
         EOT
         html_handling = "auto-trailing-slash"
-        not_found_handling = "none"
+        not_found_handling = "404-page"
         run_worker_first = false
         serve_directly = true
       }
@@ -24,7 +24,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
     }
     bindings = [{
       name = "MY_ENV_VAR"
-      type = "ai"
+      type = "plain_text"
     }]
     body_part = "worker.js"
     compatibility_date = "2021-01-01"
