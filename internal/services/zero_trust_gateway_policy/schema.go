@@ -460,6 +460,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "URI to which the user will be redirected",
 								Required:    true,
 							},
+							"include_context": schema.BoolAttribute{
+								Description: "If true, context information will be passed as query parameters",
+								Optional:    true,
+							},
 							"preserve_path_and_query": schema.BoolAttribute{
 								Description: "If true, the path and query parameters from the original request will be appended to target_uri",
 								Optional:    true,
