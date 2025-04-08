@@ -31,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -123,7 +123,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[ObservatoryScheduledTestTestModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Description: "UUID",
+						Description: "UUID.",
 						Computed:    true,
 					},
 					"date": schema.StringAttribute{
