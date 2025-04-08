@@ -269,6 +269,8 @@ cloudflare_terraform_v5()
 
 - Renamed to `cloudflare_workers_script`
 
+
+
 ## cloudflare_worker_secret
 
 - Renamed to `cloudflare_workers_secret`
@@ -1278,14 +1280,18 @@ resource "cloudflare_list_item" "example" {
 - `name` is now `script_name`.
 - `analytics_engine_binding` is now a list of objects (`analytics_engine_binding = [{ ... }]`) instead of multiple block attribute (`analytics_engine_binding { ... }`).
 - `d1_database_binding` is now a list of objects (`d1_database_binding = [{ ... }]`) instead of multiple block attribute (`d1_database_binding { ... }`).
-- `kv_namespace_binding` is now a list of objects (`kv_namespace_binding = [{ ... }]`) instead of multiple block attribute (`kv_namespace_binding { ... }`).
 - `placement` is now a list of objects (`placement = [{ ... }]`) instead of multiple block attribute (`placement { ... }`).
-- `plain_text_binding` is now a list of objects (`plain_text_binding = [{ ... }]`) instead of multiple block attribute (`plain_text_binding { ... }`).
-- `queue_binding` is now a list of objects (`queue_binding = [{ ... }]`) instead of multiple block attribute (`queue_binding { ... }`).
-- `r2_bucket_binding` is now a list of objects (`r2_bucket_binding = [{ ... }]`) instead of multiple block attribute (`r2_bucket_binding { ... }`).
-- `secret_text_binding` is now a list of objects (`secret_text_binding = [{ ... }]`) instead of multiple block attribute (`secret_text_binding { ... }`).
-- `service_binding` is now a list of objects (`service_binding = [{ ... }]`) instead of multiple block attribute (`service_binding { ... }`).
-- `webassembly_binding` is now a list of objects (`webassembly_binding = [{ ... }]`) instead of multiple block attribute (`webassembly_binding { ... }`).
+- `*_binding` are now a list of objects (`binding = [{ ... }]`) where `type = `
+  - `analytics_engine_binding` -> `"analytics_engine"`
+  - `d1_database_binding` -> `"d1"`
+  - `hyperdrive_config_binding` -> `"hyperdrive"`
+  - `kv_namespace_binding` -> `"kv_namespace"`
+  - `plain_text_binding` -> `"plain_text"`
+  - `queue_binding` -> `"queue"`
+  - `r2_bucket_binding` -> `"r2_bucket"`
+  - `secret_text_binding` -> `"secret_text"`
+  - `service_binding` -> `"service"`
+  - `webassembly_binding` -> `"wasm_module"`
 
 ## cloudflare_magic_wan_static_route
 
