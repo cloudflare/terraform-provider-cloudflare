@@ -4,5 +4,5 @@ resource "cloudflare_user_agent_blocking_rule" "example_user_agent_blocking_rule
     target = "ip"
     value = "198.51.100.4"
   }
-  mode = "block"
+  mode = "challenge"
 }

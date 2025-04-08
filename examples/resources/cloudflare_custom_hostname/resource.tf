@@ -3,7 +3,7 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
   hostname = "app.example.com"
   ssl = {
     bundle_method = "ubiquitous"
-    certificate_authority = "digicert"
+    certificate_authority = "google"
     cloudflare_branding = false
     custom_cert_bundle = [{
       custom_certificate = <<EOT
@@ -55,7 +55,7 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
       ciphers = ["ECDHE-RSA-AES128-GCM-SHA256", "AES128-SHA"]
       early_hints = "on"
       http2 = "on"
-      min_tls_version = "1.0"
+      min_tls_version = "1.2"
       tls_1_3 = "on"
     }
     type = "dv"

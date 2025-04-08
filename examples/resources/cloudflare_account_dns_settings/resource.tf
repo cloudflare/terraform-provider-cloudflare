@@ -21,6 +21,6 @@ resource "cloudflare_account_dns_settings" "example_account_dns_settings" {
       rname = "admin.example.com"
       ttl = 3600
     }
-    zone_mode = "standard"
+    zone_mode = "dns_only"
   }
 }
