@@ -145,6 +145,7 @@ type ZeroTrustGatewayPolicyRuleSettingsQuarantineModel struct {
 
 type ZeroTrustGatewayPolicyRuleSettingsRedirectModel struct {
 	TargetURI            types.String `tfsdk:"target_uri" json:"target_uri,required"`
+	IncludeContext       types.Bool   `tfsdk:"include_context" json:"include_context,optional"`
 	PreservePathAndQuery types.Bool   `tfsdk:"preserve_path_and_query" json:"preserve_path_and_query,optional"`
 }
 

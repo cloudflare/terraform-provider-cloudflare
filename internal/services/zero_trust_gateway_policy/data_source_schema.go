@@ -464,6 +464,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Description: "URI to which the user will be redirected",
 								Computed:    true,
 							},
+							"include_context": schema.BoolAttribute{
+								Description: "If true, context information will be passed as query parameters",
+								Computed:    true,
+							},
 							"preserve_path_and_query": schema.BoolAttribute{
 								Description: "If true, the path and query parameters from the original request will be appended to target_uri",
 								Computed:    true,
