@@ -3,17 +3,17 @@
 package zero_trust_dlp_entry_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_entry"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_entry"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestZeroTrustDLPEntriesDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*zero_trust_dlp_entry.ZeroTrustDLPEntriesDataSourceModel)(nil)
-  schema := zero_trust_dlp_entry.ListDataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*zero_trust_dlp_entry.ZeroTrustDLPEntriesDataSourceModel)(nil)
+	schema := zero_trust_dlp_entry.ListDataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

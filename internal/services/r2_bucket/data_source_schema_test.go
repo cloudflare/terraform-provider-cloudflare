@@ -3,17 +3,17 @@
 package r2_bucket_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestR2BucketDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*r2_bucket.R2BucketDataSourceModel)(nil)
-  schema := r2_bucket.DataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*r2_bucket.R2BucketDataSourceModel)(nil)
+	schema := r2_bucket.DataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

@@ -3,17 +3,17 @@
 package account_member_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_member"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_member"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestAccountMemberModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*account_member.AccountMemberModel)(nil)
-  schema := account_member.ResourceSchema(context.TODO())
-  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*account_member.AccountMemberModel)(nil)
+	schema := account_member.ResourceSchema(context.TODO())
+	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

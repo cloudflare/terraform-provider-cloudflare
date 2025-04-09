@@ -3,17 +3,17 @@
 package zero_trust_access_group_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_group"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_group"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestZeroTrustAccessGroupsDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*zero_trust_access_group.ZeroTrustAccessGroupsDataSourceModel)(nil)
-  schema := zero_trust_access_group.ListDataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*zero_trust_access_group.ZeroTrustAccessGroupsDataSourceModel)(nil)
+	schema := zero_trust_access_group.ListDataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

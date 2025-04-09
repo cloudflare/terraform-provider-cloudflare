@@ -3,26 +3,26 @@
 package registrar_domain
 
 import (
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-  "github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type RegistrarDomainResultEnvelope struct {
-Result RegistrarDomainModel `json:"result"`
+	Result RegistrarDomainModel `json:"result"`
 }
 
 type RegistrarDomainModel struct {
-AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
-DomainName types.String `tfsdk:"domain_name" path:"domain_name,required"`
-AutoRenew types.Bool `tfsdk:"auto_renew" json:"auto_renew,optional"`
-Locked types.Bool `tfsdk:"locked" json:"locked,optional"`
-Privacy types.Bool `tfsdk:"privacy" json:"privacy,optional"`
+	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
+	DomainName types.String `tfsdk:"domain_name" path:"domain_name,required"`
+	AutoRenew  types.Bool   `tfsdk:"auto_renew" json:"auto_renew,optional"`
+	Locked     types.Bool   `tfsdk:"locked" json:"locked,optional"`
+	Privacy    types.Bool   `tfsdk:"privacy" json:"privacy,optional"`
 }
 
 func (m RegistrarDomainModel) MarshalJSON() (data []byte, err error) {
-  return apijson.MarshalRoot(m)
+	return apijson.MarshalRoot(m)
 }
 
 func (m RegistrarDomainModel) MarshalJSONForUpdate(state RegistrarDomainModel) (data []byte, err error) {
-  return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForUpdate(m, state)
 }

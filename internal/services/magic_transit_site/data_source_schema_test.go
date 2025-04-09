@@ -3,17 +3,17 @@
 package magic_transit_site_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_site"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_site"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestMagicTransitSiteDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*magic_transit_site.MagicTransitSiteDataSourceModel)(nil)
-  schema := magic_transit_site.DataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*magic_transit_site.MagicTransitSiteDataSourceModel)(nil)
+	schema := magic_transit_site.DataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

@@ -3,17 +3,17 @@
 package workers_for_platforms_script_secret_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_script_secret"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_script_secret"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestWorkersForPlatformsScriptSecretsDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*workers_for_platforms_script_secret.WorkersForPlatformsScriptSecretsDataSourceModel)(nil)
-  schema := workers_for_platforms_script_secret.ListDataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*workers_for_platforms_script_secret.WorkersForPlatformsScriptSecretsDataSourceModel)(nil)
+	schema := workers_for_platforms_script_secret.ListDataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

@@ -3,17 +3,17 @@
 package page_shield_scripts_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_scripts"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_scripts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestPageShieldScriptsListDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*page_shield_scripts.PageShieldScriptsListDataSourceModel)(nil)
-  schema := page_shield_scripts.ListDataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*page_shield_scripts.PageShieldScriptsListDataSourceModel)(nil)
+	schema := page_shield_scripts.ListDataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }

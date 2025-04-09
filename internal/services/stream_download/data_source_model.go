@@ -3,27 +3,27 @@
 package stream_download
 
 import (
-  "context"
+	"context"
 
-  "github.com/cloudflare/cloudflare-go/v4"
-  "github.com/cloudflare/cloudflare-go/v4/stream"
-  "github.com/hashicorp/terraform-plugin-framework/diag"
-  "github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/stream"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type StreamDownloadResultDataSourceEnvelope struct {
-Result StreamDownloadDataSourceModel `json:"result,computed"`
+	Result StreamDownloadDataSourceModel `json:"result,computed"`
 }
 
 type StreamDownloadDataSourceModel struct {
-AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
-Identifier types.String `tfsdk:"identifier" path:"identifier,required"`
+	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
+	Identifier types.String `tfsdk:"identifier" path:"identifier,required"`
 }
 
 func (m *StreamDownloadDataSourceModel) toReadParams(_ context.Context) (params stream.DownloadGetParams, diags diag.Diagnostics) {
-  params = stream.DownloadGetParams{
-    AccountID: cloudflare.F(m.AccountID.ValueString()),
-  }
+	params = stream.DownloadGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
 
-  return
+	return
 }

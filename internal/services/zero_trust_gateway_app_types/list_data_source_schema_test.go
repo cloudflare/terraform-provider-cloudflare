@@ -3,17 +3,17 @@
 package zero_trust_gateway_app_types_test
 
 import (
-  "context"
-  "testing"
+	"context"
+	"testing"
 
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_app_types"
-  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_app_types"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestZeroTrustGatewayAppTypesListDataSourceModelSchemaParity(t *testing.T) {
-  t.Parallel()
-  model := (*zero_trust_gateway_app_types.ZeroTrustGatewayAppTypesListDataSourceModel)(nil)
-  schema := zero_trust_gateway_app_types.ListDataSourceSchema(context.TODO())
-  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-  errs.Report(t)
+	t.Parallel()
+	model := (*zero_trust_gateway_app_types.ZeroTrustGatewayAppTypesListDataSourceModel)(nil)
+	schema := zero_trust_gateway_app_types.ListDataSourceSchema(context.TODO())
+	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+	errs.Report(t)
 }
