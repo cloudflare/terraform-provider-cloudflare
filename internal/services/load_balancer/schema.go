@@ -484,7 +484,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"terminates": schema.BoolAttribute{
 							Description: "If this rule's condition is true, this causes rule evaluation to stop after processing this rule.",
+							Computed:    true,
 							Optional:    true,
+							Default:     booldefault.StaticBool(false),
 						},
 					},
 				},
