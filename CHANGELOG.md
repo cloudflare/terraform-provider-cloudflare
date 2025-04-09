@@ -1,5 +1,34 @@
 # Changelog
 
+## 5.4.0 (2025-04-09)
+
+Full Changelog: [v5.3.0...v5.4.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.3.0...v5.4.0)
+
+### Features
+
+* **api:** api update ([1e6c508](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1e6c5080c5aedac0645faf19ad9ba56f396effd4))
+* **api:** api update ([167fdfe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/167fdfe4a8800d0a2fb921497ebba56f657f13e0))
+* **api:** api update ([24d9aa3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/24d9aa3800c82a5ee047cee558fa72ff78591c79))
+* **api:** api update ([d6d1761](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d6d17610e188fb02e103ee211c487c8e765bc949))
+* **api:** api update ([61f6f7b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/61f6f7b8ce846d4f0759e780ea6a2e7abfd48325))
+* **api:** api update ([#5485](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5485)) ([550382e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/550382e58906f4bf17a4907c669026caf71b9e21))
+
+
+### Bug Fixes
+
+* **load_balancer:** remove `terminates` default ([#5482](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5482)) ([f033515](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f033515bd93fa4c269be8c84e580173247f3246a))
+
+
+### Chores
+
+* configure new SDK language ([a4267fd](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a4267fd9a053c6417dd03ceda7cb3f2097e2333b))
+
+
+### Build System
+
+* add workflow for triggering terraform registry sync ([#5484](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5484)) ([41b193f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/41b193ffbdfbda63f8dd083ea141933eccadab01))
+* document and script release steps ([#5483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5483)) ([dcac13f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/dcac13f2a50a3a8bdadfb0c7058d9bda7a71cbdd))
+
 ## 5.3.0 (2025-04-09)
 
 Full Changelog: [v5.2.0...v5.3.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.2.0...v5.3.0)
