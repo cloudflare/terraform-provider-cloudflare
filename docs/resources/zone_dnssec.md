@@ -25,7 +25,7 @@ resource "cloudflare_zone_dnssec" "example_zone_dnssec" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -52,7 +52,7 @@ Available values: "active", "disabled".
 - `digest_type` (String) Coded type for digest algorithm.
 - `ds` (String) Full DS record.
 - `flags` (Number) Flag for DNSSEC record.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `key_tag` (Number) Code for key tag.
 - `key_type` (String) Algorithm key type.
 - `modified_on` (String) When DNSSEC was last modified.

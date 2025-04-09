@@ -16,7 +16,6 @@ resource "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   site_id = "023e105f4ecef8ad9ca31a8372d0c353"
   physport = 1
-  vlan_tag = 0
   name = "name"
   priority = 0
   static_addressing = {
@@ -24,6 +23,7 @@ resource "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
     gateway_address = "192.0.2.1"
     secondary_address = "192.0.2.0/24"
   }
+  vlan_tag = 42
 }
 ```
 
@@ -35,13 +35,13 @@ resource "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
 - `account_id` (String) Identifier
 - `physport` (Number)
 - `site_id` (String) Identifier
-- `vlan_tag` (Number) VLAN port number.
 
 ### Optional
 
 - `name` (String)
 - `priority` (Number)
 - `static_addressing` (Attributes) (optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode. (see [below for nested schema](#nestedatt--static_addressing))
+- `vlan_tag` (Number) VLAN ID. Use zero for untagged.
 
 ### Read-Only
 

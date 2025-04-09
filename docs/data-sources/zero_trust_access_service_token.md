@@ -26,7 +26,7 @@ data "cloudflare_zero_trust_access_service_token" "example_zero_trust_access_ser
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `service_token_id` (String) UUID
+- `service_token_id` (String) UUID.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
@@ -35,7 +35,7 @@ data "cloudflare_zero_trust_access_service_token" "example_zero_trust_access_ser
 - `created_at` (String)
 - `duration` (String) The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).
 - `expires_at` (String)
-- `id` (String) UUID
+- `id` (String) UUID.
 - `last_seen_at` (String)
 - `name` (String) The name of the service token.
 - `updated_at` (String)

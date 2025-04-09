@@ -25,7 +25,7 @@ data "cloudflare_zero_trust_access_mtls_certificate" "example_zero_trust_access_
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `certificate_id` (String) UUID
+- `certificate_id` (String) UUID.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
@@ -34,7 +34,7 @@ data "cloudflare_zero_trust_access_mtls_certificate" "example_zero_trust_access_
 - `created_at` (String)
 - `expires_on` (String)
 - `fingerprint` (String) The MD5 fingerprint of the certificate.
-- `id` (String) UUID
+- `id` (String) UUID.
 - `name` (String) The name of the certificate.
 - `updated_at` (String)
 

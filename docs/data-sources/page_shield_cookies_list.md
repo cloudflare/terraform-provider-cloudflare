@@ -25,7 +25,7 @@ data "cloudflare_page_shield_cookies_list" "example_page_shield_cookies_list" {
   page_url = "example.com/page,*/checkout,example.com/*,*checkout*"
   path = "/"
   per_page = 100
-  same_site = "lax"
+  same_site = "strict"
   secure = true
   type = "first_party"
 }

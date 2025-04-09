@@ -43,10 +43,20 @@ Read-Only:
 - `created_at` (String)
 - `description` (String) The description of the list.
 - `id` (String) API Resource UUID tag.
+- `items` (Attributes List) The items in the list. (see [below for nested schema](#nestedatt--result--items))
 - `list_count` (Number) The number of items in the list.
 - `name` (String) The name of the list.
 - `type` (String) The type of list.
 Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 - `updated_at` (String)
+
+<a id="nestedatt--result--items"></a>
+### Nested Schema for `result.items`
+
+Read-Only:
+
+- `created_at` (String)
+- `description` (String) The description of the list item, if present
+- `value` (String) The value of the item in a list.
 
 

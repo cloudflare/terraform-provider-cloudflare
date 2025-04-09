@@ -227,6 +227,7 @@ Read-Only:
 
 Read-Only:
 
+- `include_context` (Boolean) If true, context information will be passed as query parameters
 - `preserve_path_and_query` (Boolean) If true, the path and query parameters from the original request will be appended to target_uri
 - `target_uri` (String) URI to which the user will be redirected
 

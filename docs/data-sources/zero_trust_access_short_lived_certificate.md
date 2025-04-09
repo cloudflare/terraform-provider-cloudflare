@@ -24,7 +24,7 @@ data "cloudflare_zero_trust_access_short_lived_certificate" "example_zero_trust_
 
 ### Required
 
-- `app_id` (String) UUID
+- `app_id` (String) UUID.
 
 ### Optional
 

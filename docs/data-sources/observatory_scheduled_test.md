@@ -15,7 +15,7 @@ description: |-
 data "cloudflare_observatory_scheduled_test" "example_observatory_scheduled_test" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   url = "example.com"
-  region = "asia-east1"
+  region = "us-central1"
 }
 ```
 
@@ -25,7 +25,7 @@ data "cloudflare_observatory_scheduled_test" "example_observatory_scheduled_test
 ### Required
 
 - `url` (String) A URL.
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 

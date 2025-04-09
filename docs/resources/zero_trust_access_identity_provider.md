@@ -53,7 +53,7 @@ Available values: "onetimepin", "azureAD", "saml", "centrify", "facebook", "gith
 
 ### Read-Only
 
-- `id` (String) UUID
+- `id` (String) UUID.
 
 <a id="nestedatt--config"></a>
 ### Nested Schema for `config`

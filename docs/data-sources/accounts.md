@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_accounts" "example_accounts" {
-  direction = "asc"
+  direction = "desc"
   name = "example.com"
 }
 ```

@@ -39,7 +39,7 @@ data "cloudflare_zero_trust_access_identity_providers" "example_zero_trust_acces
 Read-Only:
 
 - `config` (Attributes) The configuration parameters for the identity provider. To view the required parameters for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/). (see [below for nested schema](#nestedatt--result--config))
-- `id` (String) UUID
+- `id` (String) UUID.
 - `name` (String) The name of the identity provider, shown to users on the login page.
 - `scim_config` (Attributes) The configuration settings for enabling a System for Cross-Domain Identity Management (SCIM) with the identity provider. (see [below for nested schema](#nestedatt--result--scim_config))
 - `type` (String) The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).

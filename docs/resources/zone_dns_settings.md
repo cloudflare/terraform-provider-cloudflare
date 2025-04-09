@@ -35,7 +35,7 @@ resource "cloudflare_zone_dns_settings" "example_zone_dns_settings" {
     rname = "admin.example.com"
     ttl = 3600
   }
-  zone_mode = "standard"
+  zone_mode = "dns_only"
 }
 ```
 

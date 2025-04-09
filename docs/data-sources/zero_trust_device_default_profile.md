@@ -70,9 +70,9 @@ Read-Only:
 
 Read-Only:
 
-- `address` (String) The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.
+- `address` (String) The address in CIDR format to include in the tunnel. If `address` is present, `host` must not be present.
 - `description` (String) A description of the Split Tunnel item, displayed in the client UI.
-- `host` (String) The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.
+- `host` (String) The domain name to include in the tunnel. If `host` is present, `address` must not be present.
 
 
 <a id="nestedatt--service_mode_v2"></a>
