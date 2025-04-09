@@ -23,7 +23,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
@@ -116,7 +116,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"operation_id": schema.StringAttribute{
-							Description: "UUID",
+							Description: "UUID.",
 							Computed:    true,
 						},
 						"features": schema.SingleNestedAttribute{
@@ -289,7 +289,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											CustomType:  customfield.NewNestedObjectType[APIShieldOperationsFeaturesSchemaInfoActiveSchemaDataSourceModel](ctx),
 											Attributes: map[string]schema.Attribute{
 												"id": schema.StringAttribute{
-													Description: "UUID",
+													Description: "UUID.",
 													Computed:    true,
 												},
 												"created_at": schema.StringAttribute{

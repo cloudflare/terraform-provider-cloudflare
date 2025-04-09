@@ -17,11 +17,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"operation_id": schema.StringAttribute{
-				Description: "UUID",
+				Description: "UUID.",
 				Required:    true,
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"mitigation_action": schema.StringAttribute{
