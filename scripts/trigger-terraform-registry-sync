@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ -z "${TERRAFORM_REGISTRY_COOKIE}" ]; then
+  echo "TERRAFORM_REGISTRY_COOKIE is not set."
+  exit 1
+fi
+
+curl -X POST https://registry.terraform.io/github/providers/cloudflare/cloudflare/resync \
+  -H 'Content-Type: application/vnd.api+json' \
+  --cookie $TERRAFORM_REGISTRY_COOKIE
