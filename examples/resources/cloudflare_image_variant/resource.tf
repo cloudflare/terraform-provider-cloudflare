@@ -4,7 +4,7 @@ resource "cloudflare_image_variant" "example_image_variant" {
   options = {
     fit = "scale-down"
     height = 768
-    metadata = "keep"
+    metadata = "none"
     width = 1366
   }
   never_require_signed_urls = true

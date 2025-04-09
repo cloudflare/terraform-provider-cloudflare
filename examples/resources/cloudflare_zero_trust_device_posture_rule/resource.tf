@@ -5,7 +5,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "example_zero_trust_device_
   description = "The rule for admin serial numbers"
   expiration = "1h"
   input = {
-    operating_system = "windows"
+    operating_system = "linux"
     path = "/bin/cat"
     exists = true
     sha256 = "https://api.us-2.crowdstrike.com"
