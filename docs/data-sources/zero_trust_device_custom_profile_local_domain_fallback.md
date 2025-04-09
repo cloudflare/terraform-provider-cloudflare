@@ -24,7 +24,7 @@ data "cloudflare_zero_trust_device_custom_profile_local_domain_fallback" "exampl
 ### Required
 
 - `account_id` (String)
-- `policy_id` (String) Device ID.
+- `policy_id` (String)
 
 ### Read-Only
 

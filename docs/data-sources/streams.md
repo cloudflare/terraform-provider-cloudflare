@@ -18,7 +18,7 @@ data "cloudflare_streams" "example_streams" {
   end = "2014-01-02T02:20:00Z"
   search = "puppy.mp4"
   start = "2014-01-02T02:20:00Z"
-  status = "pendingupload"
+  status = "inprogress"
   type = "live"
 }
 ```

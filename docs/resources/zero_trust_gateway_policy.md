@@ -14,7 +14,7 @@ description: |-
 ```terraform
 resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_policy" {
   account_id = "699d98642c564d2e855e9661899b7252"
-  action = "on"
+  action = "allow"
   name = "block bad websites"
   description = "Block bad websites based on their host name."
   device_posture = "any(device_posture.checks.passed[*] in {\"1308749e-fcfb-4ebc-b051-fe022b632644\"})"
@@ -36,7 +36,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       command_logging = false
     }
     biso_admin_controls = {
-      copy = "enabled"
+      copy = "remote_only"
       dcp = false
       dd = false
       dk = false
@@ -98,6 +98,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
     }
     redirect = {
       target_uri = "https://example.com"
+      include_context = true
       preserve_path_and_query = true
     }
     resolve_dns_internally = {
@@ -106,7 +107,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
     }
     resolve_dns_through_cloudflare = true
     untrusted_cert = {
-      action = "pass_through"
+      action = "error"
     }
   }
   schedule = {
@@ -344,6 +345,7 @@ Required:
 
 Optional:
 
+- `include_context` (Boolean) If true, context information will be passed as query parameters
 - `preserve_path_and_query` (Boolean) If true, the path and query parameters from the original request will be appended to target_uri
 
 

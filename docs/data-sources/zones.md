@@ -17,9 +17,9 @@ data "cloudflare_zones" "example_zones" {
     id = "id"
     name = "name"
   }
-  direction = "asc"
+  direction = "desc"
   name = "name"
-  order = "name"
+  order = "status"
   status = "initializing"
 }
 ```

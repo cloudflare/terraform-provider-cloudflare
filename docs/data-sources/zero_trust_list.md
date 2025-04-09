@@ -35,6 +35,7 @@ data "cloudflare_zero_trust_list" "example_zero_trust_list" {
 - `created_at` (String)
 - `description` (String) The description of the list.
 - `id` (String) API Resource UUID tag.
+- `items` (Attributes List) The items in the list. (see [below for nested schema](#nestedatt--items))
 - `list_count` (Number) The number of items in the list.
 - `name` (String) The name of the list.
 - `type` (String) The type of list.
@@ -48,5 +49,15 @@ Optional:
 
 - `type` (String) The type of list.
 Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
+
+
+<a id="nestedatt--items"></a>
+### Nested Schema for `items`
+
+Read-Only:
+
+- `created_at` (String)
+- `description` (String) The description of the list item, if present
+- `value` (String) The value of the item in a list.
 
 

@@ -23,22 +23,22 @@ data "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_custo
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
-- `custom_page_id` (String) UUID
+- `custom_page_id` (String) UUID.
 
 ### Read-Only
 
 - `app_count` (Number) Number of apps the custom page is assigned to.
 - `created_at` (String)
 - `custom_html` (String) Custom page HTML.
-- `id` (String) UUID
+- `id` (String) UUID.
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
 Available values: "identity_denied", "forbidden".
-- `uid` (String) UUID
+- `uid` (String) UUID.
 - `updated_at` (String)
 
 

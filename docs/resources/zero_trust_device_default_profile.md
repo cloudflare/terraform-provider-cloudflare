@@ -27,7 +27,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
   exclude_office_ips = true
   include = [{
     address = "192.0.2.0/24"
-    description = "Exclude testing domains from the tunnel"
+    description = "Include testing domains in the tunnel"
   }]
   register_interface_ip_with_dns = true
   service_mode_v2 = {
@@ -87,9 +87,9 @@ Optional:
 
 Optional:
 
-- `address` (String) The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.
+- `address` (String) The address in CIDR format to include in the tunnel. If `address` is present, `host` must not be present.
 - `description` (String) A description of the Split Tunnel item, displayed in the client UI.
-- `host` (String) The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.
+- `host` (String) The domain name to include in the tunnel. If `host` is present, `address` must not be present.
 
 
 <a id="nestedatt--service_mode_v2"></a>

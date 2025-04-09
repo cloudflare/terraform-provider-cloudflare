@@ -34,7 +34,7 @@ resource "cloudflare_stream_live_input" "example_stream_live_input" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 

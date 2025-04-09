@@ -47,7 +47,7 @@ Available values: "low", "mid", "high".
 - `priority` (Number) Priority of WAN for traffic loadbalancing.
 - `site_id` (String) Identifier
 - `static_addressing` (Attributes) (optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode. (see [below for nested schema](#nestedatt--result--static_addressing))
-- `vlan_tag` (Number) VLAN port number.
+- `vlan_tag` (Number) VLAN ID. Use zero for untagged.
 
 <a id="nestedatt--result--static_addressing"></a>
 ### Nested Schema for `result.static_addressing`

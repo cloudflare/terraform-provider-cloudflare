@@ -32,7 +32,7 @@ resource "cloudflare_load_balancer_monitor" "example_load_balancer_monitor" {
   probe_zone = "example.com"
   retries = 0
   timeout = 0
-  type = "http"
+  type = "https"
 }
 ```
 

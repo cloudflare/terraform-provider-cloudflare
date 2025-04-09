@@ -40,7 +40,7 @@ Available values: "low", "mid", "high".
 - `physport` (Number)
 - `priority` (Number) Priority of WAN for traffic loadbalancing.
 - `static_addressing` (Attributes) (optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode. (see [below for nested schema](#nestedatt--static_addressing))
-- `vlan_tag` (Number) VLAN port number.
+- `vlan_tag` (Number) VLAN ID. Use zero for untagged.
 
 <a id="nestedatt--static_addressing"></a>
 ### Nested Schema for `static_addressing`

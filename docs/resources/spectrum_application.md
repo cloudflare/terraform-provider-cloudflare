@@ -21,7 +21,7 @@ resource "cloudflare_spectrum_application" "example_spectrum_application" {
   ip_firewall = true
   protocol = "tcp/22"
   proxy_protocol = "off"
-  tls = "off"
+  tls = "full"
   traffic_type = "direct"
   argo_smart_routing = true
   edge_ips = {

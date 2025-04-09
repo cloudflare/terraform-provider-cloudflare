@@ -21,7 +21,7 @@ description: |-
 resource "cloudflare_firewall_rule" "example_firewall_rule" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   action = {
-    mode = "simulate"
+    mode = "challenge"
     response = {
       body = "<error>This request has been rate-limited.</error>"
       content_type = "text/xml"

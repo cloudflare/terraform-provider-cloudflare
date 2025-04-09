@@ -40,7 +40,7 @@ data "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
 - `physport` (Number)
 - `routed_subnets` (Attributes List) (see [below for nested schema](#nestedatt--routed_subnets))
 - `static_addressing` (Attributes) If the site is not configured in high availability mode, this configuration is optional (if omitted, use DHCP). However, if in high availability mode, static_address is required along with secondary and virtual address. (see [below for nested schema](#nestedatt--static_addressing))
-- `vlan_tag` (Number) VLAN port number.
+- `vlan_tag` (Number) VLAN ID. Use zero for untagged.
 
 <a id="nestedatt--nat"></a>
 ### Nested Schema for `nat`
