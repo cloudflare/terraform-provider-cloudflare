@@ -3,17 +3,17 @@
 package ruleset_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestRulesetsDataSourceModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*ruleset.RulesetsDataSourceModel)(nil)
-	schema := ruleset.ListDataSourceSchema(context.TODO())
-	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*ruleset.RulesetsDataSourceModel)(nil)
+  schema := ruleset.ListDataSourceSchema(context.TODO())
+  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

@@ -3,17 +3,17 @@
 package zone_lockdown_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_lockdown"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_lockdown"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestZoneLockdownModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*zone_lockdown.ZoneLockdownModel)(nil)
-	schema := zone_lockdown.ResourceSchema(context.TODO())
-	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*zone_lockdown.ZoneLockdownModel)(nil)
+  schema := zone_lockdown.ResourceSchema(context.TODO())
+  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

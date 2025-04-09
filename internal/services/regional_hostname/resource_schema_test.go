@@ -3,17 +3,17 @@
 package regional_hostname_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestRegionalHostnameModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*regional_hostname.RegionalHostnameModel)(nil)
-	schema := regional_hostname.ResourceSchema(context.TODO())
-	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*regional_hostname.RegionalHostnameModel)(nil)
+  schema := regional_hostname.ResourceSchema(context.TODO())
+  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

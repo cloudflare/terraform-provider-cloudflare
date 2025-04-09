@@ -3,17 +3,17 @@
 package account_api_token_permission_groups_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestAccountAPITokenPermissionGroupsListDataSourceModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*account_api_token_permission_groups.AccountAPITokenPermissionGroupsListDataSourceModel)(nil)
-	schema := account_api_token_permission_groups.ListDataSourceSchema(context.TODO())
-	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*account_api_token_permission_groups.AccountAPITokenPermissionGroupsListDataSourceModel)(nil)
+  schema := account_api_token_permission_groups.ListDataSourceSchema(context.TODO())
+  errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

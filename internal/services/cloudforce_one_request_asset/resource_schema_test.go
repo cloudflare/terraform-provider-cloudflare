@@ -3,17 +3,17 @@
 package cloudforce_one_request_asset_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_asset"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_asset"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestCloudforceOneRequestAssetModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*cloudforce_one_request_asset.CloudforceOneRequestAssetModel)(nil)
-	schema := cloudforce_one_request_asset.ResourceSchema(context.TODO())
-	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*cloudforce_one_request_asset.CloudforceOneRequestAssetModel)(nil)
+  schema := cloudforce_one_request_asset.ResourceSchema(context.TODO())
+  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }

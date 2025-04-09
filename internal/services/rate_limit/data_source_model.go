@@ -3,74 +3,74 @@
 package rate_limit
 
 import (
-	"context"
+  "context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/rate_limits"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+  "github.com/cloudflare/cloudflare-go/v4"
+  "github.com/cloudflare/cloudflare-go/v4/rate_limits"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+  "github.com/hashicorp/terraform-plugin-framework/diag"
+  "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type RateLimitResultDataSourceEnvelope struct {
-	Result RateLimitDataSourceModel `json:"result,computed"`
+Result RateLimitDataSourceModel `json:"result,computed"`
 }
 
 type RateLimitDataSourceModel struct {
-	ID          types.String                                                 `tfsdk:"id" path:"rate_limit_id,computed"`
-	RateLimitID types.String                                                 `tfsdk:"rate_limit_id" path:"rate_limit_id,optional"`
-	ZoneID      types.String                                                 `tfsdk:"zone_id" path:"zone_id,required"`
-	Description types.String                                                 `tfsdk:"description" json:"description,computed"`
-	Disabled    types.Bool                                                   `tfsdk:"disabled" json:"disabled,computed"`
-	Period      types.Float64                                                `tfsdk:"period" json:"period,computed"`
-	Threshold   types.Float64                                                `tfsdk:"threshold" json:"threshold,computed"`
-	Action      customfield.NestedObject[RateLimitActionDataSourceModel]     `tfsdk:"action" json:"action,computed"`
-	Bypass      customfield.NestedObjectList[RateLimitBypassDataSourceModel] `tfsdk:"bypass" json:"bypass,computed"`
-	Match       customfield.NestedObject[RateLimitMatchDataSourceModel]      `tfsdk:"match" json:"match,computed"`
+ID types.String `tfsdk:"id" path:"rate_limit_id,computed"`
+RateLimitID types.String `tfsdk:"rate_limit_id" path:"rate_limit_id,optional"`
+ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
+Description types.String `tfsdk:"description" json:"description,computed"`
+Disabled types.Bool `tfsdk:"disabled" json:"disabled,computed"`
+Period types.Float64 `tfsdk:"period" json:"period,computed"`
+Threshold types.Float64 `tfsdk:"threshold" json:"threshold,computed"`
+Action customfield.NestedObject[RateLimitActionDataSourceModel] `tfsdk:"action" json:"action,computed"`
+Bypass customfield.NestedObjectList[RateLimitBypassDataSourceModel] `tfsdk:"bypass" json:"bypass,computed"`
+Match customfield.NestedObject[RateLimitMatchDataSourceModel] `tfsdk:"match" json:"match,computed"`
 }
 
 func (m *RateLimitDataSourceModel) toReadParams(_ context.Context) (params rate_limits.RateLimitGetParams, diags diag.Diagnostics) {
-	params = rate_limits.RateLimitGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+  params = rate_limits.RateLimitGetParams{
+    ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+  }
 
-	return
+  return
 }
 
 type RateLimitActionDataSourceModel struct {
-	Mode     types.String                                                     `tfsdk:"mode" json:"mode,computed"`
-	Response customfield.NestedObject[RateLimitActionResponseDataSourceModel] `tfsdk:"response" json:"response,computed"`
-	Timeout  types.Float64                                                    `tfsdk:"timeout" json:"timeout,computed"`
+Mode types.String `tfsdk:"mode" json:"mode,computed"`
+Response customfield.NestedObject[RateLimitActionResponseDataSourceModel] `tfsdk:"response" json:"response,computed"`
+Timeout types.Float64 `tfsdk:"timeout" json:"timeout,computed"`
 }
 
 type RateLimitActionResponseDataSourceModel struct {
-	Body        types.String `tfsdk:"body" json:"body,computed"`
-	ContentType types.String `tfsdk:"content_type" json:"content_type,computed"`
+Body types.String `tfsdk:"body" json:"body,computed"`
+ContentType types.String `tfsdk:"content_type" json:"content_type,computed"`
 }
 
 type RateLimitBypassDataSourceModel struct {
-	Name  types.String `tfsdk:"name" json:"name,computed"`
-	Value types.String `tfsdk:"value" json:"value,computed"`
+Name types.String `tfsdk:"name" json:"name,computed"`
+Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type RateLimitMatchDataSourceModel struct {
-	Headers  customfield.NestedObjectList[RateLimitMatchHeadersDataSourceModel] `tfsdk:"headers" json:"headers,computed"`
-	Request  customfield.NestedObject[RateLimitMatchRequestDataSourceModel]     `tfsdk:"request" json:"request,computed"`
-	Response customfield.NestedObject[RateLimitMatchResponseDataSourceModel]    `tfsdk:"response" json:"response,computed"`
+Headers customfield.NestedObjectList[RateLimitMatchHeadersDataSourceModel] `tfsdk:"headers" json:"headers,computed"`
+Request customfield.NestedObject[RateLimitMatchRequestDataSourceModel] `tfsdk:"request" json:"request,computed"`
+Response customfield.NestedObject[RateLimitMatchResponseDataSourceModel] `tfsdk:"response" json:"response,computed"`
 }
 
 type RateLimitMatchHeadersDataSourceModel struct {
-	Name  types.String `tfsdk:"name" json:"name,computed"`
-	Op    types.String `tfsdk:"op" json:"op,computed"`
-	Value types.String `tfsdk:"value" json:"value,computed"`
+Name types.String `tfsdk:"name" json:"name,computed"`
+Op types.String `tfsdk:"op" json:"op,computed"`
+Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type RateLimitMatchRequestDataSourceModel struct {
-	Methods customfield.List[types.String] `tfsdk:"methods" json:"methods,computed"`
-	Schemes customfield.List[types.String] `tfsdk:"schemes" json:"schemes,computed"`
-	URL     types.String                   `tfsdk:"url" json:"url,computed"`
+Methods customfield.List[types.String] `tfsdk:"methods" json:"methods,computed"`
+Schemes customfield.List[types.String] `tfsdk:"schemes" json:"schemes,computed"`
+URL types.String `tfsdk:"url" json:"url,computed"`
 }
 
 type RateLimitMatchResponseDataSourceModel struct {
-	OriginTraffic types.Bool `tfsdk:"origin_traffic" json:"origin_traffic,computed"`
+OriginTraffic types.Bool `tfsdk:"origin_traffic" json:"origin_traffic,computed"`
 }

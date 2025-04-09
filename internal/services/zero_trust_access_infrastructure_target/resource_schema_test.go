@@ -3,17 +3,17 @@
 package zero_trust_access_infrastructure_target_test
 
 import (
-	"context"
-	"testing"
+  "context"
+  "testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_infrastructure_target"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_infrastructure_target"
+  "github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
 func TestZeroTrustAccessInfrastructureTargetModelSchemaParity(t *testing.T) {
-	t.Parallel()
-	model := (*zero_trust_access_infrastructure_target.ZeroTrustAccessInfrastructureTargetModel)(nil)
-	schema := zero_trust_access_infrastructure_target.ResourceSchema(context.TODO())
-	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
-	errs.Report(t)
+  t.Parallel()
+  model := (*zero_trust_access_infrastructure_target.ZeroTrustAccessInfrastructureTargetModel)(nil)
+  schema := zero_trust_access_infrastructure_target.ResourceSchema(context.TODO())
+  errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+  errs.Report(t)
 }
