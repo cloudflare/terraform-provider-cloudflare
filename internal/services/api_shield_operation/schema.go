@@ -22,17 +22,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "UUID",
+				Description:   "UUID.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"operation_id": schema.StringAttribute{
-				Description:   "UUID",
+				Description:   "UUID.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -235,7 +235,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								CustomType:  customfield.NewNestedObjectType[APIShieldOperationFeaturesSchemaInfoActiveSchemaModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
-										Description: "UUID",
+										Description: "UUID.",
 										Computed:    true,
 									},
 									"created_at": schema.StringAttribute{
