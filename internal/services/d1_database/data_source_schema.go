@@ -5,11 +5,14 @@ package d1_database
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*D1DatabaseDataSource)(nil)
@@ -51,6 +54,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"version": schema.StringAttribute{
 				Computed: true,
+			},
+			"read_replication": schema.SingleNestedAttribute{
+				Description: "Configuration for D1 read replication.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[D1DatabaseReadReplicationDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"mode": schema.StringAttribute{
+						Description: "The read replication mode for the database. Use 'auto' to create replicas and allow D1 automatically place them around the world, or 'disabled' to not use any database replicas (it can take a few hours for all replicas to be deleted).\nAvailable values: \"auto\", \"disabled\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("auto", "disabled"),
+						},
+					},
+				},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
