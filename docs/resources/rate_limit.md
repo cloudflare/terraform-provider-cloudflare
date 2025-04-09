@@ -22,7 +22,7 @@ description: |-
 resource "cloudflare_rate_limit" "example_rate_limit" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   action = {
-    mode = "simulate"
+    mode = "challenge"
     response = {
       body = "<error>This request has been rate-limited.</error>"
       content_type = "text/xml"
@@ -32,7 +32,7 @@ resource "cloudflare_rate_limit" "example_rate_limit" {
   match = {
     headers = [{
       name = "Cf-Cache-Status"
-      op = "eq"
+      op = "ne"
       value = "HIT"
     }]
     request = {

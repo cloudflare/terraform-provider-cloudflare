@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
@@ -93,7 +94,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBlockPageModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"background_color": schema.StringAttribute{
-								Description: "Block page background color in #rrggbb format.",
+								Description: "If mode is customized_block_page: block page background color in #rrggbb format.",
 								Optional:    true,
 							},
 							"enabled": schema.BoolAttribute{
@@ -101,31 +102,48 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 							"footer_text": schema.StringAttribute{
-								Description: "Block page footer text.",
+								Description: "If mode is customized_block_page: block page footer text.",
 								Optional:    true,
 							},
 							"header_text": schema.StringAttribute{
-								Description: "Block page header text.",
+								Description: "If mode is customized_block_page: block page header text.",
+								Optional:    true,
+							},
+							"include_context": schema.BoolAttribute{
+								Description: "If mode is redirect_uri: when enabled, context will be appended to target_uri as query parameters.",
 								Optional:    true,
 							},
 							"logo_path": schema.StringAttribute{
-								Description: "Full URL to the logo file.",
+								Description: "If mode is customized_block_page: full URL to the logo file.",
 								Optional:    true,
 							},
 							"mailto_address": schema.StringAttribute{
-								Description: "Admin email for users to contact.",
+								Description: "If mode is customized_block_page: admin email for users to contact.",
 								Optional:    true,
 							},
 							"mailto_subject": schema.StringAttribute{
-								Description: "Subject line for emails created from block page.",
+								Description: "If mode is customized_block_page: subject line for emails created from block page.",
 								Optional:    true,
 							},
+							"mode": schema.StringAttribute{
+								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"customized_block_page\", \"redirect_uri\".",
+								Computed:    true,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("customized_block_page", "redirect_uri"),
+								},
+								Default: stringdefault.StaticString("customized_block_page"),
+							},
 							"name": schema.StringAttribute{
-								Description: "Block page title.",
+								Description: "If mode is customized_block_page: block page title.",
 								Optional:    true,
 							},
 							"suppress_footer": schema.BoolAttribute{
-								Description: "Suppress detailed info at the bottom of the block page.",
+								Description: "If mode is customized_block_page: suppress detailed info at the bottom of the block page.",
+								Optional:    true,
+							},
+							"target_uri": schema.StringAttribute{
+								Description: "If mode is redirect_uri: URI to which the user should be redirected.",
 								Optional:    true,
 							},
 						},
@@ -171,10 +189,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"custom_certificate": schema.SingleNestedAttribute{
-						Description: "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`)",
-						Computed:    true,
-						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCustomCertificateModel](ctx),
+						Description:        "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`)",
+						Computed:           true,
+						Optional:           true,
+						DeprecationMessage: "This attribute is deprecated.",
+						CustomType:         customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCustomCertificateModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable use of custom certificate authority for signing Gateway traffic.",

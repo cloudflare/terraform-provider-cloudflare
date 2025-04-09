@@ -112,6 +112,9 @@ func (r *ZeroTrustTunnelCloudflaredResource) Update(ctx context.Context, req res
 		return
 	}
 
+	configurationSource := state.ConfigSrc
+	tunnelSecret := state.TunnelSecret
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -140,6 +143,8 @@ func (r *ZeroTrustTunnelCloudflaredResource) Update(ctx context.Context, req res
 		return
 	}
 	data = &env.Result
+	data.ConfigSrc = configurationSource
+	data.TunnelSecret = tunnelSecret
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -152,6 +157,9 @@ func (r *ZeroTrustTunnelCloudflaredResource) Read(ctx context.Context, req resou
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	configurationSource := data.ConfigSrc
+	tunnelSecret := data.TunnelSecret
 
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredResultEnvelope{*data}
@@ -180,6 +188,8 @@ func (r *ZeroTrustTunnelCloudflaredResource) Read(ctx context.Context, req resou
 		return
 	}
 	data = &env.Result
+	data.ConfigSrc = configurationSource
+	data.TunnelSecret = tunnelSecret
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

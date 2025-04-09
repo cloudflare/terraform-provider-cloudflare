@@ -25,7 +25,7 @@ data "cloudflare_zero_trust_access_application" "example_zero_trust_access_appli
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `app_id` (String) Identifier
+- `app_id` (String) Identifier.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
@@ -50,17 +50,24 @@ data "cloudflare_zero_trust_access_application" "example_zero_trust_access_appli
 - `footer_links` (Attributes List) The links in the App Launcher footer. (see [below for nested schema](#nestedatt--footer_links))
 - `header_bg_color` (String) The background color of the App Launcher header.
 - `http_only_cookie_attribute` (Boolean) Enables the HttpOnly cookie attribute, which increases security against XSS attacks.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `landing_page_design` (Attributes) The design of the App Launcher landing page shown to users when they log in. (see [below for nested schema](#nestedatt--landing_page_design))
 - `logo_url` (String) The image URL for the logo shown in the App Launcher dashboard.
 - `name` (String) The name of the application.
 - `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.
 - `path_cookie_attribute` (Boolean) Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default
 - `policies` (Attributes List) (see [below for nested schema](#nestedatt--policies))
+- `read_service_tokens_from_header` (String) Allows matching Access Service Tokens passed HTTP in a single header with this name.
+This works as an alternative to the (CF-Access-Client-Id, CF-Access-Client-Secret) pair of headers.
+The header value will be interpreted as a json object similar to: 
+  {
+    "cf-access-client-id": "88bf3b6d86161464f6509f7219099e57.access.example.com",
+    "cf-access-client-secret": "bdd31cbc4dec990953e39163fbbb194c93313ca9f0a6e420346af9d326b1d2a5"
+  }
 - `saas_app` (Attributes) (see [below for nested schema](#nestedatt--saas_app))
 - `same_site_cookie_attribute` (String) Sets the SameSite cookie setting, which provides increased security against CSRF attacks.
 - `scim_config` (Attributes) Configuration for provisioning to this application via SCIM. This is currently in closed beta. (see [below for nested schema](#nestedatt--scim_config))
-- `self_hosted_domains` (List of String) List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.
+- `self_hosted_domains` (List of String, Deprecated) List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.
 - `service_auth_401_redirect` (Boolean) Returns a 401 status code when the request is blocked by a Service Auth policy.
 - `session_duration` (String) The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
 - `skip_app_launcher_login_page` (Boolean) Determines when to skip the App Launcher landing page.

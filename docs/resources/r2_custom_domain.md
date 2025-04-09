@@ -35,6 +35,7 @@ resource "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 
 ### Optional
 
+- `jurisdiction` (String) Jurisdiction of the bucket
 - `min_tls` (String) Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.
 Available values: "1.0", "1.1", "1.2", "1.3".
 

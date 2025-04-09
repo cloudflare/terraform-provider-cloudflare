@@ -17,7 +17,7 @@ type Web3HostnameResultDataSourceEnvelope struct {
 }
 
 type Web3HostnameDataSourceModel struct {
-	ID          types.String      `tfsdk:"id" json:"-,computed"`
+	ID          types.String      `tfsdk:"id" path:"identifier,computed"`
 	Identifier  types.String      `tfsdk:"identifier" path:"identifier,optional"`
 	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedOn   timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -31,14 +31,6 @@ type Web3HostnameDataSourceModel struct {
 
 func (m *Web3HostnameDataSourceModel) toReadParams(_ context.Context) (params web3.HostnameGetParams, diags diag.Diagnostics) {
 	params = web3.HostnameGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}
-
-func (m *Web3HostnameDataSourceModel) toListParams(_ context.Context) (params web3.HostnameListParams, diags diag.Diagnostics) {
-	params = web3.HostnameListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 

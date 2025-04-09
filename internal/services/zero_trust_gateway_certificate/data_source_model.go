@@ -17,7 +17,7 @@ type ZeroTrustGatewayCertificateResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustGatewayCertificateDataSourceModel struct {
-	ID            types.String      `tfsdk:"id" json:"-,computed"`
+	ID            types.String      `tfsdk:"id" path:"certificate_id,computed"`
 	CertificateID types.String      `tfsdk:"certificate_id" path:"certificate_id,optional"`
 	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
 	BindingStatus types.String      `tfsdk:"binding_status" json:"binding_status,computed"`
@@ -35,14 +35,6 @@ type ZeroTrustGatewayCertificateDataSourceModel struct {
 
 func (m *ZeroTrustGatewayCertificateDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayCertificateGetParams, diags diag.Diagnostics) {
 	params = zero_trust.GatewayCertificateGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *ZeroTrustGatewayCertificateDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayCertificateListParams, diags diag.Diagnostics) {
-	params = zero_trust.GatewayCertificateListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

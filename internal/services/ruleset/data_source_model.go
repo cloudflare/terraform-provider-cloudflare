@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,13 +17,12 @@ type RulesetResultDataSourceEnvelope struct {
 }
 
 type RulesetDataSourceModel struct {
-	ID          types.String                                              `tfsdk:"id" json:"-,computed"`
+	ID          types.String                                              `tfsdk:"id" path:"ruleset_id,computed"`
 	RulesetID   types.String                                              `tfsdk:"ruleset_id" path:"ruleset_id,optional"`
 	AccountID   types.String                                              `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID      types.String                                              `tfsdk:"zone_id" path:"zone_id,optional"`
 	Description types.String                                              `tfsdk:"description" json:"description,computed"`
 	Kind        types.String                                              `tfsdk:"kind" json:"kind,computed"`
-	LastUpdated timetypes.RFC3339                                         `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Name        types.String                                              `tfsdk:"name" json:"name,computed"`
 	Phase       types.String                                              `tfsdk:"phase" json:"phase,computed"`
 	Rules       customfield.NestedObjectList[RulesetRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
@@ -42,21 +40,7 @@ func (m *RulesetDataSourceModel) toReadParams(_ context.Context) (params ruleset
 	return
 }
 
-func (m *RulesetDataSourceModel) toListParams(_ context.Context) (params rulesets.RulesetListParams, diags diag.Diagnostics) {
-	params = rulesets.RulesetListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
-
-	return
-}
-
 type RulesetRulesDataSourceModel struct {
-	LastUpdated            timetypes.RFC3339                                                           `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	Version                types.String                                                                `tfsdk:"version" json:"version,computed"`
 	ID                     types.String                                                                `tfsdk:"id" json:"id,computed"`
 	Action                 types.String                                                                `tfsdk:"action" json:"action,computed"`
 	ActionParameters       customfield.NestedObject[RulesetRulesActionParametersDataSourceModel]       `tfsdk:"action_parameters" json:"action_parameters,computed"`

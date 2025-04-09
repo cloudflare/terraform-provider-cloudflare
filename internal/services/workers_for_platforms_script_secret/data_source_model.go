@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package workers_secret
+package workers_for_platforms_script_secret
 
 import (
 	"context"
@@ -11,12 +11,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type WorkersSecretResultDataSourceEnvelope struct {
-	Result WorkersSecretDataSourceModel `json:"result,computed"`
+type WorkersForPlatformsScriptSecretResultDataSourceEnvelope struct {
+	Result WorkersForPlatformsScriptSecretDataSourceModel `json:"result,computed"`
 }
 
-type WorkersSecretDataSourceModel struct {
-	ID                types.String `tfsdk:"id" json:"-,computed"`
+type WorkersForPlatformsScriptSecretDataSourceModel struct {
+	ID                types.String `tfsdk:"id" path:"secret_name,computed"`
 	SecretName        types.String `tfsdk:"secret_name" path:"secret_name,optional"`
 	AccountID         types.String `tfsdk:"account_id" path:"account_id,required"`
 	DispatchNamespace types.String `tfsdk:"dispatch_namespace" path:"dispatch_namespace,required"`
@@ -25,16 +25,8 @@ type WorkersSecretDataSourceModel struct {
 	Type              types.String `tfsdk:"type" json:"type,computed"`
 }
 
-func (m *WorkersSecretDataSourceModel) toReadParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceScriptSecretGetParams, diags diag.Diagnostics) {
+func (m *WorkersForPlatformsScriptSecretDataSourceModel) toReadParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceScriptSecretGetParams, diags diag.Diagnostics) {
 	params = workers_for_platforms.DispatchNamespaceScriptSecretGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *WorkersSecretDataSourceModel) toListParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceScriptSecretListParams, diags diag.Diagnostics) {
-	params = workers_for_platforms.DispatchNamespaceScriptSecretListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

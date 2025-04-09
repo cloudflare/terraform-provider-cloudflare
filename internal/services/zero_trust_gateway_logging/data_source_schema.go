@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -28,20 +27,47 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayLoggingSettingsByRuleTypeDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
-					"dns": schema.StringAttribute{
-						Description: "Logging settings for DNS firewall.",
-						Computed:    true,
-						CustomType:  jsontypes.NormalizedType{},
+					"dns": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustGatewayLoggingSettingsByRuleTypeDNSDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"log_all": schema.BoolAttribute{
+								Description: "Log all requests to this service.",
+								Computed:    true,
+							},
+							"log_blocks": schema.BoolAttribute{
+								Description: "Log only blocking requests to this service.",
+								Computed:    true,
+							},
+						},
 					},
-					"http": schema.StringAttribute{
-						Description: "Logging settings for HTTP/HTTPS firewall.",
-						Computed:    true,
-						CustomType:  jsontypes.NormalizedType{},
+					"http": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustGatewayLoggingSettingsByRuleTypeHTTPDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"log_all": schema.BoolAttribute{
+								Description: "Log all requests to this service.",
+								Computed:    true,
+							},
+							"log_blocks": schema.BoolAttribute{
+								Description: "Log only blocking requests to this service.",
+								Computed:    true,
+							},
+						},
 					},
-					"l4": schema.StringAttribute{
-						Description: "Logging settings for Network firewall.",
-						Computed:    true,
-						CustomType:  jsontypes.NormalizedType{},
+					"l4": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustGatewayLoggingSettingsByRuleTypeL4DataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"log_all": schema.BoolAttribute{
+								Description: "Log all requests to this service.",
+								Computed:    true,
+							},
+							"log_blocks": schema.BoolAttribute{
+								Description: "Log only blocking requests to this service.",
+								Computed:    true,
+							},
+						},
 					},
 				},
 			},

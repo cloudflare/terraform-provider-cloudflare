@@ -3,11 +3,7 @@
 package cloudforce_one_request
 
 import (
-	"context"
-
-	"github.com/cloudflare/cloudflare-go/v4/cloudforce_one"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,7 +12,7 @@ type CloudforceOneRequestResultDataSourceEnvelope struct {
 }
 
 type CloudforceOneRequestDataSourceModel struct {
-	ID                types.String      `tfsdk:"id" json:"-,computed"`
+	ID                types.String      `tfsdk:"id" path:"request_identifier,computed"`
 	RequestIdentifier types.String      `tfsdk:"request_identifier" path:"request_identifier,optional"`
 	AccountIdentifier types.String      `tfsdk:"account_identifier" path:"account_identifier,required"`
 	Completed         timetypes.RFC3339 `tfsdk:"completed" json:"completed,computed" format:"date-time"`
@@ -31,10 +27,4 @@ type CloudforceOneRequestDataSourceModel struct {
 	TLP               types.String      `tfsdk:"tlp" json:"tlp,computed"`
 	Tokens            types.Int64       `tfsdk:"tokens" json:"tokens,computed"`
 	Updated           timetypes.RFC3339 `tfsdk:"updated" json:"updated,computed" format:"date-time"`
-}
-
-func (m *CloudforceOneRequestDataSourceModel) toListParams(_ context.Context) (params cloudforce_one.RequestListParams, diags diag.Diagnostics) {
-	params = cloudforce_one.RequestListParams{}
-
-	return
 }

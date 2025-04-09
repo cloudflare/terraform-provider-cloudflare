@@ -23,11 +23,11 @@ data "cloudflare_dns_record" "example_dns_record" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
-- `dns_record_id` (String) Identifier
+- `dns_record_id` (String) Identifier.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
@@ -37,7 +37,7 @@ data "cloudflare_dns_record" "example_dns_record" {
 - `content` (String) A valid IPv4 address.
 - `created_on` (String) When the record was created.
 - `data` (Attributes) Components of a CAA record. (see [below for nested schema](#nestedatt--data))
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `meta` (String) Extra Cloudflare-specific information about the record.
 - `modified_on` (String) When the record was last modified.
 - `name` (String) DNS record name (or @ for the zone apex) in Punycode.

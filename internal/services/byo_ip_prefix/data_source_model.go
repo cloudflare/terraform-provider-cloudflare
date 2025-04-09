@@ -17,7 +17,7 @@ type ByoIPPrefixResultDataSourceEnvelope struct {
 }
 
 type ByoIPPrefixDataSourceModel struct {
-	ID                   types.String      `tfsdk:"id" json:"-,computed"`
+	ID                   types.String      `tfsdk:"id" path:"prefix_id,computed"`
 	PrefixID             types.String      `tfsdk:"prefix_id" path:"prefix_id,optional"`
 	AccountID            types.String      `tfsdk:"account_id" path:"account_id,required"`
 	Advertised           types.Bool        `tfsdk:"advertised" json:"advertised,computed"`
@@ -35,14 +35,6 @@ type ByoIPPrefixDataSourceModel struct {
 
 func (m *ByoIPPrefixDataSourceModel) toReadParams(_ context.Context) (params addressing.PrefixGetParams, diags diag.Diagnostics) {
 	params = addressing.PrefixGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *ByoIPPrefixDataSourceModel) toListParams(_ context.Context) (params addressing.PrefixListParams, diags diag.Diagnostics) {
-	params = addressing.PrefixListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

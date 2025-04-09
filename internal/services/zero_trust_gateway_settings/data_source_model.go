@@ -69,11 +69,14 @@ type ZeroTrustGatewaySettingsSettingsBlockPageDataSourceModel struct {
 	Enabled         types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 	FooterText      types.String `tfsdk:"footer_text" json:"footer_text,computed"`
 	HeaderText      types.String `tfsdk:"header_text" json:"header_text,computed"`
+	IncludeContext  types.Bool   `tfsdk:"include_context" json:"include_context,computed"`
 	LogoPath        types.String `tfsdk:"logo_path" json:"logo_path,computed"`
 	MailtoAddress   types.String `tfsdk:"mailto_address" json:"mailto_address,computed"`
 	MailtoSubject   types.String `tfsdk:"mailto_subject" json:"mailto_subject,computed"`
+	Mode            types.String `tfsdk:"mode" json:"mode,computed"`
 	Name            types.String `tfsdk:"name" json:"name,computed"`
 	SuppressFooter  types.Bool   `tfsdk:"suppress_footer" json:"suppress_footer,computed"`
+	TargetURI       types.String `tfsdk:"target_uri" json:"target_uri,computed"`
 }
 
 type ZeroTrustGatewaySettingsSettingsBodyScanningDataSourceModel struct {

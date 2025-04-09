@@ -25,7 +25,7 @@ resource "cloudflare_workers_script_subdomain" "example_workers_script_subdomain
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `enabled` (Boolean) Whether the Worker should be available on the workers.dev subdomain.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 

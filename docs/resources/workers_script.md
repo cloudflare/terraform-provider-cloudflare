@@ -74,7 +74,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `content` (String) Module or Service Worker contents of the Worker.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 
@@ -119,12 +119,14 @@ Optional:
 
 Optional:
 
+- `_headers` (String) The contents of a _headers file (used to attach custom headers on asset responses)
+- `_redirects` (String) The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving)
 - `html_handling` (String) Determines the redirects and rewrites of requests for HTML content.
 Available values: "auto-trailing-slash", "force-trailing-slash", "drop-trailing-slash", "none".
 - `not_found_handling` (String) Determines the response when a request does not match a static asset, and there is no Worker script.
 Available values: "none", "404-page", "single-page-application".
 - `run_worker_first` (Boolean) When true, requests will always invoke the Worker script. Otherwise, attempt to serve an asset matching the request, falling back to the Worker script.
-- `serve_directly` (Boolean) When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.
+- `serve_directly` (Boolean, Deprecated) When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.
 
 
 

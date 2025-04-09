@@ -46,7 +46,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"external_directory_node_id": schema.StringAttribute{
-				Computed: true,
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 			},
 			"is_email_regex": schema.BoolAttribute{
 				Computed: true,

@@ -11,9 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -30,19 +27,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"flatten_all_cnames": schema.BoolAttribute{
-				Description:   "Whether to flatten all CNAME records in the zone. Note that, due to DNS limitations, a CNAME record at the zone apex will always be flattened.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Whether to flatten all CNAME records in the zone. Note that, due to DNS limitations, a CNAME record at the zone apex will always be flattened.",
+				Optional:    true,
 			},
 			"foundation_dns": schema.BoolAttribute{
-				Description:   "Whether to enable Foundation DNS Advanced Nameservers on the zone.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Whether to enable Foundation DNS Advanced Nameservers on the zone.",
+				Optional:    true,
 			},
 			"multi_provider": schema.BoolAttribute{
-				Description:   "Whether to enable multi-provider DNS, which causes Cloudflare to activate the zone even when non-Cloudflare NS records exist, and to respect NS records at the zone apex during outbound zone transfers.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Whether to enable multi-provider DNS, which causes Cloudflare to activate the zone even when non-Cloudflare NS records exist, and to respect NS records at the zone apex during outbound zone transfers.",
+				Optional:    true,
 			},
 			"ns_ttl": schema.Float64Attribute{
 				Description: "The time to live (TTL) of the zone's nameserver (NS) records.",
@@ -50,12 +44,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.Float64{
 					float64validator.Between(30, 86400),
 				},
-				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
 			},
 			"secondary_overrides": schema.BoolAttribute{
-				Description:   "Allows a Secondary DNS zone to use (proxied) override records and CNAME flattening at the zone apex.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "Allows a Secondary DNS zone to use (proxied) override records and CNAME flattening at the zone apex.",
+				Optional:    true,
 			},
 			"zone_mode": schema.StringAttribute{
 				Description: "Whether the zone mode is a regular or CDN/DNS only zone.\nAvailable values: \"standard\", \"cdn_only\", \"dns_only\".",
@@ -67,7 +59,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"dns_only",
 					),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"internal_dns": schema.SingleNestedAttribute{
 				Description: "Settings for this internal zone.",
@@ -80,7 +71,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"nameservers": schema.SingleNestedAttribute{
 				Description: "Settings determining the nameservers through which the zone should be available.",
@@ -108,7 +98,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"soa": schema.SingleNestedAttribute{
 				Description: "Components of the zone's SOA record.",
@@ -160,7 +149,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 		},
 	}

@@ -17,7 +17,7 @@ type MagicTransitConnectorResultDataSourceEnvelope struct {
 }
 
 type MagicTransitConnectorDataSourceModel struct {
-	ID                           types.String                                                         `tfsdk:"id" json:"-,computed"`
+	ID                           types.String                                                         `tfsdk:"id" path:"connector_id,computed"`
 	ConnectorID                  types.String                                                         `tfsdk:"connector_id" path:"connector_id,optional"`
 	AccountID                    types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	Activated                    types.Bool                                                           `tfsdk:"activated" json:"activated,computed"`
@@ -33,14 +33,6 @@ type MagicTransitConnectorDataSourceModel struct {
 
 func (m *MagicTransitConnectorDataSourceModel) toReadParams(_ context.Context) (params magic_transit.ConnectorGetParams, diags diag.Diagnostics) {
 	params = magic_transit.ConnectorGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *MagicTransitConnectorDataSourceModel) toListParams(_ context.Context) (params magic_transit.ConnectorListParams, diags diag.Diagnostics) {
-	params = magic_transit.ConnectorListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

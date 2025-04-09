@@ -17,7 +17,7 @@ type ZeroTrustRiskScoringIntegrationResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustRiskScoringIntegrationDataSourceModel struct {
-	ID              types.String      `tfsdk:"id" json:"-,computed"`
+	ID              types.String      `tfsdk:"id" path:"integration_id,computed"`
 	IntegrationID   types.String      `tfsdk:"integration_id" path:"integration_id,optional"`
 	AccountID       types.String      `tfsdk:"account_id" path:"account_id,required"`
 	AccountTag      types.String      `tfsdk:"account_tag" json:"account_tag,computed"`
@@ -31,14 +31,6 @@ type ZeroTrustRiskScoringIntegrationDataSourceModel struct {
 
 func (m *ZeroTrustRiskScoringIntegrationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.RiskScoringIntegrationGetParams, diags diag.Diagnostics) {
 	params = zero_trust.RiskScoringIntegrationGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *ZeroTrustRiskScoringIntegrationDataSourceModel) toListParams(_ context.Context) (params zero_trust.RiskScoringIntegrationListParams, diags diag.Diagnostics) {
-	params = zero_trust.RiskScoringIntegrationListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

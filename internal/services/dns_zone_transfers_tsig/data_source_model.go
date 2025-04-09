@@ -16,7 +16,7 @@ type DNSZoneTransfersTSIGResultDataSourceEnvelope struct {
 }
 
 type DNSZoneTransfersTSIGDataSourceModel struct {
-	ID        types.String `tfsdk:"id" json:"-,computed"`
+	ID        types.String `tfsdk:"id" path:"tsig_id,computed"`
 	TSIGID    types.String `tfsdk:"tsig_id" path:"tsig_id,optional"`
 	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	Algo      types.String `tfsdk:"algo" json:"algo,computed"`
@@ -26,14 +26,6 @@ type DNSZoneTransfersTSIGDataSourceModel struct {
 
 func (m *DNSZoneTransfersTSIGDataSourceModel) toReadParams(_ context.Context) (params dns.ZoneTransferTSIGGetParams, diags diag.Diagnostics) {
 	params = dns.ZoneTransferTSIGGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *DNSZoneTransfersTSIGDataSourceModel) toListParams(_ context.Context) (params dns.ZoneTransferTSIGListParams, diags diag.Diagnostics) {
-	params = dns.ZoneTransferTSIGListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

@@ -72,6 +72,7 @@ resource "cloudflare_zero_trust_access_application" "example_zero_trust_access_a
     id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
     precedence = 0
   }]
+  read_service_tokens_from_header = "Authorization"
   same_site_cookie_attribute = "strict"
   scim_config = {
     idp_uid = "idp_uid"
@@ -133,10 +134,17 @@ resource "cloudflare_zero_trust_access_application" "example_zero_trust_access_a
 - `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.
 - `path_cookie_attribute` (Boolean) Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default
 - `policies` (Attributes List) The policies that Access applies to the application, in ascending order of precedence. Items can reference existing policies or create new policies exclusive to the application. (see [below for nested schema](#nestedatt--policies))
+- `read_service_tokens_from_header` (String) Allows matching Access Service Tokens passed HTTP in a single header with this name.
+This works as an alternative to the (CF-Access-Client-Id, CF-Access-Client-Secret) pair of headers.
+The header value will be interpreted as a json object similar to: 
+  {
+    "cf-access-client-id": "88bf3b6d86161464f6509f7219099e57.access.example.com",
+    "cf-access-client-secret": "bdd31cbc4dec990953e39163fbbb194c93313ca9f0a6e420346af9d326b1d2a5"
+  }
 - `saas_app` (Attributes) (see [below for nested schema](#nestedatt--saas_app))
 - `same_site_cookie_attribute` (String) Sets the SameSite cookie setting, which provides increased security against CSRF attacks.
 - `scim_config` (Attributes) Configuration for provisioning to this application via SCIM. This is currently in closed beta. (see [below for nested schema](#nestedatt--scim_config))
-- `self_hosted_domains` (List of String) List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.
+- `self_hosted_domains` (List of String, Deprecated) List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.
 - `service_auth_401_redirect` (Boolean) Returns a 401 status code when the request is blocked by a Service Auth policy.
 - `session_duration` (String) The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
 - `skip_app_launcher_login_page` (Boolean) Determines when to skip the App Launcher landing page.
@@ -150,7 +158,7 @@ resource "cloudflare_zero_trust_access_application" "example_zero_trust_access_a
 
 - `aud` (String) Audience tag.
 - `created_at` (String)
-- `id` (String) UUID
+- `id` (String) UUID.
 - `updated_at` (String)
 
 <a id="nestedatt--cors_headers"></a>

@@ -5,7 +5,6 @@ package zero_trust_gateway_logging
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -28,7 +27,22 @@ func (m ZeroTrustGatewayLoggingModel) MarshalJSONForUpdate(state ZeroTrustGatewa
 }
 
 type ZeroTrustGatewayLoggingSettingsByRuleTypeModel struct {
-	DNS  jsontypes.Normalized `tfsdk:"dns" json:"dns,optional"`
-	HTTP jsontypes.Normalized `tfsdk:"http" json:"http,optional"`
-	L4   jsontypes.Normalized `tfsdk:"l4" json:"l4,optional"`
+	DNS  customfield.NestedObject[ZeroTrustGatewayLoggingSettingsByRuleTypeDNSModel]  `tfsdk:"dns" json:"dns,computed_optional"`
+	HTTP customfield.NestedObject[ZeroTrustGatewayLoggingSettingsByRuleTypeHTTPModel] `tfsdk:"http" json:"http,computed_optional"`
+	L4   customfield.NestedObject[ZeroTrustGatewayLoggingSettingsByRuleTypeL4Model]   `tfsdk:"l4" json:"l4,computed_optional"`
+}
+
+type ZeroTrustGatewayLoggingSettingsByRuleTypeDNSModel struct {
+	LogAll    types.Bool `tfsdk:"log_all" json:"log_all,optional"`
+	LogBlocks types.Bool `tfsdk:"log_blocks" json:"log_blocks,optional"`
+}
+
+type ZeroTrustGatewayLoggingSettingsByRuleTypeHTTPModel struct {
+	LogAll    types.Bool `tfsdk:"log_all" json:"log_all,optional"`
+	LogBlocks types.Bool `tfsdk:"log_blocks" json:"log_blocks,optional"`
+}
+
+type ZeroTrustGatewayLoggingSettingsByRuleTypeL4Model struct {
+	LogAll    types.Bool `tfsdk:"log_all" json:"log_all,optional"`
+	LogBlocks types.Bool `tfsdk:"log_blocks" json:"log_blocks,optional"`
 }

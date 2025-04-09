@@ -17,7 +17,7 @@ type OriginCACertificateResultDataSourceEnvelope struct {
 }
 
 type OriginCACertificateDataSourceModel struct {
-	ID                types.String                                 `tfsdk:"id" json:"-,computed"`
+	ID                types.String                                 `tfsdk:"id" path:"certificate_id,computed"`
 	CertificateID     types.String                                 `tfsdk:"certificate_id" path:"certificate_id,optional"`
 	Certificate       types.String                                 `tfsdk:"certificate" json:"certificate,computed"`
 	Csr               types.String                                 `tfsdk:"csr" json:"csr,computed"`

@@ -156,12 +156,12 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_custom_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_deployment"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_dispatch_namespace"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_script_secret"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv_namespace"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script_subdomain"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_secret"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_custom_page"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_group"
@@ -313,32 +313,34 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 	opts := []option.RequestOption{}
 
-	if !data.BaseURL.IsNull() {
+	if !data.BaseURL.IsNull() && !data.BaseURL.IsUnknown() {
 		opts = append(opts, option.WithBaseURL(data.BaseURL.ValueString()))
+	} else if o, ok := os.LookupEnv("CLOUDFLARE_BASE_URL"); ok {
+		opts = append(opts, option.WithBaseURL(o))
 	}
-	if o, ok := os.LookupEnv("CLOUDFLARE_API_TOKEN"); ok {
+
+	if !data.APIToken.IsNull() && !data.APIToken.IsUnknown() {
+		opts = append(opts, option.WithAPIToken(data.APIToken.ValueString()))
+	} else if o, ok := os.LookupEnv("CLOUDFLARE_API_TOKEN"); ok {
 		opts = append(opts, option.WithAPIToken(o))
 	}
-	if o, ok := os.LookupEnv("CLOUDFLARE_API_KEY"); ok {
+
+	if !data.APIKey.IsNull() && !data.APIKey.IsUnknown() {
+		opts = append(opts, option.WithAPIKey(data.APIKey.ValueString()))
+	} else if o, ok := os.LookupEnv("CLOUDFLARE_API_KEY"); ok {
 		opts = append(opts, option.WithAPIKey(o))
 	}
-	if o, ok := os.LookupEnv("CLOUDFLARE_EMAIL"); ok {
+
+	if !data.Email.IsNull() && !data.Email.IsUnknown() {
+		opts = append(opts, option.WithAPIEmail(data.Email.ValueString()))
+	} else if o, ok := os.LookupEnv("CLOUDFLARE_EMAIL"); ok {
 		opts = append(opts, option.WithAPIEmail(o))
 	}
-	if o, ok := os.LookupEnv("CLOUDFLARE_API_USER_SERVICE_KEY"); ok {
-		opts = append(opts, option.WithUserServiceKey(o))
-	}
-	if !data.APIToken.IsNull() {
-		opts = append(opts, option.WithAPIToken(data.APIToken.ValueString()))
-	}
-	if !data.APIKey.IsNull() {
-		opts = append(opts, option.WithAPIKey(data.APIKey.ValueString()))
-	}
-	if !data.Email.IsNull() {
-		opts = append(opts, option.WithAPIEmail(data.Email.ValueString()))
-	}
-	if !data.APIUserServiceKey.IsNull() {
+
+	if !data.APIUserServiceKey.IsNull() && !data.APIUserServiceKey.IsUnknown() {
 		opts = append(opts, option.WithUserServiceKey(data.APIUserServiceKey.ValueString()))
+	} else if o, ok := os.LookupEnv("CLOUDFLARE_API_USER_SERVICE_KEY"); ok {
+		opts = append(opts, option.WithUserServiceKey(o))
 	}
 
 	pluginVersion := utils.FindGoModuleVersion("github.com/hashicorp/terraform-plugin-framework")
@@ -504,7 +506,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		r2_bucket_lock.NewResource,
 		r2_bucket_sippy.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
-		workers_secret.NewResource,
+		workers_for_platforms_script_secret.NewResource,
 		zero_trust_dex_test.NewResource,
 		zero_trust_device_managed_networks.NewResource,
 		zero_trust_device_default_profile.NewResource,
@@ -775,8 +777,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		r2_bucket_sippy.NewR2BucketSippyDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespaceDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespacesDataSource,
-		workers_secret.NewWorkersSecretDataSource,
-		workers_secret.NewWorkersSecretsDataSource,
+		workers_for_platforms_script_secret.NewWorkersForPlatformsScriptSecretDataSource,
+		workers_for_platforms_script_secret.NewWorkersForPlatformsScriptSecretsDataSource,
 		zero_trust_dex_test.NewZeroTrustDEXTestDataSource,
 		zero_trust_dex_test.NewZeroTrustDEXTestsDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksDataSource,

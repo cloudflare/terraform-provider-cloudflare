@@ -37,7 +37,7 @@ resource "cloudflare_dns_record" "example_dns_record" {
 - `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
 - `type` (String) Record type.
 Available values: "A".
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -53,7 +53,7 @@ Available values: "A".
 
 - `comment_modified_on` (String) When the record comment was last modified. Omitted if there is no comment.
 - `created_on` (String) When the record was created.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `meta` (String) Extra Cloudflare-specific information about the record.
 - `modified_on` (String) When the record was last modified.
 - `proxiable` (Boolean) Whether the record can be proxied by Cloudflare or not.

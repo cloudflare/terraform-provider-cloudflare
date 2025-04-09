@@ -45,7 +45,7 @@ Read-Only:
 - `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--result--matchers))
 - `name` (String) Routing rule name.
 - `priority` (Number) Priority of the routing rule.
-- `tag` (String) Routing rule tag. (Deprecated, replaced by routing rule identifier)
+- `tag` (String, Deprecated) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 
 <a id="nestedatt--result--actions"></a>
 ### Nested Schema for `result.actions`

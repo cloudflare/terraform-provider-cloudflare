@@ -56,8 +56,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												Required: true,
 											},
 											"validation": schema.StringAttribute{
-												Description: `Available values: "luhn".`,
-												Optional:    true,
+												Description:        `Available values: "luhn".`,
+												Optional:           true,
+												DeprecationMessage: "This attribute is deprecated.",
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("luhn"),
 												},
@@ -218,8 +219,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Required: true,
 								},
 								"validation": schema.StringAttribute{
-									Description: `Available values: "luhn".`,
-									Optional:    true,
+									Description:        `Available values: "luhn".`,
+									Optional:           true,
+									DeprecationMessage: "This attribute is deprecated.",
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("luhn"),
 									},

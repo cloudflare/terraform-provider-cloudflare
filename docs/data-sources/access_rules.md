@@ -19,10 +19,10 @@ data "cloudflare_access_rules" "example_access_rules" {
     target = "ip"
     value = "198.51.100.4"
   }
-  direction = "asc"
-  mode = "block"
+  direction = "desc"
+  mode = "challenge"
   notes = "my note"
-  order = "configuration.target"
+  order = "mode"
 }
 ```
 

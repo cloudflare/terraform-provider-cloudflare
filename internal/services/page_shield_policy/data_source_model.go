@@ -16,7 +16,7 @@ type PageShieldPolicyResultDataSourceEnvelope struct {
 }
 
 type PageShieldPolicyDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"-,computed"`
+	ID          types.String `tfsdk:"id" path:"policy_id,computed"`
 	PolicyID    types.String `tfsdk:"policy_id" path:"policy_id,optional"`
 	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Action      types.String `tfsdk:"action" json:"action,computed"`
@@ -28,14 +28,6 @@ type PageShieldPolicyDataSourceModel struct {
 
 func (m *PageShieldPolicyDataSourceModel) toReadParams(_ context.Context) (params page_shield.PolicyGetParams, diags diag.Diagnostics) {
 	params = page_shield.PolicyGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}
-
-func (m *PageShieldPolicyDataSourceModel) toListParams(_ context.Context) (params page_shield.PolicyListParams, diags diag.Diagnostics) {
-	params = page_shield.PolicyListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 

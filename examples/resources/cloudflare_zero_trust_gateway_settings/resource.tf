@@ -19,11 +19,14 @@ resource "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_se
       enabled = true
       footer_text = "--footer--"
       header_text = "--header--"
+      include_context = true
       logo_path = "https://logos.com/a.png"
       mailto_address = "admin@example.com"
       mailto_subject = "Blocked User Inquiry"
+      mode = "customized_block_page"
       name = "Cloudflare"
       suppress_footer = false
+      target_uri = "https://example.com"
     }
     body_scanning = {
       inspection_mode = "deep"

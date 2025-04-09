@@ -17,7 +17,7 @@ type NotificationPolicyWebhooksResultDataSourceEnvelope struct {
 }
 
 type NotificationPolicyWebhooksDataSourceModel struct {
-	ID          types.String      `tfsdk:"id" json:"-,computed"`
+	ID          types.String      `tfsdk:"id" path:"webhook_id,computed"`
 	WebhookID   types.String      `tfsdk:"webhook_id" path:"webhook_id,optional"`
 	AccountID   types.String      `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -31,14 +31,6 @@ type NotificationPolicyWebhooksDataSourceModel struct {
 
 func (m *NotificationPolicyWebhooksDataSourceModel) toReadParams(_ context.Context) (params alerting.DestinationWebhookGetParams, diags diag.Diagnostics) {
 	params = alerting.DestinationWebhookGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *NotificationPolicyWebhooksDataSourceModel) toListParams(_ context.Context) (params alerting.DestinationWebhookListParams, diags diag.Diagnostics) {
-	params = alerting.DestinationWebhookListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

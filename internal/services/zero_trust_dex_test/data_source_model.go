@@ -17,7 +17,7 @@ type ZeroTrustDEXTestResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDEXTestDataSourceModel struct {
-	ID             types.String                                                                `tfsdk:"id" json:"-,computed"`
+	ID             types.String                                                                `tfsdk:"id" path:"dex_test_id,computed"`
 	DEXTestID      types.String                                                                `tfsdk:"dex_test_id" path:"dex_test_id,optional"`
 	AccountID      types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
 	Description    types.String                                                                `tfsdk:"description" json:"description,computed"`
@@ -32,14 +32,6 @@ type ZeroTrustDEXTestDataSourceModel struct {
 
 func (m *ZeroTrustDEXTestDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DeviceDEXTestGetParams, diags diag.Diagnostics) {
 	params = zero_trust.DeviceDEXTestGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *ZeroTrustDEXTestDataSourceModel) toListParams(_ context.Context) (params zero_trust.DeviceDEXTestListParams, diags diag.Diagnostics) {
-	params = zero_trust.DeviceDEXTestListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

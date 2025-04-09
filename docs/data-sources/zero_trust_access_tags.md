@@ -22,7 +22,7 @@ data "cloudflare_zero_trust_access_tags" "example_zero_trust_access_tags" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 

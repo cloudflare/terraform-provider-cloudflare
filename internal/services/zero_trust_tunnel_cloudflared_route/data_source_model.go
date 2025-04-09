@@ -17,7 +17,7 @@ type ZeroTrustTunnelCloudflaredRouteResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredRouteDataSourceModel struct {
-	ID               types.String                                             `tfsdk:"id" json:"-,computed"`
+	ID               types.String                                             `tfsdk:"id" path:"route_id,computed"`
 	RouteID          types.String                                             `tfsdk:"route_id" path:"route_id,optional"`
 	AccountID        types.String                                             `tfsdk:"account_id" path:"account_id,required"`
 	Comment          types.String                                             `tfsdk:"comment" json:"comment,computed"`

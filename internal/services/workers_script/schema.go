@@ -33,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -50,6 +50,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Configuration for assets within a Worker.",
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
+							"_headers": schema.StringAttribute{
+								Description: "The contents of a _headers file (used to attach custom headers on asset responses)",
+								Optional:    true,
+							},
+							"_redirects": schema.StringAttribute{
+								Description: "The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving)",
+								Optional:    true,
+							},
 							"html_handling": schema.StringAttribute{
 								Description: "Determines the redirects and rewrites of requests for HTML content.\nAvailable values: \"auto-trailing-slash\", \"force-trailing-slash\", \"drop-trailing-slash\", \"none\".",
 								Optional:    true,
@@ -80,10 +88,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(false),
 							},
 							"serve_directly": schema.BoolAttribute{
-								Description: "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(true),
+								Description:        "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
+								Computed:           true,
+								Optional:           true,
+								DeprecationMessage: "This attribute is deprecated.",
+								Default:            booldefault.StaticBool(true),
 							},
 						},
 					},
@@ -380,6 +389,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"etag": schema.StringAttribute{
+				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
+				Computed:    true,
+			},
+			"has_assets": schema.BoolAttribute{
+				Description: "Whether a Worker contains assets.",
+				Computed:    true,
+			},
+			"has_modules": schema.BoolAttribute{
+				Description: "Whether a Worker contains modules.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the script was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"startup_time_ms": schema.Int64Attribute{
+				Computed: true,
+			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
 				Optional:    true,
@@ -440,26 +469,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the script was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"etag": schema.StringAttribute{
-				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
-				Computed:    true,
-			},
-			"has_assets": schema.BoolAttribute{
-				Description: "Whether a Worker contains assets.",
-				Computed:    true,
-			},
-			"has_modules": schema.BoolAttribute{
-				Description: "Whether a Worker contains modules.",
-				Computed:    true,
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "When the script was last modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"startup_time_ms": schema.Int64Attribute{
-				Computed: true,
 			},
 		},
 	}

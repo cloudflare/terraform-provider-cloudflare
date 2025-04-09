@@ -34,7 +34,7 @@ resource "cloudflare_zone" "example_zone" {
 
 - `type` (String) A full zone implies that DNS is hosted with Cloudflare. A partial zone is
 typically a partner-hosted zone or a CNAME setup.
-Available values: "full", "partial", "secondary".
+Available values: "full", "partial", "secondary", "internal".
 - `vanity_name_servers` (List of String) An array of domains used for custom name servers. This is only
 available for Business and Enterprise plans.
 

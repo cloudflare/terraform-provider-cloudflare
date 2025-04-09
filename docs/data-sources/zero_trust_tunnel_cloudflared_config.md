@@ -23,7 +23,7 @@ data "cloudflare_zero_trust_tunnel_cloudflared_config" "example_zero_trust_tunne
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `tunnel_id` (String) UUID of the tunnel.
 
 ### Read-Only

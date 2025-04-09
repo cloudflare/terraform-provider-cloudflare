@@ -17,7 +17,7 @@ type ZeroTrustDevicePostureRuleResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDevicePostureRuleDataSourceModel struct {
-	ID          types.String                                                                 `tfsdk:"id" json:"-,computed"`
+	ID          types.String                                                                 `tfsdk:"id" path:"rule_id,computed"`
 	RuleID      types.String                                                                 `tfsdk:"rule_id" path:"rule_id,optional"`
 	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
 	Description types.String                                                                 `tfsdk:"description" json:"description,computed"`
@@ -31,14 +31,6 @@ type ZeroTrustDevicePostureRuleDataSourceModel struct {
 
 func (m *ZeroTrustDevicePostureRuleDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePostureGetParams, diags diag.Diagnostics) {
 	params = zero_trust.DevicePostureGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *ZeroTrustDevicePostureRuleDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePostureListParams, diags diag.Diagnostics) {
-	params = zero_trust.DevicePostureListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

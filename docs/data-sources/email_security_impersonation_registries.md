@@ -55,7 +55,7 @@ Read-Only:
 - `directory_id` (Number)
 - `directory_node_id` (Number)
 - `email` (String)
-- `external_directory_node_id` (String)
+- `external_directory_node_id` (String, Deprecated)
 - `id` (Number)
 - `is_email_regex` (Boolean)
 - `last_modified` (String)

@@ -67,8 +67,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"logpull_options": schema.StringAttribute{
-				Description: "This field is deprecated. Use `output_options` instead. Configuration string. It specifies things like requested fields and timestamp formats. If migrating from the logpull api, copy the url (full url or just the query string) of your call here, and logpush will keep on making this call for you, setting start and end times appropriately.",
-				Optional:    true,
+				Description:        "This field is deprecated. Use `output_options` instead. Configuration string. It specifies things like requested fields and timestamp formats. If migrating from the logpull api, copy the url (full url or just the query string) of your call here, and logpush will keep on making this call for you, setting start and end times appropriately.",
+				Optional:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 			},
 			"max_upload_bytes": schema.Int64Attribute{
 				Description: "The maximum uncompressed file size of a batch of logs. This setting value must be between `5 MB` and `1 GB`, or `0` to disable it. Note that you cannot set a minimum file size; this means that log files may be much smaller than this batch size. This parameter is not available for jobs with `edge` as its kind.",
@@ -87,9 +88,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Sensitive:   true,
 			},
 			"frequency": schema.StringAttribute{
-				Description: "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.\nAvailable values: \"high\", \"low\".",
-				Computed:    true,
-				Optional:    true,
+				Description:        "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.\nAvailable values: \"high\", \"low\".",
+				Computed:           true,
+				Optional:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("high", "low"),
 				},
@@ -121,15 +123,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"batch_prefix": schema.StringAttribute{
 						Description: "String to be prepended before each batch.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString(""),
 					},
 					"batch_suffix": schema.StringAttribute{
 						Description: "String to be appended after each batch.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString(""),
 					},
 					"cve_2021_44228": schema.BoolAttribute{
 						Description: "If set to true, will cause all occurrences of `${` in the generated files to be replaced with `x{`.",
@@ -139,9 +137,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"field_delimiter": schema.StringAttribute{
 						Description: "String to join fields. This field be ignored when `record_template` is set.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString(","),
 					},
 					"field_names": schema.ListAttribute{
 						Description: "List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.",
@@ -159,27 +155,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"record_delimiter": schema.StringAttribute{
 						Description: "String to be inserted in-between the records as separator.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString(""),
 					},
 					"record_prefix": schema.StringAttribute{
 						Description: "String to be prepended before each record.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString("{"),
 					},
 					"record_suffix": schema.StringAttribute{
 						Description: "String to be appended after each record.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString("}\n"),
 					},
 					"record_template": schema.StringAttribute{
-						Description: "String to use as template for each record instead of the default comma-separated list. All fields used in the template must be present in `field_names` as well, otherwise they will end up as null. Format as a Go `text/template` without any standard functions, like conditionals, loops, sub-templates, etc.",
-						Computed:    true,
+						Description: "String to use as template for each record instead of the default json key value mapping. All fields used in the template must be present in `field_names` as well, otherwise they will end up as null. Format as a Go `text/template` without any standard functions, like conditionals, loops, sub-templates, etc.",
 						Optional:    true,
-						Default:     stringdefault.StaticString(""),
 					},
 					"sample_rate": schema.Float64Attribute{
 						Description: "Floating number to specify sampling rate. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.",

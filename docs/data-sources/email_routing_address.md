@@ -36,7 +36,7 @@ data "cloudflare_email_routing_address" "example_email_routing_address" {
 - `email` (String) The contact email address of the user.
 - `id` (String) Destination address identifier.
 - `modified` (String) The date and time the destination address was last modified.
-- `tag` (String) Destination address tag. (Deprecated, replaced by destination address identifier)
+- `tag` (String, Deprecated) Destination address tag. (Deprecated, replaced by destination address identifier)
 - `verified` (String) The date and time the destination address has been verified. Null means not verified yet.
 
 <a id="nestedatt--filter"></a>

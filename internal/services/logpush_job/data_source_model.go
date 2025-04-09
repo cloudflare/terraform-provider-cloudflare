@@ -18,7 +18,7 @@ type LogpushJobResultDataSourceEnvelope struct {
 }
 
 type LogpushJobDataSourceModel struct {
-	ID                       types.Int64                                                      `tfsdk:"id" json:"-,computed"`
+	ID                       types.Int64                                                      `tfsdk:"id" path:"job_id,computed"`
 	JobID                    types.Int64                                                      `tfsdk:"job_id" path:"job_id,optional"`
 	AccountID                types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID                   types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
@@ -40,18 +40,6 @@ type LogpushJobDataSourceModel struct {
 
 func (m *LogpushJobDataSourceModel) toReadParams(_ context.Context) (params logpush.JobGetParams, diags diag.Diagnostics) {
 	params = logpush.JobGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	}
-
-	return
-}
-
-func (m *LogpushJobDataSourceModel) toListParams(_ context.Context) (params logpush.JobListParams, diags diag.Diagnostics) {
-	params = logpush.JobListParams{}
 
 	if !m.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(m.AccountID.ValueString())

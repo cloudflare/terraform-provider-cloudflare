@@ -17,7 +17,7 @@ type MagicNetworkMonitoringRuleResultDataSourceEnvelope struct {
 }
 
 type MagicNetworkMonitoringRuleDataSourceModel struct {
-	ID                     types.String                   `tfsdk:"id" json:"-,computed"`
+	ID                     types.String                   `tfsdk:"id" path:"rule_id,computed"`
 	RuleID                 types.String                   `tfsdk:"rule_id" path:"rule_id,optional"`
 	AccountID              types.String                   `tfsdk:"account_id" path:"account_id,required"`
 	AutomaticAdvertisement types.Bool                     `tfsdk:"automatic_advertisement" json:"automatic_advertisement,computed"`
@@ -34,14 +34,6 @@ type MagicNetworkMonitoringRuleDataSourceModel struct {
 
 func (m *MagicNetworkMonitoringRuleDataSourceModel) toReadParams(_ context.Context) (params magic_network_monitoring.RuleGetParams, diags diag.Diagnostics) {
 	params = magic_network_monitoring.RuleGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *MagicNetworkMonitoringRuleDataSourceModel) toListParams(_ context.Context) (params magic_network_monitoring.RuleListParams, diags diag.Diagnostics) {
-	params = magic_network_monitoring.RuleListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

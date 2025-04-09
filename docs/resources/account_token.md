@@ -53,15 +53,13 @@ resource "cloudflare_account_token" "example_account_token" {
 
 - `account_id` (String) Account identifier tag.
 - `name` (String) Token name.
-- `policies` (Attributes List) List of access policies assigned to the token. (see [below for nested schema](#nestedatt--policies))
+- `policies` (Attributes Set) List of access policies assigned to the token. (see [below for nested schema](#nestedatt--policies))
 
 ### Optional
 
 - `condition` (Attributes) (see [below for nested schema](#nestedatt--condition))
 - `expires_on` (String) The expiration time on or after which the JWT MUST NOT be accepted for processing.
 - `not_before` (String) The time before which the token MUST NOT be accepted for processing.
-- `status` (String) Status of the token.
-Available values: "active", "disabled", "expired".
 
 ### Read-Only
 
@@ -69,6 +67,8 @@ Available values: "active", "disabled", "expired".
 - `issued_on` (String) The time on which the token was created.
 - `last_used_on` (String) Last time the token was used.
 - `modified_on` (String) Last time the token was modified.
+- `status` (String) Status of the token.
+Available values: "active", "disabled", "expired".
 - `value` (String, Sensitive) The token value.
 
 <a id="nestedatt--policies"></a>

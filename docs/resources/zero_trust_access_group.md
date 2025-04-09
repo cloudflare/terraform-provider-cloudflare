@@ -53,7 +53,7 @@ resource "cloudflare_zero_trust_access_group" "example_zero_trust_access_group" 
 ### Read-Only
 
 - `created_at` (String)
-- `id` (String) UUID
+- `id` (String) UUID.
 - `updated_at` (String)
 
 <a id="nestedatt--include"></a>

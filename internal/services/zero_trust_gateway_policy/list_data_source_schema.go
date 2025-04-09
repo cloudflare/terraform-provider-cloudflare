@@ -42,7 +42,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"action": schema.StringAttribute{
-							Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\".",
+							Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\", \"redirect\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -61,6 +61,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"egress",
 									"resolve",
 									"quarantine",
+									"redirect",
 								),
 							},
 						},
@@ -448,6 +449,25 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
+										},
+									},
+								},
+								"redirect": schema.SingleNestedAttribute{
+									Description: "Settings that apply to redirect rules",
+									Computed:    true,
+									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsRedirectDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"target_uri": schema.StringAttribute{
+											Description: "URI to which the user will be redirected",
+											Computed:    true,
+										},
+										"include_context": schema.BoolAttribute{
+											Description: "If true, context information will be passed as query parameters",
+											Computed:    true,
+										},
+										"preserve_path_and_query": schema.BoolAttribute{
+											Description: "If true, the path and query parameters from the original request will be appended to target_uri",
+											Computed:    true,
 										},
 									},
 								},

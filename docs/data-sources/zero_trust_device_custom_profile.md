@@ -27,7 +27,7 @@ data "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_device_cu
 
 ### Optional
 
-- `policy_id` (String) Device ID.
+- `policy_id` (String)
 
 ### Read-Only
 
@@ -44,7 +44,7 @@ data "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_device_cu
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
 - `fallback_domains` (Attributes List) (see [below for nested schema](#nestedatt--fallback_domains))
 - `gateway_unique_id` (String)
-- `id` (String) Device ID.
+- `id` (String) The ID of this resource.
 - `include` (Attributes List) List of routes included in the WARP client's tunnel. (see [below for nested schema](#nestedatt--include))
 - `lan_allow_minutes` (Number) The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.
 - `lan_allow_subnet_size` (Number) The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.
@@ -83,9 +83,9 @@ Read-Only:
 
 Read-Only:
 
-- `address` (String) The address in CIDR format to include in the tunnel. If address is present, host must not be present.
-- `description` (String) A description of the split tunnel item, displayed in the client UI.
-- `host` (String) The domain name to include in the tunnel. If host is present, address must not be present.
+- `address` (String) The address in CIDR format to include in the tunnel. If `address` is present, `host` must not be present.
+- `description` (String) A description of the Split Tunnel item, displayed in the client UI.
+- `host` (String) The domain name to include in the tunnel. If `host` is present, `address` must not be present.
 
 
 <a id="nestedatt--service_mode_v2"></a>

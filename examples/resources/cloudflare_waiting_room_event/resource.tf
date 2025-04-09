@@ -14,4 +14,6 @@ resource "cloudflare_waiting_room_event" "example_waiting_room_event" {
   shuffle_at_event_start = true
   suspended = true
   total_active_users = 200
+  turnstile_action = "log"
+  turnstile_mode = "off"
 }

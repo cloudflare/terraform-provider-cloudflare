@@ -78,6 +78,7 @@ type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {
 	OverrideIPs                     customfield.List[types.String]                                                                    `tfsdk:"override_ips" json:"override_ips,computed"`
 	PayloadLog                      customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsPayloadLogDataSourceModel]           `tfsdk:"payload_log" json:"payload_log,computed"`
 	Quarantine                      customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsQuarantineDataSourceModel]           `tfsdk:"quarantine" json:"quarantine,computed"`
+	Redirect                        customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsRedirectDataSourceModel]             `tfsdk:"redirect" json:"redirect,computed"`
 	ResolveDNSInternally            customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsResolveDNSInternallyDataSourceModel] `tfsdk:"resolve_dns_internally" json:"resolve_dns_internally,computed"`
 	ResolveDNSThroughCloudflare     types.Bool                                                                                        `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,computed"`
 	UntrustedCERT                   customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsUntrustedCERTDataSourceModel]        `tfsdk:"untrusted_cert" json:"untrusted_cert,computed"`
@@ -149,6 +150,12 @@ type ZeroTrustGatewayPoliciesRuleSettingsPayloadLogDataSourceModel struct {
 
 type ZeroTrustGatewayPoliciesRuleSettingsQuarantineDataSourceModel struct {
 	FileTypes customfield.List[types.String] `tfsdk:"file_types" json:"file_types,computed"`
+}
+
+type ZeroTrustGatewayPoliciesRuleSettingsRedirectDataSourceModel struct {
+	TargetURI            types.String `tfsdk:"target_uri" json:"target_uri,computed"`
+	IncludeContext       types.Bool   `tfsdk:"include_context" json:"include_context,computed"`
+	PreservePathAndQuery types.Bool   `tfsdk:"preserve_path_and_query" json:"preserve_path_and_query,computed"`
 }
 
 type ZeroTrustGatewayPoliciesRuleSettingsResolveDNSInternallyDataSourceModel struct {

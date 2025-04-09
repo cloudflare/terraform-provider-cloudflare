@@ -2,7 +2,6 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   site_id = "023e105f4ecef8ad9ca31a8372d0c353"
   physport = 1
-  vlan_tag = 0
   ha_link = true
   name = "name"
   nat = {
@@ -33,4 +32,5 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
     secondary_address = "192.0.2.0/24"
     virtual_address = "192.0.2.0/24"
   }
+  vlan_tag = 42
 }

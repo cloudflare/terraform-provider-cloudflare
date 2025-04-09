@@ -49,5 +49,9 @@ data "cloudflare_waiting_room_event" "example_waiting_room_event" {
 - `shuffle_at_event_start` (Boolean) If enabled, users in the prequeue will be shuffled randomly at the `event_start_time`. Requires that `prequeue_start_time` is not null. This is useful for situations when many users will join the event prequeue at the same time and you want to shuffle them to ensure fairness. Naturally, it makes the most sense to enable this feature when the `queueing_method` during the event respects ordering such as **fifo**, or else the shuffling may be unnecessary.
 - `suspended` (Boolean) Suspends or allows an event. If set to `true`, the event is ignored and traffic will be handled based on the waiting room configuration.
 - `total_active_users` (Number) If set, the event will override the waiting room's `total_active_users` property while it is active. If null, the event will inherit it. This can only be set if the event's `new_users_per_minute` property is also set.
+- `turnstile_action` (String) If set, the event will override the waiting room's `turnstile_action` property while it is active. If null, the event will inherit it.
+Available values: "log", "infinite_queue".
+- `turnstile_mode` (String) If set, the event will override the waiting room's `turnstile_mode` property while it is active. If null, the event will inherit it.
+Available values: "off", "invisible", "visible_non_interactive", "visible_managed".
 
 

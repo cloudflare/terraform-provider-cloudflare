@@ -17,7 +17,7 @@ type WorkersForPlatformsDispatchNamespaceResultDataSourceEnvelope struct {
 }
 
 type WorkersForPlatformsDispatchNamespaceDataSourceModel struct {
-	ID                types.String      `tfsdk:"id" json:"-,computed"`
+	ID                types.String      `tfsdk:"id" path:"dispatch_namespace,computed"`
 	DispatchNamespace types.String      `tfsdk:"dispatch_namespace" path:"dispatch_namespace,optional"`
 	AccountID         types.String      `tfsdk:"account_id" path:"account_id,required"`
 	CreatedBy         types.String      `tfsdk:"created_by" json:"created_by,computed"`
@@ -31,14 +31,6 @@ type WorkersForPlatformsDispatchNamespaceDataSourceModel struct {
 
 func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toReadParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceGetParams, diags diag.Diagnostics) {
 	params = workers_for_platforms.DispatchNamespaceGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toListParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceListParams, diags diag.Diagnostics) {
-	params = workers_for_platforms.DispatchNamespaceListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

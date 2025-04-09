@@ -17,7 +17,7 @@ type LoadBalancerResultDataSourceEnvelope struct {
 }
 
 type LoadBalancerDataSourceModel struct {
-	ID                        types.String                                                                   `tfsdk:"id" json:"-,computed"`
+	ID                        types.String                                                                   `tfsdk:"id" path:"load_balancer_id,computed"`
 	LoadBalancerID            types.String                                                                   `tfsdk:"load_balancer_id" path:"load_balancer_id,optional"`
 	ZoneID                    types.String                                                                   `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedOn                 types.String                                                                   `tfsdk:"created_on" json:"created_on,computed"`
@@ -45,14 +45,6 @@ type LoadBalancerDataSourceModel struct {
 
 func (m *LoadBalancerDataSourceModel) toReadParams(_ context.Context) (params load_balancers.LoadBalancerGetParams, diags diag.Diagnostics) {
 	params = load_balancers.LoadBalancerGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}
-
-func (m *LoadBalancerDataSourceModel) toListParams(_ context.Context) (params load_balancers.LoadBalancerListParams, diags diag.Diagnostics) {
-	params = load_balancers.LoadBalancerListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 

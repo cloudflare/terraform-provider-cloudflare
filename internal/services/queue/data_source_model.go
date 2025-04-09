@@ -17,7 +17,7 @@ type QueueResultDataSourceEnvelope struct {
 }
 
 type QueueDataSourceModel struct {
-	ID                  types.String                                                `tfsdk:"id" json:"-,computed"`
+	ID                  types.String                                                `tfsdk:"id" path:"queue_id,computed"`
 	QueueID             types.String                                                `tfsdk:"queue_id" path:"queue_id,computed_optional"`
 	AccountID           types.String                                                `tfsdk:"account_id" path:"account_id,required"`
 	ConsumersTotalCount types.Float64                                               `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
@@ -32,14 +32,6 @@ type QueueDataSourceModel struct {
 
 func (m *QueueDataSourceModel) toReadParams(_ context.Context) (params queues.QueueGetParams, diags diag.Diagnostics) {
 	params = queues.QueueGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *QueueDataSourceModel) toListParams(_ context.Context) (params queues.QueueListParams, diags diag.Diagnostics) {
-	params = queues.QueueListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
@@ -73,5 +65,6 @@ type QueueProducersDataSourceModel struct {
 
 type QueueSettingsDataSourceModel struct {
 	DeliveryDelay          types.Float64 `tfsdk:"delivery_delay" json:"delivery_delay,computed"`
+	DeliveryPaused         types.Bool    `tfsdk:"delivery_paused" json:"delivery_paused,computed"`
 	MessageRetentionPeriod types.Float64 `tfsdk:"message_retention_period" json:"message_retention_period,computed"`
 }

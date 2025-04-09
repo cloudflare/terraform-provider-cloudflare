@@ -89,7 +89,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBlockPageDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"background_color": schema.StringAttribute{
-								Description: "Block page background color in #rrggbb format.",
+								Description: "If mode is customized_block_page: block page background color in #rrggbb format.",
 								Computed:    true,
 							},
 							"enabled": schema.BoolAttribute{
@@ -97,31 +97,46 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"footer_text": schema.StringAttribute{
-								Description: "Block page footer text.",
+								Description: "If mode is customized_block_page: block page footer text.",
 								Computed:    true,
 							},
 							"header_text": schema.StringAttribute{
-								Description: "Block page header text.",
+								Description: "If mode is customized_block_page: block page header text.",
+								Computed:    true,
+							},
+							"include_context": schema.BoolAttribute{
+								Description: "If mode is redirect_uri: when enabled, context will be appended to target_uri as query parameters.",
 								Computed:    true,
 							},
 							"logo_path": schema.StringAttribute{
-								Description: "Full URL to the logo file.",
+								Description: "If mode is customized_block_page: full URL to the logo file.",
 								Computed:    true,
 							},
 							"mailto_address": schema.StringAttribute{
-								Description: "Admin email for users to contact.",
+								Description: "If mode is customized_block_page: admin email for users to contact.",
 								Computed:    true,
 							},
 							"mailto_subject": schema.StringAttribute{
-								Description: "Subject line for emails created from block page.",
+								Description: "If mode is customized_block_page: subject line for emails created from block page.",
 								Computed:    true,
 							},
+							"mode": schema.StringAttribute{
+								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"customized_block_page\", \"redirect_uri\".",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("customized_block_page", "redirect_uri"),
+								},
+							},
 							"name": schema.StringAttribute{
-								Description: "Block page title.",
+								Description: "If mode is customized_block_page: block page title.",
 								Computed:    true,
 							},
 							"suppress_footer": schema.BoolAttribute{
-								Description: "Suppress detailed info at the bottom of the block page.",
+								Description: "If mode is customized_block_page: suppress detailed info at the bottom of the block page.",
+								Computed:    true,
+							},
+							"target_uri": schema.StringAttribute{
+								Description: "If mode is redirect_uri: URI to which the user should be redirected.",
 								Computed:    true,
 							},
 						},
@@ -164,9 +179,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"custom_certificate": schema.SingleNestedAttribute{
-						Description: "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`)",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCustomCertificateDataSourceModel](ctx),
+						Description:        "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`)",
+						Computed:           true,
+						DeprecationMessage: "This attribute is deprecated.",
+						CustomType:         customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCustomCertificateDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable use of custom certificate authority for signing Gateway traffic.",

@@ -22,7 +22,7 @@ data "cloudflare_zero_trust_access_key_configuration" "example_zero_trust_access
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

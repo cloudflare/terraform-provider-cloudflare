@@ -24,7 +24,7 @@ data "cloudflare_stream_caption_language" "example_stream_caption_language" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `identifier` (String) A Cloudflare-generated unique identifier for a media item.
 - `language` (String) The language tag in BCP 47 format.
 

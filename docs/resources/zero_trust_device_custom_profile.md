@@ -14,7 +14,7 @@ description: |-
 ```terraform
 resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_device_custom_profile" {
   account_id = "699d98642c564d2e855e9661899b7252"
-  match = "user.identity == \"test@cloudflare.com\""
+  match = "identity.email == \"test@cloudflare.com\""
   name = "Allow Developers"
   precedence = 100
   allow_mode_switch = true
@@ -28,13 +28,11 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
   exclude = [{
     address = "192.0.2.0/24"
     description = "Exclude testing domains from the tunnel"
-    host = "*.example.com"
   }]
   exclude_office_ips = true
   include = [{
     address = "192.0.2.0/24"
-    description = "Exclude testing domains from the tunnel"
-    host = "*.example.com"
+    description = "Include testing domains in the tunnel"
   }]
   lan_allow_minutes = 30
   lan_allow_subnet_size = 24
@@ -85,34 +83,28 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 - `default` (Boolean) Whether the policy is the default policy for an account.
 - `fallback_domains` (Attributes List) (see [below for nested schema](#nestedatt--fallback_domains))
 - `gateway_unique_id` (String)
-- `id` (String) Device ID.
-- `policy_id` (String) Device ID.
+- `id` (String) The ID of this resource.
+- `policy_id` (String)
 - `target_tests` (Attributes List) (see [below for nested schema](#nestedatt--target_tests))
 
 <a id="nestedatt--exclude"></a>
 ### Nested Schema for `exclude`
 
-Required:
+Optional:
 
 - `address` (String) The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.
 - `description` (String) A description of the Split Tunnel item, displayed in the client UI.
-
-Optional:
-
 - `host` (String) The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.
 
 
 <a id="nestedatt--include"></a>
 ### Nested Schema for `include`
 
-Required:
-
-- `address` (String) The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.
-- `description` (String) A description of the Split Tunnel item, displayed in the client UI.
-
 Optional:
 
-- `host` (String) The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.
+- `address` (String) The address in CIDR format to include in the tunnel. If `address` is present, `host` must not be present.
+- `description` (String) A description of the Split Tunnel item, displayed in the client UI.
+- `host` (String) The domain name to include in the tunnel. If `host` is present, `address` must not be present.
 
 
 <a id="nestedatt--service_mode_v2"></a>

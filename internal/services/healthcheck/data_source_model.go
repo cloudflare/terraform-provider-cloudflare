@@ -18,7 +18,7 @@ type HealthcheckResultDataSourceEnvelope struct {
 }
 
 type HealthcheckDataSourceModel struct {
-	ID                   types.String                                                   `tfsdk:"id" json:"-,computed"`
+	ID                   types.String                                                   `tfsdk:"id" path:"healthcheck_id,computed"`
 	HealthcheckID        types.String                                                   `tfsdk:"healthcheck_id" path:"healthcheck_id,optional"`
 	ZoneID               types.String                                                   `tfsdk:"zone_id" path:"zone_id,required"`
 	Address              types.String                                                   `tfsdk:"address" json:"address,computed"`
@@ -42,14 +42,6 @@ type HealthcheckDataSourceModel struct {
 
 func (m *HealthcheckDataSourceModel) toReadParams(_ context.Context) (params healthchecks.HealthcheckGetParams, diags diag.Diagnostics) {
 	params = healthchecks.HealthcheckGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}
-
-func (m *HealthcheckDataSourceModel) toListParams(_ context.Context) (params healthchecks.HealthcheckListParams, diags diag.Diagnostics) {
-	params = healthchecks.HealthcheckListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 

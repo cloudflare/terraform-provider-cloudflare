@@ -17,7 +17,7 @@ type ZeroTrustTunnelCloudflaredVirtualNetworkResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel struct {
-	ID               types.String                                                      `tfsdk:"id" json:"-,computed"`
+	ID               types.String                                                      `tfsdk:"id" path:"virtual_network_id,computed"`
 	VirtualNetworkID types.String                                                      `tfsdk:"virtual_network_id" path:"virtual_network_id,optional"`
 	AccountID        types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	Comment          types.String                                                      `tfsdk:"comment" json:"comment,computed"`

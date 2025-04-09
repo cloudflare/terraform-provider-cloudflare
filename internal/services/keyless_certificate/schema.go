@@ -57,8 +57,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"enabled": schema.BoolAttribute{
-				Description: "Whether or not the Keyless SSL is on or off.",
-				Optional:    true,
+				Description:        "Whether or not the Keyless SSL is on or off.",
+				Optional:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 			},
 			"name": schema.StringAttribute{
 				Description: "The keyless SSL name.",

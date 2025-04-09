@@ -7,5 +7,4 @@ cd "$(dirname "$0")/.."
 echo "==> Running formatters"
 gofmt -s -w .
 
-echo "==> Generate terraform docs"
-./scripts/generate-docs
+

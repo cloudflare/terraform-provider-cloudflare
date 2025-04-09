@@ -17,7 +17,7 @@ type AccountMemberResultDataSourceEnvelope struct {
 }
 
 type AccountMemberDataSourceModel struct {
-	ID        types.String                                                       `tfsdk:"id" json:"-,computed"`
+	ID        types.String                                                       `tfsdk:"id" path:"member_id,computed"`
 	MemberID  types.String                                                       `tfsdk:"member_id" path:"member_id,optional"`
 	AccountID types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
 	Status    types.String                                                       `tfsdk:"status" json:"status,computed"`

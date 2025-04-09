@@ -18,15 +18,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "UUID",
+				Description: "UUID.",
 				Computed:    true,
 			},
 			"custom_page_id": schema.StringAttribute{
-				Description: "UUID",
+				Description: "UUID.",
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"app_count": schema.Int64Attribute{
@@ -53,7 +53,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"uid": schema.StringAttribute{
-				Description: "UUID",
+				Description: "UUID.",
 				Computed:    true,
 			},
 			"updated_at": schema.StringAttribute{

@@ -18,7 +18,7 @@ type WaitingRoomResultDataSourceEnvelope struct {
 }
 
 type WaitingRoomDataSourceModel struct {
-	ID                         types.String                                                             `tfsdk:"id" json:"-,computed"`
+	ID                         types.String                                                             `tfsdk:"id" path:"waiting_room_id,computed"`
 	WaitingRoomID              types.String                                                             `tfsdk:"waiting_room_id" path:"waiting_room_id,optional"`
 	ZoneID                     types.String                                                             `tfsdk:"zone_id" path:"zone_id,required"`
 	CookieSuffix               types.String                                                             `tfsdk:"cookie_suffix" json:"cookie_suffix,computed"`
@@ -52,20 +52,6 @@ func (m *WaitingRoomDataSourceModel) toReadParams(_ context.Context) (params wai
 	params = waiting_rooms.WaitingRoomGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
-
-	return
-}
-
-func (m *WaitingRoomDataSourceModel) toListParams(_ context.Context) (params waiting_rooms.WaitingRoomListParams, diags diag.Diagnostics) {
-	params = waiting_rooms.WaitingRoomListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	// if !m.AccountID.IsNull() {
-	// 	params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	// } else {
-	// 	params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
-	// }
 
 	return
 }

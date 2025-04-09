@@ -34,6 +34,6 @@ data "cloudflare_dns_zone_transfers_tsig" "example_dns_zone_transfers_tsig" {
 - `algo` (String) TSIG algorithm.
 - `id` (String) The ID of this resource.
 - `name` (String) TSIG key name.
-- `secret` (String) TSIG secret.
+- `secret` (String, Sensitive) TSIG secret.
 
 

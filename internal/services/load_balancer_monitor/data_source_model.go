@@ -17,7 +17,7 @@ type LoadBalancerMonitorResultDataSourceEnvelope struct {
 }
 
 type LoadBalancerMonitorDataSourceModel struct {
-	ID              types.String                                    `tfsdk:"id" json:"-,computed"`
+	ID              types.String                                    `tfsdk:"id" path:"monitor_id,computed"`
 	MonitorID       types.String                                    `tfsdk:"monitor_id" path:"monitor_id,optional"`
 	AccountID       types.String                                    `tfsdk:"account_id" path:"account_id,required"`
 	AllowInsecure   types.Bool                                      `tfsdk:"allow_insecure" json:"allow_insecure,computed"`
@@ -42,14 +42,6 @@ type LoadBalancerMonitorDataSourceModel struct {
 
 func (m *LoadBalancerMonitorDataSourceModel) toReadParams(_ context.Context) (params load_balancers.MonitorGetParams, diags diag.Diagnostics) {
 	params = load_balancers.MonitorGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *LoadBalancerMonitorDataSourceModel) toListParams(_ context.Context) (params load_balancers.MonitorListParams, diags diag.Diagnostics) {
-	params = load_balancers.MonitorListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

@@ -17,7 +17,7 @@ type FirewallRuleResultDataSourceEnvelope struct {
 }
 
 type FirewallRuleDataSourceModel struct {
-	ID          types.String                   `tfsdk:"id" query:"id,optional" json:"-,computed"`
+	ID          types.String                   `tfsdk:"id" query:"id,optional" path:"rule_id,computed"`
 	RuleID      types.String                   `tfsdk:"rule_id" path:"rule_id,optional"`
 	ZoneID      types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
 	Action      types.String                   `tfsdk:"action" json:"action,computed"`
@@ -30,14 +30,6 @@ type FirewallRuleDataSourceModel struct {
 
 func (m *FirewallRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.RuleGetParams, diags diag.Diagnostics) {
 	params = firewall.RuleGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}
-
-func (m *FirewallRuleDataSourceModel) toListParams(_ context.Context) (params firewall.RuleListParams, diags diag.Diagnostics) {
-	params = firewall.RuleListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 

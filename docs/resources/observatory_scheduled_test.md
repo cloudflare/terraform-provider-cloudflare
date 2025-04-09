@@ -24,7 +24,7 @@ resource "cloudflare_observatory_scheduled_test" "example_observatory_scheduled_
 ### Required
 
 - `url` (String) A URL.
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
@@ -55,7 +55,7 @@ Read-Only:
 
 - `date` (String)
 - `desktop_report` (Attributes) The Lighthouse report. (see [below for nested schema](#nestedatt--test--desktop_report))
-- `id` (String) UUID
+- `id` (String) UUID.
 - `mobile_report` (Attributes) The Lighthouse report. (see [below for nested schema](#nestedatt--test--mobile_report))
 - `region` (Attributes) A test region with a label. (see [below for nested schema](#nestedatt--test--region))
 - `schedule_frequency` (String) The frequency of the test.

@@ -55,7 +55,7 @@ Read-Only:
 - `lan_allow_subnet_size` (Number) The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.
 - `match` (String) The wirefilter expression to match devices.
 - `name` (String) The name of the device settings profile.
-- `policy_id` (String) Device ID.
+- `policy_id` (String)
 - `precedence` (Number) The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.
 - `register_interface_ip_with_dns` (Boolean) Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.
 - `service_mode_v2` (Attributes) (see [below for nested schema](#nestedatt--result--service_mode_v2))
@@ -89,9 +89,9 @@ Read-Only:
 
 Read-Only:
 
-- `address` (String) The address in CIDR format to include in the tunnel. If address is present, host must not be present.
-- `description` (String) A description of the split tunnel item, displayed in the client UI.
-- `host` (String) The domain name to include in the tunnel. If host is present, address must not be present.
+- `address` (String) The address in CIDR format to include in the tunnel. If `address` is present, `host` must not be present.
+- `description` (String) A description of the Split Tunnel item, displayed in the client UI.
+- `host` (String) The domain name to include in the tunnel. If `host` is present, `address` must not be present.
 
 
 <a id="nestedatt--result--service_mode_v2"></a>

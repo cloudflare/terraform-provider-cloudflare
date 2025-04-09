@@ -20,13 +20,13 @@ resource "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
   customer_endpoint = "203.0.113.1"
   description = "Tunnel for ISP X"
   health_check = {
-    direction = "unidirectional"
+    direction = "bidirectional"
     enabled = true
     rate = "low"
     target = {
       saved = "203.0.113.1"
     }
-    type = "reply"
+    type = "request"
   }
   psk = "O3bwKSjnaoCxDoUxjcq4Rk8ZKkezQUiy"
   replay_protection = false

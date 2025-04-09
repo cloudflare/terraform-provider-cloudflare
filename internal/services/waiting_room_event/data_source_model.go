@@ -17,7 +17,7 @@ type WaitingRoomEventResultDataSourceEnvelope struct {
 }
 
 type WaitingRoomEventDataSourceModel struct {
-	ID                    types.String      `tfsdk:"id" json:"-,computed"`
+	ID                    types.String      `tfsdk:"id" path:"event_id,computed"`
 	EventID               types.String      `tfsdk:"event_id" path:"event_id,optional"`
 	WaitingRoomID         types.String      `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
 	ZoneID                types.String      `tfsdk:"zone_id" path:"zone_id,required"`
@@ -36,18 +36,12 @@ type WaitingRoomEventDataSourceModel struct {
 	ShuffleAtEventStart   types.Bool        `tfsdk:"shuffle_at_event_start" json:"shuffle_at_event_start,computed"`
 	Suspended             types.Bool        `tfsdk:"suspended" json:"suspended,computed"`
 	TotalActiveUsers      types.Int64       `tfsdk:"total_active_users" json:"total_active_users,computed"`
+	TurnstileAction       types.String      `tfsdk:"turnstile_action" json:"turnstile_action,computed"`
+	TurnstileMode         types.String      `tfsdk:"turnstile_mode" json:"turnstile_mode,computed"`
 }
 
 func (m *WaitingRoomEventDataSourceModel) toReadParams(_ context.Context) (params waiting_rooms.EventGetParams, diags diag.Diagnostics) {
 	params = waiting_rooms.EventGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
-
-	return
-}
-
-func (m *WaitingRoomEventDataSourceModel) toListParams(_ context.Context) (params waiting_rooms.EventListParams, diags diag.Diagnostics) {
-	params = waiting_rooms.EventListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 

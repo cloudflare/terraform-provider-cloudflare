@@ -40,7 +40,7 @@ resource "cloudflare_email_routing_dns" "example_email_routing_dns" {
 - `status` (String) Show the state of your account, and the type or configuration error.
 Available values: "ready", "unconfigured", "misconfigured", "misconfigured/locked", "unlocked".
 - `success` (Boolean) Whether the API call was successful
-- `tag` (String) Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)
+- `tag` (String, Deprecated) Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)
 
 <a id="nestedatt--errors"></a>
 ### Nested Schema for `errors`

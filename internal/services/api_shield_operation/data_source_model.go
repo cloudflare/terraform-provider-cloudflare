@@ -19,7 +19,7 @@ type APIShieldOperationResultDataSourceEnvelope struct {
 }
 
 type APIShieldOperationDataSourceModel struct {
-	ID          types.String                                                        `tfsdk:"id" json:"-,computed"`
+	ID          types.String                                                        `tfsdk:"id" path:"operation_id,computed"`
 	OperationID types.String                                                        `tfsdk:"operation_id" path:"operation_id,computed_optional"`
 	ZoneID      types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
 	Feature     *[]types.String                                                     `tfsdk:"feature" query:"feature,optional"`

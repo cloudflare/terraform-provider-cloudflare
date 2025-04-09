@@ -14,7 +14,7 @@ resource "cloudflare_waiting_room" "example_waiting_room" {
   }
   cookie_suffix = "abcd"
   custom_page_html = "{{#waitTimeKnown}} {{waitTime}} mins {{/waitTimeKnown}} {{^waitTimeKnown}} Queue all enabled {{/waitTimeKnown}}"
-  default_template_language = "en-US"
+  default_template_language = "es-ES"
   description = "Production - DO NOT MODIFY"
   disable_session_renewal = false
   enabled_origin_commands = ["revoke"]
@@ -22,7 +22,7 @@ resource "cloudflare_waiting_room" "example_waiting_room" {
   path = "/shop/checkout"
   queue_all = true
   queueing_method = "fifo"
-  queueing_status_code = 200
+  queueing_status_code = 202
   session_duration = 1
   suspended = true
   turnstile_action = "log"

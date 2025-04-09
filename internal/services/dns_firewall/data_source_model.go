@@ -18,7 +18,7 @@ type DNSFirewallResultDataSourceEnvelope struct {
 }
 
 type DNSFirewallDataSourceModel struct {
-	ID                   types.String                                                         `tfsdk:"id" json:"-,computed"`
+	ID                   types.String                                                         `tfsdk:"id" path:"dns_firewall_id,computed"`
 	DNSFirewallID        types.String                                                         `tfsdk:"dns_firewall_id" path:"dns_firewall_id,optional"`
 	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	DeprecateAnyRequests types.Bool                                                           `tfsdk:"deprecate_any_requests" json:"deprecate_any_requests,computed"`
@@ -37,14 +37,6 @@ type DNSFirewallDataSourceModel struct {
 
 func (m *DNSFirewallDataSourceModel) toReadParams(_ context.Context) (params dns_firewall.DNSFirewallGetParams, diags diag.Diagnostics) {
 	params = dns_firewall.DNSFirewallGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *DNSFirewallDataSourceModel) toListParams(_ context.Context) (params dns_firewall.DNSFirewallListParams, diags diag.Diagnostics) {
-	params = dns_firewall.DNSFirewallListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

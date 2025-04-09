@@ -17,7 +17,7 @@ type MTLSCertificateResultDataSourceEnvelope struct {
 }
 
 type MTLSCertificateDataSourceModel struct {
-	ID                types.String      `tfsdk:"id" json:"-,computed"`
+	ID                types.String      `tfsdk:"id" path:"mtls_certificate_id,computed"`
 	MTLSCertificateID types.String      `tfsdk:"mtls_certificate_id" path:"mtls_certificate_id,optional"`
 	AccountID         types.String      `tfsdk:"account_id" path:"account_id,required"`
 	CA                types.Bool        `tfsdk:"ca" json:"ca,computed"`
@@ -32,14 +32,6 @@ type MTLSCertificateDataSourceModel struct {
 
 func (m *MTLSCertificateDataSourceModel) toReadParams(_ context.Context) (params mtls_certificates.MTLSCertificateGetParams, diags diag.Diagnostics) {
 	params = mtls_certificates.MTLSCertificateGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *MTLSCertificateDataSourceModel) toListParams(_ context.Context) (params mtls_certificates.MTLSCertificateListParams, diags diag.Diagnostics) {
-	params = mtls_certificates.MTLSCertificateListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

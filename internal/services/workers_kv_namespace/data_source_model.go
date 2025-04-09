@@ -16,9 +16,10 @@ type WorkersKVNamespaceResultDataSourceEnvelope struct {
 }
 
 type WorkersKVNamespaceDataSourceModel struct {
-	ID                  types.String                                `tfsdk:"id" json:"-,computed"`
+	ID                  types.String                                `tfsdk:"id" path:"namespace_id,computed"`
 	NamespaceID         types.String                                `tfsdk:"namespace_id" path:"namespace_id,optional"`
 	AccountID           types.String                                `tfsdk:"account_id" path:"account_id,required"`
+	Beta                types.Bool                                  `tfsdk:"beta" json:"beta,computed"`
 	SupportsURLEncoding types.Bool                                  `tfsdk:"supports_url_encoding" json:"supports_url_encoding,computed"`
 	Title               types.String                                `tfsdk:"title" json:"title,computed"`
 	Filter              *WorkersKVNamespaceFindOneByDataSourceModel `tfsdk:"filter"`

@@ -19,7 +19,7 @@ type ZeroTrustDLPEntryResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDLPEntryDataSourceModel struct {
-	ID         types.String                                                         `tfsdk:"id" json:"-,computed"`
+	ID         types.String                                                         `tfsdk:"id" path:"entry_id,computed"`
 	EntryID    types.String                                                         `tfsdk:"entry_id" path:"entry_id,optional"`
 	AccountID  types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAt  timetypes.RFC3339                                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -36,14 +36,6 @@ type ZeroTrustDLPEntryDataSourceModel struct {
 
 func (m *ZeroTrustDLPEntryDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DLPEntryGetParams, diags diag.Diagnostics) {
 	params = zero_trust.DLPEntryGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *ZeroTrustDLPEntryDataSourceModel) toListParams(_ context.Context) (params zero_trust.DLPEntryListParams, diags diag.Diagnostics) {
-	params = zero_trust.DLPEntryListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

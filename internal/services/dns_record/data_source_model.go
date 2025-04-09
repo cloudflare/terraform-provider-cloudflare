@@ -20,7 +20,7 @@ type DNSRecordResultDataSourceEnvelope struct {
 }
 
 type DNSRecordDataSourceModel struct {
-	ID                types.String                                               `tfsdk:"id" json:"-,computed"`
+	ID                types.String                                               `tfsdk:"id" path:"dns_record_id,computed"`
 	DNSRecordID       types.String                                               `tfsdk:"dns_record_id" path:"dns_record_id,optional"`
 	ZoneID            types.String                                               `tfsdk:"zone_id" path:"zone_id,required"`
 	Comment           types.String                                               `tfsdk:"comment" json:"comment,computed"`

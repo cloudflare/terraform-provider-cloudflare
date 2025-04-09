@@ -15,7 +15,7 @@ description: |-
 resource "cloudflare_email_routing_rule" "example_email_routing_rule" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   actions = [{
-    type = "drop"
+    type = "forward"
     value = ["destinationaddress@example.net"]
   }]
   matchers = [{
@@ -47,7 +47,7 @@ resource "cloudflare_email_routing_rule" "example_email_routing_rule" {
 ### Read-Only
 
 - `id` (String) Routing rule identifier.
-- `tag` (String) Routing rule tag. (Deprecated, replaced by routing rule identifier)
+- `tag` (String, Deprecated) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 
 <a id="nestedatt--actions"></a>
 ### Nested Schema for `actions`

@@ -14,7 +14,7 @@ description: |-
 ```terraform
 resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_policy" {
   account_id = "699d98642c564d2e855e9661899b7252"
-  action = "on"
+  action = "allow"
   name = "block bad websites"
   description = "Block bad websites based on their host name."
   device_posture = "any(device_posture.checks.passed[*] in {\"1308749e-fcfb-4ebc-b051-fe022b632644\"})"
@@ -36,7 +36,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       command_logging = false
     }
     biso_admin_controls = {
-      copy = "enabled"
+      copy = "remote_only"
       dcp = false
       dd = false
       dk = false
@@ -96,13 +96,18 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
     quarantine = {
       file_types = ["exe"]
     }
+    redirect = {
+      target_uri = "https://example.com"
+      include_context = true
+      preserve_path_and_query = true
+    }
     resolve_dns_internally = {
       fallback = "none"
       view_id = "view_id"
     }
     resolve_dns_through_cloudflare = true
     untrusted_cert = {
-      action = "pass_through"
+      action = "error"
     }
   }
   schedule = {
@@ -126,7 +131,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
 
 - `account_id` (String)
 - `action` (String) The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.
-Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine".
+Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine", "redirect".
 - `name` (String) The name of the rule.
 
 ### Optional
@@ -201,6 +206,7 @@ Optional:
 - `override_ips` (List of String) Override matching DNS queries with an IP or set of IPs.
 - `payload_log` (Attributes) Configure DLP payload logging. (see [below for nested schema](#nestedatt--rule_settings--payload_log))
 - `quarantine` (Attributes) Settings that apply to quarantine rules (see [below for nested schema](#nestedatt--rule_settings--quarantine))
+- `redirect` (Attributes) Settings that apply to redirect rules (see [below for nested schema](#nestedatt--rule_settings--redirect))
 - `resolve_dns_internally` (Attributes) Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action is set to 'resolve'. (see [below for nested schema](#nestedatt--rule_settings--resolve_dns_internally))
 - `resolve_dns_through_cloudflare` (Boolean) Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_internally' is set. Only valid when a rule's action is set to 'resolve'.
 - `untrusted_cert` (Attributes) Configure behavior when an upstream cert is invalid or an SSL error occurs. (see [below for nested schema](#nestedatt--rule_settings--untrusted_cert))
@@ -328,6 +334,19 @@ Optional:
 Optional:
 
 - `file_types` (List of String) Types of files to sandbox.
+
+
+<a id="nestedatt--rule_settings--redirect"></a>
+### Nested Schema for `rule_settings.redirect`
+
+Required:
+
+- `target_uri` (String) URI to which the user will be redirected
+
+Optional:
+
+- `include_context` (Boolean) If true, context information will be passed as query parameters
+- `preserve_path_and_query` (Boolean) If true, the path and query parameters from the original request will be appended to target_uri
 
 
 <a id="nestedatt--rule_settings--resolve_dns_internally"></a>

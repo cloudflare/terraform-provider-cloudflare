@@ -17,13 +17,16 @@ resource "cloudflare_zero_trust_gateway_logging" "example_zero_trust_gateway_log
   redact_pii = true
   settings_by_rule_type = {
     dns = {
-
+      log_all = false
+      log_blocks = true
     }
     http = {
-
+      log_all = false
+      log_blocks = true
     }
     l4 = {
-
+      log_all = false
+      log_blocks = true
     }
   }
 }
@@ -46,8 +49,34 @@ resource "cloudflare_zero_trust_gateway_logging" "example_zero_trust_gateway_log
 
 Optional:
 
-- `dns` (String) Logging settings for DNS firewall.
-- `http` (String) Logging settings for HTTP/HTTPS firewall.
-- `l4` (String) Logging settings for Network firewall.
+- `dns` (Attributes) (see [below for nested schema](#nestedatt--settings_by_rule_type--dns))
+- `http` (Attributes) (see [below for nested schema](#nestedatt--settings_by_rule_type--http))
+- `l4` (Attributes) (see [below for nested schema](#nestedatt--settings_by_rule_type--l4))
+
+<a id="nestedatt--settings_by_rule_type--dns"></a>
+### Nested Schema for `settings_by_rule_type.dns`
+
+Optional:
+
+- `log_all` (Boolean) Log all requests to this service.
+- `log_blocks` (Boolean) Log only blocking requests to this service.
+
+
+<a id="nestedatt--settings_by_rule_type--http"></a>
+### Nested Schema for `settings_by_rule_type.http`
+
+Optional:
+
+- `log_all` (Boolean) Log all requests to this service.
+- `log_blocks` (Boolean) Log only blocking requests to this service.
+
+
+<a id="nestedatt--settings_by_rule_type--l4"></a>
+### Nested Schema for `settings_by_rule_type.l4`
+
+Optional:
+
+- `log_all` (Boolean) Log all requests to this service.
+- `log_blocks` (Boolean) Log only blocking requests to this service.
 
 

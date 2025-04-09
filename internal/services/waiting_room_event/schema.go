@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -81,6 +82,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Validators: []validator.Int64{
 					int64validator.Between(200, 2147483647),
+				},
+			},
+			"turnstile_action": schema.StringAttribute{
+				Description: "If set, the event will override the waiting room's `turnstile_action` property while it is active. If null, the event will inherit it.\nAvailable values: \"log\", \"infinite_queue\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("log", "infinite_queue"),
+				},
+			},
+			"turnstile_mode": schema.StringAttribute{
+				Description: "If set, the event will override the waiting room's `turnstile_mode` property while it is active. If null, the event will inherit it.\nAvailable values: \"off\", \"invisible\", \"visible_non_interactive\", \"visible_managed\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"off",
+						"invisible",
+						"visible_non_interactive",
+						"visible_managed",
+					),
 				},
 			},
 			"description": schema.StringAttribute{

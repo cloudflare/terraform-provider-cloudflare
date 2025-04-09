@@ -18,7 +18,7 @@ type HyperdriveConfigResultDataSourceEnvelope struct {
 }
 
 type HyperdriveConfigDataSourceModel struct {
-	ID           types.String                                                     `tfsdk:"id" json:"-,computed"`
+	ID           types.String                                                     `tfsdk:"id" path:"hyperdrive_id,computed"`
 	HyperdriveID types.String                                                     `tfsdk:"hyperdrive_id" path:"hyperdrive_id,optional"`
 	AccountID    types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
 	CreatedOn    timetypes.RFC3339                                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -30,14 +30,6 @@ type HyperdriveConfigDataSourceModel struct {
 
 func (m *HyperdriveConfigDataSourceModel) toReadParams(_ context.Context) (params hyperdrive.ConfigGetParams, diags diag.Diagnostics) {
 	params = hyperdrive.ConfigGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
-
-	return
-}
-
-func (m *HyperdriveConfigDataSourceModel) toListParams(_ context.Context) (params hyperdrive.ConfigListParams, diags diag.Diagnostics) {
-	params = hyperdrive.ConfigListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

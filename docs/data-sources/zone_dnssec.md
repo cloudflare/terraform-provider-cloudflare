@@ -22,7 +22,7 @@ data "cloudflare_zone_dnssec" "example_zone_dnssec" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
