@@ -68,7 +68,7 @@ type LoadBalancerRulesModel struct {
 	Name          types.String                                                  `tfsdk:"name" json:"name,optional"`
 	Overrides     customfield.NestedObject[LoadBalancerRulesOverridesModel]     `tfsdk:"overrides" json:"overrides,computed_optional"`
 	Priority      types.Int64                                                   `tfsdk:"priority" json:"priority,computed_optional"`
-	Terminates    types.Bool                                                    `tfsdk:"terminates" json:"terminates,computed_optional"`
+	Terminates    types.Bool                                                    `tfsdk:"terminates" json:"terminates,optional"`
 }
 
 type LoadBalancerRulesFixedResponseModel struct {
