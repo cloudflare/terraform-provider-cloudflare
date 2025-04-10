@@ -90,6 +90,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"message": schema.StringAttribute{
 							Computed: true,
 						},
+						"documentation_url": schema.StringAttribute{
+							Computed: true,
+						},
+						"source": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[EmailRoutingDNSErrorsSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"pointer": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -106,6 +118,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"message": schema.StringAttribute{
 							Computed: true,
+						},
+						"documentation_url": schema.StringAttribute{
+							Computed: true,
+						},
+						"source": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[EmailRoutingDNSMessagesSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"pointer": schema.StringAttribute{
+									Computed: true,
+								},
+							},
 						},
 					},
 				},
