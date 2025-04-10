@@ -6,7 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -112,7 +114,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Required:    true,
 								},
 								"type": schema.StringAttribute{
-									Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser_rendering\", \"d1\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"queue\", \"r2_bucket\", \"secret_text\", \"service\", \"tail_consumer\", \"vectorize\", \"version_metadata\".",
+									Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\".",
 									Required:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -135,6 +137,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"tail_consumer",
 											"vectorize",
 											"version_metadata",
+											"secrets_store_secret",
+											"secret_key",
 										),
 									},
 								},
@@ -219,6 +223,61 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"index_name": schema.StringAttribute{
 									Description: "Name of the Vectorize index to bind to.",
 									Optional:    true,
+								},
+								"secret_name": schema.StringAttribute{
+									Description: "Name of the secret in the store.",
+									Optional:    true,
+								},
+								"store_id": schema.StringAttribute{
+									Description: "ID of the store containing the secret.",
+									Optional:    true,
+								},
+								"algorithm": schema.StringAttribute{
+									Description: "Algorithm-specific key parameters ([learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm)).",
+									Optional:    true,
+									CustomType:  jsontypes.NormalizedType{},
+								},
+								"format": schema.StringAttribute{
+									Description: "Data format of the key ([learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format)).\nAvailable values: \"raw\", \"pkcs8\", \"spki\", \"jwk\".",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"raw",
+											"pkcs8",
+											"spki",
+											"jwk",
+										),
+									},
+								},
+								"usages": schema.ListAttribute{
+									Description: "Allowed operations with the key ([learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages)).",
+									Optional:    true,
+									Validators: []validator.List{
+										listvalidator.ValueStringsAre(
+											stringvalidator.OneOfCaseInsensitive(
+												"encrypt",
+												"decrypt",
+												"sign",
+												"verify",
+												"deriveKey",
+												"deriveBits",
+												"wrapKey",
+												"unwrapKey",
+											),
+										),
+									},
+									ElementType: types.StringType,
+								},
+								"key_base64": schema.StringAttribute{
+									Description: "Base64-encoded key data. Required if `format` is \"raw\", \"pkcs8\", or \"spki\".",
+									Optional:    true,
+									Sensitive:   true,
+								},
+								"key_jwk": schema.StringAttribute{
+									Description: "Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is \"jwk\".",
+									Optional:    true,
+									Sensitive:   true,
+									CustomType:  jsontypes.NormalizedType{},
 								},
 							},
 						},
@@ -385,6 +444,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
+							"last_analyzed_at": schema.StringAttribute{
+								Description: "The last time the script was analyzed for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
 							"mode": schema.StringAttribute{
 								Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
 								Optional:    true,
@@ -500,6 +564,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[WorkersScriptPlacementModel](ctx),
 				Attributes: map[string]schema.Attribute{
+					"last_analyzed_at": schema.StringAttribute{
+						Description: "The last time the script was analyzed for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
 					"mode": schema.StringAttribute{
 						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
 						Computed:    true,

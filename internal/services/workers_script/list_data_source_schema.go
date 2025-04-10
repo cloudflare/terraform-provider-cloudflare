@@ -71,6 +71,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectType[WorkersScriptsPlacementDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
+								"last_analyzed_at": schema.StringAttribute{
+									Description: "The last time the script was analyzed for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+									Computed:    true,
+									CustomType:  timetypes.RFC3339Type{},
+								},
 								"mode": schema.StringAttribute{
 									Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
 									Computed:    true,
