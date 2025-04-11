@@ -22,11 +22,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Computed:    true,
 			},
 			"certificate_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Optional:    true,
 			},
 			"certificate": schema.StringAttribute{
@@ -77,8 +77,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
+						Description: "Identifier.",
 						Required:    true,
+					},
+					"limit": schema.Int64Attribute{
+						Description: "Limit to the number of records returned.",
+						Optional:    true,
+					},
+					"offset": schema.Int64Attribute{
+						Description: "Offset the results",
+						Optional:    true,
 					},
 				},
 			},
