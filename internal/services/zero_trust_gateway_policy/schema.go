@@ -239,6 +239,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"block_page": schema.SingleNestedAttribute{
+						Description: "Custom block page settings. If missing/null, blocking will use the the account settings.",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsBlockPageModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"target_uri": schema.StringAttribute{
+								Description: "URI to which the user will be redirected",
+								Required:    true,
+							},
+							"include_context": schema.BoolAttribute{
+								Description: "If true, context information will be passed as query parameters",
+								Optional:    true,
+							},
+						},
+					},
 					"block_page_enabled": schema.BoolAttribute{
 						Description: "Enable the custom block page.",
 						Optional:    true,
@@ -385,6 +401,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Set notification on",
+								Optional:    true,
+							},
+							"include_context": schema.BoolAttribute{
+								Description: "If true, context information will be passed as query parameters",
 								Optional:    true,
 							},
 							"msg": schema.StringAttribute{

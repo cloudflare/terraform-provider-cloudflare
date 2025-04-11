@@ -53,6 +53,7 @@ type ZeroTrustGatewayPolicyRuleSettingsModel struct {
 	AllowChildBypass                types.Bool                                                                            `tfsdk:"allow_child_bypass" json:"allow_child_bypass,optional"`
 	AuditSSH                        customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsAuditSSHModel]             `tfsdk:"audit_ssh" json:"audit_ssh,computed_optional"`
 	BISOAdminControls               customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel]    `tfsdk:"biso_admin_controls" json:"biso_admin_controls,computed_optional"`
+	BlockPage                       customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBlockPageModel]            `tfsdk:"block_page" json:"block_page,computed_optional"`
 	BlockPageEnabled                types.Bool                                                                            `tfsdk:"block_page_enabled" json:"block_page_enabled,optional"`
 	BlockReason                     types.String                                                                          `tfsdk:"block_reason" json:"block_reason,optional"`
 	BypassParentRule                types.Bool                                                                            `tfsdk:"bypass_parent_rule" json:"bypass_parent_rule,optional"`
@@ -94,6 +95,11 @@ type ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel struct {
 	Version  types.String `tfsdk:"version" json:"version,computed_optional"`
 }
 
+type ZeroTrustGatewayPolicyRuleSettingsBlockPageModel struct {
+	TargetURI      types.String `tfsdk:"target_uri" json:"target_uri,required"`
+	IncludeContext types.Bool   `tfsdk:"include_context" json:"include_context,optional"`
+}
+
 type ZeroTrustGatewayPolicyRuleSettingsCheckSessionModel struct {
 	Duration types.String `tfsdk:"duration" json:"duration,optional"`
 	Enforce  types.Bool   `tfsdk:"enforce" json:"enforce,optional"`
@@ -130,9 +136,10 @@ type ZeroTrustGatewayPolicyRuleSettingsL4overrideModel struct {
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsNotificationSettingsModel struct {
-	Enabled    types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
-	Msg        types.String `tfsdk:"msg" json:"msg,optional"`
-	SupportURL types.String `tfsdk:"support_url" json:"support_url,optional"`
+	Enabled        types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
+	IncludeContext types.Bool   `tfsdk:"include_context" json:"include_context,optional"`
+	Msg            types.String `tfsdk:"msg" json:"msg,optional"`
+	SupportURL     types.String `tfsdk:"support_url" json:"support_url,optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsPayloadLogModel struct {

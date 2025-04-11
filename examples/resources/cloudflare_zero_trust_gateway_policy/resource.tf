@@ -35,6 +35,10 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       upload = "enabled"
       version = "v1"
     }
+    block_page = {
+      target_uri = "https://example.com"
+      include_context = true
+    }
     block_page_enabled = true
     block_reason = "This website is a security risk"
     bypass_parent_rule = false
@@ -71,6 +75,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
     }
     notification_settings = {
       enabled = true
+      include_context = true
       msg = "msg"
       support_url = "support_url"
     }
