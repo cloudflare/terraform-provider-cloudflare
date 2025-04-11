@@ -75,6 +75,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Description: "Set notification on",
 										Optional:    true,
 									},
+									"include_context": schema.BoolAttribute{
+										Description: "If true, context information will be passed as query parameters",
+										Optional:    true,
+									},
 									"msg": schema.StringAttribute{
 										Description: "Customize the message shown in the notification.",
 										Optional:    true,

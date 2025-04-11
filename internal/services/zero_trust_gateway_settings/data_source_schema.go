@@ -71,6 +71,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										Description: "Set notification on",
 										Computed:    true,
 									},
+									"include_context": schema.BoolAttribute{
+										Description: "If true, context information will be passed as query parameters",
+										Computed:    true,
+									},
 									"msg": schema.StringAttribute{
 										Description: "Customize the message shown in the notification.",
 										Computed:    true,

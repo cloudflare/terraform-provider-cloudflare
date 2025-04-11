@@ -56,9 +56,10 @@ type ZeroTrustGatewaySettingsSettingsAntivirusModel struct {
 }
 
 type ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel struct {
-	Enabled    types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
-	Msg        types.String `tfsdk:"msg" json:"msg,optional"`
-	SupportURL types.String `tfsdk:"support_url" json:"support_url,optional"`
+	Enabled        types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
+	IncludeContext types.Bool   `tfsdk:"include_context" json:"include_context,optional"`
+	Msg            types.String `tfsdk:"msg" json:"msg,optional"`
+	SupportURL     types.String `tfsdk:"support_url" json:"support_url,optional"`
 }
 
 type ZeroTrustGatewaySettingsSettingsBlockPageModel struct {
