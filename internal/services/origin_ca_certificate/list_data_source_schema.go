@@ -21,8 +21,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
+			},
+			"limit": schema.Int64Attribute{
+				Description: "Limit to the number of records returned.",
+				Optional:    true,
+			},
+			"offset": schema.Int64Attribute{
+				Description: "Offset the results",
+				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -74,7 +82,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"id": schema.StringAttribute{
-							Description: "Identifier",
+							Description: "Identifier.",
 							Computed:    true,
 						},
 						"certificate": schema.StringAttribute{
