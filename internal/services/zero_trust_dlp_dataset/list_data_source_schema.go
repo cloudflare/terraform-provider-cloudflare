@@ -132,6 +132,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"case_sensitive": schema.BoolAttribute{
+							Computed: true,
+						},
 						"description": schema.StringAttribute{
 							Description: "The description of the dataset",
 							Computed:    true,
