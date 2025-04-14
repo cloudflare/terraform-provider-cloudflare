@@ -25,7 +25,7 @@ type PagesProjectModel struct {
 	Domains             customfield.List[types.String]                                 `tfsdk:"domains" json:"domains,computed"`
 	CanonicalDeployment customfield.NestedObject[PagesProjectCanonicalDeploymentModel] `tfsdk:"canonical_deployment" json:"canonical_deployment,computed"`
 	LatestDeployment    customfield.NestedObject[PagesProjectLatestDeploymentModel]    `tfsdk:"latest_deployment" json:"latest_deployment,computed"`
-	Source              customfield.NestedObject[PagesProjectSourceModel]              `tfsdk:"source" json:"source,computed"`
+	Source              customfield.NestedObject[PagesProjectSourceModel]              `tfsdk:"source" json:"source,computed_optional"`
 }
 
 func (m PagesProjectModel) MarshalJSON() (data []byte, err error) {
@@ -361,20 +361,20 @@ type PagesProjectLatestDeploymentStagesModel struct {
 }
 
 type PagesProjectSourceModel struct {
-	Config customfield.NestedObject[PagesProjectSourceConfigModel] `tfsdk:"config" json:"config,computed"`
-	Type   types.String                                            `tfsdk:"type" json:"type,computed"`
+	Config customfield.NestedObject[PagesProjectSourceConfigModel] `tfsdk:"config" json:"config,computed_optional"`
+	Type   types.String                                            `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type PagesProjectSourceConfigModel struct {
-	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed"`
-	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed"`
-	PathExcludes                 customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed"`
-	PathIncludes                 customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed"`
-	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
-	PreviewBranchExcludes        customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed"`
-	PreviewBranchIncludes        customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed"`
-	PreviewDeploymentSetting     types.String                   `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,computed"`
-	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
-	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed"`
-	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
+	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed_optional"`
+	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed_optional"`
+	PathExcludes                 customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed_optional"`
+	PathIncludes                 customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed_optional"`
+	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed_optional"`
+	PreviewBranchExcludes        customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed_optional"`
+	PreviewBranchIncludes        customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed_optional"`
+	PreviewDeploymentSetting     types.String                   `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,computed_optional"`
+	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,required"`
+	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed_optional"`
+	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed_optional"`
 }

@@ -1121,45 +1121,66 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"source": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[PagesProjectSourceModel](ctx),
+				Description: "Configuration for the source of the Cloudflare Pages project.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[PagesProjectSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"config": schema.SingleNestedAttribute{
-						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[PagesProjectSourceConfigModel](ctx),
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[PagesProjectSourceConfigModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"deployments_enabled": schema.BoolAttribute{
-								Computed: true,
+								Description: "Toggle deployments on this repo.",
+								Computed:    true,
+								Optional:    true,
 							},
 							"owner": schema.StringAttribute{
-								Computed: true,
+								Description: "Project owner username.",
+								Computed:    true,
+								Optional:    true,
+								PlanModifiers: []planmodifier.String{
+									stringplanmodifier.RequiresReplace(),
+								},
 							},
 							"path_excludes": schema.ListAttribute{
+								Description: "Paths will be excluded from automatic deployment.",
 								Computed:    true,
+								Optional:    true,
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"path_includes": schema.ListAttribute{
+								Description: "Paths will be included for automatic deployment.",
 								Computed:    true,
+								Optional:    true,
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"pr_comments_enabled": schema.BoolAttribute{
-								Computed: true,
+								Description: "Enable Pages to comment on Pull Requests.",
+								Computed:    true,
+								Optional:    true,
 							},
 							"preview_branch_excludes": schema.ListAttribute{
+								Description: "Branches will be excluded from automatic deployment.",
 								Computed:    true,
+								Optional:    true,
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"preview_branch_includes": schema.ListAttribute{
+								Description: "Branches will be included for automatic deployment.",
 								Computed:    true,
+								Optional:    true,
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"preview_deployment_setting": schema.StringAttribute{
-								Description: `Available values: "all", "none", "custom".`,
+								Description: "Preview Deployment Setting. Available values: "all", "none", "custom".",
 								Computed:    true,
+								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
 										"all",
@@ -1169,18 +1190,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"production_branch": schema.StringAttribute{
-								Computed: true,
+								Description: "Project production branch name.",
+								Computed:    true,
+								Required:    true,
 							},
 							"production_deployments_enabled": schema.BoolAttribute{
-								Computed: true,
+								Description: "Enable production deployments.",
+								Computed:    true,
+								Optional:    true,
 							},
 							"repo_name": schema.StringAttribute{
-								Computed: true,
+								Description: "Project repository name.",
+								Computed:    true,
+								Optional:    true,
+								PlanModifiers: []planmodifier.String{
+									stringplanmodifier.RequiresReplace(),
+								},
 							},
 						},
 					},
 					"type": schema.StringAttribute{
-						Computed: true,
+						Description: "Project host type.",
+						Computed:    true,
+						Optional:    true,
 					},
 				},
 			},
