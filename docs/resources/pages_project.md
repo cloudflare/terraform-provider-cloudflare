@@ -2,7 +2,7 @@
 page_title: "cloudflare_pages_project Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+
 ---
 
 # cloudflare_pages_project (Resource)
@@ -197,6 +197,7 @@ resource "cloudflare_pages_project" "example_pages_project" {
 - `build_config` (Attributes) Configs for the project build process. (see [below for nested schema](#nestedatt--build_config))
 - `deployment_configs` (Attributes) Configs for deployments in a project. (see [below for nested schema](#nestedatt--deployment_configs))
 - `production_branch` (String) Production branch of the project. Used to identify production deployments.
+- `source` (Attributes) Configuration for the project source. Read more about the source configuration in the [developer documentation](https://developers.cloudflare.com/pages/platform/branch-build-controls/). (see [below for nested schema](#nestedatt--source))
 
 ### Read-Only
 
@@ -205,7 +206,6 @@ resource "cloudflare_pages_project" "example_pages_project" {
 - `domains` (List of String) A list of associated custom domains for the project.
 - `id` (String) Name of the project.
 - `latest_deployment` (Attributes) Most recent deployment to the repo. (see [below for nested schema](#nestedatt--latest_deployment))
-- `source` (Attributes) (see [below for nested schema](#nestedatt--source))
 - `subdomain` (String) The Cloudflare subdomain associated with the project.
 
 <a id="nestedatt--build_config"></a>
@@ -498,6 +498,34 @@ Optional:
 - `index_name` (String)
 
 
+<a id="nestedatt--source"></a>
+### Nested Schema for `source`
+
+Optional:
+
+- `config` (Attributes) Configuration for the source of the Cloudflare Pages project. (see [below for nested schema](#nestedatt--source--config))
+- `type` (String) Project host type.
+
+<a id="nestedatt--source--config"></a>
+### Nested Schema for `source.config`
+
+Required:
+
+- `production_branch` (String) Project production branch name.
+
+Optional:
+
+- `deployments_enabled` (Boolean) Toggle deployments on this repo. Defaults to `true`.
+- `owner` (String) Project owner username. **Modifying this attribute will force creation of a new resource.**
+- `path_excludes` (List of String) Paths will be excluded from automatic deployment.
+- `path_includes` (List of String) Paths will be included for automatic deployment.
+- `pr_comments_enabled` (Boolean) Enable Pages to comment on Pull Requests. Defaults to `true`.
+- `preview_branch_excludes` (List of String) Branches will be excluded from automatic deployment.
+- `preview_branch_includes` (List of String) Branches will be included for automatic deployment.
+- `preview_deployment_setting` (String) Preview Deployment Setting. Available values: `custom`, `all`, `none`. Defaults to `all`.
+- `production_deployment_enabled` (Boolean) Enable production deployments. Defaults to `true`.
+- `repo_name` (String) Project repository name. **Modifying this attribute will force creation of a new resource.**
+
 
 
 <a id="nestedatt--canonical_deployment"></a>
@@ -519,7 +547,7 @@ Available values: "preview", "production".
 - `project_id` (String) Id of the project.
 - `project_name` (String) Name of the project.
 - `short_id` (String) Short Id (8 character) of the deployment.
-- `source` (Attributes) (see [below for nested schema](#nestedatt--canonical_deployment--source))
+- `source` (Attributes) Configuration for the project source. (see [below for nested schema](#nestedatt--canonical_deployment--source))
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--canonical_deployment--stages))
 - `url` (String) The live URL to view this deployment.
 
@@ -583,25 +611,25 @@ Available values: "success", "idle", "active", "failure", "canceled".
 
 Read-Only:
 
-- `config` (Attributes) (see [below for nested schema](#nestedatt--canonical_deployment--source--config))
-- `type` (String)
+- `config` (Attributes) Configuration for the source of the Cloudflare Pages project. (see [below for nested schema](#nestedatt--canonical_deployment--source--config))
+- `type` (String) Project host type.
 
 <a id="nestedatt--canonical_deployment--source--config"></a>
 ### Nested Schema for `canonical_deployment.source.config`
 
 Read-Only:
 
-- `deployments_enabled` (Boolean)
-- `owner` (String)
-- `path_excludes` (List of String)
-- `path_includes` (List of String)
-- `pr_comments_enabled` (Boolean)
-- `preview_branch_excludes` (List of String)
-- `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
-- `production_branch` (String)
-- `production_deployments_enabled` (Boolean)
-- `repo_name` (String)
+- `deployments_enabled` (Boolean) Toggle deployments on this repo.
+- `owner` (String) Project owner username.
+- `path_excludes` (List of String) Paths will be excluded from automatic deployment.
+- `path_includes` (List of String) Paths will be included for automatic deployment.
+- `pr_comments_enabled` (Boolean) Enable Pages to comment on Pull Requests.
+- `preview_branch_excludes` (List of String) Branches will be excluded from automatic deployment.
+- `preview_branch_includes` (List of String) Branches will be included for automatic deployment.
+- `preview_deployment_setting` (String) Preview Deployment Setting.
+- `production_branch` (String) Project production branch name.
+- `production_deployment_enabled` (Boolean) Enable production deployments.
+- `repo_name` (String) Project repository name.
 
 
 
@@ -638,7 +666,7 @@ Available values: "preview", "production".
 - `project_id` (String) Id of the project.
 - `project_name` (String) Name of the project.
 - `short_id` (String) Short Id (8 character) of the deployment.
-- `source` (Attributes) (see [below for nested schema](#nestedatt--latest_deployment--source))
+- `source` (Attributes) Configuration for the project source. (see [below for nested schema](#nestedatt--latest_deployment--source))
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--latest_deployment--stages))
 - `url` (String) The live URL to view this deployment.
 
@@ -702,25 +730,25 @@ Available values: "success", "idle", "active", "failure", "canceled".
 
 Read-Only:
 
-- `config` (Attributes) (see [below for nested schema](#nestedatt--latest_deployment--source--config))
-- `type` (String)
+- `config` (Attributes) Configuration for the source of the Cloudflare Pages project. (see [below for nested schema](#nestedatt--latest_deployment--source--config))
+- `type` (String) Project host type.
 
 <a id="nestedatt--latest_deployment--source--config"></a>
 ### Nested Schema for `latest_deployment.source.config`
 
 Read-Only:
 
-- `deployments_enabled` (Boolean)
-- `owner` (String)
-- `path_excludes` (List of String)
-- `path_includes` (List of String)
-- `pr_comments_enabled` (Boolean)
-- `preview_branch_excludes` (List of String)
-- `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
-- `production_branch` (String)
-- `production_deployments_enabled` (Boolean)
-- `repo_name` (String)
+- `deployments_enabled` (Boolean) Toggle deployments on this repo.
+- `owner` (String) Project owner username.
+- `path_excludes` (List of String) Paths will be excluded from automatic deployment.
+- `path_includes` (List of String) Paths will be included for automatic deployment.
+- `pr_comments_enabled` (Boolean) Enable Pages to comment on Pull Requests.
+- `preview_branch_excludes` (List of String) Branches will be excluded from automatic deployment.
+- `preview_branch_includes` (List of String) Branches will be included for automatic deployment.
+- `preview_deployment_setting` (String) Preview Deployment Setting.
+- `production_branch` (String) Project production branch name.
+- `production_deployment_enabled` (Boolean) Enable production deployments.
+- `repo_name` (String) Project repository name.
 
 
 
@@ -735,33 +763,6 @@ Available values: "queued", "initialize", "clone_repo", "build", "deploy".
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
 Available values: "success", "idle", "active", "failure", "canceled".
-
-
-
-<a id="nestedatt--source"></a>
-### Nested Schema for `source`
-
-Read-Only:
-
-- `config` (Attributes) (see [below for nested schema](#nestedatt--source--config))
-- `type` (String)
-
-<a id="nestedatt--source--config"></a>
-### Nested Schema for `source.config`
-
-Read-Only:
-
-- `deployments_enabled` (Boolean)
-- `owner` (String)
-- `path_excludes` (List of String)
-- `path_includes` (List of String)
-- `pr_comments_enabled` (Boolean)
-- `preview_branch_excludes` (List of String)
-- `preview_branch_includes` (List of String)
-- `preview_deployment_setting` (String) Available values: "all", "none", "custom".
-- `production_branch` (String)
-- `production_deployments_enabled` (Boolean)
-- `repo_name` (String)
 
 ## Import
 
