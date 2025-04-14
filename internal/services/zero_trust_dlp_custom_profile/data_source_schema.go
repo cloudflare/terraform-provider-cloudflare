@@ -175,6 +175,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"case_sensitive": schema.BoolAttribute{
+							Description: "Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
+							Computed:    true,
+						},
 						"secret": schema.BoolAttribute{
 							Computed: true,
 						},

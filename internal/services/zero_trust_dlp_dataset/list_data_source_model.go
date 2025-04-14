@@ -42,6 +42,7 @@ type ZeroTrustDLPDatasetsResultDataSourceModel struct {
 	Status          types.String                                                             `tfsdk:"status" json:"status,computed"`
 	UpdatedAt       timetypes.RFC3339                                                        `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Uploads         customfield.NestedObjectList[ZeroTrustDLPDatasetsUploadsDataSourceModel] `tfsdk:"uploads" json:"uploads,computed"`
+	CaseSensitive   types.Bool                                                               `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	Description     types.String                                                             `tfsdk:"description" json:"description,computed"`
 }
 
