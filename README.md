@@ -1,7 +1,7 @@
 # Cloudflare Terraform Provider
 
 The [Cloudflare Terraform provider](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs) provides convenient access to
-[the Cloudflare REST API](https://developers.cloudflare.com/api) from Terraform.
+the [Cloudflare REST API](https://developers.cloudflare.com/api) from Terraform.
 
 It is generated with [Stainless](https://www.stainless.com/).
 
