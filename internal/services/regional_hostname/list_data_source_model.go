@@ -35,4 +35,5 @@ type RegionalHostnamesResultDataSourceModel struct {
 	CreatedOn timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Hostname  types.String      `tfsdk:"hostname" json:"hostname,computed"`
 	RegionKey types.String      `tfsdk:"region_key" json:"region_key,computed"`
+	Routing   types.String      `tfsdk:"routing" json:"routing,computed"`
 }
