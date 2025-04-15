@@ -32,7 +32,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"order": schema.StringAttribute{
-				Description: "Field to order zones by.\nAvailable values: \"name\", \"status\", \"account.id\", \"account.name\".",
+				Description: "Field to order zones by.\nAvailable values: \"name\", \"status\", \"account.id\", \"account.name\", \"plan.id\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -40,6 +40,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"status",
 						"account.id",
 						"account.name",
+						"plan.id",
 					),
 				},
 			},
