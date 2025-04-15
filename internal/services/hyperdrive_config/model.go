@@ -19,6 +19,7 @@ type HyperdriveConfigModel struct {
 	Name       types.String                                           `tfsdk:"name" json:"name,required"`
 	Origin     *HyperdriveConfigOriginModel                           `tfsdk:"origin" json:"origin,required"`
 	Caching    customfield.NestedObject[HyperdriveConfigCachingModel] `tfsdk:"caching" json:"caching,computed_optional"`
+	MTLS       customfield.NestedObject[HyperdriveConfigMTLSModel]    `tfsdk:"mtls" json:"mtls,computed_optional"`
 	CreatedOn  timetypes.RFC3339                                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn timetypes.RFC3339                                      `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }
@@ -46,4 +47,10 @@ type HyperdriveConfigCachingModel struct {
 	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,computed_optional"`
 	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age,optional"`
 	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate,optional"`
+}
+
+type HyperdriveConfigMTLSModel struct {
+	CACertificateID   types.String `tfsdk:"ca_certificate_id" json:"ca_certificate_id,optional"`
+	MTLSCertificateID types.String `tfsdk:"mtls_certificate_id" json:"mtls_certificate_id,optional"`
+	Sslmode           types.String `tfsdk:"sslmode" json:"sslmode,optional"`
 }
