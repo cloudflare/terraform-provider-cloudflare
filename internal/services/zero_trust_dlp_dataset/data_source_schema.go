@@ -33,7 +33,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"description": schema.StringAttribute{
-				Description: "The description of the dataset",
+				Description: "The description of the dataset.",
 				Computed:    true,
 			},
 			"encoding_version": schema.Int64Attribute{

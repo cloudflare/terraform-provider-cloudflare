@@ -37,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"tenant_url": schema.StringAttribute{
-				Description: `The base url of the tenant, e.g. "https://tenant.okta.com"`,
+				Description: `The base url of the tenant, e.g. "https://tenant.okta.com".`,
 				Required:    true,
 			},
 			"active": schema.BoolAttribute{
@@ -58,7 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"well_known_url": schema.StringAttribute{
-				Description: `The URL for the Shared Signals Framework configuration, e.g. "/.well-known/sse-configuration/{integration_uuid}/". https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.6.2.1`,
+				Description: `The URL for the Shared Signals Framework configuration, e.g. "/.well-known/sse-configuration/{integration_uuid}/". https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.6.2.1.`,
 				Computed:    true,
 			},
 		},

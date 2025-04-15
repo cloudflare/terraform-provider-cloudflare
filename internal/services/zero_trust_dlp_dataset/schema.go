@@ -52,7 +52,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"description": schema.StringAttribute{
-				Description: "The description of the dataset",
+				Description: "The description of the dataset.",
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
@@ -228,7 +228,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"description": schema.StringAttribute{
-						Description: "The description of the dataset",
+						Description: "The description of the dataset.",
 						Computed:    true,
 					},
 				},
