@@ -65,10 +65,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"scheme": schema.StringAttribute{
-									Description: "Specifies the URL scheme used to connect to your origin database.\nAvailable values: \"postgres\", \"postgresql\".",
+									Description: "Specifies the URL scheme used to connect to your origin database.\nAvailable values: \"postgres\", \"postgresql\", \"mysql\".",
 									Computed:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("postgres", "postgresql"),
+										stringvalidator.OneOfCaseInsensitive(
+											"postgres",
+											"postgresql",
+											"mysql",
+										),
 									},
 								},
 								"user": schema.StringAttribute{
@@ -113,6 +117,24 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "When the Hyperdrive configuration was last modified.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
+						},
+						"mtls": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[HyperdriveConfigsMTLSDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"ca_certificate_id": schema.StringAttribute{
+									Description: "CA certificate ID",
+									Computed:    true,
+								},
+								"mtls_certificate_id": schema.StringAttribute{
+									Description: "mTLS certificate ID",
+									Computed:    true,
+								},
+								"sslmode": schema.StringAttribute{
+									Description: "SSL mode used for CA verification. Must be 'require', 'verify-ca', or 'verify-full'",
+									Computed:    true,
+								},
+							},
 						},
 					},
 				},

@@ -12,4 +12,9 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
   caching = {
     disabled = true
   }
+  mtls = {
+    ca_certificate_id = "00000000-0000-0000-0000-0000000000"
+    mtls_certificate_id = "00000000-0000-0000-0000-0000000000"
+    sslmode = "verify-full"
+  }
 }
