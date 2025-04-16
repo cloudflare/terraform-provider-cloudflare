@@ -821,6 +821,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Description: "The name of the Access policy.",
 										Computed:    true,
 									},
+									"precedence": schema.Int64Attribute{
+										Description: "The order of execution for this policy. Must be unique for each policy within an app.",
+										Computed:    true,
+									},
 									"purpose_justification_prompt": schema.StringAttribute{
 										Description: "A custom message that will appear on the purpose justification screen.",
 										Computed:    true,
@@ -1092,10 +1096,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"updated_at": schema.StringAttribute{
 										Computed:   true,
 										CustomType: timetypes.RFC3339Type{},
-									},
-									"precedence": schema.Int64Attribute{
-										Description: "The order of execution for this policy. Must be unique for each policy within an app.",
-										Computed:    true,
 									},
 									"connection_rules": schema.SingleNestedAttribute{
 										Description: "The rules that define how users may connect to the targets secured by your application.",
