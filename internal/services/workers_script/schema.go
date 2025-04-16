@@ -130,6 +130,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"kv_namespace",
 											"mtls_certificate",
 											"plain_text",
+											"pipelines",
 											"queue",
 											"r2_bucket",
 											"secret_text",
@@ -207,6 +208,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The text value to use.",
 									Optional:    true,
 									Sensitive:   true,
+								},
+								"pipeline": schema.StringAttribute{
+									Description: "Name of the Pipeline to bind to.",
+									Optional:    true,
 								},
 								"queue_name": schema.StringAttribute{
 									Description: "Name of the Queue to bind to.",

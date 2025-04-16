@@ -108,6 +108,7 @@ type WorkersScriptMetadataBindingsModel struct {
 	Json          types.String                                `tfsdk:"json" json:"json,optional"`
 	CertificateID types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
 	Text          types.String                                `tfsdk:"text" json:"text,optional"`
+	Pipeline      types.String                                `tfsdk:"pipeline" json:"pipeline,optional"`
 	QueueName     types.String                                `tfsdk:"queue_name" json:"queue_name,optional"`
 	BucketName    types.String                                `tfsdk:"bucket_name" json:"bucket_name,optional"`
 	Service       types.String                                `tfsdk:"service" json:"service,optional"`
