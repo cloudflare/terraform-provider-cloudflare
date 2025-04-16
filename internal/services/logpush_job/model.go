@@ -17,7 +17,7 @@ type LogpushJobModel struct {
 	ID                       types.Int64                                            `tfsdk:"id" json:"id,computed"`
 	AccountID                types.String                                           `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID                   types.String                                           `tfsdk:"zone_id" path:"zone_id,optional"`
-	Dataset                  types.String                                           `tfsdk:"dataset" json:"dataset,optional"`
+	Dataset                  types.String                                           `tfsdk:"dataset" json:"dataset,computed_optional"`
 	DestinationConf          types.String                                           `tfsdk:"destination_conf" json:"destination_conf,required"`
 	Enabled                  types.Bool                                             `tfsdk:"enabled" json:"enabled,optional"`
 	Kind                     types.String                                           `tfsdk:"kind" json:"kind,optional"`

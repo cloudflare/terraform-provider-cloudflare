@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/logpush"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -67,7 +68,7 @@ func (d *LogpushDatasetFieldDataSource) Read(ctx context.Context, req datasource
 	env := LogpushDatasetFieldResultDataSourceEnvelope{*data}
 	_, err := d.client.Logpush.Datasets.Fields.Get(
 		ctx,
-		data.DatasetID.ValueString(),
+		logpush.DatasetFieldGetParamsDatasetID(data.DatasetID.ValueString()),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
