@@ -14,23 +14,24 @@ var _ datasource.DataSourceWithConfigValidators = (*WorkersRouteDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier.",
+				Computed:    true,
+			},
 			"route_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Required:    true,
+				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "Identifier.",
+			"pattern": schema.StringAttribute{
+				Description: "Pattern to match incoming requests against. [Learn more](https://developers.cloudflare.com/workers/configuration/routing/routes/#matching-behavior).",
 				Computed:    true,
 			},
-			"pattern": schema.StringAttribute{
-				Computed: true,
-			},
 			"script": schema.StringAttribute{
-				Description: "Name of the script, used in URLs and route configuration.",
+				Description: "Name of the script to run if the route matches.",
 				Computed:    true,
 			},
 		},
