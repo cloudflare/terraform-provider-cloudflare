@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*WorkersRouteResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*WorkersRouteResource)(nil)
+var _ resource.ResourceWithImportState = (*WorkersRouteResource)(nil)
 
 func NewResource() resource.Resource {
 	return &WorkersRouteResource{}
@@ -67,6 +70,7 @@ func (r *WorkersRouteResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	res := new(http.Response)
+	env := WorkersRouteResultEnvelope{*data}
 	_, err = r.client.Workers.Routes.New(
 		ctx,
 		workers.RouteNewParams{
@@ -81,11 +85,12 @@ func (r *WorkersRouteResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -116,7 +121,7 @@ func (r *WorkersRouteResource) Update(ctx context.Context, req resource.UpdateRe
 	env := WorkersRouteResultEnvelope{*data}
 	_, err = r.client.Workers.Routes.Update(
 		ctx,
-		data.RouteID.ValueString(),
+		data.ID.ValueString(),
 		workers.RouteUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -152,7 +157,7 @@ func (r *WorkersRouteResource) Read(ctx context.Context, req resource.ReadReques
 	env := WorkersRouteResultEnvelope{*data}
 	_, err := r.client.Workers.Routes.Get(
 		ctx,
-		data.RouteID.ValueString(),
+		data.ID.ValueString(),
 		workers.RouteGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -190,7 +195,7 @@ func (r *WorkersRouteResource) Delete(ctx context.Context, req resource.DeleteRe
 
 	_, err := r.client.Workers.Routes.Delete(
 		ctx,
-		data.RouteID.ValueString(),
+		data.ID.ValueString(),
 		workers.RouteDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -200,6 +205,51 @@ func (r *WorkersRouteResource) Delete(ctx context.Context, req resource.DeleteRe
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WorkersRouteResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *WorkersRouteModel = new(WorkersRouteModel)
+
+	path_zone_id := ""
+	path_route_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<route_id>",
+		&path_zone_id,
+		&path_route_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.ID = types.StringValue(path_route_id)
+
+	res := new(http.Response)
+	env := WorkersRouteResultEnvelope{*data}
+	_, err := r.client.Workers.Routes.Get(
+		ctx,
+		path_route_id,
+		workers.RouteGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

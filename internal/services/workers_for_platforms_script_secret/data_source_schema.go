@@ -41,7 +41,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"format": schema.StringAttribute{
-				Description: "Data format of the key ([learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format)).\nAvailable values: \"raw\", \"pkcs8\", \"spki\", \"jwk\".",
+				Description: "Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).\nAvailable values: \"raw\", \"pkcs8\", \"spki\", \"jwk\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -74,7 +74,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"usages": schema.ListAttribute{
-				Description: "Allowed operations with the key ([learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages)).",
+				Description: "Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).",
 				Computed:    true,
 				Validators: []validator.List{
 					listvalidator.ValueStringsAre(
@@ -94,7 +94,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"algorithm": schema.StringAttribute{
-				Description: "Algorithm-specific key parameters ([learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm)).",
+				Description: "Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).",
 				Computed:    true,
 				CustomType:  jsontypes.NormalizedType{},
 			},
