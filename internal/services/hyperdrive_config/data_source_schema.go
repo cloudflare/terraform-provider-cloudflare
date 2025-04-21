@@ -83,10 +83,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"scheme": schema.StringAttribute{
-						Description: "Specifies the URL scheme used to connect to your origin database.\nAvailable values: \"postgres\", \"postgresql\".",
+						Description: "Specifies the URL scheme used to connect to your origin database.\nAvailable values: \"postgres\", \"postgresql\", \"mysql\".",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("postgres", "postgresql"),
+							stringvalidator.OneOfCaseInsensitive("postgres", "postgresql", "mysql"),
 						},
 					},
 					"user": schema.StringAttribute{

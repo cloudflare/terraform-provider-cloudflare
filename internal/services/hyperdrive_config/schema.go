@@ -55,10 +55,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"scheme": schema.StringAttribute{
-						Description: "Specifies the URL scheme used to connect to your origin database.\nAvailable values: \"postgres\", \"postgresql\".",
+						Description: "Specifies the URL scheme used to connect to your origin database.\nAvailable values: \"postgres\", \"postgresql\", \"mysql\".",
 						Required:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("postgres", "postgresql"),
+							stringvalidator.OneOfCaseInsensitive("postgres", "postgresql", "mysql"),
 						},
 					},
 					"user": schema.StringAttribute{

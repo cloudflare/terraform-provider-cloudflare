@@ -66,7 +66,7 @@ Read-Only:
 - `password` (String, Sensitive) The password required to access your origin database. This value is write-only and never returned by the API.
 - `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
-Available values: "postgres", "postgresql".
+Available values: "postgres", "postgresql", "mysql".
 - `user` (String) The user of your origin database.
 
 

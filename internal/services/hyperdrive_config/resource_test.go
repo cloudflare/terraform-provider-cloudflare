@@ -206,6 +206,70 @@ func TestAccCloudflareHyperdriveConfig_CachingSettings(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareHyperdriveConfig_Scheme(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	databaseName := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME")
+	databaseHostname := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME")
+	databasePort := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PORT")
+	port, _ := strconv.Atoi(databasePort)
+	databaseUser := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_USER")
+	databasePassword := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD")
+	resourceName := "cloudflare_hyperdrive_config." + rnd
+
+	var origin = cfv1.HyperdriveConfigOrigin{
+		Database: databaseName,
+		Host:     databaseHostname,
+		Port:     port,
+		Scheme:   "mysql",
+		User:     databaseUser,
+	}
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_Hyperdrive(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testHyperdriveConfigFullCachingSettings(
+					rnd,
+					accountID,
+					rnd,
+					databasePassword,
+					origin,
+					false,
+					60,
+					30,
+				),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
+					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
+					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
+					resource.TestCheckResourceAttr(resourceName, "origin.scheme", "mysql"),
+					resource.TestCheckResourceAttr(resourceName, "origin.user", databaseUser),
+					resource.TestCheckResourceAttr(resourceName, "origin.password", databasePassword),
+					resource.TestCheckNoResourceAttr(resourceName, "origin.access_client_id"),
+					resource.TestCheckNoResourceAttr(resourceName, "origin.access_client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "caching.max_age", "60"),
+					resource.TestCheckResourceAttr(resourceName, "caching.stale_while_revalidate", "30"),
+				),
+			},
+			// {
+			// 	ResourceName:            resourceName,
+			// 	ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+			// 	ImportState:             true,
+			// 	ImportStateVerify:       true,
+			// 	ImportStateVerifyIgnore: []string{"origin.password"},
+			// },
+		},
+	})
+}
+
 func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
