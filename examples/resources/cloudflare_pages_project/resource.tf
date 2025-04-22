@@ -164,4 +164,20 @@ resource "cloudflare_pages_project" "example_pages_project" {
   }
   name = "NextJS Blog"
   production_branch = "main"
+  source = {
+    config = {
+      deployments_enabled = true
+      owner = "owner"
+      path_excludes = ["string"]
+      path_includes = ["string"]
+      pr_comments_enabled = true
+      preview_branch_excludes = ["string"]
+      preview_branch_includes = ["string"]
+      preview_deployment_setting = "all"
+      production_branch = "production_branch"
+      production_deployments_enabled = true
+      repo_name = "repo_name"
+    }
+    type = "type"
+  }
 }
