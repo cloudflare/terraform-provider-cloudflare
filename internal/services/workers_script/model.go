@@ -8,6 +8,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/jinzhu/copier"
@@ -111,6 +112,13 @@ type WorkersScriptMetadataBindingsModel struct {
 	BucketName    types.String                                `tfsdk:"bucket_name" json:"bucket_name,optional"`
 	Service       types.String                                `tfsdk:"service" json:"service,optional"`
 	IndexName     types.String                                `tfsdk:"index_name" json:"index_name,optional"`
+	SecretName    types.String                                `tfsdk:"secret_name" json:"secret_name,optional"`
+	StoreID       types.String                                `tfsdk:"store_id" json:"store_id,optional"`
+	Algorithm     jsontypes.Normalized                        `tfsdk:"algorithm" json:"algorithm,optional"`
+	Format        types.String                                `tfsdk:"format" json:"format,optional"`
+	Usages        *[]types.String                             `tfsdk:"usages" json:"usages,optional"`
+	KeyBase64     types.String                                `tfsdk:"key_base64" json:"key_base64,optional"`
+	KeyJwk        jsontypes.Normalized                        `tfsdk:"key_jwk" json:"key_jwk,optional"`
 }
 
 type WorkersScriptMetadataBindingsOutboundModel struct {
@@ -170,8 +178,9 @@ type WorkersScriptMetadataObservabilityModel struct {
 }
 
 type WorkersScriptMetadataPlacementModel struct {
-	Mode   types.String `tfsdk:"mode" json:"mode,optional"`
-	Status types.String `tfsdk:"status" json:"status,computed"`
+	LastAnalyzedAt timetypes.RFC3339 `tfsdk:"last_analyzed_at" json:"last_analyzed_at,computed" format:"date-time"`
+	Mode           types.String      `tfsdk:"mode" json:"mode,optional"`
+	Status         types.String      `tfsdk:"status" json:"status,computed"`
 }
 
 type WorkersScriptMetadataTailConsumersModel struct {
@@ -181,8 +190,9 @@ type WorkersScriptMetadataTailConsumersModel struct {
 }
 
 type WorkersScriptPlacementModel struct {
-	Mode   types.String `tfsdk:"mode" json:"mode,computed"`
-	Status types.String `tfsdk:"status" json:"status,computed"`
+	LastAnalyzedAt timetypes.RFC3339 `tfsdk:"last_analyzed_at" json:"last_analyzed_at,computed" format:"date-time"`
+	Mode           types.String      `tfsdk:"mode" json:"mode,computed"`
+	Status         types.String      `tfsdk:"status" json:"status,computed"`
 }
 
 type WorkersScriptTailConsumersModel struct {

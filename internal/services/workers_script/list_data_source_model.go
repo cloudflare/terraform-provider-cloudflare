@@ -47,8 +47,9 @@ type WorkersScriptsResultDataSourceModel struct {
 }
 
 type WorkersScriptsPlacementDataSourceModel struct {
-	Mode   types.String `tfsdk:"mode" json:"mode,computed"`
-	Status types.String `tfsdk:"status" json:"status,computed"`
+	LastAnalyzedAt timetypes.RFC3339 `tfsdk:"last_analyzed_at" json:"last_analyzed_at,computed" format:"date-time"`
+	Mode           types.String      `tfsdk:"mode" json:"mode,computed"`
+	Status         types.String      `tfsdk:"status" json:"status,computed"`
 }
 
 type WorkersScriptsTailConsumersDataSourceModel struct {

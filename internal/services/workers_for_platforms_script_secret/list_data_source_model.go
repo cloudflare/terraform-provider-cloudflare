@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -33,6 +34,12 @@ func (m *WorkersForPlatformsScriptSecretsDataSourceModel) toListParams(_ context
 }
 
 type WorkersForPlatformsScriptSecretsResultDataSourceModel struct {
-	Name types.String `tfsdk:"name" json:"name,computed"`
-	Type types.String `tfsdk:"type" json:"type,computed"`
+	Name      types.String                   `tfsdk:"name" json:"name,computed"`
+	Text      types.String                   `tfsdk:"text" json:"text,computed"`
+	Type      types.String                   `tfsdk:"type" json:"type,computed"`
+	Algorithm jsontypes.Normalized           `tfsdk:"algorithm" json:"algorithm,computed"`
+	Format    types.String                   `tfsdk:"format" json:"format,computed"`
+	Usages    customfield.List[types.String] `tfsdk:"usages" json:"usages,computed"`
+	KeyBase64 types.String                   `tfsdk:"key_base64" json:"key_base64,computed"`
+	KeyJwk    jsontypes.Normalized           `tfsdk:"key_jwk" json:"key_jwk,computed"`
 }
