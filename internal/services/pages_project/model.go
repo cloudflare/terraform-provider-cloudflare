@@ -20,12 +20,12 @@ type PagesProjectModel struct {
 	ProductionBranch    types.String                                                   `tfsdk:"production_branch" json:"production_branch,optional"`
 	BuildConfig         customfield.NestedObject[PagesProjectBuildConfigModel]         `tfsdk:"build_config" json:"build_config,computed_optional"`
 	DeploymentConfigs   customfield.NestedObject[PagesProjectDeploymentConfigsModel]   `tfsdk:"deployment_configs" json:"deployment_configs,computed_optional"`
+	Source              customfield.NestedObject[PagesProjectSourceModel]              `tfsdk:"source" json:"source,computed_optional"`
 	CreatedOn           timetypes.RFC3339                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Subdomain           types.String                                                   `tfsdk:"subdomain" json:"subdomain,computed"`
 	Domains             customfield.List[types.String]                                 `tfsdk:"domains" json:"domains,computed"`
 	CanonicalDeployment customfield.NestedObject[PagesProjectCanonicalDeploymentModel] `tfsdk:"canonical_deployment" json:"canonical_deployment,computed"`
 	LatestDeployment    customfield.NestedObject[PagesProjectLatestDeploymentModel]    `tfsdk:"latest_deployment" json:"latest_deployment,computed"`
-	Source              customfield.NestedObject[PagesProjectSourceModel]              `tfsdk:"source" json:"source,computed"`
 }
 
 func (m PagesProjectModel) MarshalJSON() (data []byte, err error) {
@@ -206,6 +206,25 @@ type PagesProjectDeploymentConfigsProductionVectorizeBindingsModel struct {
 	IndexName types.String `tfsdk:"index_name" json:"index_name,optional"`
 }
 
+type PagesProjectSourceModel struct {
+	Config customfield.NestedObject[PagesProjectSourceConfigModel] `tfsdk:"config" json:"config,computed_optional"`
+	Type   types.String                                            `tfsdk:"type" json:"type,optional"`
+}
+
+type PagesProjectSourceConfigModel struct {
+	DeploymentsEnabled           types.Bool      `tfsdk:"deployments_enabled" json:"deployments_enabled,optional"`
+	Owner                        types.String    `tfsdk:"owner" json:"owner,optional"`
+	PathExcludes                 *[]types.String `tfsdk:"path_excludes" json:"path_excludes,optional"`
+	PathIncludes                 *[]types.String `tfsdk:"path_includes" json:"path_includes,optional"`
+	PrCommentsEnabled            types.Bool      `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,optional"`
+	PreviewBranchExcludes        *[]types.String `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,optional"`
+	PreviewBranchIncludes        *[]types.String `tfsdk:"preview_branch_includes" json:"preview_branch_includes,optional"`
+	PreviewDeploymentSetting     types.String    `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,optional"`
+	ProductionBranch             types.String    `tfsdk:"production_branch" json:"production_branch,optional"`
+	ProductionDeploymentsEnabled types.Bool      `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,optional"`
+	RepoName                     types.String    `tfsdk:"repo_name" json:"repo_name,optional"`
+}
+
 type PagesProjectCanonicalDeploymentModel struct {
 	ID                types.String                                                                    `tfsdk:"id" json:"id,computed"`
 	Aliases           customfield.List[types.String]                                                  `tfsdk:"aliases" json:"aliases,computed"`
@@ -358,23 +377,4 @@ type PagesProjectLatestDeploymentStagesModel struct {
 	Name      types.String      `tfsdk:"name" json:"name,computed"`
 	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed" format:"date-time"`
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
-}
-
-type PagesProjectSourceModel struct {
-	Config customfield.NestedObject[PagesProjectSourceConfigModel] `tfsdk:"config" json:"config,computed"`
-	Type   types.String                                            `tfsdk:"type" json:"type,computed"`
-}
-
-type PagesProjectSourceConfigModel struct {
-	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed"`
-	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed"`
-	PathExcludes                 customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed"`
-	PathIncludes                 customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed"`
-	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
-	PreviewBranchExcludes        customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed"`
-	PreviewBranchIncludes        customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed"`
-	PreviewDeploymentSetting     types.String                   `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,computed"`
-	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
-	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed"`
-	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
 }

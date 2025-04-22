@@ -521,6 +521,68 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"source": schema.SingleNestedAttribute{
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[PagesProjectSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"config": schema.SingleNestedAttribute{
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[PagesProjectSourceConfigModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"deployments_enabled": schema.BoolAttribute{
+								Optional: true,
+							},
+							"owner": schema.StringAttribute{
+								Optional: true,
+							},
+							"path_excludes": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"path_includes": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"pr_comments_enabled": schema.BoolAttribute{
+								Optional: true,
+							},
+							"preview_branch_excludes": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"preview_branch_includes": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"preview_deployment_setting": schema.StringAttribute{
+								Description: `Available values: "all", "none", "custom".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"all",
+										"none",
+										"custom",
+									),
+								},
+							},
+							"production_branch": schema.StringAttribute{
+								Optional: true,
+							},
+							"production_deployments_enabled": schema.BoolAttribute{
+								Optional: true,
+							},
+							"repo_name": schema.StringAttribute{
+								Optional: true,
+							},
+						},
+					},
+					"type": schema.StringAttribute{
+						Optional: true,
+					},
+				},
+			},
 			"created_on": schema.StringAttribute{
 				Description: "When the project was created.",
 				Computed:    true,
@@ -1117,70 +1179,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"url": schema.StringAttribute{
 						Description: "The live URL to view this deployment.",
 						Computed:    true,
-					},
-				},
-			},
-			"source": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[PagesProjectSourceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"config": schema.SingleNestedAttribute{
-						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[PagesProjectSourceConfigModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"deployments_enabled": schema.BoolAttribute{
-								Computed: true,
-							},
-							"owner": schema.StringAttribute{
-								Computed: true,
-							},
-							"path_excludes": schema.ListAttribute{
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"path_includes": schema.ListAttribute{
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"pr_comments_enabled": schema.BoolAttribute{
-								Computed: true,
-							},
-							"preview_branch_excludes": schema.ListAttribute{
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"preview_branch_includes": schema.ListAttribute{
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"preview_deployment_setting": schema.StringAttribute{
-								Description: `Available values: "all", "none", "custom".`,
-								Computed:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"all",
-										"none",
-										"custom",
-									),
-								},
-							},
-							"production_branch": schema.StringAttribute{
-								Computed: true,
-							},
-							"production_deployments_enabled": schema.BoolAttribute{
-								Computed: true,
-							},
-							"repo_name": schema.StringAttribute{
-								Computed: true,
-							},
-						},
-					},
-					"type": schema.StringAttribute{
-						Computed: true,
 					},
 				},
 			},
