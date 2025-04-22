@@ -89,6 +89,7 @@ type LoadBalancerPoolsOriginsDataSourceModel struct {
 	Enabled          types.Bool                                                              `tfsdk:"enabled" json:"enabled,computed"`
 	Header           customfield.NestedObject[LoadBalancerPoolsOriginsHeaderDataSourceModel] `tfsdk:"header" json:"header,computed"`
 	Name             types.String                                                            `tfsdk:"name" json:"name,computed"`
+	Port             types.Int64                                                             `tfsdk:"port" json:"port,computed"`
 	VirtualNetworkID types.String                                                            `tfsdk:"virtual_network_id" json:"virtual_network_id,computed"`
 	Weight           types.Float64                                                           `tfsdk:"weight" json:"weight,computed"`
 }

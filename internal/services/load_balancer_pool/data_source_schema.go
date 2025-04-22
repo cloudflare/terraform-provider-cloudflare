@@ -235,6 +235,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "A human-identifiable name for the origin.",
 							Computed:    true,
 						},
+						"port": schema.Int64Attribute{
+							Description: "The port for upstream connections. A value of 0 means the default port for the protocol will be used.",
+							Computed:    true,
+						},
 						"virtual_network_id": schema.StringAttribute{
 							Description: "The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.",
 							Computed:    true,
