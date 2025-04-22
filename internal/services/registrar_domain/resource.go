@@ -152,7 +152,6 @@ func (r *RegistrarDomainResource) Read(ctx context.Context, req resource.ReadReq
 	}
 
 	res := new(http.Response)
-	env := RegistrarDomainResultEnvelope{*data}
 	_, err := r.client.Registrar.Domains.Get(
 		ctx,
 		data.DomainName.ValueString(),
@@ -171,13 +170,6 @@ func (r *RegistrarDomainResource) Read(ctx context.Context, req resource.ReadReq
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
