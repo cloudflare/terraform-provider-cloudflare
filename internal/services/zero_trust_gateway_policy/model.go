@@ -19,12 +19,12 @@ type ZeroTrustGatewayPolicyModel struct {
 	Action        types.String                                                      `tfsdk:"action" json:"action,required"`
 	Name          types.String                                                      `tfsdk:"name" json:"name,required"`
 	Description   types.String                                                      `tfsdk:"description" json:"description,optional"`
-	DevicePosture types.String                                                      `tfsdk:"device_posture" json:"device_posture,optional"`
 	Enabled       types.Bool                                                        `tfsdk:"enabled" json:"enabled,optional"`
-	Identity      types.String                                                      `tfsdk:"identity" json:"identity,optional"`
 	Precedence    types.Int64                                                       `tfsdk:"precedence" json:"precedence,optional"`
-	Traffic       types.String                                                      `tfsdk:"traffic" json:"traffic,optional"`
 	Filters       *[]types.String                                                   `tfsdk:"filters" json:"filters,optional"`
+	DevicePosture types.String                                                      `tfsdk:"device_posture" json:"device_posture,computed_optional"`
+	Identity      types.String                                                      `tfsdk:"identity" json:"identity,computed_optional"`
+	Traffic       types.String                                                      `tfsdk:"traffic" json:"traffic,computed_optional"`
 	Expiration    customfield.NestedObject[ZeroTrustGatewayPolicyExpirationModel]   `tfsdk:"expiration" json:"expiration,computed_optional"`
 	RuleSettings  customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsModel] `tfsdk:"rule_settings" json:"rule_settings,computed_optional"`
 	Schedule      customfield.NestedObject[ZeroTrustGatewayPolicyScheduleModel]     `tfsdk:"schedule" json:"schedule,computed_optional"`
