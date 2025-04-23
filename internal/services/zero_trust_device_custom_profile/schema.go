@@ -42,7 +42,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
 			},
 			"match": schema.StringAttribute{
-				Description: "The wirefilter expression to match devices.",
+				Description: `The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version"`,
 				Required:    true,
 			},
 			"name": schema.StringAttribute{
