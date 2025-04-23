@@ -32,11 +32,11 @@ func (m *MagicWANGRETunnelDataSourceModel) toReadParams(_ context.Context) (para
 }
 
 type MagicWANGRETunnelGRETunnelDataSourceModel struct {
+	ID                    types.String                                                                   `tfsdk:"id" json:"id,computed"`
 	CloudflareGREEndpoint types.String                                                                   `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,computed"`
 	CustomerGREEndpoint   types.String                                                                   `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,computed"`
 	InterfaceAddress      types.String                                                                   `tfsdk:"interface_address" json:"interface_address,computed"`
 	Name                  types.String                                                                   `tfsdk:"name" json:"name,computed"`
-	ID                    types.String                                                                   `tfsdk:"id" json:"id,computed"`
 	CreatedOn             timetypes.RFC3339                                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description           types.String                                                                   `tfsdk:"description" json:"description,computed"`
 	HealthCheck           customfield.NestedObject[MagicWANGRETunnelGRETunnelHealthCheckDataSourceModel] `tfsdk:"health_check" json:"health_check,computed"`
