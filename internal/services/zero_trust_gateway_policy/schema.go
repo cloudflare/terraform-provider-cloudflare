@@ -65,24 +65,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The description of the rule.",
 				Optional:    true,
 			},
-			"device_posture": schema.StringAttribute{
-				Description: "The wirefilter expression used for device posture check matching.",
-				Optional:    true,
-			},
 			"enabled": schema.BoolAttribute{
 				Description: "True if the rule is enabled.",
 				Optional:    true,
 			},
-			"identity": schema.StringAttribute{
-				Description: "The wirefilter expression used for identity matching.",
-				Optional:    true,
-			},
 			"precedence": schema.Int64Attribute{
 				Description: "Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value.",
-				Optional:    true,
-			},
-			"traffic": schema.StringAttribute{
-				Description: "The wirefilter expression used for traffic matching.",
 				Optional:    true,
 			},
 			"filters": schema.ListAttribute{
@@ -100,6 +88,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				ElementType: types.StringType,
+			},
+			"device_posture": schema.StringAttribute{
+				Description: "The wirefilter expression used for device posture check matching.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"identity": schema.StringAttribute{
+				Description: "The wirefilter expression used for identity matching.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"traffic": schema.StringAttribute{
+				Description: "The wirefilter expression used for traffic matching.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
 			},
 			"expiration": schema.SingleNestedAttribute{
 				Description: "The expiration time stamp and default duration of a DNS policy. Takes\nprecedence over the policy's `schedule` configuration, if any.\n\nThis does not apply to HTTP or network policies.",
