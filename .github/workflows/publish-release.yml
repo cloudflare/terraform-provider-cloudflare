@@ -12,7 +12,7 @@ on:
       - "v*"
 jobs:
   goreleaser:
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v4
