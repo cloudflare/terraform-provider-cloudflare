@@ -366,7 +366,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"platform": schema.StringAttribute{
-							Description: `Available values: "windows", "mac", "linux", "android", "ios".`,
+							Description: `Available values: "windows", "mac", "linux", "android", "ios", "chromeos".`,
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -375,6 +375,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"linux",
 									"android",
 									"ios",
+									"chromeos",
 								),
 							},
 						},
