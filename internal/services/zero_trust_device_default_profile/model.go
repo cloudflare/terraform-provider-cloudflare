@@ -22,6 +22,8 @@ type ZeroTrustDeviceDefaultProfileModel struct {
 	CaptivePortal              types.Float64                                                                   `tfsdk:"captive_portal" json:"captive_portal,optional"`
 	DisableAutoFallback        types.Bool                                                                      `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,optional"`
 	ExcludeOfficeIPs           types.Bool                                                                      `tfsdk:"exclude_office_ips" json:"exclude_office_ips,optional"`
+	LANAllowMinutes            types.Float64                                                                   `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional"`
+	LANAllowSubnetSize         types.Float64                                                                   `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional"`
 	RegisterInterfaceIPWithDNS types.Bool                                                                      `tfsdk:"register_interface_ip_with_dns" json:"register_interface_ip_with_dns,optional"`
 	SupportURL                 types.String                                                                    `tfsdk:"support_url" json:"support_url,optional"`
 	SwitchLocked               types.Bool                                                                      `tfsdk:"switch_locked" json:"switch_locked,optional"`

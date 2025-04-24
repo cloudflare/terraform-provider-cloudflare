@@ -54,6 +54,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
 				Optional:    true,
 			},
+			"lan_allow_minutes": schema.Float64Attribute{
+				Description: "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
+				Optional:    true,
+			},
+			"lan_allow_subnet_size": schema.Float64Attribute{
+				Description: "The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.",
+				Optional:    true,
+			},
 			"register_interface_ip_with_dns": schema.BoolAttribute{
 				Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
 				Optional:    true,
