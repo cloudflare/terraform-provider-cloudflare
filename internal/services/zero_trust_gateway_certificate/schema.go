@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -65,6 +66,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"in_use": schema.BoolAttribute{
 				Description: "Use this certificate for Gateway TLS interception",
 				Computed:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"issuer_org": schema.StringAttribute{
 				Description: "The organization that issued the certificate.",
