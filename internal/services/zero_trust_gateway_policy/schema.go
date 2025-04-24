@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -61,14 +62,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the rule.",
 				Required:    true,
 			},
-			"description": schema.StringAttribute{
-				Description: "The description of the rule.",
-				Optional:    true,
-			},
-			"enabled": schema.BoolAttribute{
-				Description: "True if the rule is enabled.",
-				Optional:    true,
-			},
 			"precedence": schema.Int64Attribute{
 				Description: "Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value.",
 				Optional:    true,
@@ -89,11 +82,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				ElementType: types.StringType,
 			},
+			"description": schema.StringAttribute{
+				Description: "The description of the rule.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
 			"device_posture": schema.StringAttribute{
 				Description: "The wirefilter expression used for device posture check matching.",
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "True if the rule is enabled.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"identity": schema.StringAttribute{
 				Description: "The wirefilter expression used for identity matching.",
@@ -127,7 +132,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"expired": schema.BoolAttribute{
 						Description: "Whether the policy has expired.",
-						Optional:    true,
+						Computed:    true,
 					},
 				},
 			},
@@ -144,7 +149,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"allow_child_bypass": schema.BoolAttribute{
 						Description: "Set by parent MSP accounts to enable their children to bypass this rule.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"audit_ssh": schema.SingleNestedAttribute{
 						Description: "Settings for the Audit SSH action.",
@@ -154,7 +161,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"command_logging": schema.BoolAttribute{
 								Description: "Enable to turn on SSH command logging.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -177,15 +186,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"dcp": schema.BoolAttribute{
 								Description: "Set to false to enable copy-pasting. Only applies when `version == \"v1\"`.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"dd": schema.BoolAttribute{
 								Description: "Set to false to enable downloading. Only applies when `version == \"v1\"`.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"dk": schema.BoolAttribute{
 								Description: "Set to false to enable keyboard usage. Only applies when `version == \"v1\"`.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"download": schema.StringAttribute{
 								Description: "Configure whether downloading enabled or not. When absent, downloading is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\".",
@@ -196,11 +211,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"dp": schema.BoolAttribute{
 								Description: "Set to false to enable printing. Only applies when `version == \"v1\"`.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"du": schema.BoolAttribute{
 								Description: "Set to false to enable uploading. Only applies when `version == \"v1\"`.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"keyboard": schema.StringAttribute{
 								Description: "Configure whether keyboard usage is enabled or not. When absent, keyboard usage is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\".",
@@ -257,21 +276,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"include_context": schema.BoolAttribute{
 								Description: "If true, context information will be passed as query parameters",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
 					"block_page_enabled": schema.BoolAttribute{
 						Description: "Enable the custom block page.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"block_reason": schema.StringAttribute{
 						Description: "The text describing why this block occurred, displayed on the custom block page (if enabled).",
+						Computed:    true,
 						Optional:    true,
+						Default:     stringdefault.StaticString(""),
 					},
 					"bypass_parent_rule": schema.BoolAttribute{
 						Description: "Set by children MSP accounts to bypass their parent's rules.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"check_session": schema.SingleNestedAttribute{
 						Description: "Configure how session check behaves.",
@@ -285,7 +312,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"enforce": schema.BoolAttribute{
 								Description: "Set to true to enable session enforcement.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -369,19 +398,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"ignore_cname_category_matches": schema.BoolAttribute{
 						Description: "Set to true, to ignore the category matches at CNAME domains in a response. If unchecked, the categories in this rule will be checked against all the CNAME domain categories in a response.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"insecure_disable_dnssec_validation": schema.BoolAttribute{
 						Description: "INSECURE - disable DNSSEC validation (for Allow actions).",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"ip_categories": schema.BoolAttribute{
 						Description: "Set to true to enable IPs in DNS resolver category blocks. By default categories only block based on domain names.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"ip_indicator_feeds": schema.BoolAttribute{
 						Description: "Set to true to include IPs in DNS resolver indicator feed blocks. By default indicator feeds only block based on domain names.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"l4override": schema.SingleNestedAttribute{
 						Description: "Send matching traffic to the supplied destination IP address and port.",
@@ -407,7 +444,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Set notification on",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"include_context": schema.BoolAttribute{
 								Description: "If true, context information will be passed as query parameters",
@@ -425,7 +464,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"override_host": schema.StringAttribute{
 						Description: "Override matching DNS queries with a hostname.",
+						Computed:    true,
 						Optional:    true,
+						Default:     stringdefault.StaticString(""),
 					},
 					"override_ips": schema.ListAttribute{
 						Description: "Override matching DNS queries with an IP or set of IPs.",
@@ -440,7 +481,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Set to true to enable DLP payload logging for this rule.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -488,11 +531,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"include_context": schema.BoolAttribute{
 								Description: "If true, context information will be passed as query parameters",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"preserve_path_and_query": schema.BoolAttribute{
 								Description: "If true, the path and query parameters from the original request will be appended to target_uri",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -519,7 +566,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"resolve_dns_through_cloudflare": schema.BoolAttribute{
 						Description: "Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_internally' is set. Only valid when a rule's action is set to 'resolve'.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"untrusted_cert": schema.SingleNestedAttribute{
 						Description: "Configure behavior when an upstream cert is invalid or an SSL error occurs.",

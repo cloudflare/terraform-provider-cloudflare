@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -23,7 +24,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"redact_pii": schema.BoolAttribute{
 				Description: "Redact personally identifiable information from activity logging (PII fields are: source IP, user email, user ID, device ID, URL, referrer, user agent).",
+				Computed:    true,
 				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"settings_by_rule_type": schema.SingleNestedAttribute{
 				Description: "Logging settings by rule type.",
@@ -38,11 +41,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"log_all": schema.BoolAttribute{
 								Description: "Log all requests to this service.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"log_blocks": schema.BoolAttribute{
 								Description: "Log only blocking requests to this service.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -53,11 +60,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"log_all": schema.BoolAttribute{
 								Description: "Log all requests to this service.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"log_blocks": schema.BoolAttribute{
 								Description: "Log only blocking requests to this service.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -68,11 +79,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"log_all": schema.BoolAttribute{
 								Description: "Log all requests to this service.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"log_blocks": schema.BoolAttribute{
 								Description: "Log only blocking requests to this service.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},

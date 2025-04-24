@@ -18,11 +18,11 @@ type ZeroTrustGatewayPolicyModel struct {
 	AccountID     types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	Action        types.String                                                      `tfsdk:"action" json:"action,required"`
 	Name          types.String                                                      `tfsdk:"name" json:"name,required"`
-	Description   types.String                                                      `tfsdk:"description" json:"description,optional"`
-	Enabled       types.Bool                                                        `tfsdk:"enabled" json:"enabled,optional"`
 	Precedence    types.Int64                                                       `tfsdk:"precedence" json:"precedence,optional"`
 	Filters       *[]types.String                                                   `tfsdk:"filters" json:"filters,optional"`
+	Description   types.String                                                      `tfsdk:"description" json:"description,computed_optional"`
 	DevicePosture types.String                                                      `tfsdk:"device_posture" json:"device_posture,computed_optional"`
+	Enabled       types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Identity      types.String                                                      `tfsdk:"identity" json:"identity,computed_optional"`
 	Traffic       types.String                                                      `tfsdk:"traffic" json:"traffic,computed_optional"`
 	Expiration    customfield.NestedObject[ZeroTrustGatewayPolicyExpirationModel]   `tfsdk:"expiration" json:"expiration,computed_optional"`
@@ -45,49 +45,49 @@ func (m ZeroTrustGatewayPolicyModel) MarshalJSONForUpdate(state ZeroTrustGateway
 type ZeroTrustGatewayPolicyExpirationModel struct {
 	ExpiresAt timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,required" format:"date-time"`
 	Duration  types.Int64       `tfsdk:"duration" json:"duration,optional"`
-	Expired   types.Bool        `tfsdk:"expired" json:"expired,optional"`
+	Expired   types.Bool        `tfsdk:"expired" json:"expired,computed"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsModel struct {
 	AddHeaders                      *map[string]types.String                                                              `tfsdk:"add_headers" json:"add_headers,optional"`
-	AllowChildBypass                types.Bool                                                                            `tfsdk:"allow_child_bypass" json:"allow_child_bypass,optional"`
+	AllowChildBypass                types.Bool                                                                            `tfsdk:"allow_child_bypass" json:"allow_child_bypass,computed_optional"`
 	AuditSSH                        customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsAuditSSHModel]             `tfsdk:"audit_ssh" json:"audit_ssh,computed_optional"`
 	BISOAdminControls               customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel]    `tfsdk:"biso_admin_controls" json:"biso_admin_controls,computed_optional"`
 	BlockPage                       customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBlockPageModel]            `tfsdk:"block_page" json:"block_page,computed_optional"`
-	BlockPageEnabled                types.Bool                                                                            `tfsdk:"block_page_enabled" json:"block_page_enabled,optional"`
-	BlockReason                     types.String                                                                          `tfsdk:"block_reason" json:"block_reason,optional"`
-	BypassParentRule                types.Bool                                                                            `tfsdk:"bypass_parent_rule" json:"bypass_parent_rule,optional"`
+	BlockPageEnabled                types.Bool                                                                            `tfsdk:"block_page_enabled" json:"block_page_enabled,computed_optional"`
+	BlockReason                     types.String                                                                          `tfsdk:"block_reason" json:"block_reason,computed_optional"`
+	BypassParentRule                types.Bool                                                                            `tfsdk:"bypass_parent_rule" json:"bypass_parent_rule,computed_optional"`
 	CheckSession                    customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsCheckSessionModel]         `tfsdk:"check_session" json:"check_session,computed_optional"`
 	DNSResolvers                    customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsDNSResolversModel]         `tfsdk:"dns_resolvers" json:"dns_resolvers,computed_optional"`
 	Egress                          customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsEgressModel]               `tfsdk:"egress" json:"egress,computed_optional"`
-	IgnoreCNAMECategoryMatches      types.Bool                                                                            `tfsdk:"ignore_cname_category_matches" json:"ignore_cname_category_matches,optional"`
-	InsecureDisableDNSSECValidation types.Bool                                                                            `tfsdk:"insecure_disable_dnssec_validation" json:"insecure_disable_dnssec_validation,optional"`
-	IPCategories                    types.Bool                                                                            `tfsdk:"ip_categories" json:"ip_categories,optional"`
-	IPIndicatorFeeds                types.Bool                                                                            `tfsdk:"ip_indicator_feeds" json:"ip_indicator_feeds,optional"`
+	IgnoreCNAMECategoryMatches      types.Bool                                                                            `tfsdk:"ignore_cname_category_matches" json:"ignore_cname_category_matches,computed_optional"`
+	InsecureDisableDNSSECValidation types.Bool                                                                            `tfsdk:"insecure_disable_dnssec_validation" json:"insecure_disable_dnssec_validation,computed_optional"`
+	IPCategories                    types.Bool                                                                            `tfsdk:"ip_categories" json:"ip_categories,computed_optional"`
+	IPIndicatorFeeds                types.Bool                                                                            `tfsdk:"ip_indicator_feeds" json:"ip_indicator_feeds,computed_optional"`
 	L4override                      customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsL4overrideModel]           `tfsdk:"l4override" json:"l4override,computed_optional"`
 	NotificationSettings            customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsNotificationSettingsModel] `tfsdk:"notification_settings" json:"notification_settings,computed_optional"`
-	OverrideHost                    types.String                                                                          `tfsdk:"override_host" json:"override_host,optional"`
+	OverrideHost                    types.String                                                                          `tfsdk:"override_host" json:"override_host,computed_optional"`
 	OverrideIPs                     *[]types.String                                                                       `tfsdk:"override_ips" json:"override_ips,optional"`
 	PayloadLog                      customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsPayloadLogModel]           `tfsdk:"payload_log" json:"payload_log,computed_optional"`
 	Quarantine                      customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsQuarantineModel]           `tfsdk:"quarantine" json:"quarantine,computed_optional"`
 	Redirect                        customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsRedirectModel]             `tfsdk:"redirect" json:"redirect,computed_optional"`
 	ResolveDNSInternally            customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsResolveDNSInternallyModel] `tfsdk:"resolve_dns_internally" json:"resolve_dns_internally,computed_optional"`
-	ResolveDNSThroughCloudflare     types.Bool                                                                            `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,optional"`
+	ResolveDNSThroughCloudflare     types.Bool                                                                            `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,computed_optional"`
 	UntrustedCERT                   customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTModel]        `tfsdk:"untrusted_cert" json:"untrusted_cert,computed_optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsAuditSSHModel struct {
-	CommandLogging types.Bool `tfsdk:"command_logging" json:"command_logging,optional"`
+	CommandLogging types.Bool `tfsdk:"command_logging" json:"command_logging,computed_optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel struct {
 	Copy     types.String `tfsdk:"copy" json:"copy,optional"`
-	DCP      types.Bool   `tfsdk:"dcp" json:"dcp,optional"`
-	DD       types.Bool   `tfsdk:"dd" json:"dd,optional"`
-	DK       types.Bool   `tfsdk:"dk" json:"dk,optional"`
+	DCP      types.Bool   `tfsdk:"dcp" json:"dcp,computed_optional"`
+	DD       types.Bool   `tfsdk:"dd" json:"dd,computed_optional"`
+	DK       types.Bool   `tfsdk:"dk" json:"dk,computed_optional"`
 	Download types.String `tfsdk:"download" json:"download,optional"`
-	DP       types.Bool   `tfsdk:"dp" json:"dp,optional"`
-	DU       types.Bool   `tfsdk:"du" json:"du,optional"`
+	DP       types.Bool   `tfsdk:"dp" json:"dp,computed_optional"`
+	DU       types.Bool   `tfsdk:"du" json:"du,computed_optional"`
 	Keyboard types.String `tfsdk:"keyboard" json:"keyboard,optional"`
 	Paste    types.String `tfsdk:"paste" json:"paste,optional"`
 	Printing types.String `tfsdk:"printing" json:"printing,optional"`
@@ -97,12 +97,12 @@ type ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel struct {
 
 type ZeroTrustGatewayPolicyRuleSettingsBlockPageModel struct {
 	TargetURI      types.String `tfsdk:"target_uri" json:"target_uri,required"`
-	IncludeContext types.Bool   `tfsdk:"include_context" json:"include_context,optional"`
+	IncludeContext types.Bool   `tfsdk:"include_context" json:"include_context,computed_optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsCheckSessionModel struct {
 	Duration types.String `tfsdk:"duration" json:"duration,optional"`
-	Enforce  types.Bool   `tfsdk:"enforce" json:"enforce,optional"`
+	Enforce  types.Bool   `tfsdk:"enforce" json:"enforce,computed_optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsDNSResolversModel struct {
@@ -136,14 +136,14 @@ type ZeroTrustGatewayPolicyRuleSettingsL4overrideModel struct {
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsNotificationSettingsModel struct {
-	Enabled        types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
+	Enabled        types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 	IncludeContext types.Bool   `tfsdk:"include_context" json:"include_context,optional"`
 	Msg            types.String `tfsdk:"msg" json:"msg,optional"`
 	SupportURL     types.String `tfsdk:"support_url" json:"support_url,optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsPayloadLogModel struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled,optional"`
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed_optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsQuarantineModel struct {
@@ -152,8 +152,8 @@ type ZeroTrustGatewayPolicyRuleSettingsQuarantineModel struct {
 
 type ZeroTrustGatewayPolicyRuleSettingsRedirectModel struct {
 	TargetURI            types.String `tfsdk:"target_uri" json:"target_uri,required"`
-	IncludeContext       types.Bool   `tfsdk:"include_context" json:"include_context,optional"`
-	PreservePathAndQuery types.Bool   `tfsdk:"preserve_path_and_query" json:"preserve_path_and_query,optional"`
+	IncludeContext       types.Bool   `tfsdk:"include_context" json:"include_context,computed_optional"`
+	PreservePathAndQuery types.Bool   `tfsdk:"preserve_path_and_query" json:"preserve_path_and_query,computed_optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsResolveDNSInternallyModel struct {

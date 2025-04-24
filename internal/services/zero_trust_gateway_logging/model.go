@@ -14,7 +14,7 @@ type ZeroTrustGatewayLoggingResultEnvelope struct {
 
 type ZeroTrustGatewayLoggingModel struct {
 	AccountID          types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
-	RedactPii          types.Bool                                                               `tfsdk:"redact_pii" json:"redact_pii,optional"`
+	RedactPii          types.Bool                                                               `tfsdk:"redact_pii" json:"redact_pii,computed_optional"`
 	SettingsByRuleType customfield.NestedObject[ZeroTrustGatewayLoggingSettingsByRuleTypeModel] `tfsdk:"settings_by_rule_type" json:"settings_by_rule_type,computed_optional"`
 }
 
@@ -33,16 +33,16 @@ type ZeroTrustGatewayLoggingSettingsByRuleTypeModel struct {
 }
 
 type ZeroTrustGatewayLoggingSettingsByRuleTypeDNSModel struct {
-	LogAll    types.Bool `tfsdk:"log_all" json:"log_all,optional"`
-	LogBlocks types.Bool `tfsdk:"log_blocks" json:"log_blocks,optional"`
+	LogAll    types.Bool `tfsdk:"log_all" json:"log_all,computed_optional"`
+	LogBlocks types.Bool `tfsdk:"log_blocks" json:"log_blocks,computed_optional"`
 }
 
 type ZeroTrustGatewayLoggingSettingsByRuleTypeHTTPModel struct {
-	LogAll    types.Bool `tfsdk:"log_all" json:"log_all,optional"`
-	LogBlocks types.Bool `tfsdk:"log_blocks" json:"log_blocks,optional"`
+	LogAll    types.Bool `tfsdk:"log_all" json:"log_all,computed_optional"`
+	LogBlocks types.Bool `tfsdk:"log_blocks" json:"log_blocks,computed_optional"`
 }
 
 type ZeroTrustGatewayLoggingSettingsByRuleTypeL4Model struct {
-	LogAll    types.Bool `tfsdk:"log_all" json:"log_all,optional"`
-	LogBlocks types.Bool `tfsdk:"log_blocks" json:"log_blocks,optional"`
+	LogAll    types.Bool `tfsdk:"log_all" json:"log_all,computed_optional"`
+	LogBlocks types.Bool `tfsdk:"log_blocks" json:"log_blocks,computed_optional"`
 }
