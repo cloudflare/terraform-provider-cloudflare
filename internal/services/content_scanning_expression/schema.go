@@ -18,12 +18,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "The unique ID for this custom scan expression",
+				Description:   "defines the unique ID for this custom scan expression.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Defines an identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -32,7 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"payload": schema.StringAttribute{
-							Description: "Ruleset expression to use in matching content objects",
+							Description: "Defines the ruleset expression to use in matching content objects.",
 							Required:    true,
 						},
 					},
@@ -40,7 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"payload": schema.StringAttribute{
-				Description: "Ruleset expression to use in matching content objects",
+				Description: "Defines the ruleset expression to use in matching content objects.",
 				Computed:    true,
 			},
 		},
