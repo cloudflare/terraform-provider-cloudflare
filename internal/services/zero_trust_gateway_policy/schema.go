@@ -149,9 +149,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"allow_child_bypass": schema.BoolAttribute{
 						Description: "Set by parent MSP accounts to enable their children to bypass this rule.",
-						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"audit_ssh": schema.SingleNestedAttribute{
 						Description: "Settings for the Audit SSH action.",
@@ -296,9 +294,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"bypass_parent_rule": schema.BoolAttribute{
 						Description: "Set by children MSP accounts to bypass their parent's rules.",
-						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"check_session": schema.SingleNestedAttribute{
 						Description: "Configure how session check behaves.",
