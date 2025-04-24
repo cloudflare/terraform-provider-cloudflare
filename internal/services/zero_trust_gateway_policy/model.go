@@ -50,13 +50,13 @@ type ZeroTrustGatewayPolicyExpirationModel struct {
 
 type ZeroTrustGatewayPolicyRuleSettingsModel struct {
 	AddHeaders                      *map[string]types.String                                                              `tfsdk:"add_headers" json:"add_headers,optional"`
-	AllowChildBypass                types.Bool                                                                            `tfsdk:"allow_child_bypass" json:"allow_child_bypass,computed_optional"`
+	AllowChildBypass                types.Bool                                                                            `tfsdk:"allow_child_bypass" json:"allow_child_bypass,optional"`
 	AuditSSH                        customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsAuditSSHModel]             `tfsdk:"audit_ssh" json:"audit_ssh,computed_optional"`
 	BISOAdminControls               customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel]    `tfsdk:"biso_admin_controls" json:"biso_admin_controls,computed_optional"`
 	BlockPage                       customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBlockPageModel]            `tfsdk:"block_page" json:"block_page,computed_optional"`
 	BlockPageEnabled                types.Bool                                                                            `tfsdk:"block_page_enabled" json:"block_page_enabled,computed_optional"`
 	BlockReason                     types.String                                                                          `tfsdk:"block_reason" json:"block_reason,computed_optional"`
-	BypassParentRule                types.Bool                                                                            `tfsdk:"bypass_parent_rule" json:"bypass_parent_rule,computed_optional"`
+	BypassParentRule                types.Bool                                                                            `tfsdk:"bypass_parent_rule" json:"bypass_parent_rule,optional"`
 	CheckSession                    customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsCheckSessionModel]         `tfsdk:"check_session" json:"check_session,computed_optional"`
 	DNSResolvers                    customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsDNSResolversModel]         `tfsdk:"dns_resolvers" json:"dns_resolvers,computed_optional"`
 	Egress                          customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsEgressModel]               `tfsdk:"egress" json:"egress,computed_optional"`
