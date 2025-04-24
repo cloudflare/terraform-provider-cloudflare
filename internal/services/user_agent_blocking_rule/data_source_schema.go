@@ -19,7 +19,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Defines an identifier.",
 				Required:    true,
 			},
 		},

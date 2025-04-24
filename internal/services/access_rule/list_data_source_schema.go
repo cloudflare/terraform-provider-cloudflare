@@ -32,7 +32,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "The direction used to sort returned rules.\nAvailable values: \"asc\", \"desc\".",
+				Description: "Defines the direction used to sort returned rules.\nAvailable values: \"asc\", \"desc\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
@@ -52,11 +52,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"notes": schema.StringAttribute{
-				Description: "The string to search for in the notes of existing IP Access rules.\nNotes: For example, the string 'attack' would match IP Access rules with notes 'Attack 26/02' and 'Attack 27/02'. The search is case insensitive.",
+				Description: "Defines the string to search for in the notes of existing IP Access rules.\nNotes: For example, the string 'attack' would match IP Access rules with notes 'Attack 26/02' and 'Attack 27/02'. The search is case insensitive.",
 				Optional:    true,
 			},
 			"order": schema.StringAttribute{
-				Description: "The field used to sort returned rules.\nAvailable values: \"configuration.target\", \"configuration.value\", \"mode\".",
+				Description: "Defines the field used to sort returned rules.\nAvailable values: \"configuration.target\", \"configuration.value\", \"mode\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -70,7 +70,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"target": schema.StringAttribute{
-						Description: "The target to search in existing rules.\nAvailable values: \"ip\", \"ip_range\", \"asn\", \"country\".",
+						Description: "Defines the target to search in existing rules.\nAvailable values: \"ip\", \"ip_range\", \"asn\", \"country\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -82,13 +82,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"value": schema.StringAttribute{
-						Description: "The target value to search for in existing rules: an IP address, an IP address range, or a country code, depending on the provided `configuration.target`.\nNotes: You can search for a single IPv4 address, an IP address range with a subnet of '/16' or '/24', or a two-letter ISO-3166-1 alpha-2 country code.",
+						Description: "Defines the target value to search for in existing rules: an IP address, an IP address range, or a country code, depending on the provided `configuration.target`.\nNotes: You can search for a single IPv4 address, an IP address range with a subnet of '/16' or '/24', or a two-letter ISO-3166-1 alpha-2 country code.",
 						Optional:    true,
 					},
 				},
 			},
 			"match": schema.StringAttribute{
-				Description: "When set to `all`, all the search requirements must match. When set to `any`, only one of the search requirements has to match.\nAvailable values: \"any\", \"all\".",
+				Description: "Defines the search requirements. When set to `all`, all the search requirements must match. When set to `any`, only one of the search requirements has to match.\nAvailable values: \"any\", \"all\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -186,7 +186,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[AccessRulesScopeDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"id": schema.StringAttribute{
-									Description: "Identifier",
+									Description: "Defines an identifier.",
 									Computed:    true,
 								},
 								"email": schema.StringAttribute{
@@ -194,7 +194,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"type": schema.StringAttribute{
-									Description: "The scope of the rule.\nAvailable values: \"user\", \"organization\".",
+									Description: "Defines the scope of the rule.\nAvailable values: \"user\", \"organization\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("user", "organization"),

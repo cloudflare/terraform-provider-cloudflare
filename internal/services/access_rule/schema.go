@@ -110,7 +110,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[AccessRuleScopeModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Description: "Identifier",
+						Description: "Defines an identifier.",
 						Computed:    true,
 					},
 					"email": schema.StringAttribute{
@@ -118,7 +118,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"type": schema.StringAttribute{
-						Description: "The scope of the rule.\nAvailable values: \"user\", \"organization\".",
+						Description: "Defines the scope of the rule.\nAvailable values: \"user\", \"organization\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("user", "organization"),
