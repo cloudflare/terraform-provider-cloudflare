@@ -13,8 +13,24 @@ import (
 	"github.com/jinzhu/copier"
 )
 
+type WorkersServiceResultEnvelope struct {
+	Result WorkersServiceModel `json:"result"`
+}
+
 type WorkersScriptResultEnvelope struct {
 	Result WorkersScriptModel `json:"result"`
+}
+
+type WorkersScriptMetadataResultEnvelope struct {
+	Result WorkersScriptMetadataModel `json:"result"`
+}
+
+type WorkersServiceModel struct {
+	DefaultEnvironment WorkersEnvironmentModel `json:"default_environment"`
+}
+
+type WorkersEnvironmentModel struct {
+	Script WorkersScriptModel `json:"script"`
 }
 
 type WorkersScriptModel struct {
