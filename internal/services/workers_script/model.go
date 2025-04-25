@@ -90,8 +90,8 @@ type WorkersScriptMetadataAssetsConfigModel struct {
 	Redirects        types.String `tfsdk:"_redirects" json:"_redirects,optional"`
 	HTMLHandling     types.String `tfsdk:"html_handling" json:"html_handling,optional"`
 	NotFoundHandling types.String `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
-	RunWorkerFirst   types.Bool   `tfsdk:"run_worker_first" json:"run_worker_first,computed_optional"`
-	ServeDirectly    types.Bool   `tfsdk:"serve_directly" json:"serve_directly,computed_optional"`
+	RunWorkerFirst   types.Bool   `tfsdk:"run_worker_first" json:"run_worker_first,optional"`
+	ServeDirectly    types.Bool   `tfsdk:"serve_directly" json:"serve_directly,optional"`
 }
 
 type WorkersScriptMetadataBindingsModel struct {
