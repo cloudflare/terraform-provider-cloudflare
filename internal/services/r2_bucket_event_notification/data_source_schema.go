@@ -20,11 +20,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Account ID",
+				Description: "Account ID.",
 				Required:    true,
 			},
 			"bucket_name": schema.StringAttribute{
-				Description: "Name of the bucket",
+				Description: "Name of the bucket.",
 				Required:    true,
 			},
 			"queues": schema.ListNestedAttribute{
@@ -34,11 +34,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"queue_id": schema.StringAttribute{
-							Description: "Queue ID",
+							Description: "Queue ID.",
 							Computed:    true,
 						},
 						"queue_name": schema.StringAttribute{
-							Description: "Name of the queue",
+							Description: "Name of the queue.",
 							Computed:    true,
 						},
 						"rules": schema.ListNestedAttribute{
@@ -47,7 +47,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"actions": schema.ListAttribute{
-										Description: "Array of R2 object actions that will trigger notifications",
+										Description: "Array of R2 object actions that will trigger notifications.",
 										Computed:    true,
 										Validators: []validator.List{
 											listvalidator.ValueStringsAre(
@@ -64,23 +64,23 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										ElementType: types.StringType,
 									},
 									"created_at": schema.StringAttribute{
-										Description: "Timestamp when the rule was created",
+										Description: "Timestamp when the rule was created.",
 										Computed:    true,
 									},
 									"description": schema.StringAttribute{
-										Description: "A description that can be used to identify the event notification rule after creation",
+										Description: "A description that can be used to identify the event notification rule after creation.",
 										Computed:    true,
 									},
 									"prefix": schema.StringAttribute{
-										Description: "Notifications will be sent only for objects with this prefix",
+										Description: "Notifications will be sent only for objects with this prefix.",
 										Computed:    true,
 									},
 									"rule_id": schema.StringAttribute{
-										Description: "Rule ID",
+										Description: "Rule ID.",
 										Computed:    true,
 									},
 									"suffix": schema.StringAttribute{
-										Description: "Notifications will be sent only for objects with this suffix",
+										Description: "Notifications will be sent only for objects with this suffix.",
 										Computed:    true,
 									},
 								},

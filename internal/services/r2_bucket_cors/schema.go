@@ -23,12 +23,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description:   "Account ID",
+				Description:   "Account ID.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"bucket_name": schema.StringAttribute{
-				Description:   "Name of the bucket",
+				Description:   "Name of the bucket.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -84,7 +84,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"id": schema.StringAttribute{
-							Description: "Identifier for this rule",
+							Description: "Identifier for this rule.",
 							Optional:    true,
 						},
 						"expose_headers": schema.ListAttribute{

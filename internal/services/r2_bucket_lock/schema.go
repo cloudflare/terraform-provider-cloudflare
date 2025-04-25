@@ -22,12 +22,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description:   "Account ID",
+				Description:   "Account ID.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"bucket_name": schema.StringAttribute{
-				Description:   "Name of the bucket",
+				Description:   "Name of the bucket.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -51,11 +51,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "Unique identifier for this rule",
+							Description: "Unique identifier for this rule.",
 							Required:    true,
 						},
 						"condition": schema.SingleNestedAttribute{
-							Description: "Condition to apply a lock rule to an object for how long in seconds",
+							Description: "Condition to apply a lock rule to an object for how long in seconds.",
 							Required:    true,
 							Attributes: map[string]schema.Attribute{
 								"max_age_seconds": schema.Int64Attribute{
@@ -79,11 +79,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"enabled": schema.BoolAttribute{
-							Description: "Whether or not this rule is in effect",
+							Description: "Whether or not this rule is in effect.",
 							Required:    true,
 						},
 						"prefix": schema.StringAttribute{
-							Description: "Rule will only apply to objects/uploads in the bucket that start with the given prefix, an empty prefix can be provided to scope rule to all objects/uploads",
+							Description: "Rule will only apply to objects/uploads in the bucket that start with the given prefix, an empty prefix can be provided to scope rule to all objects/uploads.",
 							Optional:    true,
 						},
 					},

@@ -18,19 +18,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Account ID",
+				Description: "Account ID.",
 				Required:    true,
 			},
 			"bucket_name": schema.StringAttribute{
-				Description: "Name of the bucket",
+				Description: "Name of the bucket.",
 				Required:    true,
 			},
 			"domain": schema.StringAttribute{
-				Description: "Name of the custom domain",
+				Description: "Name of the custom domain.",
 				Required:    true,
 			},
 			"enabled": schema.BoolAttribute{
-				Description: "Whether this bucket is publicly accessible at the specified custom domain",
+				Description: "Whether this bucket is publicly accessible at the specified custom domain.",
 				Computed:    true,
 			},
 			"min_tls": schema.StringAttribute{
@@ -46,11 +46,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "Zone ID of the custom domain resides in",
+				Description: "Zone ID of the custom domain resides in.",
 				Computed:    true,
 			},
 			"zone_name": schema.StringAttribute{
-				Description: "Zone that the custom domain resides in",
+				Description: "Zone that the custom domain resides in.",
 				Computed:    true,
 			},
 			"status": schema.SingleNestedAttribute{
@@ -58,7 +58,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[R2CustomDomainStatusDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ownership": schema.StringAttribute{
-						Description: "Ownership status of the domain\nAvailable values: \"pending\", \"active\", \"deactivated\", \"blocked\", \"error\", \"unknown\".",
+						Description: "Ownership status of the domain.\nAvailable values: \"pending\", \"active\", \"deactivated\", \"blocked\", \"error\", \"unknown\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -72,7 +72,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"ssl": schema.StringAttribute{
-						Description: "SSL certificate status\nAvailable values: \"initializing\", \"pending\", \"active\", \"deactivated\", \"error\", \"unknown\".",
+						Description: "SSL certificate status.\nAvailable values: \"initializing\", \"pending\", \"active\", \"deactivated\", \"error\", \"unknown\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
