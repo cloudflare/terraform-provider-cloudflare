@@ -17,25 +17,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description:   "Account ID",
+				Description:   "Account ID.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"bucket_name": schema.StringAttribute{
-				Description:   "Name of the bucket",
+				Description:   "Name of the bucket.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"enabled": schema.BoolAttribute{
-				Description: "Whether to enable public bucket access at the r2.dev domain",
+				Description: "Whether to enable public bucket access at the r2.dev domain.",
 				Required:    true,
 			},
 			"bucket_id": schema.StringAttribute{
-				Description: "Bucket ID",
+				Description: "Bucket ID.",
 				Computed:    true,
 			},
 			"domain": schema.StringAttribute{
-				Description: "Domain name of the bucket's r2.dev domain",
+				Description: "Domain name of the bucket's r2.dev domain.",
 				Computed:    true,
 			},
 		},

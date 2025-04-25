@@ -22,29 +22,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description:   "Account ID",
+				Description:   "Account ID.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"bucket_name": schema.StringAttribute{
-				Description:   "Name of the bucket",
+				Description:   "Name of the bucket.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"queue_id": schema.StringAttribute{
-				Description:   "Queue ID",
+				Description:   "Queue ID.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"rules": schema.ListNestedAttribute{
-				Description: "Array of rules to drive notifications",
+				Description: "Array of rules to drive notifications.",
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectListType[R2BucketEventNotificationRulesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"actions": schema.ListAttribute{
-							Description: "Array of R2 object actions that will trigger notifications",
+							Description: "Array of R2 object actions that will trigger notifications.",
 							Required:    true,
 							Validators: []validator.List{
 								listvalidator.ValueStringsAre(
@@ -60,15 +60,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							ElementType: types.StringType,
 						},
 						"description": schema.StringAttribute{
-							Description: "A description that can be used to identify the event notification rule after creation",
+							Description: "A description that can be used to identify the event notification rule after creation.",
 							Optional:    true,
 						},
 						"prefix": schema.StringAttribute{
-							Description: "Notifications will be sent only for objects with this prefix",
+							Description: "Notifications will be sent only for objects with this prefix.",
 							Optional:    true,
 						},
 						"suffix": schema.StringAttribute{
-							Description: "Notifications will be sent only for objects with this suffix",
+							Description: "Notifications will be sent only for objects with this suffix.",
 							Optional:    true,
 						},
 					},
@@ -81,11 +81,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"queue_id": schema.StringAttribute{
-							Description: "Queue ID",
+							Description: "Queue ID.",
 							Computed:    true,
 						},
 						"queue_name": schema.StringAttribute{
-							Description: "Name of the queue",
+							Description: "Name of the queue.",
 							Computed:    true,
 						},
 						"rules": schema.ListNestedAttribute{
@@ -94,7 +94,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"actions": schema.ListAttribute{
-										Description: "Array of R2 object actions that will trigger notifications",
+										Description: "Array of R2 object actions that will trigger notifications.",
 										Computed:    true,
 										Validators: []validator.List{
 											listvalidator.ValueStringsAre(
@@ -111,23 +111,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										ElementType: types.StringType,
 									},
 									"created_at": schema.StringAttribute{
-										Description: "Timestamp when the rule was created",
+										Description: "Timestamp when the rule was created.",
 										Computed:    true,
 									},
 									"description": schema.StringAttribute{
-										Description: "A description that can be used to identify the event notification rule after creation",
+										Description: "A description that can be used to identify the event notification rule after creation.",
 										Computed:    true,
 									},
 									"prefix": schema.StringAttribute{
-										Description: "Notifications will be sent only for objects with this prefix",
+										Description: "Notifications will be sent only for objects with this prefix.",
 										Computed:    true,
 									},
 									"rule_id": schema.StringAttribute{
-										Description: "Rule ID",
+										Description: "Rule ID.",
 										Computed:    true,
 									},
 									"suffix": schema.StringAttribute{
-										Description: "Notifications will be sent only for objects with this suffix",
+										Description: "Notifications will be sent only for objects with this suffix.",
 										Computed:    true,
 									},
 								},

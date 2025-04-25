@@ -21,12 +21,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description:   "Account ID",
+				Description:   "Account ID.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"bucket_name": schema.StringAttribute{
-				Description:   "Name of the bucket",
+				Description:   "Name of the bucket.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -37,31 +37,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "Unique identifier for this rule",
+							Description: "Unique identifier for this rule.",
 							Required:    true,
 						},
 						"conditions": schema.SingleNestedAttribute{
-							Description: "Conditions that apply to all transitions of this rule",
+							Description: "Conditions that apply to all transitions of this rule.",
 							Required:    true,
 							Attributes: map[string]schema.Attribute{
 								"prefix": schema.StringAttribute{
-									Description: "Transitions will only apply to objects/uploads in the bucket that start with the given prefix, an empty prefix can be provided to scope rule to all objects/uploads",
+									Description: "Transitions will only apply to objects/uploads in the bucket that start with the given prefix, an empty prefix can be provided to scope rule to all objects/uploads.",
 									Required:    true,
 								},
 							},
 						},
 						"enabled": schema.BoolAttribute{
-							Description: "Whether or not this rule is in effect",
+							Description: "Whether or not this rule is in effect.",
 							Required:    true,
 						},
 						"abort_multipart_uploads_transition": schema.SingleNestedAttribute{
-							Description: "Transition to abort ongoing multipart uploads",
+							Description: "Transition to abort ongoing multipart uploads.",
 							Computed:    true,
 							Optional:    true,
 							CustomType:  customfield.NewNestedObjectType[R2BucketLifecycleRulesAbortMultipartUploadsTransitionModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"condition": schema.SingleNestedAttribute{
-									Description: "Condition for lifecycle transitions to apply after an object reaches an age in seconds",
+									Description: "Condition for lifecycle transitions to apply after an object reaches an age in seconds.",
 									Computed:    true,
 									Optional:    true,
 									CustomType:  customfield.NewNestedObjectType[R2BucketLifecycleRulesAbortMultipartUploadsTransitionConditionModel](ctx),
@@ -81,13 +81,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"delete_objects_transition": schema.SingleNestedAttribute{
-							Description: "Transition to delete objects",
+							Description: "Transition to delete objects.",
 							Computed:    true,
 							Optional:    true,
 							CustomType:  customfield.NewNestedObjectType[R2BucketLifecycleRulesDeleteObjectsTransitionModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"condition": schema.SingleNestedAttribute{
-									Description: "Condition for lifecycle transitions to apply after an object reaches an age in seconds",
+									Description: "Condition for lifecycle transitions to apply after an object reaches an age in seconds.",
 									Computed:    true,
 									Optional:    true,
 									CustomType:  customfield.NewNestedObjectType[R2BucketLifecycleRulesDeleteObjectsTransitionConditionModel](ctx),
@@ -111,14 +111,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"storage_class_transitions": schema.ListNestedAttribute{
-							Description: "Transitions to change the storage class of objects",
+							Description: "Transitions to change the storage class of objects.",
 							Computed:    true,
 							Optional:    true,
 							CustomType:  customfield.NewNestedObjectListType[R2BucketLifecycleRulesStorageClassTransitionsModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"condition": schema.SingleNestedAttribute{
-										Description: "Condition for lifecycle transitions to apply after an object reaches an age in seconds",
+										Description: "Condition for lifecycle transitions to apply after an object reaches an age in seconds.",
 										Required:    true,
 										Attributes: map[string]schema.Attribute{
 											"max_age": schema.Int64Attribute{

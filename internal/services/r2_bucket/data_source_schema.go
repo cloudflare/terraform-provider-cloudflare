@@ -17,19 +17,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Account ID",
+				Description: "Account ID.",
 				Required:    true,
 			},
 			"bucket_name": schema.StringAttribute{
-				Description: "Name of the bucket",
+				Description: "Name of the bucket.",
 				Required:    true,
 			},
 			"creation_date": schema.StringAttribute{
-				Description: "Creation timestamp",
+				Description: "Creation timestamp.",
 				Computed:    true,
 			},
 			"location": schema.StringAttribute{
-				Description: "Location of the bucket\nAvailable values: \"apac\", \"eeur\", \"enam\", \"weur\", \"wnam\", \"oc\".",
+				Description: "Location of the bucket.\nAvailable values: \"apac\", \"eeur\", \"enam\", \"weur\", \"wnam\", \"oc\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -43,7 +43,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the bucket",
+				Description: "Name of the bucket.",
 				Computed:    true,
 			},
 			"storage_class": schema.StringAttribute{
