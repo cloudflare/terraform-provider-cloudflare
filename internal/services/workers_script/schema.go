@@ -116,7 +116,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"ai",
 											"analytics_engine",
 											"assets",
-											"browser_rendering",
+											"browser",
 											"d1",
 											"dispatch_namespace",
 											"durable_object_namespace",
