@@ -66,6 +66,7 @@ func (r *MagicWANGRETunnelResource) Create(ctx context.Context, req resource.Cre
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+	dataBody := append(append([]byte("{\"gre_tunnels\": ["), dataBytes...), []byte("]}")...)
 	res := new(http.Response)
 	env := MagicWANGRETunnelResultEnvelope{*data}
 	_, err = r.client.MagicTransit.GRETunnels.New(
@@ -73,7 +74,7 @@ func (r *MagicWANGRETunnelResource) Create(ctx context.Context, req resource.Cre
 		magic_transit.GRETunnelNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
+		option.WithRequestBody("application/json", dataBody),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
