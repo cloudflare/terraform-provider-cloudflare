@@ -19,7 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -58,7 +58,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"cloud_provider": schema.StringAttribute{
+						"provider": schema.StringAttribute{
 							Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"r2\", \"gcp_storage\", \"azure_storage\".",
 							Computed:    true,
 							Validators: []validator.String{
