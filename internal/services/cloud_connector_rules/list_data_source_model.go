@@ -31,12 +31,12 @@ func (m *CloudConnectorRulesListDataSourceModel) toListParams(_ context.Context)
 }
 
 type CloudConnectorRulesListResultDataSourceModel struct {
-	ID            types.String                                                               `tfsdk:"id" json:"id,computed"`
-	Description   types.String                                                               `tfsdk:"description" json:"description,computed"`
-	Enabled       types.Bool                                                                 `tfsdk:"enabled" json:"enabled,computed"`
-	Expression    types.String                                                               `tfsdk:"expression" json:"expression,computed"`
-	Parameters    customfield.NestedObject[CloudConnectorRulesListParametersDataSourceModel] `tfsdk:"parameters" json:"parameters,computed"`
-	CloudProvider types.String                                                               `tfsdk:"cloud_provider" json:"provider,computed"`
+	ID          types.String                                                               `tfsdk:"id" json:"id,computed"`
+	Description types.String                                                               `tfsdk:"description" json:"description,computed"`
+	Enabled     types.Bool                                                                 `tfsdk:"enabled" json:"enabled,computed"`
+	Expression  types.String                                                               `tfsdk:"expression" json:"expression,computed"`
+	Parameters  customfield.NestedObject[CloudConnectorRulesListParametersDataSourceModel] `tfsdk:"parameters" json:"parameters,computed"`
+	Provider    types.String                                                               `tfsdk:"provider" json:"provider,computed"`
 }
 
 type CloudConnectorRulesListParametersDataSourceModel struct {
