@@ -143,7 +143,44 @@ func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateReques
 }
 
 func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *ListItemModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ListItemResultEnvelope{data.Body}
+	_, err := r.client.Rules.Lists.Items.Get(
+		ctx,
+		data.ListID.ValueString(),
+		data.ItemID.ValueString(),
+		rules.ListItemGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if res != nil && res.StatusCode == 404 {
+		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data.Body = env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
