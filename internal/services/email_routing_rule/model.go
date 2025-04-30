@@ -32,11 +32,11 @@ func (m EmailRoutingRuleModel) MarshalJSONForUpdate(state EmailRoutingRuleModel)
 
 type EmailRoutingRuleActionsModel struct {
 	Type  types.String    `tfsdk:"type" json:"type,required"`
-	Value *[]types.String `tfsdk:"value" json:"value,required"`
+	Value *[]types.String `tfsdk:"value" json:"value,optional"`
 }
 
 type EmailRoutingRuleMatchersModel struct {
-	Field types.String `tfsdk:"field" json:"field,required"`
 	Type  types.String `tfsdk:"type" json:"type,required"`
-	Value types.String `tfsdk:"value" json:"value,required"`
+	Field types.String `tfsdk:"field" json:"field,optional"`
+	Value types.String `tfsdk:"value" json:"value,optional"`
 }

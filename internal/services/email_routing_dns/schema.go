@@ -23,12 +23,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Identifier.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
@@ -68,7 +68,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"success": schema.BoolAttribute{
-				Description: "Whether the API call was successful",
+				Description: "Whether the API call was successful.",
 				Computed:    true,
 			},
 			"tag": schema.StringAttribute{
@@ -306,19 +306,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[EmailRoutingDNSResultInfoModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"count": schema.Float64Attribute{
-						Description: "Total number of results for the requested service",
+						Description: "Total number of results for the requested service.",
 						Computed:    true,
 					},
 					"page": schema.Float64Attribute{
-						Description: "Current page within paginated list of results",
+						Description: "Current page within paginated list of results.",
 						Computed:    true,
 					},
 					"per_page": schema.Float64Attribute{
-						Description: "Number of results per page of results",
+						Description: "Number of results per page of results.",
 						Computed:    true,
 					},
 					"total_count": schema.Float64Attribute{
-						Description: "Total results available without any search parameters",
+						Description: "Total results available without any search parameters.",
 						Computed:    true,
 					},
 				},

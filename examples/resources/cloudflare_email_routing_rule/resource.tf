@@ -5,8 +5,8 @@ resource "cloudflare_email_routing_rule" "example_email_routing_rule" {
     value = ["destinationaddress@example.net"]
   }]
   matchers = [{
-    field = "to"
     type = "literal"
+    field = "to"
     value = "test@example.com"
   }]
   enabled = true
