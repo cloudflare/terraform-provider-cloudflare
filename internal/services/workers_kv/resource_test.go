@@ -6,18 +6,17 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/kv"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 	t.Parallel()
-	var kvPair cloudflare.WorkersKVPair
 	name := utils.GenerateRandomResourceName()
 	key := utils.GenerateRandomResourceName()
 	value := utils.GenerateRandomResourceName()
@@ -35,7 +34,7 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkersKVExists(key, &kvPair),
+					testAccCheckCloudflareWorkersKVExists(key),
 					resource.TestCheckResourceAttr(
 						resourceName, "value", value,
 					),
@@ -47,7 +46,6 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 
 func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 	t.Parallel()
-	var kvPair cloudflare.WorkersKVPair
 	name := utils.GenerateRandomResourceName()
 	key := utils.GenerateRandomResourceName()
 	value := utils.GenerateRandomResourceName()
@@ -65,7 +63,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkersKVExists(key, &kvPair),
+					testAccCheckCloudflareWorkersKVExists(key),
 					resource.TestCheckResourceAttr(
 						resourceName, "value", value,
 					),
@@ -74,7 +72,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key+"-updated", value, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkersKVExists(key+"-updated", &kvPair),
+					testAccCheckCloudflareWorkersKVExists(key+"-updated"),
 					resource.TestCheckResourceAttr(
 						resourceName, "value", value,
 					),
@@ -87,7 +85,6 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 
 func TestAccCloudflareWorkersKV_WithAccountID(t *testing.T) {
 	t.Parallel()
-	var kvPair cloudflare.WorkersKVPair
 	name := utils.GenerateRandomResourceName()
 	key := utils.GenerateRandomResourceName()
 	value := utils.GenerateRandomResourceName()
@@ -105,7 +102,7 @@ func TestAccCloudflareWorkersKV_WithAccountID(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkersKVExists(key, &kvPair),
+					testAccCheckCloudflareWorkersKVExists(key),
 					resource.TestCheckResourceAttr(resourceName, "value", value),
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 				),
@@ -115,10 +112,7 @@ func TestAccCloudflareWorkersKV_WithAccountID(t *testing.T) {
 }
 
 func testAccCloudflareWorkersKVDestroy(s *terraform.State) error {
-	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-	}
+	client := acctest.SharedClient()
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_workers_kv" {
@@ -130,7 +124,7 @@ func testAccCloudflareWorkersKVDestroy(s *terraform.State) error {
 
 		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 
-		_, err := client.GetWorkersKV(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.GetWorkersKVParams{NamespaceID: namespaceID, Key: key})
+		_, err := client.KV.Namespaces.Values.Get(context.Background(), namespaceID, key, kv.NamespaceValueGetParams{AccountID: cloudflare.F(accountID)})
 
 		if err == nil {
 			return fmt.Errorf("workers kv pair still exists")
@@ -148,12 +142,9 @@ func testAccCheckCloudflareWorkersKVWithAccount(rName string, key string, value 
 	return acctest.LoadTestCase("workerskvwithaccount.tf", rName, key, value, accountID)
 }
 
-func testAccCheckCloudflareWorkersKVExists(key string, kv *cloudflare.WorkersKVPair) resource.TestCheckFunc {
+func testAccCheckCloudflareWorkersKVExists(key string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-		}
+		client := acctest.SharedClient()
 
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != "cloudflare_workers_kv" {
@@ -162,7 +153,7 @@ func testAccCheckCloudflareWorkersKVExists(key string, kv *cloudflare.WorkersKVP
 
 			accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 			namespaceID := rs.Primary.Attributes["namespace_id"]
-			value, err := client.GetWorkersKV(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.GetWorkersKVParams{NamespaceID: namespaceID, Key: key})
+			value, err := client.KV.Namespaces.Values.Get(context.Background(), namespaceID, key, kv.NamespaceValueGetParams{AccountID: cloudflare.F(accountID)})
 			if err != nil {
 				return err
 			}
