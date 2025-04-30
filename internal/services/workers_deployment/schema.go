@@ -62,9 +62,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"annotations": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[WorkersDeploymentAnnotationsModel](ctx),
+				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"workers_message": schema.StringAttribute{
 						Description: "Human-readable message about the deployment. Truncated to 100 bytes.",

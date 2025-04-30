@@ -78,6 +78,35 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
+			"origin_dns": schema.SingleNestedAttribute{
+				Description: "The name and type of DNS record for the Spectrum application.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"name": schema.StringAttribute{
+						Description: "The name of the DNS record associated with the origin.",
+						Optional:    true,
+					},
+					"ttl": schema.Int64Attribute{
+						Description: "The TTL of our resolution of your DNS record in seconds.",
+						Optional:    true,
+						Validators: []validator.Int64{
+							int64validator.AtLeast(600),
+						},
+					},
+					"type": schema.StringAttribute{
+						Description: "The type of DNS record associated with the origin. \"\" is used to specify a combination of A/AAAA records.\nAvailable values: \"\", \"A\", \"AAAA\", \"SRV\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"",
+								"A",
+								"AAAA",
+								"SRV",
+							),
+						},
+					},
+				},
+			},
 			"origin_port": schema.DynamicAttribute{
 				Description: "The destination port at the origin. Only specified in conjunction with origin_dns. May use an integer to specify a single origin port, for example `1000`, or a string to specify a range of origin ports, for example `\"1000-2000\"`.\nNotes: If specifying a port range, the number of ports in the range must match the number of ports specified in the \"protocol\" field.",
 				Optional:    true,
@@ -146,37 +175,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The array of customer owned IPs we broadcast via anycast for this hostname and application.",
 						Optional:    true,
 						ElementType: types.StringType,
-					},
-				},
-			},
-			"origin_dns": schema.SingleNestedAttribute{
-				Description: "The name and type of DNS record for the Spectrum application.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[SpectrumApplicationOriginDNSModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"name": schema.StringAttribute{
-						Description: "The name of the DNS record associated with the origin.",
-						Optional:    true,
-					},
-					"ttl": schema.Int64Attribute{
-						Description: "The TTL of our resolution of your DNS record in seconds.",
-						Optional:    true,
-						Validators: []validator.Int64{
-							int64validator.AtLeast(600),
-						},
-					},
-					"type": schema.StringAttribute{
-						Description: "The type of DNS record associated with the origin. \"\" is used to specify a combination of A/AAAA records.\nAvailable values: \"\", \"A\", \"AAAA\", \"SRV\".",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"",
-								"A",
-								"AAAA",
-								"SRV",
-							),
-						},
 					},
 				},
 			},

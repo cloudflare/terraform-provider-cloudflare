@@ -5,7 +5,6 @@ package magic_network_monitoring_configuration
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -33,19 +32,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
-			"default_sampling": schema.Float64Attribute{
-				Description: "Fallback sampling rate of flow messages being sent in packets per second. This should match the packet sampling rate configured on the router.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(1),
-				},
-				Default: float64default.StaticFloat64(1),
-			},
 			"warp_devices": schema.ListNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectListType[MagicNetworkMonitoringConfigurationWARPDevicesModel](ctx),
+				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -62,6 +50,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"default_sampling": schema.Float64Attribute{
+				Description: "Fallback sampling rate of flow messages being sent in packets per second. This should match the packet sampling rate configured on the router.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(1),
+				},
+				Default: float64default.StaticFloat64(1),
 			},
 		},
 	}

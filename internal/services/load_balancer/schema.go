@@ -215,9 +215,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"fixed_response": schema.SingleNestedAttribute{
 							Description: "A collection of fields used to directly respond to the eyeball instead of routing to a pool. If a fixed_response is supplied the rule will be marked as terminates.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[LoadBalancerRulesFixedResponseModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"content_type": schema.StringAttribute{
 									Description: "The http 'Content-Type' header to include in the response.",

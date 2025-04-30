@@ -92,9 +92,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"context_awareness": schema.SingleNestedAttribute{
 							Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileProfilesContextAwarenessModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"enabled": schema.BoolAttribute{
 									Description: "If true, scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -121,9 +119,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"shared_entries": schema.ListNestedAttribute{
 							Description: "Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles).",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustDLPCustomProfileProfilesSharedEntriesModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{
@@ -167,20 +163,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"ocr_enabled": schema.BoolAttribute{
 				Optional: true,
 			},
-			"allowed_match_count": schema.Int64Attribute{
-				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(0, 1000),
-				},
-				Default: int64default.StaticInt64(0),
-			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileContextAwarenessModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "If true, scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -199,9 +184,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"entries": schema.ListNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustDLPCustomProfileEntriesModel](ctx),
+				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"enabled": schema.BoolAttribute{
@@ -211,9 +194,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required: true,
 						},
 						"pattern": schema.SingleNestedAttribute{
-							Computed:   true,
-							Optional:   true,
-							CustomType: customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileEntriesPatternModel](ctx),
+							Optional: true,
 							Attributes: map[string]schema.Attribute{
 								"regex": schema.StringAttribute{
 									Required: true,
@@ -237,9 +218,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"shared_entries": schema.ListNestedAttribute{
 				Description: "Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles).",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDLPCustomProfileSharedEntriesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"enabled": schema.BoolAttribute{
@@ -262,6 +241,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"allowed_match_count": schema.Int64Attribute{
+				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(0, 1000),
+				},
+				Default: int64default.StaticInt64(0),
 			},
 			"created_at": schema.StringAttribute{
 				Description: "When the profile was created.",

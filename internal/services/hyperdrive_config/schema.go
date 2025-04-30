@@ -5,7 +5,6 @@ package hyperdrive_config
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -80,9 +79,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"caching": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[HyperdriveConfigCachingModel](ctx),
+				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"disabled": schema.BoolAttribute{
 						Description: "When set to true, disables the caching of SQL responses. (Default: false)",
@@ -99,9 +96,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"mtls": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[HyperdriveConfigMTLSModel](ctx),
+				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"ca_certificate_id": schema.StringAttribute{
 						Description: "CA certificate ID",

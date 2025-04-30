@@ -4,7 +4,6 @@ package account_token
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,18 +13,18 @@ type AccountTokenResultEnvelope struct {
 }
 
 type AccountTokenModel struct {
-	ID         types.String                                         `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String                                         `tfsdk:"account_id" path:"account_id,required"`
-	Name       types.String                                         `tfsdk:"name" json:"name,required"`
-	Policies   *[]*AccountTokenPoliciesModel                        `tfsdk:"policies" json:"policies,required"`
-	ExpiresOn  timetypes.RFC3339                                    `tfsdk:"expires_on" json:"expires_on,optional" format:"date-time"`
-	NotBefore  timetypes.RFC3339                                    `tfsdk:"not_before" json:"not_before,optional" format:"date-time"`
-	Status     types.String                                         `tfsdk:"status" json:"status,optional"`
-	Condition  customfield.NestedObject[AccountTokenConditionModel] `tfsdk:"condition" json:"condition,computed_optional"`
-	IssuedOn   timetypes.RFC3339                                    `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
-	LastUsedOn timetypes.RFC3339                                    `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
-	ModifiedOn timetypes.RFC3339                                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Value      types.String                                         `tfsdk:"value" json:"value,computed"`
+	ID         types.String                  `tfsdk:"id" json:"id,computed"`
+	AccountID  types.String                  `tfsdk:"account_id" path:"account_id,required"`
+	Name       types.String                  `tfsdk:"name" json:"name,required"`
+	Policies   *[]*AccountTokenPoliciesModel `tfsdk:"policies" json:"policies,required"`
+	ExpiresOn  timetypes.RFC3339             `tfsdk:"expires_on" json:"expires_on,optional" format:"date-time"`
+	NotBefore  timetypes.RFC3339             `tfsdk:"not_before" json:"not_before,optional" format:"date-time"`
+	Status     types.String                  `tfsdk:"status" json:"status,optional"`
+	Condition  *AccountTokenConditionModel   `tfsdk:"condition" json:"condition,optional"`
+	IssuedOn   timetypes.RFC3339             `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
+	LastUsedOn timetypes.RFC3339             `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
+	ModifiedOn timetypes.RFC3339             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Value      types.String                  `tfsdk:"value" json:"value,computed"`
 }
 
 func (m AccountTokenModel) MarshalJSON() (data []byte, err error) {
@@ -55,7 +54,7 @@ type AccountTokenPoliciesPermissionGroupsMetaModel struct {
 }
 
 type AccountTokenConditionModel struct {
-	RequestIP customfield.NestedObject[AccountTokenConditionRequestIPModel] `tfsdk:"request_ip" json:"request_ip,computed_optional"`
+	RequestIP *AccountTokenConditionRequestIPModel `tfsdk:"request_ip" json:"request_ip,optional"`
 }
 
 type AccountTokenConditionRequestIPModel struct {

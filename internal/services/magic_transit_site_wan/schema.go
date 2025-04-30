@@ -5,7 +5,6 @@ package magic_transit_site_wan
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -50,9 +49,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"static_addressing": schema.SingleNestedAttribute{
 				Description: "(optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[MagicTransitSiteWANStaticAddressingModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"address": schema.StringAttribute{
 						Description: "A valid CIDR notation representing an IP range.",

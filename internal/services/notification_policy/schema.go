@@ -5,7 +5,6 @@ package notification_policy
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -159,17 +158,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Optional description for the Notification policy.",
 				Optional:    true,
 			},
-			"enabled": schema.BoolAttribute{
-				Description: "Whether or not the Notification policy is enabled.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(true),
-			},
 			"filters": schema.SingleNestedAttribute{
 				Description: "Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[NotificationPolicyFiltersModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"actions": schema.ListAttribute{
 						Description: "Usage depends on specific alert type",
@@ -397,6 +388,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 				},
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Whether or not the Notification policy is enabled.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
 			},
 			"created": schema.StringAttribute{
 				Computed:   true,

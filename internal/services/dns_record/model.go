@@ -22,10 +22,10 @@ type DNSRecordModel struct {
 	Name              types.String                                     `tfsdk:"name" json:"name,optional"`
 	Priority          types.Float64                                    `tfsdk:"priority" json:"priority,optional"`
 	Type              types.String                                     `tfsdk:"type" json:"type,optional"`
+	Data              *DNSRecordDataModel                              `tfsdk:"data" json:"data,optional"`
 	Proxied           types.Bool                                       `tfsdk:"proxied" json:"proxied,computed_optional"`
 	TTL               types.Float64                                    `tfsdk:"ttl" json:"ttl,computed_optional"`
 	Tags              customfield.List[types.String]                   `tfsdk:"tags" json:"tags,computed_optional"`
-	Data              customfield.NestedObject[DNSRecordDataModel]     `tfsdk:"data" json:"data,computed_optional"`
 	Settings          customfield.NestedObject[DNSRecordSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
 	CommentModifiedOn timetypes.RFC3339                                `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
 	CreatedOn         timetypes.RFC3339                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`

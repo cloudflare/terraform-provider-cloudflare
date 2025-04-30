@@ -33,9 +33,9 @@ type ZeroTrustGatewaySettingsSettingsModel struct {
 	ActivityLog           customfield.NestedObject[ZeroTrustGatewaySettingsSettingsActivityLogModel]           `tfsdk:"activity_log" json:"activity_log,computed_optional"`
 	Antivirus             customfield.NestedObject[ZeroTrustGatewaySettingsSettingsAntivirusModel]             `tfsdk:"antivirus" json:"antivirus,computed_optional"`
 	BlockPage             customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBlockPageModel]             `tfsdk:"block_page" json:"block_page,computed_optional"`
-	BodyScanning          customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBodyScanningModel]          `tfsdk:"body_scanning" json:"body_scanning,computed_optional"`
+	BodyScanning          *ZeroTrustGatewaySettingsSettingsBodyScanningModel                                   `tfsdk:"body_scanning" json:"body_scanning,optional"`
 	BrowserIsolation      customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBrowserIsolationModel]      `tfsdk:"browser_isolation" json:"browser_isolation,computed_optional"`
-	Certificate           customfield.NestedObject[ZeroTrustGatewaySettingsSettingsCertificateModel]           `tfsdk:"certificate" json:"certificate,computed_optional"`
+	Certificate           *ZeroTrustGatewaySettingsSettingsCertificateModel                                    `tfsdk:"certificate" json:"certificate,optional"`
 	CustomCertificate     customfield.NestedObject[ZeroTrustGatewaySettingsSettingsCustomCertificateModel]     `tfsdk:"custom_certificate" json:"custom_certificate,computed_optional"`
 	ExtendedEmailMatching customfield.NestedObject[ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingModel] `tfsdk:"extended_email_matching" json:"extended_email_matching,computed_optional"`
 	Fips                  customfield.NestedObject[ZeroTrustGatewaySettingsSettingsFipsModel]                  `tfsdk:"fips" json:"fips,computed_optional"`

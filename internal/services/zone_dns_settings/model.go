@@ -4,7 +4,6 @@ package zone_dns_settings
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,16 +12,16 @@ type ZoneDNSSettingsResultEnvelope struct {
 }
 
 type ZoneDNSSettingsModel struct {
-	ZoneID             types.String                                              `tfsdk:"zone_id" path:"zone_id,required"`
-	FlattenAllCNAMEs   types.Bool                                                `tfsdk:"flatten_all_cnames" json:"flatten_all_cnames,optional"`
-	FoundationDNS      types.Bool                                                `tfsdk:"foundation_dns" json:"foundation_dns,optional"`
-	MultiProvider      types.Bool                                                `tfsdk:"multi_provider" json:"multi_provider,optional"`
-	NSTTL              types.Float64                                             `tfsdk:"ns_ttl" json:"ns_ttl,optional"`
-	SecondaryOverrides types.Bool                                                `tfsdk:"secondary_overrides" json:"secondary_overrides,optional"`
-	ZoneMode           types.String                                              `tfsdk:"zone_mode" json:"zone_mode,optional"`
-	InternalDNS        customfield.NestedObject[ZoneDNSSettingsInternalDNSModel] `tfsdk:"internal_dns" json:"internal_dns,computed_optional"`
-	Nameservers        customfield.NestedObject[ZoneDNSSettingsNameserversModel] `tfsdk:"nameservers" json:"nameservers,computed_optional"`
-	SOA                customfield.NestedObject[ZoneDNSSettingsSOAModel]         `tfsdk:"soa" json:"soa,computed_optional"`
+	ZoneID             types.String                     `tfsdk:"zone_id" path:"zone_id,required"`
+	FlattenAllCNAMEs   types.Bool                       `tfsdk:"flatten_all_cnames" json:"flatten_all_cnames,optional"`
+	FoundationDNS      types.Bool                       `tfsdk:"foundation_dns" json:"foundation_dns,optional"`
+	MultiProvider      types.Bool                       `tfsdk:"multi_provider" json:"multi_provider,optional"`
+	NSTTL              types.Float64                    `tfsdk:"ns_ttl" json:"ns_ttl,optional"`
+	SecondaryOverrides types.Bool                       `tfsdk:"secondary_overrides" json:"secondary_overrides,optional"`
+	ZoneMode           types.String                     `tfsdk:"zone_mode" json:"zone_mode,optional"`
+	InternalDNS        *ZoneDNSSettingsInternalDNSModel `tfsdk:"internal_dns" json:"internal_dns,optional"`
+	Nameservers        *ZoneDNSSettingsNameserversModel `tfsdk:"nameservers" json:"nameservers,optional"`
+	SOA                *ZoneDNSSettingsSOAModel         `tfsdk:"soa" json:"soa,optional"`
 }
 
 func (m ZoneDNSSettingsModel) MarshalJSON() (data []byte, err error) {

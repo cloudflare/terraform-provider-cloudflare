@@ -5,7 +5,6 @@ package zero_trust_organization
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -61,16 +60,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The amount of time that tokens issued for applications will be valid. Must be in the format `30m` or `2h45m`. Valid time units are: m, h.",
 				Optional:    true,
 			},
-			"auto_redirect_to_identity": schema.BoolAttribute{
-				Description: "When set to `true`, users skip the identity provider selection step during login.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
 			"custom_pages": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[ZeroTrustOrganizationCustomPagesModel](ctx),
+				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"forbidden": schema.StringAttribute{
 						Description: "The uid of the custom page to use when a user is denied access after failing a non-identity rule.",
@@ -83,9 +74,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"login_design": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[ZeroTrustOrganizationLoginDesignModel](ctx),
+				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"background_color": schema.StringAttribute{
 						Description: "The background color on your login page.",
@@ -108,6 +97,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
+			},
+			"auto_redirect_to_identity": schema.BoolAttribute{
+				Description: "When set to `true`, users skip the identity provider selection step during login.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,

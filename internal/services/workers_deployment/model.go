@@ -18,7 +18,7 @@ type WorkersDeploymentModel struct {
 	ScriptName  types.String                                                    `tfsdk:"script_name" path:"script_name,required"`
 	Strategy    types.String                                                    `tfsdk:"strategy" json:"strategy,required"`
 	Versions    *[]*WorkersDeploymentVersionsModel                              `tfsdk:"versions" json:"versions,required"`
-	Annotations customfield.NestedObject[WorkersDeploymentAnnotationsModel]     `tfsdk:"annotations" json:"annotations,computed_optional"`
+	Annotations *WorkersDeploymentAnnotationsModel                              `tfsdk:"annotations" json:"annotations,optional"`
 	AuthorEmail types.String                                                    `tfsdk:"author_email" json:"author_email,computed"`
 	CreatedOn   types.String                                                    `tfsdk:"created_on" json:"created_on,computed"`
 	Source      types.String                                                    `tfsdk:"source" json:"source,computed"`

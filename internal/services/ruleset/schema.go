@@ -139,9 +139,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"response": schema.SingleNestedAttribute{
 									Description: "The response to show when the block is applied.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersResponseModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"content": schema.StringAttribute{
 											Description: "The content to return.",
@@ -162,9 +160,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"algorithms": schema.ListNestedAttribute{
 									Description: "Custom order for compression algorithms.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersAlgorithmsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -189,9 +185,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"matched_data": schema.SingleNestedAttribute{
 									Description: "The configuration to use for matched data logging.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersMatchedDataModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"public_key": schema.StringAttribute{
 											Description: "The public key to encrypt matched data logs with.",
@@ -201,9 +195,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"overrides": schema.SingleNestedAttribute{
 									Description: "A set of overrides to apply to the target ruleset.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersOverridesModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"action": schema.StringAttribute{
 											Description: "An action to override all rules with. This option has lower precedence than rule and category overrides.",
@@ -211,9 +203,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"categories": schema.ListNestedAttribute{
 											Description: "A list of category-level overrides. This option has the second-highest precedence after rule-level overrides.",
-											Computed:    true,
 											Optional:    true,
-											CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersOverridesCategoriesModel](ctx),
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
 													"category": schema.StringAttribute{
@@ -249,9 +239,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"rules": schema.ListNestedAttribute{
 											Description: "A list of rule-level overrides. This option has the highest precedence.",
-											Computed:    true,
 											Optional:    true,
-											CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersOverridesRulesModel](ctx),
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
 													"id": schema.StringAttribute{
@@ -301,9 +289,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"from_list": schema.SingleNestedAttribute{
 									Description: "Serve a redirect based on a bulk list lookup.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersFromListModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"key": schema.StringAttribute{
 											Description: "Expression that evaluates to the list lookup key.",
@@ -317,9 +303,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"from_value": schema.SingleNestedAttribute{
 									Description: "Serve a redirect based on the request properties.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersFromValueModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"preserve_query_string": schema.BoolAttribute{
 											Description: "Keep the query string of the original request.",
@@ -340,9 +324,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"target_url": schema.SingleNestedAttribute{
 											Description: "The URL to redirect the request to.",
-											Computed:    true,
 											Optional:    true,
-											CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersFromValueTargetURLModel](ctx),
 											Attributes: map[string]schema.Attribute{
 												"value": schema.StringAttribute{
 													Description: "The URL to redirect the request to.",
@@ -358,9 +340,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"headers": schema.MapNestedAttribute{
 									Description: "Map of request headers to modify.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectMapType[RulesetRulesActionParametersHeadersModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"operation": schema.StringAttribute{
@@ -383,15 +363,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"uri": schema.SingleNestedAttribute{
 									Description: "URI to rewrite the request to.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersURIModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"path": schema.SingleNestedAttribute{
 											Description: "Path portion rewrite.",
-											Computed:    true,
 											Optional:    true,
-											CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersURIPathModel](ctx),
 											Attributes: map[string]schema.Attribute{
 												"value": schema.StringAttribute{
 													Description: "Predefined replacement value.",
@@ -405,9 +381,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"query": schema.SingleNestedAttribute{
 											Description: "Query portion rewrite.",
-											Computed:    true,
 											Optional:    true,
-											CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersURIQueryModel](ctx),
 											Attributes: map[string]schema.Attribute{
 												"value": schema.StringAttribute{
 													Description: "Predefined replacement value.",
@@ -427,9 +401,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"origin": schema.SingleNestedAttribute{
 									Description: "Override the IP/TCP destination.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersOriginModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"host": schema.StringAttribute{
 											Description: "Override the resolved hostname.",
@@ -446,9 +418,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"sni": schema.SingleNestedAttribute{
 									Description: "Override the Server Name Indication (SNI).",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersSNIModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"value": schema.StringAttribute{
 											Description: "The SNI override.",
@@ -489,9 +459,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"autominify": schema.SingleNestedAttribute{
 									Description: "Select which file extensions to minify automatically.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersAutominifyModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"css": schema.BoolAttribute{
 											Description: "Minify CSS files.",
@@ -671,9 +639,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"browser_ttl": schema.SingleNestedAttribute{
 									Description: "Specify how long client browsers should cache the response. Cloudflare cache purge will not purge content cached on client browsers, so high browser TTLs may lead to stale content.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersBrowserTTLModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"mode": schema.StringAttribute{
 											Description: "Determines which browser ttl mode to use.\nAvailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\".",
@@ -698,9 +664,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"cache_key": schema.SingleNestedAttribute{
 									Description: "Define which components of the request are included or excluded from the cache key Cloudflare uses to store the response in cache.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"cache_by_device_type": schema.BoolAttribute{
 											Description: "Separate cached content based on the visitor’s device type",
@@ -712,15 +676,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"custom_key": schema.SingleNestedAttribute{
 											Description: "Customize which components of the request are included or excluded from the cache key.",
-											Computed:    true,
 											Optional:    true,
-											CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyModel](ctx),
 											Attributes: map[string]schema.Attribute{
 												"cookie": schema.SingleNestedAttribute{
 													Description: "The cookies to include in building the cache key.",
-													Computed:    true,
 													Optional:    true,
-													CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyCookieModel](ctx),
 													Attributes: map[string]schema.Attribute{
 														"check_presence": schema.ListAttribute{
 															Description: "Checks for the presence of these cookie names. The presence of these cookies is used in building the cache key.",
@@ -736,9 +696,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												},
 												"header": schema.SingleNestedAttribute{
 													Description: "The header names and values to include in building the cache key.",
-													Computed:    true,
 													Optional:    true,
-													CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyHeaderModel](ctx),
 													Attributes: map[string]schema.Attribute{
 														"check_presence": schema.ListAttribute{
 															Description: "Checks for the presence of these header names. The presence of these headers is used in building the cache key.",
@@ -765,9 +723,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												},
 												"host": schema.SingleNestedAttribute{
 													Description: "Whether to use the original host or the resolved host in the cache key.",
-													Computed:    true,
 													Optional:    true,
-													CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyHostModel](ctx),
 													Attributes: map[string]schema.Attribute{
 														"resolved": schema.BoolAttribute{
 															Description: "Use the resolved host in the cache key. A value of true will use the resolved host, while a value or false will use the original host.",
@@ -777,15 +733,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												},
 												"query_string": schema.SingleNestedAttribute{
 													Description: "Use the presence of parameters in the query string to build the cache key.",
-													Computed:    true,
 													Optional:    true,
-													CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringModel](ctx),
 													Attributes: map[string]schema.Attribute{
 														"include": schema.SingleNestedAttribute{
 															Description: "A list of query string parameters used to build the cache key.",
-															Computed:    true,
 															Optional:    true,
-															CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel](ctx),
 															Attributes: map[string]schema.Attribute{
 																"list": schema.ListAttribute{
 																	Optional:    true,
@@ -799,9 +751,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 														},
 														"exclude": schema.SingleNestedAttribute{
 															Description: "A list of query string parameters NOT used to build the cache key. All parameters present in the request but missing in this list will be used to build the cache key.",
-															Computed:    true,
 															Optional:    true,
-															CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel](ctx),
 															Attributes: map[string]schema.Attribute{
 																"list": schema.ListAttribute{
 																	Optional:    true,
@@ -817,9 +767,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												},
 												"user": schema.SingleNestedAttribute{
 													Description: "Characteristics of the request user agent used in building the cache key.",
-													Computed:    true,
 													Optional:    true,
-													CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyUserModel](ctx),
 													Attributes: map[string]schema.Attribute{
 														"device_type": schema.BoolAttribute{
 															Description: "Use the user agent's device type in the cache key.",
@@ -845,9 +793,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"cache_reserve": schema.SingleNestedAttribute{
 									Description: "Mark whether the request's response from origin is eligible for Cache Reserve (requires a Cache Reserve add-on plan).",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheReserveModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"eligible": schema.BoolAttribute{
 											Description: "Determines whether cache reserve is enabled. If this is true and a request meets eligibility criteria, Cloudflare will write the resource to cache reserve.",
@@ -861,9 +807,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"edge_ttl": schema.SingleNestedAttribute{
 									Description: "TTL (Time to Live) specifies the maximum time to cache a resource in the Cloudflare edge network.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersEdgeTTLModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"default": schema.Int64Attribute{
 											Description: "The TTL (in seconds) if you choose override_origin mode.",
@@ -933,9 +877,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"serve_stale": schema.SingleNestedAttribute{
 									Description: "Define if Cloudflare should serve stale content while getting the latest content from the origin. If on, Cloudflare will not serve stale content while getting the latest content from the origin.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersServeStaleModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"disable_stale_while_updating": schema.BoolAttribute{
 											Description: "Defines whether Cloudflare should serve stale content while updating. If true, Cloudflare will not serve stale content while getting the latest content from the origin.",
@@ -945,9 +887,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"cookie_fields": schema.ListNestedAttribute{
 									Description: "The cookie fields to log.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersCookieFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -979,9 +919,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"request_fields": schema.ListNestedAttribute{
 									Description: "The raw request fields to log.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersRequestFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -1013,9 +951,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"transformed_request_fields": schema.ListNestedAttribute{
 									Description: "The transformed request fields to log.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersTransformedRequestFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -1047,9 +983,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"exposed_credential_check": schema.SingleNestedAttribute{
 							Description: "Configure checks for exposed credentials.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[RulesetRulesExposedCredentialCheckModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"password_expression": schema.StringAttribute{
 									Description: "Expression that selects the password used in the credentials check.",
@@ -1067,9 +1001,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"logging": schema.SingleNestedAttribute{
 							Description: "An object configuring the rule's logging behavior.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[RulesetRulesLoggingModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"enabled": schema.BoolAttribute{
 									Description: "Whether to generate a log when the rule matches.",
@@ -1079,9 +1011,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"ratelimit": schema.SingleNestedAttribute{
 							Description: "An object configuring the rule's ratelimit behavior.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[RulesetRulesRatelimitModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"characteristics": schema.ListAttribute{
 									Description: "Characteristics of the request on which the ratelimiter counter will be incremented.",

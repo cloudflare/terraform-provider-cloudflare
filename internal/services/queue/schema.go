@@ -36,9 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"settings": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[QueueSettingsModel](ctx),
+				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"delivery_delay": schema.Float64Attribute{
 						Description: "Number of seconds to delay delivery of all messages to consumers.",

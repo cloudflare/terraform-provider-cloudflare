@@ -65,17 +65,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The keyless SSL name.",
 				Optional:    true,
 			},
-			"port": schema.Float64Attribute{
-				Description: "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",
-				Computed:    true,
-				Optional:    true,
-				Default:     float64default.StaticFloat64(24008),
-			},
 			"tunnel": schema.SingleNestedAttribute{
 				Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[KeylessCertificateTunnelModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"private_ip": schema.StringAttribute{
 						Description: "Private IP of the Key Server Host",
@@ -86,6 +78,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required:    true,
 					},
 				},
+			},
+			"port": schema.Float64Attribute{
+				Description: "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",
+				Computed:    true,
+				Optional:    true,
+				Default:     float64default.StaticFloat64(24008),
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was created.",

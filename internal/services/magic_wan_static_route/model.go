@@ -21,7 +21,7 @@ type MagicWANStaticRouteModel struct {
 	Priority      types.Int64                                                     `tfsdk:"priority" json:"priority,required"`
 	Description   types.String                                                    `tfsdk:"description" json:"description,optional"`
 	Weight        types.Int64                                                     `tfsdk:"weight" json:"weight,optional"`
-	Scope         customfield.NestedObject[MagicWANStaticRouteScopeModel]         `tfsdk:"scope" json:"scope,computed_optional"`
+	Scope         *MagicWANStaticRouteScopeModel                                  `tfsdk:"scope" json:"scope,optional"`
 	CreatedOn     timetypes.RFC3339                                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Modified      types.Bool                                                      `tfsdk:"modified" json:"modified,computed"`
 	ModifiedOn    timetypes.RFC3339                                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`

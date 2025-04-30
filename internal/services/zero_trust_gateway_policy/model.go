@@ -20,6 +20,7 @@ type ZeroTrustGatewayPolicyModel struct {
 	Name          types.String                                                      `tfsdk:"name" json:"name,required"`
 	Precedence    types.Int64                                                       `tfsdk:"precedence" json:"precedence,optional"`
 	Filters       *[]types.String                                                   `tfsdk:"filters" json:"filters,optional"`
+	Schedule      *ZeroTrustGatewayPolicyScheduleModel                              `tfsdk:"schedule" json:"schedule,optional"`
 	Description   types.String                                                      `tfsdk:"description" json:"description,computed_optional"`
 	DevicePosture types.String                                                      `tfsdk:"device_posture" json:"device_posture,computed_optional"`
 	Enabled       types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
@@ -27,7 +28,6 @@ type ZeroTrustGatewayPolicyModel struct {
 	Traffic       types.String                                                      `tfsdk:"traffic" json:"traffic,computed_optional"`
 	Expiration    customfield.NestedObject[ZeroTrustGatewayPolicyExpirationModel]   `tfsdk:"expiration" json:"expiration,computed_optional"`
 	RuleSettings  customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsModel] `tfsdk:"rule_settings" json:"rule_settings,computed_optional"`
-	Schedule      customfield.NestedObject[ZeroTrustGatewayPolicyScheduleModel]     `tfsdk:"schedule" json:"schedule,computed_optional"`
 	CreatedAt     timetypes.RFC3339                                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt     timetypes.RFC3339                                                 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
 	UpdatedAt     timetypes.RFC3339                                                 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
@@ -40,6 +40,17 @@ func (m ZeroTrustGatewayPolicyModel) MarshalJSON() (data []byte, err error) {
 
 func (m ZeroTrustGatewayPolicyModel) MarshalJSONForUpdate(state ZeroTrustGatewayPolicyModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
+}
+
+type ZeroTrustGatewayPolicyScheduleModel struct {
+	Fri      types.String `tfsdk:"fri" json:"fri,optional"`
+	Mon      types.String `tfsdk:"mon" json:"mon,optional"`
+	Sat      types.String `tfsdk:"sat" json:"sat,optional"`
+	Sun      types.String `tfsdk:"sun" json:"sun,optional"`
+	Thu      types.String `tfsdk:"thu" json:"thu,optional"`
+	TimeZone types.String `tfsdk:"time_zone" json:"time_zone,optional"`
+	Tue      types.String `tfsdk:"tue" json:"tue,optional"`
+	Wed      types.String `tfsdk:"wed" json:"wed,optional"`
 }
 
 type ZeroTrustGatewayPolicyExpirationModel struct {
@@ -58,22 +69,22 @@ type ZeroTrustGatewayPolicyRuleSettingsModel struct {
 	BlockReason                     types.String                                                                          `tfsdk:"block_reason" json:"block_reason,computed_optional"`
 	BypassParentRule                types.Bool                                                                            `tfsdk:"bypass_parent_rule" json:"bypass_parent_rule,optional"`
 	CheckSession                    customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsCheckSessionModel]         `tfsdk:"check_session" json:"check_session,computed_optional"`
-	DNSResolvers                    customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsDNSResolversModel]         `tfsdk:"dns_resolvers" json:"dns_resolvers,computed_optional"`
-	Egress                          customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsEgressModel]               `tfsdk:"egress" json:"egress,computed_optional"`
+	DNSResolvers                    *ZeroTrustGatewayPolicyRuleSettingsDNSResolversModel                                  `tfsdk:"dns_resolvers" json:"dns_resolvers,optional"`
+	Egress                          *ZeroTrustGatewayPolicyRuleSettingsEgressModel                                        `tfsdk:"egress" json:"egress,optional"`
 	IgnoreCNAMECategoryMatches      types.Bool                                                                            `tfsdk:"ignore_cname_category_matches" json:"ignore_cname_category_matches,computed_optional"`
 	InsecureDisableDNSSECValidation types.Bool                                                                            `tfsdk:"insecure_disable_dnssec_validation" json:"insecure_disable_dnssec_validation,computed_optional"`
 	IPCategories                    types.Bool                                                                            `tfsdk:"ip_categories" json:"ip_categories,computed_optional"`
 	IPIndicatorFeeds                types.Bool                                                                            `tfsdk:"ip_indicator_feeds" json:"ip_indicator_feeds,computed_optional"`
-	L4override                      customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsL4overrideModel]           `tfsdk:"l4override" json:"l4override,computed_optional"`
+	L4override                      *ZeroTrustGatewayPolicyRuleSettingsL4overrideModel                                    `tfsdk:"l4override" json:"l4override,optional"`
 	NotificationSettings            customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsNotificationSettingsModel] `tfsdk:"notification_settings" json:"notification_settings,computed_optional"`
 	OverrideHost                    types.String                                                                          `tfsdk:"override_host" json:"override_host,computed_optional"`
 	OverrideIPs                     *[]types.String                                                                       `tfsdk:"override_ips" json:"override_ips,optional"`
 	PayloadLog                      customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsPayloadLogModel]           `tfsdk:"payload_log" json:"payload_log,computed_optional"`
-	Quarantine                      customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsQuarantineModel]           `tfsdk:"quarantine" json:"quarantine,computed_optional"`
+	Quarantine                      *ZeroTrustGatewayPolicyRuleSettingsQuarantineModel                                    `tfsdk:"quarantine" json:"quarantine,optional"`
 	Redirect                        customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsRedirectModel]             `tfsdk:"redirect" json:"redirect,computed_optional"`
 	ResolveDNSInternally            customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsResolveDNSInternallyModel] `tfsdk:"resolve_dns_internally" json:"resolve_dns_internally,computed_optional"`
 	ResolveDNSThroughCloudflare     types.Bool                                                                            `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,computed_optional"`
-	UntrustedCERT                   customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTModel]        `tfsdk:"untrusted_cert" json:"untrusted_cert,computed_optional"`
+	UntrustedCERT                   *ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTModel                                 `tfsdk:"untrusted_cert" json:"untrusted_cert,optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsAuditSSHModel struct {
@@ -106,8 +117,8 @@ type ZeroTrustGatewayPolicyRuleSettingsCheckSessionModel struct {
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsDNSResolversModel struct {
-	IPV4 customfield.NestedObjectList[ZeroTrustGatewayPolicyRuleSettingsDNSResolversIPV4Model] `tfsdk:"ipv4" json:"ipv4,computed_optional"`
-	IPV6 customfield.NestedObjectList[ZeroTrustGatewayPolicyRuleSettingsDNSResolversIPV6Model] `tfsdk:"ipv6" json:"ipv6,computed_optional"`
+	IPV4 *[]*ZeroTrustGatewayPolicyRuleSettingsDNSResolversIPV4Model `tfsdk:"ipv4" json:"ipv4,optional"`
+	IPV6 *[]*ZeroTrustGatewayPolicyRuleSettingsDNSResolversIPV6Model `tfsdk:"ipv6" json:"ipv6,optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsDNSResolversIPV4Model struct {
@@ -163,15 +174,4 @@ type ZeroTrustGatewayPolicyRuleSettingsResolveDNSInternallyModel struct {
 
 type ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTModel struct {
 	Action types.String `tfsdk:"action" json:"action,optional"`
-}
-
-type ZeroTrustGatewayPolicyScheduleModel struct {
-	Fri      types.String `tfsdk:"fri" json:"fri,optional"`
-	Mon      types.String `tfsdk:"mon" json:"mon,optional"`
-	Sat      types.String `tfsdk:"sat" json:"sat,optional"`
-	Sun      types.String `tfsdk:"sun" json:"sun,optional"`
-	Thu      types.String `tfsdk:"thu" json:"thu,optional"`
-	TimeZone types.String `tfsdk:"time_zone" json:"time_zone,optional"`
-	Tue      types.String `tfsdk:"tue" json:"tue,optional"`
-	Wed      types.String `tfsdk:"wed" json:"wed,optional"`
 }

@@ -84,29 +84,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"proxied": schema.BoolAttribute{
-				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"ttl": schema.Float64Attribute{
-				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"tags": schema.ListAttribute{
-				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
-			},
 			"data": schema.SingleNestedAttribute{
 				Description: "Components of a CAA record.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[DNSRecordDataModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"flags": schema.DynamicAttribute{
 						Description: "Flags for the CAA record.",
@@ -331,6 +311,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
+			},
+			"proxied": schema.BoolAttribute{
+				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"ttl": schema.Float64Attribute{
+				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"tags": schema.ListAttribute{
+				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Settings for the DNS record.",
