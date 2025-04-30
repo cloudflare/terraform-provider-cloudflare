@@ -193,7 +193,6 @@ func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateReques
 }
 
 func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *ListItemModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
