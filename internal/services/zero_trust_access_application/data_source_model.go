@@ -23,6 +23,7 @@ type ZeroTrustAccessApplicationDataSourceModel struct {
 	AccountID                   types.String                                                                          `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID                      types.String                                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
 	AllowAuthenticateViaWARP    types.Bool                                                                            `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed"`
+	AllowIframe                 types.Bool                                                                            `tfsdk:"allow_iframe" json:"allow_iframe,computed"`
 	AppLauncherLogoURL          types.String                                                                          `tfsdk:"app_launcher_logo_url" json:"app_launcher_logo_url,computed"`
 	AppLauncherVisible          types.Bool                                                                            `tfsdk:"app_launcher_visible" json:"app_launcher_visible,computed"`
 	AUD                         types.String                                                                          `tfsdk:"aud" json:"aud,computed"`
