@@ -58,6 +58,7 @@ type ZeroTrustAccessApplicationsResultDataSourceModel struct {
 	Type                        types.String                                                                           `tfsdk:"type" json:"type,computed"`
 	ID                          types.String                                                                           `tfsdk:"id" json:"id,computed"`
 	AllowAuthenticateViaWARP    types.Bool                                                                             `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed"`
+	AllowIframe                 types.Bool                                                                             `tfsdk:"allow_iframe" json:"allow_iframe,computed"`
 	AllowedIdPs                 customfield.List[types.String]                                                         `tfsdk:"allowed_idps" json:"allowed_idps,computed"`
 	AppLauncherVisible          types.Bool                                                                             `tfsdk:"app_launcher_visible" json:"app_launcher_visible,computed"`
 	AUD                         types.String                                                                           `tfsdk:"aud" json:"aud,computed"`

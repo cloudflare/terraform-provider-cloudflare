@@ -18,6 +18,7 @@ type ZeroTrustAccessApplicationModel struct {
 	AccountID                   types.String                                                               `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID                      types.String                                                               `tfsdk:"zone_id" path:"zone_id,optional"`
 	AllowAuthenticateViaWARP    types.Bool                                                                 `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,optional"`
+	AllowIframe                 types.Bool                                                                 `tfsdk:"allow_iframe" json:"allow_iframe,optional"`
 	AppLauncherLogoURL          types.String                                                               `tfsdk:"app_launcher_logo_url" json:"app_launcher_logo_url,optional"`
 	BgColor                     types.String                                                               `tfsdk:"bg_color" json:"bg_color,optional"`
 	CustomDenyMessage           types.String                                                               `tfsdk:"custom_deny_message" json:"custom_deny_message,optional"`

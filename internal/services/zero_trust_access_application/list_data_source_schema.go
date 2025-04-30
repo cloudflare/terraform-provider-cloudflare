@@ -77,6 +77,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "When set to true, users can authenticate to this application using their WARP session.  When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.",
 							Computed:    true,
 						},
+						"allow_iframe": schema.BoolAttribute{
+							Description: "Enables loading application content in an iFrame.",
+							Computed:    true,
+						},
 						"allowed_idps": schema.ListAttribute{
 							Description: "The identity providers your users can select when connecting to this application. Defaults to all IdPs configured in your account.",
 							Computed:    true,

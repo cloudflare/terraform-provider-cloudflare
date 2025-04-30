@@ -44,6 +44,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When set to true, users can authenticate to this application using their WARP session.  When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.",
 				Optional:    true,
 			},
+			"allow_iframe": schema.BoolAttribute{
+				Description: "Enables loading application content in an iFrame.",
+				Optional:    true,
+			},
 			"app_launcher_logo_url": schema.StringAttribute{
 				Description: "The image URL of the logo shown in the App Launcher header.",
 				Optional:    true,
