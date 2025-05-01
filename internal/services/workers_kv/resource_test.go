@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
@@ -22,6 +23,7 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 	value := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_workers_kv." + name
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	var namespaceID string
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -38,7 +40,28 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						resourceName, "value", value,
 					),
+					getNamespaceID(resourceName, &namespaceID),
 				),
+			},
+			// test refresh behavior
+			{
+				PreConfig: func() {
+					client := acctest.SharedClient()
+					result, err := client.KV.Namespaces.Values.Update(context.Background(), namespaceID, key, kv.NamespaceValueUpdateParams{AccountID: cloudflare.F(accountID), Value: cloudflare.String("foo")})
+					if err != nil {
+						t.Errorf("Error updating KV value out-of-band to test drift detection: %s", err)
+					}
+					if result == nil {
+						t.Error("Could not update KV value out-of-band to test drift detection.")
+					}
+				},
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				RefreshPlanChecks: resource.RefreshPlanChecks{
+					PostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+					},
+				},
 			},
 		},
 	})
@@ -161,6 +184,21 @@ func testAccCheckCloudflareWorkersKVExists(key string) resource.TestCheckFunc {
 			if value == nil {
 				return fmt.Errorf("workers kv key %s not found in namespace %s", key, namespaceID)
 			}
+		}
+
+		return nil
+	}
+}
+
+func getNamespaceID(resourceName string, namespaceId *string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("Resource Not found: %s", resourceName)
+		}
+
+		if namespaceId != nil {
+			*namespaceId = rs.Primary.Attributes["namespace_id"]
 		}
 
 		return nil
