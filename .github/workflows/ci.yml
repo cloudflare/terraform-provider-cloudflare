@@ -10,8 +10,7 @@ on:
 
 jobs:
   lint:
-    runs-on: 
-      group: lx64
+    runs-on: lx64
     steps:
       - uses: actions/checkout@v4
 
