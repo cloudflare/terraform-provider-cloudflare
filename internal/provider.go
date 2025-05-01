@@ -153,7 +153,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_custom_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_deployment"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_dispatch_namespace"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_script_secret"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv_namespace"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_route"
@@ -445,7 +444,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		r2_bucket_lock.NewResource,
 		r2_bucket_sippy.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
-		workers_for_platforms_script_secret.NewResource,
 		zero_trust_device_managed_networks.NewResource,
 		zero_trust_device_default_profile.NewResource,
 		zero_trust_device_default_profile_local_domain_fallback.NewResource,
@@ -713,8 +711,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		r2_bucket_sippy.NewR2BucketSippyDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespaceDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespacesDataSource,
-		workers_for_platforms_script_secret.NewWorkersForPlatformsScriptSecretDataSource,
-		workers_for_platforms_script_secret.NewWorkersForPlatformsScriptSecretsDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksListDataSource,
 		zero_trust_device_default_profile.NewZeroTrustDeviceDefaultProfileDataSource,
