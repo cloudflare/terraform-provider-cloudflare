@@ -271,7 +271,7 @@ cloudflare_terraform_v5()
 
 ## cloudflare_worker_secret
 
-- Renamed to `cloudflare_workers_secret`
+- Removed because this is only for Workers for Platforms
 
 ## cloudflare_workers_for_platforms_namespace
 
@@ -585,23 +585,7 @@ resource "cloudflare_api_token" "example" {
 
 ## cloudflare_workers_secret
 
-- `secret_text` is now `text`.
-
-  Before
-
-  ```hcl
-  resource "cloudflare_workers_secret" "example" {
-    secret_text = "my_s3cr3t!"
-  }
-  ```
-
-  After
-
-  ```hcl
-  resource "cloudflare_workers_secret" "example" {
-    text = "my_s3cr3t!"
-  }
-  ```
+- Removed because this is only for Workers for Platforms
 
 ## cloudflare_workers_kv
 
