@@ -276,6 +276,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"host_selector": schema.SingleNestedAttribute{
+						Description: "Setting to enable host selector in egress policies.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Enable filtering via hosts for egress policies.",
+								Optional:    true,
+							},
+						},
+					},
 					"protocol_detection": schema.SingleNestedAttribute{
 						Description: "Protocol Detection settings.",
 						Computed:    true,
