@@ -5,7 +5,6 @@ package r2_bucket_lifecycle
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -45,9 +44,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"rules": schema.ListNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectListType[R2BucketLifecycleRulesModel](ctx),
+				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -70,15 +67,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"abort_multipart_uploads_transition": schema.SingleNestedAttribute{
 							Description: "Transition to abort ongoing multipart uploads.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[R2BucketLifecycleRulesAbortMultipartUploadsTransitionModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"condition": schema.SingleNestedAttribute{
 									Description: "Condition for lifecycle transitions to apply after an object reaches an age in seconds.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[R2BucketLifecycleRulesAbortMultipartUploadsTransitionConditionModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"max_age": schema.Int64Attribute{
 											Required: true,
@@ -96,15 +89,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"delete_objects_transition": schema.SingleNestedAttribute{
 							Description: "Transition to delete objects.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[R2BucketLifecycleRulesDeleteObjectsTransitionModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"condition": schema.SingleNestedAttribute{
 									Description: "Condition for lifecycle transitions to apply after an object reaches an age in seconds.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[R2BucketLifecycleRulesDeleteObjectsTransitionConditionModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"max_age": schema.Int64Attribute{
 											Optional: true,
@@ -126,9 +115,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"storage_class_transitions": schema.ListNestedAttribute{
 							Description: "Transitions to change the storage class of objects.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectListType[R2BucketLifecycleRulesStorageClassTransitionsModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"condition": schema.SingleNestedAttribute{

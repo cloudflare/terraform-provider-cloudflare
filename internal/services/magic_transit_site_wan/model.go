@@ -4,7 +4,6 @@ package magic_transit_site_wan
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,15 +12,15 @@ type MagicTransitSiteWANResultEnvelope struct {
 }
 
 type MagicTransitSiteWANModel struct {
-	ID               types.String                                                       `tfsdk:"id" json:"id,computed"`
-	AccountID        types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
-	SiteID           types.String                                                       `tfsdk:"site_id" path:"site_id,required"`
-	Physport         types.Int64                                                        `tfsdk:"physport" json:"physport,required"`
-	Name             types.String                                                       `tfsdk:"name" json:"name,optional"`
-	Priority         types.Int64                                                        `tfsdk:"priority" json:"priority,optional"`
-	VlanTag          types.Int64                                                        `tfsdk:"vlan_tag" json:"vlan_tag,optional"`
-	StaticAddressing customfield.NestedObject[MagicTransitSiteWANStaticAddressingModel] `tfsdk:"static_addressing" json:"static_addressing,computed_optional"`
-	HealthCheckRate  types.String                                                       `tfsdk:"health_check_rate" json:"health_check_rate,computed"`
+	ID               types.String                              `tfsdk:"id" json:"id,computed"`
+	AccountID        types.String                              `tfsdk:"account_id" path:"account_id,required"`
+	SiteID           types.String                              `tfsdk:"site_id" path:"site_id,required"`
+	Physport         types.Int64                               `tfsdk:"physport" json:"physport,required"`
+	Name             types.String                              `tfsdk:"name" json:"name,optional"`
+	Priority         types.Int64                               `tfsdk:"priority" json:"priority,optional"`
+	VlanTag          types.Int64                               `tfsdk:"vlan_tag" json:"vlan_tag,optional"`
+	StaticAddressing *MagicTransitSiteWANStaticAddressingModel `tfsdk:"static_addressing" json:"static_addressing,optional"`
+	HealthCheckRate  types.String                              `tfsdk:"health_check_rate" json:"health_check_rate,computed"`
 }
 
 func (m MagicTransitSiteWANModel) MarshalJSON() (data []byte, err error) {

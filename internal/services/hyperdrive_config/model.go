@@ -4,7 +4,6 @@ package hyperdrive_config
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,14 +13,14 @@ type HyperdriveConfigResultEnvelope struct {
 }
 
 type HyperdriveConfigModel struct {
-	AccountID  types.String                                           `tfsdk:"account_id" path:"account_id,required"`
-	ID         types.String                                           `tfsdk:"id" json:"id,computed"`
-	Name       types.String                                           `tfsdk:"name" json:"name,required"`
-	Origin     *HyperdriveConfigOriginModel                           `tfsdk:"origin" json:"origin,required"`
-	Caching    customfield.NestedObject[HyperdriveConfigCachingModel] `tfsdk:"caching" json:"caching,computed_optional"`
-	MTLS       customfield.NestedObject[HyperdriveConfigMTLSModel]    `tfsdk:"mtls" json:"mtls,computed_optional"`
-	CreatedOn  timetypes.RFC3339                                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedOn timetypes.RFC3339                                      `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ID         types.String                  `tfsdk:"id" json:"id,computed"`
+	AccountID  types.String                  `tfsdk:"account_id" path:"account_id,required"`
+	Name       types.String                  `tfsdk:"name" json:"name,required"`
+	Origin     *HyperdriveConfigOriginModel  `tfsdk:"origin" json:"origin,required"`
+	Caching    *HyperdriveConfigCachingModel `tfsdk:"caching" json:"caching,optional"`
+	MTLS       *HyperdriveConfigMTLSModel    `tfsdk:"mtls" json:"mtls,optional"`
+	CreatedOn  timetypes.RFC3339             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn timetypes.RFC3339             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }
 
 func (m HyperdriveConfigModel) MarshalJSON() (data []byte, err error) {

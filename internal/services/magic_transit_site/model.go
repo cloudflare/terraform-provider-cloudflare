@@ -4,7 +4,6 @@ package magic_transit_site
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,14 +12,14 @@ type MagicTransitSiteResultEnvelope struct {
 }
 
 type MagicTransitSiteModel struct {
-	ID                   types.String                                            `tfsdk:"id" json:"id,computed"`
-	AccountID            types.String                                            `tfsdk:"account_id" path:"account_id,required"`
-	HaMode               types.Bool                                              `tfsdk:"ha_mode" json:"ha_mode,optional"`
-	Name                 types.String                                            `tfsdk:"name" json:"name,required"`
-	ConnectorID          types.String                                            `tfsdk:"connector_id" json:"connector_id,optional"`
-	Description          types.String                                            `tfsdk:"description" json:"description,optional"`
-	SecondaryConnectorID types.String                                            `tfsdk:"secondary_connector_id" json:"secondary_connector_id,optional"`
-	Location             customfield.NestedObject[MagicTransitSiteLocationModel] `tfsdk:"location" json:"location,computed_optional"`
+	ID                   types.String                   `tfsdk:"id" json:"id,computed"`
+	AccountID            types.String                   `tfsdk:"account_id" path:"account_id,required"`
+	HaMode               types.Bool                     `tfsdk:"ha_mode" json:"ha_mode,optional"`
+	Name                 types.String                   `tfsdk:"name" json:"name,required"`
+	ConnectorID          types.String                   `tfsdk:"connector_id" json:"connector_id,optional"`
+	Description          types.String                   `tfsdk:"description" json:"description,optional"`
+	SecondaryConnectorID types.String                   `tfsdk:"secondary_connector_id" json:"secondary_connector_id,optional"`
+	Location             *MagicTransitSiteLocationModel `tfsdk:"location" json:"location,optional"`
 }
 
 func (m MagicTransitSiteModel) MarshalJSON() (data []byte, err error) {

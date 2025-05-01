@@ -4,7 +4,6 @@ package account_dns_settings
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,8 +12,8 @@ type AccountDNSSettingsResultEnvelope struct {
 }
 
 type AccountDNSSettingsModel struct {
-	AccountID    types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
-	ZoneDefaults customfield.NestedObject[AccountDNSSettingsZoneDefaultsModel] `tfsdk:"zone_defaults" json:"zone_defaults,computed_optional"`
+	AccountID    types.String                         `tfsdk:"account_id" path:"account_id,required"`
+	ZoneDefaults *AccountDNSSettingsZoneDefaultsModel `tfsdk:"zone_defaults" json:"zone_defaults,optional"`
 }
 
 func (m AccountDNSSettingsModel) MarshalJSON() (data []byte, err error) {
@@ -26,15 +25,15 @@ func (m AccountDNSSettingsModel) MarshalJSONForUpdate(state AccountDNSSettingsMo
 }
 
 type AccountDNSSettingsZoneDefaultsModel struct {
-	FlattenAllCNAMEs   types.Bool                                                               `tfsdk:"flatten_all_cnames" json:"flatten_all_cnames,optional"`
-	FoundationDNS      types.Bool                                                               `tfsdk:"foundation_dns" json:"foundation_dns,optional"`
-	InternalDNS        customfield.NestedObject[AccountDNSSettingsZoneDefaultsInternalDNSModel] `tfsdk:"internal_dns" json:"internal_dns,computed_optional"`
-	MultiProvider      types.Bool                                                               `tfsdk:"multi_provider" json:"multi_provider,optional"`
-	Nameservers        customfield.NestedObject[AccountDNSSettingsZoneDefaultsNameserversModel] `tfsdk:"nameservers" json:"nameservers,computed_optional"`
-	NSTTL              types.Float64                                                            `tfsdk:"ns_ttl" json:"ns_ttl,optional"`
-	SecondaryOverrides types.Bool                                                               `tfsdk:"secondary_overrides" json:"secondary_overrides,optional"`
-	SOA                customfield.NestedObject[AccountDNSSettingsZoneDefaultsSOAModel]         `tfsdk:"soa" json:"soa,computed_optional"`
-	ZoneMode           types.String                                                             `tfsdk:"zone_mode" json:"zone_mode,optional"`
+	FlattenAllCNAMEs   types.Bool                                      `tfsdk:"flatten_all_cnames" json:"flatten_all_cnames,optional"`
+	FoundationDNS      types.Bool                                      `tfsdk:"foundation_dns" json:"foundation_dns,optional"`
+	InternalDNS        *AccountDNSSettingsZoneDefaultsInternalDNSModel `tfsdk:"internal_dns" json:"internal_dns,optional"`
+	MultiProvider      types.Bool                                      `tfsdk:"multi_provider" json:"multi_provider,optional"`
+	Nameservers        *AccountDNSSettingsZoneDefaultsNameserversModel `tfsdk:"nameservers" json:"nameservers,optional"`
+	NSTTL              types.Float64                                   `tfsdk:"ns_ttl" json:"ns_ttl,optional"`
+	SecondaryOverrides types.Bool                                      `tfsdk:"secondary_overrides" json:"secondary_overrides,optional"`
+	SOA                *AccountDNSSettingsZoneDefaultsSOAModel         `tfsdk:"soa" json:"soa,optional"`
+	ZoneMode           types.String                                    `tfsdk:"zone_mode" json:"zone_mode,optional"`
 }
 
 type AccountDNSSettingsZoneDefaultsInternalDNSModel struct {

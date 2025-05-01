@@ -5,7 +5,6 @@ package magic_transit_site_lan
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
@@ -50,9 +49,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"nat": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[MagicTransitSiteLANNatModel](ctx),
+				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"static_prefix": schema.StringAttribute{
 						Description: "A valid CIDR notation representing an IP range.",
@@ -61,9 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"routed_subnets": schema.ListNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectListType[MagicTransitSiteLANRoutedSubnetsModel](ctx),
+				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"next_hop": schema.StringAttribute{
@@ -75,9 +70,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"nat": schema.SingleNestedAttribute{
-							Computed:   true,
-							Optional:   true,
-							CustomType: customfield.NewNestedObjectType[MagicTransitSiteLANRoutedSubnetsNatModel](ctx),
+							Optional: true,
 							Attributes: map[string]schema.Attribute{
 								"static_prefix": schema.StringAttribute{
 									Description: "A valid CIDR notation representing an IP range.",
@@ -90,18 +83,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"static_addressing": schema.SingleNestedAttribute{
 				Description: "If the site is not configured in high availability mode, this configuration is optional (if omitted, use DHCP). However, if in high availability mode, static_address is required along with secondary and virtual address.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[MagicTransitSiteLANStaticAddressingModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"address": schema.StringAttribute{
 						Description: "A valid CIDR notation representing an IP range.",
 						Required:    true,
 					},
 					"dhcp_relay": schema.SingleNestedAttribute{
-						Computed:   true,
-						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[MagicTransitSiteLANStaticAddressingDHCPRelayModel](ctx),
+						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"server_addresses": schema.ListAttribute{
 								Description: "List of DHCP server IPs.",
@@ -111,9 +100,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"dhcp_server": schema.SingleNestedAttribute{
-						Computed:   true,
-						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[MagicTransitSiteLANStaticAddressingDHCPServerModel](ctx),
+						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"dhcp_pool_end": schema.StringAttribute{
 								Description: "A valid IPv4 address.",

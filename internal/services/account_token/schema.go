@@ -111,15 +111,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"condition": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[AccountTokenConditionModel](ctx),
+				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"request_ip": schema.SingleNestedAttribute{
 						Description: "Client IP restrictions.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[AccountTokenConditionRequestIPModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"in": schema.ListAttribute{
 								Description: "List of IPv4/IPv6 CIDR addresses.",

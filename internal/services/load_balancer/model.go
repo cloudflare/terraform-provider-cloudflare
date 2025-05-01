@@ -62,13 +62,13 @@ type LoadBalancerRandomSteeringModel struct {
 }
 
 type LoadBalancerRulesModel struct {
-	Condition     types.String                                                  `tfsdk:"condition" json:"condition,optional"`
-	Disabled      types.Bool                                                    `tfsdk:"disabled" json:"disabled,computed_optional"`
-	FixedResponse customfield.NestedObject[LoadBalancerRulesFixedResponseModel] `tfsdk:"fixed_response" json:"fixed_response,computed_optional"`
-	Name          types.String                                                  `tfsdk:"name" json:"name,optional"`
-	Overrides     customfield.NestedObject[LoadBalancerRulesOverridesModel]     `tfsdk:"overrides" json:"overrides,computed_optional"`
-	Priority      types.Int64                                                   `tfsdk:"priority" json:"priority,computed_optional"`
-	Terminates    types.Bool                                                    `tfsdk:"terminates" json:"terminates,optional"`
+	Condition     types.String                                              `tfsdk:"condition" json:"condition,optional"`
+	Disabled      types.Bool                                                `tfsdk:"disabled" json:"disabled,computed_optional"`
+	FixedResponse *LoadBalancerRulesFixedResponseModel                      `tfsdk:"fixed_response" json:"fixed_response,optional"`
+	Name          types.String                                              `tfsdk:"name" json:"name,optional"`
+	Overrides     customfield.NestedObject[LoadBalancerRulesOverridesModel] `tfsdk:"overrides" json:"overrides,computed_optional"`
+	Priority      types.Int64                                               `tfsdk:"priority" json:"priority,computed_optional"`
+	Terminates    types.Bool                                                `tfsdk:"terminates" json:"terminates,optional"`
 }
 
 type LoadBalancerRulesFixedResponseModel struct {

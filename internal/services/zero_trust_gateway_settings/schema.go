@@ -183,9 +183,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"body_scanning": schema.SingleNestedAttribute{
 						Description: "DLP body scanning settings.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBodyScanningModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"inspection_mode": schema.StringAttribute{
 								Description: "Set the inspection mode to either `deep` or `shallow`.",
@@ -215,9 +213,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"certificate": schema.SingleNestedAttribute{
 						Description: "Certificate settings for Gateway TLS interception. If not specified, the Cloudflare Root CA will be used.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCertificateModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"id": schema.StringAttribute{
 								Description: "UUID of certificate to be used for interception. Certificate must be available (previously called 'active') on the edge. A nil UUID will indicate the Cloudflare Root CA should be used.",

@@ -5,7 +5,6 @@ package r2_bucket_cors
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -46,9 +45,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"rules": schema.ListNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectListType[R2BucketCORSRulesModel](ctx),
+				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"allowed": schema.SingleNestedAttribute{

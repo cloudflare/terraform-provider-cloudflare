@@ -7,7 +7,6 @@ import (
 	"mime/multipart"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,12 +15,12 @@ type SnippetsResultEnvelope struct {
 }
 
 type SnippetsModel struct {
-	SnippetName types.String                                    `tfsdk:"snippet_name" path:"snippet_name,required"`
-	ZoneID      types.String                                    `tfsdk:"zone_id" path:"zone_id,required"`
-	Files       types.String                                    `tfsdk:"files" json:"files,optional"`
-	Metadata    customfield.NestedObject[SnippetsMetadataModel] `tfsdk:"metadata" json:"metadata,computed_optional"`
-	CreatedOn   types.String                                    `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn  types.String                                    `tfsdk:"modified_on" json:"modified_on,computed"`
+	SnippetName types.String           `tfsdk:"snippet_name" path:"snippet_name,required"`
+	ZoneID      types.String           `tfsdk:"zone_id" path:"zone_id,required"`
+	Files       types.String           `tfsdk:"files" json:"files,optional"`
+	Metadata    *SnippetsMetadataModel `tfsdk:"metadata" json:"metadata,optional"`
+	CreatedOn   types.String           `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn  types.String           `tfsdk:"modified_on" json:"modified_on,computed"`
 }
 
 func (r SnippetsModel) MarshalMultipart() (data []byte, contentType string, err error) {

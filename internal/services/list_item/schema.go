@@ -47,30 +47,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The RFC 3339 timestamp of when the item was last modified.",
 				Computed:    true,
 			},
-			"asn": schema.Int64Attribute{
-				Description: "Defines a non-negative 32 bit integer.",
-				Computed:    true,
-			},
-			"comment": schema.StringAttribute{
-				Description: "Defines an informative summary of the list item.",
-				Computed:    true,
-			},
-			"created_on": schema.StringAttribute{
-				Description: "The RFC 3339 timestamp of when the item was created.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The unique ID of the list.",
-				Computed:    true,
-			},
-			"ip": schema.StringAttribute{
-				Description: "An IPv4 address, an IPv4 CIDR, or an IPv6 CIDR. IPv6 CIDRs are limited to a maximum of /64.",
-				Computed:    true,
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "The RFC 3339 timestamp of when the item was last modified.",
-				Computed:    true,
-			},
 			"operation_id": schema.StringAttribute{
 				Description: "The unique operation ID of the asynchronous action.",
 				Computed:    true,

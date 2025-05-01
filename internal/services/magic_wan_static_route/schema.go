@@ -51,9 +51,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"scope": schema.SingleNestedAttribute{
 				Description: "Used only for ECMP routes.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[MagicWANStaticRouteScopeModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"colo_names": schema.ListAttribute{
 						Description: "List of colo names for the ECMP scope.",

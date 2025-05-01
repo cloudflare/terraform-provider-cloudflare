@@ -52,9 +52,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "Array of rules to drive notifications.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[R2BucketEventNotificationRulesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"actions": schema.ListAttribute{

@@ -83,9 +83,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"exclude": schema.ListNestedAttribute{
 				Description: "List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileExcludeModel](ctx),
 				Validators: []validator.List{
 					listvalidator.ConflictsWith(path.MatchRoot("include")),
 				},
@@ -108,9 +106,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"include": schema.ListNestedAttribute{
 				Description: "List of routes included in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDeviceDefaultProfileIncludeModel](ctx),
 				Validators: []validator.List{
 					listvalidator.ConflictsWith(path.MatchRoot("exclude")),
 				},
@@ -132,9 +128,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"service_mode_v2": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[ZeroTrustDeviceDefaultProfileServiceModeV2Model](ctx),
+				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
 						Description: "The mode to run the WARP client under.",

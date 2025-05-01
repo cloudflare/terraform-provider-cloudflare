@@ -6,18 +6,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"strconv"
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/rules"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/tidwall/gjson"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -59,86 +54,86 @@ func (r *ListItemResource) Configure(ctx context.Context, req resource.Configure
 func (r *ListItemResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data *ListItemModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	// resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+	// if resp.Diagnostics.HasError() {
+	// 	return
+	// }
 
-	dataBytes, err := data.MarshalJSON()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
+	// dataBytes, err := data.MarshalJSON()
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+	// 	return
+	// }
 
-	wrappedBytes := data.MarshalSingleToCollectionJSON(dataBytes)
+	// wrappedBytes := data.MarshalSingleToCollectionJSON(dataBytes)
 
-	res := new(http.Response)
-	createEnv := ListItemResultEnvelope{*data}
-	_, err = r.client.Rules.Lists.Items.New(
-		ctx,
-		data.ListID.ValueString(),
-		rules.ListItemNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithRequestBody("application/json", wrappedBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
+	// res := new(http.Response)
+	// createEnv := ListItemResultEnvelope{*data}
+	// _, err = r.client.Rules.Lists.Items.New(
+	// 	ctx,
+	// 	data.ListID.ValueString(),
+	// 	rules.ListItemNewParams{
+	// 		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	// 	},
+	// 	option.WithRequestBody("application/json", wrappedBytes),
+	// 	option.WithResponseBodyInto(&res),
+	// 	option.WithMiddleware(logging.Middleware(ctx)),
+	// )
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	// 	return
+	// }
+	// bytes, _ := io.ReadAll(res.Body)
 
-	err = apijson.UnmarshalComputed(bytes, &createEnv)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
+	// err = apijson.UnmarshalComputed(bytes, &createEnv)
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+	// 	return
+	// }
 
-	searchTerm := getSearchTerm(data)
-	findItemRes := new(http.Response)
-	_, err = r.client.Rules.Lists.Items.List(
-		ctx,
-		data.ListID.ValueString(),
-		rules.ListItemListParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			Search:    cloudflare.F(searchTerm),
-		},
-		option.WithResponseBodyInto(&findItemRes),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
-		return
-	}
-	findListItem, _ := io.ReadAll(findItemRes.Body)
-	itemID := gjson.Get(string(findListItem), "result.0.id")
-	data.ID = types.StringValue(itemID.String())
+	// searchTerm := getSearchTerm(data)
+	// findItemRes := new(http.Response)
+	// _, err = r.client.Rules.Lists.Items.List(
+	// 	ctx,
+	// 	data.ListID.ValueString(),
+	// 	rules.ListItemListParams{
+	// 		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	// 		Search:    cloudflare.F(searchTerm),
+	// 	},
+	// 	option.WithResponseBodyInto(&findItemRes),
+	// 	option.WithMiddleware(logging.Middleware(ctx)),
+	// )
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
+	// 	return
+	// }
+	// findListItem, _ := io.ReadAll(findItemRes.Body)
+	// itemID := gjson.Get(string(findListItem), "result.0.id")
+	// data.ID = types.StringValue(itemID.String())
 
-	env := ListItemResultEnvelope{*data}
-	listItemRes := new(http.Response)
-	_, err = r.client.Rules.Lists.Items.Get(
-		ctx,
-		data.AccountID.ValueString(),
-		data.ListID.ValueString(),
-		data.ID.ValueString(),
-		option.WithResponseBodyInto(&listItemRes),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
-		return
-	}
-	listItem, _ := io.ReadAll(listItemRes.Body)
-	err = apijson.UnmarshalComputed(listItem, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
+	// env := ListItemResultEnvelope{*data}
+	// listItemRes := new(http.Response)
+	// _, err = r.client.Rules.Lists.Items.Get(
+	// 	ctx,
+	// 	data.AccountID.ValueString(),
+	// 	data.ListID.ValueString(),
+	// 	data.ID.ValueString(),
+	// 	option.WithResponseBodyInto(&listItemRes),
+	// 	option.WithMiddleware(logging.Middleware(ctx)),
+	// )
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
+	// 	return
+	// }
+	// listItem, _ := io.ReadAll(listItemRes.Body)
+	// err = apijson.UnmarshalComputed(listItem, &env)
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+	// 	return
+	// }
 
-	data = &env.Result
+	// data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -146,86 +141,86 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *ListItemModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	// resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+	// if resp.Diagnostics.HasError() {
+	// 	return
+	// }
 
-	var state *ListItemModel
+	// var state *ListItemModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	// resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+	// if resp.Diagnostics.HasError() {
+	// 	return
+	// }
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := ListItemResultEnvelope{*data}
-	_, err = r.client.Rules.Lists.Items.Update(
-		ctx,
-		data.ListID.ValueString(),
-		rules.ListItemUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
+	// dataBytes, err := data.MarshalJSONForUpdate(*state)
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+	// 	return
+	// }
+	// res := new(http.Response)
+	// env := ListItemResultEnvelope{*data}
+	// _, err = r.client.Rules.Lists.Items.Update(
+	// 	ctx,
+	// 	data.ListID.ValueString(),
+	// 	rules.ListItemUpdateParams{
+	// 		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	// 	},
+	// 	option.WithRequestBody("application/json", dataBytes),
+	// 	option.WithResponseBodyInto(&res),
+	// 	option.WithMiddleware(logging.Middleware(ctx)),
+	// )
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	// 	return
+	// }
+	// bytes, _ := io.ReadAll(res.Body)
+	// err = apijson.UnmarshalComputed(bytes, &env)
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+	// 	return
+	// }
+	// data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data *ListItemModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	// resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+	// if resp.Diagnostics.HasError() {
+	// 	return
+	// }
 
-	res := new(http.Response)
-	env := ListItemResultEnvelope{*data}
-	_, err := r.client.Rules.Lists.Items.Get(
-		ctx,
-		data.AccountID.ValueString(),
-		data.ListID.ValueString(),
-		data.ID.ValueString(),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if res != nil && res.StatusCode == 404 {
-		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
-		resp.State.RemoveResource(ctx)
-		return
-	}
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
+	// res := new(http.Response)
+	// env := ListItemResultEnvelope{*data}
+	// _, err := r.client.Rules.Lists.Items.Get(
+	// 	ctx,
+	// 	data.AccountID.ValueString(),
+	// 	data.ListID.ValueString(),
+	// 	data.ID.ValueString(),
+	// 	option.WithResponseBodyInto(&res),
+	// 	option.WithMiddleware(logging.Middleware(ctx)),
+	// )
+	// if res != nil && res.StatusCode == 404 {
+	// 	resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
+	// 	resp.State.RemoveResource(ctx)
+	// 	return
+	// }
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	// 	return
+	// }
+	// bytes, _ := io.ReadAll(res.Body)
+	// err = apijson.Unmarshal(bytes, &env)
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+	// 	return
+	// }
+	// data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

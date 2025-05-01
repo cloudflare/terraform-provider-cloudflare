@@ -5,7 +5,6 @@ package r2_bucket_sippy
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -45,15 +44,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"destination": schema.SingleNestedAttribute{
 				Description: "R2 bucket to copy objects to.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[R2BucketSippyDestinationModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"access_key_id": schema.StringAttribute{
 						Description: "ID of a Cloudflare API token.\nThis is the value labelled \"Access Key ID\" when creating an API.\ntoken from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).\n\nSippy will use this token when writing objects to R2, so it is\nbest to scope this token to the bucket you're enabling Sippy for.",
 						Optional:    true,
 					},
-					"provider": schema.StringAttribute{
+					"cloud_provider": schema.StringAttribute{
 						Description: `Available values: "r2".`,
 						Optional:    true,
 						Validators: []validator.String{
@@ -69,9 +66,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"source": schema.SingleNestedAttribute{
 				Description: "AWS S3 bucket to copy objects from.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[R2BucketSippySourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"access_key_id": schema.StringAttribute{
 						Description: "Access Key ID of an IAM credential (ideally scoped to a single S3 bucket).",
@@ -81,7 +76,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Name of the AWS S3 bucket.",
 						Optional:    true,
 					},
-					"provider": schema.StringAttribute{
+					"cloud_provider": schema.StringAttribute{
 						Description: `Available values: "aws".`,
 						Optional:    true,
 						Validators: []validator.String{

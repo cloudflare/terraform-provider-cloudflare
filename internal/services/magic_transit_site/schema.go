@@ -5,7 +5,6 @@ package magic_transit_site
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
@@ -50,9 +49,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"location": schema.SingleNestedAttribute{
 				Description: "Location of site in latitude and longitude.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[MagicTransitSiteLocationModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"lat": schema.StringAttribute{
 						Description: "Latitude",
