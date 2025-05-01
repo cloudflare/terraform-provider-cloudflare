@@ -747,6 +747,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		registrar_domain.NewRegistrarDomainDataSource,
 		registrar_domain.NewRegistrarDomainsDataSource,
 		list.NewListDataSource,
+		list_item.NewListItemDataSource,
 		stream.NewStreamDataSource,
 		stream.NewStreamsDataSource,
 		stream_audio_track.NewStreamAudioTrackDataSource,
