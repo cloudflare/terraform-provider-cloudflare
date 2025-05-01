@@ -133,9 +133,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"action_parameters": schema.SingleNestedAttribute{
 							Description: "The parameters configuring the rule's action.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"response": schema.SingleNestedAttribute{
 									Description: "The response to show when the block is applied.",
@@ -164,7 +162,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
-												Description: "Name of compression algorithm to enable.\nAvailable values: \"none\", \"auto\", \"default\", \"gzip\", \"brotli\".",
+												Description: "Name of compression algorithm to enable.\nAvailable values: \"none\", \"auto\", \"default\", \"gzip\", \"brotli\", \"zstd\".",
 												Optional:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(
@@ -173,6 +171,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 														"default",
 														"gzip",
 														"brotli",
+														"zstd",
 													),
 												},
 											},
@@ -347,7 +346,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												Description: `Available values: "remove".`,
 												Required:    true,
 												Validators: []validator.String{
-													stringvalidator.OneOfCaseInsensitive("remove", "set"),
+													stringvalidator.OneOfCaseInsensitive(
+														"remove",
+														"add",
+														"set",
+													),
 												},
 											},
 											"value": schema.StringAttribute{
@@ -899,9 +902,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"raw_response_fields": schema.ListNestedAttribute{
 									Description: "The raw response fields to log.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersRawResponseFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -910,9 +911,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 											"preserve_duplicates": schema.BoolAttribute{
 												Description: "Whether to log duplicate values of the same header.",
-												Computed:    true,
 												Optional:    true,
-												Default:     booldefault.StaticBool(false),
 											},
 										},
 									},
@@ -931,9 +930,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"response_fields": schema.ListNestedAttribute{
 									Description: "The transformed response fields to log.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersResponseFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -942,9 +939,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 											"preserve_duplicates": schema.BoolAttribute{
 												Description: "Whether to log duplicate values of the same header.",
-												Computed:    true,
 												Optional:    true,
-												Default:     booldefault.StaticBool(false),
 											},
 										},
 									},
