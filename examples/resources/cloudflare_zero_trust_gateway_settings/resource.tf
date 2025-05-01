@@ -49,6 +49,9 @@ resource "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_se
     fips = {
       tls = true
     }
+    host_selector = {
+      enabled = false
+    }
     protocol_detection = {
       enabled = true
     }

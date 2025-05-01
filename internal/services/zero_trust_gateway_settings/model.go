@@ -39,6 +39,7 @@ type ZeroTrustGatewaySettingsSettingsModel struct {
 	CustomCertificate     customfield.NestedObject[ZeroTrustGatewaySettingsSettingsCustomCertificateModel]     `tfsdk:"custom_certificate" json:"custom_certificate,computed_optional"`
 	ExtendedEmailMatching customfield.NestedObject[ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingModel] `tfsdk:"extended_email_matching" json:"extended_email_matching,computed_optional"`
 	Fips                  customfield.NestedObject[ZeroTrustGatewaySettingsSettingsFipsModel]                  `tfsdk:"fips" json:"fips,computed_optional"`
+	HostSelector          *ZeroTrustGatewaySettingsSettingsHostSelectorModel                                   `tfsdk:"host_selector" json:"host_selector,optional"`
 	ProtocolDetection     customfield.NestedObject[ZeroTrustGatewaySettingsSettingsProtocolDetectionModel]     `tfsdk:"protocol_detection" json:"protocol_detection,computed_optional"`
 	Sandbox               customfield.NestedObject[ZeroTrustGatewaySettingsSettingsSandboxModel]               `tfsdk:"sandbox" json:"sandbox,computed_optional"`
 	TLSDecrypt            customfield.NestedObject[ZeroTrustGatewaySettingsSettingsTLSDecryptModel]            `tfsdk:"tls_decrypt" json:"tls_decrypt,computed_optional"`
@@ -103,6 +104,10 @@ type ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingModel struct {
 
 type ZeroTrustGatewaySettingsSettingsFipsModel struct {
 	TLS types.Bool `tfsdk:"tls" json:"tls,computed_optional"`
+}
+
+type ZeroTrustGatewaySettingsSettingsHostSelectorModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,optional"`
 }
 
 type ZeroTrustGatewaySettingsSettingsProtocolDetectionModel struct {
