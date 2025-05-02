@@ -13,7 +13,7 @@ on:
       - "v*"
 jobs:
   goreleaser:
-    runs-on: ubuntu-latest
+    runs-on: lx64
     steps:
       - name: Cleanup unused directories and tools
         run: |
