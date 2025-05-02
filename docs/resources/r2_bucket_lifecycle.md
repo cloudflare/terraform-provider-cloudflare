@@ -49,8 +49,8 @@ resource "cloudflare_r2_bucket_lifecycle" "example_r2_bucket_lifecycle" {
 
 ### Required
 
-- `account_id` (String) Account ID
-- `bucket_name` (String) Name of the bucket
+- `account_id` (String) Account ID.
+- `bucket_name` (String) Name of the bucket.
 
 ### Optional
 
@@ -62,22 +62,22 @@ resource "cloudflare_r2_bucket_lifecycle" "example_r2_bucket_lifecycle" {
 
 Required:
 
-- `conditions` (Attributes) Conditions that apply to all transitions of this rule (see [below for nested schema](#nestedatt--rules--conditions))
-- `enabled` (Boolean) Whether or not this rule is in effect
-- `id` (String) Unique identifier for this rule
+- `conditions` (Attributes) Conditions that apply to all transitions of this rule. (see [below for nested schema](#nestedatt--rules--conditions))
+- `enabled` (Boolean) Whether or not this rule is in effect.
+- `id` (String) Unique identifier for this rule.
 
 Optional:
 
-- `abort_multipart_uploads_transition` (Attributes) Transition to abort ongoing multipart uploads (see [below for nested schema](#nestedatt--rules--abort_multipart_uploads_transition))
-- `delete_objects_transition` (Attributes) Transition to delete objects (see [below for nested schema](#nestedatt--rules--delete_objects_transition))
-- `storage_class_transitions` (Attributes List) Transitions to change the storage class of objects (see [below for nested schema](#nestedatt--rules--storage_class_transitions))
+- `abort_multipart_uploads_transition` (Attributes) Transition to abort ongoing multipart uploads. (see [below for nested schema](#nestedatt--rules--abort_multipart_uploads_transition))
+- `delete_objects_transition` (Attributes) Transition to delete objects. (see [below for nested schema](#nestedatt--rules--delete_objects_transition))
+- `storage_class_transitions` (Attributes List) Transitions to change the storage class of objects. (see [below for nested schema](#nestedatt--rules--storage_class_transitions))
 
 <a id="nestedatt--rules--conditions"></a>
 ### Nested Schema for `rules.conditions`
 
 Required:
 
-- `prefix` (String) Transitions will only apply to objects/uploads in the bucket that start with the given prefix, an empty prefix can be provided to scope rule to all objects/uploads
+- `prefix` (String) Transitions will only apply to objects/uploads in the bucket that start with the given prefix, an empty prefix can be provided to scope rule to all objects/uploads.
 
 
 <a id="nestedatt--rules--abort_multipart_uploads_transition"></a>
@@ -85,7 +85,7 @@ Required:
 
 Optional:
 
-- `condition` (Attributes) Condition for lifecycle transitions to apply after an object reaches an age in seconds (see [below for nested schema](#nestedatt--rules--abort_multipart_uploads_transition--condition))
+- `condition` (Attributes) Condition for lifecycle transitions to apply after an object reaches an age in seconds. (see [below for nested schema](#nestedatt--rules--abort_multipart_uploads_transition--condition))
 
 <a id="nestedatt--rules--abort_multipart_uploads_transition--condition"></a>
 ### Nested Schema for `rules.abort_multipart_uploads_transition.condition`
@@ -102,7 +102,7 @@ Required:
 
 Optional:
 
-- `condition` (Attributes) Condition for lifecycle transitions to apply after an object reaches an age in seconds (see [below for nested schema](#nestedatt--rules--delete_objects_transition--condition))
+- `condition` (Attributes) Condition for lifecycle transitions to apply after an object reaches an age in seconds. (see [below for nested schema](#nestedatt--rules--delete_objects_transition--condition))
 
 <a id="nestedatt--rules--delete_objects_transition--condition"></a>
 ### Nested Schema for `rules.delete_objects_transition.condition`
@@ -123,7 +123,7 @@ Optional:
 
 Required:
 
-- `condition` (Attributes) Condition for lifecycle transitions to apply after an object reaches an age in seconds (see [below for nested schema](#nestedatt--rules--storage_class_transitions--condition))
+- `condition` (Attributes) Condition for lifecycle transitions to apply after an object reaches an age in seconds. (see [below for nested schema](#nestedatt--rules--storage_class_transitions--condition))
 - `storage_class` (String) Available values: "InfrequentAccess".
 
 <a id="nestedatt--rules--storage_class_transitions--condition"></a>

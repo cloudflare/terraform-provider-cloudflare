@@ -23,18 +23,18 @@ data "cloudflare_web_analytics_site" "example_web_analytics_site" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `site_id` (String) Identifier
+- `site_id` (String) Identifier.
 
 ### Read-Only
 
 - `auto_install` (Boolean) If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.
 - `created` (String)
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `rules` (Attributes List) A list of rules. (see [below for nested schema](#nestedatt--rules))
 - `ruleset` (Attributes) (see [below for nested schema](#nestedatt--ruleset))
 - `site_tag` (String) The Web Analytics site identifier.

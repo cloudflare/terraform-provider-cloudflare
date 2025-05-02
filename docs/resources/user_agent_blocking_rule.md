@@ -30,7 +30,7 @@ resource "cloudflare_user_agent_blocking_rule" "example_user_agent_blocking_rule
 - `configuration` (Attributes) The rule configuration. (see [below for nested schema](#nestedatt--configuration))
 - `mode` (String) The action to apply to a matched request.
 Available values: "block", "challenge", "whitelist", "js_challenge", "managed_challenge".
-- `zone_id` (String) Identifier
+- `zone_id` (String) Defines an identifier.
 
 ### Optional
 

@@ -26,7 +26,7 @@ data "cloudflare_access_rule" "example_access_rule" {
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `rule_id` (String) Unique identifier for a rule
+- `rule_id` (String) Unique identifier for a rule.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
@@ -34,7 +34,7 @@ data "cloudflare_access_rule" "example_access_rule" {
 - `allowed_modes` (List of String) The available actions that a rule can apply to a matched request.
 - `configuration` (Attributes) The rule configuration. (see [below for nested schema](#nestedatt--configuration))
 - `created_on` (String) The timestamp of when the rule was created.
-- `id` (String) Unique identifier for a rule
+- `id` (String) Unique identifier for a rule.
 - `mode` (String) The action to apply to a matched request.
 Available values: "block", "challenge", "whitelist", "js_challenge", "managed_challenge".
 - `modified_on` (String) The timestamp of when the rule was last modified.
@@ -47,15 +47,15 @@ Available values: "block", "challenge", "whitelist", "js_challenge", "managed_ch
 Optional:
 
 - `configuration` (Attributes) (see [below for nested schema](#nestedatt--filter--configuration))
-- `direction` (String) The direction used to sort returned rules.
+- `direction` (String) Defines the direction used to sort returned rules.
 Available values: "asc", "desc".
-- `match` (String) When set to `all`, all the search requirements must match. When set to `any`, only one of the search requirements has to match.
+- `match` (String) Defines the search requirements. When set to `all`, all the search requirements must match. When set to `any`, only one of the search requirements has to match.
 Available values: "any", "all".
 - `mode` (String) The action to apply to a matched request.
 Available values: "block", "challenge", "whitelist", "js_challenge", "managed_challenge".
-- `notes` (String) The string to search for in the notes of existing IP Access rules.
+- `notes` (String) Defines the string to search for in the notes of existing IP Access rules.
 Notes: For example, the string 'attack' would match IP Access rules with notes 'Attack 26/02' and 'Attack 27/02'. The search is case insensitive.
-- `order` (String) The field used to sort returned rules.
+- `order` (String) Defines the field used to sort returned rules.
 Available values: "configuration.target", "configuration.value", "mode".
 
 <a id="nestedatt--filter--configuration"></a>
@@ -63,9 +63,9 @@ Available values: "configuration.target", "configuration.value", "mode".
 
 Optional:
 
-- `target` (String) The target to search in existing rules.
+- `target` (String) Defines the target to search in existing rules.
 Available values: "ip", "ip_range", "asn", "country".
-- `value` (String) The target value to search for in existing rules: an IP address, an IP address range, or a country code, depending on the provided `configuration.target`.
+- `value` (String) Defines the target value to search for in existing rules: an IP address, an IP address range, or a country code, depending on the provided `configuration.target`.
 Notes: You can search for a single IPv4 address, an IP address range with a subnet of '/16' or '/24', or a two-letter ISO-3166-1 alpha-2 country code.
 
 
@@ -86,8 +86,8 @@ Available values: "ip".
 Read-Only:
 
 - `email` (String) The contact email address of the user.
-- `id` (String) Identifier
-- `type` (String) The scope of the rule.
+- `id` (String) Defines an identifier.
+- `type` (String) Defines the scope of the rule.
 Available values: "user", "organization".
 
 

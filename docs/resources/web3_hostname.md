@@ -26,22 +26,22 @@ resource "cloudflare_web3_hostname" "example_web3_hostname" {
 
 ### Required
 
-- `name` (String) The hostname that will point to the target gateway via CNAME.
-- `target` (String) Target gateway of the hostname.
+- `name` (String) Specify the hostname that points to the target gateway via CNAME.
+- `target` (String) Specify the target gateway of the hostname.
 Available values: "ethereum", "ipfs", "ipfs_universal_path".
-- `zone_id` (String) Identifier
+- `zone_id` (String) Specify the identifier of the hostname.
 
 ### Optional
 
-- `description` (String) An optional description of the hostname.
-- `dnslink` (String) DNSLink value used if the target is ipfs.
+- `description` (String) Specify an optional description of the hostname.
+- `dnslink` (String) Specify the DNSLink value used if the target is ipfs.
 
 ### Read-Only
 
 - `created_on` (String)
-- `id` (String) Identifier
+- `id` (String) Specify the identifier of the hostname.
 - `modified_on` (String)
-- `status` (String) Status of the hostname's activation.
+- `status` (String) Specifies the status of the hostname's activation.
 Available values: "active", "pending", "deleting", "error".
 
 ## Import

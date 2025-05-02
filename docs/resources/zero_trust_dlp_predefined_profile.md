@@ -51,13 +51,13 @@ resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_
 
 ### Read-Only
 
-- `created_at` (String) When the profile was created
-- `description` (String) The description of the profile
+- `created_at` (String) When the profile was created.
+- `description` (String) The description of the profile.
 - `id` (String) The ID of this resource.
-- `name` (String) The name of the profile
-- `open_access` (Boolean) Whether this profile can be accessed by anyone
+- `name` (String) The name of the profile.
+- `open_access` (Boolean) Whether this profile can be accessed by anyone.
 - `type` (String) Available values: "custom".
-- `updated_at` (String) When the profile was lasted updated
+- `updated_at` (String) When the profile was lasted updated.
 
 <a id="nestedatt--entries"></a>
 ### Nested Schema for `entries`

@@ -22,7 +22,7 @@ data "cloudflare_authenticated_origin_pulls_certificates" "example_authenticated
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -40,7 +40,7 @@ Read-Only:
 - `certificate` (String) The zone's leaf certificate.
 - `enabled` (Boolean) Indicates whether zone-level authenticated origin pulls is enabled.
 - `expires_on` (String) When the certificate from the authority expires.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `issuer` (String) The certificate authority that issued the certificate.
 - `private_key` (String, Sensitive) The zone's private key.
 - `signature` (String) The type of hash used for the certificate.

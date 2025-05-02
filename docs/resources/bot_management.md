@@ -26,7 +26,7 @@ resource "cloudflare_bot_management" "example_bot_management" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -51,7 +51,7 @@ Available values: "allow", "block".
 
 ### Read-Only
 
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `stale_zone_configuration` (Attributes) A read-only field that shows which unauthorized settings are currently active on the zone. These settings typically result from upgrades or downgrades. (see [below for nested schema](#nestedatt--stale_zone_configuration))
 - `using_latest_model` (Boolean) A read-only field that indicates whether the zone currently is running the latest ML model.
 

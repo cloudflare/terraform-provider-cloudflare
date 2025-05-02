@@ -22,7 +22,6 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
   expiration = {
     expires_at = "2014-01-01T05:20:20Z"
     duration = 10
-    expired = false
   }
   filters = ["http"]
   identity = "any(identity.groups.name[*] in {\"finance\"})"
@@ -48,6 +47,10 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       printing = "enabled"
       upload = "enabled"
       version = "v1"
+    }
+    block_page = {
+      target_uri = "https://example.com"
+      include_context = true
     }
     block_page_enabled = true
     block_reason = "This website is a security risk"
@@ -85,6 +88,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
     }
     notification_settings = {
       enabled = true
+      include_context = true
       msg = "msg"
       support_url = "support_url"
     }
@@ -178,6 +182,9 @@ given by their `expires_at` value.
 Optional:
 
 - `duration` (Number) The default duration a policy will be active in minutes. Must be set in order to use the `reset_expiration` endpoint on this rule.
+
+Read-Only:
+
 - `expired` (Boolean) Whether the policy has expired.
 
 
@@ -190,6 +197,7 @@ Optional:
 - `allow_child_bypass` (Boolean) Set by parent MSP accounts to enable their children to bypass this rule.
 - `audit_ssh` (Attributes) Settings for the Audit SSH action. (see [below for nested schema](#nestedatt--rule_settings--audit_ssh))
 - `biso_admin_controls` (Attributes) Configure how browser isolation behaves. (see [below for nested schema](#nestedatt--rule_settings--biso_admin_controls))
+- `block_page` (Attributes) Custom block page settings. If missing/null, blocking will use the the account settings. (see [below for nested schema](#nestedatt--rule_settings--block_page))
 - `block_page_enabled` (Boolean) Enable the custom block page.
 - `block_reason` (String) The text describing why this block occurred, displayed on the custom block page (if enabled).
 - `bypass_parent_rule` (Boolean) Set by children MSP accounts to bypass their parent's rules.
@@ -243,6 +251,18 @@ Available values: "enabled", "disabled".
 Available values: "enabled", "disabled".
 - `version` (String) Indicates which version of the browser isolation controls should apply.
 Available values: "v1", "v2".
+
+
+<a id="nestedatt--rule_settings--block_page"></a>
+### Nested Schema for `rule_settings.block_page`
+
+Required:
+
+- `target_uri` (String) URI to which the user will be redirected
+
+Optional:
+
+- `include_context` (Boolean) If true, context information will be passed as query parameters
 
 
 <a id="nestedatt--rule_settings--check_session"></a>
@@ -316,6 +336,7 @@ Optional:
 Optional:
 
 - `enabled` (Boolean) Set notification on
+- `include_context` (Boolean) If true, context information will be passed as query parameters
 - `msg` (String) Customize the message shown in the notification.
 - `support_url` (String) Optional URL to direct users to additional information. If not set, the notification will open a block page.
 

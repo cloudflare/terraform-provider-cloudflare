@@ -24,20 +24,20 @@ data "cloudflare_api_shield_operation" "example_api_shield_operation" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
 - `feature` (List of String) Add feature(s) to the results. The feature name that is given here corresponds to the resulting feature object. Have a look at the top-level object description for more details on the specific meaning.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `operation_id` (String) UUID
+- `operation_id` (String) UUID.
 
 ### Read-Only
 
 - `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.
 - `features` (Attributes) (see [below for nested schema](#nestedatt--features))
 - `host` (String) RFC3986-compliant host.
-- `id` (String) UUID
+- `id` (String) UUID.
 - `last_updated` (String)
 - `method` (String) The HTTP method used to access the endpoint.
 Available values: "GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "CONNECT", "PATCH", "TRACE".
@@ -166,7 +166,7 @@ Available values: "none", "log", "block".
 Read-Only:
 
 - `created_at` (String)
-- `id` (String) UUID
+- `id` (String) UUID.
 - `is_learned` (Boolean) True if schema is Cloudflare-provided.
 - `name` (String) Schema file name.
 

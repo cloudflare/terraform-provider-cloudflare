@@ -45,7 +45,7 @@ resource "cloudflare_account_dns_settings" "example_account_dns_settings" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 

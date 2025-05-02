@@ -22,7 +22,7 @@ data "cloudflare_content_scanning_expressions" "example_content_scanning_express
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Defines an identifier.
 
 ### Optional
 
@@ -37,7 +37,7 @@ data "cloudflare_content_scanning_expressions" "example_content_scanning_express
 
 Read-Only:
 
-- `id` (String) The unique ID for this custom scan expression
-- `payload` (String) Ruleset expression to use in matching content objects
+- `id` (String) defines the unique ID for this custom scan expression.
+- `payload` (String) Defines the ruleset expression to use in matching content objects.
 
 

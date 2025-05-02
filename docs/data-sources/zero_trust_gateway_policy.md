@@ -82,6 +82,7 @@ Read-Only:
 - `allow_child_bypass` (Boolean) Set by parent MSP accounts to enable their children to bypass this rule.
 - `audit_ssh` (Attributes) Settings for the Audit SSH action. (see [below for nested schema](#nestedatt--rule_settings--audit_ssh))
 - `biso_admin_controls` (Attributes) Configure how browser isolation behaves. (see [below for nested schema](#nestedatt--rule_settings--biso_admin_controls))
+- `block_page` (Attributes) Custom block page settings. If missing/null, blocking will use the the account settings. (see [below for nested schema](#nestedatt--rule_settings--block_page))
 - `block_page_enabled` (Boolean) Enable the custom block page.
 - `block_reason` (String) The text describing why this block occurred, displayed on the custom block page (if enabled).
 - `bypass_parent_rule` (Boolean) Set by children MSP accounts to bypass their parent's rules.
@@ -135,6 +136,15 @@ Available values: "enabled", "disabled".
 Available values: "enabled", "disabled".
 - `version` (String) Indicates which version of the browser isolation controls should apply.
 Available values: "v1", "v2".
+
+
+<a id="nestedatt--rule_settings--block_page"></a>
+### Nested Schema for `rule_settings.block_page`
+
+Read-Only:
+
+- `include_context` (Boolean) If true, context information will be passed as query parameters
+- `target_uri` (String) URI to which the user will be redirected
 
 
 <a id="nestedatt--rule_settings--check_session"></a>
@@ -202,6 +212,7 @@ Read-Only:
 Read-Only:
 
 - `enabled` (Boolean) Set notification on
+- `include_context` (Boolean) If true, context information will be passed as query parameters
 - `msg` (String) Customize the message shown in the notification.
 - `support_url` (String) Optional URL to direct users to additional information. If not set, the notification will open a block page.
 

@@ -22,10 +22,10 @@ data "cloudflare_leaked_credential_check" "example_leaked_credential_check" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Defines an identifier.
 
 ### Read-Only
 
-- `enabled` (Boolean) Whether or not Leaked Credential Checks are enabled
+- `enabled` (Boolean) Determines whether or not Leaked Credential Checks are enabled.
 
 

@@ -118,6 +118,6 @@ Read-Only:
 
 Read-Only:
 
-- `platform` (String) Available values: "windows", "mac", "linux", "android", "ios".
+- `platform` (String) Available values: "windows", "mac", "linux", "android", "ios", "chromeos".
 
 

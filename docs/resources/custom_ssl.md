@@ -85,7 +85,7 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
 
 - `certificate` (String) The zone's SSL certificate or certificate and the intermediate(s).
 - `private_key` (String, Sensitive) The zone's private key.
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -100,7 +100,7 @@ Available values: "legacy_custom", "sni_custom".
 
 - `expires_on` (String) When the certificate from the authority expires.
 - `hosts` (List of String)
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `issuer` (String) The certificate authority that issued the certificate.
 - `keyless_server` (Attributes) (see [below for nested schema](#nestedatt--keyless_server))
 - `modified_on` (String) When the certificate was last modified.

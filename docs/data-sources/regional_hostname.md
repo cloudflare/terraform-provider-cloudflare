@@ -23,7 +23,7 @@ data "cloudflare_regional_hostname" "example_regional_hostname" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -34,5 +34,6 @@ data "cloudflare_regional_hostname" "example_regional_hostname" {
 - `created_on` (String) When the regional hostname was created
 - `id` (String) DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`
 - `region_key` (String) Identifying key for the region
+- `routing` (String) Configure which routing method to use for the regional hostname
 
 

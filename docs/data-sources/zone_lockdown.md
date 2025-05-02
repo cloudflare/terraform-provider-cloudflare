@@ -23,7 +23,7 @@ data "cloudflare_zone_lockdown" "example_zone_lockdown" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Defines an identifier.
 
 ### Optional
 

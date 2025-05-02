@@ -23,7 +23,7 @@ data "cloudflare_email_routing_dns" "example_email_routing_dns" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -35,7 +35,7 @@ data "cloudflare_email_routing_dns" "example_email_routing_dns" {
 - `messages` (Attributes List) (see [below for nested schema](#nestedatt--messages))
 - `result` (Attributes) (see [below for nested schema](#nestedatt--result))
 - `result_info` (Attributes) (see [below for nested schema](#nestedatt--result_info))
-- `success` (Boolean) Whether the API call was successful
+- `success` (Boolean) Whether the API call was successful.
 
 <a id="nestedatt--errors"></a>
 ### Nested Schema for `errors`
@@ -43,7 +43,17 @@ data "cloudflare_email_routing_dns" "example_email_routing_dns" {
 Read-Only:
 
 - `code` (Number)
+- `documentation_url` (String)
 - `message` (String)
+- `source` (Attributes) (see [below for nested schema](#nestedatt--errors--source))
+
+<a id="nestedatt--errors--source"></a>
+### Nested Schema for `errors.source`
+
+Read-Only:
+
+- `pointer` (String)
+
 
 
 <a id="nestedatt--messages"></a>
@@ -52,7 +62,17 @@ Read-Only:
 Read-Only:
 
 - `code` (Number)
+- `documentation_url` (String)
 - `message` (String)
+- `source` (Attributes) (see [below for nested schema](#nestedatt--messages--source))
+
+<a id="nestedatt--messages--source"></a>
+### Nested Schema for `messages.source`
+
+Read-Only:
+
+- `pointer` (String)
+
 
 
 <a id="nestedatt--result"></a>
@@ -110,9 +130,9 @@ Available values: "A", "AAAA", "CNAME", "HTTPS", "TXT", "SRV", "LOC", "MX", "NS"
 
 Read-Only:
 
-- `count` (Number) Total number of results for the requested service
-- `page` (Number) Current page within paginated list of results
-- `per_page` (Number) Number of results per page of results
-- `total_count` (Number) Total results available without any search parameters
+- `count` (Number) Total number of results for the requested service.
+- `page` (Number) Current page within paginated list of results.
+- `per_page` (Number) Number of results per page of results.
+- `total_count` (Number) Total results available without any search parameters.
 
 

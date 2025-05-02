@@ -23,7 +23,7 @@ data "cloudflare_firewall_rule" "example_firewall_rule" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Defines an identifier.
 
 ### Optional
 

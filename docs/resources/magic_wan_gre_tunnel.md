@@ -14,6 +14,22 @@ description: |-
 ```terraform
 resource "cloudflare_magic_wan_gre_tunnel" "example_magic_wan_gre_tunnel" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  cloudflare_gre_endpoint = "203.0.113.1"
+  customer_gre_endpoint = "203.0.113.1"
+  interface_address = "192.0.2.0/31"
+  name = "GRE_1"
+  description = "Tunnel for ISP X"
+  health_check = {
+    direction = "bidirectional"
+    enabled = true
+    rate = "low"
+    target = {
+      saved = "203.0.113.1"
+    }
+    type = "request"
+  }
+  mtu = 0
+  ttl = 0
 }
 ```
 
@@ -23,25 +39,26 @@ resource "cloudflare_magic_wan_gre_tunnel" "example_magic_wan_gre_tunnel" {
 ### Required
 
 - `account_id` (String) Identifier
+- `cloudflare_gre_endpoint` (String) The IP address assigned to the Cloudflare side of the GRE tunnel.
+- `customer_gre_endpoint` (String) The IP address assigned to the customer side of the GRE tunnel.
+- `interface_address` (String) A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.
+- `name` (String) The name of the tunnel. The name cannot contain spaces or special characters, must be 15 characters or less, and cannot share a name with another GRE tunnel.
 
 ### Optional
 
-- `cloudflare_gre_endpoint` (String) The IP address assigned to the Cloudflare side of the GRE tunnel.
-- `customer_gre_endpoint` (String) The IP address assigned to the customer side of the GRE tunnel.
 - `description` (String) An optional description of the GRE tunnel.
-- `gre_tunnel_id` (String) Identifier
 - `health_check` (Attributes) (see [below for nested schema](#nestedatt--health_check))
-- `interface_address` (String) A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.
 - `mtu` (Number) Maximum Transmission Unit (MTU) in bytes for the GRE tunnel. The minimum value is 576.
-- `name` (String) The name of the tunnel. The name cannot contain spaces or special characters, must be 15 characters or less, and cannot share a name with another GRE tunnel.
 - `ttl` (Number) Time To Live (TTL) in number of hops of the GRE tunnel.
 
 ### Read-Only
 
+- `created_on` (String) The date and time the tunnel was created.
 - `gre_tunnel` (Attributes) (see [below for nested schema](#nestedatt--gre_tunnel))
-- `gre_tunnels` (Attributes List) (see [below for nested schema](#nestedatt--gre_tunnels))
+- `id` (String) Identifier
 - `modified` (Boolean)
 - `modified_gre_tunnel` (Attributes) (see [below for nested schema](#nestedatt--modified_gre_tunnel))
+- `modified_on` (String) The date and time the tunnel was last modified.
 
 <a id="nestedatt--health_check"></a>
 ### Nested Schema for `health_check`
@@ -80,7 +97,7 @@ Read-Only:
 - `customer_gre_endpoint` (String) The IP address assigned to the customer side of the GRE tunnel.
 - `description` (String) An optional description of the GRE tunnel.
 - `health_check` (Attributes) (see [below for nested schema](#nestedatt--gre_tunnel--health_check))
-- `id` (String) Tunnel identifier tag.
+- `id` (String) Identifier
 - `interface_address` (String) A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.
 - `modified_on` (String) The date and time the tunnel was last modified.
 - `mtu` (Number) Maximum Transmission Unit (MTU) in bytes for the GRE tunnel. The minimum value is 576.
@@ -112,48 +129,6 @@ Read-Only:
 
 
 
-<a id="nestedatt--gre_tunnels"></a>
-### Nested Schema for `gre_tunnels`
-
-Read-Only:
-
-- `cloudflare_gre_endpoint` (String) The IP address assigned to the Cloudflare side of the GRE tunnel.
-- `created_on` (String) The date and time the tunnel was created.
-- `customer_gre_endpoint` (String) The IP address assigned to the customer side of the GRE tunnel.
-- `description` (String) An optional description of the GRE tunnel.
-- `health_check` (Attributes) (see [below for nested schema](#nestedatt--gre_tunnels--health_check))
-- `id` (String) Tunnel identifier tag.
-- `interface_address` (String) A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.
-- `modified_on` (String) The date and time the tunnel was last modified.
-- `mtu` (Number) Maximum Transmission Unit (MTU) in bytes for the GRE tunnel. The minimum value is 576.
-- `name` (String) The name of the tunnel. The name cannot contain spaces or special characters, must be 15 characters or less, and cannot share a name with another GRE tunnel.
-- `ttl` (Number) Time To Live (TTL) in number of hops of the GRE tunnel.
-
-<a id="nestedatt--gre_tunnels--health_check"></a>
-### Nested Schema for `gre_tunnels.health_check`
-
-Read-Only:
-
-- `direction` (String) The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.
-Available values: "unidirectional", "bidirectional".
-- `enabled` (Boolean) Determines whether to run healthchecks for a tunnel.
-- `rate` (String) How frequent the health check is run. The default value is `mid`.
-Available values: "low", "mid", "high".
-- `target` (Attributes) The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target. Must be in object form if the x-magic-new-hc-target header is set to true and string form if x-magic-new-hc-target is absent or set to false. (see [below for nested schema](#nestedatt--gre_tunnels--health_check--target))
-- `type` (String) The type of healthcheck to run, reply or request. The default value is `reply`.
-Available values: "reply", "request".
-
-<a id="nestedatt--gre_tunnels--health_check--target"></a>
-### Nested Schema for `gre_tunnels.health_check.target`
-
-Read-Only:
-
-- `effective` (String) The effective health check target. If 'saved' is empty, then this field will be populated with the calculated default value on GET requests. Ignored in POST, PUT, and PATCH requests.
-- `saved` (String) The saved health check target. Setting the value to the empty string indicates that the calculated default value will be used.
-
-
-
-
 <a id="nestedatt--modified_gre_tunnel"></a>
 ### Nested Schema for `modified_gre_tunnel`
 
@@ -164,7 +139,7 @@ Read-Only:
 - `customer_gre_endpoint` (String) The IP address assigned to the customer side of the GRE tunnel.
 - `description` (String) An optional description of the GRE tunnel.
 - `health_check` (Attributes) (see [below for nested schema](#nestedatt--modified_gre_tunnel--health_check))
-- `id` (String) Tunnel identifier tag.
+- `id` (String) Identifier
 - `interface_address` (String) A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.
 - `modified_on` (String) The date and time the tunnel was last modified.
 - `mtu` (Number) Maximum Transmission Unit (MTU) in bytes for the GRE tunnel. The minimum value is 576.
@@ -193,4 +168,10 @@ Read-Only:
 - `effective` (String) The effective health check target. If 'saved' is empty, then this field will be populated with the calculated default value on GET requests. Ignored in POST, PUT, and PATCH requests.
 - `saved` (String) The saved health check target. Setting the value to the empty string indicates that the calculated default value will be used.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_magic_wan_gre_tunnel.example '<account_id>/<gre_tunnel_id>'
+```

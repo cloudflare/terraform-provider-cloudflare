@@ -22,7 +22,7 @@ data "cloudflare_bot_management" "example_bot_management" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

@@ -23,7 +23,7 @@ data "cloudflare_certificate_packs" "example_certificate_packs" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 

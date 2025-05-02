@@ -22,7 +22,7 @@ data "cloudflare_keyless_certificates" "example_keyless_certificates" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 

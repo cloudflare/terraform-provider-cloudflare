@@ -23,15 +23,15 @@ data "cloudflare_r2_bucket" "example_r2_bucket" {
 
 ### Required
 
-- `account_id` (String) Account ID
-- `bucket_name` (String) Name of the bucket
+- `account_id` (String) Account ID.
+- `bucket_name` (String) Name of the bucket.
 
 ### Read-Only
 
-- `creation_date` (String) Creation timestamp
-- `location` (String) Location of the bucket
+- `creation_date` (String) Creation timestamp.
+- `location` (String) Location of the bucket.
 Available values: "apac", "eeur", "enam", "weur", "wnam", "oc".
-- `name` (String) Name of the bucket
+- `name` (String) Name of the bucket.
 - `storage_class` (String) Storage class for newly uploaded objects, unless specified otherwise.
 Available values: "Standard", "InfrequentAccess".
 

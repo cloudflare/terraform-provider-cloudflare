@@ -32,15 +32,15 @@ data "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_custom_p
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String) Available values: "low", "medium", "high", "very_high".
 - `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
-- `created_at` (String) When the profile was created
-- `description` (String) The description of the profile
+- `created_at` (String) When the profile was created.
+- `description` (String) The description of the profile.
 - `entries` (Attributes List) (see [below for nested schema](#nestedatt--entries))
-- `id` (String) The id of the profile (uuid)
-- `name` (String) The name of the profile
+- `id` (String) The id of the profile (uuid).
+- `name` (String) The name of the profile.
 - `ocr_enabled` (Boolean)
-- `open_access` (Boolean) Whether this profile can be accessed by anyone
+- `open_access` (Boolean) Whether this profile can be accessed by anyone.
 - `type` (String) Available values: "custom".
-- `updated_at` (String) When the profile was lasted updated
+- `updated_at` (String) When the profile was lasted updated.
 
 <a id="nestedatt--context_awareness"></a>
 ### Nested Schema for `context_awareness`
@@ -64,6 +64,9 @@ Read-Only:
 
 Read-Only:
 
+- `case_sensitive` (Boolean) Only applies to custom word lists.
+Determines if the words should be matched in a case-sensitive manner
+Cannot be set to false if secret is true
 - `confidence` (Attributes) (see [below for nested schema](#nestedatt--entries--confidence))
 - `created_at` (String)
 - `enabled` (Boolean)
@@ -81,8 +84,8 @@ Read-Only:
 
 Read-Only:
 
-- `ai_context_available` (Boolean) Indicates whether this entry has AI remote service validation
-- `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service
+- `ai_context_available` (Boolean) Indicates whether this entry has AI remote service validation.
+- `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service.
 
 
 <a id="nestedatt--entries--pattern"></a>

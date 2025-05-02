@@ -23,7 +23,7 @@ data "cloudflare_email_routing_address" "example_email_routing_address" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 

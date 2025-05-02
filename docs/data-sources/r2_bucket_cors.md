@@ -23,8 +23,8 @@ data "cloudflare_r2_bucket_cors" "example_r2_bucket_cors" {
 
 ### Required
 
-- `account_id` (String) Account ID
-- `bucket_name` (String) Name of the bucket
+- `account_id` (String) Account ID.
+- `bucket_name` (String) Name of the bucket.
 
 ### Read-Only
 
@@ -37,7 +37,7 @@ Read-Only:
 
 - `allowed` (Attributes) Object specifying allowed origins, methods and headers for this CORS rule. (see [below for nested schema](#nestedatt--rules--allowed))
 - `expose_headers` (List of String) Specifies the headers that can be exposed back, and accessed by, the JavaScript making the cross-origin request. If you need to access headers beyond the safelisted response headers, such as Content-Encoding or cf-cache-status, you must specify it here.
-- `id` (String) Identifier for this rule
+- `id` (String) Identifier for this rule.
 - `max_age_seconds` (Number) Specifies the amount of time (in seconds) browsers are allowed to cache CORS preflight responses. Browsers may limit this to 2 hours or less, even if the maximum value (86400) is specified.
 
 <a id="nestedatt--rules--allowed"></a>

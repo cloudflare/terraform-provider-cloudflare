@@ -38,7 +38,7 @@ data "cloudflare_workers_routes" "example_workers_routes" {
 Read-Only:
 
 - `id` (String) Identifier.
-- `pattern` (String)
-- `script` (String) Name of the script, used in URLs and route configuration.
+- `pattern` (String) Pattern to match incoming requests against. [Learn more](https://developers.cloudflare.com/workers/configuration/routing/routes/#matching-behavior).
+- `script` (String) Name of the script to run if the route matches.
 
 

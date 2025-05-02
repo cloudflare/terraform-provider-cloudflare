@@ -23,7 +23,7 @@ data "cloudflare_filter" "example_filter" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Defines an identifier.
 
 ### Optional
 
