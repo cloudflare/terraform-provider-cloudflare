@@ -172,6 +172,12 @@ func (r *WorkersKVResource) Read(ctx context.Context, req resource.ReadRequest, 
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	bytes, _ := io.ReadAll(res.Body)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to read response body", err.Error())
+		return
+	}
+	data.Value = types.StringValue(string(bytes))
 	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
