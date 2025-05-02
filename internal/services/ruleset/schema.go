@@ -133,6 +133,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"action_parameters": schema.SingleNestedAttribute{
 							Description: "The parameters configuring the rule's action.",
 							Optional:    true,
+							Computed:    true,
 							CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"response": schema.SingleNestedAttribute{

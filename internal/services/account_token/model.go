@@ -20,7 +20,7 @@ type AccountTokenModel struct {
 	Policies   *[]*AccountTokenPoliciesModel `tfsdk:"policies" json:"policies,required"`
 	ExpiresOn  timetypes.RFC3339             `tfsdk:"expires_on" json:"expires_on,optional" format:"date-time"`
 	NotBefore  timetypes.RFC3339             `tfsdk:"not_before" json:"not_before,optional" format:"date-time"`
-	Status     types.String                  `tfsdk:"status" json:"status,optional"`
+	Status     types.String                  `tfsdk:"status" json:"status,computed"`
 	Condition  *AccountTokenConditionModel   `tfsdk:"condition" json:"condition,optional"`
 	IssuedOn   timetypes.RFC3339             `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
 	LastUsedOn timetypes.RFC3339             `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`

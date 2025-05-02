@@ -14,7 +14,7 @@ type ListItemResultEnvelope struct {
 
 type ListItemModel struct {
 	ListID      types.String                                    `tfsdk:"list_id" path:"list_id,required"`
-	AccountID   types.String                                    `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID   types.String                                    `tfsdk:"account_id" path:"account_id,required"`
 	ID          types.String                                    `tfsdk:"id" path:"item_id,computed"`
 	ASN         types.Int64                                     `tfsdk:"asn" json:"asn,optional"`
 	Comment     types.String                                    `tfsdk:"comment" json:"comment,optional"`

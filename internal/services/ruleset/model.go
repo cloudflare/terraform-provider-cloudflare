@@ -35,7 +35,7 @@ type RulesetRulesModel struct {
 	ID                     types.String                                                `tfsdk:"id" json:"id,computed"`
 	Action                 types.String                                                `tfsdk:"action" json:"action,optional"`
 	ActionParameters       customfield.NestedObject[RulesetRulesActionParametersModel] `tfsdk:"action_parameters" json:"action_parameters,computed_optional"`
-	Categories             customfield.List[types.String]                              `tfsdk:"categories" json:"categories,computed"`
+	Categories             customfield.List[types.String]                              `tfsdk:"categories" json:"categories,optional"`
 	Description            types.String                                                `tfsdk:"description" json:"description,computed_optional"`
 	Enabled                types.Bool                                                  `tfsdk:"enabled" json:"enabled,computed_optional"`
 	ExposedCredentialCheck *RulesetRulesExposedCredentialCheckModel                    `tfsdk:"exposed_credential_check" json:"exposed_credential_check,optional"`
