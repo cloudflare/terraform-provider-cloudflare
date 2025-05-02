@@ -5,8 +5,14 @@ package logpush_dataset_job
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/logpush"
+	"github.com/cloudflare/cloudflare-go/v4/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -46,38 +52,38 @@ func (d *LogpushDatasetJobDataSource) Configure(ctx context.Context, req datasou
 func (d *LogpushDatasetJobDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *LogpushDatasetJobDataSourceModel
 
-	// resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
-	// if resp.Diagnostics.HasError() {
-	// 	return
-	// }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-	// params, diags := data.toReadParams(ctx)
-	// resp.Diagnostics.Append(diags...)
-	// if resp.Diagnostics.HasError() {
-	// 	return
-	// }
+	params, diags := data.toReadParams(ctx)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-	// res := new(http.Response)
-	// env := LogpushDatasetJobResultDataSourceEnvelope{*data}
-	// _, err := d.client.Logpush.Datasets.Jobs.Get(
-	// 	ctx,
-	// 	logpush.DatasetJobGetParamsDatasetID(data.DatasetID.ValueString()),
-	// 	params,
-	// 	option.WithResponseBodyInto(&res),
-	// 	option.WithMiddleware(logging.Middleware(ctx)),
-	// )
-	// if err != nil {
-	// 	resp.Diagnostics.AddError("failed to make http request", err.Error())
-	// 	return
-	// }
-	// bytes, _ := io.ReadAll(res.Body)
-	// err = apijson.UnmarshalComputed(bytes, &env)
-	// if err != nil {
-	// 	resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-	// 	return
-	// }
-	// data = &env.Result
+	res := new(http.Response)
+	env := LogpushDatasetJobResultDataSourceEnvelope{*data}
+	_, err := d.client.Logpush.Datasets.Jobs.Get(
+		ctx,
+		logpush.DatasetJobGetParamsDatasetID(data.DatasetID.ValueString()),
+		params,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
