@@ -23,17 +23,17 @@ data "cloudflare_account_dns_settings_internal_view" "example_account_dns_settin
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `view_id` (String) Identifier
+- `view_id` (String) Identifier.
 
 ### Read-Only
 
 - `created_time` (String) When the view was created.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `modified_time` (String) When the view was last modified.
 - `name` (String) The name of the view.
 - `zones` (List of String) The list of zones linked to this view.

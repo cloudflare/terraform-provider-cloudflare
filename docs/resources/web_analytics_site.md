@@ -25,7 +25,7 @@ resource "cloudflare_web_analytics_site" "example_web_analytics_site" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 

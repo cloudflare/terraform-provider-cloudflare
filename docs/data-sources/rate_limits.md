@@ -22,7 +22,7 @@ data "cloudflare_rate_limits" "example_rate_limits" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Defines an identifier.
 
 ### Optional
 

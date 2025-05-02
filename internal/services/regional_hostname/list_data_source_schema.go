@@ -19,7 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -46,6 +46,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"region_key": schema.StringAttribute{
 							Description: "Identifying key for the region",
+							Computed:    true,
+						},
+						"routing": schema.StringAttribute{
+							Description: "Configure which routing method to use for the regional hostname",
 							Computed:    true,
 						},
 					},

@@ -24,6 +24,6 @@ data "cloudflare_user_agent_blocking_rule" "example_user_agent_blocking_rule" {
 ### Required
 
 - `ua_rule_id` (String) The unique identifier of the User Agent Blocking rule.
-- `zone_id` (String) Identifier
+- `zone_id` (String) Defines an identifier.
 
 

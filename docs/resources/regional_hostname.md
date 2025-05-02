@@ -16,6 +16,7 @@ resource "cloudflare_regional_hostname" "example_regional_hostname" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   hostname = "foo.example.com"
   region_key = "ca"
+  routing = "routing"
 }
 ```
 
@@ -26,7 +27,11 @@ resource "cloudflare_regional_hostname" "example_regional_hostname" {
 
 - `hostname` (String) DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`
 - `region_key` (String) Identifying key for the region
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
+
+### Optional
+
+- `routing` (String) Configure which routing method to use for the regional hostname
 
 ### Read-Only
 

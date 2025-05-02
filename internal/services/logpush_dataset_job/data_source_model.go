@@ -18,9 +18,9 @@ type LogpushDatasetJobResultDataSourceEnvelope struct {
 }
 
 type LogpushDatasetJobDataSourceModel struct {
-	DatasetID                types.String                                                            `tfsdk:"dataset_id" path:"dataset_id,required"`
 	AccountID                types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID                   types.String                                                            `tfsdk:"zone_id" path:"zone_id,optional"`
+	DatasetID                types.String                                                            `tfsdk:"dataset_id" path:"dataset_id,computed_optional"`
 	Dataset                  types.String                                                            `tfsdk:"dataset" json:"dataset,computed"`
 	DestinationConf          types.String                                                            `tfsdk:"destination_conf" json:"destination_conf,computed"`
 	Enabled                  types.Bool                                                              `tfsdk:"enabled" json:"enabled,computed"`

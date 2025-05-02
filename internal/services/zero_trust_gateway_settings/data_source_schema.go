@@ -71,6 +71,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										Description: "Set notification on",
 										Computed:    true,
 									},
+									"include_context": schema.BoolAttribute{
+										Description: "If true, context information will be passed as query parameters",
+										Computed:    true,
+									},
 									"msg": schema.StringAttribute{
 										Description: "Customize the message shown in the notification.",
 										Computed:    true,
@@ -220,6 +224,17 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"tls": schema.BoolAttribute{
 								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
+								Computed:    true,
+							},
+						},
+					},
+					"host_selector": schema.SingleNestedAttribute{
+						Description: "Setting to enable host selector in egress policies.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsHostSelectorDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Enable filtering via hosts for egress policies.",
 								Computed:    true,
 							},
 						},

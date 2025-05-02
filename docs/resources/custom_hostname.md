@@ -88,7 +88,7 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
 
 - `hostname` (String) The custom hostname that will point to your hostname via CNAME.
 - `ssl` (Attributes) SSL properties used when creating the custom hostname. (see [below for nested schema](#nestedatt--ssl))
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -99,7 +99,7 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
 ### Read-Only
 
 - `created_at` (String) This is the time the hostname was created.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `ownership_verification` (Attributes) This is a record which can be placed to activate a hostname. (see [below for nested schema](#nestedatt--ownership_verification))
 - `ownership_verification_http` (Attributes) This presents the token to be served by the given http url to activate a hostname. (see [below for nested schema](#nestedatt--ownership_verification_http))
 - `status` (String) Status of the hostname's activation.

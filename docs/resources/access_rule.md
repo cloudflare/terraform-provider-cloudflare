@@ -62,8 +62,8 @@ Available values: "ip".
 Read-Only:
 
 - `email` (String) The contact email address of the user.
-- `id` (String) Identifier
-- `type` (String) The scope of the rule.
+- `id` (String) Defines an identifier.
+- `type` (String) Defines the scope of the rule.
 Available values: "user", "organization".
 
 ## Import

@@ -30,6 +30,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description: "Identifier",
+						Computed:    true,
+					},
 					"cloudflare_endpoint": schema.StringAttribute{
 						Description: "The IP address assigned to the Cloudflare side of the IPsec tunnel.",
 						Computed:    true,
@@ -40,10 +44,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"name": schema.StringAttribute{
 						Description: "The name of the IPsec tunnel. The name cannot share a name with other tunnels.",
-						Computed:    true,
-					},
-					"id": schema.StringAttribute{
-						Description: "Tunnel identifier tag.",
 						Computed:    true,
 					},
 					"allow_null_cipher": schema.BoolAttribute{

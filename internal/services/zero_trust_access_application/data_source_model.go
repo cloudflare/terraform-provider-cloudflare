@@ -23,6 +23,7 @@ type ZeroTrustAccessApplicationDataSourceModel struct {
 	AccountID                   types.String                                                                          `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID                      types.String                                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
 	AllowAuthenticateViaWARP    types.Bool                                                                            `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed"`
+	AllowIframe                 types.Bool                                                                            `tfsdk:"allow_iframe" json:"allow_iframe,computed"`
 	AppLauncherLogoURL          types.String                                                                          `tfsdk:"app_launcher_logo_url" json:"app_launcher_logo_url,computed"`
 	AppLauncherVisible          types.Bool                                                                            `tfsdk:"app_launcher_visible" json:"app_launcher_visible,computed"`
 	AUD                         types.String                                                                          `tfsdk:"aud" json:"aud,computed"`
@@ -144,12 +145,12 @@ type ZeroTrustAccessApplicationPoliciesDataSourceModel struct {
 	Include                      customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesIncludeDataSourceModel]        `tfsdk:"include" json:"include,computed"`
 	IsolationRequired            types.Bool                                                                                    `tfsdk:"isolation_required" json:"isolation_required,computed"`
 	Name                         types.String                                                                                  `tfsdk:"name" json:"name,computed"`
+	Precedence                   types.Int64                                                                                   `tfsdk:"precedence" json:"precedence,computed"`
 	PurposeJustificationPrompt   types.String                                                                                  `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
 	PurposeJustificationRequired types.Bool                                                                                    `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
 	Require                      customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesRequireDataSourceModel]        `tfsdk:"require" json:"require,computed"`
 	SessionDuration              types.String                                                                                  `tfsdk:"session_duration" json:"session_duration,computed"`
 	UpdatedAt                    timetypes.RFC3339                                                                             `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	Precedence                   types.Int64                                                                                   `tfsdk:"precedence" json:"precedence,computed"`
 	ConnectionRules              customfield.NestedObject[ZeroTrustAccessApplicationPoliciesConnectionRulesDataSourceModel]    `tfsdk:"connection_rules" json:"connection_rules,computed"`
 }
 

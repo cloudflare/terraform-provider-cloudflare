@@ -4,7 +4,6 @@ package r2_bucket_lifecycle
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,10 +13,10 @@ type R2BucketLifecycleResultEnvelope struct {
 }
 
 type R2BucketLifecycleModel struct {
-	AccountID    types.String                                              `tfsdk:"account_id" path:"account_id,required"`
-	BucketName   types.String                                              `tfsdk:"bucket_name" path:"bucket_name,required"`
-	Jurisdiction types.String                                              `tfsdk:"jurisdiction" json:"-,computed_optional"`
-	Rules        customfield.NestedObjectList[R2BucketLifecycleRulesModel] `tfsdk:"rules" json:"rules,computed_optional"`
+	AccountID    types.String                    `tfsdk:"account_id" path:"account_id,required"`
+	BucketName   types.String                    `tfsdk:"bucket_name" path:"bucket_name,required"`
+	Jurisdiction types.String                    `tfsdk:"jurisdiction" json:"-,computed_optional"`
+	Rules        *[]*R2BucketLifecycleRulesModel `tfsdk:"rules" json:"rules,optional"`
 }
 
 func (m R2BucketLifecycleModel) MarshalJSON() (data []byte, err error) {
@@ -29,12 +28,12 @@ func (m R2BucketLifecycleModel) MarshalJSONForUpdate(state R2BucketLifecycleMode
 }
 
 type R2BucketLifecycleRulesModel struct {
-	ID                              types.String                                                                         `tfsdk:"id" json:"id,required"`
-	Conditions                      *R2BucketLifecycleRulesConditionsModel                                               `tfsdk:"conditions" json:"conditions,required"`
-	Enabled                         types.Bool                                                                           `tfsdk:"enabled" json:"enabled,required"`
-	AbortMultipartUploadsTransition customfield.NestedObject[R2BucketLifecycleRulesAbortMultipartUploadsTransitionModel] `tfsdk:"abort_multipart_uploads_transition" json:"abortMultipartUploadsTransition,computed_optional"`
-	DeleteObjectsTransition         customfield.NestedObject[R2BucketLifecycleRulesDeleteObjectsTransitionModel]         `tfsdk:"delete_objects_transition" json:"deleteObjectsTransition,computed_optional"`
-	StorageClassTransitions         customfield.NestedObjectList[R2BucketLifecycleRulesStorageClassTransitionsModel]     `tfsdk:"storage_class_transitions" json:"storageClassTransitions,computed_optional"`
+	ID                              types.String                                                `tfsdk:"id" json:"id,required"`
+	Conditions                      *R2BucketLifecycleRulesConditionsModel                      `tfsdk:"conditions" json:"conditions,required"`
+	Enabled                         types.Bool                                                  `tfsdk:"enabled" json:"enabled,required"`
+	AbortMultipartUploadsTransition *R2BucketLifecycleRulesAbortMultipartUploadsTransitionModel `tfsdk:"abort_multipart_uploads_transition" json:"abortMultipartUploadsTransition,optional"`
+	DeleteObjectsTransition         *R2BucketLifecycleRulesDeleteObjectsTransitionModel         `tfsdk:"delete_objects_transition" json:"deleteObjectsTransition,optional"`
+	StorageClassTransitions         *[]*R2BucketLifecycleRulesStorageClassTransitionsModel      `tfsdk:"storage_class_transitions" json:"storageClassTransitions,optional"`
 }
 
 type R2BucketLifecycleRulesConditionsModel struct {
@@ -42,7 +41,7 @@ type R2BucketLifecycleRulesConditionsModel struct {
 }
 
 type R2BucketLifecycleRulesAbortMultipartUploadsTransitionModel struct {
-	Condition customfield.NestedObject[R2BucketLifecycleRulesAbortMultipartUploadsTransitionConditionModel] `tfsdk:"condition" json:"condition,computed_optional"`
+	Condition *R2BucketLifecycleRulesAbortMultipartUploadsTransitionConditionModel `tfsdk:"condition" json:"condition,optional"`
 }
 
 type R2BucketLifecycleRulesAbortMultipartUploadsTransitionConditionModel struct {
@@ -51,7 +50,7 @@ type R2BucketLifecycleRulesAbortMultipartUploadsTransitionConditionModel struct 
 }
 
 type R2BucketLifecycleRulesDeleteObjectsTransitionModel struct {
-	Condition customfield.NestedObject[R2BucketLifecycleRulesDeleteObjectsTransitionConditionModel] `tfsdk:"condition" json:"condition,computed_optional"`
+	Condition *R2BucketLifecycleRulesDeleteObjectsTransitionConditionModel `tfsdk:"condition" json:"condition,optional"`
 }
 
 type R2BucketLifecycleRulesDeleteObjectsTransitionConditionModel struct {

@@ -17,12 +17,12 @@ var _ datasource.DataSourceWithConfigValidators = (*ListItemDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_identifier": schema.StringAttribute{
-				Description: "Identifier",
+			"account_id": schema.StringAttribute{
+				Description: "Defines an identifier.",
 				Required:    true,
 			},
 			"item_id": schema.StringAttribute{
-				Description: "The unique ID of the item in the List.",
+				Description: "Defines the unique ID of the item in the List.",
 				Required:    true,
 			},
 			"list_id": schema.StringAttribute{
@@ -30,11 +30,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"asn": schema.Int64Attribute{
-				Description: "A non-negative 32 bit integer",
+				Description: "Defines a non-negative 32 bit integer.",
 				Computed:    true,
 			},
 			"comment": schema.StringAttribute{
-				Description: "An informative summary of the list item.",
+				Description: "Defines an informative summary of the list item.",
 				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{

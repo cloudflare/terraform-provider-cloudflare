@@ -66,6 +66,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"case_sensitive": schema.BoolAttribute{
+				Description: "Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
+				Computed:    true,
+			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
@@ -82,11 +86,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[ZeroTrustDLPEntryConfidenceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ai_context_available": schema.BoolAttribute{
-						Description: "Indicates whether this entry has AI remote service validation",
+						Description: "Indicates whether this entry has AI remote service validation.",
 						Computed:    true,
 					},
 					"available": schema.BoolAttribute{
-						Description: "Indicates whether this entry has any form of validation that is not an AI remote service",
+						Description: "Indicates whether this entry has any form of validation that is not an AI remote service.",
 						Computed:    true,
 					},
 				},

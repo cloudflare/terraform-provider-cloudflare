@@ -4,7 +4,6 @@ package zone_subscription
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,9 +12,9 @@ type ZoneSubscriptionResultEnvelope struct {
 }
 
 type ZoneSubscriptionModel struct {
-	Identifier types.String                                            `tfsdk:"identifier" path:"identifier,required"`
-	Frequency  types.String                                            `tfsdk:"frequency" json:"frequency,optional"`
-	RatePlan   customfield.NestedObject[ZoneSubscriptionRatePlanModel] `tfsdk:"rate_plan" json:"rate_plan,computed_optional"`
+	Identifier types.String                   `tfsdk:"identifier" path:"identifier,required"`
+	Frequency  types.String                   `tfsdk:"frequency" json:"frequency,optional"`
+	RatePlan   *ZoneSubscriptionRatePlanModel `tfsdk:"rate_plan" json:"rate_plan,optional"`
 }
 
 func (m ZoneSubscriptionModel) MarshalJSON() (data []byte, err error) {

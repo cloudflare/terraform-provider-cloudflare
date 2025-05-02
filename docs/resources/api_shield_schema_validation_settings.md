@@ -33,7 +33,7 @@ Mitigation actions are as follows:
 
 A special value of of `none` will skip running schema validation entirely for the request when there is no mitigation action defined on the operation
 Available values: "none", "log", "block".
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -47,7 +47,7 @@ Available values: "none", "disable_override".
 
 ### Read-Only
 
-- `id` (String) Identifier
+- `id` (String) Identifier.
 
 ## Import
 

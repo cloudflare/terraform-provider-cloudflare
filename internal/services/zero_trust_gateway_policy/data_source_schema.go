@@ -251,6 +251,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"block_page": schema.SingleNestedAttribute{
+						Description: "Custom block page settings. If missing/null, blocking will use the the account settings.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsBlockPageDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"target_uri": schema.StringAttribute{
+								Description: "URI to which the user will be redirected",
+								Computed:    true,
+							},
+							"include_context": schema.BoolAttribute{
+								Description: "If true, context information will be passed as query parameters",
+								Computed:    true,
+							},
+						},
+					},
 					"block_page_enabled": schema.BoolAttribute{
 						Description: "Enable the custom block page.",
 						Computed:    true,
@@ -390,6 +405,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Set notification on",
+								Computed:    true,
+							},
+							"include_context": schema.BoolAttribute{
+								Description: "If true, context information will be passed as query parameters",
 								Computed:    true,
 							},
 							"msg": schema.StringAttribute{

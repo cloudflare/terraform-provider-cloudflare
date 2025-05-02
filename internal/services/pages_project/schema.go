@@ -42,9 +42,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"build_config": schema.SingleNestedAttribute{
 				Description: "Configs for the project build process.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[PagesProjectBuildConfigModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"build_caching": schema.BoolAttribute{
 						Description: "Enable build caching for the project.",
@@ -75,21 +73,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"deployment_configs": schema.SingleNestedAttribute{
 				Description: "Configs for deployments in a project.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentConfigsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"preview": schema.SingleNestedAttribute{
 						Description: "Configs for preview deploys.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentConfigsPreviewModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ai_bindings": schema.MapNestedAttribute{
 								Description: "Constellation bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewAIBindingsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"project_id": schema.StringAttribute{
@@ -100,9 +92,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"analytics_engine_datasets": schema.MapNestedAttribute{
 								Description: "Analytics Engine bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"dataset": schema.StringAttribute{
@@ -130,9 +120,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"d1_databases": schema.MapNestedAttribute{
 								Description: "D1 databases used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewD1DatabasesModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"id": schema.StringAttribute{
@@ -144,9 +132,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"durable_object_namespaces": schema.MapNestedAttribute{
 								Description: "Durable Object namespaces used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"namespace_id": schema.StringAttribute{
@@ -158,9 +144,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"env_vars": schema.MapNestedAttribute{
 								Description: "Environment variables used for builds and Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewEnvVarsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"type": schema.StringAttribute{
@@ -180,9 +164,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"hyperdrive_bindings": schema.MapNestedAttribute{
 								Description: "Hyperdrive bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewHyperdriveBindingsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"id": schema.StringAttribute{
@@ -193,9 +175,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"kv_namespaces": schema.MapNestedAttribute{
 								Description: "KV namespaces used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewKVNamespacesModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"namespace_id": schema.StringAttribute{
@@ -207,9 +187,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"mtls_certificates": schema.MapNestedAttribute{
 								Description: "mTLS bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewMTLSCertificatesModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"certificate_id": schema.StringAttribute{
@@ -220,9 +198,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"placement": schema.SingleNestedAttribute{
 								Description: "Placement setting used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentConfigsPreviewPlacementModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"mode": schema.StringAttribute{
 										Description: "Placement mode.",
@@ -232,9 +208,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"queue_producers": schema.MapNestedAttribute{
 								Description: "Queue Producer bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewQueueProducersModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"name": schema.StringAttribute{
@@ -246,9 +220,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"r2_buckets": schema.MapNestedAttribute{
 								Description: "R2 buckets used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewR2BucketsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"jurisdiction": schema.StringAttribute{
@@ -264,9 +236,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"services": schema.MapNestedAttribute{
 								Description: "Services used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewServicesModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"entrypoint": schema.StringAttribute{
@@ -286,9 +256,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"vectorize_bindings": schema.MapNestedAttribute{
 								Description: "Vectorize bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewVectorizeBindingsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"index_name": schema.StringAttribute{
@@ -301,15 +269,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"production": schema.SingleNestedAttribute{
 						Description: "Configs for production deploys.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentConfigsProductionModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ai_bindings": schema.MapNestedAttribute{
 								Description: "Constellation bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionAIBindingsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"project_id": schema.StringAttribute{
@@ -320,9 +284,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"analytics_engine_datasets": schema.MapNestedAttribute{
 								Description: "Analytics Engine bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"dataset": schema.StringAttribute{
@@ -350,9 +312,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"d1_databases": schema.MapNestedAttribute{
 								Description: "D1 databases used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionD1DatabasesModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"id": schema.StringAttribute{
@@ -364,9 +324,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"durable_object_namespaces": schema.MapNestedAttribute{
 								Description: "Durable Object namespaces used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionDurableObjectNamespacesModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"namespace_id": schema.StringAttribute{
@@ -378,9 +336,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"env_vars": schema.MapNestedAttribute{
 								Description: "Environment variables used for builds and Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionEnvVarsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"type": schema.StringAttribute{
@@ -400,9 +356,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"hyperdrive_bindings": schema.MapNestedAttribute{
 								Description: "Hyperdrive bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionHyperdriveBindingsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"id": schema.StringAttribute{
@@ -413,9 +367,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"kv_namespaces": schema.MapNestedAttribute{
 								Description: "KV namespaces used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionKVNamespacesModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"namespace_id": schema.StringAttribute{
@@ -427,9 +379,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"mtls_certificates": schema.MapNestedAttribute{
 								Description: "mTLS bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionMTLSCertificatesModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"certificate_id": schema.StringAttribute{
@@ -440,9 +390,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"placement": schema.SingleNestedAttribute{
 								Description: "Placement setting used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentConfigsProductionPlacementModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"mode": schema.StringAttribute{
 										Description: "Placement mode.",
@@ -452,9 +400,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"queue_producers": schema.MapNestedAttribute{
 								Description: "Queue Producer bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionQueueProducersModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"name": schema.StringAttribute{
@@ -466,9 +412,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"r2_buckets": schema.MapNestedAttribute{
 								Description: "R2 buckets used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionR2BucketsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"jurisdiction": schema.StringAttribute{
@@ -484,9 +428,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"services": schema.MapNestedAttribute{
 								Description: "Services used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionServicesModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"entrypoint": schema.StringAttribute{
@@ -506,9 +448,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"vectorize_bindings": schema.MapNestedAttribute{
 								Description: "Vectorize bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionVectorizeBindingsModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"index_name": schema.StringAttribute{
@@ -518,6 +458,64 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+					},
+				},
+			},
+			"source": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"config": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"deployments_enabled": schema.BoolAttribute{
+								Optional: true,
+							},
+							"owner": schema.StringAttribute{
+								Optional: true,
+							},
+							"path_excludes": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"path_includes": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"pr_comments_enabled": schema.BoolAttribute{
+								Optional: true,
+							},
+							"preview_branch_excludes": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"preview_branch_includes": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"preview_deployment_setting": schema.StringAttribute{
+								Description: `Available values: "all", "none", "custom".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"all",
+										"none",
+										"custom",
+									),
+								},
+							},
+							"production_branch": schema.StringAttribute{
+								Optional: true,
+							},
+							"production_deployments_enabled": schema.BoolAttribute{
+								Optional: true,
+							},
+							"repo_name": schema.StringAttribute{
+								Optional: true,
+							},
+						},
+					},
+					"type": schema.StringAttribute{
+						Optional: true,
 					},
 				},
 			},
@@ -1117,70 +1115,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"url": schema.StringAttribute{
 						Description: "The live URL to view this deployment.",
 						Computed:    true,
-					},
-				},
-			},
-			"source": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[PagesProjectSourceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"config": schema.SingleNestedAttribute{
-						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[PagesProjectSourceConfigModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"deployments_enabled": schema.BoolAttribute{
-								Computed: true,
-							},
-							"owner": schema.StringAttribute{
-								Computed: true,
-							},
-							"path_excludes": schema.ListAttribute{
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"path_includes": schema.ListAttribute{
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"pr_comments_enabled": schema.BoolAttribute{
-								Computed: true,
-							},
-							"preview_branch_excludes": schema.ListAttribute{
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"preview_branch_includes": schema.ListAttribute{
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"preview_deployment_setting": schema.StringAttribute{
-								Description: `Available values: "all", "none", "custom".`,
-								Computed:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"all",
-										"none",
-										"custom",
-									),
-								},
-							},
-							"production_branch": schema.StringAttribute{
-								Computed: true,
-							},
-							"production_deployments_enabled": schema.BoolAttribute{
-								Computed: true,
-							},
-							"repo_name": schema.StringAttribute{
-								Computed: true,
-							},
-						},
-					},
-					"type": schema.StringAttribute{
-						Computed: true,
 					},
 				},
 			},

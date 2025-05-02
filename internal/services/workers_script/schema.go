@@ -5,8 +5,9 @@ package workers_script
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -44,7 +45,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"assets": schema.SingleNestedAttribute{
 				Description: "Configuration for assets within a Worker",
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataAssetsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"config": schema.SingleNestedAttribute{
 						Description: "Configuration for assets within a Worker.",
@@ -106,8 +106,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"bindings": schema.ListNestedAttribute{
 				Description: "List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.",
 				Optional:    true,
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataBindingsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
@@ -115,14 +113,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser_rendering\", \"d1\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"queue\", \"r2_bucket\", \"secret_text\", \"service\", \"tail_consumer\", \"vectorize\", \"version_metadata\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"ai",
 									"analytics_engine",
 									"assets",
-									"browser_rendering",
+									"browser",
 									"d1",
 									"dispatch_namespace",
 									"durable_object_namespace",
@@ -131,6 +129,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"kv_namespace",
 									"mtls_certificate",
 									"plain_text",
+									"pipelines",
 									"queue",
 									"r2_bucket",
 									"secret_text",
@@ -138,6 +137,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"tail_consumer",
 									"vectorize",
 									"version_metadata",
+									"secrets_store_secret",
+									"secret_key",
 								),
 							},
 						},
@@ -207,6 +208,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 							Sensitive:   true,
 						},
+						"pipeline": schema.StringAttribute{
+							Description: "Name of the Pipeline to bind to.",
+							Optional:    true,
+						},
 						"queue_name": schema.StringAttribute{
 							Description: "Name of the Queue to bind to.",
 							Optional:    true,
@@ -222,6 +227,61 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"index_name": schema.StringAttribute{
 							Description: "Name of the Vectorize index to bind to.",
 							Optional:    true,
+						},
+						"secret_name": schema.StringAttribute{
+							Description: "Name of the secret in the store.",
+							Optional:    true,
+						},
+						"store_id": schema.StringAttribute{
+							Description: "ID of the store containing the secret.",
+							Optional:    true,
+						},
+						"algorithm": schema.StringAttribute{
+							Description: "Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).",
+							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
+						},
+						"format": schema.StringAttribute{
+							Description: "Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).\nAvailable values: \"raw\", \"pkcs8\", \"spki\", \"jwk\".",
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"raw",
+									"pkcs8",
+									"spki",
+									"jwk",
+								),
+							},
+						},
+						"usages": schema.ListAttribute{
+							Description: "Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).",
+							Optional:    true,
+							Validators: []validator.List{
+								listvalidator.ValueStringsAre(
+									stringvalidator.OneOfCaseInsensitive(
+										"encrypt",
+										"decrypt",
+										"sign",
+										"verify",
+										"deriveKey",
+										"deriveBits",
+										"wrapKey",
+										"unwrapKey",
+									),
+								),
+							},
+							ElementType: types.StringType,
+						},
+						"key_base64": schema.StringAttribute{
+							Description: "Base64-encoded key data. Required if `format` is \"raw\", \"pkcs8\", or \"spki\".",
+							Optional:    true,
+							Sensitive:   true,
+						},
+						"key_jwk": schema.StringAttribute{
+							Description: "Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is \"jwk\".",
+							Optional:    true,
+							Sensitive:   true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 					},
 				},
@@ -260,8 +320,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"migrations": schema.SingleNestedAttribute{
 				Description: "Migrations to apply for Durable Objects associated with this Worker.",
 				Optional:    true,
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataMigrationsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"deleted_classes": schema.ListAttribute{
 						Description: "A list of classes to delete Durable Object namespaces from.",
@@ -376,8 +434,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"observability": schema.SingleNestedAttribute{
 				Description: "Observability settings for the Worker.",
 				Optional:    true,
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataObservabilityModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "Whether observability is enabled for the Worker.",
@@ -412,9 +468,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"placement": schema.SingleNestedAttribute{
 				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
 				Optional:    true,
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataPlacementModel](ctx),
 				Attributes: map[string]schema.Attribute{
+					"last_analyzed_at": schema.StringAttribute{
+						Description: "The last time the script was analyzed for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
 					"mode": schema.StringAttribute{
 						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
 						Optional:    true,
@@ -438,8 +497,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"tail_consumers": schema.ListNestedAttribute{
 				Description: "List of Workers that will consume logs from the attached Worker.",
 				Optional:    true,
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataTailConsumersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"service": schema.StringAttribute{

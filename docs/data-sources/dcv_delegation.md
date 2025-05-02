@@ -22,7 +22,7 @@ data "cloudflare_dcv_delegation" "example_dcv_delegation" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

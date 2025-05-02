@@ -4,7 +4,6 @@ package r2_bucket_cors
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,10 +12,10 @@ type R2BucketCORSResultEnvelope struct {
 }
 
 type R2BucketCORSModel struct {
-	AccountID    types.String                                         `tfsdk:"account_id" path:"account_id,required"`
-	BucketName   types.String                                         `tfsdk:"bucket_name" path:"bucket_name,required"`
-	Jurisdiction types.String                                         `tfsdk:"jurisdiction" json:"-,computed_optional"`
-	Rules        customfield.NestedObjectList[R2BucketCORSRulesModel] `tfsdk:"rules" json:"rules,computed_optional"`
+	AccountID    types.String               `tfsdk:"account_id" path:"account_id,required"`
+	BucketName   types.String               `tfsdk:"bucket_name" path:"bucket_name,required"`
+	Jurisdiction types.String               `tfsdk:"jurisdiction" json:"-,computed_optional"`
+	Rules        *[]*R2BucketCORSRulesModel `tfsdk:"rules" json:"rules,optional"`
 }
 
 func (m R2BucketCORSModel) MarshalJSON() (data []byte, err error) {

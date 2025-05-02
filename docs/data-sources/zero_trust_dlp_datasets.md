@@ -37,9 +37,10 @@ data "cloudflare_zero_trust_dlp_datasets" "example_zero_trust_dlp_datasets" {
 
 Read-Only:
 
+- `case_sensitive` (Boolean)
 - `columns` (Attributes List) (see [below for nested schema](#nestedatt--result--columns))
 - `created_at` (String)
-- `description` (String) The description of the dataset
+- `description` (String) The description of the dataset.
 - `encoding_version` (Number)
 - `id` (String)
 - `name` (String)

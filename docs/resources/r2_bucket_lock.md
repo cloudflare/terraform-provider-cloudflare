@@ -32,8 +32,8 @@ resource "cloudflare_r2_bucket_lock" "example_r2_bucket_lock" {
 
 ### Required
 
-- `account_id` (String) Account ID
-- `bucket_name` (String) Name of the bucket
+- `account_id` (String) Account ID.
+- `bucket_name` (String) Name of the bucket.
 
 ### Optional
 
@@ -45,13 +45,13 @@ resource "cloudflare_r2_bucket_lock" "example_r2_bucket_lock" {
 
 Required:
 
-- `condition` (Attributes) Condition to apply a lock rule to an object for how long in seconds (see [below for nested schema](#nestedatt--rules--condition))
-- `enabled` (Boolean) Whether or not this rule is in effect
-- `id` (String) Unique identifier for this rule
+- `condition` (Attributes) Condition to apply a lock rule to an object for how long in seconds. (see [below for nested schema](#nestedatt--rules--condition))
+- `enabled` (Boolean) Whether or not this rule is in effect.
+- `id` (String) Unique identifier for this rule.
 
 Optional:
 
-- `prefix` (String) Rule will only apply to objects/uploads in the bucket that start with the given prefix, an empty prefix can be provided to scope rule to all objects/uploads
+- `prefix` (String) Rule will only apply to objects/uploads in the bucket that start with the given prefix, an empty prefix can be provided to scope rule to all objects/uploads.
 
 <a id="nestedatt--rules--condition"></a>
 ### Nested Schema for `rules.condition`

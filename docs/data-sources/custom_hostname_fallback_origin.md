@@ -22,7 +22,7 @@ data "cloudflare_custom_hostname_fallback_origin" "example_custom_hostname_fallb
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

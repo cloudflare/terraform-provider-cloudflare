@@ -25,7 +25,7 @@ data "cloudflare_api_shield_schema" "example_api_shield_schema" {
 ### Required
 
 - `schema_id` (String)
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 

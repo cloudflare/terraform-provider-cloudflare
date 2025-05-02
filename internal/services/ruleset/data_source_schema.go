@@ -161,7 +161,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
-												Description: "Name of compression algorithm to enable.\nAvailable values: \"none\", \"auto\", \"default\", \"gzip\", \"brotli\".",
+												Description: "Name of compression algorithm to enable.\nAvailable values: \"none\", \"auto\", \"default\", \"gzip\", \"brotli\", \"zstd\".",
 												Computed:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(
@@ -170,6 +170,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 														"default",
 														"gzip",
 														"brotli",
+														"zstd",
 													),
 												},
 											},
@@ -352,7 +353,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 												Description: `Available values: "remove".`,
 												Computed:    true,
 												Validators: []validator.String{
-													stringvalidator.OneOfCaseInsensitive("remove", "set"),
+													stringvalidator.OneOfCaseInsensitive(
+														"remove",
+														"add",
+														"set",
+													),
 												},
 											},
 											"value": schema.StringAttribute{
@@ -573,7 +578,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"phases": schema.ListAttribute{
-									Description: "A list of phases to skip the execution of. This option is incompatible with the ruleset and rulesets options.",
+									Description: "A list of phases to skip the execution of. This option is incompatible with the rulesets options.",
 									Computed:    true,
 									Validators: []validator.List{
 										listvalidator.ValueStringsAre(
@@ -635,7 +640,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"ruleset": schema.StringAttribute{
-									Description: "A ruleset to skip the execution of. This option is incompatible with the rulesets, rules and phases options.\nAvailable values: \"current\".",
+									Description: "A ruleset to skip the execution of. This option is incompatible with the rulesets, rules. It can be incompatible with phases options base on the phase of the ruleset.\nAvailable values: \"current\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("current"),

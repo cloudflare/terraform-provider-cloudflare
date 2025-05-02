@@ -24,9 +24,9 @@ resource "cloudflare_r2_managed_domain" "example_r2_managed_domain" {
 
 ### Required
 
-- `account_id` (String) Account ID
-- `bucket_name` (String) Name of the bucket
-- `enabled` (Boolean) Whether to enable public bucket access at the r2.dev domain
+- `account_id` (String) Account ID.
+- `bucket_name` (String) Name of the bucket.
+- `enabled` (Boolean) Whether to enable public bucket access at the r2.dev domain.
 
 ### Optional
 
@@ -34,7 +34,7 @@ resource "cloudflare_r2_managed_domain" "example_r2_managed_domain" {
 
 ### Read-Only
 
-- `bucket_id` (String) Bucket ID
-- `domain` (String) Domain name of the bucket's r2.dev domain
+- `bucket_id` (String) Bucket ID.
+- `domain` (String) Domain name of the bucket's r2.dev domain.
 
 

@@ -37,6 +37,7 @@ data "cloudflare_d1_database" "example_d1_database" {
 - `id` (String) D1 database identifier (UUID).
 - `name` (String) D1 database name.
 - `num_tables` (Number)
+- `read_replication` (Attributes) Configuration for D1 read replication. (see [below for nested schema](#nestedatt--read_replication))
 - `uuid` (String) D1 database identifier (UUID).
 - `version` (String)
 
@@ -46,5 +47,14 @@ data "cloudflare_d1_database" "example_d1_database" {
 Optional:
 
 - `name` (String) a database name to search for.
+
+
+<a id="nestedatt--read_replication"></a>
+### Nested Schema for `read_replication`
+
+Read-Only:
+
+- `mode` (String) The read replication mode for the database. Use 'auto' to create replicas and allow D1 automatically place them around the world, or 'disabled' to not use any database replicas (it can take a few hours for all replicas to be deleted).
+Available values: "auto", "disabled".
 
 

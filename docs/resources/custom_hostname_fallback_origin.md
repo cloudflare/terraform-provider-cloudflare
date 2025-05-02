@@ -24,13 +24,13 @@ resource "cloudflare_custom_hostname_fallback_origin" "example_custom_hostname_f
 ### Required
 
 - `origin` (String) Your origin hostname that requests to your custom hostnames will be sent to.
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
 - `created_at` (String) This is the time the fallback origin was created.
 - `errors` (List of String) These are errors that were encountered while trying to activate a fallback origin.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `status` (String) Status of the fallback origin's activation.
 Available values: "initializing", "pending_deployment", "pending_deletion", "active", "deployment_timed_out", "deletion_timed_out".
 - `updated_at` (String) This is the time the fallback origin was updated.

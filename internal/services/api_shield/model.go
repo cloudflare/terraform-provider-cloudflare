@@ -35,11 +35,23 @@ type APIShieldAuthIDCharacteristicsModel struct {
 }
 
 type APIShieldErrorsModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
-	Message types.String `tfsdk:"message" json:"message,computed"`
+	Code             types.Int64                                          `tfsdk:"code" json:"code,computed"`
+	Message          types.String                                         `tfsdk:"message" json:"message,computed"`
+	DocumentationURL types.String                                         `tfsdk:"documentation_url" json:"documentation_url,computed"`
+	Source           customfield.NestedObject[APIShieldErrorsSourceModel] `tfsdk:"source" json:"source,computed"`
+}
+
+type APIShieldErrorsSourceModel struct {
+	Pointer types.String `tfsdk:"pointer" json:"pointer,computed"`
 }
 
 type APIShieldMessagesModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
-	Message types.String `tfsdk:"message" json:"message,computed"`
+	Code             types.Int64                                            `tfsdk:"code" json:"code,computed"`
+	Message          types.String                                           `tfsdk:"message" json:"message,computed"`
+	DocumentationURL types.String                                           `tfsdk:"documentation_url" json:"documentation_url,computed"`
+	Source           customfield.NestedObject[APIShieldMessagesSourceModel] `tfsdk:"source" json:"source,computed"`
+}
+
+type APIShieldMessagesSourceModel struct {
+	Pointer types.String `tfsdk:"pointer" json:"pointer,computed"`
 }

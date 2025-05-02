@@ -4,7 +4,6 @@ package notification_policy
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,17 +13,17 @@ type NotificationPolicyResultEnvelope struct {
 }
 
 type NotificationPolicyModel struct {
-	ID            types.String                                             `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                                             `tfsdk:"account_id" path:"account_id,required"`
-	AlertType     types.String                                             `tfsdk:"alert_type" json:"alert_type,required"`
-	Name          types.String                                             `tfsdk:"name" json:"name,required"`
-	Mechanisms    *NotificationPolicyMechanismsModel                       `tfsdk:"mechanisms" json:"mechanisms,required"`
-	AlertInterval types.String                                             `tfsdk:"alert_interval" json:"alert_interval,optional"`
-	Description   types.String                                             `tfsdk:"description" json:"description,optional"`
-	Enabled       types.Bool                                               `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Filters       customfield.NestedObject[NotificationPolicyFiltersModel] `tfsdk:"filters" json:"filters,computed_optional"`
-	Created       timetypes.RFC3339                                        `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Modified      timetypes.RFC3339                                        `tfsdk:"modified" json:"modified,computed" format:"date-time"`
+	ID            types.String                       `tfsdk:"id" json:"id,computed"`
+	AccountID     types.String                       `tfsdk:"account_id" path:"account_id,required"`
+	AlertType     types.String                       `tfsdk:"alert_type" json:"alert_type,required"`
+	Name          types.String                       `tfsdk:"name" json:"name,required"`
+	Mechanisms    *NotificationPolicyMechanismsModel `tfsdk:"mechanisms" json:"mechanisms,required"`
+	AlertInterval types.String                       `tfsdk:"alert_interval" json:"alert_interval,optional"`
+	Description   types.String                       `tfsdk:"description" json:"description,optional"`
+	Filters       *NotificationPolicyFiltersModel    `tfsdk:"filters" json:"filters,optional"`
+	Enabled       types.Bool                         `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Created       timetypes.RFC3339                  `tfsdk:"created" json:"created,computed" format:"date-time"`
+	Modified      timetypes.RFC3339                  `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 }
 
 func (m NotificationPolicyModel) MarshalJSON() (data []byte, err error) {

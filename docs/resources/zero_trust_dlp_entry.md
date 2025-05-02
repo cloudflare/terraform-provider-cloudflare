@@ -41,6 +41,9 @@ resource "cloudflare_zero_trust_dlp_entry" "example_zero_trust_dlp_entry" {
 
 ### Read-Only
 
+- `case_sensitive` (Boolean) Only applies to custom word lists.
+Determines if the words should be matched in a case-sensitive manner
+Cannot be set to false if secret is true
 - `confidence` (Attributes) (see [below for nested schema](#nestedatt--confidence))
 - `created_at` (String)
 - `id` (String) The ID of this resource.
@@ -65,8 +68,8 @@ Optional:
 
 Read-Only:
 
-- `ai_context_available` (Boolean) Indicates whether this entry has AI remote service validation
-- `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service
+- `ai_context_available` (Boolean) Indicates whether this entry has AI remote service validation.
+- `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service.
 
 ## Import
 

@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -43,7 +44,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable activity logging.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(true),
 							},
 						},
 					},
@@ -55,15 +58,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled_download_phase": schema.BoolAttribute{
 								Description: "Enable anti-virus scanning on downloads.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"enabled_upload_phase": schema.BoolAttribute{
 								Description: "Enable anti-virus scanning on uploads.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"fail_closed": schema.BoolAttribute{
 								Description: "Block requests for files that cannot be scanned.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"notification_settings": schema.SingleNestedAttribute{
 								Description: "Configure a message to display on the user's device when an antivirus search is performed.",
@@ -73,7 +82,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{
 										Description: "Set notification on",
+										Computed:    true,
 										Optional:    true,
+										Default:     booldefault.StaticBool(false),
+									},
+									"include_context": schema.BoolAttribute{
+										Description: "If true, context information will be passed as query parameters",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(false),
 									},
 									"msg": schema.StringAttribute{
 										Description: "Customize the message shown in the notification.",
@@ -95,35 +112,51 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"background_color": schema.StringAttribute{
 								Description: "If mode is customized_block_page: block page background color in #rrggbb format.",
+								Computed:    true,
 								Optional:    true,
+								Default:     stringdefault.StaticString(""),
 							},
 							"enabled": schema.BoolAttribute{
 								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"footer_text": schema.StringAttribute{
 								Description: "If mode is customized_block_page: block page footer text.",
+								Computed:    true,
 								Optional:    true,
+								Default:     stringdefault.StaticString(""),
 							},
 							"header_text": schema.StringAttribute{
 								Description: "If mode is customized_block_page: block page header text.",
+								Computed:    true,
 								Optional:    true,
+								Default:     stringdefault.StaticString(""),
 							},
 							"include_context": schema.BoolAttribute{
 								Description: "If mode is redirect_uri: when enabled, context will be appended to target_uri as query parameters.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"logo_path": schema.StringAttribute{
 								Description: "If mode is customized_block_page: full URL to the logo file.",
+								Computed:    true,
 								Optional:    true,
+								Default:     stringdefault.StaticString(""),
 							},
 							"mailto_address": schema.StringAttribute{
 								Description: "If mode is customized_block_page: admin email for users to contact.",
+								Computed:    true,
 								Optional:    true,
+								Default:     stringdefault.StaticString(""),
 							},
 							"mailto_subject": schema.StringAttribute{
 								Description: "If mode is customized_block_page: subject line for emails created from block page.",
+								Computed:    true,
 								Optional:    true,
+								Default:     stringdefault.StaticString(""),
 							},
 							"mode": schema.StringAttribute{
 								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"customized_block_page\", \"redirect_uri\".",
@@ -150,9 +183,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"body_scanning": schema.SingleNestedAttribute{
 						Description: "DLP body scanning settings.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBodyScanningModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"inspection_mode": schema.StringAttribute{
 								Description: "Set the inspection mode to either `deep` or `shallow`.",
@@ -168,19 +199,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"non_identity_enabled": schema.BoolAttribute{
 								Description: "Enable non-identity onramp support for Browser Isolation.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"url_browser_isolation_enabled": schema.BoolAttribute{
 								Description: "Enable Clientless Browser Isolation.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
 					"certificate": schema.SingleNestedAttribute{
 						Description: "Certificate settings for Gateway TLS interception. If not specified, the Cloudflare Root CA will be used.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCertificateModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"id": schema.StringAttribute{
 								Description: "UUID of certificate to be used for interception. Certificate must be available (previously called 'active') on the edge. A nil UUID will indicate the Cloudflare Root CA should be used.",
@@ -197,7 +230,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable use of custom certificate authority for signing Gateway traffic.",
-								Required:    true,
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"id": schema.StringAttribute{
 								Description: "UUID of certificate (ID from MTLS certificate store).",
@@ -221,7 +256,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable matching all variants of user emails (with + or . modifiers) used as criteria in Firewall policies.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -233,6 +270,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"tls": schema.BoolAttribute{
 								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+						},
+					},
+					"host_selector": schema.SingleNestedAttribute{
+						Description: "Setting to enable host selector in egress policies.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Enable filtering via hosts for egress policies.",
 								Optional:    true,
 							},
 						},
@@ -245,7 +294,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable detecting protocol on initial bytes of client traffic.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -257,7 +308,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable sandbox.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"fallback_action": schema.StringAttribute{
 								Description: "Action to take when the file cannot be scanned.\nAvailable values: \"allow\", \"block\".",
@@ -276,7 +329,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable inspecting encrypted HTTP traffic.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(true),
 							},
 						},
 					},

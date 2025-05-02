@@ -5,7 +5,6 @@ package zero_trust_dlp_predefined_profile
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -59,9 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPPredefinedProfileContextAwarenessModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "If true, scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -80,20 +77,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_at": schema.StringAttribute{
-				Description: "When the profile was created",
+				Description: "When the profile was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"description": schema.StringAttribute{
-				Description: "The description of the profile",
+				Description: "The description of the profile.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of the profile",
+				Description: "The name of the profile.",
 				Computed:    true,
 			},
 			"open_access": schema.BoolAttribute{
-				Description: "Whether this profile can be accessed by anyone",
+				Description: "Whether this profile can be accessed by anyone.",
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
@@ -108,7 +105,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"updated_at": schema.StringAttribute{
-				Description: "When the profile was lasted updated",
+				Description: "When the profile was lasted updated.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

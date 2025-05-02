@@ -26,6 +26,11 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
   caching = {
     disabled = true
   }
+  mtls = {
+    ca_certificate_id = "00000000-0000-0000-0000-0000000000"
+    mtls_certificate_id = "00000000-0000-0000-0000-0000000000"
+    sslmode = "verify-full"
+  }
 }
 ```
 
@@ -41,6 +46,7 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 ### Optional
 
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--caching))
+- `mtls` (Attributes) (see [below for nested schema](#nestedatt--mtls))
 
 ### Read-Only
 
@@ -57,7 +63,7 @@ Required:
 - `host` (String) The host (hostname or IP) of your origin database.
 - `password` (String, Sensitive) The password required to access your origin database. This value is write-only and never returned by the API.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
-Available values: "postgres", "postgresql".
+Available values: "postgres", "postgresql", "mysql".
 - `user` (String) The user of your origin database.
 
 Optional:
@@ -75,6 +81,16 @@ Optional:
 - `disabled` (Boolean) When set to true, disables the caching of SQL responses. (Default: false)
 - `max_age` (Number) When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)
 - `stale_while_revalidate` (Number) When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)
+
+
+<a id="nestedatt--mtls"></a>
+### Nested Schema for `mtls`
+
+Optional:
+
+- `ca_certificate_id` (String) CA certificate ID
+- `mtls_certificate_id` (String) mTLS certificate ID
+- `sslmode` (String) SSL mode used for CA verification. Must be 'require', 'verify-ca', or 'verify-full'
 
 ## Import
 

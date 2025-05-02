@@ -29,6 +29,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[MagicWANStaticRouteRouteDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description: "Identifier",
+						Computed:    true,
+					},
 					"nexthop": schema.StringAttribute{
 						Description: "The next-hop IP Address for the static route.",
 						Computed:    true,
@@ -39,10 +43,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"priority": schema.Int64Attribute{
 						Description: "Priority of the static route.",
-						Computed:    true,
-					},
-					"id": schema.StringAttribute{
-						Description: "Identifier",
 						Computed:    true,
 					},
 					"created_on": schema.StringAttribute{

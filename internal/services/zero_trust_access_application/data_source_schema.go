@@ -43,6 +43,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "When set to true, users can authenticate to this application using their WARP session.  When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.",
 				Computed:    true,
 			},
+			"allow_iframe": schema.BoolAttribute{
+				Description: "Enables loading application content in an iFrame.",
+				Computed:    true,
+			},
 			"app_launcher_logo_url": schema.StringAttribute{
 				Description: "The image URL of the logo shown in the App Launcher header.",
 				Computed:    true,
@@ -892,6 +896,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The name of the Access policy.",
 							Computed:    true,
 						},
+						"precedence": schema.Int64Attribute{
+							Description: "The order of execution for this policy. Must be unique for each policy within an app.",
+							Computed:    true,
+						},
 						"purpose_justification_prompt": schema.StringAttribute{
 							Description: "A custom message that will appear on the purpose justification screen.",
 							Computed:    true,
@@ -1163,10 +1171,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"updated_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
-						},
-						"precedence": schema.Int64Attribute{
-							Description: "The order of execution for this policy. Must be unique for each policy within an app.",
-							Computed:    true,
 						},
 						"connection_rules": schema.SingleNestedAttribute{
 							Description: "The rules that define how users may connect to the targets secured by your application.",

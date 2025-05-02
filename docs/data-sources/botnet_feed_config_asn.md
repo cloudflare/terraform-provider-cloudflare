@@ -22,7 +22,7 @@ data "cloudflare_botnet_feed_config_asn" "example_botnet_feed_config_asn" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Read-Only
 

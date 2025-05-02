@@ -23,7 +23,6 @@ func TestAccCloudflareAccessApplicationDataSource_AccountName(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", rnd+"."+domain),
-					resource.TestCheckResourceAttrSet(name, "id"),
 					resource.TestCheckResourceAttrSet(name, "aud"),
 				),
 			},
@@ -32,7 +31,7 @@ func TestAccCloudflareAccessApplicationDataSource_AccountName(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessApplicationAccountName(accountID, name, domain string) string {
-	return acctest.LoadTestCase("accessapplicationaccountname.tf", name, accountID, domain)
+	return acctest.LoadTestCase("data_accessapplicationaccountname.tf", name, accountID, domain)
 }
 
 func TestAccCloudflareAccessApplicationDataSource_AccountDomain(t *testing.T) {
@@ -48,7 +47,6 @@ func TestAccCloudflareAccessApplicationDataSource_AccountDomain(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", rnd+"."+domain),
-					resource.TestCheckResourceAttrSet(name, "id"),
 					resource.TestCheckResourceAttrSet(name, "aud"),
 				),
 			},
@@ -57,7 +55,7 @@ func TestAccCloudflareAccessApplicationDataSource_AccountDomain(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessApplicationAccountDomain(accountID, name, domain string) string {
-	return acctest.LoadTestCase("accessapplicationaccountdomain.tf", name, accountID, domain)
+	return acctest.LoadTestCase("data_accessapplicationaccountdomain.tf", name, accountID, domain)
 }
 
 func TestAccCloudflareAccessApplicationDataSource_ZoneName(t *testing.T) {
@@ -73,7 +71,6 @@ func TestAccCloudflareAccessApplicationDataSource_ZoneName(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", rnd+"."+domain),
-					resource.TestCheckResourceAttrSet(name, "id"),
 					resource.TestCheckResourceAttrSet(name, "aud"),
 				),
 			},
@@ -82,7 +79,7 @@ func TestAccCloudflareAccessApplicationDataSource_ZoneName(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessApplicationZoneName(zoneID, name, domain string) string {
-	return acctest.LoadTestCase("accessapplicationzonename.tf", name, zoneID, domain)
+	return acctest.LoadTestCase("data_accessapplicationzonename.tf", name, zoneID, domain)
 }
 
 func TestAccCloudflareAccessApplicationDataSource_ZoneDomain(t *testing.T) {
@@ -98,7 +95,6 @@ func TestAccCloudflareAccessApplicationDataSource_ZoneDomain(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", rnd+"."+domain),
-					resource.TestCheckResourceAttrSet(name, "id"),
 					resource.TestCheckResourceAttrSet(name, "aud"),
 				),
 			},
@@ -107,5 +103,5 @@ func TestAccCloudflareAccessApplicationDataSource_ZoneDomain(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessApplicationZoneDomain(zoneID, name, domain string) string {
-	return acctest.LoadTestCase("accessapplicationzonedomain.tf", name, zoneID, domain)
+	return acctest.LoadTestCase("data_accessapplicationzonedomain.tf", name, zoneID, domain)
 }

@@ -22,6 +22,7 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
       host = ["example.com"]
     }
     name = "app-server-1"
+    port = 0
     virtual_network_id = "a5624d4e-044a-4ff0-b3e1-e2465353d4b4"
     weight = 0.6
   }]
@@ -94,6 +95,7 @@ Optional:
 - `enabled` (Boolean) Whether to enable (the default) this origin within the pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.
 - `header` (Attributes) The request header is used to pass additional information with an HTTP request. Currently supported header is 'Host'. (see [below for nested schema](#nestedatt--origins--header))
 - `name` (String) A human-identifiable name for the origin.
+- `port` (Number) The port for upstream connections. A value of 0 means the default port for the protocol will be used.
 - `virtual_network_id` (String) The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.
 - `weight` (Number) The weight of this origin relative to other origins in the pool. Based on the configured weight the total traffic is distributed among origins within the pool.
 - `origin_steering.policy="least_outstanding_requests"`: Use weight to scale the origin's outstanding requests.

@@ -25,7 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"created_on": schema.StringAttribute{
@@ -35,6 +35,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"region_key": schema.StringAttribute{
 				Description: "Identifying key for the region",
+				Computed:    true,
+			},
+			"routing": schema.StringAttribute{
+				Description: "Configure which routing method to use for the regional hostname",
 				Computed:    true,
 			},
 		},

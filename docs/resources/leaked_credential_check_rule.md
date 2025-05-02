@@ -24,15 +24,15 @@ resource "cloudflare_leaked_credential_check_rule" "example_leaked_credential_ch
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Defines an identifier.
 
 ### Optional
 
-- `password` (String) The ruleset expression to use in matching the password in a request
-- `username` (String) The ruleset expression to use in matching the username in a request
+- `password` (String) Defines ehe ruleset expression to use in matching the password in a request.
+- `username` (String) Defines the ruleset expression to use in matching the username in a request.
 
 ### Read-Only
 
-- `id` (String) The unique ID for this custom detection
+- `id` (String) Defines the unique ID for this custom detection.
 
 

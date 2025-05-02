@@ -57,7 +57,7 @@ resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_cust
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String)
 - `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
-- `description` (String) The description of the profile
+- `description` (String) The description of the profile.
 - `entries` (Attributes List) (see [below for nested schema](#nestedatt--entries))
 - `name` (String)
 - `ocr_enabled` (Boolean)
@@ -66,11 +66,11 @@ resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_cust
 
 ### Read-Only
 
-- `created_at` (String) When the profile was created
-- `id` (String) The id of the profile (uuid)
-- `open_access` (Boolean) Whether this profile can be accessed by anyone
+- `created_at` (String) When the profile was created.
+- `id` (String) The id of the profile (uuid).
+- `open_access` (Boolean) Whether this profile can be accessed by anyone.
 - `type` (String) Available values: "custom".
-- `updated_at` (String) When the profile was lasted updated
+- `updated_at` (String) When the profile was lasted updated.
 
 <a id="nestedatt--context_awareness"></a>
 ### Nested Schema for `context_awareness`
@@ -129,7 +129,7 @@ Optional:
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String)
 - `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--profiles--context_awareness))
-- `description` (String) The description of the profile
+- `description` (String) The description of the profile.
 - `ocr_enabled` (Boolean)
 - `shared_entries` (Attributes List) Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles). (see [below for nested schema](#nestedatt--profiles--shared_entries))
 

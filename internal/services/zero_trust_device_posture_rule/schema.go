@@ -5,7 +5,6 @@ package zero_trust_device_posture_rule
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -77,9 +76,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"input": schema.SingleNestedAttribute{
 				Description: "The value to be checked against.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustDevicePostureRuleInputModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"operating_system": schema.StringAttribute{
 						Description: "Operating system\nAvailable values: \"windows\", \"linux\", \"mac\".",
@@ -184,9 +181,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 					"locations": schema.SingleNestedAttribute{
-						Computed:   true,
-						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[ZeroTrustDevicePostureRuleInputLocationsModel](ctx),
+						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"paths": schema.ListAttribute{
 								Description: "List of paths to check for client certificate on linux.",
@@ -360,13 +355,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"match": schema.ListNestedAttribute{
 				Description: "The conditions that the client must match to run the rule.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDevicePostureRuleMatchModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"platform": schema.StringAttribute{
-							Description: `Available values: "windows", "mac", "linux", "android", "ios".`,
+							Description: `Available values: "windows", "mac", "linux", "android", "ios", "chromeos".`,
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -375,6 +368,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"linux",
 									"android",
 									"ios",
+									"chromeos",
 								),
 							},
 						},

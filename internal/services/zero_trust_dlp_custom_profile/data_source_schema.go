@@ -45,27 +45,27 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_at": schema.StringAttribute{
-				Description: "When the profile was created",
+				Description: "When the profile was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"description": schema.StringAttribute{
-				Description: "The description of the profile",
+				Description: "The description of the profile.",
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "The id of the profile (uuid)",
+				Description: "The id of the profile (uuid).",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of the profile",
+				Description: "The name of the profile.",
 				Computed:    true,
 			},
 			"ocr_enabled": schema.BoolAttribute{
 				Computed: true,
 			},
 			"open_access": schema.BoolAttribute{
-				Description: "Whether this profile can be accessed by anyone",
+				Description: "Whether this profile can be accessed by anyone.",
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
@@ -80,7 +80,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"updated_at": schema.StringAttribute{
-				Description: "When the profile was lasted updated",
+				Description: "When the profile was lasted updated.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
@@ -166,14 +166,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileEntriesConfidenceDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"ai_context_available": schema.BoolAttribute{
-									Description: "Indicates whether this entry has AI remote service validation",
+									Description: "Indicates whether this entry has AI remote service validation.",
 									Computed:    true,
 								},
 								"available": schema.BoolAttribute{
-									Description: "Indicates whether this entry has any form of validation that is not an AI remote service",
+									Description: "Indicates whether this entry has any form of validation that is not an AI remote service.",
 									Computed:    true,
 								},
 							},
+						},
+						"case_sensitive": schema.BoolAttribute{
+							Description: "Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
+							Computed:    true,
 						},
 						"secret": schema.BoolAttribute{
 							Computed: true,

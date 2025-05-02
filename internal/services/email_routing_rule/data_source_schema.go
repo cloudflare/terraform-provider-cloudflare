@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Required:    true,
 			},
 			"enabled": schema.BoolAttribute{
@@ -84,18 +84,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[EmailRoutingRuleMatchersDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"field": schema.StringAttribute{
-							Description: "Field for type matcher.\nAvailable values: \"to\".",
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("to"),
-							},
-						},
 						"type": schema.StringAttribute{
 							Description: "Type of matcher.\nAvailable values: \"literal\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("literal"),
+							},
+						},
+						"field": schema.StringAttribute{
+							Description: "Field for type matcher.\nAvailable values: \"to\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("to"),
 							},
 						},
 						"value": schema.StringAttribute{

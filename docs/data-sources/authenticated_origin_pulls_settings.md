@@ -22,7 +22,7 @@ data "cloudflare_authenticated_origin_pulls_settings" "example_authenticated_ori
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

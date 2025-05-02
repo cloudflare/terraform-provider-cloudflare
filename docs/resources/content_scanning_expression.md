@@ -26,18 +26,18 @@ resource "cloudflare_content_scanning_expression" "example_content_scanning_expr
 ### Required
 
 - `body` (Attributes List) (see [below for nested schema](#nestedatt--body))
-- `zone_id` (String) Identifier
+- `zone_id` (String) Defines an identifier.
 
 ### Read-Only
 
-- `id` (String) The unique ID for this custom scan expression
-- `payload` (String) Ruleset expression to use in matching content objects
+- `id` (String) defines the unique ID for this custom scan expression.
+- `payload` (String) Defines the ruleset expression to use in matching content objects.
 
 <a id="nestedatt--body"></a>
 ### Nested Schema for `body`
 
 Required:
 
-- `payload` (String) Ruleset expression to use in matching content objects
+- `payload` (String) Defines the ruleset expression to use in matching content objects.
 
 

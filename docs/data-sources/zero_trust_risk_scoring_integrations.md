@@ -45,7 +45,7 @@ Read-Only:
 - `reference_id` (String) A reference ID defined by the client.
 Should be set to the Access-Okta IDP integration ID.
 Useful when the risk-score integration needs to be associated with a secondary asset and recalled using that ID.
-- `tenant_url` (String) The base URL for the tenant. E.g. "https://tenant.okta.com"
-- `well_known_url` (String) The URL for the Shared Signals Framework configuration, e.g. "/.well-known/sse-configuration/{integration_uuid}/". https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.6.2.1
+- `tenant_url` (String) The base URL for the tenant. E.g. "https://tenant.okta.com".
+- `well_known_url` (String) The URL for the Shared Signals Framework configuration, e.g. "/.well-known/sse-configuration/{integration_uuid}/". https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.6.2.1.
 
 

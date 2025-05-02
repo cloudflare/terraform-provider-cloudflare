@@ -22,7 +22,7 @@ data "cloudflare_email_routing_catch_all" "example_email_routing_catch_all" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

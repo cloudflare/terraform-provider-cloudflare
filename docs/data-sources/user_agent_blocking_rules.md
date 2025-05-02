@@ -25,7 +25,7 @@ data "cloudflare_user_agent_blocking_rules" "example_user_agent_blocking_rules" 
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Defines an identifier.
 
 ### Optional
 

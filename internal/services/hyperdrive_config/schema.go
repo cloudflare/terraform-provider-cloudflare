@@ -5,7 +5,6 @@ package hyperdrive_config
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -55,10 +54,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"scheme": schema.StringAttribute{
-						Description: "Specifies the URL scheme used to connect to your origin database.\nAvailable values: \"postgres\", \"postgresql\".",
+						Description: "Specifies the URL scheme used to connect to your origin database.\nAvailable values: \"postgres\", \"postgresql\", \"mysql\".",
 						Required:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("postgres", "postgresql"),
+							stringvalidator.OneOfCaseInsensitive(
+								"postgres",
+								"postgresql",
+								"mysql",
+							),
 						},
 					},
 					"user": schema.StringAttribute{
@@ -77,9 +80,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"caching": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[HyperdriveConfigCachingModel](ctx),
+				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"disabled": schema.BoolAttribute{
 						Description: "When set to true, disables the caching of SQL responses. (Default: false)",
@@ -93,6 +94,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"stale_while_revalidate": schema.Int64Attribute{
 						Description: "When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)",
+						Optional:    true,
+					},
+				},
+			},
+			"mtls": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"ca_certificate_id": schema.StringAttribute{
+						Description: "CA certificate ID",
+						Optional:    true,
+					},
+					"mtls_certificate_id": schema.StringAttribute{
+						Description: "mTLS certificate ID",
+						Optional:    true,
+					},
+					"sslmode": schema.StringAttribute{
+						Description: "SSL mode used for CA verification. Must be 'require', 'verify-ca', or 'verify-full'",
 						Optional:    true,
 					},
 				},

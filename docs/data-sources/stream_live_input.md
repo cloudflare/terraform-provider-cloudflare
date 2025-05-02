@@ -62,7 +62,7 @@ Available values: "off", "automatic".
 Read-Only:
 
 - `stream_key` (String, Sensitive) The secret key to use when streaming via RTMPS to a live input.
-- `url` (String) The RTMPS URL you provide to the broadcaster, which they stream live video to.
+- `url` (String, Sensitive) The RTMPS URL you provide to the broadcaster, which they stream live video to.
 
 
 <a id="nestedatt--rtmps_playback"></a>
@@ -71,7 +71,7 @@ Read-Only:
 Read-Only:
 
 - `stream_key` (String, Sensitive) The secret key to use for playback via RTMPS.
-- `url` (String) The URL used to play live video over RTMPS.
+- `url` (String, Sensitive) The URL used to play live video over RTMPS.
 
 
 <a id="nestedatt--srt"></a>
@@ -81,7 +81,7 @@ Read-Only:
 
 - `passphrase` (String, Sensitive) The secret key to use when streaming via SRT to a live input.
 - `stream_id` (String) The identifier of the live input to use when streaming via SRT.
-- `url` (String) The SRT URL you provide to the broadcaster, which they stream live video to.
+- `url` (String, Sensitive) The SRT URL you provide to the broadcaster, which they stream live video to.
 
 
 <a id="nestedatt--srt_playback"></a>
@@ -91,7 +91,7 @@ Read-Only:
 
 - `passphrase` (String, Sensitive) The secret key to use for playback via SRT.
 - `stream_id` (String) The identifier of the live input to use for playback via SRT.
-- `url` (String) The URL used to play live video over SRT.
+- `url` (String, Sensitive) The URL used to play live video over SRT.
 
 
 <a id="nestedatt--web_rtc"></a>
@@ -99,7 +99,7 @@ Read-Only:
 
 Read-Only:
 
-- `url` (String) The WebRTC URL you provide to the broadcaster, which they stream live video to.
+- `url` (String, Sensitive) The WebRTC URL you provide to the broadcaster, which they stream live video to.
 
 
 <a id="nestedatt--web_rtc_playback"></a>
@@ -107,6 +107,6 @@ Read-Only:
 
 Read-Only:
 
-- `url` (String) The URL used to play live video over WebRTC.
+- `url` (String, Sensitive) The URL used to play live video over WebRTC.
 
 

@@ -34,6 +34,7 @@ resource "cloudflare_d1_database" "example_d1_database" {
 
 - `primary_location_hint` (String) Specify the region to create the D1 primary, if available. If this option is omitted, the D1 will be created as close as possible to the current user.
 Available values: "wnam", "enam", "weur", "eeur", "apac", "oc".
+- `read_replication` (Attributes) Configuration for D1 read replication. (see [below for nested schema](#nestedatt--read_replication))
 
 ### Read-Only
 
@@ -43,6 +44,14 @@ Available values: "wnam", "enam", "weur", "eeur", "apac", "oc".
 - `num_tables` (Number)
 - `uuid` (String) D1 database identifier (UUID).
 - `version` (String)
+
+<a id="nestedatt--read_replication"></a>
+### Nested Schema for `read_replication`
+
+Required:
+
+- `mode` (String) The read replication mode for the database. Use 'auto' to create replicas and allow D1 automatically place them around the world, or 'disabled' to not use any database replicas (it can take a few hours for all replicas to be deleted).
+Available values: "auto", "disabled".
 
 ## Import
 

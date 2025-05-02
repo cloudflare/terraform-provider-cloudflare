@@ -22,7 +22,7 @@ data "cloudflare_email_routing_settings" "example_email_routing_settings" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
