@@ -24,6 +24,6 @@ resource "cloudflare_authenticated_origin_pulls_settings" "example_authenticated
 ### Required
 
 - `enabled` (Boolean) Indicates whether zone-level authenticated origin pulls is enabled.
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 

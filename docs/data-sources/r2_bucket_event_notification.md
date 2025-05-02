@@ -23,8 +23,8 @@ data "cloudflare_r2_bucket_event_notification" "example_r2_bucket_event_notifica
 
 ### Required
 
-- `account_id` (String) Account ID
-- `bucket_name` (String) Name of the bucket
+- `account_id` (String) Account ID.
+- `bucket_name` (String) Name of the bucket.
 
 ### Read-Only
 
@@ -35,8 +35,8 @@ data "cloudflare_r2_bucket_event_notification" "example_r2_bucket_event_notifica
 
 Read-Only:
 
-- `queue_id` (String) Queue ID
-- `queue_name` (String) Name of the queue
+- `queue_id` (String) Queue ID.
+- `queue_name` (String) Name of the queue.
 - `rules` (Attributes List) (see [below for nested schema](#nestedatt--queues--rules))
 
 <a id="nestedatt--queues--rules"></a>
@@ -44,11 +44,11 @@ Read-Only:
 
 Read-Only:
 
-- `actions` (List of String) Array of R2 object actions that will trigger notifications
-- `created_at` (String) Timestamp when the rule was created
-- `description` (String) A description that can be used to identify the event notification rule after creation
-- `prefix` (String) Notifications will be sent only for objects with this prefix
-- `rule_id` (String) Rule ID
-- `suffix` (String) Notifications will be sent only for objects with this suffix
+- `actions` (List of String) Array of R2 object actions that will trigger notifications.
+- `created_at` (String) Timestamp when the rule was created.
+- `description` (String) A description that can be used to identify the event notification rule after creation.
+- `prefix` (String) Notifications will be sent only for objects with this prefix.
+- `rule_id` (String) Rule ID.
+- `suffix` (String) Notifications will be sent only for objects with this suffix.
 
 

@@ -22,7 +22,7 @@ data "cloudflare_cloud_connector_rules_list" "example_cloud_connector_rules_list
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -37,13 +37,13 @@ data "cloudflare_cloud_connector_rules_list" "example_cloud_connector_rules_list
 
 Read-Only:
 
-- `cloud_provider` (String) Cloud Provider type
-Available values: "aws_s3", "r2", "gcp_storage", "azure_storage".
 - `description` (String)
 - `enabled` (Boolean)
 - `expression` (String)
 - `id` (String)
 - `parameters` (Attributes) Parameters of Cloud Connector Rule (see [below for nested schema](#nestedatt--result--parameters))
+- `provider` (String) Cloud Provider type
+Available values: "aws_s3", "r2", "gcp_storage", "azure_storage".
 
 <a id="nestedatt--result--parameters"></a>
 ### Nested Schema for `result.parameters`

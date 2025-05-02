@@ -24,8 +24,8 @@ resource "cloudflare_api_shield_operation_schema_validation_settings" "example_a
 
 ### Required
 
-- `operation_id` (String) UUID
-- `zone_id` (String) Identifier
+- `operation_id` (String) UUID.
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -39,7 +39,7 @@ Available values: "log", "block", "none".
 
 ### Read-Only
 
-- `id` (String) UUID
+- `id` (String) UUID.
 
 ## Import
 

@@ -45,6 +45,7 @@ data "cloudflare_zero_trust_access_applications" "example_zero_trust_access_appl
 Read-Only:
 
 - `allow_authenticate_via_warp` (Boolean) When set to true, users can authenticate to this application using their WARP session.  When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.
+- `allow_iframe` (Boolean) Enables loading application content in an iFrame.
 - `allowed_idps` (List of String) The identity providers your users can select when connecting to this application. Defaults to all IdPs configured in your account.
 - `app_launcher_logo_url` (String) The image URL of the logo shown in the App Launcher header.
 - `app_launcher_visible` (Boolean) Displays the application in the App Launcher.

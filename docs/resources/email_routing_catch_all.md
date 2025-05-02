@@ -33,7 +33,7 @@ resource "cloudflare_email_routing_catch_all" "example_email_routing_catch_all" 
 
 - `actions` (Attributes List) List actions for the catch-all routing rule. (see [below for nested schema](#nestedatt--actions))
 - `matchers` (Attributes List) List of matchers for the catch-all routing rule. (see [below for nested schema](#nestedatt--matchers))
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -42,7 +42,7 @@ resource "cloudflare_email_routing_catch_all" "example_email_routing_catch_all" 
 
 ### Read-Only
 
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `tag` (String, Deprecated) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 
 <a id="nestedatt--actions"></a>

@@ -17,6 +17,7 @@ resource "cloudflare_zero_trust_access_application" "example_zero_trust_access_a
   type = "self_hosted"
   zone_id = "zone_id"
   allow_authenticate_via_warp = true
+  allow_iframe = true
   allowed_idps = ["699d98642c564d2e855e9661899b7252"]
   app_launcher_visible = true
   auto_redirect_to_identity = true
@@ -112,6 +113,7 @@ resource "cloudflare_zero_trust_access_application" "example_zero_trust_access_a
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `allow_authenticate_via_warp` (Boolean) When set to true, users can authenticate to this application using their WARP session.  When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.
+- `allow_iframe` (Boolean) Enables loading application content in an iFrame.
 - `allowed_idps` (List of String) The identity providers your users can select when connecting to this application. Defaults to all IdPs configured in your account.
 - `app_launcher_logo_url` (String) The image URL of the logo shown in the App Launcher header.
 - `app_launcher_visible` (Boolean) Displays the application in the App Launcher.

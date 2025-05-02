@@ -44,6 +44,7 @@ Read-Only:
 - `custom_certificate` (Attributes, Deprecated) Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`) (see [below for nested schema](#nestedatt--settings--custom_certificate))
 - `extended_email_matching` (Attributes) Extended e-mail matching settings. (see [below for nested schema](#nestedatt--settings--extended_email_matching))
 - `fips` (Attributes) FIPS settings. (see [below for nested schema](#nestedatt--settings--fips))
+- `host_selector` (Attributes) Setting to enable host selector in egress policies. (see [below for nested schema](#nestedatt--settings--host_selector))
 - `protocol_detection` (Attributes) Protocol Detection settings. (see [below for nested schema](#nestedatt--settings--protocol_detection))
 - `sandbox` (Attributes) Sandbox settings. (see [below for nested schema](#nestedatt--settings--sandbox))
 - `tls_decrypt` (Attributes) TLS interception settings. (see [below for nested schema](#nestedatt--settings--tls_decrypt))
@@ -72,6 +73,7 @@ Read-Only:
 Read-Only:
 
 - `enabled` (Boolean) Set notification on
+- `include_context` (Boolean) If true, context information will be passed as query parameters
 - `msg` (String) Customize the message shown in the notification.
 - `support_url` (String) Optional URL to direct users to additional information. If not set, the notification will open a block page.
 
@@ -147,6 +149,14 @@ Read-Only:
 Read-Only:
 
 - `tls` (Boolean) Enable only cipher suites and TLS versions compliant with FIPS 140-2.
+
+
+<a id="nestedatt--settings--host_selector"></a>
+### Nested Schema for `settings.host_selector`
+
+Read-Only:
+
+- `enabled` (Boolean) Enable filtering via hosts for egress policies.
 
 
 <a id="nestedatt--settings--protocol_detection"></a>

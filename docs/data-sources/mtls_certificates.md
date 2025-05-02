@@ -22,7 +22,7 @@ data "cloudflare_mtls_certificates" "example_mtls_certificates" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
@@ -40,7 +40,7 @@ Read-Only:
 - `ca` (Boolean) Indicates whether the certificate is a CA or leaf certificate.
 - `certificates` (String) The uploaded root CA certificate.
 - `expires_on` (String) When the certificate expires.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `issuer` (String) The certificate authority that issued the certificate.
 - `name` (String) Optional unique name for the certificate. Only used for human readability.
 - `serial_number` (String) The certificate serial number.

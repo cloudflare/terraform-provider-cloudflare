@@ -14,6 +14,8 @@ description: |-
 ```terraform
 data "cloudflare_origin_ca_certificates" "example_origin_ca_certificates" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  limit = 10
+  offset = 10
 }
 ```
 
@@ -22,11 +24,13 @@ data "cloudflare_origin_ca_certificates" "example_origin_ca_certificates" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
+- `limit` (Number) Limit to the number of records returned.
 - `max_items` (Number) Max items to fetch, default: 1000
+- `offset` (Number) Offset the results
 
 ### Read-Only
 
@@ -41,7 +45,7 @@ Read-Only:
 - `csr` (String) The Certificate Signing Request (CSR). Must be newline-encoded.
 - `expires_on` (String) When the certificate will expire.
 - `hostnames` (List of String) Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `request_type` (String) Signature type desired on certificate ("origin-rsa" (rsa), "origin-ecc" (ecdsa), or "keyless-certificate" (for Keyless SSL servers).
 Available values: "origin-rsa", "origin-ecc", "keyless-certificate".
 - `requested_validity` (Number) The number of days for which the certificate should be valid.

@@ -15,6 +15,7 @@ description: |-
 resource "cloudflare_zero_trust_dlp_dataset" "example_zero_trust_dlp_dataset" {
   account_id = "account_id"
   name = "name"
+  case_sensitive = true
   description = "description"
   encoding_version = 0
   secret = true
@@ -31,8 +32,11 @@ resource "cloudflare_zero_trust_dlp_dataset" "example_zero_trust_dlp_dataset" {
 
 ### Optional
 
+- `case_sensitive` (Boolean) Only applies to custom word lists.
+Determines if the words should be matched in a case-sensitive manner
+Cannot be set to false if `secret` is true or undefined
 - `dataset_id` (String)
-- `description` (String) The description of the dataset
+- `description` (String) The description of the dataset.
 - `encoding_version` (Number) Dataset encoding version
 
 Non-secret custom word lists with no header are always version 1.
@@ -76,9 +80,10 @@ Read-Only:
 
 Read-Only:
 
+- `case_sensitive` (Boolean)
 - `columns` (Attributes List) (see [below for nested schema](#nestedatt--dataset--columns))
 - `created_at` (String)
-- `description` (String) The description of the dataset
+- `description` (String) The description of the dataset.
 - `encoding_version` (Number)
 - `id` (String)
 - `name` (String)

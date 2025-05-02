@@ -23,7 +23,7 @@ data "cloudflare_web_analytics_sites" "example_web_analytics_sites" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 

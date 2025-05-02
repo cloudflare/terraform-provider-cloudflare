@@ -23,8 +23,8 @@ data "cloudflare_api_shield_operation_schema_validation_settings" "example_api_s
 
 ### Required
 
-- `operation_id` (String) UUID
-- `zone_id` (String) Identifier
+- `operation_id` (String) UUID.
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

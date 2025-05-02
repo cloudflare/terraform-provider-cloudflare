@@ -22,7 +22,7 @@ data "cloudflare_zone_dns_settings" "example_zone_dns_settings" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

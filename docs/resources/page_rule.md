@@ -31,7 +31,7 @@ resource "cloudflare_page_rule" "example_page_rule" {
 
 - `actions` (Attributes) (see [below for nested schema](#nestedatt--actions))
 - `target` (String)
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -46,7 +46,7 @@ Available values: "active", "disabled".
 ### Read-Only
 
 - `created_on` (String) The timestamp of when the Page Rule was created.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `modified_on` (String) The timestamp of when the Page Rule was last modified.
 
 <a id="nestedatt--actions"></a>

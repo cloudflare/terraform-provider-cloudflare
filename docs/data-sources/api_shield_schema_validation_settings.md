@@ -22,7 +22,7 @@ data "cloudflare_api_shield_schema_validation_settings" "example_api_shield_sche
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

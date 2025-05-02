@@ -28,7 +28,7 @@ resource "cloudflare_authenticated_origin_pulls" "example_authenticated_origin_p
 ### Required
 
 - `config` (Attributes List) (see [below for nested schema](#nestedatt--config))
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -36,7 +36,7 @@ resource "cloudflare_authenticated_origin_pulls" "example_authenticated_origin_p
 
 ### Read-Only
 
-- `cert_id` (String) Identifier
+- `cert_id` (String) Identifier.
 - `cert_status` (String) Status of the certificate or the association.
 Available values: "initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out".
 - `cert_updated_at` (String) The time when the certificate was updated.
@@ -45,7 +45,7 @@ Available values: "initializing", "pending_deployment", "pending_deletion", "act
 - `created_at` (String) The time when the certificate was created.
 - `enabled` (Boolean) Indicates whether hostname-level authenticated origin pulls is enabled. A null value voids the association.
 - `expires_on` (String) The date when the certificate expires.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `issuer` (String) The certificate authority that issued the certificate.
 - `private_key` (String, Sensitive) The hostname certificate's private key.
 - `serial_number` (String) The serial number on the uploaded certificate.

@@ -24,8 +24,8 @@ resource "cloudflare_api_shield_discovery_operation" "example_api_shield_discove
 
 ### Required
 
-- `operation_id` (String) UUID
-- `zone_id` (String) Identifier
+- `operation_id` (String) UUID.
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -36,6 +36,6 @@ Available values: "review", "ignored".
 
 ### Read-Only
 
-- `id` (String) UUID
+- `id` (String) UUID.
 
 

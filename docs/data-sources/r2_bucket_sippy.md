@@ -23,14 +23,14 @@ data "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
 
 ### Required
 
-- `account_id` (String) Account ID
-- `bucket_name` (String) Name of the bucket
+- `account_id` (String) Account ID.
+- `bucket_name` (String) Name of the bucket.
 
 ### Read-Only
 
-- `destination` (Attributes) Details about the configured destination bucket (see [below for nested schema](#nestedatt--destination))
-- `enabled` (Boolean) State of Sippy for this bucket
-- `source` (Attributes) Details about the configured source bucket (see [below for nested schema](#nestedatt--source))
+- `destination` (Attributes) Details about the configured destination bucket. (see [below for nested schema](#nestedatt--destination))
+- `enabled` (Boolean) State of Sippy for this bucket.
+- `source` (Attributes) Details about the configured source bucket. (see [below for nested schema](#nestedatt--source))
 
 <a id="nestedatt--destination"></a>
 ### Nested Schema for `destination`
@@ -38,9 +38,9 @@ data "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
 Read-Only:
 
 - `access_key_id` (String) ID of the Cloudflare API token used when writing objects to this
-bucket
+bucket.
 - `account` (String)
-- `bucket` (String) Name of the bucket on the provider
+- `bucket` (String) Name of the bucket on the provider.
 - `provider` (String) Available values: "r2".
 
 
@@ -49,8 +49,8 @@ bucket
 
 Read-Only:
 
-- `bucket` (String) Name of the bucket on the provider
+- `bucket` (String) Name of the bucket on the provider.
 - `provider` (String) Available values: "aws", "gcs".
-- `region` (String) Region where the bucket resides (AWS only)
+- `region` (String) Region where the bucket resides (AWS only).
 
 

@@ -35,6 +35,7 @@ data "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 - `created_on` (String) When the Hyperdrive configuration was created.
 - `id` (String) Identifier
 - `modified_on` (String) When the Hyperdrive configuration was last modified.
+- `mtls` (Attributes) (see [below for nested schema](#nestedatt--mtls))
 - `name` (String)
 - `origin` (Attributes) (see [below for nested schema](#nestedatt--origin))
 
@@ -46,6 +47,16 @@ Read-Only:
 - `disabled` (Boolean) When set to true, disables the caching of SQL responses. (Default: false)
 - `max_age` (Number) When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)
 - `stale_while_revalidate` (Number) When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)
+
+
+<a id="nestedatt--mtls"></a>
+### Nested Schema for `mtls`
+
+Read-Only:
+
+- `ca_certificate_id` (String) CA certificate ID
+- `mtls_certificate_id` (String) mTLS certificate ID
+- `sslmode` (String) SSL mode used for CA verification. Must be 'require', 'verify-ca', or 'verify-full'
 
 
 <a id="nestedatt--origin"></a>
@@ -60,7 +71,7 @@ Read-Only:
 - `password` (String, Sensitive) The password required to access your origin database. This value is write-only and never returned by the API.
 - `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
-Available values: "postgres", "postgresql".
+Available values: "postgres", "postgresql", "mysql".
 - `user` (String) The user of your origin database.
 
 

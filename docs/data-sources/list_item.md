@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_list_item" "example_list_item" {
-  account_identifier = "023e105f4ecef8ad9ca31a8372d0c353"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   list_id = "2c0fc9fa937b11eaa1b71c4d701ab86e"
   item_id = "34b12448945f11eaa1b71c4d701ab86e"
 }
@@ -24,14 +24,14 @@ data "cloudflare_list_item" "example_list_item" {
 
 ### Required
 
-- `account_identifier` (String) Identifier
-- `item_id` (String) The unique ID of the item in the List.
+- `account_id` (String) Defines an identifier.
+- `item_id` (String) Defines the unique ID of the item in the List.
 - `list_id` (String) The unique ID of the list.
 
 ### Read-Only
 
-- `asn` (Number) A non-negative 32 bit integer
-- `comment` (String) An informative summary of the list item.
+- `asn` (Number) Defines a non-negative 32 bit integer.
+- `comment` (String) Defines an informative summary of the list item.
 - `created_on` (String) The RFC 3339 timestamp of when the item was created.
 - `hostname` (Attributes) Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-). (see [below for nested schema](#nestedatt--hostname))
 - `id` (String) The unique ID of the list.

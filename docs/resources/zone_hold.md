@@ -22,7 +22,7 @@ resource "cloudflare_zone_hold" "example_zone_hold" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -39,7 +39,7 @@ as SSL4SaaS Custom Hostnames. For example, a zone hold on a zone with the hostna
 ### Read-Only
 
 - `hold` (Boolean)
-- `id` (String) Identifier
+- `id` (String) Identifier.
 
 ## Import
 

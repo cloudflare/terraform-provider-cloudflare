@@ -33,7 +33,7 @@ resource "cloudflare_keyless_certificate" "example_keyless_certificate" {
 
 - `certificate` (String) The zone's SSL certificate or SSL certificate and intermediate(s).
 - `host` (String) The keyless SSL name.
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 

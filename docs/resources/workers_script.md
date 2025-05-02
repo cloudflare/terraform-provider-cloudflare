@@ -15,57 +15,70 @@ description: |-
 resource "cloudflare_workers_script" "example_workers_script" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   script_name = "this-is_my_script-01"
-  assets = {
-    config = {
-      html_handling = "auto-trailing-slash"
-      not_found_handling = "none"
-      run_worker_first = false
-      serve_directly = true
+  metadata = {
+    assets = {
+      config = {
+        _headers = <<EOT
+        /dashboard/*
+        X-Frame-Options: DENY
+
+        /static/*
+        Access-Control-Allow-Origin: *
+        EOT
+        _redirects = <<EOT
+        /foo /bar 301
+        /news/* /blog/:splat
+        EOT
+        html_handling = "auto-trailing-slash"
+        not_found_handling = "404-page"
+        run_worker_first = false
+        serve_directly = true
+      }
+      jwt = "jwt"
     }
-    jwt = "jwt"
-  }
-  bindings = [{
-    name = "MY_ENV_VAR"
-    type = "plain_text"
-  }]
-  body_part = "worker.js"
-  compatibility_date = "2021-01-01"
-  compatibility_flags = ["nodejs_compat"]
-  content = file("worker.js")
-  keep_assets = false
-  keep_bindings = ["string"]
-  logpush = false
-  main_module = "worker.js"
-  migrations = {
-    deleted_classes = ["string"]
-    new_classes = ["string"]
-    new_sqlite_classes = ["string"]
-    new_tag = "v2"
-    old_tag = "v1"
-    renamed_classes = [{
-      from = "from"
-      to = "to"
+    bindings = [{
+      name = "MY_ENV_VAR"
+      text = "my_data"
+      type = "plain_text"
     }]
-    transferred_classes = [{
-      from = "from"
-      from_script = "from_script"
-      to = "to"
+    body_part = "worker.js"
+    compatibility_date = "2021-01-01"
+    compatibility_flags = ["nodejs_compat"]
+    keep_assets = false
+    keep_bindings = ["string"]
+    logpush = false
+    main_module = "worker.js"
+    migrations = {
+      deleted_classes = ["string"]
+      new_classes = ["string"]
+      new_sqlite_classes = ["string"]
+      new_tag = "v2"
+      old_tag = "v1"
+      renamed_classes = [{
+        from = "from"
+        to = "to"
+      }]
+      transferred_classes = [{
+        from = "from"
+        from_script = "from_script"
+        to = "to"
+      }]
+    }
+    observability = {
+      enabled = true
+      head_sampling_rate = 0.1
+    }
+    placement = {
+      mode = "smart"
+    }
+    tags = ["string"]
+    tail_consumers = [{
+      service = "my-log-consumer"
+      environment = "production"
+      namespace = "my-namespace"
     }]
+    usage_model = "standard"
   }
-  observability = {
-    enabled = true
-    head_sampling_rate = 0.1
-  }
-  placement = {
-    mode = "smart"
-  }
-  tags = ["string"]
-  tail_consumers = [{
-    service = "my-log-consumer"
-    environment = "production"
-    namespace = "my-namespace"
-  }]
-  usage_model = "standard"
 }
 ```
 
@@ -137,25 +150,34 @@ Required:
 
 - `name` (String) A JavaScript variable name for the binding.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "analytics_engine", "assets", "browser_rendering", "d1", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "json", "kv_namespace", "mtls_certificate", "plain_text", "queue", "r2_bucket", "secret_text", "service", "tail_consumer", "vectorize", "version_metadata".
+Available values: "ai".
 
 Optional:
 
+- `algorithm` (String) Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).
 - `bucket_name` (String) R2 bucket to bind to.
 - `certificate_id` (String) Identifier of the certificate to bind to.
 - `class_name` (String) The exported class name of the Durable Object.
 - `dataset` (String) The name of the dataset to bind to.
 - `environment` (String) The environment of the script_name to bind to.
+- `format` (String) Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).
+Available values: "raw", "pkcs8", "spki", "jwk".
 - `id` (String) Identifier of the D1 database to bind to.
 - `index_name` (String) Name of the Vectorize index to bind to.
 - `json` (String) JSON data to use.
+- `key_base64` (String, Sensitive) Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
+- `key_jwk` (String, Sensitive) Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
 - `namespace` (String) Namespace to bind to.
 - `namespace_id` (String) Namespace identifier tag.
 - `outbound` (Attributes) Outbound worker. (see [below for nested schema](#nestedatt--bindings--outbound))
+- `pipeline` (String) Name of the Pipeline to bind to.
 - `queue_name` (String) Name of the Queue to bind to.
 - `script_name` (String) The script where the Durable Object is defined, if it is external to this Worker.
+- `secret_name` (String) Name of the secret in the store.
 - `service` (String) Name of Worker to bind to.
+- `store_id` (String) ID of the store containing the secret.
 - `text` (String, Sensitive) The text value to use.
+- `usages` (List of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
 
 <a id="nestedatt--bindings--outbound"></a>
 ### Nested Schema for `bindings.outbound`
@@ -263,6 +285,7 @@ Available values: "smart".
 
 Read-Only:
 
+- `last_analyzed_at` (String) The last time the script was analyzed for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 - `status` (String) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
 

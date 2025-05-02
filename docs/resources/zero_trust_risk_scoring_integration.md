@@ -27,7 +27,7 @@ resource "cloudflare_zero_trust_risk_scoring_integration" "example_zero_trust_ri
 
 - `account_id` (String)
 - `integration_type` (String) Available values: "Okta".
-- `tenant_url` (String) The base url of the tenant, e.g. "https://tenant.okta.com"
+- `tenant_url` (String) The base url of the tenant, e.g. "https://tenant.okta.com".
 
 ### Optional
 
@@ -40,7 +40,7 @@ https://developers.cloudflare.com/api/operations/access-identity-providers-get-a
 - `account_tag` (String) The Cloudflare account tag.
 - `created_at` (String) When the integration was created in RFC3339 format.
 - `id` (String) The id of the integration, a UUIDv4.
-- `well_known_url` (String) The URL for the Shared Signals Framework configuration, e.g. "/.well-known/sse-configuration/{integration_uuid}/". https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.6.2.1
+- `well_known_url` (String) The URL for the Shared Signals Framework configuration, e.g. "/.well-known/sse-configuration/{integration_uuid}/". https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.6.2.1.
 
 ## Import
 

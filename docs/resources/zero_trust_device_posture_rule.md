@@ -125,7 +125,7 @@ Optional:
 
 Optional:
 
-- `platform` (String) Available values: "windows", "mac", "linux", "android", "ios".
+- `platform` (String) Available values: "windows", "mac", "linux", "android", "ios", "chromeos".
 
 ## Import
 

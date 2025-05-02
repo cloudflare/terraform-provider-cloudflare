@@ -40,7 +40,7 @@ Read-Only:
 - `customer_gre_endpoint` (String) The IP address assigned to the customer side of the GRE tunnel.
 - `description` (String) An optional description of the GRE tunnel.
 - `health_check` (Attributes) (see [below for nested schema](#nestedatt--gre_tunnel--health_check))
-- `id` (String) Tunnel identifier tag.
+- `id` (String) Identifier
 - `interface_address` (String) A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.
 - `modified_on` (String) The date and time the tunnel was last modified.
 - `mtu` (Number) Maximum Transmission Unit (MTU) in bytes for the GRE tunnel. The minimum value is 576.

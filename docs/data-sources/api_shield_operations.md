@@ -28,7 +28,7 @@ data "cloudflare_api_shield_operations" "example_api_shield_operations" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -57,7 +57,7 @@ Read-Only:
 - `last_updated` (String)
 - `method` (String) The HTTP method used to access the endpoint.
 Available values: "GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "CONNECT", "PATCH", "TRACE".
-- `operation_id` (String) UUID
+- `operation_id` (String) UUID.
 
 <a id="nestedatt--result--features"></a>
 ### Nested Schema for `result.features`
@@ -168,7 +168,7 @@ Available values: "none", "log", "block".
 Read-Only:
 
 - `created_at` (String)
-- `id` (String) UUID
+- `id` (String) UUID.
 - `is_learned` (Boolean) True if schema is Cloudflare-provided.
 - `name` (String) Schema file name.
 
