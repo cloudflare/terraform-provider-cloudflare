@@ -161,7 +161,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
-												Description: "Name of compression algorithm to enable.\nAvailable values: \"none\", \"auto\", \"default\", \"gzip\", \"brotli\".",
+												Description: "Name of compression algorithm to enable.\nAvailable values: \"none\", \"auto\", \"default\", \"gzip\", \"brotli\", \"zstd\".",
 												Computed:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(
@@ -170,6 +170,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 														"default",
 														"gzip",
 														"brotli",
+														"zstd",
 													),
 												},
 											},
@@ -352,7 +353,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 												Description: `Available values: "remove".`,
 												Computed:    true,
 												Validators: []validator.String{
-													stringvalidator.OneOfCaseInsensitive("remove", "set"),
+													stringvalidator.OneOfCaseInsensitive(
+														"remove",
+														"add",
+														"set",
+													),
 												},
 											},
 											"value": schema.StringAttribute{

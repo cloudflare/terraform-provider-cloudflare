@@ -33,7 +33,7 @@ func testSweepCloudflareDNSSettingsInternalView(r string) error {
 		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
 	}
 
-	views, err := client.DNS.Settings.Views.List(context.Background(), dns.SettingViewListParams{AccountID: cloudflare.F(accountID)})
+	views, err := client.DNS.Settings.Account.Views.List(context.Background(), dns.SettingAccountViewListParams{AccountID: cloudflare.F(accountID)})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare DNS internal views: %s", err))
 	}
@@ -46,7 +46,7 @@ func testSweepCloudflareDNSSettingsInternalView(r string) error {
 	for _, view := range views.Result {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare View ID: %s", view.ID))
 		//nolint:errcheck
-		client.DNS.Settings.Views.Delete(context.TODO(), view.ID, dns.SettingViewDeleteParams{AccountID: cloudflare.F(accountID)})
+		client.DNS.Settings.Account.Views.Delete(context.TODO(), view.ID, dns.SettingAccountViewDeleteParams{AccountID: cloudflare.F(accountID)})
 	}
 
 	return nil

@@ -90,8 +90,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative description of the ruleset.",
-				Optional:    true,
 				Computed:    true,
+				Optional:    true,
 				Default:     stringdefault.StaticString(""),
 			},
 			"rules": schema.ListNestedAttribute{
@@ -133,8 +133,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"action_parameters": schema.SingleNestedAttribute{
 							Description: "The parameters configuring the rule's action.",
 							Optional:    true,
-							Computed:    true,
-							CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"response": schema.SingleNestedAttribute{
 									Description: "The response to show when the block is applied.",
@@ -163,7 +161,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
-												Description: "Name of compression algorithm to enable.\nAvailable values: \"none\", \"auto\", \"default\", \"gzip\", \"brotli\".",
+												Description: "Name of compression algorithm to enable.\nAvailable values: \"none\", \"auto\", \"default\", \"gzip\", \"brotli\", \"zstd\".",
 												Optional:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(
@@ -172,6 +170,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 														"default",
 														"gzip",
 														"brotli",
+														"zstd",
 													),
 												},
 											},
@@ -346,7 +345,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												Description: `Available values: "remove".`,
 												Required:    true,
 												Validators: []validator.String{
-													stringvalidator.OneOfCaseInsensitive("remove", "set"),
+													stringvalidator.OneOfCaseInsensitive(
+														"remove",
+														"add",
+														"set",
+													),
 												},
 											},
 											"value": schema.StringAttribute{
@@ -968,14 +971,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"description": schema.StringAttribute{
 							Description: "An informative description of the rule.",
-							Optional:    true,
 							Computed:    true,
+							Optional:    true,
 							Default:     stringdefault.StaticString(""),
 						},
 						"enabled": schema.BoolAttribute{
 							Description: "Whether the rule should be executed.",
-							Optional:    true,
 							Computed:    true,
+							Optional:    true,
 							Default:     booldefault.StaticBool(true),
 						},
 						"exposed_credential_check": schema.SingleNestedAttribute{
