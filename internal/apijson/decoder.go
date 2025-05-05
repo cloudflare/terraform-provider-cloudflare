@@ -112,9 +112,10 @@ type decoderField struct {
 
 type decoderEntry struct {
 	reflect.Type
-	dateFormat     string
-	root           bool
-	tfSkipBehavior TerraformUpdateBehavior
+	dateFormat            string
+	root                  bool
+	unmarshalComputedOnly bool
+	tfSkipBehavior        TerraformUpdateBehavior
 }
 
 func (d *decoderBuilder) unmarshal(raw []byte, to any) error {
@@ -128,10 +129,11 @@ func (d *decoderBuilder) unmarshal(raw []byte, to any) error {
 
 func (d *decoderBuilder) typeDecoder(t reflect.Type) decoderFunc {
 	entry := decoderEntry{
-		Type:           t,
-		dateFormat:     d.dateFormat,
-		root:           d.root,
-		tfSkipBehavior: d.updateBehavior,
+		Type:                  t,
+		dateFormat:            d.dateFormat,
+		root:                  d.root,
+		unmarshalComputedOnly: d.unmarshalComputedOnly,
+		tfSkipBehavior:        d.updateBehavior,
 	}
 
 	if fi, ok := decoders.Load(entry); ok {
