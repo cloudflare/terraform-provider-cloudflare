@@ -79,7 +79,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The port for upstream connections. A value of 0 means the default port for the protocol will be used.",
 							Computed:    true,
 							Optional:    true,
-							Default:     int64default.StaticInt64(0),
+							// Default:     int64default.StaticInt64(0),
 						},
 						"virtual_network_id": schema.StringAttribute{
 							Description: "The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.",

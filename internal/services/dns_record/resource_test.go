@@ -66,6 +66,7 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 	t.Parallel()
 	var record cfold.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
 
@@ -75,11 +76,11 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, "tf-acctest-basic", rnd),
+				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, "tf-acctest-basic", rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					testAccCheckCloudflareRecordAttributes(&record),
-					resource.TestCheckResourceAttr(resourceName, "name", "tf-acctest-basic"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tf-acctest-basic.%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
 					resource.TestMatchResourceAttr(resourceName, consts.ZoneIDSchemaKey, regexp.MustCompile("^[a-z0-9]{32}$")),
@@ -98,6 +99,7 @@ func TestAccCloudflareRecord_Apex(t *testing.T) {
 	t.Parallel()
 	var record cfold.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
 
@@ -107,11 +109,11 @@ func TestAccCloudflareRecord_Apex(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigApex(zoneID, rnd),
+				Config: testAccCheckCloudflareRecordConfigApex(zoneID, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					testAccCheckCloudflareRecordAttributes(&record),
-					resource.TestCheckResourceAttr(resourceName, "name", "@"),
+					resource.TestCheckResourceAttr(resourceName, "name", domain),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
 				),
@@ -124,6 +126,7 @@ func TestAccCloudflareRecord_LOC(t *testing.T) {
 	t.Parallel()
 	var record cfold.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
 
@@ -133,7 +136,7 @@ func TestAccCloudflareRecord_LOC(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigLOC(zoneID, "tf-acctest-loc", rnd),
+				Config: testAccCheckCloudflareRecordConfigLOC(zoneID, "tf-acctest-loc."+domain, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					resource.TestCheckResourceAttr(resourceName, "content", "37 46 46.000 N 122 23 35.000 W 0.00 100.00 0.00 0.00"),
@@ -174,14 +177,13 @@ func TestAccCloudflareRecord_SRV(t *testing.T) {
 				Config: testAccCheckCloudflareRecordConfigSRV(zoneID, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("_xmpp-client._tcp.%s", rnd)),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("_xmpp-client._tcp.%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(resourceName, "content", "0 5222 talk.l.google.com"),
 					resource.TestCheckResourceAttr(resourceName, "proxiable", "false"),
 					resource.TestCheckResourceAttr(resourceName, "data.priority", "5"),
 					resource.TestCheckResourceAttr(resourceName, "data.weight", "0"),
 					resource.TestCheckResourceAttr(resourceName, "data.port", "5222"),
 					resource.TestCheckResourceAttr(resourceName, "data.target", "talk.l.google.com"),
-					resource.TestCheckResourceAttr(resourceName, "data.service", "_xmpp-client"),
 				),
 			},
 		},
@@ -254,6 +256,7 @@ func TestAccCloudflareRecord_Updated(t *testing.T) {
 	t.Parallel()
 	var record cfold.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	recordName := "tf-acctest-update"
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
@@ -264,14 +267,14 @@ func TestAccCloudflareRecord_Updated(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, recordName, rnd),
+				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, recordName, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					testAccCheckCloudflareRecordAttributes(&record),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareRecordConfigNewValue(zoneID, recordName, rnd),
+				Config: testAccCheckCloudflareRecordConfigNewValue(zoneID, recordName, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					testAccCheckCloudflareRecordAttributesUpdated(&record),
@@ -296,7 +299,7 @@ func TestAccCloudflareRecord_typeForceNewRecord(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, recordName, rnd),
+				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, recordName, rnd, zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &afterCreate),
 				),
@@ -395,6 +398,7 @@ func TestAccCloudflareRecord_MXWithPriorityZero(t *testing.T) {
 func TestAccCloudflareRecord_HTTPS(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
 
@@ -404,7 +408,7 @@ func TestAccCloudflareRecord_HTTPS(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigHTTPS(zoneID, rnd),
+				Config: testAccCheckCloudflareRecordConfigHTTPS(zoneID, rnd, zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "data.priority", "1"),
 					resource.TestCheckResourceAttr(name, "data.target", "."),
@@ -418,6 +422,7 @@ func TestAccCloudflareRecord_HTTPS(t *testing.T) {
 func TestAccCloudflareRecord_SVCB(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
 
@@ -427,7 +432,7 @@ func TestAccCloudflareRecord_SVCB(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigSVCB(zoneID, rnd),
+				Config: testAccCheckCloudflareRecordConfigSVCB(zoneID, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "data.priority", "2"),
 					resource.TestCheckResourceAttr(name, "data.target", "foo."),
@@ -441,6 +446,7 @@ func TestAccCloudflareRecord_SVCB(t *testing.T) {
 func TestAccCloudflareRecord_MXNull(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
 
@@ -450,9 +456,9 @@ func TestAccCloudflareRecord_MXNull(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordNullMX(zoneID, rnd),
+				Config: testAccCheckCloudflareRecordNullMX(zoneID, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "name", rnd+"."+domain),
 					resource.TestCheckResourceAttr(name, "content", "."),
 					resource.TestCheckResourceAttr(name, "priority", "0"),
 				),
@@ -496,6 +502,7 @@ func TestAccCloudflareRecord_DNSKEY(t *testing.T) {
 func TestAccCloudflareRecord_ClearTags(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
 
@@ -505,17 +512,17 @@ func TestAccCloudflareRecord_ClearTags(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigMultipleTags(zoneID, rnd, rnd),
+				Config: testAccCheckCloudflareRecordConfigMultipleTags(zoneID, rnd, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "name", rnd+"."+domain),
 					resource.TestCheckResourceAttr(name, "tags.#", "2"),
 					resource.TestCheckResourceAttr(name, "comment", "this is a comment"),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareRecordConfigNoTags(zoneID, rnd, rnd),
+				Config: testAccCheckCloudflareRecordConfigNoTags(zoneID, rnd, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "name", rnd+"."+domain),
 					resource.TestCheckResourceAttr(name, "tags.#", "0"),
 					resource.TestCheckNoResourceAttr(name, "comment"),
 				),
@@ -643,12 +650,12 @@ func testAccCheckCloudflareRecordExists(n string, record *cfold.DNSRecord) resou
 	}
 }
 
-func testAccCheckCloudflareRecordConfigBasic(zoneID, name, rnd string) string {
-	return acctest.LoadTestCase("recordconfigbasic.tf", zoneID, name, rnd)
+func testAccCheckCloudflareRecordConfigBasic(zoneID, name, rnd, domain string) string {
+	return acctest.LoadTestCase("recordconfigbasic.tf", zoneID, name, rnd, domain)
 }
 
-func testAccCheckCloudflareRecordConfigApex(zoneID, rnd string) string {
-	return acctest.LoadTestCase("recordconfigapex.tf", zoneID, rnd)
+func testAccCheckCloudflareRecordConfigApex(zoneID, rnd, domain string) string {
+	return acctest.LoadTestCase("recordconfigapex.tf", zoneID, rnd, domain)
 }
 
 func testAccCheckCloudflareRecordConfigLOC(zoneID, name, rnd string) string {
@@ -667,8 +674,8 @@ func testAccCheckCloudflareRecordConfigProxied(zoneID, domain, name, rnd string)
 	return acctest.LoadTestCase("recordconfigproxied.tf", zoneID, domain, name, rnd)
 }
 
-func testAccCheckCloudflareRecordConfigNewValue(zoneID, name, rnd string) string {
-	return acctest.LoadTestCase("recordconfignewvalue.tf", zoneID, name, rnd)
+func testAccCheckCloudflareRecordConfigNewValue(zoneID, name, rnd, domain string) string {
+	return acctest.LoadTestCase("recordconfignewvalue.tf", zoneID, name, rnd, domain)
 }
 
 func testAccCheckCloudflareRecordConfigChangeType(zoneID, name, zoneName, rnd string) string {
@@ -691,24 +698,24 @@ func testAccCheckCloudflareRecordConfigMXWithPriorityZero(zoneID, name, zoneName
 	return acctest.LoadTestCase("recordconfigmxwithpriorityzero.tf", zoneID, name, zoneName)
 }
 
-func testAccCheckCloudflareRecordConfigHTTPS(zoneID, rnd string) string {
-	return acctest.LoadTestCase("recordconfighttps.tf", zoneID, rnd)
+func testAccCheckCloudflareRecordConfigHTTPS(zoneID, rnd, zoneName string) string {
+	return acctest.LoadTestCase("recordconfighttps.tf", zoneID, rnd, zoneName)
 }
 
-func testAccCheckCloudflareRecordConfigSVCB(zoneID, rnd string) string {
-	return acctest.LoadTestCase("recordconfigsvcb.tf", zoneID, rnd)
+func testAccCheckCloudflareRecordConfigSVCB(zoneID, rnd, domain string) string {
+	return acctest.LoadTestCase("recordconfigsvcb.tf", zoneID, rnd, domain)
 }
 
-func testAccCheckCloudflareRecordNullMX(zoneID, rnd string) string {
-	return acctest.LoadTestCase("recordnullmx.tf", rnd, zoneID)
+func testAccCheckCloudflareRecordNullMX(zoneID, rnd, domain string) string {
+	return acctest.LoadTestCase("recordnullmx.tf", rnd, zoneID, domain)
 }
 
-func testAccCheckCloudflareRecordConfigMultipleTags(zoneID, name, rnd string) string {
-	return acctest.LoadTestCase("recordconfigmultipletags.tf", zoneID, name, rnd)
+func testAccCheckCloudflareRecordConfigMultipleTags(zoneID, name, rnd, domain string) string {
+	return acctest.LoadTestCase("recordconfigmultipletags.tf", zoneID, name, rnd, domain)
 }
 
-func testAccCheckCloudflareRecordConfigNoTags(zoneID, name, rnd string) string {
-	return acctest.LoadTestCase("recordconfignotags.tf", zoneID, name, rnd)
+func testAccCheckCloudflareRecordConfigNoTags(zoneID, name, rnd, domain string) string {
+	return acctest.LoadTestCase("recordconfignotags.tf", zoneID, name, rnd, domain)
 }
 
 func testAccCheckCloudflareRecordDNSKEY(zoneID, name string) string {
