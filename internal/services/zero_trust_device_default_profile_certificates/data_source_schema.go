@@ -17,6 +17,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"zone_id": schema.StringAttribute{
 				Required: true,
 			},
+			"enabled": schema.BoolAttribute{
+				Description: "The current status of the device policy certificate provisioning feature for WARP clients.",
+				Computed:    true,
+			},
 		},
 	}
 }

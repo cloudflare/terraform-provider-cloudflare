@@ -81,11 +81,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"access_client_id": schema.StringAttribute{
-						Description: "If present, this id will be passed in the `CF-Access-Client-ID` header when hitting the `api_url`",
+						Description: "If present, this id will be passed in the `CF-Access-Client-ID` header when hitting the `api_url`.",
 						Optional:    true,
 					},
 					"access_client_secret": schema.StringAttribute{
-						Description: "If present, this secret will be passed in the `CF-Access-Client-Secret` header when hitting the `api_url`",
+						Description: "If present, this secret will be passed in the `CF-Access-Client-Secret` header when hitting the `api_url`.",
 						Optional:    true,
 						Sensitive:   true,
 					},
