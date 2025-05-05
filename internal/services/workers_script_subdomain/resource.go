@@ -67,6 +67,7 @@ func (r *WorkersScriptSubdomainResource) Create(ctx context.Context, req resourc
 		return
 	}
 	res := new(http.Response)
+	env := WorkersScriptSubdomainResultEnvelope{*data}
 	_, err = r.client.Workers.Scripts.Subdomain.New(
 		ctx,
 		data.ScriptName.ValueString(),
@@ -82,11 +83,12 @@ func (r *WorkersScriptSubdomainResource) Create(ctx context.Context, req resourc
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -105,6 +107,7 @@ func (r *WorkersScriptSubdomainResource) Read(ctx context.Context, req resource.
 	}
 
 	res := new(http.Response)
+	env := WorkersScriptSubdomainResultEnvelope{*data}
 	_, err := r.client.Workers.Scripts.Subdomain.Get(
 		ctx,
 		data.ScriptName.ValueString(),
@@ -124,11 +127,12 @@ func (r *WorkersScriptSubdomainResource) Read(ctx context.Context, req resource.
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
