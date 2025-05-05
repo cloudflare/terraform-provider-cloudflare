@@ -16,7 +16,8 @@ type ZeroTrustDeviceDefaultProfileCertificatesResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDeviceDefaultProfileCertificatesDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 func (m *ZeroTrustDeviceDefaultProfileCertificatesDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePolicyDefaultCertificateGetParams, diags diag.Diagnostics) {

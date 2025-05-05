@@ -54,7 +54,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[ZeroTrustDevicePostureRulesInputDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"operating_system": schema.StringAttribute{
-									Description: "Operating system\nAvailable values: \"windows\", \"linux\", \"mac\".",
+									Description: "Operating system.\nAvailable values: \"windows\", \"linux\", \"mac\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -72,7 +72,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"exists": schema.BoolAttribute{
-									Description: "Whether or not file exists",
+									Description: "Whether or not file exists.",
 									Computed:    true,
 								},
 								"sha256": schema.StringAttribute{
@@ -88,11 +88,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"domain": schema.StringAttribute{
-									Description: "Domain",
+									Description: "Domain.",
 									Computed:    true,
 								},
 								"operator": schema.StringAttribute{
-									Description: "operator\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
+									Description: "Operator.\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -105,23 +105,23 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"version": schema.StringAttribute{
-									Description: "Version of OS",
+									Description: "Version of OS.",
 									Computed:    true,
 								},
 								"os_distro_name": schema.StringAttribute{
-									Description: "Operating System Distribution Name (linux only)",
+									Description: "Operating System Distribution Name (linux only).",
 									Computed:    true,
 								},
 								"os_distro_revision": schema.StringAttribute{
-									Description: "Version of OS Distribution (linux only)",
+									Description: "Version of OS Distribution (linux only).",
 									Computed:    true,
 								},
 								"os_version_extra": schema.StringAttribute{
-									Description: "Additional version data. For Mac or iOS, the Product Version Extra. For Linux, the kernel release version. (Mac, iOS, and Linux only)",
+									Description: "Additional version data. For Mac or iOS, the Product Version Extra. For Linux, the kernel release version. (Mac, iOS, and Linux only).",
 									Computed:    true,
 								},
 								"enabled": schema.BoolAttribute{
-									Description: "Enabled",
+									Description: "Enabled.",
 									Computed:    true,
 								},
 								"check_disks": schema.ListAttribute{
@@ -139,7 +139,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"cn": schema.StringAttribute{
-									Description: "Common Name that is protected by the certificate",
+									Description: "Common Name that is protected by the certificate.",
 									Computed:    true,
 								},
 								"check_private_key": schema.BoolAttribute{
@@ -147,7 +147,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"extended_key_usage": schema.ListAttribute{
-									Description: "List of values indicating purposes for which the certificate public key can be used",
+									Description: "List of values indicating purposes for which the certificate public key can be used.",
 									Computed:    true,
 									Validators: []validator.List{
 										listvalidator.ValueStringsAre(
@@ -181,7 +181,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"compliance_status": schema.StringAttribute{
-									Description: "Compliance Status\nAvailable values: \"compliant\", \"noncompliant\", \"unknown\".",
+									Description: "Compliance Status.\nAvailable values: \"compliant\", \"noncompliant\", \"unknown\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -203,15 +203,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"os": schema.StringAttribute{
-									Description: "Os Version",
+									Description: "Os Version.",
 									Computed:    true,
 								},
 								"overall": schema.StringAttribute{
-									Description: "overall",
+									Description: "Overall.",
 									Computed:    true,
 								},
 								"sensor_config": schema.StringAttribute{
-									Description: "SensorConfig",
+									Description: "SensorConfig.",
 									Computed:    true,
 								},
 								"state": schema.StringAttribute{
@@ -226,7 +226,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"version_operator": schema.StringAttribute{
-									Description: "Version Operator\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
+									Description: "Version Operator.\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -239,7 +239,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"count_operator": schema.StringAttribute{
-									Description: "Count Operator\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
+									Description: "Count Operator.\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -272,7 +272,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"score_operator": schema.StringAttribute{
-									Description: "Score Operator\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
+									Description: "Score Operator.\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -365,7 +365,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The type of device posture rule.\nAvailable values: \"file\", \"application\", \"tanium\", \"gateway\", \"warp\", \"disk_encryption\", \"sentinelone\", \"carbonblack\", \"firewall\", \"os_version\", \"domain_joined\", \"client_certificate\", \"client_certificate_v2\", \"unique_client_id\", \"kolide\", \"tanium_s2s\", \"crowdstrike_s2s\", \"intune\", \"workspace_one\", \"sentinelone_s2s\", \"custom_s2s\".",
+							Description: "The type of device posture rule.\nAvailable values: \"file\", \"application\", \"tanium\", \"gateway\", \"warp\", \"disk_encryption\", \"serial_number\", \"sentinelone\", \"carbonblack\", \"firewall\", \"os_version\", \"domain_joined\", \"client_certificate\", \"client_certificate_v2\", \"unique_client_id\", \"kolide\", \"tanium_s2s\", \"crowdstrike_s2s\", \"intune\", \"workspace_one\", \"sentinelone_s2s\", \"custom_s2s\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -375,6 +375,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"gateway",
 									"warp",
 									"disk_encryption",
+									"serial_number",
 									"sentinelone",
 									"carbonblack",
 									"firewall",
