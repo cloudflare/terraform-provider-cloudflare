@@ -44,12 +44,16 @@ jobs:
         go-version-file: ./go.mod
     - name: Bootstrap
       run: ./scripts/bootstrap
-    - name: Pre-Sweeper
-      run: go test ./internal/services/... -v -sweep="1" -timeout 60m
+    # when all resources support sweepers, re-enable.
+    #
+    # - name: Pre-Sweeper
+    #  run: go test ./internal/services/... -v -sweep="1" -timeout 60m
     - name: Run acceptance tests
       run: go test ./internal/services/... -run "^TestAcc" -count 1
       env:
         TF_ACC: 1
-    - name: Post-Sweeper
-      if: ${{ always() }}
-      run: go test ./internal/services/... -v -sweep="1" -timeout 60m
+    # when all resources support sweepers, re-enable.
+    #
+    # - name: Post-Sweeper
+    #  if: ${{ always() }}
+    #  run: go test ./internal/services/... -v -sweep="1" -timeout 60m
