@@ -4,7 +4,9 @@ concurrency:
 
 on:
   workflow_dispatch:
-
+  push:
+    branches:
+      - 'release-please**'
 jobs:
   acceptance-tests:
     name: Acceptance Tests
