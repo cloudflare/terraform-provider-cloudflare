@@ -39,7 +39,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The type of characteristic.\nAvailable values: \"header\", \"cookie\".",
+							Description: "The type of characteristic.\nAvailable values: \"header\", \"cookie\", \"jwt\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

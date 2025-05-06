@@ -49,7 +49,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "custom".`,
+				Description: `Available values: "custom", "predefined", "integration", "exact_data", "word_list".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

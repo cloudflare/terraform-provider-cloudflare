@@ -80,7 +80,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"operating_system": schema.StringAttribute{
-						Description: "Operating system.\nAvailable values: \"windows\", \"linux\", \"mac\".",
+						Description: "Operating system.\nAvailable values: \"windows\", \"linux\", \"mac\", \"android\", \"ios\", \"chromeos\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -202,7 +202,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"compliance_status": schema.StringAttribute{
-						Description: "Compliance Status.\nAvailable values: \"compliant\", \"noncompliant\", \"unknown\".",
+						Description: "Compliance Status.\nAvailable values: \"compliant\", \"noncompliant\", \"unknown\", \"notapplicable\", \"ingraceperiod\", \"error\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
