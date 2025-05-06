@@ -173,11 +173,11 @@ func (r *WorkersKVResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		resp.Diagnostics.AddError("failed to read response body", err.Error())
 		return
 	}
+	data.Value = types.StringValue(string(bytes))
 	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

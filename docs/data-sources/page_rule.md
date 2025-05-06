@@ -23,13 +23,13 @@ data "cloudflare_page_rule" "example_page_rule" {
 
 ### Required
 
-- `pagerule_id` (String) Identifier
-- `zone_id` (String) Identifier
+- `pagerule_id` (String) Identifier.
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
 - `created_on` (String) The timestamp of when the Page Rule was created.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `modified_on` (String) The timestamp of when the Page Rule was last modified.
 - `priority` (Number) The priority of the rule, used to define which Page Rule is processed
 over another. A higher number indicates a higher priority. For example,

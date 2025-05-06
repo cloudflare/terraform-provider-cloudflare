@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -61,28 +62,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the rule.",
 				Required:    true,
 			},
-			"description": schema.StringAttribute{
-				Description: "The description of the rule.",
-				Optional:    true,
-			},
-			"device_posture": schema.StringAttribute{
-				Description: "The wirefilter expression used for device posture check matching.",
-				Optional:    true,
-			},
-			"enabled": schema.BoolAttribute{
-				Description: "True if the rule is enabled.",
-				Optional:    true,
-			},
-			"identity": schema.StringAttribute{
-				Description: "The wirefilter expression used for identity matching.",
-				Optional:    true,
-			},
 			"precedence": schema.Int64Attribute{
 				Description: "Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value.",
-				Optional:    true,
-			},
-			"traffic": schema.StringAttribute{
-				Description: "The wirefilter expression used for traffic matching.",
 				Optional:    true,
 			},
 			"filters": schema.ListAttribute{
@@ -100,6 +81,74 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				ElementType: types.StringType,
+			},
+			"schedule": schema.SingleNestedAttribute{
+				Description: "The schedule for activating DNS policies. This does not apply to HTTP or network policies.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"fri": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Fridays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Fridays.",
+						Optional:    true,
+					},
+					"mon": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Mondays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Mondays.",
+						Optional:    true,
+					},
+					"sat": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Saturdays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Saturdays.",
+						Optional:    true,
+					},
+					"sun": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Sundays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Sundays.",
+						Optional:    true,
+					},
+					"thu": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Thursdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Thursdays.",
+						Optional:    true,
+					},
+					"time_zone": schema.StringAttribute{
+						Description: "The time zone the rule will be evaluated against. If a [valid time zone city name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) is provided, Gateway will always use the current time at that time zone. If this parameter is omitted, then Gateway will use the time zone inferred from the user's source IP to evaluate the rule. If Gateway cannot determine the time zone from the IP, we will fall back to the time zone of the user's connected data center.",
+						Optional:    true,
+					},
+					"tue": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Tuesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Tuesdays.",
+						Optional:    true,
+					},
+					"wed": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Wednesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Wednesdays.",
+						Optional:    true,
+					},
+				},
+			},
+			"description": schema.StringAttribute{
+				Description: "The description of the rule.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"device_posture": schema.StringAttribute{
+				Description: "The wirefilter expression used for device posture check matching.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "True if the rule is enabled.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"identity": schema.StringAttribute{
+				Description: "The wirefilter expression used for identity matching.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"traffic": schema.StringAttribute{
+				Description: "The wirefilter expression used for traffic matching.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
 			},
 			"expiration": schema.SingleNestedAttribute{
 				Description: "The expiration time stamp and default duration of a DNS policy. Takes\nprecedence over the policy's `schedule` configuration, if any.\n\nThis does not apply to HTTP or network policies.",
@@ -121,7 +170,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"expired": schema.BoolAttribute{
 						Description: "Whether the policy has expired.",
-						Optional:    true,
+						Computed:    true,
 					},
 				},
 			},
@@ -148,7 +197,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"command_logging": schema.BoolAttribute{
 								Description: "Enable to turn on SSH command logging.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -171,15 +222,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"dcp": schema.BoolAttribute{
 								Description: "Set to false to enable copy-pasting. Only applies when `version == \"v1\"`.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"dd": schema.BoolAttribute{
 								Description: "Set to false to enable downloading. Only applies when `version == \"v1\"`.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"dk": schema.BoolAttribute{
 								Description: "Set to false to enable keyboard usage. Only applies when `version == \"v1\"`.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"download": schema.StringAttribute{
 								Description: "Configure whether downloading enabled or not. When absent, downloading is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\".",
@@ -190,11 +247,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"dp": schema.BoolAttribute{
 								Description: "Set to false to enable printing. Only applies when `version == \"v1\"`.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"du": schema.BoolAttribute{
 								Description: "Set to false to enable uploading. Only applies when `version == \"v1\"`.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"keyboard": schema.StringAttribute{
 								Description: "Configure whether keyboard usage is enabled or not. When absent, keyboard usage is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\".",
@@ -239,13 +300,35 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"block_page": schema.SingleNestedAttribute{
+						Description: "Custom block page settings. If missing/null, blocking will use the the account settings.",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsBlockPageModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"target_uri": schema.StringAttribute{
+								Description: "URI to which the user will be redirected",
+								Required:    true,
+							},
+							"include_context": schema.BoolAttribute{
+								Description: "If true, context information will be passed as query parameters",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+						},
+					},
 					"block_page_enabled": schema.BoolAttribute{
 						Description: "Enable the custom block page.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"block_reason": schema.StringAttribute{
 						Description: "The text describing why this block occurred, displayed on the custom block page (if enabled).",
+						Computed:    true,
 						Optional:    true,
+						Default:     stringdefault.StaticString(""),
 					},
 					"bypass_parent_rule": schema.BoolAttribute{
 						Description: "Set by children MSP accounts to bypass their parent's rules.",
@@ -263,20 +346,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"enforce": schema.BoolAttribute{
 								Description: "Set to true to enable session enforcement.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
 					"dns_resolvers": schema.SingleNestedAttribute{
 						Description: "Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when 'resolve_dns_through_cloudflare' or 'resolve_dns_internally' are set. DNS queries will route to the address closest to their origin. Only valid when a rule's action is set to 'resolve'.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsDNSResolversModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ipv4": schema.ListNestedAttribute{
-								Computed:   true,
-								Optional:   true,
-								CustomType: customfield.NewNestedObjectListType[ZeroTrustGatewayPolicyRuleSettingsDNSResolversIPV4Model](ctx),
+								Optional: true,
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"ip": schema.StringAttribute{
@@ -299,9 +380,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"ipv6": schema.ListNestedAttribute{
-								Computed:   true,
-								Optional:   true,
-								CustomType: customfield.NewNestedObjectListType[ZeroTrustGatewayPolicyRuleSettingsDNSResolversIPV6Model](ctx),
+								Optional: true,
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"ip": schema.StringAttribute{
@@ -327,9 +406,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"egress": schema.SingleNestedAttribute{
 						Description: "Configure how Gateway Proxy traffic egresses. You can enable this setting for rules with Egress actions and filters, or omit it to indicate local egress via WARP IPs.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsEgressModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ipv4": schema.StringAttribute{
 								Description: "The IPv4 address to be used for egress.",
@@ -347,25 +424,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"ignore_cname_category_matches": schema.BoolAttribute{
 						Description: "Set to true, to ignore the category matches at CNAME domains in a response. If unchecked, the categories in this rule will be checked against all the CNAME domain categories in a response.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"insecure_disable_dnssec_validation": schema.BoolAttribute{
 						Description: "INSECURE - disable DNSSEC validation (for Allow actions).",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"ip_categories": schema.BoolAttribute{
 						Description: "Set to true to enable IPs in DNS resolver category blocks. By default categories only block based on domain names.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"ip_indicator_feeds": schema.BoolAttribute{
 						Description: "Set to true to include IPs in DNS resolver indicator feed blocks. By default indicator feeds only block based on domain names.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"l4override": schema.SingleNestedAttribute{
 						Description: "Send matching traffic to the supplied destination IP address and port.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsL4overrideModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ip": schema.StringAttribute{
 								Description: "IPv4 or IPv6 address.",
@@ -385,6 +468,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Set notification on",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+							"include_context": schema.BoolAttribute{
+								Description: "If true, context information will be passed as query parameters",
 								Optional:    true,
 							},
 							"msg": schema.StringAttribute{
@@ -399,7 +488,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"override_host": schema.StringAttribute{
 						Description: "Override matching DNS queries with a hostname.",
+						Computed:    true,
 						Optional:    true,
+						Default:     stringdefault.StaticString(""),
 					},
 					"override_ips": schema.ListAttribute{
 						Description: "Override matching DNS queries with an IP or set of IPs.",
@@ -414,15 +505,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Set to true to enable DLP payload logging for this rule.",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
 					"quarantine": schema.SingleNestedAttribute{
 						Description: "Settings that apply to quarantine rules",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsQuarantineModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"file_types": schema.ListAttribute{
 								Description: "Types of files to sandbox.",
@@ -462,11 +553,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"include_context": schema.BoolAttribute{
 								Description: "If true, context information will be passed as query parameters",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 							"preserve_path_and_query": schema.BoolAttribute{
 								Description: "If true, the path and query parameters from the original request will be appended to target_uri",
+								Computed:    true,
 								Optional:    true,
+								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -493,13 +588,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"resolve_dns_through_cloudflare": schema.BoolAttribute{
 						Description: "Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_internally' is set. Only valid when a rule's action is set to 'resolve'.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"untrusted_cert": schema.SingleNestedAttribute{
 						Description: "Configure behavior when an upstream cert is invalid or an SSL error occurs.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"action": schema.StringAttribute{
 								Description: "The action performed when an untrusted certificate is seen. The default action is an error with HTTP code 526.\nAvailable values: \"pass_through\", \"block\", \"error\".",
@@ -513,46 +608,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-					},
-				},
-			},
-			"schedule": schema.SingleNestedAttribute{
-				Description: "The schedule for activating DNS policies. This does not apply to HTTP or network policies.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyScheduleModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"fri": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Fridays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Fridays.",
-						Optional:    true,
-					},
-					"mon": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Mondays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Mondays.",
-						Optional:    true,
-					},
-					"sat": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Saturdays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Saturdays.",
-						Optional:    true,
-					},
-					"sun": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Sundays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Sundays.",
-						Optional:    true,
-					},
-					"thu": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Thursdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Thursdays.",
-						Optional:    true,
-					},
-					"time_zone": schema.StringAttribute{
-						Description: "The time zone the rule will be evaluated against. If a [valid time zone city name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) is provided, Gateway will always use the current time at that time zone. If this parameter is omitted, then Gateway will use the time zone inferred from the user's source IP to evaluate the rule. If Gateway cannot determine the time zone from the IP, we will fall back to the time zone of the user's connected data center.",
-						Optional:    true,
-					},
-					"tue": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Tuesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Tuesdays.",
-						Optional:    true,
-					},
-					"wed": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Wednesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Wednesdays.",
-						Optional:    true,
 					},
 				},
 			},

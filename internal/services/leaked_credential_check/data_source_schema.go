@@ -15,11 +15,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Defines an identifier.",
 				Required:    true,
 			},
 			"enabled": schema.BoolAttribute{
-				Description: "Whether or not Leaked Credential Checks are enabled",
+				Description: "Determines whether or not Leaked Credential Checks are enabled.",
 				Computed:    true,
 			},
 		},

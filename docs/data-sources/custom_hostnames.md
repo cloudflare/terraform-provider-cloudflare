@@ -26,7 +26,7 @@ data "cloudflare_custom_hostnames" "example_custom_hostnames" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -54,7 +54,7 @@ Read-Only:
 - `custom_origin_server` (String) a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.
 - `custom_origin_sni` (String) A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.
 - `hostname` (String) The custom hostname that will point to your hostname via CNAME.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `ownership_verification` (Attributes) This is a record which can be placed to activate a hostname. (see [below for nested schema](#nestedatt--result--ownership_verification))
 - `ownership_verification_http` (Attributes) This presents the token to be served by the given http url to activate a hostname. (see [below for nested schema](#nestedatt--result--ownership_verification_http))
 - `ssl` (Attributes) (see [below for nested schema](#nestedatt--result--ssl))

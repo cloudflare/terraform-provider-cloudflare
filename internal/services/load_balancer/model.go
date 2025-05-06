@@ -18,11 +18,11 @@ type LoadBalancerModel struct {
 	FallbackPool              types.String                                                         `tfsdk:"fallback_pool" json:"fallback_pool,required"`
 	Name                      types.String                                                         `tfsdk:"name" json:"name,required"`
 	DefaultPools              *[]types.String                                                      `tfsdk:"default_pools" json:"default_pools,required"`
-	Description               types.String                                                         `tfsdk:"description" json:"description,optional"`
+	Description               types.String                                                         `tfsdk:"description" json:"description,computed_optional"`
 	SessionAffinityTTL        types.Float64                                                        `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed_optional"`
 	TTL                       types.Float64                                                        `tfsdk:"ttl" json:"ttl,computed_optional"`
 	CountryPools              customfield.Map[customfield.List[types.String]]                      `tfsdk:"country_pools" json:"country_pools,computed_optional"`
-	Networks                  *[]types.String                                                      `tfsdk:"networks" json:"networks,optional"`
+	Networks                  customfield.List[types.String]                                       `tfsdk:"networks" json:"networks,computed_optional"`
 	POPPools                  customfield.Map[customfield.List[types.String]]                      `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 	RegionPools               customfield.Map[customfield.List[types.String]]                      `tfsdk:"region_pools" json:"region_pools,computed_optional"`
 	Enabled                   types.Bool                                                           `tfsdk:"enabled" json:"enabled,computed_optional"`
@@ -62,13 +62,13 @@ type LoadBalancerRandomSteeringModel struct {
 }
 
 type LoadBalancerRulesModel struct {
-	Condition     types.String                                                  `tfsdk:"condition" json:"condition,optional"`
-	Disabled      types.Bool                                                    `tfsdk:"disabled" json:"disabled,computed_optional"`
-	FixedResponse customfield.NestedObject[LoadBalancerRulesFixedResponseModel] `tfsdk:"fixed_response" json:"fixed_response,computed_optional"`
-	Name          types.String                                                  `tfsdk:"name" json:"name,optional"`
-	Overrides     customfield.NestedObject[LoadBalancerRulesOverridesModel]     `tfsdk:"overrides" json:"overrides,computed_optional"`
-	Priority      types.Int64                                                   `tfsdk:"priority" json:"priority,computed_optional"`
-	Terminates    types.Bool                                                    `tfsdk:"terminates" json:"terminates,computed_optional"`
+	Condition     types.String                                              `tfsdk:"condition" json:"condition,optional"`
+	Disabled      types.Bool                                                `tfsdk:"disabled" json:"disabled,computed_optional"`
+	FixedResponse *LoadBalancerRulesFixedResponseModel                      `tfsdk:"fixed_response" json:"fixed_response,optional"`
+	Name          types.String                                              `tfsdk:"name" json:"name,optional"`
+	Overrides     customfield.NestedObject[LoadBalancerRulesOverridesModel] `tfsdk:"overrides" json:"overrides,computed_optional"`
+	Priority      types.Int64                                               `tfsdk:"priority" json:"priority,computed_optional"`
+	Terminates    types.Bool                                                `tfsdk:"terminates" json:"terminates,optional"`
 }
 
 type LoadBalancerRulesFixedResponseModel struct {

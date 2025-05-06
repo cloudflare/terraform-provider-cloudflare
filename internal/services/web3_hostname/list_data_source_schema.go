@@ -20,7 +20,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Specify the identifier of the hostname.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -37,7 +37,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "Identifier",
+							Description: "Specify the identifier of the hostname.",
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{
@@ -45,11 +45,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
-							Description: "An optional description of the hostname.",
+							Description: "Specify an optional description of the hostname.",
 							Computed:    true,
 						},
 						"dnslink": schema.StringAttribute{
-							Description: "DNSLink value used if the target is ipfs.",
+							Description: "Specify the DNSLink value used if the target is ipfs.",
 							Computed:    true,
 						},
 						"modified_on": schema.StringAttribute{
@@ -57,11 +57,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
-							Description: "The hostname that will point to the target gateway via CNAME.",
+							Description: "Specify the hostname that points to the target gateway via CNAME.",
 							Computed:    true,
 						},
 						"status": schema.StringAttribute{
-							Description: "Status of the hostname's activation.\nAvailable values: \"active\", \"pending\", \"deleting\", \"error\".",
+							Description: "Specifies the status of the hostname's activation.\nAvailable values: \"active\", \"pending\", \"deleting\", \"error\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -73,7 +73,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"target": schema.StringAttribute{
-							Description: "Target gateway of the hostname.\nAvailable values: \"ethereum\", \"ipfs\", \"ipfs_universal_path\".",
+							Description: "Specify the target gateway of the hostname.\nAvailable values: \"ethereum\", \"ipfs\", \"ipfs_universal_path\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

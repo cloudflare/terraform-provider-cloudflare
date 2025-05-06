@@ -14,6 +14,15 @@ description: |-
 ```terraform
 resource "cloudflare_magic_wan_static_route" "example_magic_wan_static_route" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  nexthop = "203.0.113.1"
+  prefix = "192.0.2.0/24"
+  priority = 0
+  description = "New route for new prefix 203.0.113.1"
+  scope = {
+    colo_names = ["den01"]
+    colo_regions = ["APAC"]
+  }
+  weight = 0
 }
 ```
 
@@ -23,22 +32,23 @@ resource "cloudflare_magic_wan_static_route" "example_magic_wan_static_route" {
 ### Required
 
 - `account_id` (String) Identifier
+- `nexthop` (String) The next-hop IP Address for the static route.
+- `prefix` (String) IP Prefix in Classless Inter-Domain Routing format.
+- `priority` (Number) Priority of the static route.
 
 ### Optional
 
 - `description` (String) An optional human provided description of the static route.
-- `nexthop` (String) The next-hop IP Address for the static route.
-- `prefix` (String) IP Prefix in Classless Inter-Domain Routing format.
-- `priority` (Number) Priority of the static route.
 - `route` (Attributes) (see [below for nested schema](#nestedatt--route))
-- `route_id` (String) Identifier
-- `routes` (Attributes List) (see [below for nested schema](#nestedatt--routes))
 - `scope` (Attributes) Used only for ECMP routes. (see [below for nested schema](#nestedatt--scope))
 - `weight` (Number) Optional weight of the ECMP scope - if provided.
 
 ### Read-Only
 
+- `created_on` (String) When the route was created.
+- `id` (String) Identifier
 - `modified` (Boolean)
+- `modified_on` (String) When the route was last modified.
 - `modified_route` (Attributes) (see [below for nested schema](#nestedatt--modified_route))
 
 <a id="nestedatt--route"></a>
@@ -61,34 +71,6 @@ Read-Only:
 
 <a id="nestedatt--route--scope"></a>
 ### Nested Schema for `route.scope`
-
-Optional:
-
-- `colo_names` (List of String) List of colo names for the ECMP scope.
-- `colo_regions` (List of String) List of colo regions for the ECMP scope.
-
-
-
-<a id="nestedatt--routes"></a>
-### Nested Schema for `routes`
-
-Optional:
-
-- `description` (String) An optional human provided description of the static route.
-- `nexthop` (String) The next-hop IP Address for the static route.
-- `prefix` (String) IP Prefix in Classless Inter-Domain Routing format.
-- `priority` (Number) Priority of the static route.
-- `scope` (Attributes) Used only for ECMP routes. (see [below for nested schema](#nestedatt--routes--scope))
-- `weight` (Number) Optional weight of the ECMP scope - if provided.
-
-Read-Only:
-
-- `created_on` (String) When the route was created.
-- `id` (String) Identifier
-- `modified_on` (String) When the route was last modified.
-
-<a id="nestedatt--routes--scope"></a>
-### Nested Schema for `routes.scope`
 
 Optional:
 
@@ -129,4 +111,10 @@ Read-Only:
 - `colo_names` (List of String) List of colo names for the ECMP scope.
 - `colo_regions` (List of String) List of colo regions for the ECMP scope.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_magic_wan_static_route.example '<account_id>/<route_id>'
+```

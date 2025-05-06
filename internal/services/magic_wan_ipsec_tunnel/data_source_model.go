@@ -32,10 +32,10 @@ func (m *MagicWANIPSECTunnelDataSourceModel) toReadParams(_ context.Context) (pa
 }
 
 type MagicWANIPSECTunnelIPSECTunnelDataSourceModel struct {
+	ID                 types.String                                                                       `tfsdk:"id" json:"id,computed"`
 	CloudflareEndpoint types.String                                                                       `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint,computed"`
 	InterfaceAddress   types.String                                                                       `tfsdk:"interface_address" json:"interface_address,computed"`
 	Name               types.String                                                                       `tfsdk:"name" json:"name,computed"`
-	ID                 types.String                                                                       `tfsdk:"id" json:"id,computed"`
 	AllowNullCipher    types.Bool                                                                         `tfsdk:"allow_null_cipher" json:"allow_null_cipher,computed"`
 	CreatedOn          timetypes.RFC3339                                                                  `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	CustomerEndpoint   types.String                                                                       `tfsdk:"customer_endpoint" json:"customer_endpoint,computed"`

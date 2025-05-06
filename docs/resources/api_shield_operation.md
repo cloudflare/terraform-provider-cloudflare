@@ -29,14 +29,14 @@ resource "cloudflare_api_shield_operation" "example_api_shield_operation" {
 - `host` (String) RFC3986-compliant host.
 - `method` (String) The HTTP method used to access the endpoint.
 Available values: "GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "CONNECT", "PATCH", "TRACE".
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
 - `features` (Attributes) (see [below for nested schema](#nestedatt--features))
-- `id` (String) UUID
+- `id` (String) UUID.
 - `last_updated` (String)
-- `operation_id` (String) UUID
+- `operation_id` (String) UUID.
 
 <a id="nestedatt--features"></a>
 ### Nested Schema for `features`
@@ -147,7 +147,7 @@ Available values: "none", "log", "block".
 Read-Only:
 
 - `created_at` (String)
-- `id` (String) UUID
+- `id` (String) UUID.
 - `is_learned` (Boolean) True if schema is Cloudflare-provided.
 - `name` (String) Schema file name.
 

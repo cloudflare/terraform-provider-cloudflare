@@ -18,7 +18,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Defines an identifier.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -35,11 +35,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "The unique ID for this custom scan expression",
+							Description: "defines the unique ID for this custom scan expression.",
 							Computed:    true,
 						},
 						"payload": schema.StringAttribute{
-							Description: "Ruleset expression to use in matching content objects",
+							Description: "Defines the ruleset expression to use in matching content objects.",
 							Computed:    true,
 						},
 					},

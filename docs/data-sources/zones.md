@@ -45,7 +45,7 @@ Available values: "any", "all".
   * `ends_with_case_sensitive`
   * `contains_case_sensitive`
 - `order` (String) Field to order zones by.
-Available values: "name", "status", "account.id", "account.name".
+Available values: "name", "status", "account.id", "account.name", "plan.id".
 - `status` (String) A zone status
 Available values: "initializing", "pending", "active", "moved".
 

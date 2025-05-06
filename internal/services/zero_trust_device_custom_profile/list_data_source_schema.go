@@ -150,7 +150,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"match": schema.StringAttribute{
-							Description: "The wirefilter expression to match devices.",
+							Description: `The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version".`,
 							Computed:    true,
 						},
 						"name": schema.StringAttribute{
@@ -196,11 +196,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
-										Description: "The id of the DEX test targeting this policy",
+										Description: "The id of the DEX test targeting this policy.",
 										Computed:    true,
 									},
 									"name": schema.StringAttribute{
-										Description: "The name of the DEX test targeting this policy",
+										Description: "The name of the DEX test targeting this policy.",
 										Computed:    true,
 									},
 								},

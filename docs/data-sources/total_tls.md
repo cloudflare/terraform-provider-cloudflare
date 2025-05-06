@@ -22,7 +22,7 @@ data "cloudflare_total_tls" "example_total_tls" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

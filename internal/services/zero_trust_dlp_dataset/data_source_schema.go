@@ -25,12 +25,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"dataset_id": schema.StringAttribute{
 				Required: true,
 			},
+			"case_sensitive": schema.BoolAttribute{
+				Computed: true,
+			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"description": schema.StringAttribute{
-				Description: "The description of the dataset",
+				Description: "The description of the dataset.",
 				Computed:    true,
 			},
 			"encoding_version": schema.Int64Attribute{

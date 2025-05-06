@@ -27,7 +27,7 @@ resource "cloudflare_web_analytics_rule" "example_web_analytics_rule" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `ruleset_id` (String) The Web Analytics ruleset identifier.
 
 ### Optional

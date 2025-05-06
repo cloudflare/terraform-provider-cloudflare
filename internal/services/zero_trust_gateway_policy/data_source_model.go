@@ -58,6 +58,7 @@ type ZeroTrustGatewayPolicyRuleSettingsDataSourceModel struct {
 	AllowChildBypass                types.Bool                                                                                      `tfsdk:"allow_child_bypass" json:"allow_child_bypass,computed"`
 	AuditSSH                        customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsAuditSSHDataSourceModel]             `tfsdk:"audit_ssh" json:"audit_ssh,computed"`
 	BISOAdminControls               customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsDataSourceModel]    `tfsdk:"biso_admin_controls" json:"biso_admin_controls,computed"`
+	BlockPage                       customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBlockPageDataSourceModel]            `tfsdk:"block_page" json:"block_page,computed"`
 	BlockPageEnabled                types.Bool                                                                                      `tfsdk:"block_page_enabled" json:"block_page_enabled,computed"`
 	BlockReason                     types.String                                                                                    `tfsdk:"block_reason" json:"block_reason,computed"`
 	BypassParentRule                types.Bool                                                                                      `tfsdk:"bypass_parent_rule" json:"bypass_parent_rule,computed"`
@@ -99,6 +100,11 @@ type ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsDataSourceModel struct {
 	Version  types.String `tfsdk:"version" json:"version,computed"`
 }
 
+type ZeroTrustGatewayPolicyRuleSettingsBlockPageDataSourceModel struct {
+	TargetURI      types.String `tfsdk:"target_uri" json:"target_uri,computed"`
+	IncludeContext types.Bool   `tfsdk:"include_context" json:"include_context,computed"`
+}
+
 type ZeroTrustGatewayPolicyRuleSettingsCheckSessionDataSourceModel struct {
 	Duration types.String `tfsdk:"duration" json:"duration,computed"`
 	Enforce  types.Bool   `tfsdk:"enforce" json:"enforce,computed"`
@@ -135,9 +141,10 @@ type ZeroTrustGatewayPolicyRuleSettingsL4overrideDataSourceModel struct {
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsNotificationSettingsDataSourceModel struct {
-	Enabled    types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
-	Msg        types.String `tfsdk:"msg" json:"msg,computed"`
-	SupportURL types.String `tfsdk:"support_url" json:"support_url,computed"`
+	Enabled        types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+	IncludeContext types.Bool   `tfsdk:"include_context" json:"include_context,computed"`
+	Msg            types.String `tfsdk:"msg" json:"msg,computed"`
+	SupportURL     types.String `tfsdk:"support_url" json:"support_url,computed"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsPayloadLogDataSourceModel struct {

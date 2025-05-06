@@ -33,9 +33,18 @@ func (m *OriginCACertificateDataSourceModel) toListParams(_ context.Context) (pa
 		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
 	}
 
+	if !m.Filter.Limit.IsNull() {
+		params.Limit = cloudflare.F(m.Filter.Limit.ValueInt64())
+	}
+	if !m.Filter.Offset.IsNull() {
+		params.Offset = cloudflare.F(m.Filter.Offset.ValueInt64())
+	}
+
 	return
 }
 
 type OriginCACertificateFindOneByDataSourceModel struct {
 	ZoneID types.String `tfsdk:"zone_id" query:"zone_id,required"`
+	Limit  types.Int64  `tfsdk:"limit" query:"limit,optional"`
+	Offset types.Int64  `tfsdk:"offset" query:"offset,optional"`
 }

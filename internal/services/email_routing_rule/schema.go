@@ -28,7 +28,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -49,7 +49,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"value": schema.ListAttribute{
-							Required:    true,
+							Optional:    true,
 							ElementType: types.StringType,
 						},
 					},
@@ -60,13 +60,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"field": schema.StringAttribute{
-							Description: "Field for type matcher.\nAvailable values: \"to\".",
-							Required:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("to"),
-							},
-						},
 						"type": schema.StringAttribute{
 							Description: "Type of matcher.\nAvailable values: \"literal\".",
 							Required:    true,
@@ -74,9 +67,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.OneOfCaseInsensitive("literal"),
 							},
 						},
+						"field": schema.StringAttribute{
+							Description: "Field for type matcher.\nAvailable values: \"to\".",
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("to"),
+							},
+						},
 						"value": schema.StringAttribute{
 							Description: "Value for matcher.",
-							Required:    true,
+							Optional:    true,
 						},
 					},
 				},

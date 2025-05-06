@@ -11,12 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -85,40 +83,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"proxied": schema.BoolAttribute{
-				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"ttl": schema.Float64Attribute{
-				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
-				Required:    true,
-				Validators: []validator.Float64{
-					float64validator.Any(
-						float64validator.Between(1, 1),
-						float64validator.Between(30, 86400),
-					),
-				},
-			},
-			"tags": schema.ListAttribute{
-				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
-				Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
-			},
 			"data": schema.SingleNestedAttribute{
 				Description: "Components of a CAA record.",
-				Computed:    true,
 				Optional:    true,
 				Validators: []validator.Object{
 					objectvalidator.All(
 						objectvalidator.ConflictsWith(path.MatchRoot("content")),
 					),
 				},
-				CustomType: customfield.NewNestedObjectType[DNSRecordDataModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"flags": schema.Float64Attribute{
 						Description: "Flags for the CAA record.",
@@ -340,6 +312,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
+			},
+			"proxied": schema.BoolAttribute{
+				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"ttl": schema.Float64Attribute{
+				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
+				Required:    true,
+			},
+			"tags": schema.ListAttribute{
+				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
+				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Settings for the DNS record.",

@@ -21,12 +21,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Identifier.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
@@ -53,7 +53,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"success": schema.BoolAttribute{
-				Description: "Whether the API call was successful",
+				Description: "Whether the API call was successful.",
 				Computed:    true,
 			},
 			"errors": schema.ListNestedAttribute{
@@ -69,6 +69,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"message": schema.StringAttribute{
 							Computed: true,
+						},
+						"documentation_url": schema.StringAttribute{
+							Computed: true,
+						},
+						"source": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[APIShieldErrorsSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"pointer": schema.StringAttribute{
+									Computed: true,
+								},
+							},
 						},
 					},
 				},
@@ -86,6 +98,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"message": schema.StringAttribute{
 							Computed: true,
+						},
+						"documentation_url": schema.StringAttribute{
+							Computed: true,
+						},
+						"source": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[APIShieldMessagesSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"pointer": schema.StringAttribute{
+									Computed: true,
+								},
+							},
 						},
 					},
 				},

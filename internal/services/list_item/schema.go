@@ -21,14 +21,14 @@ var _ resource.ResourceWithConfigValidators = (*ListItemResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"list_id": schema.StringAttribute{
-				Description:   "The unique ID of the list.",
+			"account_id": schema.StringAttribute{
+				Description:   "Defines an identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"account_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Optional:      true,
+			"list_id": schema.StringAttribute{
+				Description:   "The unique ID of the list.",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"id": schema.StringAttribute{

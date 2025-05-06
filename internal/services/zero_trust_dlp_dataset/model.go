@@ -19,6 +19,7 @@ type ZeroTrustDLPDatasetModel struct {
 	EncodingVersion types.Int64                                                   `tfsdk:"encoding_version" json:"encoding_version,optional"`
 	Secret          types.Bool                                                    `tfsdk:"secret" json:"secret,optional"`
 	Name            types.String                                                  `tfsdk:"name" json:"name,required"`
+	CaseSensitive   types.Bool                                                    `tfsdk:"case_sensitive" json:"case_sensitive,optional"`
 	Description     types.String                                                  `tfsdk:"description" json:"description,optional"`
 	CreatedAt       timetypes.RFC3339                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ID              types.String                                                  `tfsdk:"id" json:"id,computed"`
@@ -58,6 +59,7 @@ type ZeroTrustDLPDatasetDatasetModel struct {
 	Status          types.String                                                         `tfsdk:"status" json:"status,computed"`
 	UpdatedAt       timetypes.RFC3339                                                    `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Uploads         customfield.NestedObjectList[ZeroTrustDLPDatasetDatasetUploadsModel] `tfsdk:"uploads" json:"uploads,computed"`
+	CaseSensitive   types.Bool                                                           `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	Description     types.String                                                         `tfsdk:"description" json:"description,computed"`
 }
 

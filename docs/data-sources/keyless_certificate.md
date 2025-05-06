@@ -23,18 +23,18 @@ data "cloudflare_keyless_certificate" "example_keyless_certificate" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
-- `keyless_certificate_id` (String) Identifier
+- `keyless_certificate_id` (String) Identifier.
 
 ### Read-Only
 
 - `created_on` (String) When the Keyless SSL was created.
 - `enabled` (Boolean) Whether or not the Keyless SSL is on or off.
 - `host` (String) The keyless SSL name.
-- `id` (String) Identifier
+- `id` (String) Identifier.
 - `modified_on` (String) When the Keyless SSL was last modified.
 - `name` (String) The keyless SSL name.
 - `permissions` (List of String) Available permissions for the Keyless SSL for the current user requesting the item.

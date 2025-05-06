@@ -135,6 +135,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"url": schema.StringAttribute{
 						Description: "The RTMPS URL you provide to the broadcaster, which they stream live video to.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 				},
 			},
@@ -151,6 +152,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"url": schema.StringAttribute{
 						Description: "The URL used to play live video over RTMPS.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 				},
 			},
@@ -171,6 +173,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"url": schema.StringAttribute{
 						Description: "The SRT URL you provide to the broadcaster, which they stream live video to.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 				},
 			},
@@ -191,6 +194,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"url": schema.StringAttribute{
 						Description: "The URL used to play live video over SRT.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 				},
 			},
@@ -202,6 +206,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"url": schema.StringAttribute{
 						Description: "The WebRTC URL you provide to the broadcaster, which they stream live video to.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 				},
 			},
@@ -213,6 +218,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"url": schema.StringAttribute{
 						Description: "The URL used to play live video over WebRTC.",
 						Computed:    true,
+						Sensitive:   true,
 					},
 				},
 			},

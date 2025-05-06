@@ -21,12 +21,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description:   "Account ID",
+				Description:   "Account ID.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"bucket_name": schema.StringAttribute{
-				Description:   "Name of the bucket",
+				Description:   "Name of the bucket.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -44,12 +44,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"domain": schema.StringAttribute{
-				Description:   "Name of the custom domain to be added",
+				Description:   "Name of the custom domain to be added.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description:   "Zone ID of the custom domain",
+				Description:   "Zone ID of the custom domain.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -70,7 +70,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"zone_name": schema.StringAttribute{
-				Description: "Zone that the custom domain resides in",
+				Description: "Zone that the custom domain resides in.",
 				Computed:    true,
 			},
 			"status": schema.SingleNestedAttribute{
@@ -78,7 +78,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[R2CustomDomainStatusModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ownership": schema.StringAttribute{
-						Description: "Ownership status of the domain\nAvailable values: \"pending\", \"active\", \"deactivated\", \"blocked\", \"error\", \"unknown\".",
+						Description: "Ownership status of the domain.\nAvailable values: \"pending\", \"active\", \"deactivated\", \"blocked\", \"error\", \"unknown\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -92,7 +92,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"ssl": schema.StringAttribute{
-						Description: "SSL certificate status\nAvailable values: \"initializing\", \"pending\", \"active\", \"deactivated\", \"error\", \"unknown\".",
+						Description: "SSL certificate status.\nAvailable values: \"initializing\", \"pending\", \"active\", \"deactivated\", \"error\", \"unknown\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

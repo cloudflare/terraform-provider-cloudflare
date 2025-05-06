@@ -53,7 +53,7 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 ### Required
 
 - `account_id` (String)
-- `match` (String) The wirefilter expression to match devices.
+- `match` (String) The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version"
 - `name` (String) The name of the device settings profile.
 - `precedence` (Number) The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.
 

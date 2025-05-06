@@ -18,11 +18,11 @@ type LoadBalancerPoolModel struct {
 	AccountID          types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	Name               types.String                                                      `tfsdk:"name" json:"name,required"`
 	Origins            *[]*LoadBalancerPoolOriginsModel                                  `tfsdk:"origins" json:"origins,required"`
-	Description        types.String                                                      `tfsdk:"description" json:"description,optional"`
+	Description        types.String                                                      `tfsdk:"description" json:"description,computed_optional"`
 	Latitude           types.Float64                                                     `tfsdk:"latitude" json:"latitude,optional"`
 	Longitude          types.Float64                                                     `tfsdk:"longitude" json:"longitude,optional"`
 	Monitor            types.String                                                      `tfsdk:"monitor" json:"monitor,optional"`
-	NotificationEmail  types.String                                                      `tfsdk:"notification_email" json:"notification_email,optional"`
+	NotificationEmail  types.String                                                      `tfsdk:"notification_email" json:"notification_email,computed_optional"`
 	CheckRegions       *[]types.String                                                   `tfsdk:"check_regions" json:"check_regions,optional"`
 	Enabled            types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	MinimumOrigins     types.Int64                                                       `tfsdk:"minimum_origins" json:"minimum_origins,computed_optional"`
@@ -49,6 +49,7 @@ type LoadBalancerPoolOriginsModel struct {
 	Enabled          types.Bool                          `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Header           *LoadBalancerPoolOriginsHeaderModel `tfsdk:"header" json:"header,optional"`
 	Name             types.String                        `tfsdk:"name" json:"name,optional"`
+	Port             types.Int64                         `tfsdk:"port" json:"port,computed_optional"`
 	VirtualNetworkID types.String                        `tfsdk:"virtual_network_id" json:"virtual_network_id,optional"`
 	Weight           types.Float64                       `tfsdk:"weight" json:"weight,computed_optional"`
 }

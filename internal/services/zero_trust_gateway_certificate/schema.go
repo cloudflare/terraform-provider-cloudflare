@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"validity_period_days": schema.Int64Attribute{
-				Description:   "Number of days the generated certificate will be valid, minimum 1 day and maximum 30 years. Defaults to 5 years.",
+				Description:   "Number of days the generated certificate will be valid, minimum 1 day and maximum 30 years. Defaults to 5 years. In terraform, validity_period_days can only be used while creating a certificate, and this CAN NOT be used to extend the validity of an already generated certificate.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
 			},
@@ -65,6 +66,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"in_use": schema.BoolAttribute{
 				Description: "Use this certificate for Gateway TLS interception",
 				Computed:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"issuer_org": schema.StringAttribute{
 				Description: "The organization that issued the certificate.",

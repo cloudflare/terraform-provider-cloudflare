@@ -19,8 +19,8 @@ resource "cloudflare_email_routing_rule" "example_email_routing_rule" {
     value = ["destinationaddress@example.net"]
   }]
   matchers = [{
-    field = "to"
     type = "literal"
+    field = "to"
     value = "test@example.com"
   }]
   enabled = true
@@ -36,7 +36,7 @@ resource "cloudflare_email_routing_rule" "example_email_routing_rule" {
 
 - `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--actions))
 - `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--matchers))
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -56,6 +56,9 @@ Required:
 
 - `type` (String) Type of supported action.
 Available values: "drop", "forward", "worker".
+
+Optional:
+
 - `value` (List of String)
 
 
@@ -64,10 +67,13 @@ Available values: "drop", "forward", "worker".
 
 Required:
 
-- `field` (String) Field for type matcher.
-Available values: "to".
 - `type` (String) Type of matcher.
 Available values: "literal".
+
+Optional:
+
+- `field` (String) Field for type matcher.
+Available values: "to".
 - `value` (String) Value for matcher.
 
 ## Import

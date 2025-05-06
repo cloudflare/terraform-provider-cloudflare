@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/magic_transit"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*MagicWANIPSECTunnelResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*MagicWANIPSECTunnelResource)(nil)
+var _ resource.ResourceWithImportState = (*MagicWANIPSECTunnelResource)(nil)
 
 func NewResource() resource.Resource {
 	return &MagicWANIPSECTunnelResource{}
@@ -118,7 +121,7 @@ func (r *MagicWANIPSECTunnelResource) Update(ctx context.Context, req resource.U
 	env := MagicWANIPSECTunnelResultEnvelope{*data}
 	_, err = r.client.MagicTransit.IPSECTunnels.Update(
 		ctx,
-		data.IPSECTunnelID.ValueString(),
+		data.ID.ValueString(),
 		magic_transit.IPSECTunnelUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -154,7 +157,7 @@ func (r *MagicWANIPSECTunnelResource) Read(ctx context.Context, req resource.Rea
 	env := MagicWANIPSECTunnelResultEnvelope{*data}
 	_, err := r.client.MagicTransit.IPSECTunnels.Get(
 		ctx,
-		data.IPSECTunnelID.ValueString(),
+		data.ID.ValueString(),
 		magic_transit.IPSECTunnelGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -192,7 +195,7 @@ func (r *MagicWANIPSECTunnelResource) Delete(ctx context.Context, req resource.D
 
 	_, err := r.client.MagicTransit.IPSECTunnels.Delete(
 		ctx,
-		data.IPSECTunnelID.ValueString(),
+		data.ID.ValueString(),
 		magic_transit.IPSECTunnelDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -202,6 +205,51 @@ func (r *MagicWANIPSECTunnelResource) Delete(ctx context.Context, req resource.D
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *MagicWANIPSECTunnelResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *MagicWANIPSECTunnelModel = new(MagicWANIPSECTunnelModel)
+
+	path_account_id := ""
+	path_ipsec_tunnel_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<ipsec_tunnel_id>",
+		&path_account_id,
+		&path_ipsec_tunnel_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.ID = types.StringValue(path_ipsec_tunnel_id)
+
+	res := new(http.Response)
+	env := MagicWANIPSECTunnelResultEnvelope{*data}
+	_, err := r.client.MagicTransit.IPSECTunnels.Get(
+		ctx,
+		path_ipsec_tunnel_id,
+		magic_transit.IPSECTunnelGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

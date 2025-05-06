@@ -13,4 +13,6 @@ fi
 
 echo "==> Installing Go dependencies…"
 
-go mod tidy
+# If go mod tidy fails, don't error during bootstrap.
+# Errors will be detected during the build phase.
+go mod tidy -e || true

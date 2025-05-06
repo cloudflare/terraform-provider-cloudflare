@@ -22,15 +22,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		DeprecationMessage: "Rate limiting API is deprecated in favour of using the Ruleset Engine. See https://developers.cloudflare.com/fundamentals/api/reference/deprecations/#rate-limiting-api-previous-version for full details.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "The unique identifier of the rate limit.",
+				Description: "Defines the unique identifier of the rate limit.",
 				Computed:    true,
 			},
 			"rate_limit_id": schema.StringAttribute{
-				Description: "The unique identifier of the rate limit.",
+				Description: "Defines the unique identifier of the rate limit.",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Defines an identifier.",
 				Required:    true,
 			},
 			"description": schema.StringAttribute{

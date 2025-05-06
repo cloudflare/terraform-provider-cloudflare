@@ -25,6 +25,7 @@ type HyperdriveConfigDataSourceModel struct {
 	ModifiedOn   timetypes.RFC3339                                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name         types.String                                                     `tfsdk:"name" json:"name,computed"`
 	Caching      customfield.NestedObject[HyperdriveConfigCachingDataSourceModel] `tfsdk:"caching" json:"caching,computed"`
+	MTLS         customfield.NestedObject[HyperdriveConfigMTLSDataSourceModel]    `tfsdk:"mtls" json:"mtls,computed"`
 	Origin       customfield.NestedObject[HyperdriveConfigOriginDataSourceModel]  `tfsdk:"origin" json:"origin,computed"`
 }
 
@@ -40,6 +41,12 @@ type HyperdriveConfigCachingDataSourceModel struct {
 	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,computed"`
 	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age,computed"`
 	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate,computed"`
+}
+
+type HyperdriveConfigMTLSDataSourceModel struct {
+	CACertificateID   types.String `tfsdk:"ca_certificate_id" json:"ca_certificate_id,computed"`
+	MTLSCertificateID types.String `tfsdk:"mtls_certificate_id" json:"mtls_certificate_id,computed"`
+	Sslmode           types.String `tfsdk:"sslmode" json:"sslmode,computed"`
 }
 
 type HyperdriveConfigOriginDataSourceModel struct {

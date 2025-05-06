@@ -39,10 +39,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"pattern": schema.StringAttribute{
-							Computed: true,
+							Description: "Pattern to match incoming requests against. [Learn more](https://developers.cloudflare.com/workers/configuration/routing/routes/#matching-behavior).",
+							Computed:    true,
 						},
 						"script": schema.StringAttribute{
-							Description: "Name of the script, used in URLs and route configuration.",
+							Description: "Name of the script to run if the route matches.",
 							Computed:    true,
 						},
 					},

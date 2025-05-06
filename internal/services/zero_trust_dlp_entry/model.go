@@ -15,18 +15,19 @@ type ZeroTrustDLPEntryResultEnvelope struct {
 }
 
 type ZeroTrustDLPEntryModel struct {
-	ID         types.String                                               `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String                                               `tfsdk:"account_id" path:"account_id,required"`
-	ProfileID  types.String                                               `tfsdk:"profile_id" json:"profile_id,required"`
-	Enabled    types.Bool                                                 `tfsdk:"enabled" json:"enabled,required"`
-	Name       types.String                                               `tfsdk:"name" json:"name,required"`
-	Pattern    *ZeroTrustDLPEntryPatternModel                             `tfsdk:"pattern" json:"pattern,required"`
-	Type       types.String                                               `tfsdk:"type" json:"type,optional"`
-	CreatedAt  timetypes.RFC3339                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Secret     types.Bool                                                 `tfsdk:"secret" json:"secret,computed"`
-	UpdatedAt  timetypes.RFC3339                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	Confidence customfield.NestedObject[ZeroTrustDLPEntryConfidenceModel] `tfsdk:"confidence" json:"confidence,computed"`
-	WordList   jsontypes.Normalized                                       `tfsdk:"word_list" json:"word_list,computed"`
+	ID            types.String                                               `tfsdk:"id" json:"id,computed"`
+	AccountID     types.String                                               `tfsdk:"account_id" path:"account_id,required"`
+	ProfileID     types.String                                               `tfsdk:"profile_id" json:"profile_id,required"`
+	Enabled       types.Bool                                                 `tfsdk:"enabled" json:"enabled,required"`
+	Name          types.String                                               `tfsdk:"name" json:"name,required"`
+	Pattern       *ZeroTrustDLPEntryPatternModel                             `tfsdk:"pattern" json:"pattern,required"`
+	Type          types.String                                               `tfsdk:"type" json:"type,optional"`
+	CaseSensitive types.Bool                                                 `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
+	CreatedAt     timetypes.RFC3339                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Secret        types.Bool                                                 `tfsdk:"secret" json:"secret,computed"`
+	UpdatedAt     timetypes.RFC3339                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	Confidence    customfield.NestedObject[ZeroTrustDLPEntryConfidenceModel] `tfsdk:"confidence" json:"confidence,computed"`
+	WordList      jsontypes.Normalized                                       `tfsdk:"word_list" json:"word_list,computed"`
 }
 
 func (m ZeroTrustDLPEntryModel) MarshalJSON() (data []byte, err error) {

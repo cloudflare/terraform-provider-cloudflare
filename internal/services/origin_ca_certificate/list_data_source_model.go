@@ -18,6 +18,8 @@ type OriginCACertificatesResultListDataSourceEnvelope struct {
 
 type OriginCACertificatesDataSourceModel struct {
 	ZoneID   types.String                                                            `tfsdk:"zone_id" query:"zone_id,required"`
+	Limit    types.Int64                                                             `tfsdk:"limit" query:"limit,optional"`
+	Offset   types.Int64                                                             `tfsdk:"offset" query:"offset,optional"`
 	MaxItems types.Int64                                                             `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[OriginCACertificatesResultDataSourceModel] `tfsdk:"result"`
 }
@@ -25,6 +27,13 @@ type OriginCACertificatesDataSourceModel struct {
 func (m *OriginCACertificatesDataSourceModel) toListParams(_ context.Context) (params origin_ca_certificates.OriginCACertificateListParams, diags diag.Diagnostics) {
 	params = origin_ca_certificates.OriginCACertificateListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	if !m.Limit.IsNull() {
+		params.Limit = cloudflare.F(m.Limit.ValueInt64())
+	}
+	if !m.Offset.IsNull() {
+		params.Offset = cloudflare.F(m.Offset.ValueInt64())
 	}
 
 	return

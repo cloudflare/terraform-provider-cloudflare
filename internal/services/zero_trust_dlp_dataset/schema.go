@@ -47,8 +47,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"name": schema.StringAttribute{
 				Required: true,
 			},
+			"case_sensitive": schema.BoolAttribute{
+				Description: "Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if `secret` is true or undefined",
+				Optional:    true,
+			},
 			"description": schema.StringAttribute{
-				Description: "The description of the dataset",
+				Description: "The description of the dataset.",
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
@@ -220,8 +224,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"case_sensitive": schema.BoolAttribute{
+						Computed: true,
+					},
 					"description": schema.StringAttribute{
-						Description: "The description of the dataset",
+						Description: "The description of the dataset.",
 						Computed:    true,
 					},
 				},

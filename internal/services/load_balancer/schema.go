@@ -50,6 +50,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"description": schema.StringAttribute{
 				Description: "Object description.",
 				Optional:    true,
+				Computed:    true,
 			},
 			"session_affinity_ttl": schema.Float64Attribute{
 				Description: "Time, in seconds, until a client's session expires after being created. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. The accepted ranges per `session_affinity` policy are:\n- `\"cookie\"` / `\"ip_cookie\"`: The current default of 23 hours will be used unless explicitly set. The accepted range of values is between [1800, 604800].\n- `\"header\"`: The current default of 1800 seconds will be used unless explicitly set. The accepted range of values is between [30, 3600]. Note: With session affinity by header, sessions only expire after they haven't been used for the number of seconds specified.",
@@ -74,7 +75,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"networks": schema.ListAttribute{
 				Description: "List of networks where Load Balancer or Pool is enabled.",
 				Optional:    true,
+				Computed:    true,
 				ElementType: types.StringType,
+				CustomType:  customfield.NewListType[types.String](ctx),
 			},
 			"pop_pools": schema.MapAttribute{
 				Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
@@ -226,9 +229,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"fixed_response": schema.SingleNestedAttribute{
 							Description: "A collection of fields used to directly respond to the eyeball instead of routing to a pool. If a fixed_response is supplied the rule will be marked as terminates.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[LoadBalancerRulesFixedResponseModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"content_type": schema.StringAttribute{
 									Description: "The http 'Content-Type' header to include in the response.",
@@ -481,9 +482,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"terminates": schema.BoolAttribute{
 							Description: "If this rule's condition is true, this causes rule evaluation to stop after processing this rule.",
-							Computed:    true,
 							Optional:    true,
-							Default:     booldefault.StaticBool(false),
 						},
 					},
 				},

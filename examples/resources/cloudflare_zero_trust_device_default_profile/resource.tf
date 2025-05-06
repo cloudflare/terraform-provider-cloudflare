@@ -15,6 +15,8 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
     address = "192.0.2.0/24"
     description = "Include testing domains in the tunnel"
   }]
+  lan_allow_minutes = 30
+  lan_allow_subnet_size = 24
   register_interface_ip_with_dns = true
   service_mode_v2 = {
     mode = "proxy"

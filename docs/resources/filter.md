@@ -30,7 +30,7 @@ resource "cloudflare_filter" "example_filter" {
 ### Required
 
 - `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
-- `zone_id` (String) Identifier
+- `zone_id` (String) Defines an identifier.
 
 ### Read-Only
 

@@ -18,14 +18,14 @@ type PagesProjectModel struct {
 	Name                types.String                                                   `tfsdk:"name" json:"name,required"`
 	AccountID           types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
 	ProductionBranch    types.String                                                   `tfsdk:"production_branch" json:"production_branch,optional"`
-	BuildConfig         customfield.NestedObject[PagesProjectBuildConfigModel]         `tfsdk:"build_config" json:"build_config,computed_optional"`
-	DeploymentConfigs   customfield.NestedObject[PagesProjectDeploymentConfigsModel]   `tfsdk:"deployment_configs" json:"deployment_configs,computed_optional"`
+	BuildConfig         *PagesProjectBuildConfigModel                                  `tfsdk:"build_config" json:"build_config,optional"`
+	DeploymentConfigs   *PagesProjectDeploymentConfigsModel                            `tfsdk:"deployment_configs" json:"deployment_configs,optional"`
+	Source              *PagesProjectSourceModel                                       `tfsdk:"source" json:"source,optional"`
 	CreatedOn           timetypes.RFC3339                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Subdomain           types.String                                                   `tfsdk:"subdomain" json:"subdomain,computed"`
 	Domains             customfield.List[types.String]                                 `tfsdk:"domains" json:"domains,computed"`
 	CanonicalDeployment customfield.NestedObject[PagesProjectCanonicalDeploymentModel] `tfsdk:"canonical_deployment" json:"canonical_deployment,computed"`
 	LatestDeployment    customfield.NestedObject[PagesProjectLatestDeploymentModel]    `tfsdk:"latest_deployment" json:"latest_deployment,computed"`
-	Source              customfield.NestedObject[PagesProjectSourceModel]              `tfsdk:"source" json:"source,computed"`
 }
 
 func (m PagesProjectModel) MarshalJSON() (data []byte, err error) {
@@ -46,27 +46,27 @@ type PagesProjectBuildConfigModel struct {
 }
 
 type PagesProjectDeploymentConfigsModel struct {
-	Preview    customfield.NestedObject[PagesProjectDeploymentConfigsPreviewModel]    `tfsdk:"preview" json:"preview,computed_optional"`
-	Production customfield.NestedObject[PagesProjectDeploymentConfigsProductionModel] `tfsdk:"production" json:"production,computed_optional"`
+	Preview    *PagesProjectDeploymentConfigsPreviewModel    `tfsdk:"preview" json:"preview,optional"`
+	Production *PagesProjectDeploymentConfigsProductionModel `tfsdk:"production" json:"production,optional"`
 }
 
 type PagesProjectDeploymentConfigsPreviewModel struct {
-	AIBindings              customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewAIBindingsModel]              `tfsdk:"ai_bindings" json:"ai_bindings,computed_optional"`
-	AnalyticsEngineDatasets customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsModel] `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,computed_optional"`
-	Browsers                *map[string]PagesProjectDeploymentConfigsPreviewBrowsersModel                                 `tfsdk:"browsers" json:"browsers,optional"`
-	CompatibilityDate       types.String                                                                                  `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
-	CompatibilityFlags      *[]types.String                                                                               `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
-	D1Databases             customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewD1DatabasesModel]             `tfsdk:"d1_databases" json:"d1_databases,computed_optional"`
-	DurableObjectNamespaces customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesModel] `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces,computed_optional"`
-	EnvVars                 customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewEnvVarsModel]                 `tfsdk:"env_vars" json:"env_vars,computed_optional"`
-	HyperdriveBindings      customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewHyperdriveBindingsModel]      `tfsdk:"hyperdrive_bindings" json:"hyperdrive_bindings,computed_optional"`
-	KVNamespaces            customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewKVNamespacesModel]            `tfsdk:"kv_namespaces" json:"kv_namespaces,computed_optional"`
-	MTLSCertificates        customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewMTLSCertificatesModel]        `tfsdk:"mtls_certificates" json:"mtls_certificates,computed_optional"`
-	Placement               customfield.NestedObject[PagesProjectDeploymentConfigsPreviewPlacementModel]                  `tfsdk:"placement" json:"placement,computed_optional"`
-	QueueProducers          customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewQueueProducersModel]          `tfsdk:"queue_producers" json:"queue_producers,computed_optional"`
-	R2Buckets               customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewR2BucketsModel]               `tfsdk:"r2_buckets" json:"r2_buckets,computed_optional"`
-	Services                customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewServicesModel]                `tfsdk:"services" json:"services,computed_optional"`
-	VectorizeBindings       customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewVectorizeBindingsModel]       `tfsdk:"vectorize_bindings" json:"vectorize_bindings,computed_optional"`
+	AIBindings              *map[string]PagesProjectDeploymentConfigsPreviewAIBindingsModel              `tfsdk:"ai_bindings" json:"ai_bindings,optional"`
+	AnalyticsEngineDatasets *map[string]PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsModel `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,optional"`
+	Browsers                *map[string]PagesProjectDeploymentConfigsPreviewBrowsersModel                `tfsdk:"browsers" json:"browsers,optional"`
+	CompatibilityDate       types.String                                                                 `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
+	CompatibilityFlags      *[]types.String                                                              `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
+	D1Databases             *map[string]PagesProjectDeploymentConfigsPreviewD1DatabasesModel             `tfsdk:"d1_databases" json:"d1_databases,optional"`
+	DurableObjectNamespaces *map[string]PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesModel `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces,optional"`
+	EnvVars                 *map[string]PagesProjectDeploymentConfigsPreviewEnvVarsModel                 `tfsdk:"env_vars" json:"env_vars,optional"`
+	HyperdriveBindings      *map[string]PagesProjectDeploymentConfigsPreviewHyperdriveBindingsModel      `tfsdk:"hyperdrive_bindings" json:"hyperdrive_bindings,optional"`
+	KVNamespaces            *map[string]PagesProjectDeploymentConfigsPreviewKVNamespacesModel            `tfsdk:"kv_namespaces" json:"kv_namespaces,optional"`
+	MTLSCertificates        *map[string]PagesProjectDeploymentConfigsPreviewMTLSCertificatesModel        `tfsdk:"mtls_certificates" json:"mtls_certificates,optional"`
+	Placement               *PagesProjectDeploymentConfigsPreviewPlacementModel                          `tfsdk:"placement" json:"placement,optional"`
+	QueueProducers          *map[string]PagesProjectDeploymentConfigsPreviewQueueProducersModel          `tfsdk:"queue_producers" json:"queue_producers,optional"`
+	R2Buckets               *map[string]PagesProjectDeploymentConfigsPreviewR2BucketsModel               `tfsdk:"r2_buckets" json:"r2_buckets,optional"`
+	Services                *map[string]PagesProjectDeploymentConfigsPreviewServicesModel                `tfsdk:"services" json:"services,optional"`
+	VectorizeBindings       *map[string]PagesProjectDeploymentConfigsPreviewVectorizeBindingsModel       `tfsdk:"vectorize_bindings" json:"vectorize_bindings,optional"`
 }
 
 type PagesProjectDeploymentConfigsPreviewAIBindingsModel struct {
@@ -129,22 +129,22 @@ type PagesProjectDeploymentConfigsPreviewVectorizeBindingsModel struct {
 }
 
 type PagesProjectDeploymentConfigsProductionModel struct {
-	AIBindings              customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionAIBindingsModel]              `tfsdk:"ai_bindings" json:"ai_bindings,computed_optional"`
-	AnalyticsEngineDatasets customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsModel] `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,computed_optional"`
-	Browsers                *map[string]PagesProjectDeploymentConfigsProductionBrowsersModel                                 `tfsdk:"browsers" json:"browsers,optional"`
-	CompatibilityDate       types.String                                                                                     `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
-	CompatibilityFlags      *[]types.String                                                                                  `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
-	D1Databases             customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionD1DatabasesModel]             `tfsdk:"d1_databases" json:"d1_databases,computed_optional"`
-	DurableObjectNamespaces customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionDurableObjectNamespacesModel] `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces,computed_optional"`
-	EnvVars                 customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionEnvVarsModel]                 `tfsdk:"env_vars" json:"env_vars,computed_optional"`
-	HyperdriveBindings      customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionHyperdriveBindingsModel]      `tfsdk:"hyperdrive_bindings" json:"hyperdrive_bindings,computed_optional"`
-	KVNamespaces            customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionKVNamespacesModel]            `tfsdk:"kv_namespaces" json:"kv_namespaces,computed_optional"`
-	MTLSCertificates        customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionMTLSCertificatesModel]        `tfsdk:"mtls_certificates" json:"mtls_certificates,computed_optional"`
-	Placement               customfield.NestedObject[PagesProjectDeploymentConfigsProductionPlacementModel]                  `tfsdk:"placement" json:"placement,computed_optional"`
-	QueueProducers          customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionQueueProducersModel]          `tfsdk:"queue_producers" json:"queue_producers,computed_optional"`
-	R2Buckets               customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionR2BucketsModel]               `tfsdk:"r2_buckets" json:"r2_buckets,computed_optional"`
-	Services                customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionServicesModel]                `tfsdk:"services" json:"services,computed_optional"`
-	VectorizeBindings       customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionVectorizeBindingsModel]       `tfsdk:"vectorize_bindings" json:"vectorize_bindings,computed_optional"`
+	AIBindings              *map[string]PagesProjectDeploymentConfigsProductionAIBindingsModel              `tfsdk:"ai_bindings" json:"ai_bindings,optional"`
+	AnalyticsEngineDatasets *map[string]PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsModel `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,optional"`
+	Browsers                *map[string]PagesProjectDeploymentConfigsProductionBrowsersModel                `tfsdk:"browsers" json:"browsers,optional"`
+	CompatibilityDate       types.String                                                                    `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
+	CompatibilityFlags      *[]types.String                                                                 `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
+	D1Databases             *map[string]PagesProjectDeploymentConfigsProductionD1DatabasesModel             `tfsdk:"d1_databases" json:"d1_databases,optional"`
+	DurableObjectNamespaces *map[string]PagesProjectDeploymentConfigsProductionDurableObjectNamespacesModel `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces,optional"`
+	EnvVars                 *map[string]PagesProjectDeploymentConfigsProductionEnvVarsModel                 `tfsdk:"env_vars" json:"env_vars,optional"`
+	HyperdriveBindings      *map[string]PagesProjectDeploymentConfigsProductionHyperdriveBindingsModel      `tfsdk:"hyperdrive_bindings" json:"hyperdrive_bindings,optional"`
+	KVNamespaces            *map[string]PagesProjectDeploymentConfigsProductionKVNamespacesModel            `tfsdk:"kv_namespaces" json:"kv_namespaces,optional"`
+	MTLSCertificates        *map[string]PagesProjectDeploymentConfigsProductionMTLSCertificatesModel        `tfsdk:"mtls_certificates" json:"mtls_certificates,optional"`
+	Placement               *PagesProjectDeploymentConfigsProductionPlacementModel                          `tfsdk:"placement" json:"placement,optional"`
+	QueueProducers          *map[string]PagesProjectDeploymentConfigsProductionQueueProducersModel          `tfsdk:"queue_producers" json:"queue_producers,optional"`
+	R2Buckets               *map[string]PagesProjectDeploymentConfigsProductionR2BucketsModel               `tfsdk:"r2_buckets" json:"r2_buckets,optional"`
+	Services                *map[string]PagesProjectDeploymentConfigsProductionServicesModel                `tfsdk:"services" json:"services,optional"`
+	VectorizeBindings       *map[string]PagesProjectDeploymentConfigsProductionVectorizeBindingsModel       `tfsdk:"vectorize_bindings" json:"vectorize_bindings,optional"`
 }
 
 type PagesProjectDeploymentConfigsProductionAIBindingsModel struct {
@@ -204,6 +204,25 @@ type PagesProjectDeploymentConfigsProductionServicesModel struct {
 
 type PagesProjectDeploymentConfigsProductionVectorizeBindingsModel struct {
 	IndexName types.String `tfsdk:"index_name" json:"index_name,optional"`
+}
+
+type PagesProjectSourceModel struct {
+	Config *PagesProjectSourceConfigModel `tfsdk:"config" json:"config,optional"`
+	Type   types.String                   `tfsdk:"type" json:"type,optional"`
+}
+
+type PagesProjectSourceConfigModel struct {
+	DeploymentsEnabled           types.Bool      `tfsdk:"deployments_enabled" json:"deployments_enabled,optional"`
+	Owner                        types.String    `tfsdk:"owner" json:"owner,optional"`
+	PathExcludes                 *[]types.String `tfsdk:"path_excludes" json:"path_excludes,optional"`
+	PathIncludes                 *[]types.String `tfsdk:"path_includes" json:"path_includes,optional"`
+	PrCommentsEnabled            types.Bool      `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,optional"`
+	PreviewBranchExcludes        *[]types.String `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,optional"`
+	PreviewBranchIncludes        *[]types.String `tfsdk:"preview_branch_includes" json:"preview_branch_includes,optional"`
+	PreviewDeploymentSetting     types.String    `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,optional"`
+	ProductionBranch             types.String    `tfsdk:"production_branch" json:"production_branch,optional"`
+	ProductionDeploymentsEnabled types.Bool      `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,optional"`
+	RepoName                     types.String    `tfsdk:"repo_name" json:"repo_name,optional"`
 }
 
 type PagesProjectCanonicalDeploymentModel struct {
@@ -358,23 +377,4 @@ type PagesProjectLatestDeploymentStagesModel struct {
 	Name      types.String      `tfsdk:"name" json:"name,computed"`
 	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed" format:"date-time"`
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
-}
-
-type PagesProjectSourceModel struct {
-	Config customfield.NestedObject[PagesProjectSourceConfigModel] `tfsdk:"config" json:"config,computed"`
-	Type   types.String                                            `tfsdk:"type" json:"type,computed"`
-}
-
-type PagesProjectSourceConfigModel struct {
-	DeploymentsEnabled           types.Bool                     `tfsdk:"deployments_enabled" json:"deployments_enabled,computed"`
-	Owner                        types.String                   `tfsdk:"owner" json:"owner,computed"`
-	PathExcludes                 customfield.List[types.String] `tfsdk:"path_excludes" json:"path_excludes,computed"`
-	PathIncludes                 customfield.List[types.String] `tfsdk:"path_includes" json:"path_includes,computed"`
-	PrCommentsEnabled            types.Bool                     `tfsdk:"pr_comments_enabled" json:"pr_comments_enabled,computed"`
-	PreviewBranchExcludes        customfield.List[types.String] `tfsdk:"preview_branch_excludes" json:"preview_branch_excludes,computed"`
-	PreviewBranchIncludes        customfield.List[types.String] `tfsdk:"preview_branch_includes" json:"preview_branch_includes,computed"`
-	PreviewDeploymentSetting     types.String                   `tfsdk:"preview_deployment_setting" json:"preview_deployment_setting,computed"`
-	ProductionBranch             types.String                   `tfsdk:"production_branch" json:"production_branch,computed"`
-	ProductionDeploymentsEnabled types.Bool                     `tfsdk:"production_deployments_enabled" json:"production_deployments_enabled,computed"`
-	RepoName                     types.String                   `tfsdk:"repo_name" json:"repo_name,computed"`
 }

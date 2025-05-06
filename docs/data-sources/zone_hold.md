@@ -22,7 +22,7 @@ data "cloudflare_zone_hold" "example_zone_hold" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

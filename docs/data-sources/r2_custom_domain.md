@@ -24,27 +24,27 @@ data "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 
 ### Required
 
-- `account_id` (String) Account ID
-- `bucket_name` (String) Name of the bucket
-- `domain` (String) Name of the custom domain
+- `account_id` (String) Account ID.
+- `bucket_name` (String) Name of the bucket.
+- `domain` (String) Name of the custom domain.
 
 ### Read-Only
 
-- `enabled` (Boolean) Whether this bucket is publicly accessible at the specified custom domain
+- `enabled` (Boolean) Whether this bucket is publicly accessible at the specified custom domain.
 - `min_tls` (String) Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.
 Available values: "1.0", "1.1", "1.2", "1.3".
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
-- `zone_id` (String) Zone ID of the custom domain resides in
-- `zone_name` (String) Zone that the custom domain resides in
+- `zone_id` (String) Zone ID of the custom domain resides in.
+- `zone_name` (String) Zone that the custom domain resides in.
 
 <a id="nestedatt--status"></a>
 ### Nested Schema for `status`
 
 Read-Only:
 
-- `ownership` (String) Ownership status of the domain
+- `ownership` (String) Ownership status of the domain.
 Available values: "pending", "active", "deactivated", "blocked", "error", "unknown".
-- `ssl` (String) SSL certificate status
+- `ssl` (String) SSL certificate status.
 Available values: "initializing", "pending", "active", "deactivated", "error", "unknown".
 
 

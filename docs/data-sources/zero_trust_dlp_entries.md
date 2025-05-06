@@ -37,6 +37,9 @@ data "cloudflare_zero_trust_dlp_entries" "example_zero_trust_dlp_entries" {
 
 Read-Only:
 
+- `case_sensitive` (Boolean) Only applies to custom word lists.
+Determines if the words should be matched in a case-sensitive manner
+Cannot be set to false if secret is true
 - `confidence` (Attributes) (see [below for nested schema](#nestedatt--result--confidence))
 - `created_at` (String)
 - `enabled` (Boolean)
@@ -54,8 +57,8 @@ Read-Only:
 
 Read-Only:
 
-- `ai_context_available` (Boolean) Indicates whether this entry has AI remote service validation
-- `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service
+- `ai_context_available` (Boolean) Indicates whether this entry has AI remote service validation.
+- `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service.
 
 
 <a id="nestedatt--result--pattern"></a>

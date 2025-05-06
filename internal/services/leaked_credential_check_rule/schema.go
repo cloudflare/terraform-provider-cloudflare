@@ -17,21 +17,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "The unique ID for this custom detection",
+				Description:   "Defines the unique ID for this custom detection.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Defines an identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"password": schema.StringAttribute{
-				Description: "The ruleset expression to use in matching the password in a request",
+				Description: "Defines ehe ruleset expression to use in matching the password in a request.",
 				Optional:    true,
 			},
 			"username": schema.StringAttribute{
-				Description: "The ruleset expression to use in matching the username in a request",
+				Description: "Defines the ruleset expression to use in matching the username in a request.",
 				Optional:    true,
 			},
 		},
