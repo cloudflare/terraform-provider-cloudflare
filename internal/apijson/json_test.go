@@ -41,9 +41,9 @@ type TfsdkStructs struct {
 }
 
 type EmbeddedTfsdkStruct struct {
-	EmbeddedString types.String                                 `tfsdk:"tfsdk_embedded_string" json:"embedded_string"`
-	EmbeddedInt    types.Int64                                  `tfsdk:"tfsdk_embedded_int" json:"embedded_int"`
-	DataObject     customfield.NestedObject[DoubleNestedStruct] `tfsdk:"tfsdk_data_object" json:"data_object"`
+	EmbeddedString types.String                                 `tfsdk:"tfsdk_embedded_string" json:"embedded_string,required"`
+	EmbeddedInt    types.Int64                                  `tfsdk:"tfsdk_embedded_int" json:"embedded_int,optional"`
+	DataObject     customfield.NestedObject[DoubleNestedStruct] `tfsdk:"tfsdk_data_object" json:"data_object,optional"`
 }
 
 type DoubleNestedStruct struct {
@@ -1308,6 +1308,20 @@ var decode_from_value_tests = map[string]struct {
 		},
 	},
 
+	"tfsdk_struct_overwrites_from_json": {
+		`{"embedded_string":"new_value"}`,
+		EmbeddedTfsdkStruct{
+			EmbeddedString: types.StringValue("existing_value"),
+			EmbeddedInt:    types.Int64Value(5),
+			DataObject:     customfield.UnknownObject[DoubleNestedStruct](ctx),
+		},
+		EmbeddedTfsdkStruct{
+			EmbeddedString: types.StringValue("new_value"),
+			EmbeddedInt:    types.Int64Null(),
+			DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
+		},
+	},
+
 	"tfsdk_date_time_populates_unknown_to_null_if_missing": {
 		`{"date":"2006-01-02"}`,
 		DateTimeCustom{
@@ -1690,6 +1704,20 @@ var decode_computed_only_tests = map[string]struct {
 			}),
 		},
 	},
+
+	"tfsdk_struct_only_overwrites_computed_from_json": {
+		`{"embedded_string":"new_value"}`,
+		EmbeddedTfsdkStruct{
+			EmbeddedString: types.StringValue("existing_value"),
+			EmbeddedInt:    types.Int64Value(5),
+			DataObject:     customfield.UnknownObject[DoubleNestedStruct](ctx),
+		},
+		EmbeddedTfsdkStruct{
+			EmbeddedString: types.StringValue("existing_value"),
+			EmbeddedInt:    types.Int64Value(5),
+			DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
+		},
+	},
 }
 
 func TestDecodeComputedOnly(t *testing.T) {
@@ -1709,6 +1737,13 @@ func TestDecodeComputedOnly(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestNoStateBetweenDecoders(t *testing.T) {
+	// If there is global state between the decoders, these tests will pass individually but fail when run in the same
+	// test here. This can happen if our cache key does not capture all the information needed to make these two decoders unique.
+	TestDecodeComputedOnly(t)
+	TestDecodeFromValue(t)
 }
 
 func merge[T interface{}](test_array ...map[string]T) map[string]T {
