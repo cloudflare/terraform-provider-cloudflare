@@ -42,12 +42,12 @@ jobs:
         go-version-file: ./go.mod
     - name: Bootstrap
       run: ./scripts/bootstrap
-    - name: Pre-Sweeper (Framework)
-      run: go test ./internal/framework/service/dns_record -v -sweep="1" -timeout 60m
+    - name: Pre-Sweeper
+      run: go test ./internal/services/dns_record -v -sweep="1" -timeout 60m
     - name: Run acceptance tests
       run: go test ./internal/services/dns_record -run "^TestAcc" -count 1
       env:
         TF_ACC: 1
-    - name: Post-Sweeper (Framework)
+    - name: Post-Sweeper
       if: ${{ always() }}
-      run: go test ./internal/framework/service/dns_record -v -sweep="1" -timeout 60m
+      run: go test ./internal/services/dns_record -v -sweep="1" -timeout 60m
