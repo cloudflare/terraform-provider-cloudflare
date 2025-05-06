@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package cloudforce_one_request_asset
+package cloudforce_one_request
 
 import (
 	"context"
@@ -19,24 +19,24 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*CloudforceOneRequestAssetResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*CloudforceOneRequestAssetResource)(nil)
-var _ resource.ResourceWithImportState = (*CloudforceOneRequestAssetResource)(nil)
+var _ resource.ResourceWithConfigure = (*CloudforceOneRequestResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*CloudforceOneRequestResource)(nil)
+var _ resource.ResourceWithImportState = (*CloudforceOneRequestResource)(nil)
 
 func NewResource() resource.Resource {
-	return &CloudforceOneRequestAssetResource{}
+	return &CloudforceOneRequestResource{}
 }
 
-// CloudforceOneRequestAssetResource defines the resource implementation.
-type CloudforceOneRequestAssetResource struct {
+// CloudforceOneRequestResource defines the resource implementation.
+type CloudforceOneRequestResource struct {
 	client *cloudflare.Client
 }
 
-func (r *CloudforceOneRequestAssetResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_cloudforce_one_request_asset"
+func (r *CloudforceOneRequestResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_cloudforce_one_request"
 }
 
-func (r *CloudforceOneRequestAssetResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *CloudforceOneRequestResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -55,8 +55,8 @@ func (r *CloudforceOneRequestAssetResource) Configure(ctx context.Context, req r
 	r.client = client
 }
 
-func (r *CloudforceOneRequestAssetResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *CloudforceOneRequestAssetModel
+func (r *CloudforceOneRequestResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *CloudforceOneRequestModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -70,11 +70,10 @@ func (r *CloudforceOneRequestAssetResource) Create(ctx context.Context, req reso
 		return
 	}
 	res := new(http.Response)
-	env := CloudforceOneRequestAssetResultEnvelope{*data}
-	_, err = r.client.CloudforceOne.Requests.Assets.New(
+	env := CloudforceOneRequestResultEnvelope{*data}
+	_, err = r.client.CloudforceOne.Requests.New(
 		ctx,
-		data.RequestID.ValueString(),
-		cloudforce_one.RequestAssetNewParams{
+		cloudforce_one.RequestNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -96,8 +95,8 @@ func (r *CloudforceOneRequestAssetResource) Create(ctx context.Context, req reso
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *CloudforceOneRequestAssetModel
+func (r *CloudforceOneRequestResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *CloudforceOneRequestModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -105,7 +104,7 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 		return
 	}
 
-	var state *CloudforceOneRequestAssetModel
+	var state *CloudforceOneRequestModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -119,12 +118,11 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 		return
 	}
 	res := new(http.Response)
-	env := CloudforceOneRequestAssetResultEnvelope{*data}
-	_, err = r.client.CloudforceOne.Requests.Assets.Update(
+	env := CloudforceOneRequestResultEnvelope{*data}
+	_, err = r.client.CloudforceOne.Requests.Update(
 		ctx,
-		data.RequestID.ValueString(),
-		data.ID.ValueInt64(),
-		cloudforce_one.RequestAssetUpdateParams{
+		data.ID.ValueString(),
+		cloudforce_one.RequestUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -146,8 +144,8 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CloudforceOneRequestAssetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *CloudforceOneRequestAssetModel
+func (r *CloudforceOneRequestResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *CloudforceOneRequestModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -156,12 +154,11 @@ func (r *CloudforceOneRequestAssetResource) Read(ctx context.Context, req resour
 	}
 
 	res := new(http.Response)
-	env := CloudforceOneRequestAssetResultEnvelope{*data}
-	_, err := r.client.CloudforceOne.Requests.Assets.Get(
+	env := CloudforceOneRequestResultEnvelope{*data}
+	_, err := r.client.CloudforceOne.Requests.Get(
 		ctx,
-		data.RequestID.ValueString(),
-		data.ID.ValueInt64(),
-		cloudforce_one.RequestAssetGetParams{
+		data.ID.ValueString(),
+		cloudforce_one.RequestGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -187,8 +184,8 @@ func (r *CloudforceOneRequestAssetResource) Read(ctx context.Context, req resour
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *CloudforceOneRequestAssetModel
+func (r *CloudforceOneRequestResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *CloudforceOneRequestModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -196,11 +193,10 @@ func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req reso
 		return
 	}
 
-	_, err := r.client.CloudforceOne.Requests.Assets.Delete(
+	_, err := r.client.CloudforceOne.Requests.Delete(
 		ctx,
-		data.RequestID.ValueString(),
-		data.ID.ValueInt64(),
-		cloudforce_one.RequestAssetDeleteParams{
+		data.ID.ValueString(),
+		cloudforce_one.RequestDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -213,18 +209,16 @@ func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req reso
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CloudforceOneRequestAssetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CloudforceOneRequestAssetModel = new(CloudforceOneRequestAssetModel)
+func (r *CloudforceOneRequestResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *CloudforceOneRequestModel = new(CloudforceOneRequestModel)
 
 	path_account_id := ""
 	path_request_id := ""
-	path_asset_id := int64(0)
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<request_id>/<asset_id>",
+		"<account_id>/<request_id>",
 		&path_account_id,
 		&path_request_id,
-		&path_asset_id,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -232,16 +226,14 @@ func (r *CloudforceOneRequestAssetResource) ImportState(ctx context.Context, req
 	}
 
 	data.AccountID = types.StringValue(path_account_id)
-	data.RequestID = types.StringValue(path_request_id)
-	data.ID = types.Int64Value(path_asset_id)
+	data.ID = types.StringValue(path_request_id)
 
 	res := new(http.Response)
-	env := CloudforceOneRequestAssetResultEnvelope{*data}
-	_, err := r.client.CloudforceOne.Requests.Assets.Get(
+	env := CloudforceOneRequestResultEnvelope{*data}
+	_, err := r.client.CloudforceOne.Requests.Get(
 		ctx,
 		path_request_id,
-		path_asset_id,
-		cloudforce_one.RequestAssetGetParams{
+		cloudforce_one.RequestGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
 		option.WithResponseBodyInto(&res),
@@ -262,6 +254,6 @@ func (r *CloudforceOneRequestAssetResource) ImportState(ctx context.Context, req
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CloudforceOneRequestAssetResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *CloudforceOneRequestResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }

@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package cloudforce_one_request_asset
+package cloudforce_one_request_priority
 
 import (
 	"context"
@@ -19,24 +19,24 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*CloudforceOneRequestAssetResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*CloudforceOneRequestAssetResource)(nil)
-var _ resource.ResourceWithImportState = (*CloudforceOneRequestAssetResource)(nil)
+var _ resource.ResourceWithConfigure = (*CloudforceOneRequestPriorityResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*CloudforceOneRequestPriorityResource)(nil)
+var _ resource.ResourceWithImportState = (*CloudforceOneRequestPriorityResource)(nil)
 
 func NewResource() resource.Resource {
-	return &CloudforceOneRequestAssetResource{}
+	return &CloudforceOneRequestPriorityResource{}
 }
 
-// CloudforceOneRequestAssetResource defines the resource implementation.
-type CloudforceOneRequestAssetResource struct {
+// CloudforceOneRequestPriorityResource defines the resource implementation.
+type CloudforceOneRequestPriorityResource struct {
 	client *cloudflare.Client
 }
 
-func (r *CloudforceOneRequestAssetResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_cloudforce_one_request_asset"
+func (r *CloudforceOneRequestPriorityResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_cloudforce_one_request_priority"
 }
 
-func (r *CloudforceOneRequestAssetResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *CloudforceOneRequestPriorityResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -55,8 +55,8 @@ func (r *CloudforceOneRequestAssetResource) Configure(ctx context.Context, req r
 	r.client = client
 }
 
-func (r *CloudforceOneRequestAssetResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *CloudforceOneRequestAssetModel
+func (r *CloudforceOneRequestPriorityResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *CloudforceOneRequestPriorityModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -70,11 +70,10 @@ func (r *CloudforceOneRequestAssetResource) Create(ctx context.Context, req reso
 		return
 	}
 	res := new(http.Response)
-	env := CloudforceOneRequestAssetResultEnvelope{*data}
-	_, err = r.client.CloudforceOne.Requests.Assets.New(
+	env := CloudforceOneRequestPriorityResultEnvelope{*data}
+	_, err = r.client.CloudforceOne.Requests.Priority.New(
 		ctx,
-		data.RequestID.ValueString(),
-		cloudforce_one.RequestAssetNewParams{
+		cloudforce_one.RequestPriorityNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -96,8 +95,8 @@ func (r *CloudforceOneRequestAssetResource) Create(ctx context.Context, req reso
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *CloudforceOneRequestAssetModel
+func (r *CloudforceOneRequestPriorityResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *CloudforceOneRequestPriorityModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -105,7 +104,7 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 		return
 	}
 
-	var state *CloudforceOneRequestAssetModel
+	var state *CloudforceOneRequestPriorityModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -119,12 +118,11 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 		return
 	}
 	res := new(http.Response)
-	env := CloudforceOneRequestAssetResultEnvelope{*data}
-	_, err = r.client.CloudforceOne.Requests.Assets.Update(
+	env := CloudforceOneRequestPriorityResultEnvelope{*data}
+	_, err = r.client.CloudforceOne.Requests.Priority.Update(
 		ctx,
-		data.RequestID.ValueString(),
-		data.ID.ValueInt64(),
-		cloudforce_one.RequestAssetUpdateParams{
+		data.ID.ValueString(),
+		cloudforce_one.RequestPriorityUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -146,8 +144,8 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CloudforceOneRequestAssetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *CloudforceOneRequestAssetModel
+func (r *CloudforceOneRequestPriorityResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *CloudforceOneRequestPriorityModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -156,12 +154,11 @@ func (r *CloudforceOneRequestAssetResource) Read(ctx context.Context, req resour
 	}
 
 	res := new(http.Response)
-	env := CloudforceOneRequestAssetResultEnvelope{*data}
-	_, err := r.client.CloudforceOne.Requests.Assets.Get(
+	env := CloudforceOneRequestPriorityResultEnvelope{*data}
+	_, err := r.client.CloudforceOne.Requests.Priority.Get(
 		ctx,
-		data.RequestID.ValueString(),
-		data.ID.ValueInt64(),
-		cloudforce_one.RequestAssetGetParams{
+		data.ID.ValueString(),
+		cloudforce_one.RequestPriorityGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -187,8 +184,8 @@ func (r *CloudforceOneRequestAssetResource) Read(ctx context.Context, req resour
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *CloudforceOneRequestAssetModel
+func (r *CloudforceOneRequestPriorityResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *CloudforceOneRequestPriorityModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -196,11 +193,10 @@ func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req reso
 		return
 	}
 
-	_, err := r.client.CloudforceOne.Requests.Assets.Delete(
+	_, err := r.client.CloudforceOne.Requests.Priority.Delete(
 		ctx,
-		data.RequestID.ValueString(),
-		data.ID.ValueInt64(),
-		cloudforce_one.RequestAssetDeleteParams{
+		data.ID.ValueString(),
+		cloudforce_one.RequestPriorityDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -213,18 +209,16 @@ func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req reso
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CloudforceOneRequestAssetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CloudforceOneRequestAssetModel = new(CloudforceOneRequestAssetModel)
+func (r *CloudforceOneRequestPriorityResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *CloudforceOneRequestPriorityModel = new(CloudforceOneRequestPriorityModel)
 
 	path_account_id := ""
-	path_request_id := ""
-	path_asset_id := int64(0)
+	path_priority_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<request_id>/<asset_id>",
+		"<account_id>/<priority_id>",
 		&path_account_id,
-		&path_request_id,
-		&path_asset_id,
+		&path_priority_id,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -232,16 +226,14 @@ func (r *CloudforceOneRequestAssetResource) ImportState(ctx context.Context, req
 	}
 
 	data.AccountID = types.StringValue(path_account_id)
-	data.RequestID = types.StringValue(path_request_id)
-	data.ID = types.Int64Value(path_asset_id)
+	data.ID = types.StringValue(path_priority_id)
 
 	res := new(http.Response)
-	env := CloudforceOneRequestAssetResultEnvelope{*data}
-	_, err := r.client.CloudforceOne.Requests.Assets.Get(
+	env := CloudforceOneRequestPriorityResultEnvelope{*data}
+	_, err := r.client.CloudforceOne.Requests.Priority.Get(
 		ctx,
-		path_request_id,
-		path_asset_id,
-		cloudforce_one.RequestAssetGetParams{
+		path_priority_id,
+		cloudforce_one.RequestPriorityGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
 		option.WithResponseBodyInto(&res),
@@ -262,6 +254,6 @@ func (r *CloudforceOneRequestAssetResource) ImportState(ctx context.Context, req
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CloudforceOneRequestAssetResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *CloudforceOneRequestPriorityResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }

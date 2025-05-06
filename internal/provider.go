@@ -42,6 +42,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/calls_turn_app"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/certificate_pack"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloud_connector_rules"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_asset"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_message"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_priority"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning_expression"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
@@ -549,6 +553,10 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		snippet_rules.NewResource,
 		calls_sfu_app.NewResource,
 		calls_turn_app.NewResource,
+		cloudforce_one_request.NewResource,
+		cloudforce_one_request_message.NewResource,
+		cloudforce_one_request_priority.NewResource,
+		cloudforce_one_request_asset.NewResource,
 		cloud_connector_rules.NewResource,
 		leaked_credential_check.NewResource,
 		leaked_credential_check_rule.NewResource,
@@ -845,6 +853,11 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		calls_sfu_app.NewCallsSFUAppsDataSource,
 		calls_turn_app.NewCallsTURNAppDataSource,
 		calls_turn_app.NewCallsTURNAppsDataSource,
+		cloudforce_one_request.NewCloudforceOneRequestDataSource,
+		cloudforce_one_request.NewCloudforceOneRequestsDataSource,
+		cloudforce_one_request_message.NewCloudforceOneRequestMessageDataSource,
+		cloudforce_one_request_priority.NewCloudforceOneRequestPriorityDataSource,
+		cloudforce_one_request_asset.NewCloudforceOneRequestAssetDataSource,
 		account_permission_group.NewAccountPermissionGroupDataSource,
 		account_permission_group.NewAccountPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
