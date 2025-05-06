@@ -47,6 +47,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"oc",
 					),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"jurisdiction": schema.StringAttribute{
 				Description: "Jurisdiction of the bucket",
@@ -68,7 +69,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("Standard", "InfrequentAccess"),
 				},
-				Default: stringdefault.StaticString("Standard"),
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Default:       stringdefault.StaticString("Standard"),
 			},
 			"creation_date": schema.StringAttribute{
 				Description: "Creation timestamp.",

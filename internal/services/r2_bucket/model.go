@@ -26,5 +26,5 @@ func (m R2BucketModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m R2BucketModel) MarshalJSONForUpdate(state R2BucketModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
