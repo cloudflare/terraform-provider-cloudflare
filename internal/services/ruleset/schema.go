@@ -1014,16 +1014,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									ElementType: types.StringType,
 								},
 								"period": schema.Int64Attribute{
-									Description: "Period in seconds over which the counter is being incremented.\nAvailable values: 10, 60, 600, 3600.",
+									Description: "Period in seconds over which the counter is being incremented.",
 									Required:    true,
-									Validators: []validator.Int64{
-										int64validator.OneOf(
-											10,
-											60,
-											600,
-											3600,
-										),
-									},
 								},
 								"counting_expression": schema.StringAttribute{
 									Description: "Defines when the ratelimit counter should be incremented. It is optional and defaults to the same as the rule's expression.",
@@ -1036,6 +1028,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"requests_per_period": schema.Int64Attribute{
 									Description: "The threshold of requests per period after which the action will be executed for the first time.",
 									Optional:    true,
+									Validators: []validator.Int64{
+										int64validator.AtLeast(1),
+									},
 								},
 								"requests_to_origin": schema.BoolAttribute{
 									Description: "Defines if ratelimit counting is only done when an origin is reached.",
