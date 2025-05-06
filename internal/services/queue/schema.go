@@ -119,7 +119,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: `Available values: "worker".`,
+							Description: `Available values: "worker", "http_pull".`,
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("worker", "http_pull"),
@@ -137,7 +137,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"type": schema.StringAttribute{
-							Description: `Available values: "worker".`,
+							Description: `Available values: "worker", "r2_bucket".`,
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("worker", "r2_bucket"),

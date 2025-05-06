@@ -106,7 +106,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"action": schema.StringAttribute{
-							Description: "The action to perform when the rule matches.\nAvailable values: \"block\".",
+							Description: "The action to perform when the rule matches.\nAvailable values: \"block\", \"challenge\", \"compress_response\", \"execute\", \"js_challenge\", \"log\", \"managed_challenge\", \"redirect\", \"rewrite\", \"route\", \"score\", \"serve_error\", \"set_config\", \"skip\", \"set_cache_settings\", \"log_custom_field\", \"ddos_dynamic\", \"force_connection_close\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -343,7 +343,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"operation": schema.StringAttribute{
-												Description: `Available values: "remove".`,
+												Description: `Available values: "remove", "add", "set".`,
 												Required:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(

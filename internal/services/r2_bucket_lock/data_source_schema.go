@@ -44,7 +44,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed: true,
 								},
 								"type": schema.StringAttribute{
-									Description: `Available values: "Age".`,
+									Description: `Available values: "Age", "Date", "Indefinite".`,
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
