@@ -20,6 +20,7 @@ type LogpushJobModel struct {
 	Dataset                  types.String                                           `tfsdk:"dataset" json:"dataset,computed_optional"`
 	DestinationConf          types.String                                           `tfsdk:"destination_conf" json:"destination_conf,required"`
 	Enabled                  types.Bool                                             `tfsdk:"enabled" json:"enabled,optional"`
+	Filter                   types.String                                           `tfsdk:"filter" json:"filter,optional"`
 	Kind                     types.String                                           `tfsdk:"kind" json:"kind,optional"`
 	LogpullOptions           types.String                                           `tfsdk:"logpull_options" json:"logpull_options,optional"`
 	MaxUploadBytes           types.Int64                                            `tfsdk:"max_upload_bytes" json:"max_upload_bytes,optional"`
