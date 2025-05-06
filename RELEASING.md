@@ -2,11 +2,7 @@
 
 ## GitHub (Recommended)
 
-> [!NOTE]
-> Releasing with GitHub Actions is currently not usable due to the Golang build cache being larger than the available resources for the free runners. There is work to remedy this but in the meantime, you must follow the manual steps.
-
 - Merge release PR.
-- If needed, trigger the resync Terraform registry releases CI job.
 
 ## Manual
 
