@@ -13,8 +13,8 @@ type ZoneSubscriptionResultEnvelope struct {
 
 type ZoneSubscriptionModel struct {
 	Identifier types.String                   `tfsdk:"identifier" path:"identifier,required"`
-	Frequency  types.String                   `tfsdk:"frequency" json:"frequency,optional"`
-	RatePlan   *ZoneSubscriptionRatePlanModel `tfsdk:"rate_plan" json:"rate_plan,optional"`
+	Frequency  types.String                   `tfsdk:"frequency" json:"frequency,optional,no_refresh"`
+	RatePlan   *ZoneSubscriptionRatePlanModel `tfsdk:"rate_plan" json:"rate_plan,optional,no_refresh"`
 }
 
 func (m ZoneSubscriptionModel) MarshalJSON() (data []byte, err error) {

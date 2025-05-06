@@ -23,7 +23,7 @@ type APITokenModel struct {
 	IssuedOn   timetypes.RFC3339         `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
 	LastUsedOn timetypes.RFC3339         `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
 	ModifiedOn timetypes.RFC3339         `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Value      types.String              `tfsdk:"value" json:"value,computed"`
+	Value      types.String              `tfsdk:"value" json:"value,computed,no_refresh"`
 }
 
 func (m APITokenModel) MarshalJSON() (data []byte, err error) {

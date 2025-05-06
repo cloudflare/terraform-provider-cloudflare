@@ -16,7 +16,7 @@ type WorkersCronTriggerModel struct {
 	ID         types.String                                                   `tfsdk:"id" json:"-,computed"`
 	ScriptName types.String                                                   `tfsdk:"script_name" path:"script_name,required"`
 	AccountID  types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
-	Body       *[]*WorkersCronTriggerBodyModel                                `tfsdk:"body" json:"body,required"`
+	Body       *[]*WorkersCronTriggerBodyModel                                `tfsdk:"body" json:"body,required,no_refresh"`
 	Schedules  customfield.NestedObjectList[WorkersCronTriggerSchedulesModel] `tfsdk:"schedules" json:"schedules,computed"`
 }
 

@@ -16,7 +16,7 @@ type R2BucketEventNotificationModel struct {
 	AccountID  types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
 	BucketName types.String                                                       `tfsdk:"bucket_name" path:"bucket_name,required"`
 	QueueID    types.String                                                       `tfsdk:"queue_id" path:"queue_id,optional"`
-	Rules      *[]*R2BucketEventNotificationRulesModel                            `tfsdk:"rules" json:"rules,optional"`
+	Rules      *[]*R2BucketEventNotificationRulesModel                            `tfsdk:"rules" json:"rules,optional,no_refresh"`
 	Queues     customfield.NestedObjectList[R2BucketEventNotificationQueuesModel] `tfsdk:"queues" json:"queues,computed"`
 }
 

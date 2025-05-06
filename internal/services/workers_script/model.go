@@ -21,19 +21,19 @@ type WorkersScriptModel struct {
 	ID              types.String                                                  `tfsdk:"id" json:"-,computed"`
 	ScriptName      types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
 	AccountID       types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
-	Metadata        *WorkersScriptMetadataModel                                   `tfsdk:"metadata" json:"metadata,required"`
-	CreatedOn       timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Etag            types.String                                                  `tfsdk:"etag" json:"etag,computed"`
-	HasAssets       types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed"`
-	HasModules      types.Bool                                                    `tfsdk:"has_modules" json:"has_modules,computed"`
-	Logpush         types.Bool                                                    `tfsdk:"logpush" json:"logpush,computed"`
-	ModifiedOn      timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	PlacementMode   types.String                                                  `tfsdk:"placement_mode" json:"placement_mode,computed"`
-	PlacementStatus types.String                                                  `tfsdk:"placement_status" json:"placement_status,computed"`
-	StartupTimeMs   types.Int64                                                   `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
-	UsageModel      types.String                                                  `tfsdk:"usage_model" json:"usage_model,computed"`
-	Placement       customfield.NestedObject[WorkersScriptPlacementModel]         `tfsdk:"placement" json:"placement,computed"`
-	TailConsumers   customfield.NestedObjectList[WorkersScriptTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
+	Metadata        *WorkersScriptMetadataModel                                   `tfsdk:"metadata" json:"metadata,required,no_refresh"`
+	CreatedOn       timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed,no_refresh" format:"date-time"`
+	Etag            types.String                                                  `tfsdk:"etag" json:"etag,computed,no_refresh"`
+	HasAssets       types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed,no_refresh"`
+	HasModules      types.Bool                                                    `tfsdk:"has_modules" json:"has_modules,computed,no_refresh"`
+	Logpush         types.Bool                                                    `tfsdk:"logpush" json:"logpush,computed,no_refresh"`
+	ModifiedOn      timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed,no_refresh" format:"date-time"`
+	PlacementMode   types.String                                                  `tfsdk:"placement_mode" json:"placement_mode,computed,no_refresh"`
+	PlacementStatus types.String                                                  `tfsdk:"placement_status" json:"placement_status,computed,no_refresh"`
+	StartupTimeMs   types.Int64                                                   `tfsdk:"startup_time_ms" json:"startup_time_ms,computed,no_refresh"`
+	UsageModel      types.String                                                  `tfsdk:"usage_model" json:"usage_model,computed,no_refresh"`
+	Placement       customfield.NestedObject[WorkersScriptPlacementModel]         `tfsdk:"placement" json:"placement,computed,no_refresh"`
+	TailConsumers   customfield.NestedObjectList[WorkersScriptTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed,no_refresh"`
 }
 
 func (r WorkersScriptModel) MarshalMultipart() (data []byte, contentType string, err error) {

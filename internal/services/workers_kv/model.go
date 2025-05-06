@@ -19,8 +19,8 @@ type WorkersKVModel struct {
 	KeyName     types.String `tfsdk:"key_name" path:"key_name,required"`
 	AccountID   types.String `tfsdk:"account_id" path:"account_id,required"`
 	NamespaceID types.String `tfsdk:"namespace_id" path:"namespace_id,required"`
-	Metadata    types.String `tfsdk:"metadata" json:"metadata,required"`
-	Value       types.String `tfsdk:"value" json:"value,required"`
+	Metadata    types.String `tfsdk:"metadata" json:"metadata,required,no_refresh"`
+	Value       types.String `tfsdk:"value" json:"value,required,no_refresh"`
 }
 
 func (r WorkersKVModel) MarshalMultipart() (data []byte, contentType string, err error) {

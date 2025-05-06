@@ -15,7 +15,7 @@ type StreamCaptionLanguageModel struct {
 	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
 	Identifier types.String `tfsdk:"identifier" path:"identifier,required"`
 	Language   types.String `tfsdk:"language" path:"language,required"`
-	File       types.String `tfsdk:"file" json:"file,optional"`
+	File       types.String `tfsdk:"file" json:"file,optional,no_refresh"`
 	Generated  types.Bool   `tfsdk:"generated" json:"generated,computed"`
 	Label      types.String `tfsdk:"label" json:"label,computed"`
 	Status     types.String `tfsdk:"status" json:"status,computed"`

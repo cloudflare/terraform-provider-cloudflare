@@ -16,16 +16,16 @@ type MagicWANStaticRouteResultEnvelope struct {
 type MagicWANStaticRouteModel struct {
 	ID            types.String                                                    `tfsdk:"id" json:"id,computed"`
 	AccountID     types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
-	Nexthop       types.String                                                    `tfsdk:"nexthop" json:"nexthop,required"`
-	Prefix        types.String                                                    `tfsdk:"prefix" json:"prefix,required"`
-	Priority      types.Int64                                                     `tfsdk:"priority" json:"priority,required"`
-	Description   types.String                                                    `tfsdk:"description" json:"description,optional"`
-	Weight        types.Int64                                                     `tfsdk:"weight" json:"weight,optional"`
-	Scope         *MagicWANStaticRouteScopeModel                                  `tfsdk:"scope" json:"scope,optional"`
-	CreatedOn     timetypes.RFC3339                                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Modified      types.Bool                                                      `tfsdk:"modified" json:"modified,computed"`
-	ModifiedOn    timetypes.RFC3339                                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	ModifiedRoute customfield.NestedObject[MagicWANStaticRouteModifiedRouteModel] `tfsdk:"modified_route" json:"modified_route,computed"`
+	Nexthop       types.String                                                    `tfsdk:"nexthop" json:"nexthop,required,no_refresh"`
+	Prefix        types.String                                                    `tfsdk:"prefix" json:"prefix,required,no_refresh"`
+	Priority      types.Int64                                                     `tfsdk:"priority" json:"priority,required,no_refresh"`
+	Description   types.String                                                    `tfsdk:"description" json:"description,optional,no_refresh"`
+	Weight        types.Int64                                                     `tfsdk:"weight" json:"weight,optional,no_refresh"`
+	Scope         *MagicWANStaticRouteScopeModel                                  `tfsdk:"scope" json:"scope,optional,no_refresh"`
+	CreatedOn     timetypes.RFC3339                                               `tfsdk:"created_on" json:"created_on,computed,no_refresh" format:"date-time"`
+	Modified      types.Bool                                                      `tfsdk:"modified" json:"modified,computed,no_refresh"`
+	ModifiedOn    timetypes.RFC3339                                               `tfsdk:"modified_on" json:"modified_on,computed,no_refresh" format:"date-time"`
+	ModifiedRoute customfield.NestedObject[MagicWANStaticRouteModifiedRouteModel] `tfsdk:"modified_route" json:"modified_route,computed,no_refresh"`
 	Route         customfield.NestedObject[MagicWANStaticRouteRouteModel]         `tfsdk:"route" json:"route,computed"`
 }
 

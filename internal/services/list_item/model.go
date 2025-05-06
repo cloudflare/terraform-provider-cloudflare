@@ -16,14 +16,14 @@ type ListItemModel struct {
 	AccountID   types.String                                    `tfsdk:"account_id" path:"account_id,required"`
 	ListID      types.String                                    `tfsdk:"list_id" path:"list_id,required"`
 	ItemID      types.String                                    `tfsdk:"item_id" path:"item_id,optional"`
-	Body        *[]*ListItemBodyModel                           `tfsdk:"body" json:"body,required"`
+	Body        *[]*ListItemBodyModel                           `tfsdk:"body" json:"body,required,no_refresh"`
 	ASN         types.Int64                                     `tfsdk:"asn" json:"asn,computed"`
 	Comment     types.String                                    `tfsdk:"comment" json:"comment,computed"`
 	CreatedOn   types.String                                    `tfsdk:"created_on" json:"created_on,computed"`
 	ID          types.String                                    `tfsdk:"id" json:"id,computed"`
 	IP          types.String                                    `tfsdk:"ip" json:"ip,computed"`
 	ModifiedOn  types.String                                    `tfsdk:"modified_on" json:"modified_on,computed"`
-	OperationID types.String                                    `tfsdk:"operation_id" json:"operation_id,computed"`
+	OperationID types.String                                    `tfsdk:"operation_id" json:"operation_id,computed,no_refresh"`
 	Hostname    customfield.NestedObject[ListItemHostnameModel] `tfsdk:"hostname" json:"hostname,computed"`
 	Redirect    customfield.NestedObject[ListItemRedirectModel] `tfsdk:"redirect" json:"redirect,computed"`
 }

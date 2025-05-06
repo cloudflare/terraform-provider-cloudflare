@@ -15,7 +15,7 @@ type ZeroTrustGatewayCertificateResultEnvelope struct {
 type ZeroTrustGatewayCertificateModel struct {
 	ID                 types.String      `tfsdk:"id" json:"id,computed"`
 	AccountID          types.String      `tfsdk:"account_id" path:"account_id,required"`
-	ValidityPeriodDays types.Int64       `tfsdk:"validity_period_days" json:"validity_period_days,optional"`
+	ValidityPeriodDays types.Int64       `tfsdk:"validity_period_days" json:"validity_period_days,optional,no_refresh"`
 	BindingStatus      types.String      `tfsdk:"binding_status" json:"binding_status,computed"`
 	Certificate        types.String      `tfsdk:"certificate" json:"certificate,computed"`
 	CreatedAt          timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

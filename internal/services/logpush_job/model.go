@@ -20,12 +20,12 @@ type LogpushJobModel struct {
 	Dataset                  types.String                                           `tfsdk:"dataset" json:"dataset,computed_optional"`
 	DestinationConf          types.String                                           `tfsdk:"destination_conf" json:"destination_conf,required"`
 	Enabled                  types.Bool                                             `tfsdk:"enabled" json:"enabled,optional"`
-	Filter                   types.String                                           `tfsdk:"filter" json:"filter,optional"`
+	Filter                   types.String                                           `tfsdk:"filter" json:"filter,optional,no_refresh"`
 	Kind                     types.String                                           `tfsdk:"kind" json:"kind,optional"`
 	LogpullOptions           types.String                                           `tfsdk:"logpull_options" json:"logpull_options,optional"`
 	MaxUploadBytes           types.Int64                                            `tfsdk:"max_upload_bytes" json:"max_upload_bytes,optional"`
 	Name                     types.String                                           `tfsdk:"name" json:"name,optional"`
-	OwnershipChallenge       types.String                                           `tfsdk:"ownership_challenge" json:"ownership_challenge,optional"`
+	OwnershipChallenge       types.String                                           `tfsdk:"ownership_challenge" json:"ownership_challenge,optional,no_refresh"`
 	Frequency                types.String                                           `tfsdk:"frequency" json:"frequency,computed_optional"`
 	MaxUploadIntervalSeconds types.Int64                                            `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds,computed_optional"`
 	MaxUploadRecords         types.Int64                                            `tfsdk:"max_upload_records" json:"max_upload_records,computed_optional"`

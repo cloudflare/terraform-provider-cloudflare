@@ -13,7 +13,7 @@ type StreamWebhookResultEnvelope struct {
 
 type StreamWebhookModel struct {
 	AccountID       types.String `tfsdk:"account_id" path:"account_id,required"`
-	NotificationURL types.String `tfsdk:"notification_url" json:"notificationUrl,required"`
+	NotificationURL types.String `tfsdk:"notification_url" json:"notificationUrl,required,no_refresh"`
 }
 
 func (m StreamWebhookModel) MarshalJSON() (data []byte, err error) {

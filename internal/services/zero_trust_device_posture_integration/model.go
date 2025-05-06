@@ -32,9 +32,9 @@ type ZeroTrustDevicePostureIntegrationConfigModel struct {
 	APIURL             types.String `tfsdk:"api_url" json:"api_url,optional"`
 	AuthURL            types.String `tfsdk:"auth_url" json:"auth_url,optional"`
 	ClientID           types.String `tfsdk:"client_id" json:"client_id,optional"`
-	ClientSecret       types.String `tfsdk:"client_secret" json:"client_secret,optional"`
-	CustomerID         types.String `tfsdk:"customer_id" json:"customer_id,optional"`
-	ClientKey          types.String `tfsdk:"client_key" json:"client_key,optional"`
-	AccessClientID     types.String `tfsdk:"access_client_id" json:"access_client_id,optional"`
-	AccessClientSecret types.String `tfsdk:"access_client_secret" json:"access_client_secret,optional"`
+	ClientSecret       types.String `tfsdk:"client_secret" json:"client_secret,optional,no_refresh"`
+	CustomerID         types.String `tfsdk:"customer_id" json:"customer_id,optional,no_refresh"`
+	ClientKey          types.String `tfsdk:"client_key" json:"client_key,optional,no_refresh"`
+	AccessClientID     types.String `tfsdk:"access_client_id" json:"access_client_id,optional,no_refresh"`
+	AccessClientSecret types.String `tfsdk:"access_client_secret" json:"access_client_secret,optional,no_refresh"`
 }
