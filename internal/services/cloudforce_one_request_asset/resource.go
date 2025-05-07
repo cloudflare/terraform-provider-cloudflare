@@ -123,7 +123,7 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 	_, err = r.client.CloudforceOne.Requests.Assets.Update(
 		ctx,
 		data.RequestID.ValueString(),
-		data.ID.ValueInt64(),
+		string(data.ID.ValueInt64()),
 		cloudforce_one.RequestAssetUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -160,7 +160,7 @@ func (r *CloudforceOneRequestAssetResource) Read(ctx context.Context, req resour
 	_, err := r.client.CloudforceOne.Requests.Assets.Get(
 		ctx,
 		data.RequestID.ValueString(),
-		data.ID.ValueInt64(),
+		string(data.ID.ValueInt64()),
 		cloudforce_one.RequestAssetGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -199,7 +199,7 @@ func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req reso
 	_, err := r.client.CloudforceOne.Requests.Assets.Delete(
 		ctx,
 		data.RequestID.ValueString(),
-		data.ID.ValueInt64(),
+		string(data.ID.ValueInt64()),
 		cloudforce_one.RequestAssetDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -240,7 +240,7 @@ func (r *CloudforceOneRequestAssetResource) ImportState(ctx context.Context, req
 	_, err := r.client.CloudforceOne.Requests.Assets.Get(
 		ctx,
 		path_request_id,
-		path_asset_id,
+		string(path_asset_id),
 		cloudforce_one.RequestAssetGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
