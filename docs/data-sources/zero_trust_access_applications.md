@@ -116,7 +116,7 @@ Read-Only:
 - `l4_protocol` (String) The L4 protocol of the destination. When omitted, both UDP and TCP traffic will match.
 Available values: "tcp", "udp".
 - `port_range` (String) The port range of the destination. Can be a single port or a range of ports. When omitted, all ports will match.
-- `type` (String) Available values: "public".
+- `type` (String) Available values: "public", "private".
 - `uri` (String) The URI of the destination. Public destinations' URIs can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/).
 - `vnet_id` (String) The VNET ID to match the destination. When omitted, all VNETs will match.
 
@@ -927,7 +927,7 @@ Read-Only:
 - `client_secret` (String, Sensitive) Secret used to authenticate when generating a token for authenticating with the remove SCIM service.
 - `password` (String) Password used to authenticate with the remote SCIM service.
 - `scheme` (String) The authentication scheme to use when making SCIM requests to this application.
-Available values: "httpbasic".
+Available values: "httpbasic", "oauthbearertoken", "oauth2", "access_service_token".
 - `scopes` (List of String) The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.
 - `token` (String, Sensitive) Token used to authenticate with the remote SCIM service.
 - `token_url` (String) URL used to generate the token used to authenticate with the remote SCIM service.

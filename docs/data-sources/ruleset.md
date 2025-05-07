@@ -45,7 +45,7 @@ Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_err
 Read-Only:
 
 - `action` (String) The action to perform when the rule matches.
-Available values: "block".
+Available values: "block", "challenge", "compress_response", "execute", "js_challenge", "log", "managed_challenge", "redirect", "rewrite", "route", "score", "serve_error", "set_config", "skip", "set_cache_settings", "log_custom_field", "ddos_dynamic", "force_connection_close".
 - `action_parameters` (Attributes) The parameters configuring the rule's action. (see [below for nested schema](#nestedatt--rules--action_parameters))
 - `categories` (List of String) The categories of the rule.
 - `description` (String) An informative description of the rule.
@@ -321,7 +321,7 @@ Read-Only:
 Read-Only:
 
 - `expression` (String) Expression for the header value.
-- `operation` (String) Available values: "remove".
+- `operation` (String) Available values: "remove", "add", "set".
 - `value` (String) Static value for the header.
 
 
@@ -494,7 +494,6 @@ Read-Only:
 - `counting_expression` (String) Defines when the ratelimit counter should be incremented. It is optional and defaults to the same as the rule's expression.
 - `mitigation_timeout` (Number) Period of time in seconds after which the action will be disabled following its first execution.
 - `period` (Number) Period in seconds over which the counter is being incremented.
-Available values: 10, 60, 600, 3600.
 - `requests_per_period` (Number) The threshold of requests per period after which the action will be executed for the first time.
 - `requests_to_origin` (Boolean) Defines if ratelimit counting is only done when an origin is reached.
 - `score_per_period` (Number) The score threshold per period for which the action will be executed the first time.

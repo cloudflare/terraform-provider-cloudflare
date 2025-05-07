@@ -23,7 +23,7 @@ resource "cloudflare_waiting_room_settings" "example_waiting_room_settings" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -33,7 +33,7 @@ and will not appear in waiting room analytics.
 
 ### Read-Only
 
-- `id` (String) Identifier
+- `id` (String) Identifier.
 
 ## Import
 

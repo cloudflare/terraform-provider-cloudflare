@@ -81,7 +81,7 @@ Read-Only:
 
 - `date` (String)
 - `max_age` (Number)
-- `type` (String) Available values: "Age".
+- `type` (String) Available values: "Age", "Date".
 
 
 
@@ -100,6 +100,6 @@ Read-Only:
 
 - `date` (String)
 - `max_age` (Number)
-- `type` (String) Available values: "Age".
+- `type` (String) Available values: "Age", "Date".
 
 
