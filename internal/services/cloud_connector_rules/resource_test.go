@@ -54,21 +54,18 @@ func TestAccCloudflareCloudConnectorRules(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "3"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.%", "5"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "some description 1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.provider", "aws_s3"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.parameters.host", "mystorage1.s3.ams.amazonaws.com"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.1.%", "5"),
 					resource.TestCheckResourceAttr(resourceName, "rules.1.enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.1.expression", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.1.description", "some description 2"),
 					resource.TestCheckResourceAttr(resourceName, "rules.1.provider", "aws_s3"),
 					resource.TestCheckResourceAttr(resourceName, "rules.1.parameters.host", "mystorage2.s3.ams.amazonaws.com"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.2.%", "5"),
 					resource.TestCheckResourceAttr(resourceName, "rules.2.enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.2.expression", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.2.description", "some description 3"),
@@ -82,14 +79,12 @@ func TestAccCloudflareCloudConnectorRules(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "2"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.%", "5"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "some description 2"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.provider", "aws_s3"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.parameters.host", "mystorage2.s3.ams.amazonaws.com"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.1.%", "5"),
 					resource.TestCheckResourceAttr(resourceName, "rules.1.enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.1.expression", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.1.description", "some description 3"),

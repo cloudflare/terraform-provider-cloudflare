@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/cloud_connector"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,13 +16,9 @@ type CloudConnectorRulesResultDataSourceEnvelope struct {
 }
 
 type CloudConnectorRulesDataSourceModel struct {
-	ZoneID      types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
-	Description types.String                                                           `tfsdk:"description" json:"description,computed"`
-	Enabled     types.Bool                                                             `tfsdk:"enabled" json:"enabled,computed"`
-	Expression  types.String                                                           `tfsdk:"expression" json:"expression,computed"`
-	ID          types.String                                                           `tfsdk:"id" json:"id,computed"`
-	Provider    types.String                                                           `tfsdk:"provider" json:"provider,computed"`
-	Parameters  customfield.NestedObject[CloudConnectorRulesParametersDataSourceModel] `tfsdk:"parameters" json:"parameters,computed"`
+	ID     types.String                                `tfsdk:"id" json:"id,computed"`
+	ZoneID types.String                                `tfsdk:"zone_id" path:"zone_id,required"`
+	Rules  *[]*CloudConnectorRulesDataSourceRulesModel `tfsdk:"rules" json:"rules,computed,no_refresh"`
 }
 
 func (m *CloudConnectorRulesDataSourceModel) toReadParams(_ context.Context) (params cloud_connector.RuleListParams, diags diag.Diagnostics) {
@@ -36,4 +31,13 @@ func (m *CloudConnectorRulesDataSourceModel) toReadParams(_ context.Context) (pa
 
 type CloudConnectorRulesParametersDataSourceModel struct {
 	Host types.String `tfsdk:"host" json:"host,computed"`
+}
+
+type CloudConnectorRulesDataSourceRulesModel struct {
+	ID          types.String                                  `tfsdk:"id" json:"id,computed"`
+	Description types.String                                  `tfsdk:"description" json:"description,computed"`
+	Enabled     types.Bool                                    `tfsdk:"enabled" json:"enabled,computed"`
+	Expression  types.String                                  `tfsdk:"expression" json:"expression,computed"`
+	Parameters  *CloudConnectorRulesParametersDataSourceModel `tfsdk:"parameters" json:"parameters,computed"`
+	Provider    types.String                                  `tfsdk:"provider" json:"provider,computed"`
 }
