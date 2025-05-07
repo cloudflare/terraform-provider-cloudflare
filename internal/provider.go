@@ -802,7 +802,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		account_permission_group.NewAccountPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
 		resource_group.NewResourceGroupsDataSource,
-		cloud_connector_rules.NewCloudConnectorRulesListDataSource,
+		cloud_connector_rules.NewCloudConnectorRulesDataSource,
 		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
 		leaked_credential_check.NewLeakedCredentialCheckDataSource,
 		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,

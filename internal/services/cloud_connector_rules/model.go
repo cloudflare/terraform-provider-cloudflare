@@ -15,7 +15,7 @@ type CloudConnectorRulesResultEnvelope struct {
 type CloudConnectorRulesModel struct {
 	ID          types.String                                                 `tfsdk:"id" json:"id,computed"`
 	ZoneID      types.String                                                 `tfsdk:"zone_id" path:"zone_id,required"`
-	Rules       *[]*CloudConnectorRulesRulesModel                            `tfsdk:"rules" json:"rules,optional"`
+	Rules       *[]*CloudConnectorRulesRulesModel                            `tfsdk:"rules" json:"rules,optional,no_refresh"`
 	Description types.String                                                 `tfsdk:"description" json:"description,computed"`
 	Enabled     types.Bool                                                   `tfsdk:"enabled" json:"enabled,computed"`
 	Expression  types.String                                                 `tfsdk:"expression" json:"expression,computed"`
