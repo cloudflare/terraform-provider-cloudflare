@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/cloudforce_one"
@@ -123,7 +124,7 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 	_, err = r.client.CloudforceOne.Requests.Assets.Update(
 		ctx,
 		data.RequestID.ValueString(),
-		string(data.ID.ValueInt64()),
+		strconv.FormatInt(data.ID.ValueInt64(), 10),
 		cloudforce_one.RequestAssetUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -160,7 +161,7 @@ func (r *CloudforceOneRequestAssetResource) Read(ctx context.Context, req resour
 	_, err := r.client.CloudforceOne.Requests.Assets.Get(
 		ctx,
 		data.RequestID.ValueString(),
-		string(data.ID.ValueInt64()),
+		strconv.FormatInt(data.ID.ValueInt64(), 10),
 		cloudforce_one.RequestAssetGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -199,7 +200,7 @@ func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req reso
 	_, err := r.client.CloudforceOne.Requests.Assets.Delete(
 		ctx,
 		data.RequestID.ValueString(),
-		string(data.ID.ValueInt64()),
+		strconv.FormatInt(data.ID.ValueInt64(), 10),
 		cloudforce_one.RequestAssetDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},

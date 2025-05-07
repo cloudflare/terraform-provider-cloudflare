@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/cloudforce_one"
@@ -159,7 +160,7 @@ func (r *CloudforceOneRequestMessageResource) Read(ctx context.Context, req reso
 	env := CloudforceOneRequestMessageResultEnvelope{*data}
 	_, err := r.client.CloudforceOne.Requests.Message.Get(
 		ctx,
-		string(data.ID.ValueInt64()),
+		strconv.FormatInt(data.ID.ValueInt64(), 10),
 		cloudforce_one.RequestMessageGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
