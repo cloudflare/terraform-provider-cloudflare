@@ -23,13 +23,13 @@ type ZeroTrustDLPDatasetModel struct {
 	Description     types.String                                                  `tfsdk:"description" json:"description,optional"`
 	CreatedAt       timetypes.RFC3339                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ID              types.String                                                  `tfsdk:"id" json:"id,computed"`
-	MaxCells        types.Int64                                                   `tfsdk:"max_cells" json:"max_cells,computed"`
+	MaxCells        types.Int64                                                   `tfsdk:"max_cells" json:"max_cells,computed,no_refresh"`
 	NumCells        types.Int64                                                   `tfsdk:"num_cells" json:"num_cells,computed"`
 	Status          types.String                                                  `tfsdk:"status" json:"status,computed"`
 	UpdatedAt       timetypes.RFC3339                                             `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	Version         types.Int64                                                   `tfsdk:"version" json:"version,computed"`
+	Version         types.Int64                                                   `tfsdk:"version" json:"version,computed,no_refresh"`
 	Columns         customfield.NestedObjectList[ZeroTrustDLPDatasetColumnsModel] `tfsdk:"columns" json:"columns,computed"`
-	Dataset         customfield.NestedObject[ZeroTrustDLPDatasetDatasetModel]     `tfsdk:"dataset" json:"dataset,computed"`
+	Dataset         customfield.NestedObject[ZeroTrustDLPDatasetDatasetModel]     `tfsdk:"dataset" json:"dataset,computed,no_refresh"`
 	Uploads         customfield.NestedObjectList[ZeroTrustDLPDatasetUploadsModel] `tfsdk:"uploads" json:"uploads,computed"`
 }
 

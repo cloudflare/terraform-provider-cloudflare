@@ -18,7 +18,7 @@ type ZeroTrustAccessGroupModel struct {
 	ZoneID    types.String                         `tfsdk:"zone_id" path:"zone_id,optional"`
 	Name      types.String                         `tfsdk:"name" json:"name,required"`
 	Include   *[]*ZeroTrustAccessGroupIncludeModel `tfsdk:"include" json:"include,required"`
-	IsDefault types.Bool                           `tfsdk:"is_default" json:"is_default,optional"`
+	IsDefault types.Bool                           `tfsdk:"is_default" json:"is_default,optional,no_refresh"`
 	Exclude   *[]*ZeroTrustAccessGroupExcludeModel `tfsdk:"exclude" json:"exclude,optional"`
 	Require   *[]*ZeroTrustAccessGroupRequireModel `tfsdk:"require" json:"require,optional"`
 	CreatedAt timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

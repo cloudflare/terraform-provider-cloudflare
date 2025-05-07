@@ -16,21 +16,21 @@ type MagicWANIPSECTunnelResultEnvelope struct {
 type MagicWANIPSECTunnelModel struct {
 	ID                  types.String                                                          `tfsdk:"id" json:"id,computed"`
 	AccountID           types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
-	CloudflareEndpoint  types.String                                                          `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint,required"`
-	InterfaceAddress    types.String                                                          `tfsdk:"interface_address" json:"interface_address,required"`
-	Name                types.String                                                          `tfsdk:"name" json:"name,required"`
-	CustomerEndpoint    types.String                                                          `tfsdk:"customer_endpoint" json:"customer_endpoint,optional"`
-	Description         types.String                                                          `tfsdk:"description" json:"description,optional"`
-	PSK                 types.String                                                          `tfsdk:"psk" json:"psk,optional"`
-	ReplayProtection    types.Bool                                                            `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
-	HealthCheck         customfield.NestedObject[MagicWANIPSECTunnelHealthCheckModel]         `tfsdk:"health_check" json:"health_check,computed_optional"`
-	AllowNullCipher     types.Bool                                                            `tfsdk:"allow_null_cipher" json:"allow_null_cipher,computed"`
-	CreatedOn           timetypes.RFC3339                                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Modified            types.Bool                                                            `tfsdk:"modified" json:"modified,computed"`
-	ModifiedOn          timetypes.RFC3339                                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	CloudflareEndpoint  types.String                                                          `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint,required,no_refresh"`
+	InterfaceAddress    types.String                                                          `tfsdk:"interface_address" json:"interface_address,required,no_refresh"`
+	Name                types.String                                                          `tfsdk:"name" json:"name,required,no_refresh"`
+	CustomerEndpoint    types.String                                                          `tfsdk:"customer_endpoint" json:"customer_endpoint,optional,no_refresh"`
+	Description         types.String                                                          `tfsdk:"description" json:"description,optional,no_refresh"`
+	PSK                 types.String                                                          `tfsdk:"psk" json:"psk,optional,no_refresh"`
+	ReplayProtection    types.Bool                                                            `tfsdk:"replay_protection" json:"replay_protection,computed_optional,no_refresh"`
+	HealthCheck         customfield.NestedObject[MagicWANIPSECTunnelHealthCheckModel]         `tfsdk:"health_check" json:"health_check,computed_optional,no_refresh"`
+	AllowNullCipher     types.Bool                                                            `tfsdk:"allow_null_cipher" json:"allow_null_cipher,computed,no_refresh"`
+	CreatedOn           timetypes.RFC3339                                                     `tfsdk:"created_on" json:"created_on,computed,no_refresh" format:"date-time"`
+	Modified            types.Bool                                                            `tfsdk:"modified" json:"modified,computed,no_refresh"`
+	ModifiedOn          timetypes.RFC3339                                                     `tfsdk:"modified_on" json:"modified_on,computed,no_refresh" format:"date-time"`
 	IPSECTunnel         customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelModel]         `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel,computed"`
-	ModifiedIPSECTunnel customfield.NestedObject[MagicWANIPSECTunnelModifiedIPSECTunnelModel] `tfsdk:"modified_ipsec_tunnel" json:"modified_ipsec_tunnel,computed"`
-	PSKMetadata         customfield.NestedObject[MagicWANIPSECTunnelPSKMetadataModel]         `tfsdk:"psk_metadata" json:"psk_metadata,computed"`
+	ModifiedIPSECTunnel customfield.NestedObject[MagicWANIPSECTunnelModifiedIPSECTunnelModel] `tfsdk:"modified_ipsec_tunnel" json:"modified_ipsec_tunnel,computed,no_refresh"`
+	PSKMetadata         customfield.NestedObject[MagicWANIPSECTunnelPSKMetadataModel]         `tfsdk:"psk_metadata" json:"psk_metadata,computed,no_refresh"`
 }
 
 func (m MagicWANIPSECTunnelModel) MarshalJSON() (data []byte, err error) {

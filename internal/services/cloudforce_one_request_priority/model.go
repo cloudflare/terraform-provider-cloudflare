@@ -15,10 +15,10 @@ type CloudforceOneRequestPriorityResultEnvelope struct {
 type CloudforceOneRequestPriorityModel struct {
 	ID            types.String      `tfsdk:"id" json:"id,computed"`
 	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
-	Priority      types.Int64       `tfsdk:"priority" json:"priority,required"`
-	Requirement   types.String      `tfsdk:"requirement" json:"requirement,required"`
+	Priority      types.Int64       `tfsdk:"priority" json:"priority,required,no_refresh"`
+	Requirement   types.String      `tfsdk:"requirement" json:"requirement,required,no_refresh"`
 	TLP           types.String      `tfsdk:"tlp" json:"tlp,required"`
-	Labels        *[]types.String   `tfsdk:"labels" json:"labels,required"`
+	Labels        *[]types.String   `tfsdk:"labels" json:"labels,required,no_refresh"`
 	Completed     timetypes.RFC3339 `tfsdk:"completed" json:"completed,computed" format:"date-time"`
 	Content       types.String      `tfsdk:"content" json:"content,computed"`
 	Created       timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`

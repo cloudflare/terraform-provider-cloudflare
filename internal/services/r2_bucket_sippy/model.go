@@ -31,15 +31,15 @@ func (m R2BucketSippyModel) MarshalJSONForUpdate(state R2BucketSippyModel) (data
 type R2BucketSippyDestinationModel struct {
 	AccessKeyID     types.String `tfsdk:"access_key_id" json:"accessKeyId,optional"`
 	CloudProvider   types.String `tfsdk:"cloud_provider" json:"provider,optional"`
-	SecretAccessKey types.String `tfsdk:"secret_access_key" json:"secretAccessKey,optional"`
+	SecretAccessKey types.String `tfsdk:"secret_access_key" json:"secretAccessKey,optional,no_refresh"`
 }
 
 type R2BucketSippySourceModel struct {
-	AccessKeyID     types.String `tfsdk:"access_key_id" json:"accessKeyId,optional"`
+	AccessKeyID     types.String `tfsdk:"access_key_id" json:"accessKeyId,optional,no_refresh"`
 	Bucket          types.String `tfsdk:"bucket" json:"bucket,optional"`
 	CloudProvider   types.String `tfsdk:"cloud_provider" json:"provider,optional"`
 	Region          types.String `tfsdk:"region" json:"region,optional"`
-	SecretAccessKey types.String `tfsdk:"secret_access_key" json:"secretAccessKey,optional"`
-	ClientEmail     types.String `tfsdk:"client_email" json:"clientEmail,optional"`
-	PrivateKey      types.String `tfsdk:"private_key" json:"privateKey,optional"`
+	SecretAccessKey types.String `tfsdk:"secret_access_key" json:"secretAccessKey,optional,no_refresh"`
+	ClientEmail     types.String `tfsdk:"client_email" json:"clientEmail,optional,no_refresh"`
+	PrivateKey      types.String `tfsdk:"private_key" json:"privateKey,optional,no_refresh"`
 }

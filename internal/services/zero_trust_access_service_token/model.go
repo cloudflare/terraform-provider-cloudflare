@@ -19,7 +19,7 @@ type ZeroTrustAccessServiceTokenModel struct {
 	Name         types.String      `tfsdk:"name" json:"name,required"`
 	Duration     types.String      `tfsdk:"duration" json:"duration,computed_optional"`
 	ClientID     types.String      `tfsdk:"client_id" json:"client_id,computed"`
-	ClientSecret types.String      `tfsdk:"client_secret" json:"client_secret,computed"`
+	ClientSecret types.String      `tfsdk:"client_secret" json:"client_secret,computed,no_refresh"`
 	CreatedAt    timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ExpiresAt    timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
 	LastSeenAt   timetypes.RFC3339 `tfsdk:"last_seen_at" json:"last_seen_at,computed" format:"date-time"`
