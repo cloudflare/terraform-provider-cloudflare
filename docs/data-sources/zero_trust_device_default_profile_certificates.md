@@ -24,4 +24,8 @@ data "cloudflare_zero_trust_device_default_profile_certificates" "example_zero_t
 
 - `zone_id` (String)
 
+### Read-Only
+
+- `enabled` (Boolean) The current status of the device policy certificate provisioning feature for WARP clients.
+
 

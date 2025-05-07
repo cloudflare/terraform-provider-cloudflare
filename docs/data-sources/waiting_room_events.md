@@ -24,7 +24,7 @@ data "cloudflare_waiting_room_events" "example_waiting_room_events" {
 ### Required
 
 - `waiting_room_id` (String)
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Optional
 

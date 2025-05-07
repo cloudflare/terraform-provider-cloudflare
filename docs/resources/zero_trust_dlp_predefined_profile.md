@@ -56,7 +56,7 @@ resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_
 - `id` (String) The ID of this resource.
 - `name` (String) The name of the profile.
 - `open_access` (Boolean) Whether this profile can be accessed by anyone.
-- `type` (String) Available values: "custom".
+- `type` (String) Available values: "custom", "predefined", "integration".
 - `updated_at` (String) When the profile was lasted updated.
 
 <a id="nestedatt--entries"></a>

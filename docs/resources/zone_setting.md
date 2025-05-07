@@ -32,7 +32,7 @@ resource "cloudflare_zone_setting" "example_zone_setting" {
 ### Optional
 
 - `id` (String) ID of the zone setting.
-Available values: "0rtt".
+Available values: "0rtt", "advanced_ddos", "aegis", "always_online", "always_use_https", "automatic_https_rewrites", "brotli", "browser_cache_ttl", "browser_check", "cache_level", "challenge_ttl", "ciphers", "cname_flattening", "development_mode", "early_hints", "edge_cache_ttl", "email_obfuscation", "h2_prioritization", "hotlink_protection", "http2", "http3", "image_resizing", "ip_geolocation", "ipv6", "max_upload", "min_tls_version", "mirage", "nel", "opportunistic_encryption", "opportunistic_onion", "orange_to_orange", "origin_error_page_pass_thru", "origin_h2_max_streams", "origin_max_http_version", "polish", "prefetch_preload", "privacy_pass", "proxy_read_timeout", "pseudo_ipv4", "replace_insecure_js", "response_buffering", "rocket_loader", "automatic_platform_optimization", "security_header", "security_level", "server_side_exclude", "sha1_support", "sort_query_string_for_cache", "ssl", "ssl_recommender", "tls_1_2_only", "tls_1_3", "tls_client_auth", "true_client_ip_header", "waf", "webp", "websockets".
 
 ### Read-Only
 

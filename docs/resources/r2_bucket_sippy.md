@@ -76,7 +76,7 @@ Optional:
 - `access_key_id` (String) Access Key ID of an IAM credential (ideally scoped to a single S3 bucket).
 - `bucket` (String) Name of the AWS S3 bucket.
 - `client_email` (String) Client email of an IAM credential (ideally scoped to a single GCS bucket).
-- `cloud_provider` (String) Available values: "aws".
+- `cloud_provider` (String) Available values: "aws", "gcs".
 - `private_key` (String, Sensitive) Private Key of an IAM credential (ideally scoped to a single GCS bucket).
 - `region` (String) Name of the AWS availability zone.
 - `secret_access_key` (String, Sensitive) Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket).

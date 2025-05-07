@@ -24,7 +24,7 @@ data "cloudflare_waiting_room_rules" "example_waiting_room_rules" {
 ### Required
 
 - `waiting_room_id` (String)
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
