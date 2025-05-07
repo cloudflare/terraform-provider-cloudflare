@@ -186,7 +186,28 @@ func (r *CloudConnectorRulesResource) Read(ctx context.Context, req resource.Rea
 }
 
 func (r *CloudConnectorRulesResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *CloudConnectorRulesModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	_, err := r.client.CloudConnector.Rules.Update(
+		ctx,
+		cloud_connector.RuleUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithRequestBody("application/json", []byte(`[]`)),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *CloudConnectorRulesResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
