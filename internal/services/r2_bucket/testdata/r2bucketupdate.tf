@@ -3,5 +3,5 @@
     account_id    = "%[2]s"
     name          = "%[1]s"
     location      = "ENAM"
-    storage_class = "Standard"
+    storage_class = "InfrequentAccess"
   }
