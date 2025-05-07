@@ -159,7 +159,7 @@ func (r *CloudforceOneRequestMessageResource) Read(ctx context.Context, req reso
 	env := CloudforceOneRequestMessageResultEnvelope{*data}
 	_, err := r.client.CloudforceOne.Requests.Message.Get(
 		ctx,
-		data.ID.ValueInt64(),
+		string(data.ID.ValueInt64()),
 		cloudforce_one.RequestMessageGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
