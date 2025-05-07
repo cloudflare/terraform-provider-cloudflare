@@ -91,6 +91,7 @@ func (r *CloudConnectorRulesResource) Create(ctx context.Context, req resource.C
 		return
 	}
 	data.Rules = env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,7 +123,7 @@ func (r *CloudConnectorRulesResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.CloudConnector.Rules.Update(
 		ctx,
 		cloud_connector.RuleUpdateParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -139,6 +140,7 @@ func (r *CloudConnectorRulesResource) Update(ctx context.Context, req resource.U
 		return
 	}
 	data.Rules = env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -157,7 +159,7 @@ func (r *CloudConnectorRulesResource) Read(ctx context.Context, req resource.Rea
 	_, err := r.client.CloudConnector.Rules.List(
 		ctx,
 		cloud_connector.RuleListParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -178,6 +180,7 @@ func (r *CloudConnectorRulesResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	data.Rules = env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -223,6 +226,7 @@ func (r *CloudConnectorRulesResource) ImportState(ctx context.Context, req resou
 		return
 	}
 	data.Rules = env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
