@@ -65,7 +65,15 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
+	var state *CreateR2BucketModel
+
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &state)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	dataBytes, err := state.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
@@ -115,21 +123,16 @@ func (r *R2BucketResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
 	res := new(http.Response)
 	env := R2BucketResultEnvelope{*data}
-	_, err = r.client.R2.Buckets.Edit(
+	_, err := r.client.R2.Buckets.Edit(
 		ctx,
 		data.Name.ValueString(),
 		r2.BucketEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
-		option.WithRequestBody("application/json", dataBytes),
+		option.WithHeader(consts.R2StorageClassHTTPHeaderName, data.StorageClass.ValueString()),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -185,6 +188,7 @@ func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, r
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	env.Result.Jurisdiction = data.Jurisdiction
 	data = &env.Result
 	data.ID = data.Name
 
@@ -267,6 +271,7 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	env.Result.Jurisdiction = data.Jurisdiction
 	data = &env.Result
 	data.ID = data.Name
 
