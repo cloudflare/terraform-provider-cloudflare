@@ -9,10 +9,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -44,6 +49,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"assets": schema.SingleNestedAttribute{
 				Description: "Configuration for assets within a Worker",
+				Computed:    true,
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"config": schema.SingleNestedAttribute{
@@ -105,6 +111,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"bindings": schema.ListNestedAttribute{
 				Description: "List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.",
+				Computed:    true,
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -188,8 +195,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"namespace_id": schema.StringAttribute{
-							Description: "Namespace identifier tag.",
-							Optional:    true,
+							Description:   "Namespace identifier tag.",
+							Computed:      true,
+							Optional:      true,
+							PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 						},
 						"script_name": schema.StringAttribute{
 							Description: "The script where the Durable Object is defined, if it is external to this Worker.",
@@ -291,13 +300,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"compatibility_date": schema.StringAttribute{
-				Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
-				Optional:    true,
+				Description:   "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
+				Computed:      true,
+				Optional:      true,
+				Default:       stringdefault.StaticString(""),
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"compatibility_flags": schema.ListAttribute{
-				Description: "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
-				Optional:    true,
-				ElementType: types.StringType,
+				Description:   "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
+				Computed:      true,
+				Optional:      true,
+				ElementType:   types.StringType,
+				Default:       listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 			},
 			"keep_assets": schema.BoolAttribute{
 				Description: "Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.",
@@ -310,8 +325,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"logpush": schema.BoolAttribute{
 				Description: "Whether Logpush is turned on for the Worker.",
-				Optional:    true,
 				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"main_module": schema.StringAttribute{
 				Description: "Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
@@ -319,6 +335,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"migrations": schema.SingleNestedAttribute{
 				Description: "Migrations to apply for Durable Objects associated with this Worker.",
+				Computed:    true,
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"deleted_classes": schema.ListAttribute{
@@ -433,6 +450,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"observability": schema.SingleNestedAttribute{
 				Description: "Observability settings for the Worker.",
+				Computed:    true,
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
@@ -463,10 +481,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"startup_time_ms": schema.Int64Attribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+				Computed:    true,
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"last_analyzed_at": schema.StringAttribute{
@@ -496,6 +516,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"tail_consumers": schema.ListNestedAttribute{
 				Description: "List of Workers that will consume logs from the attached Worker.",
+				Computed:    true,
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -516,16 +537,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"usage_model": schema.StringAttribute{
 				Description: "Usage model for the Worker invocations.\nAvailable values: \"standard\".",
-				Optional:    true,
 				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("standard"),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "When the script was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "When the script was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}
