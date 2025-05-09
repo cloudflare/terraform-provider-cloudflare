@@ -17,6 +17,7 @@ type parsedStructTag struct {
 	optional          bool
 	computed          bool
 	computed_optional bool
+	noRefresh         bool
 }
 
 func parseJSONStructTag(field reflect.StructField) (tag parsedStructTag, ok bool) {
@@ -45,6 +46,8 @@ func parseJSONStructTag(field reflect.StructField) (tag parsedStructTag, ok bool
 			tag.computed = true
 		case "computed_optional":
 			tag.computed_optional = true
+		case "no_refresh":
+			tag.noRefresh = true
 		}
 	}
 	return

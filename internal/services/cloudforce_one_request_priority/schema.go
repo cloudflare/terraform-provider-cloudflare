@@ -21,25 +21,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "UUID",
+				Description:   "UUID.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
-			"account_identifier": schema.StringAttribute{
-				Description:   "Identifier",
+			"account_id": schema.StringAttribute{
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"priority": schema.Int64Attribute{
-				Description: "Priority",
+				Description: "Priority.",
 				Required:    true,
 			},
 			"requirement": schema.StringAttribute{
-				Description: "Requirement",
+				Description: "Requirement.",
 				Required:    true,
 			},
 			"tlp": schema.StringAttribute{
-				Description: "The CISA defined Traffic Light Protocol (TLP)\nAvailable values: \"clear\", \"amber\", \"amber-strict\", \"green\", \"red\".",
+				Description: "The CISA defined Traffic Light Protocol (TLP).\nAvailable values: \"clear\", \"amber\", \"amber-strict\", \"green\", \"red\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -52,7 +52,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"labels": schema.ListAttribute{
-				Description: "List of labels",
+				Description: "List of labels.",
 				Required:    true,
 				ElementType: types.StringType,
 			},
@@ -61,7 +61,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"content": schema.StringAttribute{
-				Description: "Request content",
+				Description: "Request content.",
 				Computed:    true,
 			},
 			"created": schema.StringAttribute{
@@ -69,19 +69,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"message_tokens": schema.Int64Attribute{
-				Description: "Tokens for the request messages",
+				Description: "Tokens for the request messages.",
 				Computed:    true,
 			},
 			"readable_id": schema.StringAttribute{
-				Description: "Readable Request ID",
+				Description: "Readable Request ID.",
 				Computed:    true,
 			},
 			"request": schema.StringAttribute{
-				Description: "Requested information from request",
+				Description: "Requested information from request.",
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Request Status\nAvailable values: \"open\", \"accepted\", \"reported\", \"approved\", \"completed\", \"declined\".",
+				Description: "Request Status.\nAvailable values: \"open\", \"accepted\", \"reported\", \"approved\", \"completed\", \"declined\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -95,11 +95,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"summary": schema.StringAttribute{
-				Description: "Brief description of the request",
+				Description: "Brief description of the request.",
 				Computed:    true,
 			},
 			"tokens": schema.Int64Attribute{
-				Description: "Tokens for the request",
+				Description: "Tokens for the request.",
 				Computed:    true,
 			},
 			"updated": schema.StringAttribute{

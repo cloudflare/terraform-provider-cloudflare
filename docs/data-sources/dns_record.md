@@ -49,7 +49,7 @@ data "cloudflare_dns_record" "example_dns_record" {
 - `tags_modified_on` (String) When the record tags were last modified. Omitted if there are no tags.
 - `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
 - `type` (String) Record type.
-Available values: "A".
+Available values: "A", "AAAA", "CAA", "CERT", "CNAME", "DNSKEY", "DS", "HTTPS", "LOC", "MX", "NAPTR", "NS", "OPENPGPKEY", "PTR", "SMIMEA", "SRV", "SSHFP", "SVCB", "TLSA", "TXT", "URI".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

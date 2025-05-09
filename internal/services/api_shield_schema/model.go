@@ -19,14 +19,14 @@ type APIShieldSchemaResultEnvelope struct {
 type APIShieldSchemaModel struct {
 	ZoneID            types.String                                                `tfsdk:"zone_id" path:"zone_id,required"`
 	SchemaID          types.String                                                `tfsdk:"schema_id" path:"schema_id,optional"`
-	File              types.String                                                `tfsdk:"file" json:"file,required"`
+	File              types.String                                                `tfsdk:"file" json:"file,required,no_refresh"`
 	Kind              types.String                                                `tfsdk:"kind" json:"kind,required"`
 	Name              types.String                                                `tfsdk:"name" json:"name,optional"`
-	ValidationEnabled types.String                                                `tfsdk:"validation_enabled" json:"validation_enabled,optional"`
+	ValidationEnabled types.String                                                `tfsdk:"validation_enabled" json:"validation_enabled,optional,no_refresh"`
 	CreatedAt         timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Source            types.String                                                `tfsdk:"source" json:"source,computed"`
-	Schema            customfield.NestedObject[APIShieldSchemaSchemaModel]        `tfsdk:"schema" json:"schema,computed"`
-	UploadDetails     customfield.NestedObject[APIShieldSchemaUploadDetailsModel] `tfsdk:"upload_details" json:"upload_details,computed"`
+	Schema            customfield.NestedObject[APIShieldSchemaSchemaModel]        `tfsdk:"schema" json:"schema,computed,no_refresh"`
+	UploadDetails     customfield.NestedObject[APIShieldSchemaUploadDetailsModel] `tfsdk:"upload_details" json:"upload_details,computed,no_refresh"`
 }
 
 func (r APIShieldSchemaModel) MarshalMultipart() (data []byte, contentType string, err error) {

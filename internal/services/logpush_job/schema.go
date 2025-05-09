@@ -89,6 +89,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Flag that indicates if the job is enabled.",
 				Optional:    true,
 			},
+			"filter": schema.StringAttribute{
+				Description: "The filters to select the events to include and/or remove from your logs. For more information, refer to [Filters](https://developers.cloudflare.com/logs/reference/filters/).",
+				Optional:    true,
+			},
 			"kind": schema.StringAttribute{
 				Description: "The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs. Currently, Edge Log Delivery is only supported for the `http_requests` dataset.\nAvailable values: \"edge\".",
 				Optional:    true,

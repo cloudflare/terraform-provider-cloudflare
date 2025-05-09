@@ -19,8 +19,8 @@ type ObservatoryScheduledTestModel struct {
 	ZoneID    types.String                                                    `tfsdk:"zone_id" path:"zone_id,required"`
 	Frequency types.String                                                    `tfsdk:"frequency" json:"frequency,computed"`
 	Region    types.String                                                    `tfsdk:"region" json:"region,computed"`
-	Schedule  customfield.NestedObject[ObservatoryScheduledTestScheduleModel] `tfsdk:"schedule" json:"schedule,computed"`
-	Test      customfield.NestedObject[ObservatoryScheduledTestTestModel]     `tfsdk:"test" json:"test,computed"`
+	Schedule  customfield.NestedObject[ObservatoryScheduledTestScheduleModel] `tfsdk:"schedule" json:"schedule,computed,no_refresh"`
+	Test      customfield.NestedObject[ObservatoryScheduledTestTestModel]     `tfsdk:"test" json:"test,computed,no_refresh"`
 }
 
 func (m ObservatoryScheduledTestModel) MarshalJSON() (data []byte, err error) {

@@ -7,6 +7,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+type WorkersScriptSubdomainResultEnvelope struct {
+	Result WorkersScriptSubdomainModel `json:"result"`
+}
+
 type WorkersScriptSubdomainModel struct {
 	AccountID       types.String `tfsdk:"account_id" path:"account_id,required"`
 	ScriptName      types.String `tfsdk:"script_name" path:"script_name,required"`

@@ -16,7 +16,7 @@ type WaitingRoomRulesModel struct {
 	ID            types.String                   `tfsdk:"id" json:"id,computed"`
 	WaitingRoomID types.String                   `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
 	ZoneID        types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
-	Rules         *[]*WaitingRoomRulesRulesModel `tfsdk:"rules" json:"rules,required"`
+	Rules         *[]*WaitingRoomRulesRulesModel `tfsdk:"rules" json:"rules,required,no_refresh"`
 	Action        types.String                   `tfsdk:"action" json:"action,computed"`
 	Description   types.String                   `tfsdk:"description" json:"description,computed"`
 	Enabled       types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`

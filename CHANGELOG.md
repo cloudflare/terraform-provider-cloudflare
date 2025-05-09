@@ -1,5 +1,46 @@
 # Changelog
 
+## 5.5.0 (2025-05-09)
+
+Full Changelog: [v5.4.0...v5.5.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.4.0...v5.5.0)
+
+### Features
+
+* **api:** api update ([736d315](https://github.com/cloudflare/terraform-provider-cloudflare/commit/736d315532c10bb1dfa40d5574ec7b9141c7e0b7))
+* **api:** api update ([0ae0584](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0ae058461089ed5221185bc16785fbb9f96230ea))
+* **api:** api update ([5f69644](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5f6964437e80f9adfba6414881a3b447a18a14e6))
+* **api:** api update ([275a65a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/275a65aefe0fa1df3b4cecfef35f78e9a84e4fe9))
+* **api:** api update ([51f1988](https://github.com/cloudflare/terraform-provider-cloudflare/commit/51f1988cd47bc99c0d73900f07f61bfcbf66272b))
+* **api:** api update ([7a7cce4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7a7cce48cce9473c1a8b527dc8d6ce9f4096335b))
+* **api:** manual updates ([8356001](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8356001958c00b90444088da60469d2e54be0bde))
+
+
+### Bug Fixes
+
+* **api:** fix path placeholders ([0964b9a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0964b9a2b34439d9ac45c26adddf7b106f02f5e7))
+* **cloud_connector_rules:** define upsert operations ([db4e2aa](https://github.com/cloudflare/terraform-provider-cloudflare/commit/db4e2aaae61bdd99bf4d02272ba5c1be95681065))
+* **cloud_connector_rules:** fix nested schema bodies ([#5559](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5559)) ([64edb91](https://github.com/cloudflare/terraform-provider-cloudflare/commit/64edb916cd0b35a1c8587069d2384cb233556067))
+* **cloud_connector_rules:** remove outdated warning ([#5560](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5560)) ([d7d6ad0](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d7d6ad0b1bfff08027025520e0c89aee15c70071))
+* **cloud_connector_rules:** reuse zone_id for anchor aliasing ([bb5cbf3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bb5cbf397f7f5c4c65a75982d73efe080abd66b1))
+* **cloud_connector:** alias read methods ([2df31d9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2df31d930ee0fd1a03ee34d2df486484e4d0d95d))
+* **cloudforce_one:** fix ID typings ([#5556](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5556)) ([8f30924](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8f30924a22cc651808db8c6e1ecef1c2322beede))
+* **cloudforce_one:** fix ID typings ([#5558](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5558)) ([6259852](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6259852a197bee1e7e38f90e1c3a658119f57a9a))
+* **docs:** ensure schema docstrings always match the correct schema ([120b0c0](https://github.com/cloudflare/terraform-provider-cloudflare/commit/120b0c01424bb58b0c65e25d7ed1f355317ec223))
+* only unmarshal attributes that exist on the read response schema during refresh ([6521853](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6521853a6ac417cbef0c7f997d1bc54a50c7e72b))
+* **r2_bucket:** fix handling of r2_bucket params ([#5562](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5562)) ([aa7ba48](https://github.com/cloudflare/terraform-provider-cloudflare/commit/aa7ba480e0b73d2da0771b96b44b4541ef4d0961))
+* **r2_bucket:** support editing attributes in place ([d0f7581](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d0f7581c7d98c4ee002101efc343d86d1eca497e))
+
+
+### Chores
+
+* **build:** update go.mod indirect dependencies ([b808655](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b80865549413d2c014c137971875728737962674))
+* **grit:** make state replacements more flexible ([94617a7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/94617a780eb11c92868b4ecb816b65711d93db7a))
+
+
+### Documentation
+
+* generate ([#5557](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5557)) ([0aba524](https://github.com/cloudflare/terraform-provider-cloudflare/commit/0aba5249212a7af4a4970f7ebb4cf2c49503fdc8))
+
 ## 5.4.0 (2025-05-05)
 
 Full Changelog: [v5.3.0...v5.4.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.3.0...v5.4.0)

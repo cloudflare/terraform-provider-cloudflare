@@ -19,39 +19,39 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
-				Description:   "Message ID",
+				Description:   "Message ID.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 			},
-			"account_identifier": schema.StringAttribute{
-				Description:   "Identifier",
+			"account_id": schema.StringAttribute{
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"request_identifier": schema.StringAttribute{
-				Description:   "UUID",
+			"request_id": schema.StringAttribute{
+				Description:   "UUID.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"content": schema.StringAttribute{
-				Description: "Content of message",
+				Description: "Content of message.",
 				Optional:    true,
 			},
 			"author": schema.StringAttribute{
-				Description: "Author of message",
+				Description: "Author of message.",
 				Computed:    true,
 			},
 			"created": schema.StringAttribute{
-				Description: "Message creation time",
+				Description: "Defines the message creation time.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"is_follow_on_request": schema.BoolAttribute{
-				Description: "Whether the message is a follow-on request",
+				Description: "Whether the message is a follow-on request.",
 				Computed:    true,
 			},
 			"updated": schema.StringAttribute{
-				Description: "Message last updated time",
+				Description: "Defines the message last updated time.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

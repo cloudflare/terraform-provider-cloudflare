@@ -17,7 +17,7 @@ type CallsTURNAppModel struct {
 	KeyID     types.String      `tfsdk:"key_id" path:"key_id,optional"`
 	Name      types.String      `tfsdk:"name" json:"name,computed_optional"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Key       types.String      `tfsdk:"key" json:"key,computed"`
+	Key       types.String      `tfsdk:"key" json:"key,computed,no_refresh"`
 	Modified  timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	UID       types.String      `tfsdk:"uid" json:"uid,computed"`
 }

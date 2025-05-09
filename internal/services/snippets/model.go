@@ -17,8 +17,8 @@ type SnippetsResultEnvelope struct {
 type SnippetsModel struct {
 	SnippetName types.String           `tfsdk:"snippet_name" path:"snippet_name,required"`
 	ZoneID      types.String           `tfsdk:"zone_id" path:"zone_id,required"`
-	Files       types.String           `tfsdk:"files" json:"files,optional"`
-	Metadata    *SnippetsMetadataModel `tfsdk:"metadata" json:"metadata,optional"`
+	Files       types.String           `tfsdk:"files" json:"files,optional,no_refresh"`
+	Metadata    *SnippetsMetadataModel `tfsdk:"metadata" json:"metadata,optional,no_refresh"`
 	CreatedOn   types.String           `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn  types.String           `tfsdk:"modified_on" json:"modified_on,computed"`
 }

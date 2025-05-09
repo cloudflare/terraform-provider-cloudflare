@@ -73,8 +73,9 @@ func (r *CloudforceOneRequestPriorityResource) Create(ctx context.Context, req r
 	env := CloudforceOneRequestPriorityResultEnvelope{*data}
 	_, err = r.client.CloudforceOne.Requests.Priority.New(
 		ctx,
-		data.AccountIdentifier.ValueString(),
-		cloudforce_one.RequestPriorityNewParams{},
+		cloudforce_one.RequestPriorityNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -120,9 +121,10 @@ func (r *CloudforceOneRequestPriorityResource) Update(ctx context.Context, req r
 	env := CloudforceOneRequestPriorityResultEnvelope{*data}
 	_, err = r.client.CloudforceOne.Requests.Priority.Update(
 		ctx,
-		data.AccountIdentifier.ValueString(),
 		data.ID.ValueString(),
-		cloudforce_one.RequestPriorityUpdateParams{},
+		cloudforce_one.RequestPriorityUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -155,8 +157,10 @@ func (r *CloudforceOneRequestPriorityResource) Read(ctx context.Context, req res
 	env := CloudforceOneRequestPriorityResultEnvelope{*data}
 	_, err := r.client.CloudforceOne.Requests.Priority.Get(
 		ctx,
-		data.AccountIdentifier.ValueString(),
 		data.ID.ValueString(),
+		cloudforce_one.RequestPriorityGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -191,8 +195,10 @@ func (r *CloudforceOneRequestPriorityResource) Delete(ctx context.Context, req r
 
 	_, err := r.client.CloudforceOne.Requests.Priority.Delete(
 		ctx,
-		data.AccountIdentifier.ValueString(),
 		data.ID.ValueString(),
+		cloudforce_one.RequestPriorityDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
@@ -206,28 +212,30 @@ func (r *CloudforceOneRequestPriorityResource) Delete(ctx context.Context, req r
 func (r *CloudforceOneRequestPriorityResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *CloudforceOneRequestPriorityModel = new(CloudforceOneRequestPriorityModel)
 
-	path_account_identifier := ""
-	path_priority_identifer := ""
+	path_account_id := ""
+	path_priority_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_identifier>/<priority_identifer>",
-		&path_account_identifier,
-		&path_priority_identifer,
+		"<account_id>/<priority_id>",
+		&path_account_id,
+		&path_priority_id,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.AccountIdentifier = types.StringValue(path_account_identifier)
-	data.ID = types.StringValue(path_priority_identifer)
+	data.AccountID = types.StringValue(path_account_id)
+	data.ID = types.StringValue(path_priority_id)
 
 	res := new(http.Response)
 	env := CloudforceOneRequestPriorityResultEnvelope{*data}
 	_, err := r.client.CloudforceOne.Requests.Priority.Get(
 		ctx,
-		path_account_identifier,
-		path_priority_identifer,
+		path_priority_id,
+		cloudforce_one.RequestPriorityGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

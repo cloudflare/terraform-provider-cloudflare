@@ -15,9 +15,9 @@ type AccountMemberResultEnvelope struct {
 type AccountMemberModel struct {
 	ID        types.String                                             `tfsdk:"id" json:"id,computed"`
 	AccountID types.String                                             `tfsdk:"account_id" path:"account_id,required"`
-	Email     types.String                                             `tfsdk:"email" json:"email,required"`
+	Email     types.String                                             `tfsdk:"email" json:"email,required,no_refresh"`
 	Status    types.String                                             `tfsdk:"status" json:"status,computed_optional"`
-	Roles     *[]types.String                                          `tfsdk:"roles" json:"roles,optional"`
+	Roles     *[]types.String                                          `tfsdk:"roles" json:"roles,optional,no_refresh"`
 	Policies  customfield.NestedObjectList[AccountMemberPoliciesModel] `tfsdk:"policies" json:"policies,computed_optional"`
 	User      customfield.NestedObject[AccountMemberUserModel]         `tfsdk:"user" json:"user,computed"`
 }

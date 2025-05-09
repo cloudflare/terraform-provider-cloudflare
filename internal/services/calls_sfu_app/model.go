@@ -18,7 +18,7 @@ type CallsSFUAppModel struct {
 	Name      types.String      `tfsdk:"name" json:"name,computed_optional"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Modified  timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
-	Secret    types.String      `tfsdk:"secret" json:"secret,computed"`
+	Secret    types.String      `tfsdk:"secret" json:"secret,computed,no_refresh"`
 	UID       types.String      `tfsdk:"uid" json:"uid,computed"`
 }
 

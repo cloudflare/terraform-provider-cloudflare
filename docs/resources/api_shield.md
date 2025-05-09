@@ -43,7 +43,7 @@ Required:
 
 - `name` (String) The name of the characteristic field, i.e., the header or cookie name.
 - `type` (String) The type of characteristic.
-Available values: "header", "cookie".
+Available values: "header", "cookie", "jwt".
 
 
 <a id="nestedatt--errors"></a>

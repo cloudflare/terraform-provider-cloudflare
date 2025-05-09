@@ -12,11 +12,11 @@ type UserResultEnvelope struct {
 }
 
 type UserModel struct {
-	Country   types.String `tfsdk:"country" json:"country,optional"`
-	FirstName types.String `tfsdk:"first_name" json:"first_name,optional"`
-	LastName  types.String `tfsdk:"last_name" json:"last_name,optional"`
-	Telephone types.String `tfsdk:"telephone" json:"telephone,optional"`
-	Zipcode   types.String `tfsdk:"zipcode" json:"zipcode,optional"`
+	Country   types.String `tfsdk:"country" json:"country,optional,no_refresh"`
+	FirstName types.String `tfsdk:"first_name" json:"first_name,optional,no_refresh"`
+	LastName  types.String `tfsdk:"last_name" json:"last_name,optional,no_refresh"`
+	Telephone types.String `tfsdk:"telephone" json:"telephone,optional,no_refresh"`
+	Zipcode   types.String `tfsdk:"zipcode" json:"zipcode,optional,no_refresh"`
 }
 
 func (m UserModel) MarshalJSON() (data []byte, err error) {

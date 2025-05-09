@@ -57,12 +57,18 @@ func (d *CloudforceOneRequestDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
+	params, diags := data.toReadParams(ctx)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	res := new(http.Response)
 	env := CloudforceOneRequestResultDataSourceEnvelope{*data}
 	_, err := d.client.CloudforceOne.Requests.Get(
 		ctx,
-		data.AccountIdentifier.ValueString(),
-		data.RequestIdentifier.ValueString(),
+		data.RequestID.ValueString(),
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

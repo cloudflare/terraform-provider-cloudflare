@@ -37,7 +37,7 @@ resource "cloudflare_zero_trust_dlp_entry" "example_zero_trust_dlp_entry" {
 
 ### Optional
 
-- `type` (String) Available values: "custom".
+- `type` (String) Available values: "custom", "predefined", "integration".
 
 ### Read-Only
 

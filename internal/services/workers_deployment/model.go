@@ -16,12 +16,12 @@ type WorkersDeploymentModel struct {
 	ID          types.String                                                    `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
 	ScriptName  types.String                                                    `tfsdk:"script_name" path:"script_name,required"`
-	Strategy    types.String                                                    `tfsdk:"strategy" json:"strategy,required"`
-	Versions    *[]*WorkersDeploymentVersionsModel                              `tfsdk:"versions" json:"versions,required"`
-	Annotations *WorkersDeploymentAnnotationsModel                              `tfsdk:"annotations" json:"annotations,optional"`
-	AuthorEmail types.String                                                    `tfsdk:"author_email" json:"author_email,computed"`
-	CreatedOn   types.String                                                    `tfsdk:"created_on" json:"created_on,computed"`
-	Source      types.String                                                    `tfsdk:"source" json:"source,computed"`
+	Strategy    types.String                                                    `tfsdk:"strategy" json:"strategy,required,no_refresh"`
+	Versions    *[]*WorkersDeploymentVersionsModel                              `tfsdk:"versions" json:"versions,required,no_refresh"`
+	Annotations *WorkersDeploymentAnnotationsModel                              `tfsdk:"annotations" json:"annotations,optional,no_refresh"`
+	AuthorEmail types.String                                                    `tfsdk:"author_email" json:"author_email,computed,no_refresh"`
+	CreatedOn   types.String                                                    `tfsdk:"created_on" json:"created_on,computed,no_refresh"`
+	Source      types.String                                                    `tfsdk:"source" json:"source,computed,no_refresh"`
 	Deployments customfield.NestedObjectList[WorkersDeploymentDeploymentsModel] `tfsdk:"deployments" json:"deployments,computed"`
 }
 

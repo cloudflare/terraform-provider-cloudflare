@@ -99,7 +99,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 										},
 										"type": schema.StringAttribute{
-											Description: `Available values: "Age".`,
+											Description: `Available values: "Age", "Date".`,
 											Required:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("Age", "Date"),
@@ -126,7 +126,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												Optional: true,
 											},
 											"type": schema.StringAttribute{
-												Description: `Available values: "Age".`,
+												Description: `Available values: "Age", "Date".`,
 												Required:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("Age", "Date"),

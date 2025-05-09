@@ -13,8 +13,8 @@ description: |-
 
 ```terraform
 resource "cloudflare_cloudforce_one_request_message" "example_cloudforce_one_request_message" {
-  account_identifier = "023e105f4ecef8ad9ca31a8372d0c353"
-  request_identifier = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  request_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
   content = "Can you elaborate on the type of DoS that occurred?"
 }
 ```
@@ -24,25 +24,25 @@ resource "cloudflare_cloudforce_one_request_message" "example_cloudforce_one_req
 
 ### Required
 
-- `account_identifier` (String) Identifier
-- `request_identifier` (String) UUID
+- `account_id` (String) Identifier.
+- `request_id` (String) UUID.
 
 ### Optional
 
-- `content` (String) Content of message
+- `content` (String) Content of message.
 
 ### Read-Only
 
-- `author` (String) Author of message
-- `created` (String) Message creation time
-- `id` (Number) Message ID
-- `is_follow_on_request` (Boolean) Whether the message is a follow-on request
-- `updated` (String) Message last updated time
+- `author` (String) Author of message.
+- `created` (String) Defines the message creation time.
+- `id` (Number) Message ID.
+- `is_follow_on_request` (Boolean) Whether the message is a follow-on request.
+- `updated` (String) Defines the message last updated time.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_cloudforce_one_request_message.example '<account_identifier>/<request_identifier>'
+$ terraform import cloudflare_cloudforce_one_request_message.example '<account_id>/<request_id>'
 ```

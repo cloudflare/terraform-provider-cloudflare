@@ -86,7 +86,7 @@ Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_err
 Optional:
 
 - `action` (String) The action to perform when the rule matches.
-Available values: "block".
+Available values: "block", "challenge", "compress_response", "execute", "js_challenge", "log", "managed_challenge", "redirect", "rewrite", "route", "score", "serve_error", "set_config", "skip", "set_cache_settings", "log_custom_field", "ddos_dynamic", "force_connection_close".
 - `action_parameters` (Attributes) The parameters configuring the rule's action. (see [below for nested schema](#nestedatt--rules--action_parameters))
 - `categories` (List of String) The categories of the rule.
 - `description` (String) An informative description of the rule.
@@ -373,7 +373,7 @@ Optional:
 
 Required:
 
-- `operation` (String) Available values: "remove".
+- `operation` (String) Available values: "remove", "add", "set".
 
 Optional:
 
@@ -560,7 +560,6 @@ Required:
 
 - `characteristics` (List of String) Characteristics of the request on which the ratelimiter counter will be incremented.
 - `period` (Number) Period in seconds over which the counter is being incremented.
-Available values: 10, 60, 600, 3600.
 
 Optional:
 

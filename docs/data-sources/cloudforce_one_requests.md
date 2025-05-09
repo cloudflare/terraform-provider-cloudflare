@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_cloudforce_one_requests" "example_cloudforce_one_requests" {
-  account_identifier = "023e105f4ecef8ad9ca31a8372d0c353"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }
 ```
 
@@ -22,7 +22,7 @@ data "cloudflare_cloudforce_one_requests" "example_cloudforce_one_requests" {
 
 ### Required
 
-- `account_identifier` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
@@ -37,19 +37,19 @@ data "cloudflare_cloudforce_one_requests" "example_cloudforce_one_requests" {
 
 Read-Only:
 
-- `completed` (String) Request completion time
-- `created` (String) Request creation time
-- `id` (String) UUID
-- `message_tokens` (Number) Tokens for the request messages
+- `completed` (String) Request completion time.
+- `created` (String) Request creation time.
+- `id` (String) UUID.
+- `message_tokens` (Number) Tokens for the request messages.
 - `priority` (String) Available values: "routine", "high", "urgent".
-- `readable_id` (String) Readable Request ID
-- `request` (String) Requested information from request
-- `status` (String) Request Status
+- `readable_id` (String) Readable Request ID.
+- `request` (String) Requested information from request.
+- `status` (String) Request Status.
 Available values: "open", "accepted", "reported", "approved", "completed", "declined".
-- `summary` (String) Brief description of the request
-- `tlp` (String) The CISA defined Traffic Light Protocol (TLP)
+- `summary` (String) Brief description of the request.
+- `tlp` (String) The CISA defined Traffic Light Protocol (TLP).
 Available values: "clear", "amber", "amber-strict", "green", "red".
-- `tokens` (Number) Tokens for the request
-- `updated` (String) Request last updated time
+- `tokens` (Number) Tokens for the request.
+- `updated` (String) Request last updated time.
 
 

@@ -5,34 +5,26 @@ package cloud_connector_rules
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*CloudConnectorRulesListDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*CloudConnectorRulesDataSource)(nil)
 
-func ListDataSourceSchema(ctx context.Context) schema.Schema {
+func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier.",
 				Required:    true,
 			},
-			"max_items": schema.Int64Attribute{
-				Description: "Max items to fetch, default: 1000",
-				Optional:    true,
-				Validators: []validator.Int64{
-					int64validator.AtLeast(0),
-				},
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
-			"result": schema.ListNestedAttribute{
-				Description: "The items returned by the data source",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[CloudConnectorRulesListResultDataSourceModel](ctx),
+			"rules": schema.ListNestedAttribute{
+				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -50,7 +42,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"parameters": schema.SingleNestedAttribute{
 							Description: "Parameters of Cloud Connector Rule",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectType[CloudConnectorRulesListParametersDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"host": schema.StringAttribute{
 									Description: "Host to perform Cloud Connection to",
@@ -77,10 +68,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *CloudConnectorRulesListDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = ListDataSourceSchema(ctx)
+func (d *CloudConnectorRulesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
-func (d *CloudConnectorRulesListDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *CloudConnectorRulesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
 }
