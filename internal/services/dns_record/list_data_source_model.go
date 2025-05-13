@@ -201,7 +201,7 @@ type DNSRecordsSettingsDataSourceModel struct {
 }
 
 type DNSRecordsDataDataSourceModel struct {
-	Flags         types.Dynamic `tfsdk:"flags" json:"flags,computed"`
+	Flags         types.Float64 `tfsdk:"flags" json:"flags,computed"`
 	Tag           types.String  `tfsdk:"tag" json:"tag,computed"`
 	Value         types.String  `tfsdk:"value" json:"value,computed"`
 	Algorithm     types.Float64 `tfsdk:"algorithm" json:"algorithm,computed"`

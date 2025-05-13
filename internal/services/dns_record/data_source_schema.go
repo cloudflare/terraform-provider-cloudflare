@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
@@ -17,7 +16,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*DNSRecordDataSource)(nil)
@@ -128,11 +126,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[DNSRecordDataDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
-					"flags": schema.DynamicAttribute{
+					"flags": schema.Float64Attribute{
 						Description: "Flags for the CAA record.",
 						Computed:    true,
-						Validators: []validator.Dynamic{
-							customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
+						Validators: []validator.Float64{
+							float64validator.AtLeast(0),
 						},
 					},
 					"tag": schema.StringAttribute{

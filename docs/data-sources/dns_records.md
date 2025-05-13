@@ -161,7 +161,7 @@ Read-Only:
 - `digest` (String) Digest.
 - `digest_type` (Number) Digest Type.
 - `fingerprint` (String) fingerprint.
-- `flags` (Dynamic) Flags for the CAA record.
+- `flags` (Number) Flags for the CAA record.
 - `key_tag` (Number) Key Tag.
 - `lat_degrees` (Number) Degrees of latitude.
 - `lat_direction` (String) Latitude direction.

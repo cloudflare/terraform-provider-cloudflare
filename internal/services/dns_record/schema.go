@@ -95,6 +95,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"flags": schema.Float64Attribute{
 						Description: "Flags for the CAA record.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.AtLeast(0),
+						},
 					},
 					"tag": schema.StringAttribute{
 						Description: "Name of the property controlled by this record (e.g.: issue, issuewild, iodef).",
