@@ -36,16 +36,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"region": schema.StringAttribute{
-				Description: "Region where this widget can be used.\nAvailable values: \"world\".",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("world"),
-				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-				Default:       stringdefault.StaticString("world"),
-			},
 			"mode": schema.StringAttribute{
 				Description: "Widget Mode\nAvailable values: \"non-interactive\", \"invisible\", \"managed\".",
 				Required:    true,
@@ -89,6 +79,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Do not show any Cloudflare branding on the widget (ENT only).",
 				Optional:    true,
 			},
+			"region": schema.StringAttribute{
+				Description: "Region where this widget can be used. This cannot be changed after creation.\nAvailable values: \"world\", \"china\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("world", "china"),
+				},
+				Default: stringdefault.StaticString("world"),
+			},
 			"created_on": schema.StringAttribute{
 				Description: "When the widget was created.",
 				Computed:    true,
@@ -102,6 +101,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"secret": schema.StringAttribute{
 				Description: "Secret key for this widget.",
 				Computed:    true,
+				Sensitive:   true,
 			},
 		},
 	}

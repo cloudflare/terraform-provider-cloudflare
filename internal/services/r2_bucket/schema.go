@@ -36,6 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"location": schema.StringAttribute{
 				Description: "Location of the bucket.\nAvailable values: \"apac\", \"eeur\", \"enam\", \"weur\", \"wnam\", \"oc\".",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -62,6 +63,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"creation_date": schema.StringAttribute{
 				Description: "Creation timestamp.",
 				Computed:    true,
+			},
+			"jurisdiction": schema.StringAttribute{
+				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"default",
+						"eu",
+						"fedramp",
+					),
+				},
+				Default: stringdefault.StaticString("default"),
 			},
 		},
 	}

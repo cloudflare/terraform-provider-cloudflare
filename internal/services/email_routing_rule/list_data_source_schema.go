@@ -81,10 +81,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"type": schema.StringAttribute{
-										Description: "Type of matcher.\nAvailable values: \"literal\".",
+										Description: "Type of matcher.\nAvailable values: \"all\", \"literal\".",
 										Computed:    true,
 										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive("literal"),
+											stringvalidator.OneOfCaseInsensitive("all", "literal"),
 										},
 									},
 									"field": schema.StringAttribute{

@@ -53,6 +53,11 @@ resource "cloudflare_workers_script" "example_workers_script" {
     observability = {
       enabled = true
       head_sampling_rate = 0.1
+      logs = {
+        enabled = true
+        invocation_logs = true
+        head_sampling_rate = 0.1
+      }
     }
     placement = {
       mode = "smart"

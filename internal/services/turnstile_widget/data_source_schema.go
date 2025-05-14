@@ -84,15 +84,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"region": schema.StringAttribute{
-				Description: "Region where this widget can be used.\nAvailable values: \"world\".",
+				Description: "Region where this widget can be used. This cannot be changed after creation.\nAvailable values: \"world\", \"china\".",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("world"),
+					stringvalidator.OneOfCaseInsensitive("world", "china"),
 				},
 			},
 			"secret": schema.StringAttribute{
 				Description: "Secret key for this widget.",
 				Computed:    true,
+				Sensitive:   true,
 			},
 			"domains": schema.ListAttribute{
 				Computed:    true,

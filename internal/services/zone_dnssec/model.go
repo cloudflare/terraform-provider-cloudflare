@@ -17,6 +17,7 @@ type ZoneDNSSECModel struct {
 	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	DNSSECMultiSigner types.Bool        `tfsdk:"dnssec_multi_signer" json:"dnssec_multi_signer,optional"`
 	DNSSECPresigned   types.Bool        `tfsdk:"dnssec_presigned" json:"dnssec_presigned,optional"`
+	DNSSECUseNsec3    types.Bool        `tfsdk:"dnssec_use_nsec3" json:"dnssec_use_nsec3,optional"`
 	Status            types.String      `tfsdk:"status" json:"status,optional"`
 	Algorithm         types.String      `tfsdk:"algorithm" json:"algorithm,computed"`
 	Digest            types.String      `tfsdk:"digest" json:"digest,computed"`

@@ -90,10 +90,10 @@ type WorkersScriptMetadataBindingsModel struct {
 	ID            types.String                                `tfsdk:"id" json:"id,optional"`
 	Namespace     types.String                                `tfsdk:"namespace" json:"namespace,optional"`
 	Outbound      *WorkersScriptMetadataBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
-	ClassName     types.String                                `tfsdk:"class_name" json:"class_name,optional"`
+	ClassName     types.String                                `tfsdk:"class_name" json:"class_name,computed_optional"`
 	Environment   types.String                                `tfsdk:"environment" json:"environment,optional"`
-	NamespaceID   types.String                                `tfsdk:"namespace_id" json:"namespace_id,optional"`
-	ScriptName    types.String                                `tfsdk:"script_name" json:"script_name,optional"`
+	NamespaceID   types.String                                `tfsdk:"namespace_id" json:"namespace_id,computed_optional"`
+	ScriptName    types.String                                `tfsdk:"script_name" json:"script_name,computed_optional"`
 	Json          types.String                                `tfsdk:"json" json:"json,optional"`
 	CertificateID types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
 	Text          types.String                                `tfsdk:"text" json:"text,optional"`
@@ -163,7 +163,14 @@ type WorkersScriptMetadataMigrationsStepsTransferredClassesModel struct {
 }
 
 type WorkersScriptMetadataObservabilityModel struct {
+	Enabled          types.Bool                                   `tfsdk:"enabled" json:"enabled,required"`
+	HeadSamplingRate types.Float64                                `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Logs             *WorkersScriptMetadataObservabilityLogsModel `tfsdk:"logs" json:"logs,optional"`
+}
+
+type WorkersScriptMetadataObservabilityLogsModel struct {
 	Enabled          types.Bool    `tfsdk:"enabled" json:"enabled,required"`
+	InvocationLogs   types.Bool    `tfsdk:"invocation_logs" json:"invocation_logs,required"`
 	HeadSamplingRate types.Float64 `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
 }
 

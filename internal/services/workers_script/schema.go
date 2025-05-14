@@ -177,6 +177,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"class_name": schema.StringAttribute{
 									Description: "The exported class name of the Durable Object.",
+									Computed:    true,
 									Optional:    true,
 								},
 								"environment": schema.StringAttribute{
@@ -185,10 +186,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"namespace_id": schema.StringAttribute{
 									Description: "Namespace identifier tag.",
+									Computed:    true,
 									Optional:    true,
 								},
 								"script_name": schema.StringAttribute{
 									Description: "The script where the Durable Object is defined, if it is external to this Worker.",
+									Computed:    true,
 									Optional:    true,
 								},
 								"json": schema.StringAttribute{
@@ -437,6 +440,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"head_sampling_rate": schema.Float64Attribute{
 								Description: "The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
 								Optional:    true,
+							},
+							"logs": schema.SingleNestedAttribute{
+								Description: "Log settings for the Worker.",
+								Optional:    true,
+								Attributes: map[string]schema.Attribute{
+									"enabled": schema.BoolAttribute{
+										Description: "Whether logs are enabled for the Worker.",
+										Required:    true,
+									},
+									"invocation_logs": schema.BoolAttribute{
+										Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
+										Required:    true,
+									},
+									"head_sampling_rate": schema.Float64Attribute{
+										Description: "The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
+										Optional:    true,
+									},
+								},
 							},
 						},
 					},

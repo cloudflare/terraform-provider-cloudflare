@@ -28,6 +28,17 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Creation timestamp.",
 				Computed:    true,
 			},
+			"jurisdiction": schema.StringAttribute{
+				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"default",
+						"eu",
+						"fedramp",
+					),
+				},
+			},
 			"location": schema.StringAttribute{
 				Description: "Location of the bucket.\nAvailable values: \"apac\", \"eeur\", \"enam\", \"weur\", \"wnam\", \"oc\".",
 				Computed:    true,

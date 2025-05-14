@@ -24,7 +24,7 @@ type LogpushDatasetJobDataSourceModel struct {
 	Dataset                  types.String                                                            `tfsdk:"dataset" json:"dataset,computed"`
 	DestinationConf          types.String                                                            `tfsdk:"destination_conf" json:"destination_conf,computed"`
 	Enabled                  types.Bool                                                              `tfsdk:"enabled" json:"enabled,computed"`
-	ErrorMessage             timetypes.RFC3339                                                       `tfsdk:"error_message" json:"error_message,computed" format:"date-time"`
+	ErrorMessage             types.String                                                            `tfsdk:"error_message" json:"error_message,computed"`
 	Frequency                types.String                                                            `tfsdk:"frequency" json:"frequency,computed"`
 	ID                       types.Int64                                                             `tfsdk:"id" json:"id,computed"`
 	Kind                     types.String                                                            `tfsdk:"kind" json:"kind,computed"`
