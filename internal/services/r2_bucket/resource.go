@@ -125,7 +125,7 @@ func (r *R2BucketResource) Update(ctx context.Context, req resource.UpdateReques
 	_, err = r.client.R2.Buckets.New(
 		ctx,
 		r2.BucketNewParams{
-			AccountID: cloudflare.F(data.Name.ValueString()),
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
 		option.WithRequestBody("application/json", dataBytes),
