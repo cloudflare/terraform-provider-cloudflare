@@ -271,7 +271,11 @@ cloudflare_terraform_v5()
 
 ## cloudflare_worker_secret
 
-- Renamed to `cloudflare_workers_secret`
+This has been removed. Users should instead use the:
+
+- [Secrets Store](https://developers.cloudflare.com/secrets-store/) with the `secrets_store_secret` binding on the [cloudflare_workers_script resource](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_script)
+- `secret_text` binding
+- [Workers Secrets API](https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/secrets/)
 
 ## cloudflare_workers_for_platforms_namespace
 
@@ -585,23 +589,11 @@ resource "cloudflare_api_token" "example" {
 
 ## cloudflare_workers_secret
 
-- `secret_text` is now `text`.
+This has been removed. Users should instead use the:
 
-  Before
-
-  ```hcl
-  resource "cloudflare_workers_secret" "example" {
-    secret_text = "my_s3cr3t!"
-  }
-  ```
-
-  After
-
-  ```hcl
-  resource "cloudflare_workers_secret" "example" {
-    text = "my_s3cr3t!"
-  }
-  ```
+- [Secrets Store](https://developers.cloudflare.com/secrets-store/) with the `secrets_store_secret` binding on the [cloudflare_workers_script resource](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_script)
+- `secret_text` binding
+- [Workers Secrets API](https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/secrets/)
 
 ## cloudflare_workers_kv
 
