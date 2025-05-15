@@ -148,7 +148,7 @@ The header value will be interpreted as a json object similar to:
 - `scim_config` (Attributes) Configuration for provisioning to this application via SCIM. This is currently in closed beta. (see [below for nested schema](#nestedatt--scim_config))
 - `self_hosted_domains` (List of String, Deprecated) List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.
 - `service_auth_401_redirect` (Boolean) Returns a 401 status code when the request is blocked by a Service Auth policy.
-- `session_duration` (String) The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
+- `session_duration` (String) The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. Note: unsupported for infrastructure type applications.
 - `skip_app_launcher_login_page` (Boolean) Determines when to skip the App Launcher landing page.
 - `skip_interstitial` (Boolean) Enables automatic authentication through cloudflared.
 - `tags` (List of String) The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
