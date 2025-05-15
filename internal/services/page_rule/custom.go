@@ -3,7 +3,6 @@ package page_rule
 import (
 	"context"
 	"encoding/json"
-
 	"github.com/cloudflare/cloudflare-go/v4/page_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -124,7 +123,7 @@ type PageRuleActionsModel struct {
 	EdgeCacheTTL            types.Int64                                                  `tfsdk:"edge_cache_ttl" json:"edge_cache_ttl,optional"`
 	EmailObfuscation        types.String                                                 `tfsdk:"email_obfuscation" json:"email_obfuscation,optional"`
 	ExplicitCacheControl    types.String                                                 `tfsdk:"explicit_cache_control" json:"explicit_cache_control,optional"`
-	ForwardingURL           customfield.NestedObject[PageRuleActionsForwardingURLModel]  `tfsdk:"forwarding_url" json:"forwarding_url,optional"`
+	ForwardingURL           *PageRuleActionsForwardingURLModel                           `tfsdk:"forwarding_url" json:"forwarding_url,optional"`
 	HostHeaderOverride      types.String                                                 `tfsdk:"host_header_override" json:"host_header_override,optional"`
 	IPGeolocation           types.String                                                 `tfsdk:"ip_geolocation" json:"ip_geolocation,optional"`
 	Mirage                  types.String                                                 `tfsdk:"mirage" json:"mirage,optional"`
@@ -221,7 +220,10 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 		stringVal := m.CacheTTLByStatus.String()
 		ttl := map[string]interface{}{}
 
-		json.Unmarshal([]byte(stringVal), &ttl)
+		err = json.Unmarshal([]byte(stringVal), &ttl)
+		if err != nil {
+			return
+		}
 		value := map[string]any{}
 		for k, v := range ttl {
 			value[k] = v
@@ -250,14 +252,12 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 	if !m.ExplicitCacheControl.IsNull() {
 		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDExplicitCacheControl, "value": m.ExplicitCacheControl.ValueString()})
 	}
-	if !m.ForwardingURL.IsNull() {
-		var fw PageRuleActionsForwardingURLModel
-		m.ForwardingURL.As(context.TODO(), &fw, basetypes.ObjectAsOptions{})
+	if m.ForwardingURL != nil {
 		encoded = append(encoded, map[string]any{
 			"id": page_rules.PageRuleActionsIDForwardingURL,
 			"value": map[string]any{
-				"url":         fw.URL.ValueString(),
-				"status_code": fw.StatusCode.ValueInt64(),
+				"url":         m.ForwardingURL.URL.ValueString(),
+				"status_code": m.ForwardingURL.StatusCode.ValueInt64(),
 			},
 		})
 	}
