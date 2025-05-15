@@ -188,7 +188,6 @@ func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, r
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	env.Result.Jurisdiction = data.Jurisdiction
 	data = &env.Result
 	data.ID = data.Name
 
@@ -271,7 +270,6 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	env.Result.Jurisdiction = data.Jurisdiction
 	data = &env.Result
 	data.ID = data.Name
 

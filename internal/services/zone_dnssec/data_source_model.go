@@ -24,6 +24,7 @@ type ZoneDNSSECDataSourceModel struct {
 	DigestType        types.String      `tfsdk:"digest_type" json:"digest_type,computed"`
 	DNSSECMultiSigner types.Bool        `tfsdk:"dnssec_multi_signer" json:"dnssec_multi_signer,computed"`
 	DNSSECPresigned   types.Bool        `tfsdk:"dnssec_presigned" json:"dnssec_presigned,computed"`
+	DNSSECUseNsec3    types.Bool        `tfsdk:"dnssec_use_nsec3" json:"dnssec_use_nsec3,computed"`
 	DS                types.String      `tfsdk:"ds" json:"ds,computed"`
 	Flags             types.Float64     `tfsdk:"flags" json:"flags,computed"`
 	KeyTag            types.Float64     `tfsdk:"key_tag" json:"key_tag,computed"`

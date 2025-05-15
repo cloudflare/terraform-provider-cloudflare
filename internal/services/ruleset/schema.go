@@ -564,7 +564,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 								},
 								"phases": schema.ListAttribute{
-									Description: "A list of phases to skip the execution of. This option is incompatible with the rulesets options.",
+									Description: "A list of phases to skip the execution of. This option is incompatible with the rulesets option.",
 									Optional:    true,
 									Validators: []validator.List{
 										listvalidator.ValueStringsAre(
@@ -624,7 +624,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"ruleset": schema.StringAttribute{
-									Description: "A ruleset to skip the execution of. This option is incompatible with the rulesets, rules. It can be incompatible with phases options base on the phase of the ruleset.\nAvailable values: \"current\".",
+									Description: "A ruleset to skip the execution of. This option is incompatible with the rulesets option.\nAvailable values: \"current\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("current"),
