@@ -70,13 +70,13 @@ func TestAccCloudflareTunnelVirtualNetwork_Exists(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareTunnelVirtualNetworkSimple(rnd, rnd, accountID, rnd, false),
+				Config: testAccCloudflareTunnelVirtualNetworkSimple(rnd, rnd, accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareTunnelVirtualNetworkExists(name, &TunnelVirtualNetwork),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "comment", rnd),
-					resource.TestCheckResourceAttr(name, "is_default", "false"),
+					resource.TestCheckResourceAttr(name, "is_default_network", "false"),
 				),
 			},
 		},
@@ -128,14 +128,14 @@ func TestAccCloudflareTunnelVirtualNetwork_UpdateComment(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareTunnelVirtualNetworkSimple(rnd, rnd, accountID, rnd, false),
+				Config: testAccCloudflareTunnelVirtualNetworkSimple(rnd, rnd, accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareTunnelVirtualNetworkExists(name, &TunnelVirtualNetwork),
 					resource.TestCheckResourceAttr(name, "comment", rnd),
 				),
 			},
 			{
-				Config: testAccCloudflareTunnelVirtualNetworkSimple(rnd, rnd+"-updated", accountID, rnd, false),
+				Config: testAccCloudflareTunnelVirtualNetworkSimple(rnd, rnd+"-updated", accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareTunnelVirtualNetworkExists(name, &TunnelVirtualNetwork),
 					resource.TestCheckResourceAttr(name, "comment", rnd+"-updated"),
@@ -145,6 +145,44 @@ func TestAccCloudflareTunnelVirtualNetwork_UpdateComment(t *testing.T) {
 	})
 }
 
-func testAccCloudflareTunnelVirtualNetworkSimple(ID, comment, accountID, name string, isDefault bool) string {
-	return acctest.LoadTestCase("tunnelvirtualnetworksimple.tf", ID, comment, accountID, name, isDefault)
+func TestAccCloudflareTunnelVirtualNetwork_WithIsDefault(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_virtual_network.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var TunnelVirtualNetwork cloudflare.TunnelVirtualNetwork
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareTunnelVirtualNetworkDefault(rnd, rnd, accountID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareTunnelVirtualNetworkExists(name, &TunnelVirtualNetwork),
+					resource.TestCheckResourceAttr(name, "comment", rnd),
+					resource.TestCheckResourceAttr(name, "is_default_network", "false"),
+				),
+			},
+			{
+				Config: testAccCloudflareTunnelVirtualNetworkDefault(rnd, rnd, accountID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareTunnelVirtualNetworkExists(name, &TunnelVirtualNetwork),
+					resource.TestCheckResourceAttr(name, "comment", rnd),
+					resource.TestCheckResourceAttr(name, "is_default_network", "false"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCloudflareTunnelVirtualNetworkSimple(ID, comment, accountID, name string) string {
+	return acctest.LoadTestCase("tunnelvirtualnetworksimple.tf", ID, comment, accountID, name)
+}
+
+func testAccCloudflareTunnelVirtualNetworkDefault(ID, comment, accountID, name string) string {
+	return acctest.LoadTestCase("tunnelvirtualnetworkdefault.tf", ID, comment, accountID, name)
 }
