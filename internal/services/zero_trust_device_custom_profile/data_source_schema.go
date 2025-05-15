@@ -93,6 +93,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
 				Computed:    true,
 			},
+			"sccm_vpn_boundary_support": schema.BoolAttribute{
+				Description: "Determines whether the WARP client indicates to SCCM that it is inside a VPN boundary. (Windows only).",
+				Computed:    true,
+			},
 			"support_url": schema.StringAttribute{
 				Description: "The URL to launch when the Send Feedback button is clicked.",
 				Computed:    true,
