@@ -91,6 +91,7 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Create(ctx context.Co
 		return
 	}
 	data = &env.Result
+	data.IsDefault = data.IsDefaultNetwork
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -111,8 +112,6 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Update(ctx context.Co
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	isDefault := state.IsDefault
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -142,7 +141,7 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Update(ctx context.Co
 		return
 	}
 	data = &env.Result
-	data.IsDefault = isDefault
+	data.IsDefault = data.IsDefaultNetwork
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -155,8 +154,6 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Read(ctx context.Cont
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	isDefault := data.IsDefault
 
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredVirtualNetworkResultEnvelope{*data}
@@ -185,7 +182,7 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Read(ctx context.Cont
 		return
 	}
 	data = &env.Result
-	data.IsDefault = isDefault
+	data.IsDefault = data.IsDefaultNetwork
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -256,6 +253,7 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) ImportState(ctx conte
 		return
 	}
 	data = &env.Result
+	data.IsDefault = data.IsDefaultNetwork
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
