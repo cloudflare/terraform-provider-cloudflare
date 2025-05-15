@@ -189,7 +189,7 @@ func (r *WorkersScriptResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	err := r.client.Workers.Scripts.Delete(
+	_, err := r.client.Workers.Scripts.Delete(
 		ctx,
 		data.ScriptName.ValueString(),
 		workers.ScriptDeleteParams{

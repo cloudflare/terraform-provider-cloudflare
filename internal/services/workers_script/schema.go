@@ -43,7 +43,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"assets": schema.SingleNestedAttribute{
-						Description: "Configuration for assets within a Worker",
+						Description: "Configuration for assets within a Worker.",
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"config": schema.SingleNestedAttribute{
@@ -51,11 +51,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								Attributes: map[string]schema.Attribute{
 									"_headers": schema.StringAttribute{
-										Description: "The contents of a _headers file (used to attach custom headers on asset responses)",
+										Description: "The contents of a _headers file (used to attach custom headers on asset responses).",
 										Optional:    true,
 									},
 									"_redirects": schema.StringAttribute{
-										Description: "The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving)",
+										Description: "The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving).",
 										Optional:    true,
 									},
 									"html_handling": schema.StringAttribute{
@@ -551,7 +551,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"placement_mode": schema.StringAttribute{
-				Description:        "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\".",
+				Description:        `Available values: "smart".`,
 				Computed:           true,
 				DeprecationMessage: "This attribute is deprecated.",
 				Validators: []validator.String{
@@ -559,7 +559,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"placement_status": schema.StringAttribute{
-				Description:        "Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"SUCCESS\", \"UNSUPPORTED_APPLICATION\", \"INSUFFICIENT_INVOCATIONS\".",
+				Description:        `Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".`,
 				Computed:           true,
 				DeprecationMessage: "This attribute is deprecated.",
 				Validators: []validator.String{
