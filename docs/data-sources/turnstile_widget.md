@@ -48,9 +48,9 @@ Available values: "non-interactive", "invisible", "managed".
 set this to a meaningful string to make it easier to identify your
 widget, and where it is used.
 - `offlabel` (Boolean) Do not show any Cloudflare branding on the widget (ENT only).
-- `region` (String) Region where this widget can be used.
-Available values: "world".
-- `secret` (String) Secret key for this widget.
+- `region` (String) Region where this widget can be used. This cannot be changed after creation.
+Available values: "world", "china".
+- `secret` (String, Sensitive) Secret key for this widget.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

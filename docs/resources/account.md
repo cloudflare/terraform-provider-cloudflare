@@ -46,23 +46,8 @@ Available values: "standard", "enterprise".
 Optional:
 
 - `abuse_contact_email` (String) Sets an abuse contact email to notify for abuse reports.
-- `default_nameservers` (String, Deprecated) Specifies the default nameservers to be used for new zones added to this account.
-
-- `cloudflare.standard` for Cloudflare-branded nameservers
-- `custom.account` for account custom nameservers
-- `custom.tenant` for tenant custom nameservers
-
-See [Custom Nameservers](https://developers.cloudflare.com/dns/additional-options/custom-nameservers/)
-for more information.
-
-Deprecated in favor of [DNS Settings](https://developers.cloudflare.com/api/operations/dns-settings-for-an-account-update-dns-settings).
-Available values: "cloudflare.standard", "custom.account", "custom.tenant".
 - `enforce_twofactor` (Boolean) Indicates whether membership in this account requires that
 Two-Factor Authentication is enabled
-- `use_account_custom_ns_by_default` (Boolean, Deprecated) Indicates whether new zones should use the account-level custom
-nameservers by default.
-
-Deprecated in favor of [DNS Settings](https://developers.cloudflare.com/api/operations/dns-settings-for-an-account-update-dns-settings).
 
 
 <a id="nestedatt--unit"></a>
