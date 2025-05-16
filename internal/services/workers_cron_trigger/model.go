@@ -8,14 +8,14 @@ import (
 )
 
 type WorkersCronTriggerResultEnvelope struct {
-	Result *[]*WorkersCronTriggerSchedulesModel `json:"result"`
+	Result *WorkersCronTriggerModel `json:"result"`
 }
 
 type WorkersCronTriggerModel struct {
 	ID         types.String                         `tfsdk:"id" json:"-,computed"`
 	ScriptName types.String                         `tfsdk:"script_name" path:"script_name,required"`
 	AccountID  types.String                         `tfsdk:"account_id" path:"account_id,required"`
-	Schedules  *[]*WorkersCronTriggerSchedulesModel `tfsdk:"schedules" json:"schedules,required"`
+	Schedules  *[]*WorkersCronTriggerSchedulesModel `tfsdk:"schedules" json:"schedules,required,no_refresh"`
 }
 
 func (m WorkersCronTriggerModel) MarshalJSON() (data []byte, err error) {
@@ -27,11 +27,7 @@ func (m WorkersCronTriggerModel) MarshalJSONForUpdate(state WorkersCronTriggerMo
 }
 
 type WorkersCronTriggerSchedulesModel struct {
-	Cron types.String `tfsdk:"cron" json:"cron,required"`
-}
-
-type WorkersCronTriggerBodyModel struct {
+	Cron       types.String `tfsdk:"cron" json:"cron,required"`
 	CreatedOn  types.String `tfsdk:"created_on" json:"created_on,computed"`
-	Cron       types.String `tfsdk:"cron" json:"cron,optional"`
 	ModifiedOn types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 }
