@@ -18,9 +18,19 @@ type CloudforceOneRequestsResultListDataSourceEnvelope struct {
 }
 
 type CloudforceOneRequestsDataSourceModel struct {
-	AccountID types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
-	MaxItems  types.Int64                                                              `tfsdk:"max_items"`
-	Result    customfield.NestedObjectList[CloudforceOneRequestsResultDataSourceModel] `tfsdk:"result"`
+	AccountID       types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
+	Page            types.Int64                                                              `tfsdk:"page" json:"page,required"`
+	PerPage         types.Int64                                                              `tfsdk:"per_page" json:"per_page,required"`
+	CompletedAfter  timetypes.RFC3339                                                        `tfsdk:"completed_after" json:"completed_after,optional" format:"date-time"`
+	CompletedBefore timetypes.RFC3339                                                        `tfsdk:"completed_before" json:"completed_before,optional" format:"date-time"`
+	CreatedAfter    timetypes.RFC3339                                                        `tfsdk:"created_after" json:"created_after,optional" format:"date-time"`
+	CreatedBefore   timetypes.RFC3339                                                        `tfsdk:"created_before" json:"created_before,optional" format:"date-time"`
+	RequestType     types.String                                                             `tfsdk:"request_type" json:"request_type,optional"`
+	SortBy          types.String                                                             `tfsdk:"sort_by" json:"sort_by,optional"`
+	SortOrder       types.String                                                             `tfsdk:"sort_order" json:"sort_order,optional"`
+	Status          types.String                                                             `tfsdk:"status" json:"status,optional"`
+	MaxItems        types.Int64                                                              `tfsdk:"max_items"`
+	Result          customfield.NestedObjectList[CloudforceOneRequestsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *CloudforceOneRequestsDataSourceModel) toListParams(_ context.Context) (params cloudforce_one.RequestListParams, diags diag.Diagnostics) {

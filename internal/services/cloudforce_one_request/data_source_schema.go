@@ -6,9 +6,11 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -96,6 +98,68 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"filter": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"page": schema.Int64Attribute{
+						Description: "Page number of results.",
+						Required:    true,
+					},
+					"per_page": schema.Int64Attribute{
+						Description: "Number of results per page.",
+						Required:    true,
+					},
+					"completed_after": schema.StringAttribute{
+						Description: "Retrieve requests completed after this time.",
+						Optional:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"completed_before": schema.StringAttribute{
+						Description: "Retrieve requests completed before this time.",
+						Optional:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"created_after": schema.StringAttribute{
+						Description: "Retrieve requests created after this time.",
+						Optional:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"created_before": schema.StringAttribute{
+						Description: "Retrieve requests created before this time.",
+						Optional:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"request_type": schema.StringAttribute{
+						Description: "Requested information from request.",
+						Optional:    true,
+					},
+					"sort_by": schema.StringAttribute{
+						Description: "Field to sort results by.",
+						Optional:    true,
+					},
+					"sort_order": schema.StringAttribute{
+						Description: "Sort order (asc or desc).\nAvailable values: \"asc\", \"desc\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+						},
+					},
+					"status": schema.StringAttribute{
+						Description: "Request Status.\nAvailable values: \"open\", \"accepted\", \"reported\", \"approved\", \"completed\", \"declined\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"open",
+								"accepted",
+								"reported",
+								"approved",
+								"completed",
+								"declined",
+							),
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -105,5 +169,7 @@ func (d *CloudforceOneRequestDataSource) Schema(ctx context.Context, req datasou
 }
 
 func (d *CloudforceOneRequestDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("request_id"), path.MatchRoot("filter")),
+	}
 }
