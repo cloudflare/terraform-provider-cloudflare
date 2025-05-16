@@ -36,8 +36,8 @@ type StreamDataSourceModel struct {
 	Thumbnail             types.String                                             `tfsdk:"thumbnail" json:"thumbnail,computed"`
 	ThumbnailTimestampPct types.Float64                                            `tfsdk:"thumbnail_timestamp_pct" json:"thumbnailTimestampPct,computed"`
 	UID                   types.String                                             `tfsdk:"uid" json:"uid,computed"`
-	Uploaded              timetypes.RFC3339                                        `tfsdk:"uploaded" json:"uploaded,computed" format:"date-time"`
 	UploadExpiry          timetypes.RFC3339                                        `tfsdk:"upload_expiry" json:"uploadExpiry,computed" format:"date-time"`
+	Uploaded              timetypes.RFC3339                                        `tfsdk:"uploaded" json:"uploaded,computed" format:"date-time"`
 	AllowedOrigins        customfield.List[types.String]                           `tfsdk:"allowed_origins" json:"allowedOrigins,computed"`
 	Input                 customfield.NestedObject[StreamInputDataSourceModel]     `tfsdk:"input" json:"input,computed"`
 	Playback              customfield.NestedObject[StreamPlaybackDataSourceModel]  `tfsdk:"playback" json:"playback,computed"`
