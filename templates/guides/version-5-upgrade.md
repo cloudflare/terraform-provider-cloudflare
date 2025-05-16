@@ -1036,6 +1036,7 @@ This has been removed. Users should instead use the:
 
 - `settings` is now a single nested attribute (`settings = { ... }`) instead of a block (`settings { ... }`).
 - `ssl` is now a single nested attribute (`ssl = { ... }`) instead of a block (`ssl { ... }`).
+- `wait_for_ssl_pending_validation` was an abstratction in v4 that no longer exists in v5. There are no plans to provide support for this attribute in later versions. If you need this feature, you can watch for the value in a data source, then refresh the state after validation is confirmed.
 
 ## cloudflare_custom_ssl
 
