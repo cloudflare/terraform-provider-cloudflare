@@ -6,8 +6,10 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*CloudforceOneRequestMessageDataSource)(nil)
@@ -22,6 +24,35 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"request_id": schema.StringAttribute{
 				Description: "UUID.",
 				Required:    true,
+			},
+			"page": schema.Int64Attribute{
+				Description: "Page number of results.",
+				Required:    true,
+			},
+			"per_page": schema.Int64Attribute{
+				Description: "Number of results per page.",
+				Required:    true,
+			},
+			"after": schema.StringAttribute{
+				Description: "Retrieve mes  ges created after this time.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"before": schema.StringAttribute{
+				Description: "Retrieve messages created before this time.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"sort_by": schema.StringAttribute{
+				Description: "Field to sort results by.",
+				Optional:    true,
+			},
+			"sort_order": schema.StringAttribute{
+				Description: "Sort order (asc or desc).\nAvailable values: \"asc\", \"desc\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+				},
 			},
 			"author": schema.StringAttribute{
 				Description: "Author of message.",

@@ -23,6 +23,63 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Required:    true,
 			},
+			"page": schema.Int64Attribute{
+				Description: "Page number of results.",
+				Required:    true,
+			},
+			"per_page": schema.Int64Attribute{
+				Description: "Number of results per page.",
+				Required:    true,
+			},
+			"completed_after": schema.StringAttribute{
+				Description: "Retrieve requests completed after this time.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"completed_before": schema.StringAttribute{
+				Description: "Retrieve requests completed before this time.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"created_after": schema.StringAttribute{
+				Description: "Retrieve requests created after this time.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"created_before": schema.StringAttribute{
+				Description: "Retrieve requests created before this time.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"request_type": schema.StringAttribute{
+				Description: "Requested information from request.",
+				Optional:    true,
+			},
+			"sort_by": schema.StringAttribute{
+				Description: "Field to sort results by.",
+				Optional:    true,
+			},
+			"sort_order": schema.StringAttribute{
+				Description: "Sort order (asc or desc).\nAvailable values: \"asc\", \"desc\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+				},
+			},
+			"status": schema.StringAttribute{
+				Description: "Request Status.\nAvailable values: \"open\", \"accepted\", \"reported\", \"approved\", \"completed\", \"declined\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"open",
+						"accepted",
+						"reported",
+						"approved",
+						"completed",
+						"declined",
+					),
+				},
+			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,

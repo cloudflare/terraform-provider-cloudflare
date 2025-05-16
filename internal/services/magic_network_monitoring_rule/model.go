@@ -12,7 +12,7 @@ type MagicNetworkMonitoringRuleResultEnvelope struct {
 }
 
 type MagicNetworkMonitoringRuleModel struct {
-	ID                     types.String    `tfsdk:"id" json:"id,required"`
+	ID                     types.String    `tfsdk:"id" json:"id,computed"`
 	AccountID              types.String    `tfsdk:"account_id" path:"account_id,required"`
 	Name                   types.String    `tfsdk:"name" json:"name,required"`
 	AutomaticAdvertisement types.Bool      `tfsdk:"automatic_advertisement" json:"automatic_advertisement,optional"`
