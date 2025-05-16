@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -47,7 +48,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"queue_id": schema.StringAttribute{
 				Description:   "Queue ID.",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"rules": schema.ListNestedAttribute{
@@ -86,63 +87,109 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"queues": schema.ListNestedAttribute{
-				Description: "List of queues associated with the bucket.",
+			"enabled": schema.BoolAttribute{
+				Description: "Whether or not this rule is in effect.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[R2BucketEventNotificationQueuesModel](ctx),
+			},
+			"id": schema.StringAttribute{
+				Description: "Unique identifier for this rule.",
+				Computed:    true,
+			},
+			"abort_multipart_uploads_transition": schema.SingleNestedAttribute{
+				Description: "Transition to abort ongoing multipart uploads.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[R2BucketEventNotificationAbortMultipartUploadsTransitionModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"condition": schema.SingleNestedAttribute{
+						Description: "Condition for lifecycle transitions to apply after an object reaches an age in seconds.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[R2BucketEventNotificationAbortMultipartUploadsTransitionConditionModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"max_age": schema.Int64Attribute{
+								Computed: true,
+							},
+							"type": schema.StringAttribute{
+								Description: `Available values: "Age".`,
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("Age"),
+								},
+							},
+						},
+					},
+				},
+			},
+			"conditions": schema.SingleNestedAttribute{
+				Description: "Conditions that apply to all transitions of this rule.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[R2BucketEventNotificationConditionsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"prefix": schema.StringAttribute{
+						Description: "Transitions will only apply to objects/uploads in the bucket that start with the given prefix, an empty prefix can be provided to scope rule to all objects/uploads.",
+						Computed:    true,
+					},
+				},
+			},
+			"delete_objects_transition": schema.SingleNestedAttribute{
+				Description: "Transition to delete objects.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[R2BucketEventNotificationDeleteObjectsTransitionModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"condition": schema.SingleNestedAttribute{
+						Description: "Condition for lifecycle transitions to apply after an object reaches an age in seconds.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[R2BucketEventNotificationDeleteObjectsTransitionConditionModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"max_age": schema.Int64Attribute{
+								Computed: true,
+							},
+							"type": schema.StringAttribute{
+								Description: `Available values: "Age", "Date".`,
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("Age", "Date"),
+								},
+							},
+							"date": schema.StringAttribute{
+								Computed:   true,
+								CustomType: timetypes.RFC3339Type{},
+							},
+						},
+					},
+				},
+			},
+			"storage_class_transitions": schema.ListNestedAttribute{
+				Description: "Transitions to change the storage class of objects.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[R2BucketEventNotificationStorageClassTransitionsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"queue_id": schema.StringAttribute{
-							Description: "Queue ID.",
+						"condition": schema.SingleNestedAttribute{
+							Description: "Condition for lifecycle transitions to apply after an object reaches an age in seconds.",
 							Computed:    true,
-						},
-						"queue_name": schema.StringAttribute{
-							Description: "Name of the queue.",
-							Computed:    true,
-						},
-						"rules": schema.ListNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectListType[R2BucketEventNotificationQueuesRulesModel](ctx),
-							NestedObject: schema.NestedAttributeObject{
-								Attributes: map[string]schema.Attribute{
-									"actions": schema.ListAttribute{
-										Description: "Array of R2 object actions that will trigger notifications.",
-										Computed:    true,
-										Validators: []validator.List{
-											listvalidator.ValueStringsAre(
-												stringvalidator.OneOfCaseInsensitive(
-													"PutObject",
-													"CopyObject",
-													"DeleteObject",
-													"CompleteMultipartUpload",
-													"LifecycleDeletion",
-												),
-											),
-										},
-										CustomType:  customfield.NewListType[types.String](ctx),
-										ElementType: types.StringType,
-									},
-									"created_at": schema.StringAttribute{
-										Description: "Timestamp when the rule was created.",
-										Computed:    true,
-									},
-									"description": schema.StringAttribute{
-										Description: "A description that can be used to identify the event notification rule after creation.",
-										Computed:    true,
-									},
-									"prefix": schema.StringAttribute{
-										Description: "Notifications will be sent only for objects with this prefix.",
-										Computed:    true,
-									},
-									"rule_id": schema.StringAttribute{
-										Description: "Rule ID.",
-										Computed:    true,
-									},
-									"suffix": schema.StringAttribute{
-										Description: "Notifications will be sent only for objects with this suffix.",
-										Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[R2BucketEventNotificationStorageClassTransitionsConditionModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"max_age": schema.Int64Attribute{
+									Computed: true,
+								},
+								"type": schema.StringAttribute{
+									Description: `Available values: "Age", "Date".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("Age", "Date"),
 									},
 								},
+								"date": schema.StringAttribute{
+									Computed:   true,
+									CustomType: timetypes.RFC3339Type{},
+								},
+							},
+						},
+						"storage_class": schema.StringAttribute{
+							Description: `Available values: "InfrequentAccess".`,
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("InfrequentAccess"),
 							},
 						},
 					},
