@@ -7,14 +7,31 @@ import (
 	"mime/multipart"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/jinzhu/copier"
 )
 
+type WorkersServiceResultEnvelope struct {
+	Result WorkersServiceModel `json:"result"`
+}
+
 type WorkersScriptResultEnvelope struct {
 	Result WorkersScriptModel `json:"result"`
+}
+
+type WorkersScriptMetadataResultEnvelope struct {
+	Result WorkersScriptMetadataModel `json:"result"`
+}
+
+type WorkersServiceModel struct {
+	DefaultEnvironment WorkersEnvironmentModel `json:"default_environment"`
+}
+
+type WorkersEnvironmentModel struct {
+	Script WorkersScriptModel `json:"script"`
 }
 
 type WorkersScriptModel struct {
@@ -62,21 +79,21 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, contentType string,
 }
 
 type WorkersScriptMetadataModel struct {
-	Assets             *WorkersScriptMetadataAssetsModel        `tfsdk:"assets" json:"assets,optional"`
-	Bindings           *[]*WorkersScriptMetadataBindingsModel   `tfsdk:"bindings" json:"bindings,optional"`
-	BodyPart           types.String                             `tfsdk:"body_part" json:"body_part,optional"`
-	CompatibilityDate  types.String                             `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
-	CompatibilityFlags *[]types.String                          `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
-	KeepAssets         types.Bool                               `tfsdk:"keep_assets" json:"keep_assets,optional"`
-	KeepBindings       *[]types.String                          `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
-	Logpush            types.Bool                               `tfsdk:"logpush" json:"logpush,computed_optional"`
-	MainModule         types.String                             `tfsdk:"main_module" json:"main_module,optional"`
-	Migrations         *WorkersScriptMetadataMigrationsModel    `tfsdk:"migrations" json:"migrations,optional"`
-	Observability      *WorkersScriptMetadataObservabilityModel `tfsdk:"observability" json:"observability,optional"`
-	Placement          *WorkersScriptMetadataPlacementModel     `tfsdk:"placement" json:"placement,optional"`
+	Assets             *WorkersScriptMetadataAssetsModel                                `tfsdk:"assets" json:"assets,optional"`
+	Bindings           customfield.NestedObjectList[WorkersScriptMetadataBindingsModel] `tfsdk:"bindings" json:"bindings,computed_optional"`
+	BodyPart           types.String                                                     `tfsdk:"body_part" json:"body_part,optional"`
+	CompatibilityDate  types.String                                                     `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
+	CompatibilityFlags customfield.List[types.String]                                   `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
+	KeepAssets         types.Bool                                                       `tfsdk:"keep_assets" json:"keep_assets,optional"`
+	KeepBindings       *[]types.String                                                  `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
+	Logpush            types.Bool                                                       `tfsdk:"logpush" json:"logpush,computed_optional"`
+	MainModule         types.String                                                     `tfsdk:"main_module" json:"main_module,optional"`
+	Migrations         customfield.NestedObject[WorkersScriptMetadataMigrationsModel]   `tfsdk:"migrations" json:"migrations,computed_optional"`
+	Observability      *WorkersScriptMetadataObservabilityModel                         `tfsdk:"observability" json:"observability,optional"`
+	Placement          customfield.NestedObject[WorkersScriptMetadataPlacementModel]    `tfsdk:"placement" json:"placement,computed_optional"`
 	// Tags               *[]types.String                                                       `tfsdk:"tags" json:"tags,optional"`
-	TailConsumers *[]*WorkersScriptMetadataTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers,optional"`
-	UsageModel    types.String                                `tfsdk:"usage_model" json:"usage_model,computed_optional"`
+	TailConsumers customfield.NestedObjectList[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
+	UsageModel    types.String                                                          `tfsdk:"usage_model" json:"usage_model,computed_optional"`
 }
 
 type WorkersScriptMetadataAssetsModel struct {
