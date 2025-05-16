@@ -10,10 +10,10 @@ resource "cloudflare_workers_cron_trigger" "%[1]s" {
 	script_name = "mute-truth-fdb1" # cloudflare_workers_script.%[1]s.name
 	schedules   = [
   	{
-   	  cron = "*/5 * * * *",      # every 5 minutes
+   	  cron = "*/5 * * * *"     # every 5 minutes
   	},
   	{
-  		cron = "10 7 * * mon-fri", # 7:10am every weekday
+  		cron = "10 7 * * mon-fri" # 7:10am every weekday
   	}
 	]
 }

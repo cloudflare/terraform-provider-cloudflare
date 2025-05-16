@@ -22,7 +22,7 @@ data "cloudflare_hyperdrive_configs" "example_hyperdrive_configs" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Define configurations using a unique string identifier.
 
 ### Optional
 
@@ -38,9 +38,9 @@ data "cloudflare_hyperdrive_configs" "example_hyperdrive_configs" {
 Read-Only:
 
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--result--caching))
-- `created_on` (String) When the Hyperdrive configuration was created.
-- `id` (String) Identifier
-- `modified_on` (String) When the Hyperdrive configuration was last modified.
+- `created_on` (String) Defines the creation time of the Hyperdrive configuration.
+- `id` (String) Define configurations using a unique string identifier.
+- `modified_on` (String) Defines the last modified time of the Hyperdrive configuration.
 - `mtls` (Attributes) (see [below for nested schema](#nestedatt--result--mtls))
 - `name` (String)
 - `origin` (Attributes) (see [below for nested schema](#nestedatt--result--origin))
@@ -50,9 +50,9 @@ Read-Only:
 
 Read-Only:
 
-- `disabled` (Boolean) When set to true, disables the caching of SQL responses. (Default: false)
-- `max_age` (Number) When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)
-- `stale_while_revalidate` (Number) When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)
+- `disabled` (Boolean) Set to true to disable caching of SQL responses. Default is false.
+- `max_age` (Number) Specify the maximum duration items should persist in the cache. Not returned if set to the default (60).
+- `stale_while_revalidate` (Number) Specify the number of seconds the cache may serve a stale response. Omitted if set to the default (15).
 
 
 <a id="nestedatt--result--mtls"></a>
@@ -60,9 +60,9 @@ Read-Only:
 
 Read-Only:
 
-- `ca_certificate_id` (String) CA certificate ID
-- `mtls_certificate_id` (String) mTLS certificate ID
-- `sslmode` (String) SSL mode used for CA verification. Must be 'require', 'verify-ca', or 'verify-full'
+- `ca_certificate_id` (String) Define CA certificate ID obtained after uploading CA cert.
+- `mtls_certificate_id` (String) Define mTLS certificate ID obtained after uploading client cert.
+- `sslmode` (String) Set SSL mode to 'require', 'verify-ca', or 'verify-full' to verify the CA.
 
 
 <a id="nestedatt--result--origin"></a>
@@ -70,14 +70,14 @@ Read-Only:
 
 Read-Only:
 
-- `access_client_id` (String) The Client ID of the Access token to use when connecting to the origin database.
-- `access_client_secret` (String, Sensitive) The Client Secret of the Access token to use when connecting to the origin database. This value is write-only and never returned by the API.
-- `database` (String) The name of your origin database.
-- `host` (String) The host (hostname or IP) of your origin database.
-- `password` (String, Sensitive) The password required to access your origin database. This value is write-only and never returned by the API.
-- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
+- `access_client_id` (String) Defines the Client ID of the Access token to use when connecting to the origin database.
+- `access_client_secret` (String, Sensitive) Defines the Client Secret of the Access Token to use when connecting to the origin database. The API never returns this write-only value.
+- `database` (String) Set the name of your origin database.
+- `host` (String) Defines the host (hostname or IP) of your origin database.
+- `password` (String, Sensitive) Set the password needed to access your origin database. The API never returns this write-only value.
+- `port` (Number) Defines the port (default: 5432 for Postgres) of your origin database.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
 Available values: "postgres", "postgresql", "mysql".
-- `user` (String) The user of your origin database.
+- `user` (String) Set the user of your origin database.
 
 

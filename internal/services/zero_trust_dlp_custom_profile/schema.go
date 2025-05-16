@@ -129,7 +129,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Required: true,
 									},
 									"entry_type": schema.StringAttribute{
-										Description: `Available values: "custom".`,
+										Description: `Available values: "custom", "predefined", "integration", "exact_data".`,
 										Required:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -228,7 +228,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required: true,
 						},
 						"entry_type": schema.StringAttribute{
-							Description: `Available values: "custom".`,
+							Description: `Available values: "custom", "predefined", "integration", "exact_data".`,
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -261,7 +261,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "custom".`,
+				Description: `Available values: "custom", "predefined", "integration".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

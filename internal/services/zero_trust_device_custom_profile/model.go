@@ -31,6 +31,7 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	LANAllowMinutes            types.Float64                                                                  `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional"`
 	LANAllowSubnetSize         types.Float64                                                                  `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional"`
 	RegisterInterfaceIPWithDNS types.Bool                                                                     `tfsdk:"register_interface_ip_with_dns" json:"register_interface_ip_with_dns,optional"`
+	SccmVpnBoundarySupport     types.Bool                                                                     `tfsdk:"sccm_vpn_boundary_support" json:"sccm_vpn_boundary_support,optional"`
 	SupportURL                 types.String                                                                   `tfsdk:"support_url" json:"support_url,optional"`
 	SwitchLocked               types.Bool                                                                     `tfsdk:"switch_locked" json:"switch_locked,optional"`
 	TunnelProtocol             types.String                                                                   `tfsdk:"tunnel_protocol" json:"tunnel_protocol,optional"`

@@ -36,7 +36,7 @@ resource "cloudflare_zero_trust_device_posture_integration" "example_zero_trust_
 - `interval` (String) The interval between each posture check with the third-party API. Use `m` for minutes (e.g. `5m`) and `h` for hours (e.g. `12h`).
 - `name` (String) The name of the device posture integration.
 - `type` (String) The type of device posture integration.
-Available values: "workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolide", "tanium", "sentinelone_s2s", "custom_s2s".
+Available values: "workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolide", "tanium_s2s", "sentinelone_s2s", "custom_s2s".
 
 ### Read-Only
 
@@ -47,8 +47,8 @@ Available values: "workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolid
 
 Optional:
 
-- `access_client_id` (String) If present, this id will be passed in the `CF-Access-Client-ID` header when hitting the `api_url`
-- `access_client_secret` (String, Sensitive) If present, this secret will be passed in the `CF-Access-Client-Secret` header when hitting the `api_url`
+- `access_client_id` (String) If present, this id will be passed in the `CF-Access-Client-ID` header when hitting the `api_url`.
+- `access_client_secret` (String, Sensitive) If present, this secret will be passed in the `CF-Access-Client-Secret` header when hitting the `api_url`.
 - `api_url` (String) The Workspace One API URL provided in the Workspace One Admin Dashboard.
 - `auth_url` (String) The Workspace One Authorization URL depending on your region.
 - `client_id` (String) The Workspace One client ID provided in the Workspace One Admin Dashboard.

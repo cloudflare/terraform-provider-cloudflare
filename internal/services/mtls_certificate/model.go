@@ -18,12 +18,12 @@ type MTLSCertificateModel struct {
 	CA           types.Bool        `tfsdk:"ca" json:"ca,required"`
 	Certificates types.String      `tfsdk:"certificates" json:"certificates,required"`
 	Name         types.String      `tfsdk:"name" json:"name,optional"`
-	PrivateKey   types.String      `tfsdk:"private_key" json:"private_key,optional"`
+	PrivateKey   types.String      `tfsdk:"private_key" json:"private_key,optional,no_refresh"`
 	ExpiresOn    timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Issuer       types.String      `tfsdk:"issuer" json:"issuer,computed"`
 	SerialNumber types.String      `tfsdk:"serial_number" json:"serial_number,computed"`
 	Signature    types.String      `tfsdk:"signature" json:"signature,computed"`
-	UpdatedAt    timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	UpdatedAt    timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed,no_refresh" format:"date-time"`
 	UploadedOn   timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
 }
 

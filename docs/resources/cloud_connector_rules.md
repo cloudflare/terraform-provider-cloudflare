@@ -40,7 +40,7 @@ resource "cloudflare_cloud_connector_rules" "example_cloud_connector_rules" {
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) Identifier.
 
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`
@@ -50,10 +50,13 @@ Optional:
 - `description` (String)
 - `enabled` (Boolean)
 - `expression` (String)
-- `id` (String)
 - `parameters` (Attributes) Parameters of Cloud Connector Rule (see [below for nested schema](#nestedatt--rules--parameters))
 - `provider` (String) Cloud Provider type
 Available values: "aws_s3", "r2", "gcp_storage", "azure_storage".
+
+Read-Only:
+
+- `id` (String)
 
 <a id="nestedatt--rules--parameters"></a>
 ### Nested Schema for `rules.parameters`
@@ -62,4 +65,10 @@ Optional:
 
 - `host` (String) Host to perform Cloud Connection to
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_cloud_connector_rules.example '<zone_id>'
+```

@@ -42,6 +42,8 @@ available for Business and Enterprise plans.
 
 - `activated_on` (String) The last time proof of ownership was detected and the zone was made
 active
+- `cname_suffix` (String) Allows the customer to use a custom apex.
+*Tenants Only Configuration*.
 - `created_on` (String) When the zone was created
 - `development_mode` (Number) The interval (in seconds) from when development mode expires
 (positive integer) or last expired (negative integer) for the
@@ -57,8 +59,12 @@ domain. If development mode has never been enabled, this value is 0.
 - `paused` (Boolean) Indicates whether the zone is only using Cloudflare DNS services. A
 true value means the zone will not receive security or performance
 benefits.
+- `permissions` (List of String, Deprecated) Legacy permissions based on legacy user membership information.
+- `plan` (Attributes, Deprecated) A Zones subscription information. (see [below for nested schema](#nestedatt--plan))
 - `status` (String) The zone status on Cloudflare.
 Available values: "initializing", "pending", "active", "moved".
+- `tenant` (Attributes) The root organizational unit that this zone belongs to (such as a tenant or organization). (see [below for nested schema](#nestedatt--tenant))
+- `tenant_unit` (Attributes) The immediate parent organizational unit that this zone belongs to (such as under a tenant or sub-organization). (see [below for nested schema](#nestedatt--tenant_unit))
 - `verification_key` (String) Verification key for partial zone setup.
 
 <a id="nestedatt--account"></a>
@@ -91,6 +97,40 @@ Read-Only:
 - `id` (String) Identifier
 - `name` (String) Name of the owner
 - `type` (String) The type of owner
+
+
+<a id="nestedatt--plan"></a>
+### Nested Schema for `plan`
+
+Read-Only:
+
+- `can_subscribe` (Boolean) States if the subscription can be activated.
+- `currency` (String) The denomination of the customer.
+- `externally_managed` (Boolean) If this Zone is managed by another company.
+- `frequency` (String) How often the customer is billed.
+- `id` (String) Identifier
+- `is_subscribed` (Boolean) States if the subscription active.
+- `legacy_discount` (Boolean) If the legacy discount applies to this Zone.
+- `legacy_id` (String) The legacy name of the plan.
+- `name` (String) Name of the owner
+- `price` (Number) How much the customer is paying.
+
+
+<a id="nestedatt--tenant"></a>
+### Nested Schema for `tenant`
+
+Read-Only:
+
+- `id` (String) Identifier
+- `name` (String) The name of the Tenant account.
+
+
+<a id="nestedatt--tenant_unit"></a>
+### Nested Schema for `tenant_unit`
+
+Read-Only:
+
+- `id` (String) Identifier
 
 ## Import
 

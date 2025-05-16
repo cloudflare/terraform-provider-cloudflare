@@ -86,7 +86,7 @@ Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_err
 Optional:
 
 - `action` (String) The action to perform when the rule matches.
-Available values: "block".
+Available values: "block", "challenge", "compress_response", "execute", "js_challenge", "log", "managed_challenge", "redirect", "rewrite", "route", "score", "serve_error", "set_config", "skip", "set_cache_settings", "log_custom_field", "ddos_dynamic", "force_connection_close".
 - `action_parameters` (Attributes) The parameters configuring the rule's action. (see [below for nested schema](#nestedatt--rules--action_parameters))
 - `categories` (List of String) The categories of the rule.
 - `description` (String) An informative description of the rule.
@@ -139,7 +139,7 @@ Available values: "application/json", "text/xml", "text/plain", "text/html".
 - `origin_cache_control` (Boolean) When enabled, Cloudflare will aim to strictly adhere to RFC 7234.
 - `origin_error_page_passthru` (Boolean) Generate Cloudflare error pages from issues sent from the origin server. When on, error pages will trigger for issues from the origin
 - `overrides` (Attributes) A set of overrides to apply to the target ruleset. (see [below for nested schema](#nestedatt--rules--action_parameters--overrides))
-- `phases` (List of String) A list of phases to skip the execution of. This option is incompatible with the rulesets options.
+- `phases` (List of String) A list of phases to skip the execution of. This option is incompatible with the rulesets option.
 - `polish` (String) Configure the Polish level.
 Available values: "off", "lossless", "lossy".
 - `products` (List of String) A list of legacy security products to skip the execution of.
@@ -151,7 +151,7 @@ Available values: "off", "lossless", "lossy".
 - `response_fields` (Attributes List) The transformed response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--response_fields))
 - `rocket_loader` (Boolean) Turn on or off Rocket Loader
 - `rules` (Map of List of String) A mapping of ruleset IDs to a list of rule IDs in that ruleset to skip the execution of. This option is incompatible with the ruleset option.
-- `ruleset` (String) A ruleset to skip the execution of. This option is incompatible with the rulesets, rules. It can be incompatible with phases options base on the phase of the ruleset.
+- `ruleset` (String) A ruleset to skip the execution of. This option is incompatible with the rulesets option.
 Available values: "current".
 - `rulesets` (List of String) A list of ruleset IDs to skip the execution of. This option is incompatible with the ruleset and phases options.
 - `security_level` (String) Configure the Security Level.
@@ -373,7 +373,7 @@ Optional:
 
 Required:
 
-- `operation` (String) Available values: "remove".
+- `operation` (String) Available values: "remove", "add", "set".
 
 Optional:
 
@@ -560,7 +560,6 @@ Required:
 
 - `characteristics` (List of String) Characteristics of the request on which the ratelimiter counter will be incremented.
 - `period` (Number) Period in seconds over which the counter is being incremented.
-Available values: 10, 60, 600, 3600.
 
 Optional:
 

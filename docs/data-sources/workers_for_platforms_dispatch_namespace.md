@@ -38,6 +38,6 @@ data "cloudflare_workers_for_platforms_dispatch_namespace" "example_workers_for_
 - `modified_on` (String) When the script was last modified.
 - `namespace_id` (String) API Resource UUID tag.
 - `namespace_name` (String) Name of the Workers for Platforms dispatch namespace.
-- `script_count` (Number) The current number of scripts in this Dispatch Namespace
+- `script_count` (Number) The current number of scripts in this Dispatch Namespace.
 
 

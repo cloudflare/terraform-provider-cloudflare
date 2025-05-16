@@ -29,6 +29,6 @@ data "cloudflare_workers_script_subdomain" "example_workers_script_subdomain" {
 ### Read-Only
 
 - `enabled` (Boolean) Whether the Worker is available on the workers.dev subdomain.
-- `previews_enabled` (Boolean) Whether the Worker's Preview URLs should be available on the workers.dev subdomain.
+- `previews_enabled` (Boolean) Whether the Worker's Preview URLs are available on the workers.dev subdomain.
 
 

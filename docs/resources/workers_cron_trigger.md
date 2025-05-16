@@ -41,6 +41,11 @@ Required:
 
 - `cron` (String)
 
+Read-Only:
+
+- `created_on` (String)
+- `modified_on` (String)
+
 ## Import
 
 Import is supported using the following syntax:

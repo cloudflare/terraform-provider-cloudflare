@@ -52,6 +52,7 @@ type ZeroTrustDeviceCustomProfilesResultDataSourceModel struct {
 	PolicyID                   types.String                                                                              `tfsdk:"policy_id" json:"policy_id,computed"`
 	Precedence                 types.Float64                                                                             `tfsdk:"precedence" json:"precedence,computed"`
 	RegisterInterfaceIPWithDNS types.Bool                                                                                `tfsdk:"register_interface_ip_with_dns" json:"register_interface_ip_with_dns,computed"`
+	SccmVpnBoundarySupport     types.Bool                                                                                `tfsdk:"sccm_vpn_boundary_support" json:"sccm_vpn_boundary_support,computed"`
 	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceCustomProfilesServiceModeV2DataSourceModel]       `tfsdk:"service_mode_v2" json:"service_mode_v2,computed"`
 	SupportURL                 types.String                                                                              `tfsdk:"support_url" json:"support_url,computed"`
 	SwitchLocked               types.Bool                                                                                `tfsdk:"switch_locked" json:"switch_locked,computed"`

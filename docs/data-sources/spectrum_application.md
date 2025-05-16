@@ -68,7 +68,7 @@ Read-Only:
 Available values: "all", "ipv4", "ipv6".
 - `ips` (List of String) The array of customer owned IPs we broadcast via anycast for this hostname and application.
 - `type` (String) The type of edge IP configuration specified. Dynamically allocated edge IPs use Spectrum anycast IPs in accordance with the connectivity you specify. Only valid with CNAME DNS names.
-Available values: "dynamic".
+Available values: "dynamic", "static".
 
 
 <a id="nestedatt--origin_dns"></a>

@@ -30,4 +30,8 @@ resource "cloudflare_workers_script" "%[1]s" {
       queue_name = cloudflare_queue.%[1]s.queue_name
     }
   ]
+  observability = {
+    enabled = true
+    head_sampling_rate = 0.1
+  }
 }

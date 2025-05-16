@@ -118,17 +118,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
-			"self_hosted_domains": schema.ListAttribute{
-				Description:        "List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.",
-				Optional:           true,
-				DeprecationMessage: "This attribute is deprecated.",
-				ElementType:        types.StringType,
-			},
-			"tags": schema.ListAttribute{
-				Description: "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",
-				Optional:    true,
-				ElementType: types.StringType,
-			},
 			"cors_headers": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
@@ -187,13 +176,237 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"destinations": schema.ListNestedAttribute{
-				Description: "List of destinations secured by Access. This supersedes `self_hosted_domains` to allow for more flexibility in defining different types of domains. If `destinations` are provided, then `self_hosted_domains` will be ignored.",
+			"footer_links": schema.ListNestedAttribute{
+				Description: "The links in the App Launcher footer.",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							Description: "The hypertext in the footer link.",
+							Required:    true,
+						},
+						"url": schema.StringAttribute{
+							Description: "the hyperlink in the footer link.",
+							Required:    true,
+						},
+					},
+				},
+			},
+			"scim_config": schema.SingleNestedAttribute{
+				Description: "Configuration for provisioning to this application via SCIM. This is currently in closed beta.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"idp_uid": schema.StringAttribute{
+						Description: "The UID of the IdP to use as the source for SCIM resources to provision to this application.",
+						Required:    true,
+					},
+					"remote_uri": schema.StringAttribute{
+						Description: "The base URI for the application's SCIM-compatible API.",
+						Required:    true,
+					},
+					"authentication": schema.SingleNestedAttribute{
+						Description: "Attributes for configuring HTTP Basic authentication scheme for SCIM provisioning to an application.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"password": schema.StringAttribute{
+								Description: "Password used to authenticate with the remote SCIM service.",
+								Optional:    true,
+							},
+							"scheme": schema.StringAttribute{
+								Description: "The authentication scheme to use when making SCIM requests to this application.\nAvailable values: \"httpbasic\", \"oauthbearertoken\", \"oauth2\", \"access_service_token\".",
+								Required:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"httpbasic",
+										"oauthbearertoken",
+										"oauth2",
+										"access_service_token",
+									),
+								},
+							},
+							"user": schema.StringAttribute{
+								Description: "User name used to authenticate with the remote SCIM service.",
+								Optional:    true,
+							},
+							"token": schema.StringAttribute{
+								Description: "Token used to authenticate with the remote SCIM service.",
+								Optional:    true,
+								Sensitive:   true,
+							},
+							"authorization_url": schema.StringAttribute{
+								Description: "URL used to generate the auth code used during token generation.",
+								Optional:    true,
+							},
+							"client_id": schema.StringAttribute{
+								Description: "Client ID used to authenticate when generating a token for authenticating with the remote SCIM service.",
+								Optional:    true,
+							},
+							"client_secret": schema.StringAttribute{
+								Description: "Secret used to authenticate when generating a token for authenticating with the remove SCIM service.",
+								Optional:    true,
+								Sensitive:   true,
+							},
+							"token_url": schema.StringAttribute{
+								Description: "URL used to generate the token used to authenticate with the remote SCIM service.",
+								Optional:    true,
+							},
+							"scopes": schema.ListAttribute{
+								Description: "The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.",
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+						},
+					},
+					"deactivate_on_delete": schema.BoolAttribute{
+						Description: "If false, propagates DELETE requests to the target application for SCIM resources. If true, sets 'active' to false on the SCIM resource. Note: Some targets do not support DELETE operations.",
+						Optional:    true,
+					},
+					"enabled": schema.BoolAttribute{
+						Description: "Whether SCIM provisioning is turned on for this application.",
+						Optional:    true,
+					},
+					"mappings": schema.ListNestedAttribute{
+						Description: "A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned.",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"schema": schema.StringAttribute{
+									Description: "Which SCIM resource type this mapping applies to.",
+									Required:    true,
+								},
+								"enabled": schema.BoolAttribute{
+									Description: "Whether or not this mapping is enabled.",
+									Optional:    true,
+								},
+								"filter": schema.StringAttribute{
+									Description: "A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.",
+									Optional:    true,
+								},
+								"operations": schema.SingleNestedAttribute{
+									Description: "Whether or not this mapping applies to creates, updates, or deletes.",
+									Optional:    true,
+									Attributes: map[string]schema.Attribute{
+										"create": schema.BoolAttribute{
+											Description: "Whether or not this mapping applies to create (POST) operations.",
+											Optional:    true,
+										},
+										"delete": schema.BoolAttribute{
+											Description: "Whether or not this mapping applies to DELETE operations.",
+											Optional:    true,
+										},
+										"update": schema.BoolAttribute{
+											Description: "Whether or not this mapping applies to update (PATCH/PUT) operations.",
+											Optional:    true,
+										},
+									},
+								},
+								"strictness": schema.StringAttribute{
+									Description: "The level of adherence to outbound resource schemas when provisioning to this mapping. ‘Strict’ removes unknown values, while ‘passthrough’ passes unknown values to the target.\nAvailable values: \"strict\", \"passthrough\".",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("strict", "passthrough"),
+									},
+								},
+								"transform_jsonata": schema.StringAttribute{
+									Description: "A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.",
+									Optional:    true,
+								},
+							},
+						},
+					},
+				},
+			},
+			"target_criteria": schema.ListNestedAttribute{
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"port": schema.Int64Attribute{
+							Description: "The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.",
+							Required:    true,
+						},
+						"protocol": schema.StringAttribute{
+							Description: "The communication protocol your application secures.\nAvailable values: \"ssh\".",
+							Required:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("ssh"),
+							},
+						},
+						"target_attributes": schema.MapAttribute{
+							Description: "Contains a map of target attribute keys to target attribute values.",
+							Required:    true,
+							ElementType: types.ListType{
+								ElemType: types.StringType,
+							},
+						},
+					},
+				},
+			},
+			"app_launcher_visible": schema.BoolAttribute{
+				Description: "Displays the application in the App Launcher.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
+			},
+			"auto_redirect_to_identity": schema.BoolAttribute{
+				Description: "When set to `true`, users skip the identity provider selection step during login. You must specify only one identity provider in allowed_idps.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"enable_binding_cookie": schema.BoolAttribute{
+				Description: "Enables the binding cookie, which increases security against compromised authorization tokens and CSRF attacks.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"http_only_cookie_attribute": schema.BoolAttribute{
+				Description: "Enables the HttpOnly cookie attribute, which increases security against XSS attacks.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
+			},
+			"path_cookie_attribute": schema.BoolAttribute{
+				Description: "Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"session_duration": schema.StringAttribute{
+				Description: "The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. Note: unsupported for infrastructure type applications.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString("24h"),
+			},
+			"skip_app_launcher_login_page": schema.BoolAttribute{
+				Description: "Determines when to skip the App Launcher landing page.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"self_hosted_domains": schema.ListAttribute{
+				Description:        "List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.",
+				Computed:           true,
+				Optional:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				CustomType:         customfield.NewListType[types.String](ctx),
+				ElementType:        types.StringType,
+			},
+			"tags": schema.ListAttribute{
+				Description: "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
+			},
+			"destinations": schema.ListNestedAttribute{
+				Description: "List of destinations secured by Access. This supersedes `self_hosted_domains` to allow for more flexibility in defining different types of domains. If `destinations` are provided, then `self_hosted_domains` will be ignored.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationDestinationsModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
-							Description: `Available values: "public".`,
+							Description: `Available values: "public", "private".`,
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("public", "private"),
@@ -229,25 +442,41 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"footer_links": schema.ListNestedAttribute{
-				Description: "The links in the App Launcher footer.",
+			"landing_page_design": schema.SingleNestedAttribute{
+				Description: "The design of the App Launcher landing page shown to users when they log in.",
+				Computed:    true,
 				Optional:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"name": schema.StringAttribute{
-							Description: "The hypertext in the footer link.",
-							Required:    true,
-						},
-						"url": schema.StringAttribute{
-							Description: "the hyperlink in the footer link.",
-							Required:    true,
-						},
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationLandingPageDesignModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"button_color": schema.StringAttribute{
+						Description: "The background color of the log in button on the landing page.",
+						Optional:    true,
+					},
+					"button_text_color": schema.StringAttribute{
+						Description: "The color of the text in the log in button on the landing page.",
+						Optional:    true,
+					},
+					"image_url": schema.StringAttribute{
+						Description: "The URL of the image shown on the landing page.",
+						Optional:    true,
+					},
+					"message": schema.StringAttribute{
+						Description: "The message shown on the landing page.",
+						Optional:    true,
+					},
+					"title": schema.StringAttribute{
+						Description: "The title shown on the landing page.",
+						Computed:    true,
+						Optional:    true,
+						Default:     stringdefault.StaticString("Welcome!"),
 					},
 				},
 			},
 			"policies": schema.ListNestedAttribute{
 				Description: "The policies that Access applies to the application, in ascending order of precedence. Items can reference existing policies or create new policies exclusive to the application.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -272,7 +501,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"include": schema.ListNestedAttribute{
 							Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
+							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -530,7 +761,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"exclude": schema.ListNestedAttribute{
 							Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
+							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -763,7 +996,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"require": schema.ListNestedAttribute{
 							Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
+							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesRequireModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -994,227 +1229,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-					},
-				},
-			},
-			"scim_config": schema.SingleNestedAttribute{
-				Description: "Configuration for provisioning to this application via SCIM. This is currently in closed beta.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"idp_uid": schema.StringAttribute{
-						Description: "The UID of the IdP to use as the source for SCIM resources to provision to this application.",
-						Required:    true,
-					},
-					"remote_uri": schema.StringAttribute{
-						Description: "The base URI for the application's SCIM-compatible API.",
-						Required:    true,
-					},
-					"authentication": schema.SingleNestedAttribute{
-						Description: "Attributes for configuring HTTP Basic authentication scheme for SCIM provisioning to an application.",
-						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"password": schema.StringAttribute{
-								Description: "Password used to authenticate with the remote SCIM service.",
-								Optional:    true,
-							},
-							"scheme": schema.StringAttribute{
-								Description: "The authentication scheme to use when making SCIM requests to this application.\nAvailable values: \"httpbasic\".",
-								Required:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"httpbasic",
-										"oauthbearertoken",
-										"oauth2",
-										"access_service_token",
-									),
-								},
-							},
-							"user": schema.StringAttribute{
-								Description: "User name used to authenticate with the remote SCIM service.",
-								Optional:    true,
-							},
-							"token": schema.StringAttribute{
-								Description: "Token used to authenticate with the remote SCIM service.",
-								Optional:    true,
-								Sensitive:   true,
-							},
-							"authorization_url": schema.StringAttribute{
-								Description: "URL used to generate the auth code used during token generation.",
-								Optional:    true,
-							},
-							"client_id": schema.StringAttribute{
-								Description: "Client ID used to authenticate when generating a token for authenticating with the remote SCIM service.",
-								Optional:    true,
-							},
-							"client_secret": schema.StringAttribute{
-								Description: "Secret used to authenticate when generating a token for authenticating with the remove SCIM service.",
-								Optional:    true,
-								Sensitive:   true,
-							},
-							"token_url": schema.StringAttribute{
-								Description: "URL used to generate the token used to authenticate with the remote SCIM service.",
-								Optional:    true,
-							},
-							"scopes": schema.ListAttribute{
-								Description: "The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.",
-								Optional:    true,
-								ElementType: types.StringType,
-							},
-						},
-					},
-					"deactivate_on_delete": schema.BoolAttribute{
-						Description: "If false, propagates DELETE requests to the target application for SCIM resources. If true, sets 'active' to false on the SCIM resource. Note: Some targets do not support DELETE operations.",
-						Optional:    true,
-					},
-					"enabled": schema.BoolAttribute{
-						Description: "Whether SCIM provisioning is turned on for this application.",
-						Optional:    true,
-					},
-					"mappings": schema.ListNestedAttribute{
-						Description: "A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned.",
-						Optional:    true,
-						NestedObject: schema.NestedAttributeObject{
-							Attributes: map[string]schema.Attribute{
-								"schema": schema.StringAttribute{
-									Description: "Which SCIM resource type this mapping applies to.",
-									Required:    true,
-								},
-								"enabled": schema.BoolAttribute{
-									Description: "Whether or not this mapping is enabled.",
-									Optional:    true,
-								},
-								"filter": schema.StringAttribute{
-									Description: "A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.",
-									Optional:    true,
-								},
-								"operations": schema.SingleNestedAttribute{
-									Description: "Whether or not this mapping applies to creates, updates, or deletes.",
-									Optional:    true,
-									Attributes: map[string]schema.Attribute{
-										"create": schema.BoolAttribute{
-											Description: "Whether or not this mapping applies to create (POST) operations.",
-											Optional:    true,
-										},
-										"delete": schema.BoolAttribute{
-											Description: "Whether or not this mapping applies to DELETE operations.",
-											Optional:    true,
-										},
-										"update": schema.BoolAttribute{
-											Description: "Whether or not this mapping applies to update (PATCH/PUT) operations.",
-											Optional:    true,
-										},
-									},
-								},
-								"strictness": schema.StringAttribute{
-									Description: "The level of adherence to outbound resource schemas when provisioning to this mapping. ‘Strict’ removes unknown values, while ‘passthrough’ passes unknown values to the target.\nAvailable values: \"strict\", \"passthrough\".",
-									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("strict", "passthrough"),
-									},
-								},
-								"transform_jsonata": schema.StringAttribute{
-									Description: "A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.",
-									Optional:    true,
-								},
-							},
-						},
-					},
-				},
-			},
-			"target_criteria": schema.ListNestedAttribute{
-				Optional: true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"port": schema.Int64Attribute{
-							Description: "The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.",
-							Required:    true,
-						},
-						"protocol": schema.StringAttribute{
-							Description: "The communication protocol your application secures.\nAvailable values: \"ssh\".",
-							Required:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("ssh"),
-							},
-						},
-						"target_attributes": schema.MapAttribute{
-							Description: "Contains a map of target attribute keys to target attribute values.",
-							Required:    true,
-							ElementType: types.ListType{
-								ElemType: types.StringType,
-							},
-						},
-					},
-				},
-			},
-			"app_launcher_visible": schema.BoolAttribute{
-				Description: "Displays the application in the App Launcher.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(true),
-			},
-			"auto_redirect_to_identity": schema.BoolAttribute{
-				Description: "When set to `true`, users skip the identity provider selection step during login. You must specify only one identity provider in allowed_idps.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"enable_binding_cookie": schema.BoolAttribute{
-				Description: "Enables the binding cookie, which increases security against compromised authorization tokens and CSRF attacks.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"http_only_cookie_attribute": schema.BoolAttribute{
-				Description: "Enables the HttpOnly cookie attribute, which increases security against XSS attacks.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(true),
-			},
-			"path_cookie_attribute": schema.BoolAttribute{
-				Description: "Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"session_duration": schema.StringAttribute{
-				Description: "The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString("24h"),
-			},
-			"skip_app_launcher_login_page": schema.BoolAttribute{
-				Description: "Determines when to skip the App Launcher landing page.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"landing_page_design": schema.SingleNestedAttribute{
-				Description: "The design of the App Launcher landing page shown to users when they log in.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationLandingPageDesignModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"button_color": schema.StringAttribute{
-						Description: "The background color of the log in button on the landing page.",
-						Optional:    true,
-					},
-					"button_text_color": schema.StringAttribute{
-						Description: "The color of the text in the log in button on the landing page.",
-						Optional:    true,
-					},
-					"image_url": schema.StringAttribute{
-						Description: "The URL of the image shown on the landing page.",
-						Optional:    true,
-					},
-					"message": schema.StringAttribute{
-						Description: "The message shown on the landing page.",
-						Optional:    true,
-					},
-					"title": schema.StringAttribute{
-						Description: "The title shown on the landing page.",
-						Computed:    true,
-						Optional:    true,
-						Default:     stringdefault.StaticString("Welcome!"),
 					},
 				},
 			},

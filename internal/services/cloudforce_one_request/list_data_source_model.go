@@ -5,6 +5,7 @@ package cloudforce_one_request
 import (
 	"context"
 
+	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/cloudforce_one"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -17,13 +18,15 @@ type CloudforceOneRequestsResultListDataSourceEnvelope struct {
 }
 
 type CloudforceOneRequestsDataSourceModel struct {
-	AccountIdentifier types.String                                                             `tfsdk:"account_identifier" path:"account_identifier,required"`
-	MaxItems          types.Int64                                                              `tfsdk:"max_items"`
-	Result            customfield.NestedObjectList[CloudforceOneRequestsResultDataSourceModel] `tfsdk:"result"`
+	AccountID types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
+	MaxItems  types.Int64                                                              `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[CloudforceOneRequestsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *CloudforceOneRequestsDataSourceModel) toListParams(_ context.Context) (params cloudforce_one.RequestListParams, diags diag.Diagnostics) {
-	params = cloudforce_one.RequestListParams{}
+	params = cloudforce_one.RequestListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
 
 	return
 }

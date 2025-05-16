@@ -41,7 +41,7 @@ resource "cloudflare_mtls_certificate" "example_mtls_certificate" {
 ### Optional
 
 - `name` (String) Optional unique name for the certificate. Only used for human readability.
-- `private_key` (String, Sensitive) The private key for the certificate
+- `private_key` (String, Sensitive) The private key for the certificate. This field is only needed for specific use cases such as using a custom certificate with Zero Trust's block page.
 
 ### Read-Only
 

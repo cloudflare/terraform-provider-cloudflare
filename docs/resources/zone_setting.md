@@ -15,8 +15,7 @@ description: |-
 resource "cloudflare_zone_setting" "example_zone_setting" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   setting_id = "always_online"
-  id = "0rtt"
-  value = "on"
+  enabled = true
 }
 ```
 
@@ -31,12 +30,12 @@ resource "cloudflare_zone_setting" "example_zone_setting" {
 
 ### Optional
 
-- `id` (String) ID of the zone setting.
-Available values: "0rtt".
+- `enabled` (Boolean) ssl-recommender enrollment setting.
 
 ### Read-Only
 
 - `editable` (Boolean) Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).
+- `id` (String) Setting name
 - `modified_on` (String) last time this setting was modified.
 - `time_remaining` (Number) Value of the zone setting.
 Notes: The interval (in seconds) from when development mode expires (positive integer) or last expired (negative integer) for the domain. If development mode has never been enabled, this value is false.

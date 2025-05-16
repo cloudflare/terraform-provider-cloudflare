@@ -91,5 +91,5 @@ type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestAccessModel struct {
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,optional"`
 }

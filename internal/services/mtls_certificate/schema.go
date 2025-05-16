@@ -44,7 +44,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"private_key": schema.StringAttribute{
-				Description:   "The private key for the certificate",
+				Description:   "The private key for the certificate. This field is only needed for specific use cases such as using a custom certificate with Zero Trust's block page.",
 				Optional:      true,
 				Sensitive:     true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},

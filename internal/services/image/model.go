@@ -20,9 +20,9 @@ type ImageResultEnvelope struct {
 type ImageModel struct {
 	ID                types.String                   `tfsdk:"id" json:"id,computed"`
 	AccountID         types.String                   `tfsdk:"account_id" path:"account_id,required"`
-	URL               types.String                   `tfsdk:"url" json:"url,optional"`
-	File              jsontypes.Normalized           `tfsdk:"file" json:"file,optional"`
-	Metadata          jsontypes.Normalized           `tfsdk:"metadata" json:"metadata,optional"`
+	URL               types.String                   `tfsdk:"url" json:"url,optional,no_refresh"`
+	File              jsontypes.Normalized           `tfsdk:"file" json:"file,optional,no_refresh"`
+	Metadata          jsontypes.Normalized           `tfsdk:"metadata" json:"metadata,optional,no_refresh"`
 	RequireSignedURLs types.Bool                     `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed_optional"`
 	Filename          types.String                   `tfsdk:"filename" json:"filename,computed"`
 	Uploaded          timetypes.RFC3339              `tfsdk:"uploaded" json:"uploaded,computed" format:"date-time"`

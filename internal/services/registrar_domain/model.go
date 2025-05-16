@@ -14,9 +14,9 @@ type RegistrarDomainResultEnvelope struct {
 type RegistrarDomainModel struct {
 	AccountID  types.String `tfsdk:"account_id" path:"account_id,required"`
 	DomainName types.String `tfsdk:"domain_name" path:"domain_name,required"`
-	AutoRenew  types.Bool   `tfsdk:"auto_renew" json:"auto_renew,optional"`
-	Locked     types.Bool   `tfsdk:"locked" json:"locked,optional"`
-	Privacy    types.Bool   `tfsdk:"privacy" json:"privacy,optional"`
+	AutoRenew  types.Bool   `tfsdk:"auto_renew" json:"auto_renew,optional,no_refresh"`
+	Locked     types.Bool   `tfsdk:"locked" json:"locked,optional,no_refresh"`
+	Privacy    types.Bool   `tfsdk:"privacy" json:"privacy,optional,no_refresh"`
 }
 
 func (m RegistrarDomainModel) MarshalJSON() (data []byte, err error) {

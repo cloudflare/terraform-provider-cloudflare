@@ -60,7 +60,6 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
 - `account_id` (String) Identifier.
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
 Available values: "allow", "deny", "non_identity", "bypass".
-- `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--include))
 - `name` (String) The name of the Access policy.
 
 ### Optional
@@ -68,6 +67,7 @@ Available values: "allow", "deny", "non_identity", "bypass".
 - `approval_groups` (Attributes List) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--approval_groups))
 - `approval_required` (Boolean) Requires the user to request access from an administrator at the start of each session.
 - `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--exclude))
+- `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--include))
 - `isolation_required` (Boolean) Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.
 - `purpose_justification_prompt` (String) A custom message that will appear on the purpose justification screen.
 - `purpose_justification_required` (Boolean) Require users to enter a justification when they log in to the application.
@@ -81,212 +81,6 @@ Available values: "allow", "deny", "non_identity", "bypass".
 - `id` (String) The UUID of the policy
 - `reusable` (Boolean)
 - `updated_at` (String)
-
-<a id="nestedatt--include"></a>
-### Nested Schema for `include`
-
-Optional:
-
-- `any_valid_service_token` (Attributes) An empty object which matches on all service tokens. (see [below for nested schema](#nestedatt--include--any_valid_service_token))
-- `auth_context` (Attributes) (see [below for nested schema](#nestedatt--include--auth_context))
-- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--include--auth_method))
-- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--include--azure_ad))
-- `certificate` (Attributes) (see [below for nested schema](#nestedatt--include--certificate))
-- `common_name` (Attributes) (see [below for nested schema](#nestedatt--include--common_name))
-- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--include--device_posture))
-- `email` (Attributes) (see [below for nested schema](#nestedatt--include--email))
-- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--include--email_domain))
-- `email_list` (Attributes) (see [below for nested schema](#nestedatt--include--email_list))
-- `everyone` (Attributes) An empty object which matches on all users. (see [below for nested schema](#nestedatt--include--everyone))
-- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--include--external_evaluation))
-- `geo` (Attributes) (see [below for nested schema](#nestedatt--include--geo))
-- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--include--github_organization))
-- `group` (Attributes) (see [below for nested schema](#nestedatt--include--group))
-- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--include--gsuite))
-- `ip` (Attributes) (see [below for nested schema](#nestedatt--include--ip))
-- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--include--ip_list))
-- `login_method` (Attributes) (see [below for nested schema](#nestedatt--include--login_method))
-- `okta` (Attributes) (see [below for nested schema](#nestedatt--include--okta))
-- `saml` (Attributes) (see [below for nested schema](#nestedatt--include--saml))
-- `service_token` (Attributes) (see [below for nested schema](#nestedatt--include--service_token))
-
-<a id="nestedatt--include--any_valid_service_token"></a>
-### Nested Schema for `include.any_valid_service_token`
-
-
-<a id="nestedatt--include--auth_context"></a>
-### Nested Schema for `include.auth_context`
-
-Required:
-
-- `ac_id` (String) The ACID of an Authentication context.
-- `id` (String) The ID of an Authentication context.
-- `identity_provider_id` (String) The ID of your Azure identity provider.
-
-
-<a id="nestedatt--include--auth_method"></a>
-### Nested Schema for `include.auth_method`
-
-Required:
-
-- `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.
-
-
-<a id="nestedatt--include--azure_ad"></a>
-### Nested Schema for `include.azure_ad`
-
-Required:
-
-- `id` (String) The ID of an Azure group.
-- `identity_provider_id` (String) The ID of your Azure identity provider.
-
-
-<a id="nestedatt--include--certificate"></a>
-### Nested Schema for `include.certificate`
-
-
-<a id="nestedatt--include--common_name"></a>
-### Nested Schema for `include.common_name`
-
-Required:
-
-- `common_name` (String) The common name to match.
-
-
-<a id="nestedatt--include--device_posture"></a>
-### Nested Schema for `include.device_posture`
-
-Required:
-
-- `integration_uid` (String) The ID of a device posture integration.
-
-
-<a id="nestedatt--include--email"></a>
-### Nested Schema for `include.email`
-
-Required:
-
-- `email` (String) The email of the user.
-
-
-<a id="nestedatt--include--email_domain"></a>
-### Nested Schema for `include.email_domain`
-
-Required:
-
-- `domain` (String) The email domain to match.
-
-
-<a id="nestedatt--include--email_list"></a>
-### Nested Schema for `include.email_list`
-
-Required:
-
-- `id` (String) The ID of a previously created email list.
-
-
-<a id="nestedatt--include--everyone"></a>
-### Nested Schema for `include.everyone`
-
-
-<a id="nestedatt--include--external_evaluation"></a>
-### Nested Schema for `include.external_evaluation`
-
-Required:
-
-- `evaluate_url` (String) The API endpoint containing your business logic.
-- `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
-
-
-<a id="nestedatt--include--geo"></a>
-### Nested Schema for `include.geo`
-
-Required:
-
-- `country_code` (String) The country code that should be matched.
-
-
-<a id="nestedatt--include--github_organization"></a>
-### Nested Schema for `include.github_organization`
-
-Required:
-
-- `identity_provider_id` (String) The ID of your Github identity provider.
-- `name` (String) The name of the organization.
-
-Optional:
-
-- `team` (String) The name of the team
-
-
-<a id="nestedatt--include--group"></a>
-### Nested Schema for `include.group`
-
-Required:
-
-- `id` (String) The ID of a previously created Access group.
-
-
-<a id="nestedatt--include--gsuite"></a>
-### Nested Schema for `include.gsuite`
-
-Required:
-
-- `email` (String) The email of the Google Workspace group.
-- `identity_provider_id` (String) The ID of your Google Workspace identity provider.
-
-
-<a id="nestedatt--include--ip"></a>
-### Nested Schema for `include.ip`
-
-Required:
-
-- `ip` (String) An IPv4 or IPv6 CIDR block.
-
-
-<a id="nestedatt--include--ip_list"></a>
-### Nested Schema for `include.ip_list`
-
-Required:
-
-- `id` (String) The ID of a previously created IP list.
-
-
-<a id="nestedatt--include--login_method"></a>
-### Nested Schema for `include.login_method`
-
-Required:
-
-- `id` (String) The ID of an identity provider.
-
-
-<a id="nestedatt--include--okta"></a>
-### Nested Schema for `include.okta`
-
-Required:
-
-- `identity_provider_id` (String) The ID of your Okta identity provider.
-- `name` (String) The name of the Okta group.
-
-
-<a id="nestedatt--include--saml"></a>
-### Nested Schema for `include.saml`
-
-Required:
-
-- `attribute_name` (String) The name of the SAML attribute.
-- `attribute_value` (String) The SAML attribute value to look for.
-- `identity_provider_id` (String) The ID of your SAML identity provider.
-
-
-<a id="nestedatt--include--service_token"></a>
-### Nested Schema for `include.service_token`
-
-Required:
-
-- `token_id` (String) The ID of a Service Token.
-
-
 
 <a id="nestedatt--approval_groups"></a>
 ### Nested Schema for `approval_groups`
@@ -500,6 +294,212 @@ Required:
 
 <a id="nestedatt--exclude--service_token"></a>
 ### Nested Schema for `exclude.service_token`
+
+Required:
+
+- `token_id` (String) The ID of a Service Token.
+
+
+
+<a id="nestedatt--include"></a>
+### Nested Schema for `include`
+
+Optional:
+
+- `any_valid_service_token` (Attributes) An empty object which matches on all service tokens. (see [below for nested schema](#nestedatt--include--any_valid_service_token))
+- `auth_context` (Attributes) (see [below for nested schema](#nestedatt--include--auth_context))
+- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--include--auth_method))
+- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--include--azure_ad))
+- `certificate` (Attributes) (see [below for nested schema](#nestedatt--include--certificate))
+- `common_name` (Attributes) (see [below for nested schema](#nestedatt--include--common_name))
+- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--include--device_posture))
+- `email` (Attributes) (see [below for nested schema](#nestedatt--include--email))
+- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--include--email_domain))
+- `email_list` (Attributes) (see [below for nested schema](#nestedatt--include--email_list))
+- `everyone` (Attributes) An empty object which matches on all users. (see [below for nested schema](#nestedatt--include--everyone))
+- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--include--external_evaluation))
+- `geo` (Attributes) (see [below for nested schema](#nestedatt--include--geo))
+- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--include--github_organization))
+- `group` (Attributes) (see [below for nested schema](#nestedatt--include--group))
+- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--include--gsuite))
+- `ip` (Attributes) (see [below for nested schema](#nestedatt--include--ip))
+- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--include--ip_list))
+- `login_method` (Attributes) (see [below for nested schema](#nestedatt--include--login_method))
+- `okta` (Attributes) (see [below for nested schema](#nestedatt--include--okta))
+- `saml` (Attributes) (see [below for nested schema](#nestedatt--include--saml))
+- `service_token` (Attributes) (see [below for nested schema](#nestedatt--include--service_token))
+
+<a id="nestedatt--include--any_valid_service_token"></a>
+### Nested Schema for `include.any_valid_service_token`
+
+
+<a id="nestedatt--include--auth_context"></a>
+### Nested Schema for `include.auth_context`
+
+Required:
+
+- `ac_id` (String) The ACID of an Authentication context.
+- `id` (String) The ID of an Authentication context.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--include--auth_method"></a>
+### Nested Schema for `include.auth_method`
+
+Required:
+
+- `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.
+
+
+<a id="nestedatt--include--azure_ad"></a>
+### Nested Schema for `include.azure_ad`
+
+Required:
+
+- `id` (String) The ID of an Azure group.
+- `identity_provider_id` (String) The ID of your Azure identity provider.
+
+
+<a id="nestedatt--include--certificate"></a>
+### Nested Schema for `include.certificate`
+
+
+<a id="nestedatt--include--common_name"></a>
+### Nested Schema for `include.common_name`
+
+Required:
+
+- `common_name` (String) The common name to match.
+
+
+<a id="nestedatt--include--device_posture"></a>
+### Nested Schema for `include.device_posture`
+
+Required:
+
+- `integration_uid` (String) The ID of a device posture integration.
+
+
+<a id="nestedatt--include--email"></a>
+### Nested Schema for `include.email`
+
+Required:
+
+- `email` (String) The email of the user.
+
+
+<a id="nestedatt--include--email_domain"></a>
+### Nested Schema for `include.email_domain`
+
+Required:
+
+- `domain` (String) The email domain to match.
+
+
+<a id="nestedatt--include--email_list"></a>
+### Nested Schema for `include.email_list`
+
+Required:
+
+- `id` (String) The ID of a previously created email list.
+
+
+<a id="nestedatt--include--everyone"></a>
+### Nested Schema for `include.everyone`
+
+
+<a id="nestedatt--include--external_evaluation"></a>
+### Nested Schema for `include.external_evaluation`
+
+Required:
+
+- `evaluate_url` (String) The API endpoint containing your business logic.
+- `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
+
+
+<a id="nestedatt--include--geo"></a>
+### Nested Schema for `include.geo`
+
+Required:
+
+- `country_code` (String) The country code that should be matched.
+
+
+<a id="nestedatt--include--github_organization"></a>
+### Nested Schema for `include.github_organization`
+
+Required:
+
+- `identity_provider_id` (String) The ID of your Github identity provider.
+- `name` (String) The name of the organization.
+
+Optional:
+
+- `team` (String) The name of the team
+
+
+<a id="nestedatt--include--group"></a>
+### Nested Schema for `include.group`
+
+Required:
+
+- `id` (String) The ID of a previously created Access group.
+
+
+<a id="nestedatt--include--gsuite"></a>
+### Nested Schema for `include.gsuite`
+
+Required:
+
+- `email` (String) The email of the Google Workspace group.
+- `identity_provider_id` (String) The ID of your Google Workspace identity provider.
+
+
+<a id="nestedatt--include--ip"></a>
+### Nested Schema for `include.ip`
+
+Required:
+
+- `ip` (String) An IPv4 or IPv6 CIDR block.
+
+
+<a id="nestedatt--include--ip_list"></a>
+### Nested Schema for `include.ip_list`
+
+Required:
+
+- `id` (String) The ID of a previously created IP list.
+
+
+<a id="nestedatt--include--login_method"></a>
+### Nested Schema for `include.login_method`
+
+Required:
+
+- `id` (String) The ID of an identity provider.
+
+
+<a id="nestedatt--include--okta"></a>
+### Nested Schema for `include.okta`
+
+Required:
+
+- `identity_provider_id` (String) The ID of your Okta identity provider.
+- `name` (String) The name of the Okta group.
+
+
+<a id="nestedatt--include--saml"></a>
+### Nested Schema for `include.saml`
+
+Required:
+
+- `attribute_name` (String) The name of the SAML attribute.
+- `attribute_value` (String) The SAML attribute value to look for.
+- `identity_provider_id` (String) The ID of your SAML identity provider.
+
+
+<a id="nestedatt--include--service_token"></a>
+### Nested Schema for `include.service_token`
 
 Required:
 

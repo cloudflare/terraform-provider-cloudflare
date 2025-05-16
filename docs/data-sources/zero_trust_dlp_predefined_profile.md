@@ -39,7 +39,7 @@ data "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_pred
 - `name` (String) The name of the profile.
 - `ocr_enabled` (Boolean)
 - `open_access` (Boolean) Whether this profile can be accessed by anyone.
-- `type` (String) Available values: "custom".
+- `type` (String) Available values: "custom", "predefined", "integration".
 - `updated_at` (String) When the profile was lasted updated.
 
 <a id="nestedatt--context_awareness"></a>
@@ -75,7 +75,7 @@ Cannot be set to false if secret is true
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--entries--pattern))
 - `profile_id` (String)
 - `secret` (Boolean)
-- `type` (String) Available values: "custom".
+- `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "word_list".
 - `updated_at` (String)
 - `word_list` (String)
 

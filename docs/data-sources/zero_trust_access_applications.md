@@ -83,7 +83,7 @@ The header value will be interpreted as a json object similar to:
 - `scim_config` (Attributes) Configuration for provisioning to this application via SCIM. This is currently in closed beta. (see [below for nested schema](#nestedatt--result--scim_config))
 - `self_hosted_domains` (List of String, Deprecated) List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.
 - `service_auth_401_redirect` (Boolean) Returns a 401 status code when the request is blocked by a Service Auth policy.
-- `session_duration` (String) The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
+- `session_duration` (String) The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. Note: unsupported for infrastructure type applications.
 - `skip_app_launcher_login_page` (Boolean) Determines when to skip the App Launcher landing page.
 - `skip_interstitial` (Boolean) Enables automatic authentication through cloudflared.
 - `tags` (List of String) The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
@@ -116,7 +116,7 @@ Read-Only:
 - `l4_protocol` (String) The L4 protocol of the destination. When omitted, both UDP and TCP traffic will match.
 Available values: "tcp", "udp".
 - `port_range` (String) The port range of the destination. Can be a single port or a range of ports. When omitted, all ports will match.
-- `type` (String) Available values: "public".
+- `type` (String) Available values: "public", "private".
 - `uri` (String) The URI of the destination. Public destinations' URIs can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/).
 - `vnet_id` (String) The VNET ID to match the destination. When omitted, all VNETs will match.
 
@@ -927,7 +927,7 @@ Read-Only:
 - `client_secret` (String, Sensitive) Secret used to authenticate when generating a token for authenticating with the remove SCIM service.
 - `password` (String) Password used to authenticate with the remote SCIM service.
 - `scheme` (String) The authentication scheme to use when making SCIM requests to this application.
-Available values: "httpbasic".
+Available values: "httpbasic", "oauthbearertoken", "oauth2", "access_service_token".
 - `scopes` (List of String) The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.
 - `token` (String, Sensitive) Token used to authenticate with the remote SCIM service.
 - `token_url` (String) URL used to generate the token used to authenticate with the remote SCIM service.

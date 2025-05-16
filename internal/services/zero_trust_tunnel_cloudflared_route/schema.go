@@ -41,6 +41,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"virtual_network_id": schema.StringAttribute{
 				Description: "UUID of the virtual network.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{

@@ -89,12 +89,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Flag that indicates if the job is enabled.",
 				Optional:    true,
 			},
-			"kind": schema.StringAttribute{
-				Description: "The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs. Currently, Edge Log Delivery is only supported for the `http_requests` dataset.\nAvailable values: \"edge\".",
+			"filter": schema.StringAttribute{
+				Description: "The filters to select the events to include and/or remove from your logs. For more information, refer to [Filters](https://developers.cloudflare.com/logs/reference/filters/).",
 				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("edge"),
-				},
 			},
 			"logpull_options": schema.StringAttribute{
 				Description:        "This field is deprecated. Use `output_options` instead. Configuration string. It specifies things like requested fields and timestamp formats. If migrating from the logpull api, copy the url (full url or just the query string) of your call here, and logpush will keep on making this call for you, setting start and end times appropriately.",
@@ -126,6 +123,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("high", "low"),
 				},
 				Default: stringdefault.StaticString("high"),
+			},
+			"kind": schema.StringAttribute{
+				Description: "The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs. Currently, Edge Log Delivery is only supported for the `http_requests` dataset.\nAvailable values: \"edge\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("edge"),
+				},
 			},
 			"max_upload_interval_seconds": schema.Int64Attribute{
 				Description: "The maximum interval in seconds for log batches. This setting must be between 30 and 300 seconds (5 minutes), or `0` to disable it. Note that you cannot specify a minimum interval for log batches; this means that log files may be sent in shorter intervals than this. This parameter is only used for jobs with `edge` as its kind.",
@@ -226,7 +231,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"error_message": schema.StringAttribute{
 				Description: "If not null, the job is currently failing. Failures are usually repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.",
 				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"last_complete": schema.StringAttribute{
 				Description: "Records the last time for which logs have been successfully pushed. If the last successful push was for logs range 2018-07-23T10:00:00Z to 2018-07-23T10:01:00Z then the value of this field will be 2018-07-23T10:01:00Z. If the job has never run or has just been enabled and hasn't run yet then the field will be empty.",

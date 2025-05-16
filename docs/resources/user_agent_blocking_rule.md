@@ -42,7 +42,7 @@ Available values: "block", "challenge", "whitelist", "js_challenge", "managed_ch
 Optional:
 
 - `target` (String) The configuration target. You must set the target to `ip` when specifying an IP address in the rule.
-Available values: "ip".
+Available values: "ip", "ip6", "ip_range", "asn", "country".
 - `value` (String) The IP address to match. This address will be compared to the IP address of incoming requests.
 
 

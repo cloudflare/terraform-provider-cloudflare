@@ -66,24 +66,29 @@ type ZonesAccountDataSourceModel struct {
 }
 
 type ZonesResultDataSourceModel struct {
-	ID                  types.String                                          `tfsdk:"id" json:"id,computed"`
-	Account             customfield.NestedObject[ZonesAccountDataSourceModel] `tfsdk:"account" json:"account,computed"`
-	ActivatedOn         timetypes.RFC3339                                     `tfsdk:"activated_on" json:"activated_on,computed" format:"date-time"`
-	CreatedOn           timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	DevelopmentMode     types.Float64                                         `tfsdk:"development_mode" json:"development_mode,computed"`
-	Meta                customfield.NestedObject[ZonesMetaDataSourceModel]    `tfsdk:"meta" json:"meta,computed"`
-	ModifiedOn          timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name                types.String                                          `tfsdk:"name" json:"name,computed"`
-	NameServers         customfield.List[types.String]                        `tfsdk:"name_servers" json:"name_servers,computed"`
-	OriginalDnshost     types.String                                          `tfsdk:"original_dnshost" json:"original_dnshost,computed"`
-	OriginalNameServers customfield.List[types.String]                        `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
-	OriginalRegistrar   types.String                                          `tfsdk:"original_registrar" json:"original_registrar,computed"`
-	Owner               customfield.NestedObject[ZonesOwnerDataSourceModel]   `tfsdk:"owner" json:"owner,computed"`
-	Paused              types.Bool                                            `tfsdk:"paused" json:"paused,computed"`
-	Status              types.String                                          `tfsdk:"status" json:"status,computed"`
-	Type                types.String                                          `tfsdk:"type" json:"type,computed"`
-	VanityNameServers   customfield.List[types.String]                        `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed"`
-	VerificationKey     types.String                                          `tfsdk:"verification_key" json:"verification_key,computed"`
+	ID                  types.String                                             `tfsdk:"id" json:"id,computed"`
+	Account             customfield.NestedObject[ZonesAccountDataSourceModel]    `tfsdk:"account" json:"account,computed"`
+	ActivatedOn         timetypes.RFC3339                                        `tfsdk:"activated_on" json:"activated_on,computed" format:"date-time"`
+	CreatedOn           timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	DevelopmentMode     types.Float64                                            `tfsdk:"development_mode" json:"development_mode,computed"`
+	Meta                customfield.NestedObject[ZonesMetaDataSourceModel]       `tfsdk:"meta" json:"meta,computed"`
+	ModifiedOn          timetypes.RFC3339                                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name                types.String                                             `tfsdk:"name" json:"name,computed"`
+	NameServers         customfield.List[types.String]                           `tfsdk:"name_servers" json:"name_servers,computed"`
+	OriginalDnshost     types.String                                             `tfsdk:"original_dnshost" json:"original_dnshost,computed"`
+	OriginalNameServers customfield.List[types.String]                           `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
+	OriginalRegistrar   types.String                                             `tfsdk:"original_registrar" json:"original_registrar,computed"`
+	Owner               customfield.NestedObject[ZonesOwnerDataSourceModel]      `tfsdk:"owner" json:"owner,computed"`
+	Plan                customfield.NestedObject[ZonesPlanDataSourceModel]       `tfsdk:"plan" json:"plan,computed"`
+	CNAMESuffix         types.String                                             `tfsdk:"cname_suffix" json:"cname_suffix,computed"`
+	Paused              types.Bool                                               `tfsdk:"paused" json:"paused,computed"`
+	Permissions         customfield.List[types.String]                           `tfsdk:"permissions" json:"permissions,computed"`
+	Status              types.String                                             `tfsdk:"status" json:"status,computed"`
+	Tenant              customfield.NestedObject[ZonesTenantDataSourceModel]     `tfsdk:"tenant" json:"tenant,computed"`
+	TenantUnit          customfield.NestedObject[ZonesTenantUnitDataSourceModel] `tfsdk:"tenant_unit" json:"tenant_unit,computed"`
+	Type                types.String                                             `tfsdk:"type" json:"type,computed"`
+	VanityNameServers   customfield.List[types.String]                           `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed"`
+	VerificationKey     types.String                                             `tfsdk:"verification_key" json:"verification_key,computed"`
 }
 
 type ZonesMetaDataSourceModel struct {
@@ -100,4 +105,26 @@ type ZonesOwnerDataSourceModel struct {
 	ID   types.String `tfsdk:"id" json:"id,computed"`
 	Name types.String `tfsdk:"name" json:"name,computed"`
 	Type types.String `tfsdk:"type" json:"type,computed"`
+}
+
+type ZonesPlanDataSourceModel struct {
+	ID                types.String  `tfsdk:"id" json:"id,computed"`
+	CanSubscribe      types.Bool    `tfsdk:"can_subscribe" json:"can_subscribe,computed"`
+	Currency          types.String  `tfsdk:"currency" json:"currency,computed"`
+	ExternallyManaged types.Bool    `tfsdk:"externally_managed" json:"externally_managed,computed"`
+	Frequency         types.String  `tfsdk:"frequency" json:"frequency,computed"`
+	IsSubscribed      types.Bool    `tfsdk:"is_subscribed" json:"is_subscribed,computed"`
+	LegacyDiscount    types.Bool    `tfsdk:"legacy_discount" json:"legacy_discount,computed"`
+	LegacyID          types.String  `tfsdk:"legacy_id" json:"legacy_id,computed"`
+	Name              types.String  `tfsdk:"name" json:"name,computed"`
+	Price             types.Float64 `tfsdk:"price" json:"price,computed"`
+}
+
+type ZonesTenantDataSourceModel struct {
+	ID   types.String `tfsdk:"id" json:"id,computed"`
+	Name types.String `tfsdk:"name" json:"name,computed"`
+}
+
+type ZonesTenantUnitDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }

@@ -16,8 +16,8 @@ type CustomPagesModel struct {
 	Identifier types.String `tfsdk:"identifier" path:"identifier,required"`
 	AccountID  types.String `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID     types.String `tfsdk:"zone_id" path:"zone_id,optional"`
-	State      types.String `tfsdk:"state" json:"state,required"`
-	URL        types.String `tfsdk:"url" json:"url,required"`
+	State      types.String `tfsdk:"state" json:"state,required,no_refresh"`
+	URL        types.String `tfsdk:"url" json:"url,required,no_refresh"`
 }
 
 func (m CustomPagesModel) MarshalJSON() (data []byte, err error) {

@@ -62,7 +62,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"script_count": schema.Int64Attribute{
-							Description: "The current number of scripts in this Dispatch Namespace",
+							Description: "The current number of scripts in this Dispatch Namespace.",
 							Computed:    true,
 						},
 					},

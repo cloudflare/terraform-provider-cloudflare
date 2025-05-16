@@ -1,13 +1,17 @@
 package workers_script_test
 
 import (
+	"context"
 	"os"
 	"strings"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 )
 
 const (
@@ -58,6 +62,25 @@ func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
 				),
 			},
+			{
+				PreConfig: func() {
+					client := acctest.SharedClient()
+					result, err := client.Workers.Scripts.Settings.Edit(context.Background(), rnd, workers.ScriptSettingEditParams{AccountID: cloudflare.F(accountID), ScriptSetting: workers.ScriptSettingParam{Logpush: cloudflare.Bool(true)}})
+					if err != nil {
+						t.Errorf("Error updating script settings out-of-band to test drift detection: %s", err)
+					}
+					if result == nil {
+						t.Error("Could not update script settings out-of-band to test drift detection.")
+					}
+				},
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				RefreshPlanChecks: resource.RefreshPlanChecks{
+					PostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+					},
+				},
+			},
 		},
 	})
 }
@@ -90,6 +113,25 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 					// resource.TestCheckResourceAttr(name, "logpush", "true"),
 					resource.TestCheckResourceAttr(name, "placement.mode", "smart"),
 				),
+			},
+			{
+				PreConfig: func() {
+					client := acctest.SharedClient()
+					result, err := client.Workers.Scripts.Settings.Edit(context.Background(), rnd, workers.ScriptSettingEditParams{AccountID: cloudflare.F(accountID), ScriptSetting: workers.ScriptSettingParam{Logpush: cloudflare.Bool(true)}})
+					if err != nil {
+						t.Errorf("Error updating script settings out-of-band to test drift detection: %s", err)
+					}
+					if result == nil {
+						t.Error("Could not update script settings out-of-band to test drift detection.")
+					}
+				},
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				RefreshPlanChecks: resource.RefreshPlanChecks{
+					PostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+					},
+				},
 			},
 		},
 	})

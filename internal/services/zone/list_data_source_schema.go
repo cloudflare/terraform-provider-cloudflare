@@ -205,9 +205,68 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"plan": schema.SingleNestedAttribute{
+							Description:        "A Zones subscription information.",
+							Computed:           true,
+							DeprecationMessage: "This attribute is deprecated.",
+							CustomType:         customfield.NewNestedObjectType[ZonesPlanDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "Identifier",
+									Computed:    true,
+								},
+								"can_subscribe": schema.BoolAttribute{
+									Description: "States if the subscription can be activated.",
+									Computed:    true,
+								},
+								"currency": schema.StringAttribute{
+									Description: "The denomination of the customer.",
+									Computed:    true,
+								},
+								"externally_managed": schema.BoolAttribute{
+									Description: "If this Zone is managed by another company.",
+									Computed:    true,
+								},
+								"frequency": schema.StringAttribute{
+									Description: "How often the customer is billed.",
+									Computed:    true,
+								},
+								"is_subscribed": schema.BoolAttribute{
+									Description: "States if the subscription active.",
+									Computed:    true,
+								},
+								"legacy_discount": schema.BoolAttribute{
+									Description: "If the legacy discount applies to this Zone.",
+									Computed:    true,
+								},
+								"legacy_id": schema.StringAttribute{
+									Description: "The legacy name of the plan.",
+									Computed:    true,
+								},
+								"name": schema.StringAttribute{
+									Description: "Name of the owner",
+									Computed:    true,
+								},
+								"price": schema.Float64Attribute{
+									Description: "How much the customer is paying.",
+									Computed:    true,
+								},
+							},
+						},
+						"cname_suffix": schema.StringAttribute{
+							Description: "Allows the customer to use a custom apex.\n*Tenants Only Configuration*.",
+							Computed:    true,
+						},
 						"paused": schema.BoolAttribute{
 							Description: "Indicates whether the zone is only using Cloudflare DNS services. A\ntrue value means the zone will not receive security or performance\nbenefits.",
 							Computed:    true,
+						},
+						"permissions": schema.ListAttribute{
+							Description:        "Legacy permissions based on legacy user membership information.",
+							Computed:           true,
+							DeprecationMessage: "This attribute is deprecated.",
+							CustomType:         customfield.NewListType[types.String](ctx),
+							ElementType:        types.StringType,
 						},
 						"status": schema.StringAttribute{
 							Description: "The zone status on Cloudflare.\nAvailable values: \"initializing\", \"pending\", \"active\", \"moved\".",
@@ -219,6 +278,32 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"active",
 									"moved",
 								),
+							},
+						},
+						"tenant": schema.SingleNestedAttribute{
+							Description: "The root organizational unit that this zone belongs to (such as a tenant or organization).",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[ZonesTenantDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "Identifier",
+									Computed:    true,
+								},
+								"name": schema.StringAttribute{
+									Description: "The name of the Tenant account.",
+									Computed:    true,
+								},
+							},
+						},
+						"tenant_unit": schema.SingleNestedAttribute{
+							Description: "The immediate parent organizational unit that this zone belongs to (such as under a tenant or sub-organization).",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[ZonesTenantUnitDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "Identifier",
+									Computed:    true,
+								},
 							},
 						},
 						"type": schema.StringAttribute{

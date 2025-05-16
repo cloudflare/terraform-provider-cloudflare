@@ -93,7 +93,7 @@ Read-Only:
 
 Read-Only:
 
-- `type` (String) Available values: "plain_text".
+- `type` (String) Available values: "plain_text", "secret_text".
 - `value` (String, Sensitive) Environment variable value.
 
 

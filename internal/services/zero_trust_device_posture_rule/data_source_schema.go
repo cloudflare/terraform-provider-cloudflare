@@ -82,7 +82,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustDevicePostureRuleInputDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"operating_system": schema.StringAttribute{
-						Description: "Operating system.\nAvailable values: \"windows\", \"linux\", \"mac\".",
+						Description: "Operating system.\nAvailable values: \"windows\", \"linux\", \"mac\", \"android\", \"ios\", \"chromeos\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -209,7 +209,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"compliance_status": schema.StringAttribute{
-						Description: "Compliance Status.\nAvailable values: \"compliant\", \"noncompliant\", \"unknown\".",
+						Description: "Compliance Status.\nAvailable values: \"compliant\", \"noncompliant\", \"unknown\", \"notapplicable\", \"ingraceperiod\", \"error\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

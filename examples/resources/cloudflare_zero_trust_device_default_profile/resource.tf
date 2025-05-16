@@ -18,6 +18,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
   lan_allow_minutes = 30
   lan_allow_subnet_size = 24
   register_interface_ip_with_dns = true
+  sccm_vpn_boundary_support = false
   service_mode_v2 = {
     mode = "proxy"
     port = 3000

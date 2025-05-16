@@ -32,6 +32,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
   lan_allow_minutes = 30
   lan_allow_subnet_size = 24
   register_interface_ip_with_dns = true
+  sccm_vpn_boundary_support = false
   service_mode_v2 = {
     mode = "proxy"
     port = 3000
@@ -63,6 +64,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
 - `lan_allow_minutes` (Number) The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.
 - `lan_allow_subnet_size` (Number) The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.
 - `register_interface_ip_with_dns` (Boolean) Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.
+- `sccm_vpn_boundary_support` (Boolean) Determines whether the WARP client indicates to SCCM that it is inside a VPN boundary. (Windows only).
 - `service_mode_v2` (Attributes) (see [below for nested schema](#nestedatt--service_mode_v2))
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.

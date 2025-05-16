@@ -47,15 +47,15 @@ this setting can determine the clearance level to be set
 Available values: "no_clearance", "jschallenge", "managed", "interactive".
 - `ephemeral_id` (Boolean) Return the Ephemeral ID in /siteverify (ENT only).
 - `offlabel` (Boolean) Do not show any Cloudflare branding on the widget (ENT only).
-- `region` (String) Region where this widget can be used.
-Available values: "world".
+- `region` (String) Region where this widget can be used. This cannot be changed after creation.
+Available values: "world", "china".
 
 ### Read-Only
 
 - `created_on` (String) When the widget was created.
 - `id` (String) Widget item identifier tag.
 - `modified_on` (String) When the widget was modified.
-- `secret` (String) Secret key for this widget.
+- `secret` (String, Sensitive) Secret key for this widget.
 - `sitekey` (String) Widget item identifier tag.
 
 ## Import

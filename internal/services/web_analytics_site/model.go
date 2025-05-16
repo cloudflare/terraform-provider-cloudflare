@@ -18,10 +18,10 @@ type WebAnalyticsSiteModel struct {
 	SiteTag     types.String                                             `tfsdk:"site_tag" json:"site_tag,computed"`
 	AccountID   types.String                                             `tfsdk:"account_id" path:"account_id,required"`
 	AutoInstall types.Bool                                               `tfsdk:"auto_install" json:"auto_install,optional"`
-	Enabled     types.Bool                                               `tfsdk:"enabled" json:"enabled,optional"`
-	Host        types.String                                             `tfsdk:"host" json:"host,optional"`
-	Lite        types.Bool                                               `tfsdk:"lite" json:"lite,optional"`
-	ZoneTag     types.String                                             `tfsdk:"zone_tag" json:"zone_tag,optional"`
+	Enabled     types.Bool                                               `tfsdk:"enabled" json:"enabled,optional,no_refresh"`
+	Host        types.String                                             `tfsdk:"host" json:"host,optional,no_refresh"`
+	Lite        types.Bool                                               `tfsdk:"lite" json:"lite,optional,no_refresh"`
+	ZoneTag     types.String                                             `tfsdk:"zone_tag" json:"zone_tag,optional,no_refresh"`
 	Created     timetypes.RFC3339                                        `tfsdk:"created" json:"created,computed" format:"date-time"`
 	SiteToken   types.String                                             `tfsdk:"site_token" json:"site_token,computed"`
 	Snippet     types.String                                             `tfsdk:"snippet" json:"snippet,computed"`

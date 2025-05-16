@@ -29,6 +29,8 @@ data "cloudflare_r2_bucket" "example_r2_bucket" {
 ### Read-Only
 
 - `creation_date` (String) Creation timestamp.
+- `jurisdiction` (String) Jurisdiction where objects in this bucket are guaranteed to be stored.
+Available values: "default", "eu", "fedramp".
 - `location` (String) Location of the bucket.
 Available values: "apac", "eeur", "enam", "weur", "wnam", "oc".
 - `name` (String) Name of the bucket.
