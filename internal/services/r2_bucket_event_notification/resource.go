@@ -161,7 +161,6 @@ func (r *R2BucketEventNotificationResource) Read(ctx context.Context, req resour
 	_, err := r.client.R2.Buckets.EventNotifications.Get(
 		ctx,
 		data.BucketName.ValueString(),
-		data.QueueID.ValueString(),
 		r2.BucketEventNotificationGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
