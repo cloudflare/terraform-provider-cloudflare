@@ -260,6 +260,20 @@ Required:
 Optional:
 
 - `head_sampling_rate` (Number) The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
+- `logs` (Attributes) Log settings for the Worker. (see [below for nested schema](#nestedatt--observability--logs))
+
+<a id="nestedatt--observability--logs"></a>
+### Nested Schema for `observability.logs`
+
+Required:
+
+- `enabled` (Boolean) Whether logs are enabled for the Worker.
+- `invocation_logs` (Boolean) Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.
+
+Optional:
+
+- `head_sampling_rate` (Number) The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
+
 
 
 <a id="nestedatt--placement"></a>
