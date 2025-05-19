@@ -3,9 +3,14 @@ package page_rule
 import (
 	"context"
 	"encoding/json"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"strings"
+	"time"
+
 	"github.com/cloudflare/cloudflare-go/v4/page_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
@@ -77,7 +82,7 @@ type PageRuleActionsCacheKeyFieldsHeaderModel struct {
 }
 
 type PageRuleActionsCacheKeyFieldsHostModel struct {
-	Resolved types.Bool `tfsdk:"resolved" json:"resolved,optional"`
+	Resolved types.Bool `tfsdk:"resolved" json:"resolved,computed_optional"`
 }
 
 type PageRuleActionsCacheKeyFieldsCookieModel struct {
@@ -86,17 +91,17 @@ type PageRuleActionsCacheKeyFieldsCookieModel struct {
 }
 
 type PageRuleActionsCacheKeyFieldsUserModel struct {
-	DeviceType types.Bool `tfsdk:"device_type" json:"device_type,optional"`
-	Geo        types.Bool `tfsdk:"geo" json:"geo,optional"`
-	Lang       types.Bool `tfsdk:"lang" json:"lang,optional"`
+	DeviceType types.Bool `tfsdk:"device_type" json:"device_type,computed_optional"`
+	Geo        types.Bool `tfsdk:"geo" json:"geo,computed_optional"`
+	Lang       types.Bool `tfsdk:"lang" json:"lang,computed_optional"`
 }
 
 type PageRuleActionsCacheKeyFieldsModel struct {
 	QueryString customfield.NestedObject[PageRuleActionsCacheKeyFieldsQueryStringModel] `tfsdk:"query_string" json:"query_string,optional"`
 	Header      customfield.NestedObject[PageRuleActionsCacheKeyFieldsHeaderModel]      `tfsdk:"header" json:"header,optional"`
-	Host        customfield.NestedObject[PageRuleActionsCacheKeyFieldsHostModel]        `tfsdk:"host" json:"host,optional"`
+	Host        customfield.NestedObject[PageRuleActionsCacheKeyFieldsHostModel]        `tfsdk:"host" json:"host,computed_optional"`
 	Cookie      customfield.NestedObject[PageRuleActionsCacheKeyFieldsCookieModel]      `tfsdk:"cookie" json:"cookie,optional"`
-	User        customfield.NestedObject[PageRuleActionsCacheKeyFieldsUserModel]        `tfsdk:"user" json:"user,optional"`
+	User        customfield.NestedObject[PageRuleActionsCacheKeyFieldsUserModel]        `tfsdk:"user" json:"user,computed_optional"`
 }
 
 type PageRuleActionsForwardingURLModel struct {
@@ -228,7 +233,6 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 		for k, v := range ttl {
 			value[k] = v
 		}
-
 		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDCacheTTLByStatus, "value": value})
 	}
 	if m.DisableApps.ValueBool() {
@@ -308,6 +312,312 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 	}
 
 	return
+}
+
+func UnmarshalPageRuleModel(b []byte) (*PageRuleModel, error) {
+	var resp struct {
+		Result struct {
+			ID         string `json:"id"`
+			ZoneID     string `json:"zone_id"`
+			Priority   int64  `json:"priority"`
+			Status     string `json:"status"`
+			CreatedOn  string `json:"created_on"`
+			ModifiedOn string `json:"modified_on"`
+			Targets    []struct {
+				Constraint struct {
+					Operator string `json:"operator"`
+					Value    string `json:"value"`
+				} `json:"constraint"`
+				Target string `json:"target"`
+			} `json:"targets"`
+			Actions []struct {
+				ID    string          `json:"id"`
+				Value json.RawMessage `json:"value"`
+			} `json:"actions"`
+		} `json:"result"`
+	}
+
+	if err := json.Unmarshal(b, &resp); err != nil {
+		return nil, err
+	}
+
+	m := &PageRuleModel{
+		ID:         types.StringValue(resp.Result.ID),
+		Priority:   types.Int64Value(resp.Result.Priority),
+		Status:     types.StringValue(resp.Result.Status),
+		CreatedOn:  timetypes.NewRFC3339TimeValue(timeFromString(resp.Result.CreatedOn)),
+		ModifiedOn: timetypes.NewRFC3339TimeValue(timeFromString(resp.Result.ModifiedOn)),
+	}
+
+	if len(resp.Result.Targets) > 0 {
+		m.Target = types.StringValue(strings.TrimRight(resp.Result.Targets[0].Constraint.Value, "/"))
+	}
+
+	m.Actions = &PageRuleActionsModel{}
+	for _, action := range resp.Result.Actions {
+		switch action.ID {
+		case "always_use_https":
+			m.Actions.AlwaysUseHTTPS = types.BoolValue(true)
+		case "automatic_https_rewrites":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.AutomaticHTTPSRewrites = types.StringValue(val)
+		case "browser_cache_ttl":
+			var val int64
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.BrowserCacheTTL = types.Int64Value(val)
+		case "browser_check":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.BrowserCheck = types.StringValue(val)
+		case "bypass_cache_on_cookie":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.BypassCacheOnCookie = types.StringValue(val)
+		case "cache_by_device_type":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.CacheByDeviceType = types.StringValue(val)
+		case "cache_deception_armor":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.CacheDeceptionArmor = types.StringValue(val)
+		case "cache_level":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.CacheLevel = types.StringValue(val)
+		case "cache_on_cookie":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.CacheOnCookie = types.StringValue(val)
+		case "cache_key_fields":
+			var ckf PageRuleActionsCacheKeyFieldsModel
+			var val map[string]any
+			_ = json.Unmarshal(action.Value, &val)
+			for key, field := range val {
+				switch key {
+				case "cookie":
+					var cookie PageRuleActionsCacheKeyFieldsCookieModel
+					cookiesMap := field.(map[string]interface{})
+					if inc, ok := cookiesMap["include"]; ok {
+						includesSlice, ok := inc.([]interface{})
+						if ok {
+							for _, i := range includesSlice {
+								cookie.Include = append(cookie.Include, types.StringValue(i.(string)))
+							}
+						}
+					}
+					if cp, ok := cookiesMap["check_presence"]; ok {
+						cpSlice, ok := cp.([]interface{})
+						if ok {
+							for _, c := range cpSlice {
+								cookie.CheckPresence = append(cookie.CheckPresence, types.StringValue(c.(string)))
+							}
+						}
+					}
+					if len(cookie.CheckPresence) != 0 || len(cookie.Include) != 0 {
+						ckf.Cookie, _ = customfield.NewObject[PageRuleActionsCacheKeyFieldsCookieModel](context.Background(), &cookie)
+					}
+				case "header":
+					var header PageRuleActionsCacheKeyFieldsHeaderModel
+					headersMap := field.(map[string]interface{})
+					if inc, ok := headersMap["include"]; ok {
+						includesSlice, ok := inc.([]interface{})
+						if ok {
+							for _, i := range includesSlice {
+								header.Include = append(header.Include, types.StringValue(i.(string)))
+							}
+						}
+					}
+					if exc, ok := headersMap["exclude"]; ok {
+						excludesSlice, ok := exc.([]interface{})
+						if ok {
+							for _, e := range excludesSlice {
+								header.Exclude = append(header.Exclude, types.StringValue(e.(string)))
+							}
+						}
+					}
+					if cp, ok := headersMap["check_presence"]; ok {
+						cpSlice, ok := cp.([]interface{})
+						if ok {
+							for _, c := range cpSlice {
+								header.CheckPresence = append(header.CheckPresence, types.StringValue(c.(string)))
+							}
+						}
+					}
+					if len(header.CheckPresence) != 0 || len(header.Include) != 0 || len(header.Exclude) != 0 {
+						ckf.Header, _ = customfield.NewObject[PageRuleActionsCacheKeyFieldsHeaderModel](context.Background(), &header)
+					}
+				case "host":
+					var host PageRuleActionsCacheKeyFieldsHostModel
+					if resolved, ok := (field.(map[string]interface{}))["resolved"]; ok {
+						isResolved, ok := resolved.(bool)
+						if ok {
+							host.Resolved = types.BoolValue(isResolved)
+						}
+					}
+					ckf.Host, _ = customfield.NewObject[PageRuleActionsCacheKeyFieldsHostModel](context.Background(), &host)
+				case "query_string":
+					var queryString PageRuleActionsCacheKeyFieldsQueryStringModel
+					qsMap := field.(map[string]interface{})
+					if inc, ok := qsMap["include"]; ok {
+						includesSlice, ok := inc.([]interface{})
+						if ok {
+							for _, i := range includesSlice {
+								queryString.Include = append(queryString.Include, types.StringValue(i.(string)))
+							}
+						}
+					}
+					if exc, ok := qsMap["exclude"]; ok {
+						excludesSlice, ok := exc.([]interface{})
+						if ok {
+							for _, e := range excludesSlice {
+								queryString.Exclude = append(queryString.Exclude, types.StringValue(e.(string)))
+							}
+						}
+					}
+					ckf.QueryString, _ = customfield.NewObject[PageRuleActionsCacheKeyFieldsQueryStringModel](context.Background(), &queryString)
+				case "user":
+					var user PageRuleActionsCacheKeyFieldsUserModel
+					userMap := field.(map[string]interface{})
+					if geo, ok := userMap["geo"]; ok {
+						isGeo, ok := geo.(bool)
+						if ok {
+							user.Geo = types.BoolValue(isGeo)
+						}
+					}
+					if deviceType, ok := userMap["device_type"]; ok {
+						isDeviceType, ok := deviceType.(bool)
+						if ok {
+							user.DeviceType = types.BoolValue(isDeviceType)
+						}
+					}
+					if lang, ok := userMap["lang"]; ok {
+						isLang, ok := lang.(bool)
+						if ok {
+							user.Lang = types.BoolValue(isLang)
+						}
+					}
+					ckf.User, _ = customfield.NewObject[PageRuleActionsCacheKeyFieldsUserModel](context.Background(), &user)
+				}
+			}
+			m.Actions.CacheKeyFields, _ = customfield.NewObject[PageRuleActionsCacheKeyFieldsModel](context.Background(), &ckf)
+		case "cache_ttl_by_status":
+			var val map[string]interface{}
+			_ = json.Unmarshal(action.Value, &val)
+			elements := make(map[string]attr.Value)
+			aMap := make(map[string]attr.Type)
+			for k, v := range val {
+				aMap[k] = types.DynamicType
+				switch v.(type) {
+				case string:
+					elements[k] = types.DynamicValue(basetypes.NewDynamicValue(types.StringValue(v.(string))))
+				case float64:
+					elements[k] = types.DynamicValue(basetypes.NewDynamicValue(types.Float64Value(v.(float64))))
+				}
+
+			}
+			mapValue, _ := types.ObjectValue(aMap, elements)
+			m.Actions.CacheTTLByStatus = types.DynamicValue(mapValue)
+		case "disable_apps":
+			m.Actions.DisableApps = types.BoolValue(true)
+		case "disable_performance":
+			m.Actions.DisablePerformance = types.BoolValue(true)
+		case "disable_security":
+			m.Actions.DisableSecurity = types.BoolValue(true)
+		case "disable_zaraz":
+			m.Actions.DisableZaraz = types.BoolValue(true)
+		case "edge_cache_ttl":
+			var val int64
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.EdgeCacheTTL = types.Int64Value(val)
+		case "email_obfuscation":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.EmailObfuscation = types.StringValue(val)
+		case "explicit_cache_control":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.ExplicitCacheControl = types.StringValue(val)
+		case "forwarding_url":
+			var val struct {
+				URL        string `json:"url"`
+				StatusCode int64  `json:"status_code"`
+			}
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.ForwardingURL = &PageRuleActionsForwardingURLModel{
+				URL:        types.StringValue(val.URL),
+				StatusCode: types.Int64Value(val.StatusCode),
+			}
+		case "host_header_override":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.HostHeaderOverride = types.StringValue(val)
+		case "ip_geolocation":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.IPGeolocation = types.StringValue(val)
+		case "mirage":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.Mirage = types.StringValue(val)
+		case "opportunistic_encryption":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.OpportunisticEncryption = types.StringValue(val)
+		case "origin_error_page_pass_thru":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.OriginErrorPagePassThru = types.StringValue(val)
+		case "polish":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.Polish = types.StringValue(val)
+		case "resolve_override":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.ResolveOverride = types.StringValue(val)
+		case "respect_strong_etag":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.RespectStrongEtag = types.StringValue(val)
+		case "response_buffering":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.ResponseBuffering = types.StringValue(val)
+		case "rocket_loader":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.RocketLoader = types.StringValue(val)
+		case "ssl":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.SSL = types.StringValue(val)
+		case "security_level":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.SecurityLevel = types.StringValue(val)
+		case "sort_query_string_for_cache":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.SortQueryStringForCache = types.StringValue(val)
+		case "true_client_ip_header":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.TrueClientIPHeader = types.StringValue(val)
+		case "waf":
+			var val string
+			_ = json.Unmarshal(action.Value, &val)
+			m.Actions.WAF = types.StringValue(val)
+		}
+
+	}
+	return m, nil
+}
+
+func timeFromString(s string) time.Time {
+	t, _ := time.Parse(time.RFC3339Nano, s)
+	return t
 }
 
 func convertToStringSlice(b []basetypes.StringValue) []string {
