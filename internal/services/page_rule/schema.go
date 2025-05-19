@@ -4,7 +4,6 @@ package page_rule
 
 import (
 	"context"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -12,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -150,9 +150,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"host": schema.SingleNestedAttribute{
 								Optional: true,
+								Computed: true,
 								Attributes: map[string]schema.Attribute{
 									"resolved": schema.BoolAttribute{
 										Optional: true,
+										Computed: true,
+										Default:  booldefault.StaticBool(false),
 									},
 								},
 							},
@@ -175,15 +178,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"user": schema.SingleNestedAttribute{
 								Optional: true,
+								Computed: true,
 								Attributes: map[string]schema.Attribute{
 									"device_type": schema.BoolAttribute{
 										Optional: true,
+										Computed: true,
+										Default:  booldefault.StaticBool(false),
 									},
 									"geo": schema.BoolAttribute{
 										Optional: true,
+										Computed: true,
+										Default:  booldefault.StaticBool(false),
 									},
 									"lang": schema.BoolAttribute{
 										Optional: true,
+										Computed: true,
+										Default:  booldefault.StaticBool(false),
 									},
 								},
 							},

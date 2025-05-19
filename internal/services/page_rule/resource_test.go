@@ -2,6 +2,7 @@ package page_rule_test
 
 import (
 	"context"
+
 	"fmt"
 	"os"
 	"regexp"
@@ -92,6 +93,28 @@ func TestAccCloudflarePageRule_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 				),
 			},
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_apps = true`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					// testAccCheckCloudflarePageRuleAttributesBasic(&pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -116,6 +139,27 @@ func TestAccCloudflarePageRule_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigFullySpecified(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -143,6 +187,27 @@ func TestAccCloudflarePageRule_AlwaysUseHTTPS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "actions.always_use_https", "true"),
 				),
 			},
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `always_use_https = true`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.always_use_https", "true"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -169,12 +234,47 @@ func TestAccCloudflarePageRule_DisableApps(t *testing.T) {
 				),
 			},
 			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_apps = true`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_apps", "true"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_apps", "true"),
+				),
+			},
+			{
 				Config: buildPageRuleConfig(rnd, zoneID, `disable_apps = false`, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "actions.disable_apps", "false"),
 				),
+			},
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_apps = false`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_apps", "false"),
+				),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -202,12 +302,30 @@ func TestAccCloudflarePageRule_DisablePerformance(t *testing.T) {
 				),
 			},
 			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_performance = true`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_performance", "true"),
+				),
+				PlanOnly: true,
+			},
+			{
 				Config: buildPageRuleConfig(rnd, zoneID, `disable_performance = false`, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "actions.disable_performance", "false"),
 				),
+			},
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_performance = false`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_performance", "false"),
+				),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -235,12 +353,30 @@ func TestAccCloudflarePageRule_DisableSecurity(t *testing.T) {
 				),
 			},
 			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_security = true`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_security", "true"),
+				),
+				PlanOnly: true,
+			},
+			{
 				Config: buildPageRuleConfig(rnd, zoneID, `disable_security = false`, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "actions.disable_security", "false"),
 				),
+			},
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_security = false`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_security", "false"),
+				),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -268,12 +404,30 @@ func TestAccCloudflarePageRule_DisableZaraz(t *testing.T) {
 				),
 			},
 			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_zaraz = true`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_zaraz", "true"),
+				),
+				PlanOnly: true,
+			},
+			{
 				Config: buildPageRuleConfig(rnd, zoneID, `disable_zaraz = false`, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "actions.disable_zaraz", "false"),
 				),
+			},
+			{
+				Config: buildPageRuleConfig(rnd, zoneID, `disable_zaraz = false`, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "actions.disable_zaraz", "false"),
+				),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -300,6 +454,28 @@ func TestAccCloudflarePageRule_ForwardingOnly(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.forwarding_url.url", fmt.Sprintf("http://%s/forward", rnd+"."+domain)),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigForwardingOnly(zoneID, target, rnd, rnd+"."+domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.forwarding_url.url", fmt.Sprintf("http://%s/forward", rnd+"."+domain)),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -352,6 +528,25 @@ func TestAccCloudflarePageRule_Updated(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigBasic(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &before),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigNewValue(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &after),
@@ -359,6 +554,28 @@ func TestAccCloudflarePageRule_Updated(t *testing.T) {
 					testAccCheckCloudflarePageRuleIDUnchanged(&before, &after),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/updated", target)),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigNewValue(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &after),
+					// testAccCheckCloudflarePageRuleAttributesUpdated(&after),
+					testAccCheckCloudflarePageRuleIDUnchanged(&before, &after),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/updated", target)),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -388,6 +605,14 @@ func TestAccCloudflarePageRule_CreateAfterManualDestroy(t *testing.T) {
 				ExpectNonEmptyPlan: true,
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigBasic(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &before),
+					testAccManuallyDeletePageRule(resourceName, &initialID),
+				),
+				PlanOnly: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigNewValue(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &after),
@@ -397,6 +622,18 @@ func TestAccCloudflarePageRule_CreateAfterManualDestroy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "actions.rocket_loader", "on"),
 					resource.TestCheckResourceAttr(resourceName, "actions.ssl", "strict"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigNewValue(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &after),
+					testAccCheckCloudflarePageRuleRecreated(&before, &after),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/updated", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.browser_check", "on"),
+					resource.TestCheckResourceAttr(resourceName, "actions.rocket_loader", "on"),
+					resource.TestCheckResourceAttr(resourceName, "actions.ssl", "strict"),
+				),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -427,12 +664,53 @@ func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigBasic(oldZoneID, oldTarget, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &before),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, oldZoneID),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", oldZoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigBasic(newZoneID, newTarget, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &after),
 					testAccCheckCloudflarePageRuleRecreated(&before, &after),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, newZoneID),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigBasic(newZoneID, newTarget, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &after),
+					testAccCheckCloudflarePageRuleRecreated(&before, &after),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, newZoneID),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", newZoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -461,6 +739,28 @@ func TestAccCloudflarePageRule_BrowserCheckOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "browser_check", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.browser_check", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "browser_check", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -468,6 +768,28 @@ func TestAccCloudflarePageRule_BrowserCheckOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.browser_check", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "browser_check", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.browser_check", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -496,6 +818,28 @@ func TestAccCloudflarePageRule_CacheByDeviceTypeOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_by_device_type", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_by_device_type", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_by_device_type", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -503,6 +847,28 @@ func TestAccCloudflarePageRule_CacheByDeviceTypeOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_by_device_type", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_by_device_type", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_by_device_type", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -531,6 +897,28 @@ func TestAccCloudflarePageRule_CacheDeceptionArmorOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_deception_armor", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_deception_armor", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_deception_armor", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -538,6 +926,28 @@ func TestAccCloudflarePageRule_CacheDeceptionArmorOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_deception_armor", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_deception_armor", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_deception_armor", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -566,6 +976,28 @@ func TestAccCloudflarePageRule_EmailObfuscationOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "email_obfuscation", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.email_obfuscation", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "email_obfuscation", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -573,6 +1005,28 @@ func TestAccCloudflarePageRule_EmailObfuscationOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.email_obfuscation", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "email_obfuscation", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.email_obfuscation", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -601,6 +1055,28 @@ func TestAccCloudflarePageRule_ExplicitCacheControlOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "explicit_cache_control", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.explicit_cache_control", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "explicit_cache_control", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -608,6 +1084,28 @@ func TestAccCloudflarePageRule_ExplicitCacheControlOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.explicit_cache_control", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "explicit_cache_control", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.explicit_cache_control", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -636,6 +1134,28 @@ func TestAccCloudflarePageRule_IPGeolocationOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "ip_geolocation", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.ip_geolocation", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "ip_geolocation", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -643,6 +1163,28 @@ func TestAccCloudflarePageRule_IPGeolocationOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.ip_geolocation", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "ip_geolocation", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.ip_geolocation", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -671,6 +1213,28 @@ func TestAccCloudflarePageRule_MirageOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "mirage", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.mirage", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "mirage", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -678,6 +1242,28 @@ func TestAccCloudflarePageRule_MirageOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.mirage", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "mirage", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.mirage", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -707,6 +1293,28 @@ func TestAccCloudflarePageRule_OpportunisticEncryptionOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "opportunistic_encryption", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.opportunistic_encryption", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "opportunistic_encryption", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -714,6 +1322,28 @@ func TestAccCloudflarePageRule_OpportunisticEncryptionOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.opportunistic_encryption", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "opportunistic_encryption", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.opportunistic_encryption", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -742,6 +1372,28 @@ func TestAccCloudflarePageRule_OriginErrorPagePassThruOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "origin_error_page_pass_thru", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.origin_error_page_pass_thru", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "origin_error_page_pass_thru", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -749,6 +1401,28 @@ func TestAccCloudflarePageRule_OriginErrorPagePassThruOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.origin_error_page_pass_thru", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "origin_error_page_pass_thru", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.origin_error_page_pass_thru", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -777,6 +1451,28 @@ func TestAccCloudflarePageRule_RespectStrongEtagOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "respect_strong_etag", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.respect_strong_etag", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "respect_strong_etag", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -784,6 +1480,28 @@ func TestAccCloudflarePageRule_RespectStrongEtagOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.respect_strong_etag", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "respect_strong_etag", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.respect_strong_etag", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -812,6 +1530,28 @@ func TestAccCloudflarePageRule_ResponseBufferingOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "response_buffering", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.response_buffering", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "response_buffering", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -819,6 +1559,28 @@ func TestAccCloudflarePageRule_ResponseBufferingOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.response_buffering", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "response_buffering", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.response_buffering", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -847,6 +1609,28 @@ func TestAccCloudflarePageRule_RocketLoaderOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "rocket_loader", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.rocket_loader", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "rocket_loader", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -854,6 +1638,28 @@ func TestAccCloudflarePageRule_RocketLoaderOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.rocket_loader", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "rocket_loader", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.rocket_loader", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -882,6 +1688,28 @@ func TestAccCloudflarePageRule_SortQueryStringForCacheOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "sort_query_string_for_cache", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.sort_query_string_for_cache", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "sort_query_string_for_cache", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -889,6 +1717,28 @@ func TestAccCloudflarePageRule_SortQueryStringForCacheOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.sort_query_string_for_cache", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "sort_query_string_for_cache", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.sort_query_string_for_cache", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -917,6 +1767,28 @@ func TestAccCloudflarePageRule_TrueClientIPHeaderOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "true_client_ip_header", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.true_client_ip_header", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "true_client_ip_header", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -924,6 +1796,28 @@ func TestAccCloudflarePageRule_TrueClientIPHeaderOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.true_client_ip_header", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "true_client_ip_header", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.true_client_ip_header", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -952,6 +1846,28 @@ func TestAccCloudflarePageRule_WAFOnOff(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "waf", "on"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.waf", "on"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "waf", "off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -959,6 +1875,28 @@ func TestAccCloudflarePageRule_WAFOnOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.waf", "off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "waf", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.waf", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -985,6 +1923,28 @@ func TestAccCloudflarePageRule_BypassCacheOnCookie_String(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.bypass_cache_on_cookie", "bypass=.*|PHPSESSID=.*"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "bypass_cache_on_cookie", "bypass=.*|PHPSESSID=.*"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.bypass_cache_on_cookie", "bypass=.*|PHPSESSID=.*"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -1013,6 +1973,28 @@ func TestAccCloudflarePageRule_CacheLevel_String(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_level", "bypass"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_level", "bypass"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_level", "basic"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -1020,6 +2002,28 @@ func TestAccCloudflarePageRule_CacheLevel_String(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_level", "basic"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_level", "basic"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_level", "basic"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_level", "simplified"),
@@ -1031,12 +2035,65 @@ func TestAccCloudflarePageRule_CacheLevel_String(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_level", "simplified"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_level", "simplified"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_level", "aggressive"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_level", "aggressive"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_level", "aggressive"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_level", "aggressive"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_level", "cache_everything"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_level", "cache_everything"),
 				),
 			},
 			{
@@ -1047,6 +2104,19 @@ func TestAccCloudflarePageRule_CacheLevel_String(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_level", "cache_everything"),
 				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -1074,6 +2144,28 @@ func TestAccCloudflarePageRule_CacheOnCookie_String(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_on_cookie", "bypass=.*|PHPSESSID=.*"),
 				),
 			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "cache_on_cookie", "bypass=.*|PHPSESSID=.*"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_on_cookie", "bypass=.*|PHPSESSID=.*"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -1099,6 +2191,28 @@ func TestAccCloudflarePageRule_HostHeaderOverride_String(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.host_header_override", "example.com"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "host_header_override", "example.com"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.host_header_override", "example.com"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -1127,12 +2241,65 @@ func TestAccCloudflarePageRule_Polish_String(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "polish", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.polish", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "polish", "lossless"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.polish", "lossless"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "polish", "lossless"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.polish", "lossless"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "polish", "lossy"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.polish", "lossy"),
 				),
 			},
 			{
@@ -1143,6 +2310,19 @@ func TestAccCloudflarePageRule_Polish_String(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.polish", "lossy"),
 				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -1169,6 +2349,28 @@ func TestAccCloudflarePageRule_ResolveOverride_String(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.resolve_override", "terraform.cfapi.net"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "resolve_override", "terraform.cfapi.net"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.resolve_override", "terraform.cfapi.net"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -1197,6 +2399,28 @@ func TestAccCloudflarePageRule_SSL_String(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "ssl", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.ssl", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "ssl", "flexible"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -1204,6 +2428,28 @@ func TestAccCloudflarePageRule_SSL_String(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.ssl", "flexible"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "ssl", "flexible"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.ssl", "flexible"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "ssl", "full"),
@@ -1215,12 +2461,65 @@ func TestAccCloudflarePageRule_SSL_String(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "ssl", "full"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.ssl", "full"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "ssl", "strict"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.ssl", "strict"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "ssl", "strict"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.ssl", "strict"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "ssl", "origin_pull"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.ssl", "origin_pull"),
 				),
 			},
 			{
@@ -1231,6 +2530,19 @@ func TestAccCloudflarePageRule_SSL_String(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.ssl", "origin_pull"),
 				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -1259,6 +2571,28 @@ func TestAccCloudflarePageRule_SecurityLevel_String(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "security_level", "off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.security_level", "off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "security_level", "essentially_off"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -1266,6 +2600,28 @@ func TestAccCloudflarePageRule_SecurityLevel_String(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.security_level", "essentially_off"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "security_level", "essentially_off"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.security_level", "essentially_off"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "security_level", "low"),
@@ -1277,6 +2633,28 @@ func TestAccCloudflarePageRule_SecurityLevel_String(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "security_level", "low"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.security_level", "low"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "security_level", "medium"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -1284,6 +2662,28 @@ func TestAccCloudflarePageRule_SecurityLevel_String(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.security_level", "medium"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "security_level", "medium"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.security_level", "medium"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "security_level", "high"),
@@ -1295,6 +2695,28 @@ func TestAccCloudflarePageRule_SecurityLevel_String(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "security_level", "high"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.security_level", "high"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "security_level", "under_attack"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
@@ -1302,6 +2724,28 @@ func TestAccCloudflarePageRule_SecurityLevel_String(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.security_level", "under_attack"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigString(rnd, zoneID, target, "security_level", "under_attack"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s", target)),
+					resource.TestCheckResourceAttr(resourceName, "actions.security_level", "under_attack"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -1400,6 +2844,27 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLIntegerValues(t *testing.T)
 				resource.TestCheckResourceAttr(resourceName, "actions.browser_cache_ttl", "1"),
 			),
 		},
+		{
+			Config: buildPageRuleConfig(rnd, zoneID, "browser_cache_ttl = 1", target),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+				testAccCheckCloudflarePageRuleHasAction(&pageRule, "browser_cache_ttl", float64(1)),
+				resource.TestCheckResourceAttr(resourceName, "actions.browser_cache_ttl", "1"),
+			),
+			PlanOnly: true,
+		},
+		{
+			ResourceName: resourceName,
+			ImportStateIdFunc: func(state *terraform.State) (string, error) {
+				rs, ok := state.RootModule().Resources[resourceName]
+				if !ok {
+					return "", fmt.Errorf("not found: %s", resourceName)
+				}
+				return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+			},
+			ImportState:       true,
+			ImportStateVerify: true,
+		},
 	})
 }
 
@@ -1419,6 +2884,27 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLThatRespectsExistingHeaders
 				testAccCheckCloudflarePageRuleHasAction(&pageRule, "browser_cache_ttl", float64(0)),
 			),
 		},
+		{
+			Config: buildPageRuleConfig(rnd, zoneID, "browser_cache_ttl = 0", target),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+				resource.TestCheckResourceAttr(resourceName, "actions.browser_cache_ttl", "0"),
+				testAccCheckCloudflarePageRuleHasAction(&pageRule, "browser_cache_ttl", float64(0)),
+			),
+			PlanOnly: true,
+		},
+		{
+			ResourceName: resourceName,
+			ImportStateIdFunc: func(state *terraform.State) (string, error) {
+				rs, ok := state.RootModule().Resources[resourceName]
+				if !ok {
+					return "", fmt.Errorf("not found: %s", resourceName)
+				}
+				return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+			},
+			ImportState:       true,
+			ImportStateVerify: true,
+		},
 	})
 }
 
@@ -1434,6 +2920,10 @@ func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLToSameValue(t *testing.T) {
 			Config: buildPageRuleConfig(rnd, zoneID, "browser_cache_ttl = 1", target),
 		},
 		{
+			Config:   buildPageRuleConfig(rnd, zoneID, "browser_cache_ttl = 1", target),
+			PlanOnly: true,
+		},
+		{
 			Config: buildPageRuleConfig(rnd, zoneID, `browser_cache_ttl = 1
 			browser_check = "on"`, target),
 			Check: resource.ComposeTestCheckFunc(
@@ -1441,6 +2931,28 @@ func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLToSameValue(t *testing.T) {
 				testAccCheckCloudflarePageRuleHasAction(&pageRule, "browser_cache_ttl", float64(1)),
 				resource.TestCheckResourceAttr(resourceName, "actions.browser_cache_ttl", "1"),
 			),
+		},
+		{
+			Config: buildPageRuleConfig(rnd, zoneID, `browser_cache_ttl = 1
+			browser_check = "on"`, target),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+				testAccCheckCloudflarePageRuleHasAction(&pageRule, "browser_cache_ttl", float64(1)),
+				resource.TestCheckResourceAttr(resourceName, "actions.browser_cache_ttl", "1"),
+			),
+			PlanOnly: true,
+		},
+		{
+			ResourceName: resourceName,
+			ImportStateIdFunc: func(state *terraform.State) (string, error) {
+				rs, ok := state.RootModule().Resources[resourceName]
+				if !ok {
+					return "", fmt.Errorf("not found: %s", resourceName)
+				}
+				return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+			},
+			ImportState:       true,
+			ImportStateVerify: true,
 		},
 	})
 }
@@ -1457,12 +2969,37 @@ func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLThatRespectsExistingHeaders
 			Config: buildPageRuleConfig(rnd, zoneID, "browser_cache_ttl = 1", target),
 		},
 		{
+			Config:   buildPageRuleConfig(rnd, zoneID, "browser_cache_ttl = 1", target),
+			PlanOnly: true,
+		},
+		{
 			Config: buildPageRuleConfig(rnd, zoneID, "browser_cache_ttl = 0", target),
 			Check: resource.ComposeTestCheckFunc(
 				testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 				testAccCheckCloudflarePageRuleHasAction(&pageRule, "browser_cache_ttl", float64(0)),
 				resource.TestCheckResourceAttr(resourceName, "actions.browser_cache_ttl", "0"),
 			),
+		},
+		{
+			Config: buildPageRuleConfig(rnd, zoneID, "browser_cache_ttl = 0", target),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+				testAccCheckCloudflarePageRuleHasAction(&pageRule, "browser_cache_ttl", float64(0)),
+				resource.TestCheckResourceAttr(resourceName, "actions.browser_cache_ttl", "0"),
+			),
+			PlanOnly: true,
+		},
+		{
+			ResourceName: resourceName,
+			ImportStateIdFunc: func(state *terraform.State) (string, error) {
+				rs, ok := state.RootModule().Resources[resourceName]
+				if !ok {
+					return "", fmt.Errorf("not found: %s", resourceName)
+				}
+				return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+			},
+			ImportState:       true,
+			ImportStateVerify: true,
 		},
 	})
 }
@@ -1479,11 +3016,35 @@ func TestAccCloudflarePageRule_DeletesBrowserCacheTTLThatRespectsExistingHeaders
 			Config: buildPageRuleConfig(rnd, zoneID, "browser_cache_ttl = 0", target),
 		},
 		{
+			Config:   buildPageRuleConfig(rnd, zoneID, "browser_cache_ttl = 0", target),
+			PlanOnly: true,
+		},
+		{
 			Config: buildPageRuleConfig(rnd, zoneID, `browser_check = "on"`, target),
 			Check: resource.ComposeTestCheckFunc(
 				testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 				resource.TestCheckNoResourceAttr(resourceName, "actions.browser_cache_ttl"),
 			),
+		},
+		{
+			Config: buildPageRuleConfig(rnd, zoneID, `browser_check = "on"`, target),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+				resource.TestCheckNoResourceAttr(resourceName, "actions.browser_cache_ttl"),
+			),
+			PlanOnly: true,
+		},
+		{
+			ResourceName: resourceName,
+			ImportStateIdFunc: func(state *terraform.State) (string, error) {
+				rs, ok := state.RootModule().Resources[resourceName]
+				if !ok {
+					return "", fmt.Errorf("not found: %s", resourceName)
+				}
+				return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+			},
+			ImportState:       true,
+			ImportStateVerify: true,
 		},
 	})
 }
@@ -1509,11 +3070,51 @@ func TestAccCloudflarePageRule_EdgeCacheTTLNotClobbered(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtl(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &before),
+					resource.TestCheckResourceAttr(resourceName, "actions.edge_cache_ttl", "10"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtlAndAlwaysOnline(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &after),
 					resource.TestCheckResourceAttr(resourceName, "actions.edge_cache_ttl", "10"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtlAndAlwaysOnline(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &after),
+					resource.TestCheckResourceAttr(resourceName, "actions.edge_cache_ttl", "10"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -1535,6 +3136,32 @@ func TestAccCloudflarePageRule_CacheKeyFieldsBasic(t *testing.T) {
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFields(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
+					//func(state *terraform.State) error {
+					//	rs, ok := state.RootModule().Resources[resourceName]
+					//	if !ok {
+					//		return fmt.Errorf("not found: %s", resourceName)
+					//	}
+					//	fmt.Println(fmt.Sprintf("STATE %+v", state))
+					//
+					//	for k, v := range rs.Primary.Attributes {
+					//		fmt.Println(fmt.Sprintf("K %+v--- V: %+v", k, v))
+					//	}
+					//	return nil
+					//
+					//},
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.host.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.query_string.exclude.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.geo", "false"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFields(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.check_presence.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.include.#", "1"),
@@ -1543,6 +3170,21 @@ func TestAccCloudflarePageRule_CacheKeyFieldsBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.host.resolved", "true"),
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.query_string.exclude.#", "1"),
 				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					//fmt.Println(fmt.Sprintf("STATE %+v", state))
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -1563,6 +3205,39 @@ func TestAccCloudflarePageRule_CacheKeyFieldsIgnoreQueryStringOrdering(t *testin
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsWithUnorderedEntries(zoneID, rnd, pageRuleTarget),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.host.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.query_string.include.#", "7"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsWithUnorderedEntries(zoneID, rnd, pageRuleTarget),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.host.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.query_string.include.#", "7"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState: true,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.check_presence.#", "1"),
@@ -1602,6 +3277,32 @@ func TestAccCloudflarePageRule_CacheKeyFieldsExcludeAllQueryString(t *testing.T)
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.query_string.exclude.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.query_string.exclude.0", "*"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIgnoreAllQueryString(zoneID, rnd, pageRuleTarget),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.host.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.query_string.exclude.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.query_string.exclude.0", "*"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -1661,6 +3362,31 @@ func TestAccCloudflarePageRule_CacheKeyFieldsExcludeMultipleValuesQueryString(t 
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.query_string.exclude.#", "2"),
 				),
 			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsExcludeMultipleValuesQueryString(zoneID, rnd, pageRuleTarget),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.host.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.query_string.exclude.#", "2"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -1680,6 +3406,33 @@ func TestAccCloudflarePageRule_CacheKeyFieldsNoQueryStringValuesDefined(t *testi
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsNoQueryStringValuesDefined(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.exclude.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.device_type", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.geo", "true"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsNoQueryStringValuesDefined(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.exclude.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.device_type", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.geo", "true"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState: true,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.exclude.#", "1"),
@@ -1712,6 +3465,28 @@ func TestAccCloudflarePageRule_CacheKeyFieldsIncludeAllQueryStringValues(t *test
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.device_type", "true"),
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.geo", "true"),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIncludeAllQueryStringValues(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.exclude.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.device_type", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.geo", "true"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -1769,6 +3544,31 @@ func TestAccCloudflarePageRule_CacheKeyFieldsIncludeMultipleValuesQueryString(t 
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.query_string.include.#", "2"),
 				),
 			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIncludeMultipleValuesQueryString(zoneID, rnd, pageRuleTarget),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.host.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.query_string.include.#", "2"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -1796,6 +3596,29 @@ func TestAccCloudflarePageRule_EmptyCookie(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.lang", "false"),
 				),
 			},
+			{
+				Config: testAccCheckCloudflarePageRuleEmtpyCookie(zoneID, rnd, pageRuleTarget),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.host.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.device_type", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.geo", "false"),
+					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.lang", "false"),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -1819,6 +3642,24 @@ func TestAccCloudflarePageRule_CacheTTLByStatus(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheTTLByStatus(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+				),
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", zoneID, rs.Primary.ID), nil
+				},
+				ImportState: true,
 			},
 		},
 	})
