@@ -18,8 +18,10 @@ resource "cloudflare_page_rule" "example_page_rule" {
   priority = 1
   status = "active"
   actions = {
-    forwarding_url = "https://example.com/foo"
-    status_code = 301
+    forwarding_url = {
+      url = "https://example.com/foo"
+      status_code = 301
+    }
   }
 }
 ```
