@@ -320,15 +320,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"block_page_enabled": schema.BoolAttribute{
 						Description: "Enable the custom block page.",
-						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"block_reason": schema.StringAttribute{
 						Description: "The text describing why this block occurred, displayed on the custom block page (if enabled).",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString(""),
 					},
 					"bypass_parent_rule": schema.BoolAttribute{
 						Description: "Set by children MSP accounts to bypass their parent's rules.",
@@ -424,27 +420,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"ignore_cname_category_matches": schema.BoolAttribute{
 						Description: "Set to true, to ignore the category matches at CNAME domains in a response. If unchecked, the categories in this rule will be checked against all the CNAME domain categories in a response.",
-						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"insecure_disable_dnssec_validation": schema.BoolAttribute{
 						Description: "INSECURE - disable DNSSEC validation (for Allow actions).",
-						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"ip_categories": schema.BoolAttribute{
 						Description: "Set to true to enable IPs in DNS resolver category blocks. By default categories only block based on domain names.",
-						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"ip_indicator_feeds": schema.BoolAttribute{
 						Description: "Set to true to include IPs in DNS resolver indicator feed blocks. By default indicator feeds only block based on domain names.",
-						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"l4override": schema.SingleNestedAttribute{
 						Description: "Send matching traffic to the supplied destination IP address and port.",
@@ -488,9 +476,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"override_host": schema.StringAttribute{
 						Description: "Override matching DNS queries with a hostname.",
-						Computed:    true,
 						Optional:    true,
-						Default:     stringdefault.StaticString(""),
 					},
 					"override_ips": schema.ListAttribute{
 						Description: "Override matching DNS queries with an IP or set of IPs.",
@@ -588,9 +574,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"resolve_dns_through_cloudflare": schema.BoolAttribute{
 						Description: "Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_internally' is set. Only valid when a rule's action is set to 'resolve'.",
-						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"untrusted_cert": schema.SingleNestedAttribute{
 						Description: "Configure behavior when an upstream cert is invalid or an SSL error occurs.",
