@@ -13,8 +13,8 @@ description: |-
 
 ```terraform
 resource "cloudflare_cloudforce_one_request_asset" "example_cloudforce_one_request_asset" {
-  account_identifier = "023e105f4ecef8ad9ca31a8372d0c353"
-  request_identifier = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  request_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
   page = 0
   per_page = 10
 }
@@ -25,27 +25,27 @@ resource "cloudflare_cloudforce_one_request_asset" "example_cloudforce_one_reque
 
 ### Required
 
-- `account_identifier` (String) Identifier
-- `page` (Number) Page number of results
-- `per_page` (Number) Number of results per page
-- `request_identifier` (String) UUID
+- `account_id` (String) Identifier.
+- `page` (Number) Page number of results.
+- `per_page` (Number) Number of results per page.
+- `request_id` (String) UUID.
 
 ### Optional
 
-- `source` (String) Asset file to upload
+- `source` (String) Asset file to upload.
 
 ### Read-Only
 
-- `created` (String) Asset creation time
-- `description` (String) Asset description
-- `file_type` (String) Asset file type
-- `id` (Number) Asset ID
-- `name` (String) Asset name
+- `created` (String) Defines the asset creation time.
+- `description` (String) Asset description.
+- `file_type` (String) Asset file type.
+- `id` (Number) Asset ID.
+- `name` (String) Asset name.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_cloudforce_one_request_asset.example '<account_identifier>/<request_identifier>/<asset_identifer>'
+$ terraform import cloudflare_cloudforce_one_request_asset.example '<account_id>/<request_id>/<asset_id>'
 ```

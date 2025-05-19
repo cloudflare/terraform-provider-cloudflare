@@ -73,8 +73,9 @@ func (r *CloudforceOneRequestResource) Create(ctx context.Context, req resource.
 	env := CloudforceOneRequestResultEnvelope{*data}
 	_, err = r.client.CloudforceOne.Requests.New(
 		ctx,
-		data.AccountIdentifier.ValueString(),
-		cloudforce_one.RequestNewParams{},
+		cloudforce_one.RequestNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -120,9 +121,10 @@ func (r *CloudforceOneRequestResource) Update(ctx context.Context, req resource.
 	env := CloudforceOneRequestResultEnvelope{*data}
 	_, err = r.client.CloudforceOne.Requests.Update(
 		ctx,
-		data.AccountIdentifier.ValueString(),
 		data.ID.ValueString(),
-		cloudforce_one.RequestUpdateParams{},
+		cloudforce_one.RequestUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -155,8 +157,10 @@ func (r *CloudforceOneRequestResource) Read(ctx context.Context, req resource.Re
 	env := CloudforceOneRequestResultEnvelope{*data}
 	_, err := r.client.CloudforceOne.Requests.Get(
 		ctx,
-		data.AccountIdentifier.ValueString(),
 		data.ID.ValueString(),
+		cloudforce_one.RequestGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -191,8 +195,10 @@ func (r *CloudforceOneRequestResource) Delete(ctx context.Context, req resource.
 
 	_, err := r.client.CloudforceOne.Requests.Delete(
 		ctx,
-		data.AccountIdentifier.ValueString(),
 		data.ID.ValueString(),
+		cloudforce_one.RequestDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
@@ -206,28 +212,30 @@ func (r *CloudforceOneRequestResource) Delete(ctx context.Context, req resource.
 func (r *CloudforceOneRequestResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *CloudforceOneRequestModel = new(CloudforceOneRequestModel)
 
-	path_account_identifier := ""
-	path_request_identifier := ""
+	path_account_id := ""
+	path_request_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_identifier>/<request_identifier>",
-		&path_account_identifier,
-		&path_request_identifier,
+		"<account_id>/<request_id>",
+		&path_account_id,
+		&path_request_id,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.AccountIdentifier = types.StringValue(path_account_identifier)
-	data.ID = types.StringValue(path_request_identifier)
+	data.AccountID = types.StringValue(path_account_id)
+	data.ID = types.StringValue(path_request_id)
 
 	res := new(http.Response)
 	env := CloudforceOneRequestResultEnvelope{*data}
 	_, err := r.client.CloudforceOne.Requests.Get(
 		ctx,
-		path_account_identifier,
-		path_request_identifier,
+		path_request_id,
+		cloudforce_one.RequestGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

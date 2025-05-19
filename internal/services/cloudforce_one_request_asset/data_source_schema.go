@@ -15,37 +15,37 @@ var _ datasource.DataSourceWithConfigValidators = (*CloudforceOneRequestAssetDat
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_identifier": schema.StringAttribute{
-				Description: "Identifier",
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
 				Required:    true,
 			},
-			"asset_identifer": schema.StringAttribute{
-				Description: "UUID",
+			"asset_id": schema.StringAttribute{
+				Description: "UUID.",
 				Required:    true,
 			},
-			"request_identifier": schema.StringAttribute{
-				Description: "UUID",
+			"request_id": schema.StringAttribute{
+				Description: "UUID.",
 				Required:    true,
 			},
 			"created": schema.StringAttribute{
-				Description: "Asset creation time",
+				Description: "Defines the asset creation time.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"description": schema.StringAttribute{
-				Description: "Asset description",
+				Description: "Asset description.",
 				Computed:    true,
 			},
 			"file_type": schema.StringAttribute{
-				Description: "Asset file type",
+				Description: "Asset file type.",
 				Computed:    true,
 			},
 			"id": schema.Int64Attribute{
-				Description: "Asset ID",
+				Description: "Asset ID.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "Asset name",
+				Description: "Asset name.",
 				Computed:    true,
 			},
 		},

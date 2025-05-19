@@ -15,70 +15,57 @@ description: |-
 resource "cloudflare_workers_script" "example_workers_script" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   script_name = "this-is_my_script-01"
-  metadata = {
-    assets = {
-      config = {
-        _headers = <<EOT
-        /dashboard/*
-        X-Frame-Options: DENY
-
-        /static/*
-        Access-Control-Allow-Origin: *
-        EOT
-        _redirects = <<EOT
-        /foo /bar 301
-        /news/* /blog/:splat
-        EOT
-        html_handling = "auto-trailing-slash"
-        not_found_handling = "404-page"
-        run_worker_first = false
-        serve_directly = true
-      }
-      jwt = "jwt"
+  assets = {
+    config = {
+      html_handling = "auto-trailing-slash"
+      not_found_handling = "none"
+      run_worker_first = false
+      serve_directly = true
     }
-    bindings = [{
-      name = "MY_ENV_VAR"
-      text = "my_data"
-      type = "plain_text"
-    }]
-    body_part = "worker.js"
-    compatibility_date = "2021-01-01"
-    compatibility_flags = ["nodejs_compat"]
-    keep_assets = false
-    keep_bindings = ["string"]
-    logpush = false
-    main_module = "worker.js"
-    migrations = {
-      deleted_classes = ["string"]
-      new_classes = ["string"]
-      new_sqlite_classes = ["string"]
-      new_tag = "v2"
-      old_tag = "v1"
-      renamed_classes = [{
-        from = "from"
-        to = "to"
-      }]
-      transferred_classes = [{
-        from = "from"
-        from_script = "from_script"
-        to = "to"
-      }]
-    }
-    observability = {
-      enabled = true
-      head_sampling_rate = 0.1
-    }
-    placement = {
-      mode = "smart"
-    }
-    tags = ["string"]
-    tail_consumers = [{
-      service = "my-log-consumer"
-      environment = "production"
-      namespace = "my-namespace"
-    }]
-    usage_model = "standard"
+    jwt = "jwt"
   }
+  bindings = [{
+    name = "MY_ENV_VAR"
+    type = "plain_text"
+  }]
+  body_part = "worker.js"
+  compatibility_date = "2021-01-01"
+  compatibility_flags = ["nodejs_compat"]
+  content = file("worker.js")
+  keep_assets = false
+  keep_bindings = ["string"]
+  logpush = false
+  main_module = "worker.js"
+  migrations = {
+    deleted_classes = ["string"]
+    new_classes = ["string"]
+    new_sqlite_classes = ["string"]
+    new_tag = "v2"
+    old_tag = "v1"
+    renamed_classes = [{
+      from = "from"
+      to = "to"
+    }]
+    transferred_classes = [{
+      from = "from"
+      from_script = "from_script"
+      to = "to"
+    }]
+  }
+  observability = {
+    enabled = true
+    head_sampling_rate = 0.1
+  }
+  placement = {
+    mode = "smart"
+  }
+  tags = ["string"]
+  tail_consumers = [{
+    service = "my-log-consumer"
+    environment = "production"
+    namespace = "my-namespace"
+  }]
+  usage_model = "standard"
 }
 ```
 
@@ -150,7 +137,7 @@ Required:
 
 - `name` (String) A JavaScript variable name for the binding.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai".
+Available values: "ai", "analytics_engine", "assets", "browser", "d1", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "service", "tail_consumer", "vectorize", "version_metadata", "secrets_store_secret", "secret_key".
 
 Optional:
 
@@ -273,6 +260,20 @@ Required:
 Optional:
 
 - `head_sampling_rate` (Number) The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
+- `logs` (Attributes) Log settings for the Worker. (see [below for nested schema](#nestedatt--observability--logs))
+
+<a id="nestedatt--observability--logs"></a>
+### Nested Schema for `observability.logs`
+
+Required:
+
+- `enabled` (Boolean) Whether logs are enabled for the Worker.
+- `invocation_logs` (Boolean) Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.
+
+Optional:
+
+- `head_sampling_rate` (Number) The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
+
 
 
 <a id="nestedatt--placement"></a>

@@ -120,6 +120,18 @@ func TestAccCloudflareR2Bucket_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "id", rnd),
 					resource.TestCheckResourceAttr(resourceName, "location", "ENAM"),
+					resource.TestCheckResourceAttr(resourceName, "storage_class", "Standard"),
+					resource.TestCheckResourceAttr(resourceName, "jurisdiction", "default"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareR2BucketUpdate(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "id", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "ENAM"),
+					resource.TestCheckResourceAttr(resourceName, "storage_class", "InfrequentAccess"),
+					resource.TestCheckResourceAttr(resourceName, "jurisdiction", "default"),
 				),
 			},
 			{
@@ -127,9 +139,8 @@ func TestAccCloudflareR2Bucket_Basic(t *testing.T) {
 				ImportStateIdFunc: func(*terraform.State) (string, error) {
 					return strings.Join([]string{accountID, rnd, "default"}, "/"), nil
 				},
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "storage_class"},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -182,9 +193,8 @@ func TestAccCloudflareR2Bucket_Jurisdiction(t *testing.T) {
 				ImportStateIdFunc: func(*terraform.State) (string, error) {
 					return strings.Join([]string{accountID, rnd, "eu"}, "/"), nil
 				},
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"storage_class"},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -196,6 +206,10 @@ func testAccCheckCloudflareR2BucketMinimum(rnd, accountID string) string {
 
 func testAccCheckCloudflareR2BucketBasic(rnd, accountID string) string {
 	return acctest.LoadTestCase("r2bucketbasic.tf", rnd, accountID)
+}
+
+func testAccCheckCloudflareR2BucketUpdate(rnd, accountID string) string {
+	return acctest.LoadTestCase("r2bucketupdate.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareR2BucketJurisdiction(rnd, accountID string) string {

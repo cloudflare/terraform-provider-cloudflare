@@ -178,7 +178,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"type": schema.StringAttribute{
-									Description: `Available values: "plain_text".`,
+									Description: `Available values: "plain_text", "secret_text".`,
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
@@ -464,7 +464,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"type": schema.StringAttribute{
-											Description: `Available values: "plain_text".`,
+											Description: `Available values: "plain_text", "secret_text".`,
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
@@ -672,7 +672,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"type": schema.StringAttribute{
-											Description: `Available values: "plain_text".`,
+											Description: `Available values: "plain_text", "secret_text".`,
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
@@ -893,7 +893,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"type": schema.StringAttribute{
-									Description: `Available values: "plain_text".`,
+									Description: `Available values: "plain_text", "secret_text".`,
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),

@@ -15,7 +15,7 @@ type WorkersRouteModel struct {
 	ID      types.String `tfsdk:"id" json:"id,computed"`
 	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Pattern types.String `tfsdk:"pattern" json:"pattern,required"`
-	Script  types.String `tfsdk:"script" json:"script,required"`
+	Script  types.String `tfsdk:"script" json:"script,optional"`
 }
 
 func (m WorkersRouteModel) MarshalJSON() (data []byte, err error) {

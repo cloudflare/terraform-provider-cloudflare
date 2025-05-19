@@ -16,6 +16,7 @@ resource "cloudflare_zone_dnssec" "example_zone_dnssec" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   dnssec_multi_signer = false
   dnssec_presigned = true
+  dnssec_use_nsec3 = false
   status = "active"
 }
 ```
@@ -41,6 +42,13 @@ Cloudflare to sign any records on the fly.
 
 Note that this feature has some limitations.
 See [Cloudflare as Secondary](https://developers.cloudflare.com/dns/zone-setups/zone-transfers/cloudflare-as-secondary/setup/#dnssec) for details.
+- `dnssec_use_nsec3` (Boolean) If true, enables the use of NSEC3 together with DNSSEC on the zone.
+Combined with setting dnssec_presigned to true, this enables the use of
+NSEC3 records when transferring in from an external provider.
+If dnssec_presigned is instead set to false (default), NSEC3 records will be
+generated and signed at request time.
+
+See [DNSSEC with NSEC3](https://developers.cloudflare.com/dns/dnssec/enable-nsec3/) for details.
 - `status` (String) Status of DNSSEC, based on user-desired state and presence of necessary records.
 Available values: "active", "disabled".
 

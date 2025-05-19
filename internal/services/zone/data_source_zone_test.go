@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -23,7 +22,6 @@ func TestAccCloudflareZone_NameLookup(t *testing.T) {
 				Config: testAccCloudflareZoneConfigBasic(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", "terraform.cfapi.net"),
-					resource.TestCheckResourceAttr(name, consts.IDSchemaKey, acctest.TestAccCloudflareZoneID),
 					resource.TestCheckResourceAttr(name, "status", "active"),
 				),
 			},

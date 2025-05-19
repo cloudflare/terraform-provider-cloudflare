@@ -67,11 +67,7 @@ func (d *CloudforceOneRequestsDataSource) Read(ctx context.Context, req datasour
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.CloudforceOne.Requests.List(
-		ctx,
-		data.AccountIdentifier.ValueString(),
-		params,
-	)
+	page, err := d.client.CloudforceOne.Requests.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

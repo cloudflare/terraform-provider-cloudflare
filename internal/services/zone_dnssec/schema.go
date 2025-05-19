@@ -37,6 +37,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "If true, allows Cloudflare to transfer in a DNSSEC-signed zone\nincluding signatures from an external provider, without requiring\nCloudflare to sign any records on the fly.\n\nNote that this feature has some limitations.\nSee [Cloudflare as Secondary](https://developers.cloudflare.com/dns/zone-setups/zone-transfers/cloudflare-as-secondary/setup/#dnssec) for details.",
 				Optional:    true,
 			},
+			"dnssec_use_nsec3": schema.BoolAttribute{
+				Description: "If true, enables the use of NSEC3 together with DNSSEC on the zone.\nCombined with setting dnssec_presigned to true, this enables the use of\nNSEC3 records when transferring in from an external provider.\nIf dnssec_presigned is instead set to false (default), NSEC3 records will be\ngenerated and signed at request time.\n\nSee [DNSSEC with NSEC3](https://developers.cloudflare.com/dns/dnssec/enable-nsec3/) for details.",
+				Optional:    true,
+			},
 			"status": schema.StringAttribute{
 				Description: "Status of DNSSEC, based on user-desired state and presence of necessary records.\nAvailable values: \"active\", \"disabled\".",
 				Optional:    true,

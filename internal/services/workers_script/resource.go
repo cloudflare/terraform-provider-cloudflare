@@ -6,7 +6,10 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"mime"
+	"mime/multipart"
 	"net/http"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/option"
@@ -16,6 +19,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/jinzhu/copier"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -156,14 +160,17 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
+	accountId := data.AccountID.ValueString()
+	scriptName := data.ScriptName.ValueString()
+
+	// fetch the script resource
 	res := new(http.Response)
-	_, err := r.client.Workers.Scripts.Get(
+	path := fmt.Sprintf("accounts/%s/workers/services/%s", accountId, scriptName)
+	err := r.client.Get(
 		ctx,
-		data.ScriptName.ValueString(),
-		workers.ScriptGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
+		path,
+		nil,
+		&res,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if res != nil && res.StatusCode == 404 {
@@ -175,7 +182,78 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	data.ID = data.ScriptName
+
+	bytes, _ := io.ReadAll(res.Body)
+	var service WorkersServiceResultEnvelope
+	err = apijson.Unmarshal(bytes, &service)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	copier.CopyWithOption(&data, &service.Result.DefaultEnvironment.Script, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+
+	// fetch the script metadata and version settings
+	res = new(http.Response)
+	path = fmt.Sprintf("accounts/%s/workers/scripts/%s/settings", accountId, scriptName)
+	err = r.client.Get(
+		ctx,
+		path,
+		nil,
+		&res,
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if res != nil && res.StatusCode == 404 {
+		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ = io.ReadAll(res.Body)
+	var metadata WorkersScriptMetadataResultEnvelope
+	err = apijson.Unmarshal(bytes, &metadata)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+
+	copier.CopyWithOption(&data.WorkersScriptMetadataModel, &metadata.Result, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+
+	// fetch the script content
+	scriptContentRes, err := r.client.Workers.Scripts.Content.Get(
+		ctx,
+		data.ScriptName.ValueString(),
+		workers.ScriptContentGetParams{
+			AccountID: cloudflare.F(accountId),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	var content string
+	mediaType, mediaTypeParams, err := mime.ParseMediaType(scriptContentRes.Header.Get("Content-Type"))
+	if strings.HasPrefix(mediaType, "multipart/") {
+		mr := multipart.NewReader(scriptContentRes.Body, mediaTypeParams["boundary"])
+		p, err := mr.NextPart()
+		if err != nil {
+			resp.Diagnostics.AddError("failed to read response body", err.Error())
+		}
+		c, _ := io.ReadAll(p)
+		content = string(c)
+	} else {
+		bytes, err = io.ReadAll(scriptContentRes.Body)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to read response body", err.Error())
+			return
+		}
+		content = string(bytes)
+	}
+
+	data.Content = types.StringValue(content)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -189,7 +267,7 @@ func (r *WorkersScriptResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	err := r.client.Workers.Scripts.Delete(
+	_, err := r.client.Workers.Scripts.Delete(
 		ctx,
 		data.ScriptName.ValueString(),
 		workers.ScriptDeleteParams{

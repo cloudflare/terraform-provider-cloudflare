@@ -45,7 +45,7 @@ Read-Only:
 - `name` (String) The name of the device posture rule.
 - `schedule` (String) Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.
 - `type` (String) The type of device posture rule.
-Available values: "file", "application", "tanium", "gateway", "warp", "disk_encryption", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "client_certificate_v2", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s", "custom_s2s".
+Available values: "file", "application", "tanium", "gateway", "warp", "disk_encryption", "serial_number", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "client_certificate_v2", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s", "custom_s2s".
 
 <a id="nestedatt--result--input"></a>
 ### Nested Schema for `result.input`
@@ -56,17 +56,17 @@ Read-Only:
 - `certificate_id` (String) UUID of Cloudflare managed certificate.
 - `check_disks` (List of String) List of volume names to be checked for encryption.
 - `check_private_key` (Boolean) Confirm the certificate was not imported from another device. We recommend keeping this enabled unless the certificate was deployed without a private key.
-- `cn` (String) Common Name that is protected by the certificate
-- `compliance_status` (String) Compliance Status
-Available values: "compliant", "noncompliant", "unknown".
+- `cn` (String) Common Name that is protected by the certificate.
+- `compliance_status` (String) Compliance Status.
+Available values: "compliant", "noncompliant", "unknown", "notapplicable", "ingraceperiod", "error".
 - `connection_id` (String) Posture Integration ID.
-- `count_operator` (String) Count Operator
+- `count_operator` (String) Count Operator.
 Available values: "<", "<=", ">", ">=", "==".
-- `domain` (String) Domain
+- `domain` (String) Domain.
 - `eid_last_seen` (String) For more details on eid last seen, refer to the Tanium documentation.
-- `enabled` (Boolean) Enabled
-- `exists` (Boolean) Whether or not file exists
-- `extended_key_usage` (List of String) List of values indicating purposes for which the certificate public key can be used
+- `enabled` (Boolean) Enabled.
+- `exists` (Boolean) Whether or not file exists.
+- `extended_key_usage` (List of String) List of values indicating purposes for which the certificate public key can be used.
 - `id` (String) List ID.
 - `infected` (Boolean) Whether device is infected.
 - `is_active` (Boolean) Whether device is active.
@@ -75,32 +75,32 @@ Available values: "<", "<=", ">", ">=", "==".
 - `locations` (Attributes) (see [below for nested schema](#nestedatt--result--input--locations))
 - `network_status` (String) Network status of device.
 Available values: "connected", "disconnected", "disconnecting", "connecting".
-- `operating_system` (String) Operating system
-Available values: "windows", "linux", "mac".
+- `operating_system` (String) Operating system.
+Available values: "windows", "linux", "mac", "android", "ios", "chromeos".
 - `operational_state` (String) Agent operational state.
 Available values: "na", "partially_disabled", "auto_fully_disabled", "fully_disabled", "auto_partially_disabled", "disabled_error", "db_corruption".
-- `operator` (String) operator
+- `operator` (String) Operator.
 Available values: "<", "<=", ">", ">=", "==".
-- `os` (String) Os Version
-- `os_distro_name` (String) Operating System Distribution Name (linux only)
-- `os_distro_revision` (String) Version of OS Distribution (linux only)
-- `os_version_extra` (String) Additional version data. For Mac or iOS, the Product Version Extra. For Linux, the kernel release version. (Mac, iOS, and Linux only)
-- `overall` (String) overall
+- `os` (String) Os Version.
+- `os_distro_name` (String) Operating System Distribution Name (linux only).
+- `os_distro_revision` (String) Version of OS Distribution (linux only).
+- `os_version_extra` (String) Additional version data. For Mac or iOS, the Product Version Extra. For Linux, the kernel release version. (Mac, iOS, and Linux only).
+- `overall` (String) Overall.
 - `path` (String) File path.
 - `require_all` (Boolean) Whether to check all disks for encryption.
 - `risk_level` (String) For more details on risk level, refer to the Tanium documentation.
 Available values: "low", "medium", "high", "critical".
 - `score` (Number) A value between 0-100 assigned to devices set by the 3rd party posture provider.
-- `score_operator` (String) Score Operator
+- `score_operator` (String) Score Operator.
 Available values: "<", "<=", ">", ">=", "==".
-- `sensor_config` (String) SensorConfig
+- `sensor_config` (String) SensorConfig.
 - `sha256` (String) SHA-256.
 - `state` (String) For more details on state, please refer to the Crowdstrike documentation.
 Available values: "online", "offline", "unknown".
 - `thumbprint` (String) Signing certificate thumbprint.
 - `total_score` (Number) For more details on total score, refer to the Tanium documentation.
-- `version` (String) Version of OS
-- `version_operator` (String) Version Operator
+- `version` (String) Version of OS.
+- `version_operator` (String) Version Operator.
 Available values: "<", "<=", ">", ">=", "==".
 
 <a id="nestedatt--result--input--locations"></a>

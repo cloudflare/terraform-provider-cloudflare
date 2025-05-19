@@ -33,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description:   "The name of the dispatch namespace",
+				Description:   "The name of the dispatch namespace.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -60,7 +60,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"script_count": schema.Int64Attribute{
-				Description: "The current number of scripts in this Dispatch Namespace",
+				Description: "The current number of scripts in this Dispatch Namespace.",
 				Computed:    true,
 			},
 		},

@@ -58,7 +58,7 @@ Optional:
 
 Required:
 
-- `type` (String) Available values: "Age".
+- `type` (String) Available values: "Age", "Date", "Indefinite".
 
 Optional:
 

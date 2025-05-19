@@ -107,7 +107,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"error_message": schema.StringAttribute{
 				Description: "If not null, the job is currently failing. Failures are usually repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.",
 				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"frequency": schema.StringAttribute{
 				Description:        "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.\nAvailable values: \"high\", \"low\".",

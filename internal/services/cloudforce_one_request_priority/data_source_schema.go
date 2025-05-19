@@ -17,12 +17,12 @@ var _ datasource.DataSourceWithConfigValidators = (*CloudforceOneRequestPriority
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_identifier": schema.StringAttribute{
-				Description: "Identifier",
+			"account_id": schema.StringAttribute{
+				Description: "Identifier.",
 				Required:    true,
 			},
-			"priority_identifer": schema.StringAttribute{
-				Description: "UUID",
+			"priority_id": schema.StringAttribute{
+				Description: "UUID.",
 				Required:    true,
 			},
 			"completed": schema.StringAttribute{
@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"content": schema.StringAttribute{
-				Description: "Request content",
+				Description: "Request content.",
 				Computed:    true,
 			},
 			"created": schema.StringAttribute{
@@ -38,11 +38,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"id": schema.StringAttribute{
-				Description: "UUID",
+				Description: "UUID.",
 				Computed:    true,
 			},
 			"message_tokens": schema.Int64Attribute{
-				Description: "Tokens for the request messages",
+				Description: "Tokens for the request messages.",
 				Computed:    true,
 			},
 			"priority": schema.StringAttribute{
@@ -50,15 +50,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"readable_id": schema.StringAttribute{
-				Description: "Readable Request ID",
+				Description: "Readable Request ID.",
 				Computed:    true,
 			},
 			"request": schema.StringAttribute{
-				Description: "Requested information from request",
+				Description: "Requested information from request.",
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Request Status\nAvailable values: \"open\", \"accepted\", \"reported\", \"approved\", \"completed\", \"declined\".",
+				Description: "Request Status.\nAvailable values: \"open\", \"accepted\", \"reported\", \"approved\", \"completed\", \"declined\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -72,11 +72,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"summary": schema.StringAttribute{
-				Description: "Brief description of the request",
+				Description: "Brief description of the request.",
 				Computed:    true,
 			},
 			"tlp": schema.StringAttribute{
-				Description: "The CISA defined Traffic Light Protocol (TLP)\nAvailable values: \"clear\", \"amber\", \"amber-strict\", \"green\", \"red\".",
+				Description: "The CISA defined Traffic Light Protocol (TLP).\nAvailable values: \"clear\", \"amber\", \"amber-strict\", \"green\", \"red\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -89,7 +89,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"tokens": schema.Int64Attribute{
-				Description: "Tokens for the request",
+				Description: "Tokens for the request.",
 				Computed:    true,
 			},
 			"updated": schema.StringAttribute{

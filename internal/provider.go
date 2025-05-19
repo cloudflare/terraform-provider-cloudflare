@@ -181,6 +181,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_managed_networks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dex_test"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_dataset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_entry"
@@ -202,6 +203,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_virtual_network"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_warp_connector_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_reserve"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_variants"
@@ -504,6 +506,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		r2_bucket_lock.NewResource,
 		r2_bucket_sippy.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
+		zero_trust_dex_test.NewResource,
 		zero_trust_device_managed_networks.NewResource,
 		zero_trust_device_default_profile.NewResource,
 		zero_trust_device_default_profile_local_domain_fallback.NewResource,
@@ -771,6 +774,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		r2_bucket_sippy.NewR2BucketSippyDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespaceDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespacesDataSource,
+		zero_trust_dex_test.NewZeroTrustDEXTestDataSource,
+		zero_trust_dex_test.NewZeroTrustDEXTestsDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksListDataSource,
 		zero_trust_device_default_profile.NewZeroTrustDeviceDefaultProfileDataSource,
@@ -810,6 +815,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_cloudflared.NewZeroTrustTunnelCloudflaredsDataSource,
 		zero_trust_tunnel_cloudflared_config.NewZeroTrustTunnelCloudflaredConfigDataSource,
 		zero_trust_tunnel_cloudflared_token.NewZeroTrustTunnelCloudflaredTokenDataSource,
+		zero_trust_tunnel_warp_connector_token.NewZeroTrustTunnelWARPConnectorTokenDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetsDataSource,
 		zero_trust_dlp_custom_profile.NewZeroTrustDLPCustomProfileDataSource,
@@ -862,7 +868,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		account_permission_group.NewAccountPermissionGroupsDataSource,
 		resource_group.NewResourceGroupDataSource,
 		resource_group.NewResourceGroupsDataSource,
-		cloud_connector_rules.NewCloudConnectorRulesListDataSource,
+		cloud_connector_rules.NewCloudConnectorRulesDataSource,
 		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
 		leaked_credential_check.NewLeakedCredentialCheckDataSource,
 		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,

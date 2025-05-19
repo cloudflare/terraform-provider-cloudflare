@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 resource "cloudflare_cloudforce_one_request_priority" "example_cloudforce_one_request_priority" {
-  account_identifier = "023e105f4ecef8ad9ca31a8372d0c353"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   labels = ["DoS", "CVE"]
   priority = 1
   requirement = "DoS attacks carried out by CVEs"
@@ -26,26 +26,26 @@ resource "cloudflare_cloudforce_one_request_priority" "example_cloudforce_one_re
 
 ### Required
 
-- `account_identifier` (String) Identifier
-- `labels` (List of String) List of labels
-- `priority` (Number) Priority
-- `requirement` (String) Requirement
-- `tlp` (String) The CISA defined Traffic Light Protocol (TLP)
+- `account_id` (String) Identifier.
+- `labels` (List of String) List of labels.
+- `priority` (Number) Priority.
+- `requirement` (String) Requirement.
+- `tlp` (String) The CISA defined Traffic Light Protocol (TLP).
 Available values: "clear", "amber", "amber-strict", "green", "red".
 
 ### Read-Only
 
 - `completed` (String)
-- `content` (String) Request content
+- `content` (String) Request content.
 - `created` (String)
-- `id` (String) UUID
-- `message_tokens` (Number) Tokens for the request messages
-- `readable_id` (String) Readable Request ID
-- `request` (String) Requested information from request
-- `status` (String) Request Status
+- `id` (String) UUID.
+- `message_tokens` (Number) Tokens for the request messages.
+- `readable_id` (String) Readable Request ID.
+- `request` (String) Requested information from request.
+- `status` (String) Request Status.
 Available values: "open", "accepted", "reported", "approved", "completed", "declined".
-- `summary` (String) Brief description of the request
-- `tokens` (Number) Tokens for the request
+- `summary` (String) Brief description of the request.
+- `tokens` (Number) Tokens for the request.
 - `updated` (String)
 
 ## Import
@@ -53,5 +53,5 @@ Available values: "open", "accepted", "reported", "approved", "completed", "decl
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_cloudforce_one_request_priority.example '<account_identifier>/<priority_identifer>'
+$ terraform import cloudflare_cloudforce_one_request_priority.example '<account_id>/<priority_id>'
 ```

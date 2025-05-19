@@ -68,7 +68,7 @@ Optional:
 Required:
 
 - `type` (String) Type of matcher.
-Available values: "literal".
+Available values: "all", "literal".
 
 Optional:
 

@@ -65,7 +65,7 @@ Read-Only:
 - `field` (String) Field for type matcher.
 Available values: "to".
 - `type` (String) Type of matcher.
-Available values: "literal".
+Available values: "all", "literal".
 - `value` (String) Value for matcher.
 
 

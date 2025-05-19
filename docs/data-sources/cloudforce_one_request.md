@@ -13,8 +13,8 @@ description: |-
 
 ```terraform
 data "cloudflare_cloudforce_one_request" "example_cloudforce_one_request" {
-  account_identifier = "023e105f4ecef8ad9ca31a8372d0c353"
-  request_identifier = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  request_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
 }
 ```
 
@@ -23,28 +23,50 @@ data "cloudflare_cloudforce_one_request" "example_cloudforce_one_request" {
 
 ### Required
 
-- `account_identifier` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
-- `request_identifier` (String) UUID
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+- `request_id` (String) UUID.
 
 ### Read-Only
 
 - `completed` (String)
-- `content` (String) Request content
+- `content` (String) Request content.
 - `created` (String)
-- `id` (String) UUID
-- `message_tokens` (Number) Tokens for the request messages
+- `id` (String) UUID.
+- `message_tokens` (Number) Tokens for the request messages.
 - `priority` (String)
-- `readable_id` (String) Readable Request ID
-- `request` (String) Requested information from request
-- `status` (String) Request Status
+- `readable_id` (String) Readable Request ID.
+- `request` (String) Requested information from request.
+- `status` (String) Request Status.
 Available values: "open", "accepted", "reported", "approved", "completed", "declined".
-- `summary` (String) Brief description of the request
-- `tlp` (String) The CISA defined Traffic Light Protocol (TLP)
+- `summary` (String) Brief description of the request.
+- `tlp` (String) The CISA defined Traffic Light Protocol (TLP).
 Available values: "clear", "amber", "amber-strict", "green", "red".
-- `tokens` (Number) Tokens for the request
+- `tokens` (Number) Tokens for the request.
 - `updated` (String)
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Required:
+
+- `page` (Number) Page number of results.
+- `per_page` (Number) Number of results per page.
+
+Optional:
+
+- `completed_after` (String) Retrieve requests completed after this time.
+- `completed_before` (String) Retrieve requests completed before this time.
+- `created_after` (String) Retrieve requests created after this time.
+- `created_before` (String) Retrieve requests created before this time.
+- `request_type` (String) Requested information from request.
+- `sort_by` (String) Field to sort results by.
+- `sort_order` (String) Sort order (asc or desc).
+Available values: "asc", "desc".
+- `status` (String) Request Status.
+Available values: "open", "accepted", "reported", "approved", "completed", "declined".
 
 

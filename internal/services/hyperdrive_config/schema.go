@@ -21,12 +21,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Define configurations using a unique string identifier.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Define configurations using a unique string identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -37,20 +37,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"database": schema.StringAttribute{
-						Description: "The name of your origin database.",
+						Description: "Set the name of your origin database.",
 						Required:    true,
 					},
 					"host": schema.StringAttribute{
-						Description: "The host (hostname or IP) of your origin database.",
+						Description: "Defines the host (hostname or IP) of your origin database.",
 						Required:    true,
 					},
 					"password": schema.StringAttribute{
-						Description: "The password required to access your origin database. This value is write-only and never returned by the API.",
+						Description: "Set the password needed to access your origin database. The API never returns this write-only value.",
 						Required:    true,
 						Sensitive:   true,
 					},
 					"port": schema.Int64Attribute{
-						Description: "The port (default: 5432 for Postgres) of your origin database.",
+						Description: "Defines the port (default: 5432 for Postgres) of your origin database.",
 						Optional:    true,
 					},
 					"scheme": schema.StringAttribute{
@@ -65,15 +65,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"user": schema.StringAttribute{
-						Description: "The user of your origin database.",
+						Description: "Set the user of your origin database.",
 						Required:    true,
 					},
 					"access_client_id": schema.StringAttribute{
-						Description: "The Client ID of the Access token to use when connecting to the origin database.",
+						Description: "Defines the Client ID of the Access token to use when connecting to the origin database.",
 						Optional:    true,
 					},
 					"access_client_secret": schema.StringAttribute{
-						Description: "The Client Secret of the Access token to use when connecting to the origin database. This value is write-only and never returned by the API.",
+						Description: "Defines the Client Secret of the Access Token to use when connecting to the origin database. The API never returns this write-only value.",
 						Optional:    true,
 						Sensitive:   true,
 					},
@@ -83,17 +83,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"disabled": schema.BoolAttribute{
-						Description: "When set to true, disables the caching of SQL responses. (Default: false)",
+						Description: "Set to true to disable caching of SQL responses. Default is false.",
 						Optional:    true,
 						Computed:    true,
 						Default:     booldefault.StaticBool(false),
 					},
 					"max_age": schema.Int64Attribute{
-						Description: "When present, specifies max duration for which items should persist in the cache. Not returned if set to default. (Default: 60)",
+						Description: "Specify the maximum duration items should persist in the cache. Not returned if set to the default (60).",
 						Optional:    true,
 					},
 					"stale_while_revalidate": schema.Int64Attribute{
-						Description: "When present, indicates the number of seconds cache may serve the response after it becomes stale. Not returned if set to default. (Default: 15)",
+						Description: "Specify the number of seconds the cache may serve a stale response. Omitted if set to the default (15).",
 						Optional:    true,
 					},
 				},
@@ -102,26 +102,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"ca_certificate_id": schema.StringAttribute{
-						Description: "CA certificate ID",
+						Description: "Define CA certificate ID obtained after uploading CA cert.",
 						Optional:    true,
 					},
 					"mtls_certificate_id": schema.StringAttribute{
-						Description: "mTLS certificate ID",
+						Description: "Define mTLS certificate ID obtained after uploading client cert.",
 						Optional:    true,
 					},
 					"sslmode": schema.StringAttribute{
-						Description: "SSL mode used for CA verification. Must be 'require', 'verify-ca', or 'verify-full'",
+						Description: "Set SSL mode to 'require', 'verify-ca', or 'verify-full' to verify the CA.",
 						Optional:    true,
 					},
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "When the Hyperdrive configuration was created.",
+				Description: "Defines the creation time of the Hyperdrive configuration.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified_on": schema.StringAttribute{
-				Description: "When the Hyperdrive configuration was last modified.",
+				Description: "Defines the last modified time of the Hyperdrive configuration.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

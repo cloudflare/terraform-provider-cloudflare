@@ -13,9 +13,9 @@ description: |-
 
 ```terraform
 data "cloudflare_cloudforce_one_request_asset" "example_cloudforce_one_request_asset" {
-  account_identifier = "023e105f4ecef8ad9ca31a8372d0c353"
-  request_identifier = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
-  asset_identifer = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  request_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+  asset_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
 }
 ```
 
@@ -24,16 +24,16 @@ data "cloudflare_cloudforce_one_request_asset" "example_cloudforce_one_request_a
 
 ### Required
 
-- `account_identifier` (String) Identifier
-- `asset_identifer` (String) UUID
-- `request_identifier` (String) UUID
+- `account_id` (String) Identifier.
+- `asset_id` (String) UUID.
+- `request_id` (String) UUID.
 
 ### Read-Only
 
-- `created` (String) Asset creation time
-- `description` (String) Asset description
-- `file_type` (String) Asset file type
-- `id` (Number) Asset ID
-- `name` (String) Asset name
+- `created` (String) Defines the asset creation time.
+- `description` (String) Asset description.
+- `file_type` (String) Asset file type.
+- `id` (Number) Asset ID.
+- `name` (String) Asset name.
 
 

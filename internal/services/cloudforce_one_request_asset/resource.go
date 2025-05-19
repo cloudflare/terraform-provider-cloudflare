@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/cloudforce_one"
@@ -73,9 +74,10 @@ func (r *CloudforceOneRequestAssetResource) Create(ctx context.Context, req reso
 	env := CloudforceOneRequestAssetResultEnvelope{*data}
 	_, err = r.client.CloudforceOne.Requests.Assets.New(
 		ctx,
-		data.AccountIdentifier.ValueString(),
-		data.RequestIdentifier.ValueString(),
-		cloudforce_one.RequestAssetNewParams{},
+		data.RequestID.ValueString(),
+		cloudforce_one.RequestAssetNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -121,10 +123,11 @@ func (r *CloudforceOneRequestAssetResource) Update(ctx context.Context, req reso
 	env := CloudforceOneRequestAssetResultEnvelope{*data}
 	_, err = r.client.CloudforceOne.Requests.Assets.Update(
 		ctx,
-		data.AccountIdentifier.ValueString(),
-		data.RequestIdentifier.ValueString(),
-		fmt.Sprintf("%d", data.ID.ValueInt64()),
-		cloudforce_one.RequestAssetUpdateParams{},
+		data.RequestID.ValueString(),
+		strconv.FormatInt(data.ID.ValueInt64(), 10),
+		cloudforce_one.RequestAssetUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -157,9 +160,11 @@ func (r *CloudforceOneRequestAssetResource) Read(ctx context.Context, req resour
 	env := CloudforceOneRequestAssetResultEnvelope{*data}
 	_, err := r.client.CloudforceOne.Requests.Assets.Get(
 		ctx,
-		data.AccountIdentifier.ValueString(),
-		data.RequestIdentifier.ValueString(),
-		fmt.Sprintf("%d", data.ID.ValueInt64()),
+		data.RequestID.ValueString(),
+		strconv.FormatInt(data.ID.ValueInt64(), 10),
+		cloudforce_one.RequestAssetGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -194,9 +199,11 @@ func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req reso
 
 	_, err := r.client.CloudforceOne.Requests.Assets.Delete(
 		ctx,
-		data.AccountIdentifier.ValueString(),
-		data.RequestIdentifier.ValueString(),
-		fmt.Sprintf("%d", data.ID.ValueInt64()),
+		data.RequestID.ValueString(),
+		strconv.FormatInt(data.ID.ValueInt64(), 10),
+		cloudforce_one.RequestAssetDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
@@ -210,32 +217,34 @@ func (r *CloudforceOneRequestAssetResource) Delete(ctx context.Context, req reso
 func (r *CloudforceOneRequestAssetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *CloudforceOneRequestAssetModel = new(CloudforceOneRequestAssetModel)
 
-	path_account_identifier := ""
-	path_request_identifier := ""
-	path_asset_identifer := int64(0)
+	path_account_id := ""
+	path_request_id := ""
+	path_asset_id := int64(0)
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_identifier>/<request_identifier>/<asset_identifer>",
-		&path_account_identifier,
-		&path_request_identifier,
-		&path_asset_identifer,
+		"<account_id>/<request_id>/<asset_id>",
+		&path_account_id,
+		&path_request_id,
+		&path_asset_id,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.AccountIdentifier = types.StringValue(path_account_identifier)
-	data.RequestIdentifier = types.StringValue(path_request_identifier)
-	data.ID = types.Int64Value(path_asset_identifer)
+	data.AccountID = types.StringValue(path_account_id)
+	data.RequestID = types.StringValue(path_request_id)
+	data.ID = types.Int64Value(path_asset_id)
 
 	res := new(http.Response)
 	env := CloudforceOneRequestAssetResultEnvelope{*data}
 	_, err := r.client.CloudforceOne.Requests.Assets.Get(
 		ctx,
-		path_account_identifier,
-		path_request_identifier,
-		fmt.Sprintf("%d", path_asset_identifer),
+		path_request_id,
+		strconv.FormatInt(path_asset_id, 10),
+		cloudforce_one.RequestAssetGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

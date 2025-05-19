@@ -69,7 +69,7 @@ resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_cust
 - `created_at` (String) When the profile was created.
 - `id` (String) The id of the profile (uuid).
 - `open_access` (Boolean) Whether this profile can be accessed by anyone.
-- `type` (String) Available values: "custom".
+- `type` (String) Available values: "custom", "predefined", "integration".
 - `updated_at` (String) When the profile was lasted updated.
 
 <a id="nestedatt--context_awareness"></a>
@@ -183,7 +183,7 @@ Required:
 
 - `enabled` (Boolean)
 - `entry_id` (String)
-- `entry_type` (String) Available values: "custom".
+- `entry_type` (String) Available values: "custom", "predefined", "integration", "exact_data".
 
 
 
@@ -194,7 +194,7 @@ Required:
 
 - `enabled` (Boolean)
 - `entry_id` (String)
-- `entry_type` (String) Available values: "custom".
+- `entry_type` (String) Available values: "custom", "predefined", "integration", "exact_data".
 
 ## Import
 

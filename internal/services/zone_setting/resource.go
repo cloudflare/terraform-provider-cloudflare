@@ -92,6 +92,7 @@ func (r *ZoneSettingResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.SettingID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -141,6 +142,7 @@ func (r *ZoneSettingResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.SettingID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -181,6 +183,7 @@ func (r *ZoneSettingResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 	data = &env.Result
+	data.ID = data.SettingID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -230,6 +233,7 @@ func (r *ZoneSettingResource) ImportState(ctx context.Context, req resource.Impo
 		return
 	}
 	data = &env.Result
+	data.ID = data.SettingID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -100,13 +100,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "A Cloudflare-generated unique identifier for a media item.",
 				Computed:    true,
 			},
-			"uploaded": schema.StringAttribute{
-				Description: "The date and time the media item was uploaded.",
+			"upload_expiry": schema.StringAttribute{
+				Description: "The date and time when the video upload URL is no longer valid for direct user uploads.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"upload_expiry": schema.StringAttribute{
-				Description: "The date and time when the video upload URL is no longer valid for direct user uploads.",
+			"uploaded": schema.StringAttribute{
+				Description: "The date and time the media item was uploaded.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

@@ -10,10 +10,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
-func TestCloudConnectorRulesListDataSourceModelSchemaParity(t *testing.T) {
+func TestCloudConnectorRulesDataSourceModelSchemaParity(t *testing.T) {
 	t.Parallel()
-	model := (*cloud_connector_rules.CloudConnectorRulesListDataSourceModel)(nil)
-	schema := cloud_connector_rules.ListDataSourceSchema(context.TODO())
+	model := (*cloud_connector_rules.CloudConnectorRulesDataSourceModel)(nil)
+	schema := cloud_connector_rules.DataSourceSchema(context.TODO())
 	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
 	errs.Report(t)
 }

@@ -57,13 +57,19 @@ func (d *CloudforceOneRequestAssetDataSource) Read(ctx context.Context, req data
 		return
 	}
 
+	params, diags := data.toReadParams(ctx)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	res := new(http.Response)
 	env := CloudforceOneRequestAssetResultDataSourceEnvelope{*data}
 	_, err := d.client.CloudforceOne.Requests.Assets.Get(
 		ctx,
-		data.AccountIdentifier.ValueString(),
-		data.RequestIdentifier.ValueString(),
-		data.AssetIdentifer.ValueString(),
+		data.RequestID.ValueString(),
+		data.AssetID.ValueString(),
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

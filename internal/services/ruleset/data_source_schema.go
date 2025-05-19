@@ -102,7 +102,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"action": schema.StringAttribute{
-							Description: "The action to perform when the rule matches.\nAvailable values: \"block\".",
+							Description: "The action to perform when the rule matches.\nAvailable values: \"block\", \"challenge\", \"compress_response\", \"execute\", \"js_challenge\", \"log\", \"managed_challenge\", \"redirect\", \"rewrite\", \"route\", \"score\", \"serve_error\", \"set_config\", \"skip\", \"set_cache_settings\", \"log_custom_field\", \"ddos_dynamic\", \"force_connection_close\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -350,7 +350,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"operation": schema.StringAttribute{
-												Description: `Available values: "remove".`,
+												Description: `Available values: "remove", "add", "set".`,
 												Computed:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(
@@ -578,7 +578,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"phases": schema.ListAttribute{
-									Description: "A list of phases to skip the execution of. This option is incompatible with the rulesets options.",
+									Description: "A list of phases to skip the execution of. This option is incompatible with the rulesets option.",
 									Computed:    true,
 									Validators: []validator.List{
 										listvalidator.ValueStringsAre(
@@ -640,7 +640,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"ruleset": schema.StringAttribute{
-									Description: "A ruleset to skip the execution of. This option is incompatible with the rulesets, rules. It can be incompatible with phases options base on the phase of the ruleset.\nAvailable values: \"current\".",
+									Description: "A ruleset to skip the execution of. This option is incompatible with the rulesets option.\nAvailable values: \"current\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("current"),
@@ -1059,16 +1059,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									ElementType: types.StringType,
 								},
 								"period": schema.Int64Attribute{
-									Description: "Period in seconds over which the counter is being incremented.\nAvailable values: 10, 60, 600, 3600.",
+									Description: "Period in seconds over which the counter is being incremented.",
 									Computed:    true,
-									Validators: []validator.Int64{
-										int64validator.OneOf(
-											10,
-											60,
-											600,
-											3600,
-										),
-									},
 								},
 								"counting_expression": schema.StringAttribute{
 									Description: "Defines when the ratelimit counter should be incremented. It is optional and defaults to the same as the rule's expression.",
@@ -1081,6 +1073,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								"requests_per_period": schema.Int64Attribute{
 									Description: "The threshold of requests per period after which the action will be executed for the first time.",
 									Computed:    true,
+									Validators: []validator.Int64{
+										int64validator.AtLeast(1),
+									},
 								},
 								"requests_to_origin": schema.BoolAttribute{
 									Description: "Defines if ratelimit counting is only done when an origin is reached.",

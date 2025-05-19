@@ -19,49 +19,49 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
-				Description:   "Asset ID",
+				Description:   "Asset ID.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 			},
-			"account_identifier": schema.StringAttribute{
-				Description:   "Identifier",
+			"account_id": schema.StringAttribute{
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"request_identifier": schema.StringAttribute{
-				Description:   "UUID",
+			"request_id": schema.StringAttribute{
+				Description:   "UUID.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"page": schema.Int64Attribute{
-				Description:   "Page number of results",
+				Description:   "Page number of results.",
 				Required:      true,
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
 			},
 			"per_page": schema.Int64Attribute{
-				Description:   "Number of results per page",
+				Description:   "Number of results per page.",
 				Required:      true,
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
 			},
 			"source": schema.StringAttribute{
-				Description: "Asset file to upload",
+				Description: "Asset file to upload.",
 				Optional:    true,
 			},
 			"created": schema.StringAttribute{
-				Description: "Asset creation time",
+				Description: "Defines the asset creation time.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"description": schema.StringAttribute{
-				Description: "Asset description",
+				Description: "Asset description.",
 				Computed:    true,
 			},
 			"file_type": schema.StringAttribute{
-				Description: "Asset file type",
+				Description: "Asset file type.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "Asset name",
+				Description: "Asset name.",
 				Computed:    true,
 			},
 		},

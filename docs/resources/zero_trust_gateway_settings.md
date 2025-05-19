@@ -194,9 +194,12 @@ Required:
 <a id="nestedatt--settings--custom_certificate"></a>
 ### Nested Schema for `settings.custom_certificate`
 
-Optional:
+Required:
 
 - `enabled` (Boolean) Enable use of custom certificate authority for signing Gateway traffic.
+
+Optional:
+
 - `id` (String) UUID of certificate (ID from MTLS certificate store).
 
 Read-Only:

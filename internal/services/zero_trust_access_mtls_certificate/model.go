@@ -16,7 +16,7 @@ type ZeroTrustAccessMTLSCertificateModel struct {
 	ID                  types.String      `tfsdk:"id" json:"id,computed"`
 	AccountID           types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID              types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
-	Certificate         types.String      `tfsdk:"certificate" json:"certificate,required"`
+	Certificate         types.String      `tfsdk:"certificate" json:"certificate,required,no_refresh"`
 	Name                types.String      `tfsdk:"name" json:"name,required"`
 	AssociatedHostnames *[]types.String   `tfsdk:"associated_hostnames" json:"associated_hostnames,optional"`
 	CreatedAt           timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
