@@ -3,7 +3,6 @@ package page_rule
 import (
 	"context"
 	"encoding/json"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"strings"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
