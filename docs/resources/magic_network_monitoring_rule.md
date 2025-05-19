@@ -29,7 +29,6 @@ resource "cloudflare_magic_network_monitoring_rule" "example_magic_network_monit
 ### Required
 
 - `account_id` (String)
-- `id` (String) The id of the rule. Must be unique.
 - `name` (String) The name of the rule. Must be unique. Supports characters A-Z, a-z, 0-9, underscore (_), dash (-), period (.), and tilde (~). You can’t have a space in the rule name. Max 256 characters.
 
 ### Optional
@@ -44,6 +43,7 @@ Available values: "1m", "5m", "10m", "15m", "20m", "30m", "45m", "60m".
 ### Read-Only
 
 - `bandwidth_threshold` (Number) The number of bits per second for the rule. When this value is exceeded for the set duration, an alert notification is sent. Minimum of 1 and no maximum.
+- `id` (String) The id of the rule. Must be unique.
 - `prefix_match` (String) Prefix match type to be applied for a prefix auto advertisement when using an advanced_ddos rule.
 Available values: "exact", "subnet", "supernet".
 - `type` (String) MNM rule type.

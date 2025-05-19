@@ -14,6 +14,16 @@ description: |-
 ```terraform
 data "cloudflare_cloudforce_one_requests" "example_cloudforce_one_requests" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  page = 0
+  per_page = 10
+  completed_after = "2022-01-01T00:00:00Z"
+  completed_before = "2024-01-01T00:00:00Z"
+  created_after = "2022-01-01T00:00:00Z"
+  created_before = "2024-01-01T00:00:00Z"
+  request_type = "Victomology"
+  sort_by = "created"
+  sort_order = "asc"
+  status = "open"
 }
 ```
 
@@ -23,10 +33,22 @@ data "cloudflare_cloudforce_one_requests" "example_cloudforce_one_requests" {
 ### Required
 
 - `account_id` (String) Identifier.
+- `page` (Number) Page number of results.
+- `per_page` (Number) Number of results per page.
 
 ### Optional
 
+- `completed_after` (String) Retrieve requests completed after this time.
+- `completed_before` (String) Retrieve requests completed before this time.
+- `created_after` (String) Retrieve requests created after this time.
+- `created_before` (String) Retrieve requests created before this time.
 - `max_items` (Number) Max items to fetch, default: 1000
+- `request_type` (String) Requested information from request.
+- `sort_by` (String) Field to sort results by.
+- `sort_order` (String) Sort order (asc or desc).
+Available values: "asc", "desc".
+- `status` (String) Request Status.
+Available values: "open", "accepted", "reported", "approved", "completed", "declined".
 
 ### Read-Only
 

@@ -15,6 +15,12 @@ description: |-
 data "cloudflare_cloudforce_one_request_message" "example_cloudforce_one_request_message" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   request_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+  page = 0
+  per_page = 10
+  after = "2022-04-01T05:20:00Z"
+  before = "2024-01-01T00:00:00Z"
+  sort_by = "created"
+  sort_order = "asc"
 }
 ```
 
@@ -24,7 +30,17 @@ data "cloudflare_cloudforce_one_request_message" "example_cloudforce_one_request
 ### Required
 
 - `account_id` (String) Identifier.
+- `page` (Number) Page number of results.
+- `per_page` (Number) Number of results per page.
 - `request_id` (String) UUID.
+
+### Optional
+
+- `after` (String) Retrieve mes  ges created after this time.
+- `before` (String) Retrieve messages created before this time.
+- `sort_by` (String) Field to sort results by.
+- `sort_order` (String) Sort order (asc or desc).
+Available values: "asc", "desc".
 
 ### Read-Only
 

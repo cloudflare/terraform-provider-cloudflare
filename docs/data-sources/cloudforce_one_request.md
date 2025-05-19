@@ -27,6 +27,7 @@ data "cloudflare_cloudforce_one_request" "example_cloudforce_one_request" {
 
 ### Optional
 
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `request_id` (String) UUID.
 
 ### Read-Only
@@ -46,5 +47,26 @@ Available values: "open", "accepted", "reported", "approved", "completed", "decl
 Available values: "clear", "amber", "amber-strict", "green", "red".
 - `tokens` (Number) Tokens for the request.
 - `updated` (String)
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Required:
+
+- `page` (Number) Page number of results.
+- `per_page` (Number) Number of results per page.
+
+Optional:
+
+- `completed_after` (String) Retrieve requests completed after this time.
+- `completed_before` (String) Retrieve requests completed before this time.
+- `created_after` (String) Retrieve requests created after this time.
+- `created_before` (String) Retrieve requests created before this time.
+- `request_type` (String) Requested information from request.
+- `sort_by` (String) Field to sort results by.
+- `sort_order` (String) Sort order (asc or desc).
+Available values: "asc", "desc".
+- `status` (String) Request Status.
+Available values: "open", "accepted", "reported", "approved", "completed", "declined".
 
 
