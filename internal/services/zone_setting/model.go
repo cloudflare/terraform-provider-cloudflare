@@ -16,7 +16,7 @@ type ZoneSettingModel struct {
 	ID            types.String      `tfsdk:"id" json:"-,computed"`
 	SettingID     types.String      `tfsdk:"setting_id" path:"setting_id,required"`
 	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id,required"`
-	Value         types.Dynamic     `tfsdk:"value" json:"value,optional,no_refresh"`
+	Value         types.Dynamic     `tfsdk:"value" json:"value,required"`
 	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Editable      types.Bool        `tfsdk:"editable" json:"editable,computed"`
 	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`

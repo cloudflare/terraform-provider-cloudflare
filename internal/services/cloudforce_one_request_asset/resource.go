@@ -241,7 +241,7 @@ func (r *CloudforceOneRequestAssetResource) ImportState(ctx context.Context, req
 	_, err := r.client.CloudforceOne.Requests.Assets.Get(
 		ctx,
 		path_request_id,
-		string(path_asset_id),
+		strconv.FormatInt(path_asset_id, 10),
 		cloudforce_one.RequestAssetGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
