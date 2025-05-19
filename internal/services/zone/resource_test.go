@@ -228,7 +228,6 @@ func testZoneConfigWithPlan(resourceID, zoneName, paused, jumpStart, plan, accou
 }
 
 func TestAccCloudflareZone_SetType(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Pending stainless fix for PATCH requests only sending changed fields.")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
