@@ -62,6 +62,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the rule.",
 				Required:    true,
 			},
+			"description": schema.StringAttribute{
+				Description: "The description of the rule.",
+				Optional:    true,
+			},
 			"precedence": schema.Int64Attribute{
 				Description: "Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) docs on how to manage precedence via Terraform.",
 				Optional:    true,
@@ -119,12 +123,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
-			},
-			"description": schema.StringAttribute{
-				Description: "The description of the rule.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString(""),
 			},
 			"device_posture": schema.StringAttribute{
 				Description: "The wirefilter expression used for device posture check matching.",
@@ -191,15 +189,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"audit_ssh": schema.SingleNestedAttribute{
 						Description: "Settings for the Audit SSH action.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsAuditSSHModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"command_logging": schema.BoolAttribute{
 								Description: "Enable to turn on SSH command logging.",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -302,9 +296,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"block_page": schema.SingleNestedAttribute{
 						Description: "Custom block page settings. If missing/null, blocking will use the the account settings.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsBlockPageModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"target_uri": schema.StringAttribute{
 								Description: "URI to which the user will be redirected",
@@ -312,9 +304,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"include_context": schema.BoolAttribute{
 								Description: "If true, context information will be passed as query parameters",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -332,9 +322,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"check_session": schema.SingleNestedAttribute{
 						Description: "Configure how session check behaves.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsCheckSessionModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"duration": schema.StringAttribute{
 								Description: "Configure how fresh the session needs to be to be considered valid.",
@@ -342,9 +330,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"enforce": schema.BoolAttribute{
 								Description: "Set to true to enable session enforcement.",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -450,15 +436,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"notification_settings": schema.SingleNestedAttribute{
 						Description: "Configure a notification to display on the user's device when this rule is matched.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsNotificationSettingsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Set notification on",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"include_context": schema.BoolAttribute{
 								Description: "If true, context information will be passed as query parameters",
@@ -485,15 +467,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"payload_log": schema.SingleNestedAttribute{
 						Description: "Configure DLP payload logging.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsPayloadLogModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Set to true to enable DLP payload logging for this rule.",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
@@ -529,9 +507,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"redirect": schema.SingleNestedAttribute{
 						Description: "Settings that apply to redirect rules",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsRedirectModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"target_uri": schema.StringAttribute{
 								Description: "URI to which the user will be redirected",
@@ -539,32 +515,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"include_context": schema.BoolAttribute{
 								Description: "If true, context information will be passed as query parameters",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"preserve_path_and_query": schema.BoolAttribute{
 								Description: "If true, the path and query parameters from the original request will be appended to target_uri",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 						},
 					},
 					"resolve_dns_internally": schema.SingleNestedAttribute{
 						Description: "Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action is set to 'resolve'.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsResolveDNSInternallyModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"fallback": schema.StringAttribute{
 								Description: "The fallback behavior to apply when the internal DNS response code is different from 'NOERROR' or when the response data only contains CNAME records for 'A' or 'AAAA' queries.\nAvailable values: \"none\", \"public_dns\".",
-								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("none", "public_dns"),
 								},
-								Default: stringdefault.StaticString("none"),
 							},
 							"view_id": schema.StringAttribute{
 								Description: "The internal DNS view identifier that's passed to the internal DNS service.",
