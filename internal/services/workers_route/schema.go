@@ -32,7 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"script": schema.StringAttribute{
 				Description: "Name of the script to run if the route matches.",
-				Required:    true,
+				Optional:    true,
 			},
 		},
 	}
