@@ -181,7 +181,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_managed_networks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_rule"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dex_test"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_dataset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_entry"
@@ -506,7 +505,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		r2_bucket_lock.NewResource,
 		r2_bucket_sippy.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
-		zero_trust_dex_test.NewResource,
 		zero_trust_device_managed_networks.NewResource,
 		zero_trust_device_default_profile.NewResource,
 		zero_trust_device_default_profile_local_domain_fallback.NewResource,
@@ -774,8 +772,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		r2_bucket_sippy.NewR2BucketSippyDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespaceDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespacesDataSource,
-		zero_trust_dex_test.NewZeroTrustDEXTestDataSource,
-		zero_trust_dex_test.NewZeroTrustDEXTestsDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksDataSource,
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksListDataSource,
 		zero_trust_device_default_profile.NewZeroTrustDeviceDefaultProfileDataSource,
