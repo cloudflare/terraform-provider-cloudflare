@@ -44,10 +44,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
-			"vanity_name_servers": schema.ListAttribute{
-				Description: "An array of domains used for custom name servers. This is only\navailable for Business and Enterprise plans.",
+			"paused": schema.BoolAttribute{
+				Description: "Indicates whether the zone is only using Cloudflare DNS services. A\ntrue value means the zone will not receive security or performance\nbenefits.",
+				Computed:    true,
 				Optional:    true,
-				ElementType: types.StringType,
+				Default:     booldefault.StaticBool(false),
 			},
 			"type": schema.StringAttribute{
 				Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\nAvailable values: \"full\", \"partial\", \"secondary\", \"internal\".",
@@ -62,6 +63,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				Default: stringdefault.StaticString("full"),
+			},
+			"vanity_name_servers": schema.ListAttribute{
+				Description: "An array of domains used for custom name servers. This is only\navailable for Business and Enterprise plans.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"activated_on": schema.StringAttribute{
 				Description: "The last time proof of ownership was detected and the zone was made\nactive",
@@ -93,11 +101,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"original_registrar": schema.StringAttribute{
 				Description: "Registrar for the domain at the time of switching to Cloudflare",
 				Computed:    true,
-			},
-			"paused": schema.BoolAttribute{
-				Description: "Indicates whether the zone is only using Cloudflare DNS services. A\ntrue value means the zone will not receive security or performance\nbenefits.",
-				Computed:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 			"status": schema.StringAttribute{
 				Description: "The zone status on Cloudflare.\nAvailable values: \"initializing\", \"pending\", \"active\", \"moved\".",
