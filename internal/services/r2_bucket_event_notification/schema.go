@@ -5,7 +5,6 @@ package r2_bucket_event_notification
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -86,67 +85,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"queues": schema.ListNestedAttribute{
-				Description: "List of queues associated with the bucket.",
+			"queue_name": schema.StringAttribute{
+				Description: "Name of the queue.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[R2BucketEventNotificationQueuesModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"queue_id": schema.StringAttribute{
-							Description: "Queue ID.",
-							Computed:    true,
-						},
-						"queue_name": schema.StringAttribute{
-							Description: "Name of the queue.",
-							Computed:    true,
-						},
-						"rules": schema.ListNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectListType[R2BucketEventNotificationQueuesRulesModel](ctx),
-							NestedObject: schema.NestedAttributeObject{
-								Attributes: map[string]schema.Attribute{
-									"actions": schema.ListAttribute{
-										Description: "Array of R2 object actions that will trigger notifications.",
-										Computed:    true,
-										Validators: []validator.List{
-											listvalidator.ValueStringsAre(
-												stringvalidator.OneOfCaseInsensitive(
-													"PutObject",
-													"CopyObject",
-													"DeleteObject",
-													"CompleteMultipartUpload",
-													"LifecycleDeletion",
-												),
-											),
-										},
-										CustomType:  customfield.NewListType[types.String](ctx),
-										ElementType: types.StringType,
-									},
-									"created_at": schema.StringAttribute{
-										Description: "Timestamp when the rule was created.",
-										Computed:    true,
-									},
-									"description": schema.StringAttribute{
-										Description: "A description that can be used to identify the event notification rule after creation.",
-										Computed:    true,
-									},
-									"prefix": schema.StringAttribute{
-										Description: "Notifications will be sent only for objects with this prefix.",
-										Computed:    true,
-									},
-									"rule_id": schema.StringAttribute{
-										Description: "Rule ID.",
-										Computed:    true,
-									},
-									"suffix": schema.StringAttribute{
-										Description: "Notifications will be sent only for objects with this suffix.",
-										Computed:    true,
-									},
-								},
-							},
-						},
-					},
-				},
 			},
 		},
 	}
