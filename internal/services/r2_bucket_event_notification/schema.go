@@ -46,7 +46,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"queue_id": schema.StringAttribute{
 				Description:   "Queue ID.",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"rules": schema.ListNestedAttribute{
