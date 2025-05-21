@@ -10,9 +10,11 @@ if [ -f "Brewfile" ] && [ "$(uname -s)" = "Darwin" ] && [ "$SKIP_BREW" != "1" ];
     brew bundle
   }
 fi
-
 echo "==> Installing Go dependencies…"
 
-# If go mod tidy fails, don't error during bootstrap.
-# Errors will be detected during the build phase.
+# Set GOPRIVATE if the repository appears to be private
+REPO_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://github.com/cloudflare/cloudflare-go)
+if [ "$REPO_STATUS" = "404" ]; then
+  export GOPRIVATE=github.com/cloudflare/cloudflare-go
+fi
 go mod tidy -e || true
