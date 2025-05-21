@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'release-please**'
+      - "release-please**"
 jobs:
   acceptance-tests:
     name: Acceptance Tests
@@ -37,21 +37,22 @@ jobs:
       CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD }}
       CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME }}
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup go
-      uses: actions/setup-go@v5
-      with:
-        go-version-file: ./go.mod
-    - name: Bootstrap
-      run: ./scripts/bootstrap
-    # when all resources support sweepers, re-enable.
-    #
-    # - name: Pre-Sweeper
-    #  run: go test ./internal/services/... -v -sweep="1" -timeout 60m
-    - name: Run acceptance tests
-      run: go test ./internal/services/... -run "^TestAcc" -count 1
-      env:
-        TF_ACC: 1
+      - uses: actions/checkout@v4
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+      # when all resources support sweepers, re-enable.
+      #
+      # - name: Pre-Sweeper
+      #  run: go test ./internal/services/... -v -sweep="1" -timeout 60m
+      - name: Run acceptance tests
+        # note: not all resources are covered here, only passing ones should be included here (for now).
+        run: go test ./internal/services/{account,account_api_token_permission_groups,account_dns_settings,account_dns_settings_internal_view,account_permission_group,account_role,account_subscription,account_token,address_map,api_shield,api_shield_discovery_operation,api_shield_schema,api_token_permission_groups,argo_smart_routing,argo_tiered_caching,authenticated_origin_pulls,authenticated_origin_pulls_certificate,authenticated_origin_pulls_settings,botnet_feed_config_asn,byo_ip_prefix,calls_sfu_app,calls_turn_app,certificate_pack,cloud_connector_rules,cloudforce_one_request,cloudforce_one_request_asset,cloudforce_one_request_message,cloudforce_one_request_priority,content_scanning_expression,custom_hostname_fallback_origin,custom_pages,custom_ssl,dcv_delegation,dns_record,dns_settings_internal_view,dns_zone_transfers_acl,dns_zone_transfers_peer,dns_zone_transfers_tsig,email_routing_address,email_routing_catch_all,email_routing_dns,email_routing_rule,email_security_block_sender,email_security_impersonation_registry,email_security_trusted_domains,image,image_variant,ip_ranges,leaked_credential_check,leaked_credential_check_rule,list,logpull_retention,logpush_dataset_field,logpush_dataset_job,logpush_job,logpush_ownership_challenge,magic_network_monitoring_configuration,magic_network_monitoring_rule,magic_transit_connector,magic_transit_site,magic_transit_site_acl,magic_transit_site_lan,magic_transit_site_wan,magic_wan_gre_tunnel,magic_wan_ipsec_tunnel,magic_wan_static_route,observatory_scheduled_test,origin_ca_certificate,page_rule,page_shield_connections,page_shield_cookies,page_shield_policy,page_shield_scripts,pages_domain,pages_project,queue,queue_consumer,r2_bucket,r2_bucket_cors,r2_bucket_event_notification,r2_bucket_lifecycle,r2_bucket_lock,r2_bucket_sippy,r2_custom_domain,r2_managed_domain,regional_hostname,regional_tiered_cache,registrar_domain,resource_group,ruleset,snippet_rules,snippets,stream,stream_audio_track,stream_caption_language,stream_download,stream_key,stream_live_input,stream_watermark,stream_webhook,tiered_cache,turnstile_widget,url_normalization_settings,user,waiting_room_settings,workers_cron_trigger,workers_custom_domain,workers_deployment,workers_for_platforms_dispatch_namespace,workers_kv_namespace,workers_route,workers_script,workers_script_subdomain,zero_trust_access_infrastructure_target,zero_trust_access_key_configuration,zero_trust_access_mtls_certificate,zero_trust_access_mtls_hostname_settings,zero_trust_access_service_token,zero_trust_access_short_lived_certificate,zero_trust_access_tag,zero_trust_device_custom_profile,zero_trust_device_default_profile,zero_trust_device_default_profile_certificates,zero_trust_device_managed_networks,zero_trust_dlp_custom_profile,zero_trust_dlp_dataset,zero_trust_dlp_entry,zero_trust_dlp_predefined_profile,zero_trust_gateway_app_types,zero_trust_gateway_categories,zero_trust_gateway_certificate,zero_trust_gateway_logging,zero_trust_gateway_proxy_endpoint,zero_trust_list,zero_trust_risk_behavior,zero_trust_risk_scoring_integration,zero_trust_tunnel_cloudflared,zero_trust_tunnel_cloudflared_route,zero_trust_tunnel_cloudflared_token,zero_trust_tunnel_warp_connector_token,zone,zone_cache_reserve,zone_cache_variants,zone_dns_settings,zone_hold,zone_lockdown,zone_setting,zone_subscription} -run "^TestAcc" -count 1
+        env:
+          TF_ACC: 1
     # when all resources support sweepers, re-enable.
     #
     # - name: Post-Sweeper
