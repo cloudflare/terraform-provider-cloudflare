@@ -30,7 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"name": schema.StringAttribute{
-				Description:   "The domain name",
+				Description:   "The domain name.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -72,7 +72,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"activated_on": schema.StringAttribute{
-				Description: "The last time proof of ownership was detected and the zone was made\nactive",
+				Description: "The last time proof of ownership was detected and the zone was made\nactive.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
@@ -81,7 +81,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{
-				Description: "When the zone was created",
+				Description: "When the zone was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
@@ -90,16 +90,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
-				Description: "When the zone was last modified",
+				Description: "When the zone was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"original_dnshost": schema.StringAttribute{
-				Description: "DNS host at the time of switching to Cloudflare",
+				Description: "DNS host at the time of switching to Cloudflare.",
 				Computed:    true,
 			},
 			"original_registrar": schema.StringAttribute{
-				Description: "Registrar for the domain at the time of switching to Cloudflare",
+				Description: "Registrar for the domain at the time of switching to Cloudflare.",
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
@@ -119,13 +119,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"name_servers": schema.ListAttribute{
-				Description: "The name servers Cloudflare assigns to a zone",
+				Description: "The name servers Cloudflare assigns to a zone.",
 				Computed:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"original_name_servers": schema.ListAttribute{
-				Description: "Original name servers before moving to Cloudflare",
+				Description: "Original name servers before moving to Cloudflare.",
 				Computed:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
@@ -138,32 +138,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType:        types.StringType,
 			},
 			"meta": schema.SingleNestedAttribute{
-				Description: "Metadata about the zone",
+				Description: "Metadata about the zone.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[ZoneMetaModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"cdn_only": schema.BoolAttribute{
-						Description: "The zone is only configured for CDN",
+						Description: "The zone is only configured for CDN.",
 						Computed:    true,
 					},
 					"custom_certificate_quota": schema.Int64Attribute{
-						Description: "Number of Custom Certificates the zone can have",
+						Description: "Number of Custom Certificates the zone can have.",
 						Computed:    true,
 					},
 					"dns_only": schema.BoolAttribute{
-						Description: "The zone is only configured for DNS",
+						Description: "The zone is only configured for DNS.",
 						Computed:    true,
 					},
 					"foundation_dns": schema.BoolAttribute{
-						Description: "The zone is setup with Foundation DNS",
+						Description: "The zone is setup with Foundation DNS.",
 						Computed:    true,
 					},
 					"page_rule_quota": schema.Int64Attribute{
-						Description: "Number of Page Rules a zone can have",
+						Description: "Number of Page Rules a zone can have.",
 						Computed:    true,
 					},
 					"phishing_detected": schema.BoolAttribute{
-						Description: "The zone has been flagged for phishing",
+						Description: "The zone has been flagged for phishing.",
 						Computed:    true,
 					},
 					"step": schema.Int64Attribute{
@@ -172,7 +172,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"owner": schema.SingleNestedAttribute{
-				Description: "The owner of the zone",
+				Description: "The owner of the zone.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[ZoneOwnerModel](ctx),
 				Attributes: map[string]schema.Attribute{
@@ -181,11 +181,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"name": schema.StringAttribute{
-						Description: "Name of the owner",
+						Description: "Name of the owner.",
 						Computed:    true,
 					},
 					"type": schema.StringAttribute{
-						Description: "The type of owner",
+						Description: "The type of owner.",
 						Computed:    true,
 					},
 				},
@@ -229,7 +229,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"name": schema.StringAttribute{
-						Description: "Name of the owner",
+						Description: "Name of the owner.",
 						Computed:    true,
 					},
 					"price": schema.Float64Attribute{
