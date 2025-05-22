@@ -361,7 +361,6 @@ var (
 			"priority": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Computed:    true,
 				Description: "Priority used when determining the order of rule execution. Lower values are executed first. If not provided, the list order will be used.",
 			},
 
@@ -380,7 +379,6 @@ var (
 			"terminates": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Computed:    true,
 				Description: "Terminates indicates that if this rule is true no further rules should be executed. Note: setting a [`fixed_response`](#fixed_response) forces this field to `true`.",
 			},
 
@@ -464,7 +462,6 @@ var (
 						"pop_pools": {
 							Type:        schema.TypeSet,
 							Optional:    true,
-							Computed:    true,
 							Elem:        loadBalancerOverridesPopPoolElem,
 							Description: "A set containing mappings of Cloudflare Point-of-Presence (PoP) identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). This feature is only available to enterprise customers.",
 						},
@@ -472,7 +469,6 @@ var (
 						"country_pools": {
 							Type:        schema.TypeSet,
 							Optional:    true,
-							Computed:    true,
 							Elem:        loadBalancerOverridesCountryPoolElem,
 							Description: "A set containing mappings of country codes to a list of pool IDs (ordered by their failover priority) for the given country.",
 						},
@@ -480,7 +476,6 @@ var (
 						"region_pools": {
 							Type:        schema.TypeSet,
 							Optional:    true,
-							Computed:    true,
 							Elem:        loadBalancerOverridesRegionPoolElem,
 							Description: "A set containing mappings of region codes to a list of pool IDs (ordered by their failover priority) for the given region.",
 						},
@@ -587,7 +582,6 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 		"ttl": {
 			Type:          schema.TypeInt,
 			Optional:      true,
-			Computed:      true,
 			ConflictsWith: []string{"proxied"}, // this is set to zero regardless of config when proxied=true
 			Description:   "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This cannot be set for proxied load balancers. Defaults to `30`.",
 		},
@@ -602,7 +596,6 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 		"steering_policy": {
 			Type:         schema.TypeString,
 			Optional:     true,
-			Computed:     true,
 			ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", "least_outstanding_requests", "least_connections", ""}, false),
 			Description:  fmt.Sprintf("The method the load balancer uses to determine the route to your origin. Value `off` uses [`default_pool_ids`](#default_pool_ids). Value `geo` uses [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools). For non-proxied requests, the [`country`](#country) for [`country_pools`](#country_pools) is determined by [`location_strategy`](#location_strategy). Value `random` selects a pool randomly. Value `dynamic_latency` uses round trip time to select the closest pool in [`default_pool_ids`](#default_pool_ids) (requires pool health checks). Value `proximity` uses the pools' latitude and longitude to select the closest pool using the Cloudflare PoP location for proxied requests or the location determined by [`location_strategy`](#location_strategy) for non-proxied requests. Value `least_outstanding_requests` selects a pool by taking into consideration [`random_steering`](#random_steering) weights, as well as each pool's number of outstanding requests. Pools with more pending requests are weighted proportionately less relative to others. Value `least_connections` selects a pool by taking into consideration [`random_steering`](#random_steering) weights, as well as each pool's number of open connections. Pools with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections. Value `\"\"` maps to `geo` if you use [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools) otherwise `off`. %s Defaults to `\"\"`.", renderAvailableDocumentationValuesStringSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", "least_outstanding_requests", "least_connections", `""`})),
 		},
