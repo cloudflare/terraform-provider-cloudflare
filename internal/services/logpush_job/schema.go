@@ -78,7 +78,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"zero_trust_network_sessions",
 					),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 				Default:       stringdefault.StaticString("http_requests"),
 			},
 			"destination_conf": schema.StringAttribute{
