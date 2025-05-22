@@ -1588,10 +1588,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"protocol": schema.StringAttribute{
-							Description: "The communication protocol your application secures.\nAvailable values: \"ssh\".",
+							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\".",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("ssh"),
+								stringvalidator.OneOfCaseInsensitive("SSH"),
 							},
 						},
 						"target_attributes": schema.MapAttribute{
