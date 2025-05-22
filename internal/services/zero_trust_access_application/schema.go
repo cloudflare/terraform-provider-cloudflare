@@ -325,10 +325,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"protocol": schema.StringAttribute{
-							Description: "The communication protocol your application secures.\nAvailable values: \"ssh\".",
+							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\".",
 							Required:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("ssh"),
+								stringvalidator.OneOfCaseInsensitive("SSH"),
 							},
 						},
 						"target_attributes": schema.MapAttribute{
