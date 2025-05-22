@@ -181,6 +181,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_managed_networks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_dataset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_entry"
@@ -513,6 +514,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_device_custom_profile_local_domain_fallback.NewResource,
 		zero_trust_device_posture_rule.NewResource,
 		zero_trust_device_posture_integration.NewResource,
+		zero_trust_device_settings.NewResource,
 		zero_trust_access_identity_provider.NewResource,
 		zero_trust_organization.NewResource,
 		zero_trust_access_infrastructure_target.NewResource,
@@ -784,6 +786,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_device_posture_rule.NewZeroTrustDevicePostureRulesDataSource,
 		zero_trust_device_posture_integration.NewZeroTrustDevicePostureIntegrationDataSource,
 		zero_trust_device_posture_integration.NewZeroTrustDevicePostureIntegrationsDataSource,
+		zero_trust_device_settings.NewZeroTrustDeviceSettingsDataSource,
 		zero_trust_access_identity_provider.NewZeroTrustAccessIdentityProviderDataSource,
 		zero_trust_access_identity_provider.NewZeroTrustAccessIdentityProvidersDataSource,
 		zero_trust_organization.NewZeroTrustOrganizationDataSource,
