@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package zero_trust_device_settings
+package zero_trust_dex_test
 
 import (
 	"context"
@@ -12,28 +12,31 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*ZeroTrustDeviceSettingsResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*ZeroTrustDeviceSettingsResource)(nil)
+var _ resource.ResourceWithConfigure = (*ZeroTrustDEXTestResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ZeroTrustDEXTestResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustDEXTestResource)(nil)
 
 func NewResource() resource.Resource {
-	return &ZeroTrustDeviceSettingsResource{}
+	return &ZeroTrustDEXTestResource{}
 }
 
-// ZeroTrustDeviceSettingsResource defines the resource implementation.
-type ZeroTrustDeviceSettingsResource struct {
+// ZeroTrustDEXTestResource defines the resource implementation.
+type ZeroTrustDEXTestResource struct {
 	client *cloudflare.Client
 }
 
-func (r *ZeroTrustDeviceSettingsResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_zero_trust_device_settings"
+func (r *ZeroTrustDEXTestResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_zero_trust_dex_test"
 }
 
-func (r *ZeroTrustDeviceSettingsResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *ZeroTrustDEXTestResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -52,8 +55,8 @@ func (r *ZeroTrustDeviceSettingsResource) Configure(ctx context.Context, req res
 	r.client = client
 }
 
-func (r *ZeroTrustDeviceSettingsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *ZeroTrustDeviceSettingsModel
+func (r *ZeroTrustDEXTestResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *ZeroTrustDEXTestModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -67,10 +70,10 @@ func (r *ZeroTrustDeviceSettingsResource) Create(ctx context.Context, req resour
 		return
 	}
 	res := new(http.Response)
-	env := ZeroTrustDeviceSettingsResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Devices.Settings.Update(
+	env := ZeroTrustDEXTestResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Devices.DEXTests.New(
 		ctx,
-		zero_trust.DeviceSettingUpdateParams{
+		zero_trust.DeviceDEXTestNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -88,12 +91,13 @@ func (r *ZeroTrustDeviceSettingsResource) Create(ctx context.Context, req resour
 		return
 	}
 	data = &env.Result
+	data.ID = data.TestID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustDeviceSettingsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *ZeroTrustDeviceSettingsModel
+func (r *ZeroTrustDEXTestResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *ZeroTrustDEXTestModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -101,7 +105,7 @@ func (r *ZeroTrustDeviceSettingsResource) Update(ctx context.Context, req resour
 		return
 	}
 
-	var state *ZeroTrustDeviceSettingsModel
+	var state *ZeroTrustDEXTestModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -115,10 +119,11 @@ func (r *ZeroTrustDeviceSettingsResource) Update(ctx context.Context, req resour
 		return
 	}
 	res := new(http.Response)
-	env := ZeroTrustDeviceSettingsResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Devices.Settings.Update(
+	env := ZeroTrustDEXTestResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Devices.DEXTests.Update(
 		ctx,
-		zero_trust.DeviceSettingUpdateParams{
+		data.TestID.ValueString(),
+		zero_trust.DeviceDEXTestUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -136,12 +141,13 @@ func (r *ZeroTrustDeviceSettingsResource) Update(ctx context.Context, req resour
 		return
 	}
 	data = &env.Result
+	data.ID = data.TestID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustDeviceSettingsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *ZeroTrustDeviceSettingsModel
+func (r *ZeroTrustDEXTestResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *ZeroTrustDEXTestModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -150,10 +156,11 @@ func (r *ZeroTrustDeviceSettingsResource) Read(ctx context.Context, req resource
 	}
 
 	res := new(http.Response)
-	env := ZeroTrustDeviceSettingsResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Devices.Settings.Get(
+	env := ZeroTrustDEXTestResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Devices.DEXTests.Get(
 		ctx,
-		zero_trust.DeviceSettingGetParams{
+		data.TestID.ValueString(),
+		zero_trust.DeviceDEXTestGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -175,12 +182,13 @@ func (r *ZeroTrustDeviceSettingsResource) Read(ctx context.Context, req resource
 		return
 	}
 	data = &env.Result
+	data.ID = data.TestID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustDeviceSettingsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *ZeroTrustDeviceSettingsModel
+func (r *ZeroTrustDEXTestResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *ZeroTrustDEXTestModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -188,9 +196,10 @@ func (r *ZeroTrustDeviceSettingsResource) Delete(ctx context.Context, req resour
 		return
 	}
 
-	_, err := r.client.ZeroTrust.Devices.Settings.Delete(
+	_, err := r.client.ZeroTrust.Devices.DEXTests.Delete(
 		ctx,
-		zero_trust.DeviceSettingDeleteParams{
+		data.TestID.ValueString(),
+		zero_trust.DeviceDEXTestDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -199,10 +208,57 @@ func (r *ZeroTrustDeviceSettingsResource) Delete(ctx context.Context, req resour
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.TestID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustDeviceSettingsResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *ZeroTrustDEXTestResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZeroTrustDEXTestModel = new(ZeroTrustDEXTestModel)
+
+	path_account_id := ""
+	path_dex_test_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<dex_test_id>",
+		&path_account_id,
+		&path_dex_test_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.TestID = types.StringValue(path_dex_test_id)
+
+	res := new(http.Response)
+	env := ZeroTrustDEXTestResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Devices.DEXTests.Get(
+		ctx,
+		path_dex_test_id,
+		zero_trust.DeviceDEXTestGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.TestID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZeroTrustDEXTestResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }
