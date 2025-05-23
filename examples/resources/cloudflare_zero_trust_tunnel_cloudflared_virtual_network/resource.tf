@@ -3,4 +3,5 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_virtual_network" "example_zer
   name = "us-east-1-vpc"
   comment = "Staging VPC for data science"
   is_default = true
+  is_default_network = false
 }

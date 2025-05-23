@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -29,9 +30,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"is_default": schema.BoolAttribute{
-				Description:   "If `true`, this virtual network is the default for the account.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description:        "If `true`, this virtual network is the default for the account.",
+				Optional:           true,
+				DeprecationMessage: "Use the is_default_network property instead.",
+				PlanModifiers:      []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
 				Description: "A user-friendly name for the virtual network.",
@@ -43,7 +45,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"is_default_network": schema.BoolAttribute{
 				Description: "If `true`, this virtual network is the default for the account.",
+				Computed:    true,
 				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"created_at": schema.StringAttribute{
 				Description: "Timestamp of when the resource was created.",
