@@ -48,7 +48,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"oc",
 					),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"jurisdiction": schema.StringAttribute{
 				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\".",

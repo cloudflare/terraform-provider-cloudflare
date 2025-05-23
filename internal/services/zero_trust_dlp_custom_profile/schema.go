@@ -145,7 +145,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"ai_context_enabled": schema.BoolAttribute{
 				Optional: true,
