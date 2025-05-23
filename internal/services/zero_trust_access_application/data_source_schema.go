@@ -140,8 +140,23 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The application type.",
+				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\".",
 				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"self_hosted",
+						"saas",
+						"ssh",
+						"vnc",
+						"app_launcher",
+						"warp",
+						"biso",
+						"bookmark",
+						"dash_sso",
+						"infrastructure",
+						"rdp",
+					),
+				},
 			},
 			"updated_at": schema.StringAttribute{
 				Computed:   true,
