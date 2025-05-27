@@ -1155,7 +1155,7 @@ resource "cloudflare_list_item" "example" {
 
 ## cloudflare_dns_record
 
-- `name` now requires the full FQDN to match the API respose instead of allowing a subdomain or `@` alias.
+- `name` now requires the full FQDN to match the API response instead of allowing a subdomain or `@` alias.
 - `data` is now a single nested attribute (`data = { ... }`) instead of a block (`data { ... }`).
 - `data.flag` is now a number (`flag = 0`) instead of a string (`flag = "0"`).
 - `hostname` has been removed.
