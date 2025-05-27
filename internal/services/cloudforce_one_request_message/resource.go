@@ -217,11 +217,15 @@ func (r *CloudforceOneRequestMessageResource) ImportState(ctx context.Context, r
 
 	path_account_id := ""
 	path_request_id := ""
+	path_page := int64(0)
+	path_per_page := int64(0)
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<request_id>",
+		"<account_id>/<request_id>/<page>/<per_page>",
 		&path_account_id,
 		&path_request_id,
+		&path_page,
+		&path_per_page,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -238,6 +242,8 @@ func (r *CloudforceOneRequestMessageResource) ImportState(ctx context.Context, r
 		path_request_id,
 		cloudforce_one.RequestMessageGetParams{
 			AccountID: cloudflare.F(path_account_id),
+			Page:      cloudflare.F(path_page),
+			PerPage:   cloudflare.F(path_per_page),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
