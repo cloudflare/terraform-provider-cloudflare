@@ -122,8 +122,8 @@ Available values: "enabled", "disabled", "remote_only".
 - `dcp` (Boolean) Set to false to enable copy-pasting. Only applies when `version == "v1"`.
 - `dd` (Boolean) Set to false to enable downloading. Only applies when `version == "v1"`.
 - `dk` (Boolean) Set to false to enable keyboard usage. Only applies when `version == "v1"`.
-- `download` (String) Configure whether downloading enabled or not. When absent, downloading is enabled. Only applies when `version == "v2"`.
-Available values: "enabled", "disabled".
+- `download` (String) Configure whether downloading enabled or not. When set with "remote_only", downloads are only available for viewing. Only applies when `version == "v2"`.
+Available values: "enabled", "disabled", "remote_only".
 - `dp` (Boolean) Set to false to enable printing. Only applies when `version == "v1"`.
 - `du` (Boolean) Set to false to enable uploading. Only applies when `version == "v1"`.
 - `keyboard` (String) Configure whether keyboard usage is enabled or not. When absent, keyboard usage is enabled. Only applies when `version == "v2"`.

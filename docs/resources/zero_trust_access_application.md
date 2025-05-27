@@ -154,6 +154,7 @@ The header value will be interpreted as a json object similar to:
 - `tags` (List of String) The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
 - `target_criteria` (Attributes List) (see [below for nested schema](#nestedatt--target_criteria))
 - `type` (String) The application type.
+Available values: "self_hosted", "saas", "ssh", "vnc", "app_launcher", "warp", "biso", "bookmark", "dash_sso", "infrastructure", "rdp".
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
@@ -1044,7 +1045,7 @@ Required:
 
 - `port` (Number) The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.
 - `protocol` (String) The communication protocol your application secures.
-Available values: "ssh".
+Available values: "SSH".
 - `target_attributes` (Map of List of String) Contains a map of target attribute keys to target attribute values.
 
 ## Import
