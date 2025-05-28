@@ -125,6 +125,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_operation_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_schemas"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
@@ -507,6 +510,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		leaked_credential_check_rule.NewResource,
 		content_scanning_expression.NewResource,
 		custom_pages.NewResource,
+		schema_validation_schemas.NewResource,
+		schema_validation_settings.NewResource,
+		schema_validation_operation_settings.NewResource,
 	}
 }
 
@@ -818,6 +824,11 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		content_scanning_expression.NewContentScanningExpressionsDataSource,
 		custom_pages.NewCustomPagesDataSource,
 		custom_pages.NewCustomPagesListDataSource,
+		schema_validation_schemas.NewSchemaValidationSchemasDataSource,
+		schema_validation_schemas.NewSchemaValidationSchemasListDataSource,
+		schema_validation_settings.NewSchemaValidationSettingsDataSource,
+		schema_validation_operation_settings.NewSchemaValidationOperationSettingsDataSource,
+		schema_validation_operation_settings.NewSchemaValidationOperationSettingsListDataSource,
 	}
 }
 
