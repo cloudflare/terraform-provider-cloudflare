@@ -249,7 +249,7 @@ func ProviderSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"base_url": schema.StringAttribute{
-				Description: "Set the base url that the provider connects to. This can be used for testing in other environments.",
+				Description: "Set the base url that the provider connects to.",
 				Optional:    true,
 			},
 			"api_token": schema.StringAttribute{
