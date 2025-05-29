@@ -112,8 +112,8 @@ func (r *ZeroTrustTunnelCloudflaredResource) Update(ctx context.Context, req res
 		return
 	}
 
-	configurationSource := state.ConfigSrc
-	tunnelSecret := state.TunnelSecret
+	configurationSource := data.ConfigSrc
+	tunnelSecret := data.TunnelSecret
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {

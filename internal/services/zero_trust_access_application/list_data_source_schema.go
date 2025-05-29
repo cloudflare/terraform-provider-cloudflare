@@ -66,8 +66,23 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The application type.",
+							Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\".",
 							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"self_hosted",
+									"saas",
+									"ssh",
+									"vnc",
+									"app_launcher",
+									"warp",
+									"biso",
+									"bookmark",
+									"dash_sso",
+									"infrastructure",
+									"rdp",
+								),
+							},
 						},
 						"id": schema.StringAttribute{
 							Description: "UUID.",
@@ -1614,10 +1629,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Computed:    true,
 									},
 									"protocol": schema.StringAttribute{
-										Description: "The communication protocol your application secures.\nAvailable values: \"ssh\".",
+										Description: "The communication protocol your application secures.\nAvailable values: \"SSH\".",
 										Computed:    true,
 										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive("ssh"),
+											stringvalidator.OneOfCaseInsensitive("SSH"),
 										},
 									},
 									"target_attributes": schema.MapAttribute{

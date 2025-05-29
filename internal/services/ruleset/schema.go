@@ -514,13 +514,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 								},
 								"polish": schema.StringAttribute{
-									Description: "Configure the Polish level.\nAvailable values: \"off\", \"lossless\", \"lossy\".",
+									Description: "Configure the Polish level.\nAvailable values: \"off\", \"lossless\", \"lossy\", \"webp\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
 											"off",
 											"lossless",
 											"lossy",
+											"webp",
 										),
 									},
 								},

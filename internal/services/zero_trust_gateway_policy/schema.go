@@ -233,10 +233,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(false),
 							},
 							"download": schema.StringAttribute{
-								Description: "Configure whether downloading enabled or not. When absent, downloading is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\".",
+								Description: "Configure whether downloading enabled or not. When set with \"remote_only\", downloads are only available for viewing. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
+									stringvalidator.OneOfCaseInsensitive(
+										"enabled",
+										"disabled",
+										"remote_only",
+									),
 								},
 							},
 							"dp": schema.BoolAttribute{

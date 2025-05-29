@@ -10,10 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -47,9 +44,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"ingress": schema.ListNestedAttribute{
 						Description: "List of public hostname definitions. At least one ingress rule needs to be defined for the tunnel.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectListType[ZeroTrustTunnelCloudflaredConfigConfigIngressModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"hostname": schema.StringAttribute{
@@ -62,15 +57,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"origin_request": schema.SingleNestedAttribute{
 									Description: "Configuration parameters for the public hostname specific connection settings between cloudflared and origin server.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"access": schema.SingleNestedAttribute{
 											Description: "For all L7 requests to this hostname, cloudflared will validate each request's Cf-Access-Jwt-Assertion request header.",
-											Computed:    true,
 											Optional:    true,
-											CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestAccessModel](ctx),
 											Attributes: map[string]schema.Attribute{
 												"aud_tag": schema.ListAttribute{
 													Description: "Access applications that are allowed to reach this hostname for this Tunnel. Audience tags can be identified in the dashboard or via the List Access policies API.",
@@ -78,29 +69,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 													ElementType: types.StringType,
 												},
 												"team_name": schema.StringAttribute{
-													Computed: true,
-													Optional: true,
-													Default:  stringdefault.StaticString("Your Zero Trust organization name."),
+													Required: true,
 												},
 												"required": schema.BoolAttribute{
 													Description: "Deny traffic that has not fulfilled Access authorization.",
-													Computed:    true,
 													Optional:    true,
-													Default:     booldefault.StaticBool(false),
 												},
 											},
 										},
 										"ca_pool": schema.StringAttribute{
 											Description: "Path to the certificate authority (CA) for the certificate of your origin. This option should be used only if your certificate is not signed by Cloudflare.",
-											Computed:    true,
 											Optional:    true,
-											Default:     stringdefault.StaticString(""),
 										},
 										"connect_timeout": schema.Int64Attribute{
 											Description: "Timeout for establishing a new TCP connection to your origin server. This excludes the time taken to establish TLS, which is controlled by tlsTimeout.",
-											Computed:    true,
 											Optional:    true,
-											Default:     int64default.StaticInt64(10),
 										},
 										"disable_chunked_encoding": schema.BoolAttribute{
 											Description: "Disables chunked transfer encoding. Useful if you are running a WSGI server.",
@@ -116,74 +99,52 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"keep_alive_connections": schema.Int64Attribute{
 											Description: "Maximum number of idle keepalive connections between Tunnel and your origin. This does not restrict the total number of concurrent connections.",
-											Computed:    true,
 											Optional:    true,
-											Default:     int64default.StaticInt64(100),
 										},
 										"keep_alive_timeout": schema.Int64Attribute{
 											Description: "Timeout after which an idle keepalive connection can be discarded.",
-											Computed:    true,
 											Optional:    true,
-											Default:     int64default.StaticInt64(90),
 										},
 										"no_happy_eyeballs": schema.BoolAttribute{
 											Description: "Disable the “happy eyeballs” algorithm for IPv4/IPv6 fallback if your local network has misconfigured one of the protocols.",
-											Computed:    true,
 											Optional:    true,
-											Default:     booldefault.StaticBool(false),
 										},
 										"no_tls_verify": schema.BoolAttribute{
 											Description: "Disables TLS verification of the certificate presented by your origin. Will allow any certificate from the origin to be accepted.",
-											Computed:    true,
 											Optional:    true,
-											Default:     booldefault.StaticBool(false),
 										},
 										"origin_server_name": schema.StringAttribute{
 											Description: "Hostname that cloudflared should expect from your origin server certificate.",
-											Computed:    true,
 											Optional:    true,
-											Default:     stringdefault.StaticString(""),
 										},
 										"proxy_type": schema.StringAttribute{
 											Description: `cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. Valid options are: "" for the regular proxy and "socks" for a SOCKS5 proxy.`,
-											Computed:    true,
 											Optional:    true,
-											Default:     stringdefault.StaticString(""),
 										},
 										"tcp_keep_alive": schema.Int64Attribute{
 											Description: "The timeout after which a TCP keepalive packet is sent on a connection between Tunnel and the origin server.",
-											Computed:    true,
 											Optional:    true,
-											Default:     int64default.StaticInt64(30),
 										},
 										"tls_timeout": schema.Int64Attribute{
 											Description: "Timeout for completing a TLS handshake to your origin server, if you have chosen to connect Tunnel to an HTTPS server.",
-											Computed:    true,
 											Optional:    true,
-											Default:     int64default.StaticInt64(10),
 										},
 									},
 								},
 								"path": schema.StringAttribute{
 									Description: "Requests with this path route to this public hostname.",
-									Computed:    true,
 									Optional:    true,
-									Default:     stringdefault.StaticString(""),
 								},
 							},
 						},
 					},
 					"origin_request": schema.SingleNestedAttribute{
 						Description: "Configuration parameters for the public hostname specific connection settings between cloudflared and origin server.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigOriginRequestModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"access": schema.SingleNestedAttribute{
 								Description: "For all L7 requests to this hostname, cloudflared will validate each request's Cf-Access-Jwt-Assertion request header.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigOriginRequestAccessModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"aud_tag": schema.ListAttribute{
 										Description: "Access applications that are allowed to reach this hostname for this Tunnel. Audience tags can be identified in the dashboard or via the List Access policies API.",
@@ -191,29 +152,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										ElementType: types.StringType,
 									},
 									"team_name": schema.StringAttribute{
-										Computed: true,
-										Optional: true,
-										Default:  stringdefault.StaticString("Your Zero Trust organization name."),
+										Required: true,
 									},
 									"required": schema.BoolAttribute{
 										Description: "Deny traffic that has not fulfilled Access authorization.",
-										Computed:    true,
 										Optional:    true,
-										Default:     booldefault.StaticBool(false),
 									},
 								},
 							},
 							"ca_pool": schema.StringAttribute{
 								Description: "Path to the certificate authority (CA) for the certificate of your origin. This option should be used only if your certificate is not signed by Cloudflare.",
-								Computed:    true,
 								Optional:    true,
-								Default:     stringdefault.StaticString(""),
 							},
 							"connect_timeout": schema.Int64Attribute{
 								Description: "Timeout for establishing a new TCP connection to your origin server. This excludes the time taken to establish TLS, which is controlled by tlsTimeout.",
-								Computed:    true,
 								Optional:    true,
-								Default:     int64default.StaticInt64(10),
 							},
 							"disable_chunked_encoding": schema.BoolAttribute{
 								Description: "Disables chunked transfer encoding. Useful if you are running a WSGI server.",
@@ -229,51 +182,35 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"keep_alive_connections": schema.Int64Attribute{
 								Description: "Maximum number of idle keepalive connections between Tunnel and your origin. This does not restrict the total number of concurrent connections.",
-								Computed:    true,
 								Optional:    true,
-								Default:     int64default.StaticInt64(100),
 							},
 							"keep_alive_timeout": schema.Int64Attribute{
 								Description: "Timeout after which an idle keepalive connection can be discarded.",
-								Computed:    true,
 								Optional:    true,
-								Default:     int64default.StaticInt64(90),
 							},
 							"no_happy_eyeballs": schema.BoolAttribute{
 								Description: "Disable the “happy eyeballs” algorithm for IPv4/IPv6 fallback if your local network has misconfigured one of the protocols.",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"no_tls_verify": schema.BoolAttribute{
 								Description: "Disables TLS verification of the certificate presented by your origin. Will allow any certificate from the origin to be accepted.",
-								Computed:    true,
 								Optional:    true,
-								Default:     booldefault.StaticBool(false),
 							},
 							"origin_server_name": schema.StringAttribute{
 								Description: "Hostname that cloudflared should expect from your origin server certificate.",
-								Computed:    true,
 								Optional:    true,
-								Default:     stringdefault.StaticString(""),
 							},
 							"proxy_type": schema.StringAttribute{
 								Description: `cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. Valid options are: "" for the regular proxy and "socks" for a SOCKS5 proxy.`,
-								Computed:    true,
 								Optional:    true,
-								Default:     stringdefault.StaticString(""),
 							},
 							"tcp_keep_alive": schema.Int64Attribute{
 								Description: "The timeout after which a TCP keepalive packet is sent on a connection between Tunnel and the origin server.",
-								Computed:    true,
 								Optional:    true,
-								Default:     int64default.StaticInt64(30),
 							},
 							"tls_timeout": schema.Int64Attribute{
 								Description: "Timeout for completing a TLS handshake to your origin server, if you have chosen to connect Tunnel to an HTTPS server.",
-								Computed:    true,
 								Optional:    true,
-								Default:     int64default.StaticInt64(10),
 							},
 						},
 					},
@@ -301,7 +238,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("local", "cloudflare"),
 				},
-				Default: stringdefault.StaticString("local"),
 			},
 			"version": schema.Int64Attribute{
 				Description: "The version of the Tunnel Configuration.",

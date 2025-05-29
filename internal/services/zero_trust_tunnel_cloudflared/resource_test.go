@@ -141,3 +141,46 @@ func testAccCheckCloudflareTunnelDestroy(s *terraform.State) error {
 
 	return nil
 }
+
+func TestAccCloudflareTunnelRotateSecret(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Argo Tunnel
+	// endpoint does not yet support the API tokens.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared.%s", rnd)
+
+	secretV1 := "dGhpc19pc18xX3NlY3JldF9mb3JfdGhlX2ZpcnN0"
+	secretV2 := "Ml9zZWNyZXRfMl90dW5uZWxfdXBkYXRl"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTunnelDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareTunnelRotateSecret(accID, rnd, secretV1),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "tunnel_secret", secretV1),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareTunnelRotateSecret(accID, rnd, secretV2),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "tunnel_secret", secretV2),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareTunnelRotateSecret(accID, name, secret string) string {
+	return acctest.LoadTestCase("tunnelsecret.tf", accID, name, secret)
+}
