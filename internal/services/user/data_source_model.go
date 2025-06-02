@@ -2,9 +2,36 @@
 
 package user
 
+import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
 type UserResultDataSourceEnvelope struct {
 	Result UserDataSourceModel `json:"result,computed"`
 }
 
 type UserDataSourceModel struct {
+	Country                        types.String                                                   `tfsdk:"country" json:"country,computed"`
+	FirstName                      types.String                                                   `tfsdk:"first_name" json:"first_name,computed"`
+	HasBusinessZones               types.Bool                                                     `tfsdk:"has_business_zones" json:"has_business_zones,computed"`
+	HasEnterpriseZones             types.Bool                                                     `tfsdk:"has_enterprise_zones" json:"has_enterprise_zones,computed"`
+	HasProZones                    types.Bool                                                     `tfsdk:"has_pro_zones" json:"has_pro_zones,computed"`
+	ID                             types.String                                                   `tfsdk:"id" json:"id,computed"`
+	LastName                       types.String                                                   `tfsdk:"last_name" json:"last_name,computed"`
+	Suspended                      types.Bool                                                     `tfsdk:"suspended" json:"suspended,computed"`
+	Telephone                      types.String                                                   `tfsdk:"telephone" json:"telephone,computed"`
+	TwoFactorAuthenticationEnabled types.Bool                                                     `tfsdk:"two_factor_authentication_enabled" json:"two_factor_authentication_enabled,computed"`
+	TwoFactorAuthenticationLocked  types.Bool                                                     `tfsdk:"two_factor_authentication_locked" json:"two_factor_authentication_locked,computed"`
+	Zipcode                        types.String                                                   `tfsdk:"zipcode" json:"zipcode,computed"`
+	Betas                          customfield.List[types.String]                                 `tfsdk:"betas" json:"betas,computed"`
+	Organizations                  customfield.NestedObjectList[UserOrganizationsDataSourceModel] `tfsdk:"organizations" json:"organizations,computed"`
+}
+
+type UserOrganizationsDataSourceModel struct {
+	ID          types.String                   `tfsdk:"id" json:"id,computed"`
+	Name        types.String                   `tfsdk:"name" json:"name,computed"`
+	Permissions customfield.List[types.String] `tfsdk:"permissions" json:"permissions,computed"`
+	Roles       customfield.List[types.String] `tfsdk:"roles" json:"roles,computed"`
+	Status      types.String                   `tfsdk:"status" json:"status,computed"`
 }
