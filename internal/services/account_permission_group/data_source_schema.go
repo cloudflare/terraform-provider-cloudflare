@@ -24,11 +24,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "Identifier of the group.",
+				Description: "Identifier of the permission group.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the group.",
+				Description: "Name of the permission group.",
 				Computed:    true,
 			},
 			"meta": schema.SingleNestedAttribute{

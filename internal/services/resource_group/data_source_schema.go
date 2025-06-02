@@ -24,7 +24,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "Identifier of the group.",
+				Description: "Identifier of the resource group.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
