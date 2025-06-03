@@ -3,12 +3,15 @@ package page_rule
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go/v4/page_rules"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -120,7 +123,7 @@ type PageRuleActionsModel struct {
 	CacheLevel              types.String                                                 `tfsdk:"cache_level" json:"cache_level,optional"`
 	CacheOnCookie           types.String                                                 `tfsdk:"cache_on_cookie" json:"cache_on_cookie,optional"`
 	CacheKeyFields          customfield.NestedObject[PageRuleActionsCacheKeyFieldsModel] `tfsdk:"cache_key_fields" json:"cache_key_fields,optional"`
-	CacheTTLByStatus        types.Dynamic                                                `tfsdk:"cache_ttl_by_status" json:"cache_ttl_by_status,optional"`
+	CacheTTLByStatus        types.Map                                                    `tfsdk:"cache_ttl_by_status" json:"cache_ttl_by_status,optional"`
 	DisableApps             types.Bool                                                   `tfsdk:"disable_apps" json:"disable_apps,optional"`
 	DisablePerformance      types.Bool                                                   `tfsdk:"disable_performance" json:"disable_performance,optional"`
 	DisableSecurity         types.Bool                                                   `tfsdk:"disable_security" json:"disable_security,optional"`
@@ -224,16 +227,24 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 	if !m.CacheTTLByStatus.IsNull() {
 		stringVal := m.CacheTTLByStatus.String()
 		ttl := map[string]interface{}{}
-
 		err = json.Unmarshal([]byte(stringVal), &ttl)
 		if err != nil {
 			return
 		}
-		value := map[string]any{}
-		for k, v := range ttl {
-			value[k] = v
+
+		cacheTTLByStatusAPI := make(map[string]any)
+		for key, val := range ttl {
+			strVal, ok := val.(string)
+			if !ok {
+				continue
+			}
+			if intVal, err := strconv.Atoi(strVal); err == nil {
+				cacheTTLByStatusAPI[key] = intVal
+				continue
+			}
+			cacheTTLByStatusAPI[key] = strVal
 		}
-		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDCacheTTLByStatus, "value": value})
+		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDCacheTTLByStatus, "value": cacheTTLByStatusAPI})
 	}
 	if m.DisableApps.ValueBool() {
 		encoded = append(encoded, map[string]any{"id": page_rules.PageRuleActionsIDDisableApps, "value": m.DisableApps.ValueBool()})
@@ -353,7 +364,9 @@ func UnmarshalPageRuleModel(b []byte) (*PageRuleModel, error) {
 		m.Target = types.StringValue(strings.TrimRight(resp.Result.Targets[0].Constraint.Value, "/"))
 	}
 
-	m.Actions = &PageRuleActionsModel{}
+	m.Actions = &PageRuleActionsModel{
+		CacheTTLByStatus: types.MapNull(types.StringType),
+	}
 	for _, action := range resp.Result.Actions {
 		switch action.ID {
 		case "always_use_https":
@@ -503,22 +516,19 @@ func UnmarshalPageRuleModel(b []byte) (*PageRuleModel, error) {
 			}
 			m.Actions.CacheKeyFields, _ = customfield.NewObject[PageRuleActionsCacheKeyFieldsModel](context.Background(), &ckf)
 		case "cache_ttl_by_status":
-			var val map[string]interface{}
-			_ = json.Unmarshal(action.Value, &val)
+			var cacheTTLByStatusAPI map[string]interface{}
+			_ = json.Unmarshal(action.Value, &cacheTTLByStatusAPI)
 			elements := make(map[string]attr.Value)
-			aMap := make(map[string]attr.Type)
-			for k, v := range val {
-				aMap[k] = types.DynamicType
-				switch v.(type) {
+			for key, val := range cacheTTLByStatusAPI {
+				switch v := val.(type) {
 				case string:
-					elements[k] = types.DynamicValue(basetypes.NewDynamicValue(types.StringValue(v.(string))))
+					elements[key] = types.StringValue(v)
 				case float64:
-					elements[k] = types.DynamicValue(basetypes.NewDynamicValue(types.Float64Value(v.(float64))))
+					elements[key] = types.StringValue(strconv.FormatFloat(v, 'f', -1, 64))
 				}
-
 			}
-			mapValue, _ := types.ObjectValue(aMap, elements)
-			m.Actions.CacheTTLByStatus = types.DynamicValue(mapValue)
+			mapValue, _ := types.MapValue(types.StringType, elements)
+			m.Actions.CacheTTLByStatus = mapValue
 		case "disable_apps":
 			m.Actions.DisableApps = types.BoolValue(true)
 		case "disable_performance":
