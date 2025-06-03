@@ -1002,7 +1002,7 @@ This has been removed. Users should instead use the:
 
 ## cloudflare_zero_trust_access_policy
 
-- `application_id` has been removed. Applications can be provided a policy id.
+- `application_id` has been removed. Applications should be provided the policy ids instead
 - `approval_group` is now a list of objects (`approval_group = [{ ... }]`) instead of multiple block attribute (`approval_group { ... }`).
 - `auth_context` is now a list of objects (`auth_context = [{ ... }]`) instead of multiple block attribute (`auth_context { ... }`).
 - `azure` is now a single nested attribute (`azure = { ... }`) instead of a block (`azure { ... }`).
