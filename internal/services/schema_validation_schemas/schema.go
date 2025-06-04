@@ -54,7 +54,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"validation_enabled": schema.BoolAttribute{
 				Description: "An indicator if this schema is enabled",
-				Optional:    true,
+				Required:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
