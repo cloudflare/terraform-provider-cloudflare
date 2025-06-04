@@ -81,14 +81,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											),
 										},
 									},
-									"run_worker_first": schema.BoolAttribute{
-										Description: "When true, requests will always invoke the Worker script. Otherwise, attempt to serve an asset matching the request, falling back to the Worker script.",
+									"run_worker_first": schema.ListAttribute{
+										Description: "Contains a list path rules to control routing to either the Worker or assets. Glob (*) and negative (!) rules are supported. Rules must start with either '/' or '!/'. At least one non-negative rule must be provided, and negative rules have higher precedence than non-negative rules.",
 										Optional:    true,
-									},
-									"serve_directly": schema.BoolAttribute{
-										Description:        "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
-										Optional:           true,
-										DeprecationMessage: "This attribute is deprecated.",
+										ElementType: types.StringType,
 									},
 								},
 							},
