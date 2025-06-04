@@ -1,4 +1,4 @@
-# Cloudflare Terraform Provider
+# Cloudflare Terraform Provider (WIP: NOT READY FOR PRODUCTION, PLEASE USE v4)
 
 The [Cloudflare Terraform provider](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs) provides convenient access to
 the [Cloudflare REST API](https://developers.cloudflare.com/api) from Terraform.
