@@ -59,11 +59,16 @@ func (r *ZeroTrustAccessIdentityProviderResource) Configure(ctx context.Context,
 func (r *ZeroTrustAccessIdentityProviderResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data *ZeroTrustAccessIdentityProviderModel
 
+	secret := types.StringNull()
+	req.Config.GetAttribute(ctx, path.Root("config").AtName("client_secret"), &secret)
+
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.Config.ClientSecret = secret
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -98,6 +103,7 @@ func (r *ZeroTrustAccessIdentityProviderResource) Create(ctx context.Context, re
 		return
 	}
 	data = &env.Result
+	data.Config.ClientSecret = types.StringNull()
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
