@@ -143,43 +143,8 @@ type ZeroTrustAccessApplicationLandingPageDesignModel struct {
 }
 
 type ZeroTrustAccessApplicationPoliciesModel struct {
-	ID              types.String                                                                 `tfsdk:"id" json:"id,optional"`
-	Precedence      types.Int64                                                                  `tfsdk:"precedence" json:"precedence,optional"`
-	Decision        types.String                                                                 `tfsdk:"decision" json:"decision,optional"`
-	Include         customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesIncludeModel] `tfsdk:"include" json:"include,computed_optional"`
-	Name            types.String                                                                 `tfsdk:"name" json:"name,optional"`
-	ConnectionRules *ZeroTrustAccessApplicationPoliciesConnectionRulesModel                      `tfsdk:"connection_rules" json:"connection_rules,optional"`
-	Exclude         customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesExcludeModel] `tfsdk:"exclude" json:"exclude,computed_optional"`
-	Require         customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesRequireModel] `tfsdk:"require" json:"require,computed_optional"`
-}
-
-type ZeroTrustAccessApplicationPoliciesIncludeModel struct {
-	Group                *ZeroTrustAccessApplicationPoliciesIncludeGroupModel                `tfsdk:"group" json:"group,optional"`
-	AnyValidServiceToken *ZeroTrustAccessApplicationPoliciesIncludeAnyValidServiceTokenModel `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
-	AuthContext          *ZeroTrustAccessApplicationPoliciesIncludeAuthContextModel          `tfsdk:"auth_context" json:"auth_context,optional"`
-	AuthMethod           *ZeroTrustAccessApplicationPoliciesIncludeAuthMethodModel           `tfsdk:"auth_method" json:"auth_method,optional"`
-	AzureAD              *ZeroTrustAccessApplicationPoliciesIncludeAzureADModel              `tfsdk:"azure_ad" json:"azureAD,optional"`
-	Certificate          *ZeroTrustAccessApplicationPoliciesIncludeCertificateModel          `tfsdk:"certificate" json:"certificate,optional"`
-	CommonName           *ZeroTrustAccessApplicationPoliciesIncludeCommonNameModel           `tfsdk:"common_name" json:"common_name,optional"`
-	Geo                  *ZeroTrustAccessApplicationPoliciesIncludeGeoModel                  `tfsdk:"geo" json:"geo,optional"`
-	DevicePosture        *ZeroTrustAccessApplicationPoliciesIncludeDevicePostureModel        `tfsdk:"device_posture" json:"device_posture,optional"`
-	EmailDomain          *ZeroTrustAccessApplicationPoliciesIncludeEmailDomainModel          `tfsdk:"email_domain" json:"email_domain,optional"`
-	EmailList            *ZeroTrustAccessApplicationPoliciesIncludeEmailListModel            `tfsdk:"email_list" json:"email_list,optional"`
-	Email                *ZeroTrustAccessApplicationPoliciesIncludeEmailModel                `tfsdk:"email" json:"email,optional"`
-	Everyone             *ZeroTrustAccessApplicationPoliciesIncludeEveryoneModel             `tfsdk:"everyone" json:"everyone,optional"`
-	ExternalEvaluation   *ZeroTrustAccessApplicationPoliciesIncludeExternalEvaluationModel   `tfsdk:"external_evaluation" json:"external_evaluation,optional"`
-	GitHubOrganization   *ZeroTrustAccessApplicationPoliciesIncludeGitHubOrganizationModel   `tfsdk:"github_organization" json:"github-organization,optional"`
-	GSuite               *ZeroTrustAccessApplicationPoliciesIncludeGSuiteModel               `tfsdk:"gsuite" json:"gsuite,optional"`
-	LoginMethod          *ZeroTrustAccessApplicationPoliciesIncludeLoginMethodModel          `tfsdk:"login_method" json:"login_method,optional"`
-	IPList               *ZeroTrustAccessApplicationPoliciesIncludeIPListModel               `tfsdk:"ip_list" json:"ip_list,optional"`
-	IP                   *ZeroTrustAccessApplicationPoliciesIncludeIPModel                   `tfsdk:"ip" json:"ip,optional"`
-	Okta                 *ZeroTrustAccessApplicationPoliciesIncludeOktaModel                 `tfsdk:"okta" json:"okta,optional"`
-	SAML                 *ZeroTrustAccessApplicationPoliciesIncludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
-	ServiceToken         *ZeroTrustAccessApplicationPoliciesIncludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
-}
-
-type ZeroTrustAccessApplicationPoliciesIncludeGroupModel struct {
-	ID types.String `tfsdk:"id" json:"id,required"`
+	ID         types.String `tfsdk:"id" json:"id,required"`
+	Precedence types.Int64  `tfsdk:"precedence" json:"precedence,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesIncludeAnyValidServiceTokenModel struct {
