@@ -136,6 +136,7 @@ type WorkersScriptMetadataBindingsModel struct {
 	Usages        *[]types.String                             `tfsdk:"usages" json:"usages,optional"`
 	KeyBase64     types.String                                `tfsdk:"key_base64" json:"key_base64,optional"`
 	KeyJwk        jsontypes.Normalized                        `tfsdk:"key_jwk" json:"key_jwk,optional"`
+	WorkflowName  types.String                                `tfsdk:"workflow_name" json:"workflow_name,optional"`
 }
 
 type WorkersScriptMetadataBindingsOutboundModel struct {
