@@ -146,6 +146,7 @@ func (r *UserResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	}
 
 	res := new(http.Response)
+	env := UserResultEnvelope{*data}
 	_, err := r.client.User.Get(
 		ctx,
 		option.WithResponseBodyInto(&res),
@@ -160,6 +161,13 @@ func (r *UserResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

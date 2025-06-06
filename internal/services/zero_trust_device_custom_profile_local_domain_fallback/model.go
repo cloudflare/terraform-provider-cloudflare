@@ -4,7 +4,6 @@ package zero_trust_device_custom_profile_local_domain_fallback
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,13 +12,10 @@ type ZeroTrustDeviceCustomProfileLocalDomainFallbackResultEnvelope struct {
 }
 
 type ZeroTrustDeviceCustomProfileLocalDomainFallbackModel struct {
-	ID          types.String                                                    `tfsdk:"id" json:"-,computed"`
-	PolicyID    types.String                                                    `tfsdk:"policy_id" path:"policy_id,required"`
-	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
-	Domains     *[]*ZeroTrustDeviceCustomProfileLocalDomainFallbackDomainsModel `tfsdk:"domains" json:"domains,required,no_refresh"`
-	Description types.String                                                    `tfsdk:"description" json:"description,computed"`
-	Suffix      types.String                                                    `tfsdk:"suffix" json:"suffix,computed"`
-	DNSServer   customfield.List[types.String]                                  `tfsdk:"dns_server" json:"dns_server,computed"`
+	ID        types.String                                                    `tfsdk:"id" json:"-,computed"`
+	PolicyID  types.String                                                    `tfsdk:"policy_id" path:"policy_id,required"`
+	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
+	Domains   *[]*ZeroTrustDeviceCustomProfileLocalDomainFallbackDomainsModel `tfsdk:"domains" json:"domains,required"`
 }
 
 func (m ZeroTrustDeviceCustomProfileLocalDomainFallbackModel) MarshalJSON() (data []byte, err error) {

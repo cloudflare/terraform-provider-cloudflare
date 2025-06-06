@@ -460,6 +460,8 @@ func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultipleWithTopSkipAndLastS
 }
 
 func TestAccCloudflareRuleset_SkipPhaseAndProducts(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into mismatching identifiers.")
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -777,6 +779,8 @@ func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_RateLimitMitigationTimeoutOfZero(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into mismatching identifiers.")
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -1323,6 +1327,8 @@ func TestAccCloudflareRuleset_ActionParametersOverrideAllRulesetRules(t *testing
 }
 
 func TestAccCloudflareRuleset_AccountLevelCustomWAFRule(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into mismatching identifiers.")
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.

@@ -7,8 +7,6 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -263,66 +261,40 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "Record type.\nAvailable values: \"A\", \"AAAA\", \"CAA\", \"CERT\", \"CNAME\", \"DNSKEY\", \"DS\", \"HTTPS\", \"LOC\", \"MX\", \"NAPTR\", \"NS\", \"OPENPGPKEY\", \"PTR\", \"SMIMEA\", \"SRV\", \"SSHFP\", \"SVCB\", \"TLSA\", \"TXT\", \"URI\".",
+							Description: "Record type.\nAvailable values: \"A\", \"AAAA\", \"CNAME\", \"MX\", \"NS\", \"OPENPGPKEY\", \"PTR\", \"TXT\", \"CAA\", \"CERT\", \"DNSKEY\", \"DS\", \"HTTPS\", \"LOC\", \"NAPTR\", \"SMIMEA\", \"SRV\", \"SSHFP\", \"SVCB\", \"TLSA\", \"URI\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"A",
 									"AAAA",
+									"CNAME",
+									"MX",
+									"NS",
+									"OPENPGPKEY",
+									"PTR",
+									"TXT",
 									"CAA",
 									"CERT",
-									"CNAME",
 									"DNSKEY",
 									"DS",
 									"HTTPS",
 									"LOC",
-									"MX",
 									"NAPTR",
-									"NS",
-									"OPENPGPKEY",
-									"PTR",
 									"SMIMEA",
 									"SRV",
 									"SSHFP",
 									"SVCB",
 									"TLSA",
-									"TXT",
 									"URI",
 								),
 							},
 						},
-						"id": schema.StringAttribute{
-							Description: "Identifier.",
+						"priority": schema.Float64Attribute{
+							Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
 							Computed:    true,
-						},
-						"created_on": schema.StringAttribute{
-							Description: "When the record was created.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
-						"meta": schema.StringAttribute{
-							Description: "Extra Cloudflare-specific information about the record.",
-							Computed:    true,
-							CustomType:  jsontypes.NormalizedType{},
-						},
-						"modified_on": schema.StringAttribute{
-							Description: "When the record was last modified.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
-						"proxiable": schema.BoolAttribute{
-							Description: "Whether the record can be proxied by Cloudflare or not.",
-							Computed:    true,
-						},
-						"comment_modified_on": schema.StringAttribute{
-							Description: "When the record comment was last modified. Omitted if there is no comment.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
-						"tags_modified_on": schema.StringAttribute{
-							Description: "When the record tags were last modified. Omitted if there are no tags.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
+							Validators: []validator.Float64{
+								float64validator.Between(0, 65535),
+							},
 						},
 						"data": schema.SingleNestedAttribute{
 							Description: "Components of a CAA record.",
@@ -551,13 +523,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "fingerprint.",
 									Computed:    true,
 								},
-							},
-						},
-						"priority": schema.Float64Attribute{
-							Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
-							Computed:    true,
-							Validators: []validator.Float64{
-								float64validator.Between(0, 65535),
 							},
 						},
 					},
