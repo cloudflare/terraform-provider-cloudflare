@@ -17,7 +17,7 @@ type CustomHostnameModel struct {
 	ID                        types.String                                                           `tfsdk:"id" json:"id,computed"`
 	ZoneID                    types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
 	Hostname                  types.String                                                           `tfsdk:"hostname" json:"hostname,required"`
-	SSL                       *CustomHostnameSSLModel                                                `tfsdk:"ssl" json:"ssl,required"`
+	SSL                       *CustomHostnameSSLModel                                                `tfsdk:"ssl" json:"ssl,optional"`
 	CustomOriginServer        types.String                                                           `tfsdk:"custom_origin_server" json:"custom_origin_server,optional"`
 	CustomOriginSNI           types.String                                                           `tfsdk:"custom_origin_sni" json:"custom_origin_sni,optional"`
 	CustomMetadata            *map[string]types.String                                               `tfsdk:"custom_metadata" json:"custom_metadata,optional"`
