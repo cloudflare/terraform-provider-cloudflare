@@ -7,6 +7,8 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -24,14 +26,14 @@ var _ resource.ResourceWithConfigValidators = (*DNSRecordResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "Identifier.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"dns_record_id": schema.StringAttribute{
-				Description:   "Identifier.",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"comment": schema.StringAttribute{
@@ -353,6 +355,35 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 				},
+			},
+			"comment_modified_on": schema.StringAttribute{
+				Description: "When the record comment was last modified. Omitted if there is no comment.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the record was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the record was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"proxiable": schema.BoolAttribute{
+				Description: "Whether the record can be proxied by Cloudflare or not.",
+				Computed:    true,
+			},
+			"tags_modified_on": schema.StringAttribute{
+				Description: "When the record tags were last modified. Omitted if there are no tags.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"meta": schema.StringAttribute{
+				Description: "Extra Cloudflare-specific information about the record.",
+				Computed:    true,
+				CustomType:  jsontypes.NormalizedType{},
 			},
 		},
 	}
