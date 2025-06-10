@@ -93,9 +93,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"connections": schema.ListNestedAttribute{
-				Description: "The Cloudflare Tunnel connections between your origin and Cloudflare's edge.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustTunnelCloudflaredConnectionsDataSourceModel](ctx),
+				Description:        "The Cloudflare Tunnel connections between your origin and Cloudflare's edge.",
+				Computed:           true,
+				DeprecationMessage: "This field will start returning an empty array. To fetch the connections of a given tunnel, please use the dedicated endpoint `/accounts/{account_id}/{tunnel_type}/{tunnel_id}/connections`",
+				CustomType:         customfield.NewNestedObjectListType[ZeroTrustTunnelCloudflaredConnectionsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
