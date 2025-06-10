@@ -142,7 +142,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: `Available values: "custom", "predefined", "integration", "exact_data", "word_list".`,
+							Description: `Available values: "custom", "predefined", "integration", "exact_data", "document_template", "word_list".`,
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -150,6 +150,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"predefined",
 									"integration",
 									"exact_data",
+									"document_template",
 									"word_list",
 								),
 							},
