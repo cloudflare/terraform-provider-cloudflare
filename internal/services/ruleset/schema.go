@@ -527,7 +527,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"rocket_loader": schema.BoolAttribute{
-									Description: "Turn on or off Rocket Loader",
+									Description: "Turn on or off Rocket Loader.",
 									Optional:    true,
 								},
 								"security_level": schema.StringAttribute{
@@ -671,11 +671,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 									Attributes: map[string]schema.Attribute{
 										"cache_by_device_type": schema.BoolAttribute{
-											Description: "Separate cached content based on the visitor’s device type",
+											Description: "Separate cached content based on the visitor’s device type.",
 											Optional:    true,
 										},
 										"cache_deception_armor": schema.BoolAttribute{
-											Description: "Protect from web cache deception attacks while allowing static assets to be cached",
+											Description: "Protect from web cache deception attacks while allowing static assets to be cached.",
 											Optional:    true,
 										},
 										"custom_key": schema.SingleNestedAttribute{
@@ -821,7 +821,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"mode": schema.StringAttribute{
-											Description: "edge ttl options\nAvailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\".",
+											Description: "Edge TTL options.\nAvailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\".",
 											Required:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
@@ -832,7 +832,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"status_code_ttl": schema.ListNestedAttribute{
-											Description: "List of single status codes, or status code ranges to apply the selected mode",
+											Description: "List of single status codes, or status code ranges to apply the selected mode.",
 											Required:    true,
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
@@ -845,17 +845,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 														Optional:    true,
 														Attributes: map[string]schema.Attribute{
 															"from": schema.Int64Attribute{
-																Description: "response status code lower bound",
+																Description: "Response status code lower bound.",
 																Required:    true,
 															},
 															"to": schema.Int64Attribute{
-																Description: "response status code upper bound",
+																Description: "Response status code upper bound.",
 																Required:    true,
 															},
 														},
 													},
 													"status_code_value": schema.Int64Attribute{
-														Description: "Set the ttl for responses with this specific status code",
+														Description: "Set the TTL for responses with this specific status code.",
 														Optional:    true,
 													},
 												},
@@ -868,7 +868,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 								},
 								"origin_error_page_passthru": schema.BoolAttribute{
-									Description: "Generate Cloudflare error pages from issues sent from the origin server. When on, error pages will trigger for issues from the origin",
+									Description: "Generate Cloudflare error pages from issues sent from the origin server. When on, error pages will trigger for issues from the origin.",
 									Optional:    true,
 								},
 								"read_timeout": schema.Int64Attribute{
