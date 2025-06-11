@@ -50,6 +50,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"name": schema.StringAttribute{
+				Description: "DNS record name (or @ for the zone apex) in Punycode.",
+				Optional:    true,
+			},
 			"priority": schema.Float64Attribute{
 				Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
 				Optional:    true,
