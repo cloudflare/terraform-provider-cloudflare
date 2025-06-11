@@ -1,0 +1,16 @@
+diff --git a/internal/services/zero_trust_tunnel_cloudflared/testdata/datasource_list.tf b/internal/services/zero_trust_tunnel_cloudflared/testdata/datasource_list.tf
+new file mode 100644
+index 000000000..feb37482d
+--- /dev/null
++++ b/internal/services/zero_trust_tunnel_cloudflared/testdata/datasource_list.tf
+@@ -0,0 +1,10 @@
++resource "cloudflare_zero_trust_tunnel_cloudflared" "%[2]s" {
++	account_id = "%[1]s"
++	name       = "%[2]s"
++	tunnel_secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
++}
++
++data "cloudflare_zero_trust_tunnel_cloudflareds" "%[2]s" {
++	account_id = "%[1]s"
++	uuid = cloudflare_zero_trust_tunnel_cloudflared.%[2]s.id
++}

@@ -1,0 +1,30 @@
+diff --git a/internal/services/zero_trust_gateway_policy/testdata/teamsruleconfigbasic.tf b/internal/services/zero_trust_gateway_policy/testdata/teamsruleconfigbasic.tf
+new file mode 100644
+index 000000000..3e911012a
+--- /dev/null
++++ b/internal/services/zero_trust_gateway_policy/testdata/teamsruleconfigbasic.tf
+@@ -0,0 +1,24 @@
++resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
++  name = "%[1]s"
++  account_id = "%[2]s"
++  description = "desc"
++  precedence = 12302
++  action = "block"
++  filters = ["dns"]
++  traffic = "any(dns.domains[*] == \"example.com\")"
++  rule_settings = {
++    block_page_enabled = true
++    block_reason = "cuz"
++    insecure_disable_dnssec_validation = false
++    egress = {
++      ipv4 = "203.0.113.1"
++      ipv6 = "2001:db8::/32"
++    }
++    untrusted_cert = {
++      action = "error"
++    }
++    payload_log = {
++      enabled = true
++    }
++  }
++}

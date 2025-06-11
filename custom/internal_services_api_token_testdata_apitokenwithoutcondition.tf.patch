@@ -1,0 +1,15 @@
+diff --git a/internal/services/api_token/testdata/apitokenwithoutcondition.tf b/internal/services/api_token/testdata/apitokenwithoutcondition.tf
+new file mode 100644
+index 000000000..b64c34d05
+--- /dev/null
++++ b/internal/services/api_token/testdata/apitokenwithoutcondition.tf
+@@ -0,0 +1,9 @@
++resource "cloudflare_api_token" "%[1]s" {
++	name = "%[2]s"
++
++	policies = [{
++		effect = "allow"
++		permission_groups = [{ id = "%[3]s" }]
++		resources = { "com.cloudflare.api.account.zone.*" = "*" }
++	}]
++}

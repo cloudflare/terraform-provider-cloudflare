@@ -1,0 +1,13 @@
+diff --git a/internal/services/list/testdata/listhostnameupdate.tf b/internal/services/list/testdata/listhostnameupdate.tf
+new file mode 100644
+index 000000000..11d5cc114
+--- /dev/null
++++ b/internal/services/list/testdata/listhostnameupdate.tf
+@@ -0,0 +1,7 @@
++
++  resource "cloudflare_list" "%[1]s" {
++    account_id = "%[4]s"
++    name = "%[2]s"
++    description = "%[3]s"
++    kind = "hostname"
++  }

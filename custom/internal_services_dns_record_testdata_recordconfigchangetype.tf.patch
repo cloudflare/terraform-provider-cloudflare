@@ -1,0 +1,14 @@
+diff --git a/internal/services/dns_record/testdata/recordconfigchangetype.tf b/internal/services/dns_record/testdata/recordconfigchangetype.tf
+new file mode 100644
+index 000000000..60c4f83e1
+--- /dev/null
++++ b/internal/services/dns_record/testdata/recordconfigchangetype.tf
+@@ -0,0 +1,8 @@
++
++resource "cloudflare_dns_record" "%[4]s" {
++	zone_id = "%[1]s"
++	name = "%[2]s.%[3]s"
++	content = "%[3]s"
++	type = "CNAME"
++	ttl = 3600
++}

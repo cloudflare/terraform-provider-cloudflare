@@ -1,0 +1,13 @@
+diff --git a/internal/services/list/testdata/listiplistordered.tf b/internal/services/list/testdata/listiplistordered.tf
+new file mode 100644
+index 000000000..bce4897bb
+--- /dev/null
++++ b/internal/services/list/testdata/listiplistordered.tf
+@@ -0,0 +1,7 @@
++
++  resource "cloudflare_list" "%[1]s" {
++    account_id = "%[4]s"
++    name = "%[2]s"
++    description = "%[3]s"
++    kind = "ip"
++  }

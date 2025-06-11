@@ -1,0 +1,14 @@
+diff --git a/internal/services/dns_zone_transfers_peer/testdata/peer.tf b/internal/services/dns_zone_transfers_peer/testdata/peer.tf
+new file mode 100644
+index 000000000..a46d6226a
+--- /dev/null
++++ b/internal/services/dns_zone_transfers_peer/testdata/peer.tf
+@@ -0,0 +1,8 @@
++resource "cloudflare_dns_zone_transfers_peer" "%[1]s" {
++  account_id = "%[2]s"
++  name = "%[3]s"
++  ip = "%[4]s"
++  ixfr_enable = "%[5]t"
++  port = "%[6]d"
++  tsig_id = "%[7]s"
++}

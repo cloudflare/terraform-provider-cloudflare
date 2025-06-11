@@ -1,0 +1,15 @@
+diff --git a/internal/services/custom_hostname/testdata/customhostnamewithhttpvalidation.tf b/internal/services/custom_hostname/testdata/customhostnamewithhttpvalidation.tf
+new file mode 100644
+index 000000000..3822f08e2
+--- /dev/null
++++ b/internal/services/custom_hostname/testdata/customhostnamewithhttpvalidation.tf
+@@ -0,0 +1,9 @@
++
++resource "cloudflare_custom_hostname" "%[2]s" {
++  zone_id = "%[1]s"
++  hostname = "%[2]s.%[3]s"
++  ssl = {
++    method = "http"
++    type = "dv"
++  }
++}

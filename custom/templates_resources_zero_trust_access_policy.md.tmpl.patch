@@ -1,0 +1,31 @@
+diff --git a/templates/resources/zero_trust_access_policy.md.tmpl b/templates/resources/zero_trust_access_policy.md.tmpl
+new file mode 100644
+index 000000000..3d4e6993e
+--- /dev/null
++++ b/templates/resources/zero_trust_access_policy.md.tmpl
+@@ -0,0 +1,25 @@
++---
++page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
++subcategory: ""
++description: |-
++{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
++---
++
++# {{.Name}} ({{.Type}})
++
++{{ .Description | trimspace }}
++
++{{ if .HasExample -}}
++## Example Usage
++
++{{codefile "terraform" .ExampleFile}}
++{{- end }}
++{{ .SchemaMarkdown | trimspace }}
++
++{{ if .HasImport -}}
++## Import
++
++Import is supported using the following syntax:
++
++{{codefile "shell" .ImportFile}}
++{{- end }}

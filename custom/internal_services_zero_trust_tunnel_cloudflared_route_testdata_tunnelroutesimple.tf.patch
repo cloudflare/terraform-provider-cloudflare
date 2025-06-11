@@ -1,0 +1,19 @@
+diff --git a/internal/services/zero_trust_tunnel_cloudflared_route/testdata/tunnelroutesimple.tf b/internal/services/zero_trust_tunnel_cloudflared_route/testdata/tunnelroutesimple.tf
+new file mode 100644
+index 000000000..3d7157608
+--- /dev/null
++++ b/internal/services/zero_trust_tunnel_cloudflared_route/testdata/tunnelroutesimple.tf
+@@ -0,0 +1,13 @@
++
++resource "cloudflare_zero_trust_tunnel_cloudflared" "%[1]s" {
++	account_id    = "%[3]s"
++	name          = "%[1]s"
++	tunnel_secret = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
++}
++
++resource "cloudflare_zero_trust_tunnel_cloudflared_route" "%[1]s" {
++    account_id = "%[3]s"
++    tunnel_id = cloudflare_zero_trust_tunnel_cloudflared.%[1]s.id
++    network = "%[4]s"
++    comment = "%[2]s"
++}

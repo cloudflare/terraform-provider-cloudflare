@@ -1,0 +1,21 @@
+diff --git a/internal/services/hyperdrive_config/schema.go b/internal/services/hyperdrive_config/schema.go
+index 3cc5afb1b..5457482b2 100644
+--- a/internal/services/hyperdrive_config/schema.go
++++ b/internal/services/hyperdrive_config/schema.go
+@@ -9,6 +9,7 @@ import (
+ 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
++	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+ 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+@@ -84,6 +85,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 					"disabled": schema.BoolAttribute{
+ 						Description: "Set to true to disable caching of SQL responses. Default is false.",
+ 						Optional:    true,
++						Computed:    true,
++						Default:     booldefault.StaticBool(false),
+ 					},
+ 					"max_age": schema.Int64Attribute{
+ 						Description: "Specify the maximum duration items should persist in the cache. Not returned if set to the default (60).",

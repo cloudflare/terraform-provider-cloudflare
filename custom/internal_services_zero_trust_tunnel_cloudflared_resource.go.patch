@@ -1,0 +1,42 @@
+diff --git a/internal/services/zero_trust_tunnel_cloudflared/resource.go b/internal/services/zero_trust_tunnel_cloudflared/resource.go
+index f41dddeb4..d3c5a9944 100644
+--- a/internal/services/zero_trust_tunnel_cloudflared/resource.go
++++ b/internal/services/zero_trust_tunnel_cloudflared/resource.go
+@@ -112,6 +112,9 @@ func (r *ZeroTrustTunnelCloudflaredResource) Update(ctx context.Context, req res
+ 		return
+ 	}
+ 
++	configurationSource := data.ConfigSrc
++	tunnelSecret := data.TunnelSecret
++
+ 	dataBytes, err := data.MarshalJSONForUpdate(*state)
+ 	if err != nil {
+ 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+@@ -140,6 +143,8 @@ func (r *ZeroTrustTunnelCloudflaredResource) Update(ctx context.Context, req res
+ 		return
+ 	}
+ 	data = &env.Result
++	data.ConfigSrc = configurationSource
++	data.TunnelSecret = tunnelSecret
+ 
+ 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+ }
+@@ -153,6 +158,9 @@ func (r *ZeroTrustTunnelCloudflaredResource) Read(ctx context.Context, req resou
+ 		return
+ 	}
+ 
++	configurationSource := data.ConfigSrc
++	tunnelSecret := data.TunnelSecret
++
+ 	res := new(http.Response)
+ 	env := ZeroTrustTunnelCloudflaredResultEnvelope{*data}
+ 	_, err := r.client.ZeroTrust.Tunnels.Cloudflared.Get(
+@@ -180,6 +188,8 @@ func (r *ZeroTrustTunnelCloudflaredResource) Read(ctx context.Context, req resou
+ 		return
+ 	}
+ 	data = &env.Result
++	data.ConfigSrc = configurationSource
++	data.TunnelSecret = tunnelSecret
+ 
+ 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+ }

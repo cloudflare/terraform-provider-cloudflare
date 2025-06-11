@@ -1,0 +1,14 @@
+diff --git a/.grit/patterns/cloudflare_terraform_v5.grit b/.grit/patterns/cloudflare_terraform_v5.grit
+new file mode 100644
+index 000000000..8055308f6
+--- /dev/null
++++ b/.grit/patterns/cloudflare_terraform_v5.grit
+@@ -0,0 +1,8 @@
++language hcl
++
++pattern cloudflare_terraform_v5() {
++  any {
++    cloudflare_terraform_v5_attribute_renames_configuration(),
++    cloudflare_terraform_v5_block_to_attribute_configuration(),
++  }
++}

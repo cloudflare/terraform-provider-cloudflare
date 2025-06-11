@@ -1,0 +1,90 @@
+diff --git a/internal/services/logpush_dataset_field/data_source.go b/internal/services/logpush_dataset_field/data_source.go
+index 629714ba4..5642f8939 100644
+--- a/internal/services/logpush_dataset_field/data_source.go
++++ b/internal/services/logpush_dataset_field/data_source.go
+@@ -5,14 +5,8 @@ package logpush_dataset_field
+ import (
+ 	"context"
+ 	"fmt"
+-	"io"
+-	"net/http"
+ 
+ 	"github.com/cloudflare/cloudflare-go/v4"
+-	"github.com/cloudflare/cloudflare-go/v4/logpush"
+-	"github.com/cloudflare/cloudflare-go/v4/option"
+-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+ 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+ )
+ 
+@@ -52,38 +46,38 @@ func (d *LogpushDatasetFieldDataSource) Configure(ctx context.Context, req datas
+ func (d *LogpushDatasetFieldDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+ 	var data *LogpushDatasetFieldDataSourceModel
+ 
+-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+-
+-	if resp.Diagnostics.HasError() {
+-		return
+-	}
+-
+-	params, diags := data.toReadParams(ctx)
+-	resp.Diagnostics.Append(diags...)
+-	if resp.Diagnostics.HasError() {
+-		return
+-	}
+-
+-	res := new(http.Response)
+-	env := LogpushDatasetFieldResultDataSourceEnvelope{*data}
+-	_, err := d.client.Logpush.Datasets.Fields.Get(
+-		ctx,
+-		logpush.DatasetFieldGetParamsDatasetID(data.DatasetID.ValueString()),
+-		params,
+-		option.WithResponseBodyInto(&res),
+-		option.WithMiddleware(logging.Middleware(ctx)),
+-	)
+-	if err != nil {
+-		resp.Diagnostics.AddError("failed to make http request", err.Error())
+-		return
+-	}
+-	bytes, _ := io.ReadAll(res.Body)
+-	err = apijson.UnmarshalComputed(bytes, &env)
+-	if err != nil {
+-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+-		return
+-	}
+-	data = &env.Result
++	// resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
++
++	// if resp.Diagnostics.HasError() {
++	// 	return
++	// }
++
++	// params, diags := data.toReadParams(ctx)
++	// resp.Diagnostics.Append(diags...)
++	// if resp.Diagnostics.HasError() {
++	// 	return
++	// }
++
++	// res := new(http.Response)
++	// env := LogpushDatasetFieldResultDataSourceEnvelope{*data}
++	// _, err := d.client.Logpush.Datasets.Fields.Get(
++	// 	ctx,
++	// 	logpush.DatasetFieldGetParamsDatasetID(data.DatasetID.ValueString()),
++	// 	params,
++	// 	option.WithResponseBodyInto(&res),
++	// 	option.WithMiddleware(logging.Middleware(ctx)),
++	// )
++	// if err != nil {
++	// 	resp.Diagnostics.AddError("failed to make http request", err.Error())
++	// 	return
++	// }
++	// bytes, _ := io.ReadAll(res.Body)
++	// err = apijson.UnmarshalComputed(bytes, &env)
++	// if err != nil {
++	// 	resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
++	// 	return
++	// }
++	// data = &env.Result
+ 
+ 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+ }

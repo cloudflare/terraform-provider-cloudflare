@@ -1,0 +1,19 @@
+diff --git a/internal/services/spectrum_application/testdata/spectrumapplicationconfigbasictypes.tf b/internal/services/spectrum_application/testdata/spectrumapplicationconfigbasictypes.tf
+new file mode 100644
+index 000000000..b569cca09
+--- /dev/null
++++ b/internal/services/spectrum_application/testdata/spectrumapplicationconfigbasictypes.tf
+@@ -0,0 +1,12 @@
++
++resource "cloudflare_spectrum_application" "%[3]s" {
++  zone_id  = "%[1]s"
++  protocol = "%[4]s"
++
++  dns = {
++  type = "CNAME"
++    name = "%[3]s.%[2]s"
++}
++
++  origin_direct = ["tcp://128.66.0.4:%[5]d"]
++}
+\ No newline at end of file

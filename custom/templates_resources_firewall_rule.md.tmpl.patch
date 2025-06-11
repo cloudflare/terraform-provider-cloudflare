@@ -1,0 +1,37 @@
+diff --git a/templates/resources/firewall_rule.md.tmpl b/templates/resources/firewall_rule.md.tmpl
+new file mode 100644
+index 000000000..e24670459
+--- /dev/null
++++ b/templates/resources/firewall_rule.md.tmpl
+@@ -0,0 +1,31 @@
++---
++page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
++subcategory: ""
++description: |-
++{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
++---
++
++# {{.Name}} ({{.Type}})
++
++{{ .Description | trimspace }}
++
++~> `cloudflare_firewall_rule` is in a deprecation phase until June 15th, 2025.
++  During this time period, this resource is still
++  fully supported but you are strongly advised  to move to the
++  `cloudflare_ruleset` resource. Full details can be found in the
++  [developer documentation](https://developers.cloudflare.com/waf/reference/migration-guides/firewall-rules-to-custom-rules/#relevant-changes-for-terraform-users).
++
++{{ if .HasExample -}}
++## Example Usage
++
++{{codefile "terraform" .ExampleFile}}
++{{- end }}
++{{ .SchemaMarkdown | trimspace }}
++
++{{ if .HasImport -}}
++## Import
++
++Import is supported using the following syntax:
++
++{{codefile "shell" .ImportFile}}
++{{- end }}

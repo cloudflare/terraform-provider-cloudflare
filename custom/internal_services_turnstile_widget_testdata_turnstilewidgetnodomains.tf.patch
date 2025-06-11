@@ -1,0 +1,14 @@
+diff --git a/internal/services/turnstile_widget/testdata/turnstilewidgetnodomains.tf b/internal/services/turnstile_widget/testdata/turnstilewidgetnodomains.tf
+new file mode 100644
+index 000000000..de2c48dcf
+--- /dev/null
++++ b/internal/services/turnstile_widget/testdata/turnstilewidgetnodomains.tf
+@@ -0,0 +1,7 @@
++
++  resource "cloudflare_turnstile_widget" "%[1]s" {
++    account_id     = "%[2]s"
++    name        = "%[1]s"
++	domains = [ ]
++	mode = "managed"
++  }
+\ No newline at end of file

@@ -1,0 +1,19 @@
+diff --git a/internal/services/zone_setting/testdata/hsts.tf b/internal/services/zone_setting/testdata/hsts.tf
+new file mode 100644
+index 000000000..2a256a59b
+--- /dev/null
++++ b/internal/services/zone_setting/testdata/hsts.tf
+@@ -0,0 +1,13 @@
++resource "cloudflare_zone_setting" "%[1]s" {
++  zone_id = "%[2]s"
++  setting_id = "security_header"
++  value = {
++    strict_transport_security = {
++      enabled = true
++      include_subdomains = false
++      max_age = 30
++      nosniff = false
++      preload = false
++    }
++  }
++}

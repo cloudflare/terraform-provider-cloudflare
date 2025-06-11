@@ -1,0 +1,24 @@
+diff --git a/internal/services/firewall_rule/testdata/firewallrulebypassconfig.tf b/internal/services/firewall_rule/testdata/firewallrulebypassconfig.tf
+new file mode 100644
+index 000000000..59c523a68
+--- /dev/null
++++ b/internal/services/firewall_rule/testdata/firewallrulebypassconfig.tf
+@@ -0,0 +1,17 @@
++
++		resource "cloudflare_filter" "%[1]s" {
++		  zone_id = "%[2]s"
++		  paused = "%[3]s"
++		  description = "%[4]s"
++		  expression = "%[5]s"
++		}
++		resource "cloudflare_firewall_rule" "%[1]s" {
++		  zone_id = "%[2]s"
++		  paused = "%[3]s"
++		  description = "%[4]s"
++		  filter_id = "${cloudflare_filter.%[1]s.id}"
++		  action = "bypass"
++		  priority = "2"
++		  products = ["uaBlock", "waf"]
++		}
++		
+\ No newline at end of file

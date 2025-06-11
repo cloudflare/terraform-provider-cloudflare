@@ -1,0 +1,13 @@
+diff --git a/internal/services/web3_hostname/testdata/buildweb3hostnameconfigethereum.tf b/internal/services/web3_hostname/testdata/buildweb3hostnameconfigethereum.tf
+new file mode 100644
+index 000000000..108886dbc
+--- /dev/null
++++ b/internal/services/web3_hostname/testdata/buildweb3hostnameconfigethereum.tf
+@@ -0,0 +1,7 @@
++
++resource "cloudflare_web3_hostname" "%[1]s" {
++	zone_id = "%[2]s"
++	name = "%[1]s.%[3]s"
++	target = "ethereum"
++	description = "test"
++}

@@ -1,0 +1,18 @@
+diff --git a/internal/services/healthcheck/testdata/healthcheckhttp.tf b/internal/services/healthcheck/testdata/healthcheckhttp.tf
+new file mode 100644
+index 000000000..d10cc2d6d
+--- /dev/null
++++ b/internal/services/healthcheck/testdata/healthcheckhttp.tf
+@@ -0,0 +1,12 @@
++
++  resource "cloudflare_healthcheck" "%[2]s" {
++    zone_id = "%[1]s"
++    name = "%[2]s"
++    address = "example.com"
++    type = "HTTP"
++    http_config = {
++      expected_codes = [
++        "200"
++      ]
++    }
++  }

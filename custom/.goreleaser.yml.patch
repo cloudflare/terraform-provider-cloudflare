@@ -1,0 +1,53 @@
+diff --git a/.goreleaser.yml b/.goreleaser.yml
+index 309d89f2a..acc2cbdb0 100644
+--- a/.goreleaser.yml
++++ b/.goreleaser.yml
+@@ -12,21 +12,19 @@ builds:
+     ldflags:
+       - "-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}"
+     goos:
++      - darwin
+       - freebsd
+-      - windows
+       - linux
+-      - darwin
++      - windows
+     goarch:
+       - amd64
+-      - "386"
+-      - arm
+       - arm64
+-    ignore:
+-      - goos: darwin
+-        goarch: "386"
+     binary: "{{ .ProjectName }}_v{{ .Version }}"
++    hooks:
++      post:
++        - cp terraform-registry-manifest.json dist/{{ .ProjectName }}_{{ .Version }}_manifest.json
+ archives:
+-  - formats: [ 'zip' ]
++  - formats: ["zip"]
+     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+ checksum:
+   name_template: "{{ .ProjectName }}_{{ .Version }}_SHA256SUMS"
+@@ -39,7 +37,7 @@ signs:
+     args:
+       - "--batch"
+       - "--local-user"
+-      - "{{ .Env.GPG_FINGERPRINT }}" # set this environment variable for your signing key
++      - "{{ .Env.GPG_FINGERPRINT }}"
+       - "--output"
+       - "${signature}"
+       - "--detach-sign"
+@@ -48,3 +46,11 @@ release:
+   extra_files:
+     - glob: "terraform-registry-manifest.json"
+       name_template: "{{ .ProjectName }}_{{ .Version }}_manifest.json"
++changelog:
++  disable: true
++snapshot:
++  version_template: "{{.ShortCommit}}-dev"
++announce:
++  discord:
++    enabled: true
++    message_template: "{{ .ProjectName }} ({{ .Version }}) has been released. See the release notes at {{ .ReleaseURL }}"

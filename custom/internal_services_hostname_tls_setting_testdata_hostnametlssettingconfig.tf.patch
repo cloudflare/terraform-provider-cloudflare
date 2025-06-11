@@ -1,0 +1,13 @@
+diff --git a/internal/services/hostname_tls_setting/testdata/hostnametlssettingconfig.tf b/internal/services/hostname_tls_setting/testdata/hostnametlssettingconfig.tf
+new file mode 100644
+index 000000000..a7de7c2bb
+--- /dev/null
++++ b/internal/services/hostname_tls_setting/testdata/hostnametlssettingconfig.tf
+@@ -0,0 +1,7 @@
++
++resource "cloudflare_hostname_tls_setting" "%[5]s" {
++	zone_id	= "%[1]s"
++	hostname = "%[2]s"
++	setting_id = "%[3]s"
++	value = "%[4]s"
++}

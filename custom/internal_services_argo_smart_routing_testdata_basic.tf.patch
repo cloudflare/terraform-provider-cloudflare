@@ -1,0 +1,10 @@
+diff --git a/internal/services/argo_smart_routing/testdata/basic.tf b/internal/services/argo_smart_routing/testdata/basic.tf
+new file mode 100644
+index 000000000..026d9ff35
+--- /dev/null
++++ b/internal/services/argo_smart_routing/testdata/basic.tf
+@@ -0,0 +1,4 @@
++resource "cloudflare_argo_smart_routing" "%[2]s" {
++	 zone_id = "%[1]s"
++  value   = "on"
++}

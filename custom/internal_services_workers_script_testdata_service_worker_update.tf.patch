@@ -1,0 +1,12 @@
+diff --git a/internal/services/workers_script/testdata/service_worker_update.tf b/internal/services/workers_script/testdata/service_worker_update.tf
+new file mode 100644
+index 000000000..2c93cecf8
+--- /dev/null
++++ b/internal/services/workers_script/testdata/service_worker_update.tf
+@@ -0,0 +1,6 @@
++
++resource "cloudflare_workers_script" "%[1]s" {
++  account_id = "%[3]s"
++  script_name = "%[1]s"
++  content = "%[2]s"
++}

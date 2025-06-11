@@ -1,0 +1,15 @@
+diff --git a/internal/services/zero_trust_access_application/testdata/accessapplicationconfigwithapplaunchervisible.tf b/internal/services/zero_trust_access_application/testdata/accessapplicationconfigwithapplaunchervisible.tf
+new file mode 100644
+index 000000000..c253ce08b
+--- /dev/null
++++ b/internal/services/zero_trust_access_application/testdata/accessapplicationconfigwithapplaunchervisible.tf
+@@ -0,0 +1,9 @@
++
++resource "cloudflare_zero_trust_access_application" "%[1]s" {
++  zone_id                   = "%[2]s"
++  name                      = "%[1]s"
++  domain                    = "%[1]s.%[3]s"
++  type                      = "self_hosted"
++  session_duration          = "24h"
++  app_launcher_visible      = true
++}

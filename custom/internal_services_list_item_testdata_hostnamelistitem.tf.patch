@@ -1,0 +1,22 @@
+diff --git a/internal/services/list_item/testdata/hostnamelistitem.tf b/internal/services/list_item/testdata/hostnamelistitem.tf
+new file mode 100644
+index 000000000..64af25cbc
+--- /dev/null
++++ b/internal/services/list_item/testdata/hostnamelistitem.tf
+@@ -0,0 +1,16 @@
++
++  resource "cloudflare_list" "%[2]s" {
++    account_id          = "%[4]s"
++    name                = "%[2]s"
++    description         = "list named %[2]s"
++    kind                = "hostname"
++  }
++
++  resource "cloudflare_list_item" "%[1]s" {
++    account_id = "%[4]s"
++  	list_id    = cloudflare_list.%[2]s.id
++  	comment    = "%[3]s"
++  	hostname = {
++  		url_hostname = "example.com"
++  	}
++  }

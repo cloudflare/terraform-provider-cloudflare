@@ -1,0 +1,16 @@
+diff --git a/internal/services/zone_lockdown/testdata/cloudflarezonelockdownconfig.tf b/internal/services/zone_lockdown/testdata/cloudflarezonelockdownconfig.tf
+new file mode 100644
+index 000000000..75356a631
+--- /dev/null
++++ b/internal/services/zone_lockdown/testdata/cloudflarezonelockdownconfig.tf
+@@ -0,0 +1,10 @@
++resource "cloudflare_zone_lockdown" "%[1]s" {
++    zone_id = "%[2]s"
++    urls    = ["%[6]s"]
++    configurations = [
++      {
++        target = "%[7]s"
++        value  = "%[8]s"
++      }
++    ]
++}

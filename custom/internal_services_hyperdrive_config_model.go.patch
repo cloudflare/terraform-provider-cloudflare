@@ -1,0 +1,13 @@
+diff --git a/internal/services/hyperdrive_config/model.go b/internal/services/hyperdrive_config/model.go
+index 4abe3be48..3dc677a09 100644
+--- a/internal/services/hyperdrive_config/model.go
++++ b/internal/services/hyperdrive_config/model.go
+@@ -43,7 +43,7 @@ type HyperdriveConfigOriginModel struct {
+ }
+ 
+ type HyperdriveConfigCachingModel struct {
+-	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,optional"`
++	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,computed_optional"`
+ 	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age,optional"`
+ 	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate,optional"`
+ }

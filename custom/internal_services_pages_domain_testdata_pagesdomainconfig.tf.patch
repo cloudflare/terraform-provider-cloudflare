@@ -1,0 +1,19 @@
+diff --git a/internal/services/pages_domain/testdata/pagesdomainconfig.tf b/internal/services/pages_domain/testdata/pagesdomainconfig.tf
+new file mode 100644
+index 000000000..a997b20fb
+--- /dev/null
++++ b/internal/services/pages_domain/testdata/pagesdomainconfig.tf
+@@ -0,0 +1,12 @@
++
++		resource "cloudflare_pages_project" "%[1]s" {
++			account_id = "%[2]s"
++			name = "%[3]s"
++			production_branch = "main"
++		}
++		resource "cloudflare_pages_domain" "%[1]s" {
++		  account_id = "%[2]s"
++		  project_name = cloudflare_pages_project.%[1]s.name
++		  domain = "%[4]s"
++		}
++		
+\ No newline at end of file

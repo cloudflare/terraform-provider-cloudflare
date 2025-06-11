@@ -1,0 +1,11 @@
+diff --git a/internal/services/zero_trust_access_service_token/testdata/cloudflareaccessservicetokenbasicconfig.tf b/internal/services/zero_trust_access_service_token/testdata/cloudflareaccessservicetokenbasicconfig.tf
+new file mode 100644
+index 000000000..0166b1593
+--- /dev/null
++++ b/internal/services/zero_trust_access_service_token/testdata/cloudflareaccessservicetokenbasicconfig.tf
+@@ -0,0 +1,5 @@
++
++resource "cloudflare_zero_trust_access_service_token" "%[1]s" {
++  %[3]s_id = "%[4]s"
++  name     = "%[2]s"
++}

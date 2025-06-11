@@ -1,0 +1,31 @@
+diff --git a/internal/services/ruleset/testdata/rulesetresponsecompression.tf b/internal/services/ruleset/testdata/rulesetresponsecompression.tf
+new file mode 100644
+index 000000000..fc9d0aa59
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesetresponsecompression.tf
+@@ -0,0 +1,24 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[3]s"
++  name        = "%[2]s"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_response_compression"
++
++  rules = [{
++    action = "compress_response"
++    action_parameters = {
++      algorithms = [{
++        name = "brotli"
++        },
++        {
++          name = "default"
++      }]
++    }
++
++    expression  = "true"
++    description = "%[1]s compress response rule"
++    enabled     = false
++  }]
++}
+\ No newline at end of file

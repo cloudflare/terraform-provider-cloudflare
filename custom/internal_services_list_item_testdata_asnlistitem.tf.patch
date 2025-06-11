@@ -1,0 +1,20 @@
+diff --git a/internal/services/list_item/testdata/asnlistitem.tf b/internal/services/list_item/testdata/asnlistitem.tf
+new file mode 100644
+index 000000000..017d9f4ff
+--- /dev/null
++++ b/internal/services/list_item/testdata/asnlistitem.tf
+@@ -0,0 +1,14 @@
++
++  resource "cloudflare_list" "%[2]s" {
++    account_id          = "%[4]s"
++    name                = "%[2]s"
++    description         = "list named %[2]s"
++    kind                = "asn"
++  }
++
++  resource "cloudflare_list_item" "%[1]s" {
++    account_id = "%[4]s"
++  	list_id    = cloudflare_list.%[2]s.id
++  	asn = 1
++  	comment    = "%[3]s"
++  }

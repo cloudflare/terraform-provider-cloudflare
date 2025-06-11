@@ -1,0 +1,27 @@
+diff --git a/internal/services/ruleset/testdata/rulesetcustomerrors.tf b/internal/services/ruleset/testdata/rulesetcustomerrors.tf
+new file mode 100644
+index 000000000..7832ddaec
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesetcustomerrors.tf
+@@ -0,0 +1,20 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[3]s"
++  name        = "%[2]s"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_custom_errors"
++
++  rules = [{
++    action = "serve_error"
++    action_parameters = {
++      content      = "my example error page"
++      content_type = "text/plain"
++      status_code  = "530"
++    }
++    expression  = "(http.request.uri.path matches \"^/api/\")"
++    description = "example http custom error response"
++    enabled     = true
++  }]
++}
+\ No newline at end of file

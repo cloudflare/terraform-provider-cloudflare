@@ -1,0 +1,20 @@
+diff --git a/internal/services/list_item/testdata/badlistitemtype.tf b/internal/services/list_item/testdata/badlistitemtype.tf
+new file mode 100644
+index 000000000..d45f34a27
+--- /dev/null
++++ b/internal/services/list_item/testdata/badlistitemtype.tf
+@@ -0,0 +1,14 @@
++
++  resource "cloudflare_list" "%[2]s" {
++    account_id          = "%[4]s"
++    name                = "%[2]s"
++    description         = "list named %[2]s"
++    kind                = "redirect"
++  }
++
++  resource "cloudflare_list_item" "%[2]s" {
++    account_id = "%[4]s"
++  	list_id    = cloudflare_list.%[2]s.id
++  	ip         = "192.0.2.0"
++  	comment    = "%[3]s"
++  }

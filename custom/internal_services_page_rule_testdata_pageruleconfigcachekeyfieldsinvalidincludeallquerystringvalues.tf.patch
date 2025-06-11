@@ -1,0 +1,26 @@
+diff --git a/internal/services/page_rule/testdata/pageruleconfigcachekeyfieldsinvalidincludeallquerystringvalues.tf b/internal/services/page_rule/testdata/pageruleconfigcachekeyfieldsinvalidincludeallquerystringvalues.tf
+new file mode 100644
+index 000000000..abb1566f3
+--- /dev/null
++++ b/internal/services/page_rule/testdata/pageruleconfigcachekeyfieldsinvalidincludeallquerystringvalues.tf
+@@ -0,0 +1,20 @@
++
++resource "cloudflare_page_rule" "%[3]s" {
++  zone_id = "%[1]s"
++  target  = "%[2]s"
++  actions = {
++    cache_key_fields = {
++      header = {
++        exclude = ["origin"]
++      }
++      host = {}
++      query_string = {
++        include = ["*"]
++      }
++      user = {
++        device_type = true
++        geo         = true
++      }
++    }
++  }
++}

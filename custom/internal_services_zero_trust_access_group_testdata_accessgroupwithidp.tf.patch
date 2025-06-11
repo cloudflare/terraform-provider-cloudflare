@@ -1,0 +1,28 @@
+diff --git a/internal/services/zero_trust_access_group/testdata/accessgroupwithidp.tf b/internal/services/zero_trust_access_group/testdata/accessgroupwithidp.tf
+new file mode 100644
+index 000000000..f1673af69
+--- /dev/null
++++ b/internal/services/zero_trust_access_group/testdata/accessgroupwithidp.tf
+@@ -0,0 +1,22 @@
++resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
++  account_id = "%[1]s"
++  name = "%[2]s"
++  type = "github"
++  config = {
++    client_id = "test"
++    client_secret = "secret"
++  }
++}
++
++resource "cloudflare_zero_trust_access_group" "%[2]s" {
++  account_id = "%[1]s"
++  name = "%[2]s"
++
++  include = [{
++    github_organization = {
++      name                 = "%[3]s"
++      team                = "%[4]s"
++      identity_provider_id = cloudflare_zero_trust_access_identity_provider.%[2]s.id
++    }
++  }]
++}

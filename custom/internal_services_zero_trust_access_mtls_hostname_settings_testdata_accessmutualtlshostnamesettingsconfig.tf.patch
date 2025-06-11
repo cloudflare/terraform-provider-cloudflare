@@ -1,0 +1,15 @@
+diff --git a/internal/services/zero_trust_access_mtls_hostname_settings/testdata/accessmutualtlshostnamesettingsconfig.tf b/internal/services/zero_trust_access_mtls_hostname_settings/testdata/accessmutualtlshostnamesettingsconfig.tf
+new file mode 100644
+index 000000000..46f510b56
+--- /dev/null
++++ b/internal/services/zero_trust_access_mtls_hostname_settings/testdata/accessmutualtlshostnamesettingsconfig.tf
+@@ -0,0 +1,9 @@
++
++resource "cloudflare_zero_trust_access_mtls_hostname_settings" "%[1]s" {
++	%[2]s_id             = "%[3]s"
++	settings = [{
++		hostname = "%[4]s"
++		client_certificate_forwarding = true
++		china_network = false
++	}]
++}

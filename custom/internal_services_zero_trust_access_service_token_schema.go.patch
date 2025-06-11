@@ -1,0 +1,18 @@
+diff --git a/internal/services/zero_trust_access_service_token/schema.go b/internal/services/zero_trust_access_service_token/schema.go
+index fc46728a0..71e4858d4 100644
+--- a/internal/services/zero_trust_access_service_token/schema.go
++++ b/internal/services/zero_trust_access_service_token/schema.go
+@@ -48,9 +48,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 				Computed:    true,
+ 			},
+ 			"client_secret": schema.StringAttribute{
+-				Description: "The Client Secret for the service token. Access will check for this value in the `CF-Access-Client-Secret` request header.",
+-				Computed:    true,
+-				Sensitive:   true,
++				Description:   "The Client Secret for the service token. Access will check for this value in the `CF-Access-Client-Secret` request header.",
++				Computed:      true,
++				Sensitive:     true,
++				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+ 			},
+ 			"created_at": schema.StringAttribute{
+ 				Computed:   true,

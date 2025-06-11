@@ -1,0 +1,17 @@
+diff --git a/internal/services/healthcheck/testdata/healthchecktcp.tf b/internal/services/healthcheck/testdata/healthchecktcp.tf
+new file mode 100644
+index 000000000..820966857
+--- /dev/null
++++ b/internal/services/healthcheck/testdata/healthchecktcp.tf
+@@ -0,0 +1,11 @@
++
++  resource "cloudflare_healthcheck" "%[3]s" {
++    zone_id = "%[1]s"
++    name = "%[2]s"
++    address = "example.com"
++    type = "TCP"
++    tcp_config = {
++      method = "connection_established"
++      port = 80
++    }
++  }

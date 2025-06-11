@@ -1,0 +1,113 @@
+diff --git a/internal/services/r2_bucket/resource.go b/internal/services/r2_bucket/resource.go
+index 30dc95b3e..2552fe5df 100644
+--- a/internal/services/r2_bucket/resource.go
++++ b/internal/services/r2_bucket/resource.go
+@@ -12,6 +12,7 @@ import (
+ 	"github.com/cloudflare/cloudflare-go/v4/option"
+ 	"github.com/cloudflare/cloudflare-go/v4/r2"
+ 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
++	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+ 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
+ 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource"
+@@ -64,7 +65,15 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
+ 		return
+ 	}
+ 
+-	dataBytes, err := data.MarshalJSON()
++	var state *CreateR2BucketModel
++
++	resp.Diagnostics.Append(req.Plan.Get(ctx, &state)...)
++
++	if resp.Diagnostics.HasError() {
++		return
++	}
++
++	dataBytes, err := state.MarshalJSON()
+ 	if err != nil {
+ 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+ 		return
+@@ -76,6 +85,7 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
+ 		r2.BucketNewParams{
+ 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+ 		},
++		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+ 		option.WithRequestBody("application/json", dataBytes),
+ 		option.WithResponseBodyInto(&res),
+ 		option.WithMiddleware(logging.Middleware(ctx)),
+@@ -113,20 +123,16 @@ func (r *R2BucketResource) Update(ctx context.Context, req resource.UpdateReques
+ 		return
+ 	}
+ 
+-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+-	if err != nil {
+-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+-		return
+-	}
+ 	res := new(http.Response)
+ 	env := R2BucketResultEnvelope{*data}
+-	_, err = r.client.R2.Buckets.Edit(
++	_, err := r.client.R2.Buckets.Edit(
+ 		ctx,
+ 		data.Name.ValueString(),
+ 		r2.BucketEditParams{
+ 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+ 		},
+-		option.WithRequestBody("application/json", dataBytes),
++		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
++		option.WithHeader(consts.R2StorageClassHTTPHeaderName, data.StorageClass.ValueString()),
+ 		option.WithResponseBodyInto(&res),
+ 		option.WithMiddleware(logging.Middleware(ctx)),
+ 	)
+@@ -163,6 +169,7 @@ func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, r
+ 		r2.BucketGetParams{
+ 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+ 		},
++		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+ 		option.WithResponseBodyInto(&res),
+ 		option.WithMiddleware(logging.Middleware(ctx)),
+ 	)
+@@ -202,6 +209,7 @@ func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteReques
+ 		r2.BucketDeleteParams{
+ 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+ 		},
++		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+ 		option.WithMiddleware(logging.Middleware(ctx)),
+ 	)
+ 	if err != nil {
+@@ -218,11 +226,13 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
+ 
+ 	path_account_id := ""
+ 	path_bucket_name := ""
++	jurisdiction := "default"
+ 	diags := importpath.ParseImportID(
+ 		req.ID,
+-		"<account_id>/<bucket_name>",
++		"<account_id>/<bucket_name>/<jurisdiction>",
+ 		&path_account_id,
+ 		&path_bucket_name,
++		&jurisdiction,
+ 	)
+ 	resp.Diagnostics.Append(diags...)
+ 	if resp.Diagnostics.HasError() {
+@@ -232,6 +242,12 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
+ 	data.AccountID = types.StringValue(path_account_id)
+ 	data.Name = types.StringValue(path_bucket_name)
+ 
++	if jurisdiction == "default" {
++		data.Jurisdiction = types.StringValue("default")
++	} else {
++		data.Jurisdiction = types.StringValue(jurisdiction)
++	}
++
+ 	res := new(http.Response)
+ 	env := R2BucketResultEnvelope{*data}
+ 	_, err := r.client.R2.Buckets.Get(
+@@ -240,6 +256,7 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
+ 		r2.BucketGetParams{
+ 			AccountID: cloudflare.F(path_account_id),
+ 		},
++		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+ 		option.WithResponseBodyInto(&res),
+ 		option.WithMiddleware(logging.Middleware(ctx)),
+ 	)

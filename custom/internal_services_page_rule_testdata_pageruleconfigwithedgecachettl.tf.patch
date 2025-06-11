@@ -1,0 +1,15 @@
+diff --git a/internal/services/page_rule/testdata/pageruleconfigwithedgecachettl.tf b/internal/services/page_rule/testdata/pageruleconfigwithedgecachettl.tf
+new file mode 100644
+index 000000000..eaae907c7
+--- /dev/null
++++ b/internal/services/page_rule/testdata/pageruleconfigwithedgecachettl.tf
+@@ -0,0 +1,9 @@
++
++resource "cloudflare_page_rule" "%[3]s"{
++  zone_id = "%[1]s"
++  target  = "%[2]s"
++  actions = {
++    ssl            = "flexible"
++    edge_cache_ttl = 10
++  }
++}

@@ -1,0 +1,24 @@
+diff --git a/internal/services/page_rule/testdata/pageruleconfigcachekeyfieldsnoquerystringvaluesdefined.tf b/internal/services/page_rule/testdata/pageruleconfigcachekeyfieldsnoquerystringvaluesdefined.tf
+new file mode 100644
+index 000000000..a38611b47
+--- /dev/null
++++ b/internal/services/page_rule/testdata/pageruleconfigcachekeyfieldsnoquerystringvaluesdefined.tf
+@@ -0,0 +1,18 @@
++
++resource "cloudflare_page_rule" "%[3]s" {
++  zone_id = "%[1]s"
++  target  = "%[2]s"
++  actions = {
++    cache_key_fields = {
++      header = {
++        exclude = ["origin"]
++      }
++      host         = {}
++      query_string = {}
++      user = {
++        device_type = true
++        geo         = true
++      }
++    }
++  }
++}

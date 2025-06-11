@@ -1,0 +1,19 @@
+diff --git a/internal/services/zero_trust_access_identity_provider/testdata/accessidentityprovidersaml.tf b/internal/services/zero_trust_access_identity_provider/testdata/accessidentityprovidersaml.tf
+new file mode 100644
+index 000000000..5ff44525a
+--- /dev/null
++++ b/internal/services/zero_trust_access_identity_provider/testdata/accessidentityprovidersaml.tf
+@@ -0,0 +1,13 @@
++
++resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
++  account_id = "%[1]s"
++  name = "%[2]s"
++  type = "saml"
++  config = {
++  issuer_url = "jumpcloud"
++    sso_target_url = "https://sso.myexample.jumpcloud.com/saml2/cloudflareaccess"
++    attributes = [ "email", "username" ]
++    sign_request = false
++    idp_public_certs = ["MIIDpDCCAoygAwIBAgIGAV2ka+55MA0GCSqGSIb3DQEBCwUAMIGSMQswCQYDVQQGEwJVUzETMBEG\nA1UEC…..GF/Q2/MHadws97cZg\nuTnQyuOqPuHbnN83d/2l1NSYKCbHt24o"]
++}
++}

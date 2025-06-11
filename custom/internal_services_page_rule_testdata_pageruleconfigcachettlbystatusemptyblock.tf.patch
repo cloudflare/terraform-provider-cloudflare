@@ -1,0 +1,14 @@
+diff --git a/internal/services/page_rule/testdata/pageruleconfigcachettlbystatusemptyblock.tf b/internal/services/page_rule/testdata/pageruleconfigcachettlbystatusemptyblock.tf
+new file mode 100644
+index 000000000..cddb6adfc
+--- /dev/null
++++ b/internal/services/page_rule/testdata/pageruleconfigcachettlbystatusemptyblock.tf
+@@ -0,0 +1,8 @@
++
++resource "cloudflare_page_rule" "%[3]s" {
++  zone_id = "%[1]s"
++  target  = "%[2]s"
++  actions = {
++    cache_ttl_by_status = {}
++  }
++}

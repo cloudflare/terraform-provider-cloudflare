@@ -1,0 +1,13 @@
+diff --git a/internal/services/zone_setting/testdata/ssl_recommender.tf b/internal/services/zone_setting/testdata/ssl_recommender.tf
+new file mode 100644
+index 000000000..ce12b3551
+--- /dev/null
++++ b/internal/services/zone_setting/testdata/ssl_recommender.tf
+@@ -0,0 +1,7 @@
++resource "cloudflare_zone_setting" "%[1]s" {
++  zone_id = "%[2]s"
++  setting_id = "ssl_recommender"
++  value = {
++    enabled = true
++  }
++}

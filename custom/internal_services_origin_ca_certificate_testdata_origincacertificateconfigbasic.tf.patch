@@ -1,0 +1,14 @@
+diff --git a/internal/services/origin_ca_certificate/testdata/origincacertificateconfigbasic.tf b/internal/services/origin_ca_certificate/testdata/origincacertificateconfigbasic.tf
+new file mode 100644
+index 000000000..0a96b8ab6
+--- /dev/null
++++ b/internal/services/origin_ca_certificate/testdata/origincacertificateconfigbasic.tf
+@@ -0,0 +1,8 @@
++
++resource "cloudflare_origin_ca_certificate" "%[1]s" {
++	csr                = <<EOT
++%[3]sEOT
++	hostnames          = [ "%[2]s" ]
++	request_type       = "origin-rsa"
++	requested_validity = 7
++}

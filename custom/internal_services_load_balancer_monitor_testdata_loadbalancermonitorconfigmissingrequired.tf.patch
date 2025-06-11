@@ -1,0 +1,12 @@
+diff --git a/internal/services/load_balancer_monitor/testdata/loadbalancermonitorconfigmissingrequired.tf b/internal/services/load_balancer_monitor/testdata/loadbalancermonitorconfigmissingrequired.tf
+new file mode 100644
+index 000000000..c33c8e024
+--- /dev/null
++++ b/internal/services/load_balancer_monitor/testdata/loadbalancermonitorconfigmissingrequired.tf
+@@ -0,0 +1,5 @@
++
++resource "cloudflare_load_balancer_monitor" "test" {
++	account_id = "%[1]s"
++	description = "this is a wrong config"
++}
+\ No newline at end of file

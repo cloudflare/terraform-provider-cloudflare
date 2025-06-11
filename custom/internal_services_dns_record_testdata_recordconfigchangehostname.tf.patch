@@ -1,0 +1,14 @@
+diff --git a/internal/services/dns_record/testdata/recordconfigchangehostname.tf b/internal/services/dns_record/testdata/recordconfigchangehostname.tf
+new file mode 100644
+index 000000000..4516bf985
+--- /dev/null
++++ b/internal/services/dns_record/testdata/recordconfigchangehostname.tf
+@@ -0,0 +1,8 @@
++
++resource "cloudflare_dns_record" "%[3]s" {
++	zone_id = "%[1]s"
++	name = "%[2]s-changed"
++	content = "192.168.0.10"
++	type = "A"
++	ttl = 3600
++}

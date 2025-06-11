@@ -1,0 +1,22 @@
+diff --git a/internal/services/web_analytics_rule/testdata/webanalyticsrule.tf b/internal/services/web_analytics_rule/testdata/webanalyticsrule.tf
+new file mode 100644
+index 000000000..7d138732f
+--- /dev/null
++++ b/internal/services/web_analytics_rule/testdata/webanalyticsrule.tf
+@@ -0,0 +1,16 @@
++
++resource "cloudflare_web_analytics_site" "%[1]s" {
++  account_id   = "%[2]s"
++  zone_tag     = "%[3]s"
++  auto_install = true
++}
++
++resource "cloudflare_web_analytics_rule" "%[1]s" {
++  depends_on = [cloudflare_web_analytics_site.%[1]s]
++  account_id = "%[2]s"
++  ruleset_id = cloudflare_web_analytics_site.%[1]s.ruleset.id
++  host       = "%[3]s"
++  paths      = ["/excluded"]
++  inclusive  = false
++  is_paused  = false
++}

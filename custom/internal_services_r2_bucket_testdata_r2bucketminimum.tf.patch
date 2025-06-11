@@ -1,0 +1,12 @@
+diff --git a/internal/services/r2_bucket/testdata/r2bucketminimum.tf b/internal/services/r2_bucket/testdata/r2bucketminimum.tf
+new file mode 100644
+index 000000000..ba647abf6
+--- /dev/null
++++ b/internal/services/r2_bucket/testdata/r2bucketminimum.tf
+@@ -0,0 +1,5 @@
++
++  resource "cloudflare_r2_bucket" "%[1]s" {
++    account_id = "%[2]s"
++    name       = "%[1]s"
++  }
+\ No newline at end of file

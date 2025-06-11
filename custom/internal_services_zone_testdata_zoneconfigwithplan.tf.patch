@@ -1,0 +1,21 @@
+diff --git a/internal/services/zone/testdata/zoneconfigwithplan.tf b/internal/services/zone/testdata/zoneconfigwithplan.tf
+new file mode 100644
+index 000000000..a472aa4b2
+--- /dev/null
++++ b/internal/services/zone/testdata/zoneconfigwithplan.tf
+@@ -0,0 +1,15 @@
++
++resource "cloudflare_zone" "%[1]s" {
++	account = {
++    id = "%[6]s"
++  }
++	name = "%[2]s"
++}
++
++
++resource "cloudflare_zone_subscription" "%[1]s" {
++  identifier = cloudflare_zone.%[1]s.id
++  rate_plan = {
++    id = "%[5]s"
++  }
++}

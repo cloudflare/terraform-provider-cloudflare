@@ -1,0 +1,16 @@
+diff --git a/internal/utils/get_default_from_env.go b/internal/utils/get_default_from_env.go
+new file mode 100644
+index 000000000..224ad7072
+--- /dev/null
++++ b/internal/utils/get_default_from_env.go
+@@ -0,0 +1,10 @@
++package utils
++
++import "os"
++
++func GetDefaultFromEnv(key, fallback string) string {
++	if value, ok := os.LookupEnv(key); ok {
++		return value
++	}
++	return fallback
++}

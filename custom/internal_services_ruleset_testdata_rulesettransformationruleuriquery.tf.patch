@@ -1,0 +1,30 @@
+diff --git a/internal/services/ruleset/testdata/rulesettransformationruleuriquery.tf b/internal/services/ruleset/testdata/rulesettransformationruleuriquery.tf
+new file mode 100644
+index 000000000..023bb21cf
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesettransformationruleuriquery.tf
+@@ -0,0 +1,23 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[3]s"
++  name        = "%[2]s"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_request_transform"
++
++  rules = [{
++    action = "rewrite"
++    action_parameters = {
++      uri = {
++        query = {
++          value = "a=b"
++        }
++      }
++    }
++
++    expression  = "(http.host eq \"%[4]s\")"
++    description = "URI transformation query example"
++    enabled     = false
++  }]
++}
+\ No newline at end of file

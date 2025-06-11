@@ -1,0 +1,18 @@
+diff --git a/internal/services/r2_bucket_cors/model.go b/internal/services/r2_bucket_cors/model.go
+index e69120192..a10c416b0 100644
+--- a/internal/services/r2_bucket_cors/model.go
++++ b/internal/services/r2_bucket_cors/model.go
+@@ -12,9 +12,10 @@ type R2BucketCORSResultEnvelope struct {
+ }
+ 
+ type R2BucketCORSModel struct {
+-	AccountID  types.String               `tfsdk:"account_id" path:"account_id,required"`
+-	BucketName types.String               `tfsdk:"bucket_name" path:"bucket_name,required"`
+-	Rules      *[]*R2BucketCORSRulesModel `tfsdk:"rules" json:"rules,optional"`
++	AccountID    types.String               `tfsdk:"account_id" path:"account_id,required"`
++	BucketName   types.String               `tfsdk:"bucket_name" path:"bucket_name,required"`
++	Jurisdiction types.String               `tfsdk:"jurisdiction" json:"-,computed_optional"`
++	Rules        *[]*R2BucketCORSRulesModel `tfsdk:"rules" json:"rules,optional"`
+ }
+ 
+ func (m R2BucketCORSModel) MarshalJSON() (data []byte, err error) {

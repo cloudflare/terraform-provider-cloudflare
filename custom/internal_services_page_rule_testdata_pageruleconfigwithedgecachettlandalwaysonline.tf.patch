@@ -1,0 +1,14 @@
+diff --git a/internal/services/page_rule/testdata/pageruleconfigwithedgecachettlandalwaysonline.tf b/internal/services/page_rule/testdata/pageruleconfigwithedgecachettlandalwaysonline.tf
+new file mode 100644
+index 000000000..8578769a7
+--- /dev/null
++++ b/internal/services/page_rule/testdata/pageruleconfigwithedgecachettlandalwaysonline.tf
+@@ -0,0 +1,8 @@
++
++resource "cloudflare_page_rule" "%[3]s" {
++  zone_id = "%[1]s"
++  target  = "%[2]s"
++  actions = {
++    edge_cache_ttl = 10
++  }
++}

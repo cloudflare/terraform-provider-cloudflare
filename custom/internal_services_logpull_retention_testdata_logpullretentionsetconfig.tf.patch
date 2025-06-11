@@ -1,0 +1,11 @@
+diff --git a/internal/services/logpull_retention/testdata/logpullretentionsetconfig.tf b/internal/services/logpull_retention/testdata/logpullretentionsetconfig.tf
+new file mode 100644
+index 000000000..7a76dfa8c
+--- /dev/null
++++ b/internal/services/logpull_retention/testdata/logpullretentionsetconfig.tf
+@@ -0,0 +1,5 @@
++
++  resource "cloudflare_logpull_retention" "%[1]s" {
++    zone_id = "%[2]s"
++	  flag = "%[3]s"
++  }

@@ -1,0 +1,28 @@
+diff --git a/internal/services/account/schema.go b/internal/services/account/schema.go
+index 123f265b4..94c33e5a3 100644
+--- a/internal/services/account/schema.go
++++ b/internal/services/account/schema.go
+@@ -11,7 +11,6 @@ import (
+ 	"github.com/hashicorp/terraform-plugin-framework/resource"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+ 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+@@ -33,7 +32,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 				Validators: []validator.String{
+ 					stringvalidator.OneOfCaseInsensitive("standard", "enterprise"),
+ 				},
+-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+ 			},
+ 			"unit": schema.SingleNestedAttribute{
+ 				Description: "information related to the tenant unit, and optionally, an id of the unit to create the account on. see https://developers.cloudflare.com/tenant/how-to/manage-accounts/",
+@@ -44,7 +42,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 						Optional:    true,
+ 					},
+ 				},
+-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
+ 			},
+ 			"name": schema.StringAttribute{
+ 				Description: "Account name",

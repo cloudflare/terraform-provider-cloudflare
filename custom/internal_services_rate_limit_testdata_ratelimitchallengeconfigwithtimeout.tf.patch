@@ -1,0 +1,17 @@
+diff --git a/internal/services/rate_limit/testdata/ratelimitchallengeconfigwithtimeout.tf b/internal/services/rate_limit/testdata/ratelimitchallengeconfigwithtimeout.tf
+new file mode 100644
+index 000000000..031ad432e
+--- /dev/null
++++ b/internal/services/rate_limit/testdata/ratelimitchallengeconfigwithtimeout.tf
+@@ -0,0 +1,10 @@
++
++resource "cloudflare_rate_limit" "%[1]s" {
++  zone_id = "%[2]s"
++  threshold = 1000
++  period = 10
++  action = [{
++    mode = "challenge"
++    timeout = 60
++  }]
++}
+\ No newline at end of file

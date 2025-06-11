@@ -1,0 +1,17 @@
+diff --git a/internal/services/zero_trust_access_identity_provider/testdata/accessidentityprovideroauth.tf b/internal/services/zero_trust_access_identity_provider/testdata/accessidentityprovideroauth.tf
+new file mode 100644
+index 000000000..60e0782fd
+--- /dev/null
++++ b/internal/services/zero_trust_access_identity_provider/testdata/accessidentityprovideroauth.tf
+@@ -0,0 +1,10 @@
++
++resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
++  account_id = "%[1]s"
++  name = "%[2]s"
++  type = "github"
++  config = {
++  client_id = "test"
++    client_secret = "secret"
++}
++}
+\ No newline at end of file

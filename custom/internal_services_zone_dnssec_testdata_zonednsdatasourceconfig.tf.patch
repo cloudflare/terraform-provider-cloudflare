@@ -1,0 +1,15 @@
+diff --git a/internal/services/zone_dnssec/testdata/zonednsdatasourceconfig.tf b/internal/services/zone_dnssec/testdata/zonednsdatasourceconfig.tf
+new file mode 100644
+index 000000000..86fb01259
+--- /dev/null
++++ b/internal/services/zone_dnssec/testdata/zonednsdatasourceconfig.tf
+@@ -0,0 +1,9 @@
++resource "cloudflare_zone_dnssec" "%[1]s" {
++  zone_id = "%[2]s"
++  status = "active"
++}
++
++data "cloudflare_zone_dnssec" "%[1]s" {
++  zone_id = "%[2]s"
++  depends_on = [ "cloudflare_dns_zone_dnssec.%[1]s" ]
++}

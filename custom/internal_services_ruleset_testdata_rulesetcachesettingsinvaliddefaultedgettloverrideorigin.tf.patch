@@ -1,0 +1,28 @@
+diff --git a/internal/services/ruleset/testdata/rulesetcachesettingsinvaliddefaultedgettloverrideorigin.tf b/internal/services/ruleset/testdata/rulesetcachesettingsinvaliddefaultedgettloverrideorigin.tf
+new file mode 100644
+index 000000000..5dbc623ad
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesetcachesettingsinvaliddefaultedgettloverrideorigin.tf
+@@ -0,0 +1,21 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[2]s"
++  name        = "%[1]s"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_request_cache_settings"
++
++  rules = [{
++    action = "set_cache_settings"
++    action_parameters = {
++      edge_ttl = {
++        mode    = "override_origin"
++        default = -1
++      }
++    }
++    expression  = "true"
++    description = "%[1]s set cache settings rule"
++    enabled     = true
++  }]
++}
+\ No newline at end of file

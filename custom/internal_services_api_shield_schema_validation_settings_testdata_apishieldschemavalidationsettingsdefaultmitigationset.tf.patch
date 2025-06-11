@@ -1,0 +1,11 @@
+diff --git a/internal/services/api_shield_schema_validation_settings/testdata/apishieldschemavalidationsettingsdefaultmitigationset.tf b/internal/services/api_shield_schema_validation_settings/testdata/apishieldschemavalidationsettingsdefaultmitigationset.tf
+new file mode 100644
+index 000000000..9588b8879
+--- /dev/null
++++ b/internal/services/api_shield_schema_validation_settings/testdata/apishieldschemavalidationsettingsdefaultmitigationset.tf
+@@ -0,0 +1,5 @@
++
++	resource "cloudflare_api_shield_schema_validation_settings" "%[1]s" {
++		zone_id = "%[2]s"
++		validation_default_mitigation_action = "log"
++	}

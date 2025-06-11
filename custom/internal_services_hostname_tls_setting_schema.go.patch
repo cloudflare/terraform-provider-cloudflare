@@ -1,0 +1,17 @@
+diff --git a/internal/services/hostname_tls_setting/schema.go b/internal/services/hostname_tls_setting/schema.go
+index bc8c72b26..cd637a322 100644
+--- a/internal/services/hostname_tls_setting/schema.go
++++ b/internal/services/hostname_tls_setting/schema.go
+@@ -50,10 +50,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 			},
+ 			"hostname": schema.StringAttribute{
+ 				Description:   "The hostname for which the tls settings are set.",
+-				Optional:      true,
++				Required:      true,
+ 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+ 			},
+-			"value": schema.Float64Attribute{
++			"value": schema.DynamicAttribute{
+ 				Description: "The tls setting value.",
+ 				Required:    true,
+ 			},

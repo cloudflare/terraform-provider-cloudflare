@@ -1,0 +1,23 @@
+diff --git a/internal/services/waiting_room_rules/resource.go b/internal/services/waiting_room_rules/resource.go
+index f8e87649e..f1f59a75e 100644
+--- a/internal/services/waiting_room_rules/resource.go
++++ b/internal/services/waiting_room_rules/resource.go
+@@ -194,13 +194,15 @@ func (r *WaitingRoomRulesResource) Delete(ctx context.Context, req resource.Dele
+ 		return
+ 	}
+ 
+-	_, err := r.client.WaitingRooms.Rules.Delete(
++	res := new(http.Response)
++	_, err := r.client.WaitingRooms.Rules.Update(
+ 		ctx,
+ 		data.WaitingRoomID.ValueString(),
+-		data.ID.ValueString(),
+-		waiting_rooms.RuleDeleteParams{
++		waiting_rooms.RuleUpdateParams{
+ 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+ 		},
++		option.WithRequestBody("application/json", []byte(`[]`)),
++		option.WithResponseBodyInto(&res),
+ 		option.WithMiddleware(logging.Middleware(ctx)),
+ 	)
+ 	if err != nil {

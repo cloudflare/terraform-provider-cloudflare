@@ -1,0 +1,18 @@
+diff --git a/internal/services/load_balancer/testdata/loadbalancerconfigrandomsteeringupdate.tf b/internal/services/load_balancer/testdata/loadbalancerconfigrandomsteeringupdate.tf
+new file mode 100644
+index 000000000..4432db4c0
+--- /dev/null
++++ b/internal/services/load_balancer/testdata/loadbalancerconfigrandomsteeringupdate.tf
+@@ -0,0 +1,12 @@
++resource "cloudflare_load_balancer" "%[3]s" {
++  zone_id = "%[1]s"
++  name = "tf-testacc-lb-random-steering-%[3]s.%[2]s"
++  fallback_pool = "${cloudflare_load_balancer_pool.%[3]s.id}"
++  default_pools = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
++  random_steering = {
++    pool_weights = {
++      "${cloudflare_load_balancer_pool.%[3]s.id}" = 0.4
++    }
++    default_weight = 0.8
++  }
++}

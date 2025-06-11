@@ -1,0 +1,37 @@
+diff --git a/internal/services/ruleset/testdata/rulesettransformationrulerequestheaders.tf b/internal/services/ruleset/testdata/rulesettransformationrulerequestheaders.tf
+new file mode 100644
+index 000000000..61a1d07a6
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesettransformationrulerequestheaders.tf
+@@ -0,0 +1,31 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[3]s"
++  name        = "%[2]s"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_request_late_transform"
++
++  rules = [{
++    action = "rewrite"
++    action_parameters = {
++      headers = {
++        example1 = {
++          operation = "set"
++          value     = "my-http-header-value1"
++        },
++        example2 = {
++          operation  = "set"
++          expression = "cf.zone.name"
++        },
++        example3 = {
++          operation = "remove"
++        }
++      }
++    }
++
++    expression  = "true"
++    description = "example header transformation rule"
++    enabled     = false
++  }]
++}

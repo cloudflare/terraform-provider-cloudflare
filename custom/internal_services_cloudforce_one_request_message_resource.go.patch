@@ -1,0 +1,21 @@
+diff --git a/internal/services/cloudforce_one_request_message/resource.go b/internal/services/cloudforce_one_request_message/resource.go
+index 80ccdae05..2e9decb75 100644
+--- a/internal/services/cloudforce_one_request_message/resource.go
++++ b/internal/services/cloudforce_one_request_message/resource.go
+@@ -7,6 +7,7 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"net/http"
++	"strconv"
+ 
+ 	"github.com/cloudflare/cloudflare-go/v4"
+ 	"github.com/cloudflare/cloudflare-go/v4/cloudforce_one"
+@@ -159,7 +160,7 @@ func (r *CloudforceOneRequestMessageResource) Read(ctx context.Context, req reso
+ 	env := CloudforceOneRequestMessageResultEnvelope{*data}
+ 	_, err := r.client.CloudforceOne.Requests.Message.Get(
+ 		ctx,
+-		data.ID.ValueInt64(),
++		strconv.FormatInt(data.ID.ValueInt64(), 10),
+ 		cloudforce_one.RequestMessageGetParams{
+ 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+ 		},

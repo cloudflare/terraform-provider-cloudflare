@@ -1,0 +1,12 @@
+diff --git a/internal/services/zero_trust_gateway_proxy_endpoint/testdata/teamsproxyendpointconfigbasic.tf b/internal/services/zero_trust_gateway_proxy_endpoint/testdata/teamsproxyendpointconfigbasic.tf
+new file mode 100644
+index 000000000..4ff6b37d1
+--- /dev/null
++++ b/internal/services/zero_trust_gateway_proxy_endpoint/testdata/teamsproxyendpointconfigbasic.tf
+@@ -0,0 +1,6 @@
++
++resource "cloudflare_zero_trust_gateway_proxy_endpoint" "%[1]s" {
++  name        = "%[1]s"
++  account_id  = "%[2]s"
++  ips  = ["104.16.132.229/32"]
++}

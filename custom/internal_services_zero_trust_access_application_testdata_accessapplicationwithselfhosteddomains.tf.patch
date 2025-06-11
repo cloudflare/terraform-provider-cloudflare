@@ -1,0 +1,17 @@
+diff --git a/internal/services/zero_trust_access_application/testdata/accessapplicationwithselfhosteddomains.tf b/internal/services/zero_trust_access_application/testdata/accessapplicationwithselfhosteddomains.tf
+new file mode 100644
+index 000000000..b20487120
+--- /dev/null
++++ b/internal/services/zero_trust_access_application/testdata/accessapplicationwithselfhosteddomains.tf
+@@ -0,0 +1,11 @@
++resource "cloudflare_zero_trust_access_application" "%[1]s" {
++  %[3]s_id                  = "%[4]s"
++  name                      = "%[1]s"
++  type                      = "self_hosted"
++  session_duration          = "24h"
++  auto_redirect_to_identity = false
++  self_hosted_domains       = [
++    "d1.%[1]s.%[2]s",
++    "d2.%[1]s.%[2]s"
++  ]
++}

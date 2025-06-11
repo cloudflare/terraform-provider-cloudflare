@@ -1,0 +1,32 @@
+diff --git a/templates/resources.md.tmpl b/templates/resources.md.tmpl
+new file mode 100644
+index 000000000..05f3d51f4
+--- /dev/null
++++ b/templates/resources.md.tmpl
+@@ -0,0 +1,26 @@
++---
++page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
++subcategory: ""
++description: |-
++{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
++---
++
++# {{.Name}} ({{.Type}})
++
++{{ .Description | trimspace }}
++
++{{ if .HasExample -}}
++## Example Usage
++
++{{ tffile .ExampleFile }}
++{{- end }}
++
++{{ .SchemaMarkdown | trimspace }}
++
++{{ if .HasImport -}}
++## Import
++
++Import is supported using the following syntax:
++
++{{ codefile "shell" .ImportFile }}
++{{- end }}

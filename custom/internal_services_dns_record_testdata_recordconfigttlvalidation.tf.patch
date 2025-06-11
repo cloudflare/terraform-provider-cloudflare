@@ -1,0 +1,15 @@
+diff --git a/internal/services/dns_record/testdata/recordconfigttlvalidation.tf b/internal/services/dns_record/testdata/recordconfigttlvalidation.tf
+new file mode 100644
+index 000000000..2950e0559
+--- /dev/null
++++ b/internal/services/dns_record/testdata/recordconfigttlvalidation.tf
+@@ -0,0 +1,9 @@
++
++resource "cloudflare_dns_record" "%[4]s" {
++	zone_id = "%[1]s"
++	name = "%[2]s"
++	content = "%[3]s"
++	type = "CNAME"
++	proxied = true
++	ttl = 3600
++}

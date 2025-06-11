@@ -1,0 +1,15 @@
+diff --git a/internal/services/address_map/testdata/generatecloudflareaddressmapconfig.tf b/internal/services/address_map/testdata/generatecloudflareaddressmapconfig.tf
+new file mode 100644
+index 000000000..b441cf1e9
+--- /dev/null
++++ b/internal/services/address_map/testdata/generatecloudflareaddressmapconfig.tf
+@@ -0,0 +1,9 @@
++
++resource "cloudflare_address_map" "%[1]s" {
++  account_id  = "%[2]s"
++  enabled = %t
++  %[4]s
++  %[5]s
++  %[6]s
++  %[7]s
++}

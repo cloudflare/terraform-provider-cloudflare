@@ -1,0 +1,12 @@
+diff --git a/internal/services/workers_kv_namespace/testdata/workerskvnamespace.tf b/internal/services/workers_kv_namespace/testdata/workerskvnamespace.tf
+new file mode 100644
+index 000000000..484b9f452
+--- /dev/null
++++ b/internal/services/workers_kv_namespace/testdata/workerskvnamespace.tf
+@@ -0,0 +1,5 @@
++
++resource "cloudflare_workers_kv_namespace" "%[1]s" {
++	account_id = "%[2]s"
++	title = "%[1]s"
++}
+\ No newline at end of file

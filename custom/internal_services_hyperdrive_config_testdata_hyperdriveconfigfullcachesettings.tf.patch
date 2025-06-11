@@ -1,0 +1,23 @@
+diff --git a/internal/services/hyperdrive_config/testdata/hyperdriveconfigfullcachesettings.tf b/internal/services/hyperdrive_config/testdata/hyperdriveconfigfullcachesettings.tf
+new file mode 100644
+index 000000000..4fa170f31
+--- /dev/null
++++ b/internal/services/hyperdrive_config/testdata/hyperdriveconfigfullcachesettings.tf
+@@ -0,0 +1,17 @@
++  resource "cloudflare_hyperdrive_config" "%[1]s" {
++		account_id = "%[2]s"
++		name       = "%[3]s"
++		origin     = {
++			password = "%[4]s"
++			database = "%[5]s"
++			host     = "%[6]s"
++			port     = "%[7]s"
++			scheme   = "%[8]s"
++			user     = "%[9]s"
++		}
++		caching = {
++			disabled               = %[10]t
++			max_age                = %[11]d
++			stale_while_revalidate = %[12]d
++		}
++	}

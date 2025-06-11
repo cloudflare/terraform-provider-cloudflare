@@ -1,0 +1,14 @@
+diff --git a/internal/services/list/testdata/list.tf b/internal/services/list/testdata/list.tf
+new file mode 100644
+index 000000000..d5d80cd6b
+--- /dev/null
++++ b/internal/services/list/testdata/list.tf
+@@ -0,0 +1,7 @@
++
++  resource "cloudflare_list" "%[1]s" {
++    account_id = "%[4]s"
++    name = "%[2]s"
++    description = "%[3]s"
++    kind = "%[5]s"
++  }
+\ No newline at end of file

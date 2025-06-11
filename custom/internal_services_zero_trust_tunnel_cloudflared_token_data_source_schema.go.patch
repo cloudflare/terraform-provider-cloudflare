@@ -1,0 +1,15 @@
+diff --git a/internal/services/zero_trust_tunnel_cloudflared_token/data_source_schema.go b/internal/services/zero_trust_tunnel_cloudflared_token/data_source_schema.go
+index 8874d9ddf..b1ec860e9 100644
+--- a/internal/services/zero_trust_tunnel_cloudflared_token/data_source_schema.go
++++ b/internal/services/zero_trust_tunnel_cloudflared_token/data_source_schema.go
+@@ -22,6 +22,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
+ 				Description: "UUID of the tunnel.",
+ 				Required:    true,
+ 			},
++			"token": schema.StringAttribute{
++				Description: "The Tunnel Token is used as a mechanism to authenticate the operation of a tunnel.",
++				Computed:    true,
++			},
+ 		},
+ 	}
+ }

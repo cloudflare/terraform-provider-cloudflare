@@ -1,0 +1,11 @@
+diff --git a/internal/services/zone_dnssec/testdata/zonednssecresourceconfig.tf b/internal/services/zone_dnssec/testdata/zonednssecresourceconfig.tf
+new file mode 100644
+index 000000000..40bfb9eab
+--- /dev/null
++++ b/internal/services/zone_dnssec/testdata/zonednssecresourceconfig.tf
+@@ -0,0 +1,4 @@
++resource "cloudflare_zone_dnssec" "%s" {
++	zone_id = "%s"
++	status = "active"
++}
+\ No newline at end of file

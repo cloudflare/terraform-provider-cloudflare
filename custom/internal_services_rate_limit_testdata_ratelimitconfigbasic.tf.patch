@@ -1,0 +1,17 @@
+diff --git a/internal/services/rate_limit/testdata/ratelimitconfigbasic.tf b/internal/services/rate_limit/testdata/ratelimitconfigbasic.tf
+new file mode 100644
+index 000000000..c41a990f9
+--- /dev/null
++++ b/internal/services/rate_limit/testdata/ratelimitconfigbasic.tf
+@@ -0,0 +1,10 @@
++
++resource "cloudflare_rate_limit" "%[1]s" {
++  zone_id = "%[2]s"
++  threshold = 1000
++  period = 10
++  action = [{
++    mode = "simulate"
++    timeout = 86400
++  }]
++}
+\ No newline at end of file

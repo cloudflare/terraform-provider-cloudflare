@@ -1,0 +1,21 @@
+diff --git a/internal/services/zero_trust_device_posture_rule/testdata/devicepostureruleconfigdiskencryptionrequireall.tf b/internal/services/zero_trust_device_posture_rule/testdata/devicepostureruleconfigdiskencryptionrequireall.tf
+new file mode 100644
+index 000000000..b4b173f34
+--- /dev/null
++++ b/internal/services/zero_trust_device_posture_rule/testdata/devicepostureruleconfigdiskencryptionrequireall.tf
+@@ -0,0 +1,15 @@
++
++resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
++	account_id                = "%[2]s"
++	name                      = "%[1]s"
++	type                      = "disk_encryption"
++	description               = "My description"
++	schedule                  = "24h"
++	expiration                = "24h"
++	match = [{
++		platform = "mac"
++	}]
++	input = {
++  require_all = true
++}
++}

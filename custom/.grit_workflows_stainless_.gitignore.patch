@@ -1,0 +1,11 @@
+diff --git a/.grit/workflows/stainless/.gitignore b/.grit/workflows/stainless/.gitignore
+new file mode 100644
+index 000000000..a4254bf33
+--- /dev/null
++++ b/.grit/workflows/stainless/.gitignore
+@@ -0,0 +1,5 @@
++*.tfrc
++*.lock.hcl
++workflow.js
++new.json
++old.json

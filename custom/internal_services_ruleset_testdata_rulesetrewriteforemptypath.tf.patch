@@ -1,0 +1,29 @@
+diff --git a/internal/services/ruleset/testdata/rulesetrewriteforemptypath.tf b/internal/services/ruleset/testdata/rulesetrewriteforemptypath.tf
+new file mode 100644
+index 000000000..b8d7a0664
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesetrewriteforemptypath.tf
+@@ -0,0 +1,22 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[2]s"
++  name        = "%[1]s"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_request_transform"
++
++  rules = [{
++    action = "rewrite"
++    action_parameters = {
++      uri = {
++        path = {
++          value = "/"
++        }
++      }
++    }
++    expression  = "true"
++    description = "strip off path"
++    enabled     = true
++  }]
++}
+\ No newline at end of file

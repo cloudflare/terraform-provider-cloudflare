@@ -1,0 +1,36 @@
+diff --git a/internal/services/zero_trust_tunnel_cloudflared/list_data_source_model.go b/internal/services/zero_trust_tunnel_cloudflared/list_data_source_model.go
+index 625af8260..1ea39e41e 100644
+--- a/internal/services/zero_trust_tunnel_cloudflared/list_data_source_model.go
++++ b/internal/services/zero_trust_tunnel_cloudflared/list_data_source_model.go
+@@ -34,10 +34,6 @@ type ZeroTrustTunnelCloudflaredsDataSourceModel struct {
+ }
+ 
+ func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelCloudflaredListParams, diags diag.Diagnostics) {
+-	mWasActiveAt, errs := m.WasActiveAt.ValueRFC3339Time()
+-	diags.Append(errs...)
+-	mWasInactiveAt, errs := m.WasInactiveAt.ValueRFC3339Time()
+-	diags.Append(errs...)
+ 
+ 	params = zero_trust.TunnelCloudflaredListParams{
+ 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+@@ -65,10 +61,18 @@ func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Cont
+ 		params.UUID = cloudflare.F(m.UUID.ValueString())
+ 	}
+ 	if !m.WasActiveAt.IsNull() {
+-		params.WasActiveAt = cloudflare.F(mWasActiveAt)
++		mWasActiveAt, errs := m.WasActiveAt.ValueRFC3339Time()
++		diags.Append(errs...)
++		if errs == nil {
++			params.WasActiveAt = cloudflare.F(mWasActiveAt)
++		}
+ 	}
+ 	if !m.WasInactiveAt.IsNull() {
+-		params.WasInactiveAt = cloudflare.F(mWasInactiveAt)
++		mWasInactiveAt, errs := m.WasInactiveAt.ValueRFC3339Time()
++		diags.Append(errs...)
++		if errs == nil {
++			params.WasInactiveAt = cloudflare.F(mWasInactiveAt)
++		}
+ 	}
+ 
+ 	return

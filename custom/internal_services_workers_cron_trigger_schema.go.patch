@@ -1,0 +1,45 @@
+diff --git a/internal/services/workers_cron_trigger/schema.go b/internal/services/workers_cron_trigger/schema.go
+index d8c95209f..4d959fd9f 100644
+--- a/internal/services/workers_cron_trigger/schema.go
++++ b/internal/services/workers_cron_trigger/schema.go
+@@ -5,7 +5,6 @@ package workers_cron_trigger
+ import (
+ 	"context"
+ 
+-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+@@ -32,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 				Required:      true,
+ 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+ 			},
+-			"body": schema.ListNestedAttribute{
++			"schedules": schema.ListNestedAttribute{
+ 				Required: true,
+ 				NestedObject: schema.NestedAttributeObject{
+ 					Attributes: map[string]schema.Attribute{
+@@ -48,23 +47,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 					},
+ 				},
+ 			},
+-			"schedules": schema.ListNestedAttribute{
+-				Computed:   true,
+-				CustomType: customfield.NewNestedObjectListType[WorkersCronTriggerSchedulesModel](ctx),
+-				NestedObject: schema.NestedAttributeObject{
+-					Attributes: map[string]schema.Attribute{
+-						"cron": schema.StringAttribute{
+-							Computed: true,
+-						},
+-						"created_on": schema.StringAttribute{
+-							Computed: true,
+-						},
+-						"modified_on": schema.StringAttribute{
+-							Computed: true,
+-						},
+-					},
+-				},
+-			},
+ 		},
+ 	}
+ }

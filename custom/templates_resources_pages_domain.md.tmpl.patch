@@ -1,0 +1,34 @@
+diff --git a/templates/resources/pages_domain.md.tmpl b/templates/resources/pages_domain.md.tmpl
+new file mode 100644
+index 000000000..531b9f5bf
+--- /dev/null
++++ b/templates/resources/pages_domain.md.tmpl
+@@ -0,0 +1,28 @@
++---
++page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
++subcategory: ""
++description: |-
++{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
++---
++
++# {{.Name}} ({{.Type}})
++
++{{ .Description | trimspace }}
++
++-> A DNS record for the domain is not automatically created. You need to create
++   a `cloudflare_record` resource for the domain you want to use.
++
++{{ if .HasExample -}}
++## Example Usage
++
++{{codefile "terraform" .ExampleFile}}
++{{- end }}
++{{ .SchemaMarkdown | trimspace }}
++
++{{ if .HasImport -}}
++## Import
++
++Import is supported using the following syntax:
++
++{{codefile "shell" .ImportFile}}
++{{- end }}

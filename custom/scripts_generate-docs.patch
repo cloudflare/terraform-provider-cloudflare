@@ -1,0 +1,10 @@
+diff --git a/scripts/generate-docs b/scripts/generate-docs
+index 5980032fe..4b017e4b7 100755
+--- a/scripts/generate-docs
++++ b/scripts/generate-docs
+@@ -10,4 +10,4 @@ then
+   go install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
+ fi
+ 
+-"$(go env GOPATH)/bin/tfplugindocs" generate -rendered-provider-name "Cloudflare" -provider-name="cloudflare"
++tfplugindocs generate -rendered-provider-name "Cloudflare" -provider-name="cloudflare"

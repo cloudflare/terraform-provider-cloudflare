@@ -1,0 +1,13 @@
+diff --git a/internal/services/logpush_ownership_challenge/testdata/cloudflarelogpushownershipchallengeconfig.tf b/internal/services/logpush_ownership_challenge/testdata/cloudflarelogpushownershipchallengeconfig.tf
+new file mode 100644
+index 000000000..23e808e3f
+--- /dev/null
++++ b/internal/services/logpush_ownership_challenge/testdata/cloudflarelogpushownershipchallengeconfig.tf
+@@ -0,0 +1,6 @@
++
++		resource "cloudflare_logpush_ownership_challenge" "%[1]s" {
++		  zone_id = "%[2]s"
++		  destination_conf = "%[3]s"
++		}
++		
+\ No newline at end of file

@@ -1,0 +1,8 @@
+diff --git a/.grit/.gitignore b/.grit/.gitignore
+new file mode 100644
+index 000000000..e4fdfb17c
+--- /dev/null
++++ b/.grit/.gitignore
+@@ -0,0 +1,2 @@
++.gritmodules*
++*.log

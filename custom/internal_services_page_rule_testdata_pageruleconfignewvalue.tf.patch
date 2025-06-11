@@ -1,0 +1,16 @@
+diff --git a/internal/services/page_rule/testdata/pageruleconfignewvalue.tf b/internal/services/page_rule/testdata/pageruleconfignewvalue.tf
+new file mode 100644
+index 000000000..db9226b56
+--- /dev/null
++++ b/internal/services/page_rule/testdata/pageruleconfignewvalue.tf
+@@ -0,0 +1,10 @@
++
++resource "cloudflare_page_rule" "%[3]s" {
++  zone_id = "%[1]s"
++  target  = "%[2]s/updated"
++  actions = {
++    browser_check = "on"
++    ssl           = "strict"
++    rocket_loader = "on"
++  }
++}

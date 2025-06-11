@@ -1,0 +1,14 @@
+diff --git a/internal/services/zero_trust_access_application/testdata/accessapplicationconfigbasic.tf b/internal/services/zero_trust_access_application/testdata/accessapplicationconfigbasic.tf
+new file mode 100644
+index 000000000..9fe266bdc
+--- /dev/null
++++ b/internal/services/zero_trust_access_application/testdata/accessapplicationconfigbasic.tf
+@@ -0,0 +1,8 @@
++resource "cloudflare_zero_trust_access_application" "%[1]s" {
++  %[3]s_id                  = "%[4]s"
++  name                      = "%[1]s"
++  domain                    = "%[1]s.%[2]s"
++  type                      = "self_hosted"
++  session_duration          = "24h"
++  auto_redirect_to_identity = false
++}

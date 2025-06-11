@@ -1,0 +1,39 @@
+diff --git a/internal/services/authenticated_origin_pulls_certificate/resource.go b/internal/services/authenticated_origin_pulls_certificate/resource.go
+index 3c7eb8220..5efa8e565 100644
+--- a/internal/services/authenticated_origin_pulls_certificate/resource.go
++++ b/internal/services/authenticated_origin_pulls_certificate/resource.go
+@@ -61,6 +61,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Create(ctx context.Context
+ 		return
+ 	}
+ 
++	privateKey := data.PrivateKey
+ 	dataBytes, err := data.MarshalJSON()
+ 	if err != nil {
+ 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+@@ -88,6 +89,8 @@ func (r *AuthenticatedOriginPullsCertificateResource) Create(ctx context.Context
+ 		return
+ 	}
+ 	data = &env.Result
++	data.CertificateID = data.ID
++	data.PrivateKey = privateKey
+ 
+ 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+ }
+@@ -104,7 +107,7 @@ func (r *AuthenticatedOriginPullsCertificateResource) Read(ctx context.Context,
+ 	if resp.Diagnostics.HasError() {
+ 		return
+ 	}
+-
++	privateKey := data.PrivateKey
+ 	res := new(http.Response)
+ 	env := AuthenticatedOriginPullsCertificateResultEnvelope{*data}
+ 	_, err := r.client.OriginTLSClientAuth.Get(
+@@ -132,6 +135,8 @@ func (r *AuthenticatedOriginPullsCertificateResource) Read(ctx context.Context,
+ 		return
+ 	}
+ 	data = &env.Result
++	data.CertificateID = data.ID
++	data.PrivateKey = privateKey
+ 
+ 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+ }

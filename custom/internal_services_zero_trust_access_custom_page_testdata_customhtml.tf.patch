@@ -1,0 +1,15 @@
+diff --git a/internal/services/zero_trust_access_custom_page/testdata/customhtml.tf b/internal/services/zero_trust_access_custom_page/testdata/customhtml.tf
+new file mode 100644
+index 000000000..46b331cab
+--- /dev/null
++++ b/internal/services/zero_trust_access_custom_page/testdata/customhtml.tf
+@@ -0,0 +1,8 @@
++
++resource "cloudflare_zero_trust_access_custom_page" "%[1]s" {
++	account_id = "%[2]s"
++	name = "%[1]s"
++	type = "%[3]s"
++	custom_html = "%[4]s"
++}
++	
+\ No newline at end of file

@@ -1,0 +1,16 @@
+diff --git a/internal/services/dns_record/testdata/recordconfigmxwithpriorityzero.tf b/internal/services/dns_record/testdata/recordconfigmxwithpriorityzero.tf
+new file mode 100644
+index 000000000..8ef096b1d
+--- /dev/null
++++ b/internal/services/dns_record/testdata/recordconfigmxwithpriorityzero.tf
+@@ -0,0 +1,10 @@
++
++resource "cloudflare_dns_record" "%[2]s" {
++	zone_id = "%[1]s"
++	name = "%[2]s.%[3]s"
++	content = "mail.terraform.cfapi.net"
++	type = "MX"
++	priority = 0
++	proxied = false
++	ttl = 300
++}

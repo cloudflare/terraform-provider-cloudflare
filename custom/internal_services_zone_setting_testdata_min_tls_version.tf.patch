@@ -1,0 +1,11 @@
+diff --git a/internal/services/zone_setting/testdata/min_tls_version.tf b/internal/services/zone_setting/testdata/min_tls_version.tf
+new file mode 100644
+index 000000000..2d67f22c0
+--- /dev/null
++++ b/internal/services/zone_setting/testdata/min_tls_version.tf
+@@ -0,0 +1,5 @@
++resource "cloudflare_zone_setting" "%[1]s" {
++  zone_id = "%[2]s"
++  setting_id = "min_tls_version"
++  value = "1.2"
++}

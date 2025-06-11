@@ -1,0 +1,27 @@
+diff --git a/internal/services/ruleset/testdata/rulesetcachesettingsbypassbrowserinvalid.tf b/internal/services/ruleset/testdata/rulesetcachesettingsbypassbrowserinvalid.tf
+new file mode 100644
+index 000000000..f14d0c90e
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesetcachesettingsbypassbrowserinvalid.tf
+@@ -0,0 +1,21 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[2]s"
++  name        = "%[1]s"
++  description = "set cache settings for the request"
++  kind        = "zone"
++  phase       = "http_request_cache_settings"
++  rules = [{
++    action      = "set_cache_settings"
++    description = "example"
++    enabled     = true
++    expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
++    action_parameters = {
++      cache = true
++      browser_ttl = {
++        mode    = "bypass_by_default"
++        default = 100
++      }
++    }
++  }]
++}

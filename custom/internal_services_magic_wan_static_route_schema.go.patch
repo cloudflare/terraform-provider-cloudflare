@@ -1,0 +1,67 @@
+diff --git a/internal/services/magic_wan_static_route/schema.go b/internal/services/magic_wan_static_route/schema.go
+index 887a43427..5a713ec23 100644
+--- a/internal/services/magic_wan_static_route/schema.go
++++ b/internal/services/magic_wan_static_route/schema.go
+@@ -139,6 +139,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 			},
+ 			"route": schema.SingleNestedAttribute{
+ 				Computed:   true,
++				Optional:   true,
+ 				CustomType: customfield.NewNestedObjectType[MagicWANStaticRouteRouteModel](ctx),
+ 				Attributes: map[string]schema.Attribute{
+ 					"id": schema.StringAttribute{
+@@ -148,14 +149,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 					"nexthop": schema.StringAttribute{
+ 						Description: "The next-hop IP Address for the static route.",
+ 						Computed:    true,
++						Optional:    true,
+ 					},
+ 					"prefix": schema.StringAttribute{
+ 						Description: "IP Prefix in Classless Inter-Domain Routing format.",
+ 						Computed:    true,
++						Optional:    true,
+ 					},
+ 					"priority": schema.Int64Attribute{
+ 						Description: "Priority of the static route.",
+ 						Computed:    true,
++						Optional:    true,
+ 					},
+ 					"created_on": schema.StringAttribute{
+ 						Description: "When the route was created.",
+@@ -165,6 +169,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 					"description": schema.StringAttribute{
+ 						Description: "An optional human provided description of the static route.",
+ 						Computed:    true,
++						Optional:    true,
+ 					},
+ 					"modified_on": schema.StringAttribute{
+ 						Description: "When the route was last modified.",
+@@ -174,17 +179,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 					"scope": schema.SingleNestedAttribute{
+ 						Description: "Used only for ECMP routes.",
+ 						Computed:    true,
++						Optional:    true,
+ 						CustomType:  customfield.NewNestedObjectType[MagicWANStaticRouteRouteScopeModel](ctx),
+ 						Attributes: map[string]schema.Attribute{
+ 							"colo_names": schema.ListAttribute{
+ 								Description: "List of colo names for the ECMP scope.",
+ 								Computed:    true,
++								Optional:    true,
+ 								CustomType:  customfield.NewListType[types.String](ctx),
+ 								ElementType: types.StringType,
+ 							},
+ 							"colo_regions": schema.ListAttribute{
+ 								Description: "List of colo regions for the ECMP scope.",
+ 								Computed:    true,
++								Optional:    true,
+ 								CustomType:  customfield.NewListType[types.String](ctx),
+ 								ElementType: types.StringType,
+ 							},
+@@ -193,6 +201,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 					"weight": schema.Int64Attribute{
+ 						Description: "Optional weight of the ECMP scope - if provided.",
+ 						Computed:    true,
++						Optional:    true,
+ 					},
+ 				},
+ 			},

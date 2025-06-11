@@ -1,0 +1,20 @@
+diff --git a/internal/services/zero_trust_dex_test/testdata/devicedexteststracerouteipv4.tf b/internal/services/zero_trust_dex_test/testdata/devicedexteststracerouteipv4.tf
+new file mode 100644
+index 000000000..f2c9bf30a
+--- /dev/null
++++ b/internal/services/zero_trust_dex_test/testdata/devicedexteststracerouteipv4.tf
+@@ -0,0 +1,13 @@
++
++	resource "cloudflare_zero_trust_dex_test" "%[1]s" {
++		account_id = "%[2]s"
++		name = "%[1]s"
++		description = "%[1]s"
++		interval = "0h30m0s"
++		enabled = true
++		data = {
++  host = "1.1.1.1"
++			kind = "traceroute"
++}
++	}
++	
+\ No newline at end of file

@@ -1,0 +1,13 @@
+diff --git a/internal/services/load_balancer_monitor/testdata/loadbalancermonitorconfigbasic.tf b/internal/services/load_balancer_monitor/testdata/loadbalancermonitorconfigbasic.tf
+new file mode 100644
+index 000000000..d8998c1ad
+--- /dev/null
++++ b/internal/services/load_balancer_monitor/testdata/loadbalancermonitorconfigbasic.tf
+@@ -0,0 +1,6 @@
++
++resource "cloudflare_load_balancer_monitor" "%[1]s" {
++  account_id = "%[2]s"
++  expected_body = "alive"
++  expected_codes = "2xx"
++}
+\ No newline at end of file

@@ -1,0 +1,12 @@
+diff --git a/internal/services/total_tls/testdata/totaltls.tf b/internal/services/total_tls/testdata/totaltls.tf
+new file mode 100644
+index 000000000..223809a14
+--- /dev/null
++++ b/internal/services/total_tls/testdata/totaltls.tf
+@@ -0,0 +1,6 @@
++
++resource "cloudflare_total_tls" "%[1]s" {
++	zone_id = "%[2]s"
++	enabled = true
++	certificate_authority = "google"
++}

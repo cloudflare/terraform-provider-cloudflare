@@ -1,0 +1,35 @@
+diff --git a/internal/services/zone_setting/model.go b/internal/services/zone_setting/model.go
+index 9da84f63a..4cda34bc4 100644
+--- a/internal/services/zone_setting/model.go
++++ b/internal/services/zone_setting/model.go
+@@ -4,7 +4,6 @@ package zone_setting
+ 
+ import (
+ 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+ 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+ 	"github.com/hashicorp/terraform-plugin-framework/types"
+ )
+@@ -14,14 +13,14 @@ type ZoneSettingResultEnvelope struct {
+ }
+ 
+ type ZoneSettingModel struct {
+-	ID            types.String         `tfsdk:"id" json:"-,computed"`
+-	SettingID     types.String         `tfsdk:"setting_id" path:"setting_id,required"`
+-	ZoneID        types.String         `tfsdk:"zone_id" path:"zone_id,required"`
+-	Value         jsontypes.Normalized `tfsdk:"value" json:"value,optional,no_refresh"`
+-	Enabled       types.Bool           `tfsdk:"enabled" json:"enabled,computed_optional"`
+-	Editable      types.Bool           `tfsdk:"editable" json:"editable,computed"`
+-	ModifiedOn    timetypes.RFC3339    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+-	TimeRemaining types.Float64        `tfsdk:"time_remaining" json:"time_remaining,computed"`
++	ID            types.String      `tfsdk:"id" json:"-,computed"`
++	SettingID     types.String      `tfsdk:"setting_id" path:"setting_id,required"`
++	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id,required"`
++	Value         types.Dynamic     `tfsdk:"value" json:"value,required"`
++	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled,computed_optional"`
++	Editable      types.Bool        `tfsdk:"editable" json:"editable,computed"`
++	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
++	TimeRemaining types.Float64     `tfsdk:"time_remaining" json:"time_remaining,computed"`
+ }
+ 
+ func (m ZoneSettingModel) MarshalJSON() (data []byte, err error) {

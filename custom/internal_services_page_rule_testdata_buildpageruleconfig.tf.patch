@@ -1,0 +1,13 @@
+diff --git a/internal/services/page_rule/testdata/buildpageruleconfig.tf b/internal/services/page_rule/testdata/buildpageruleconfig.tf
+new file mode 100644
+index 000000000..5c4b2a1cc
+--- /dev/null
++++ b/internal/services/page_rule/testdata/buildpageruleconfig.tf
+@@ -0,0 +1,7 @@
++resource "cloudflare_page_rule" "%[1]s" {
++	zone_id = "%[2]s"
++	target  = "%[3]s"
++	actions = {
++		%[4]s
++	}
++}

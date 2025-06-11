@@ -1,0 +1,11 @@
+diff --git a/internal/services/zone_hold/testdata/zoneholdoffwithtimeafterresourceconfig.tf b/internal/services/zone_hold/testdata/zoneholdoffwithtimeafterresourceconfig.tf
+new file mode 100644
+index 000000000..f9222340d
+--- /dev/null
++++ b/internal/services/zone_hold/testdata/zoneholdoffwithtimeafterresourceconfig.tf
+@@ -0,0 +1,5 @@
++
++resource "cloudflare_zone_hold" "%s" {
++	zone_id = "%s"
++	hold_after = "%s"
++}

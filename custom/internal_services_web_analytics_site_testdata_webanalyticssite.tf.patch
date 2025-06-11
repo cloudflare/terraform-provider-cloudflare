@@ -1,0 +1,12 @@
+diff --git a/internal/services/web_analytics_site/testdata/webanalyticssite.tf b/internal/services/web_analytics_site/testdata/webanalyticssite.tf
+new file mode 100644
+index 000000000..8eb3b9f0b
+--- /dev/null
++++ b/internal/services/web_analytics_site/testdata/webanalyticssite.tf
+@@ -0,0 +1,6 @@
++
++resource "cloudflare_web_analytics_site" "%[1]s" {
++  account_id    = "%[2]s"
++  host          = "%[3]s"
++  auto_install  = false
++}

@@ -1,0 +1,7 @@
+diff --git a/examples/resources/cloudflare_r2_bucket/import.sh b/examples/resources/cloudflare_r2_bucket/import.sh
+index 909d275aa..4e7d38c89 100755
+--- a/examples/resources/cloudflare_r2_bucket/import.sh
++++ b/examples/resources/cloudflare_r2_bucket/import.sh
+@@ -1 +1 @@
+-$ terraform import cloudflare_r2_bucket.example '<account_id>/<bucket_name>'
++$ terraform import cloudflare_r2_bucket.example '<account_id>/<bucket_name>/<jurisdiction>'

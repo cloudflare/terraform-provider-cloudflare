@@ -1,0 +1,14 @@
+diff --git a/scripts/build-debug b/scripts/build-debug
+new file mode 100755
+index 000000000..70f4af06f
+--- /dev/null
++++ b/scripts/build-debug
+@@ -0,0 +1,8 @@
++#!/usr/bin/env bash
++
++set -e
++
++cd "$(dirname "$0")/.."
++
++echo "==> Building provider with debug symbols and no optimisations. Hang tight, this takes a while..."
++go build -gcflags="all=-N -l" -o terraform-provider-cloudflare

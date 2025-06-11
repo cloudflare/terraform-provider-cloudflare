@@ -1,0 +1,15 @@
+diff --git a/internal/services/filter/testdata/filterconfig.tf b/internal/services/filter/testdata/filterconfig.tf
+new file mode 100644
+index 000000000..f37da03e4
+--- /dev/null
++++ b/internal/services/filter/testdata/filterconfig.tf
+@@ -0,0 +1,8 @@
++
++		resource "cloudflare_filter" "%[1]s" {
++		  zone_id = "%[2]s"
++		  paused = "%[3]s"
++		  description = "%[4]s"
++		  expression = "%[5]s"
++		}
++		
+\ No newline at end of file

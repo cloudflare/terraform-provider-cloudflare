@@ -1,0 +1,11 @@
+diff --git a/internal/services/zone_setting/testdata/number.tf b/internal/services/zone_setting/testdata/number.tf
+new file mode 100644
+index 000000000..529f40442
+--- /dev/null
++++ b/internal/services/zone_setting/testdata/number.tf
+@@ -0,0 +1,5 @@
++resource "cloudflare_zone_setting" "%[1]s" {
++  zone_id = "%[2]s"
++  setting_id = "browser_cache_ttl"
++  value = 30
++}

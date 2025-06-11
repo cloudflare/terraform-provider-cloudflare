@@ -1,0 +1,13 @@
+diff --git a/internal/services/workers_kv/schema.go b/internal/services/workers_kv/schema.go
+index 704bbeb44..7aa341cbf 100644
+--- a/internal/services/workers_kv/schema.go
++++ b/internal/services/workers_kv/schema.go
+@@ -38,7 +38,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 			},
+ 			"metadata": schema.StringAttribute{
+ 				Description: "Arbitrary JSON to be associated with a key/value pair.",
+-				Required:    true,
++				Optional:    true,
+ 			},
+ 			"value": schema.StringAttribute{
+ 				Description: "A byte sequence to be stored, up to 25 MiB in length.",

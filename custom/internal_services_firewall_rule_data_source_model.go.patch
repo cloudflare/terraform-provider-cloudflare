@@ -1,0 +1,13 @@
+diff --git a/internal/services/firewall_rule/data_source_model.go b/internal/services/firewall_rule/data_source_model.go
+index 9d01152f5..5d3c820cf 100644
+--- a/internal/services/firewall_rule/data_source_model.go
++++ b/internal/services/firewall_rule/data_source_model.go
+@@ -17,7 +17,7 @@ type FirewallRuleResultDataSourceEnvelope struct {
+ }
+ 
+ type FirewallRuleDataSourceModel struct {
+-	ID          types.String                   `tfsdk:"id" path:"rule_id,computed"`
++	ID          types.String                   `tfsdk:"id" query:"id,optional" path:"rule_id,computed"`
+ 	RuleID      types.String                   `tfsdk:"rule_id" path:"rule_id,optional"`
+ 	ZoneID      types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
+ 	Action      types.String                   `tfsdk:"action" json:"action,computed"`

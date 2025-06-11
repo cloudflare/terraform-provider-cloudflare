@@ -1,0 +1,18 @@
+diff --git a/internal/services/magic_wan_static_route/testdata/staticroutesimple.tf b/internal/services/magic_wan_static_route/testdata/staticroutesimple.tf
+new file mode 100644
+index 000000000..87d42aca1
+--- /dev/null
++++ b/internal/services/magic_wan_static_route/testdata/staticroutesimple.tf
+@@ -0,0 +1,11 @@
++
++  resource "cloudflare_magic_wan_static_route" "%[1]s" {
++	account_id = "%[3]s"
++	prefix = "10.100.0.0/24"
++	nexthop = "10.0.0.0"
++	priority = "100"
++	description = "%[2]s"
++	weight = %[4]d
++	colo_regions = ["APAC"]
++	colo_names = ["den01"]
++  }
+\ No newline at end of file

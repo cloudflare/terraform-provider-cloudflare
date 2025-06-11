@@ -1,0 +1,22 @@
+diff --git a/internal/services/zero_trust_device_posture_rule/testdata/devicepostureruleconfigosversion.tf b/internal/services/zero_trust_device_posture_rule/testdata/devicepostureruleconfigosversion.tf
+new file mode 100644
+index 000000000..f60d481c2
+--- /dev/null
++++ b/internal/services/zero_trust_device_posture_rule/testdata/devicepostureruleconfigosversion.tf
+@@ -0,0 +1,16 @@
++
++resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
++	account_id                = "%[2]s"
++	name                      = "%[1]s"
++	type                      = "os_version"
++	description               = "My description"
++	schedule                  = "24h"
++	expiration                = "24h"
++	match = [{
++		platform = "mac"
++	}]
++	input = {
++  version = "10.0.1"
++		operator = "=="
++}
++}

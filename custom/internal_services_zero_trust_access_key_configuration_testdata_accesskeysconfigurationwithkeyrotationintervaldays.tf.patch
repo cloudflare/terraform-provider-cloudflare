@@ -1,0 +1,12 @@
+diff --git a/internal/services/zero_trust_access_key_configuration/testdata/accesskeysconfigurationwithkeyrotationintervaldays.tf b/internal/services/zero_trust_access_key_configuration/testdata/accesskeysconfigurationwithkeyrotationintervaldays.tf
+new file mode 100644
+index 000000000..877e42dd1
+--- /dev/null
++++ b/internal/services/zero_trust_access_key_configuration/testdata/accesskeysconfigurationwithkeyrotationintervaldays.tf
+@@ -0,0 +1,5 @@
++
++resource "cloudflare_zero_trust_access_key_configuration" "%[1]s" {
++  account_id = "%[2]s"
++  key_rotation_interval_days = "%[3]d"
++}
+\ No newline at end of file

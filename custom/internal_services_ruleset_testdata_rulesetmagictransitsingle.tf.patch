@@ -1,0 +1,27 @@
+diff --git a/internal/services/ruleset/testdata/rulesetmagictransitsingle.tf b/internal/services/ruleset/testdata/rulesetmagictransitsingle.tf
+new file mode 100644
+index 000000000..c11f6c785
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesetmagictransitsingle.tf
+@@ -0,0 +1,20 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  account_id  = "%[3]s"
++  name        = "%[2]s"
++  description = "%[1]s magic transit ruleset description"
++  kind        = "root"
++  phase       = "magic_transit"
++
++  rules = [{
++    action = "skip"
++    action_parameters = {
++      ruleset = "current"
++    }
++    expression  = "tcp.dstport in { 32768..65535 }"
++    description = "Allow TCP Ephemeral Ports"
++    logging = {
++      enabled = false
++    }
++  }]
++}
+\ No newline at end of file

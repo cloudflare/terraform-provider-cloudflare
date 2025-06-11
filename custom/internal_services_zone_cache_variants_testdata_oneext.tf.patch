@@ -1,0 +1,12 @@
+diff --git a/internal/services/zone_cache_variants/testdata/oneext.tf b/internal/services/zone_cache_variants/testdata/oneext.tf
+new file mode 100644
+index 000000000..54d248536
+--- /dev/null
++++ b/internal/services/zone_cache_variants/testdata/oneext.tf
+@@ -0,0 +1,6 @@
++resource "cloudflare_zone_cache_variants" "%[2]s" {
++	zone_id = "%[1]s"
++	value = {
++	 avif = ["image/avif", "image/webp"]
++	}
++}

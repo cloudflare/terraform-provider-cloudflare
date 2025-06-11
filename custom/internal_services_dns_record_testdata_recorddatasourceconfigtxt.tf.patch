@@ -1,0 +1,18 @@
+diff --git a/internal/services/dns_record/testdata/recorddatasourceconfigtxt.tf b/internal/services/dns_record/testdata/recorddatasourceconfigtxt.tf
+new file mode 100644
+index 000000000..10c5b2eda
+--- /dev/null
++++ b/internal/services/dns_record/testdata/recorddatasourceconfigtxt.tf
+@@ -0,0 +1,12 @@
++
++data "cloudflare_dns_record" "%[1]s" {
++  zone_id = "%[2]s"
++  type = "TXT"
++  hostname = cloudflare_dns_record.%[1]s.hostname
++}
++resource "cloudflare_dns_record" "%[1]s" {
++	zone_id = "%[2]s"
++	type = "TXT"
++	name = "%[1]s.%[3]s"
++	content = "i am a text record"
++}

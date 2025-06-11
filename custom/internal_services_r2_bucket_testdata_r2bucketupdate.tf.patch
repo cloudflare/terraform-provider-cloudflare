@@ -1,0 +1,13 @@
+diff --git a/internal/services/r2_bucket/testdata/r2bucketupdate.tf b/internal/services/r2_bucket/testdata/r2bucketupdate.tf
+new file mode 100644
+index 000000000..8ee4cba74
+--- /dev/null
++++ b/internal/services/r2_bucket/testdata/r2bucketupdate.tf
+@@ -0,0 +1,7 @@
++
++  resource "cloudflare_r2_bucket" "%[1]s" {
++    account_id    = "%[2]s"
++    name          = "%[1]s"
++    location      = "ENAM"
++    storage_class = "InfrequentAccess"
++  }

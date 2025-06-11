@@ -1,0 +1,66 @@
+diff --git a/.github/workflows/acceptance-tests.yml b/.github/workflows/acceptance-tests.yml
+new file mode 100644
+index 000000000..d087db3ef
+--- /dev/null
++++ b/.github/workflows/acceptance-tests.yml
+@@ -0,0 +1,60 @@
++name: Acceptance Tests
++concurrency:
++  group: acceptance-tests
++
++on:
++  workflow_dispatch:
++  push:
++    branches:
++      - "release-please**"
++jobs:
++  acceptance-tests:
++    name: Acceptance Tests
++    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
++    env:
++      CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe
++      CLOUDFLARE_ALT_DOMAIN: terraform2.cfapi.net
++      CLOUDFLARE_ALT_ZONE_ID: b72110c08e3382597095c29ba7e661ea
++      CLOUDFLARE_DOMAIN: terraform.cfapi.net
++      CLOUDFLARE_EMAIL: terraform-acceptance-test@cfapi.net
++      CLOUDFLARE_ZONE_ID: 0da42c8d2132a9ddaf714f9e7c920711
++      CLOUDFLARE_MUTUAL_TLS_CERTIFICATE: "-----BEGIN CERTIFICATE-----\\nMIIF+DCCA+CgAwIBAgIUWc0b+WiKSZob8wl2g/ujewoKCvgwDQYJKoZIhvcNAQEN\\nBQAwgZMxCzAJBgNVBAYTAlVTMQwwCgYDVQQIEwNOL0ExDDAKBgNVBAcTA04vQTEl\\nMCMGA1UEChMcVGVycmFmb3JtIEFjY2VwdGFuY2UgVGVzdGluZzEMMAoGA1UECxMD\\nTi9BMTMwMQYDVQQDEypUZXJyYWZvcm0gQWNjZXB0YW5jZSBUZXN0aW5nIENBIDE2\\nMTgyODU5MjYwHhcNMjEwNDEzMDM0ODAwWhcNMjYwNDEyMDM0ODAwWjCBkzELMAkG\\nA1UEBhMCVVMxDDAKBgNVBAgTA04vQTEMMAoGA1UEBxMDTi9BMSUwIwYDVQQKExxU\\nZXJyYWZvcm0gQWNjZXB0YW5jZSBUZXN0aW5nMQwwCgYDVQQLEwNOL0ExMzAxBgNV\\nBAMTKlRlcnJhZm9ybSBBY2NlcHRhbmNlIFRlc3RpbmcgQ0EgMTYxODI4NTkyNjCC\\nAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBANBzwmNB8g3eVp8Sn30z0U21\\niEh/uwa+WLPEGj/F90mWg2EnW+yFvI9O8OETJAgmAQs39Z4ivt488uwLNVplshnW\\nU5J7BqNk9MlBeUZwj6omuS1CZMST/YNSzmIHV5LtyJBcFaEZ2TAi4Ql9f+M9Y5HD\\ncxofze5n5tfYzgB3/1lFLk7Vr5eVsqeH5QGOdKZAlsIHfTPS6TFDXP/zTInqCUz0\\njfuNkRy9Mqg55JREHVGMufHcT7oTNZiLU+4B/2EfYXJ9YD6JwntKnwB2IC+iOfW7\\nGc6QtAREPIlsH3yjmO0rPORrT/oAnnWZcAkkklR5XDnY7QwK5JQ3amN1aByXaPtS\\nmbIJNMDxE84AeTREAqR8PmsPK5drRHr3qpWk9nUOVGUaeXwPV+M2t3Xe1WSAQwpv\\nJup6PyE8O6KZGwbOiYme5KaKhxMB/ObzhajhTH9RQX7+RMwBzlL+/XTFDnd2B3Ep\\nyndNFUHN7fAAapNGjPUXzez01G52N9asE8312JRmLaOqGQ2sWMzr8UgRPw7ZYL4v\\nsdlqE2fxXddijGM3TEane6CiM3UdO1VcRAjvNFQjY5WQBUdAkj5+V790cxUQZiMR\\nwfmh4hePo7bqXt9RjAS7OeFGBz//H5tQf9wFj3yJTsvKS5bIwP86quR969FFU8nW\\na0zNkQLwWygqlhW/VlhxAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMB\\nAf8EBTADAQH/MB0GA1UdDgQWBBT6PStM4ZTFmvpp6lASxuxOkNYZXzANBgkqhkiG\\n9w0BAQ0FAAOCAgEACIs9YskrLq3huQXsPDQhHBu8/SLQTAtkj5vtYf1uSq6MXx1k\\nj6nDzvixnLam/4HhrsJQyI3FjXnk5yNwaAVA1hQoVw0G2on4qk215fsIRJUKjlzK\\npUfW49TFWZ+DPlhBJ/dmHSZsxG940p4xWmNjo2aJ2CraCgP2ns+FfPxXqtpthf1y\\nVW5SxKhR9VYNLczXEz8fKvDTLictYYwQ/xFZjxPHpOdV8+DoL18brNKHN8Hs/Nk1\\nkzhKrDk8fReEX+jmpG7n/q973nJ31KIBxk85owv/BFgnWpC7HPY+waIH0xNr2iZA\\nOu1orlBiBYAqG8zDBq3AGVlxg8yUOc5bik9OhCIwYyT2RFmd6z4O36uIM3LEzJ64\\nJj8TTjOP/ktqu+GZrUrnIjfu7mlGvc4u22P8ILJ2AZe5ITp/uhMRJbGbJGEMCCH3\\nkAKIEDATrevGdmgWUpdj8RNBS7+BK98eN+vcDqtY4Sudri2TwTkMbAscraacqrSJ\\n4rJfjSywVr4oWXyd2P83Hl398X3x04E0Rc15+wrGvaCSN5i1gzc30fTlz1X8dJQ3\\nccaHajJlRVZfuCrFBk6m5YRL7AoG4iFfoOuDZZJpjr9nXEzEONhRR5QAG83yMedS\\nd8//SuQhuJQTxJW7UzkWaao+32gW/RvuQun0XtCNoow/kMVMOeSjKL9xioM=\\n-----END CERTIFICATE-----"
++      CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
++      # CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
++      # CLOUDFLARE_API_USER_SERVICE_KEY: ${{ secrets.CLOUDFLARE_API_USER_SERVICE_KEY }}
++      CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN: ${{ secrets.CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN }}
++      CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID: d0ed71f01c884e8b94ec4e4d6639f609
++      CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET }}
++      CLOUDFLARE_WORKSPACE_ONE_API_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_API_URL }}
++      CLOUDFLARE_WORKSPACE_ONE_AUTH_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_AUTH_URL }}
++      CLOUDFLARE_PAGES_OWNER: jacobbednarz
++      CLOUDFLARE_PAGES_REPO: pages-example
++      CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
++      CLOUDFLARE_R2_ACCESS_KEY_SECRET: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_SECRET }}
++      CLOUDFLARE_HYPERDRIVE_DATABASE_NAME: neondb
++      CLOUDFLARE_HYPERDRIVE_DATABASE_PORT: 5432
++      CLOUDFLARE_HYPERDRIVE_DATABASE_USER: neondb_owner
++      CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD }}
++      CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME }}
++    steps:
++      - uses: actions/checkout@v4
++      - name: Setup go
++        uses: actions/setup-go@v5
++        with:
++          go-version-file: ./go.mod
++      - name: Bootstrap
++        run: ./scripts/bootstrap
++      # when all resources support sweepers, re-enable.
++      #
++      # - name: Pre-Sweeper
++      #  run: go test ./internal/services/... -v -sweep="1" -timeout 60m
++      - name: Run acceptance tests
++        # note: not all resources are covered here, only passing ones should be included here (for now).
++        run: go test ./internal/services/{account,account_api_token_permission_groups,account_dns_settings,account_dns_settings_internal_view,account_permission_group,account_role,account_subscription,account_token,address_map,api_shield,api_shield_discovery_operation,api_shield_schema,api_token_permission_groups,argo_smart_routing,argo_tiered_caching,authenticated_origin_pulls,authenticated_origin_pulls_certificate,authenticated_origin_pulls_settings,botnet_feed_config_asn,byo_ip_prefix,calls_sfu_app,calls_turn_app,certificate_pack,cloud_connector_rules,cloudforce_one_request,cloudforce_one_request_asset,cloudforce_one_request_message,cloudforce_one_request_priority,content_scanning_expression,custom_pages,custom_ssl,dcv_delegation,dns_record,dns_settings_internal_view,dns_zone_transfers_acl,dns_zone_transfers_peer,dns_zone_transfers_tsig,email_routing_address,email_routing_catch_all,email_routing_dns,email_routing_rule,email_security_block_sender,email_security_impersonation_registry,email_security_trusted_domains,image,image_variant,ip_ranges,leaked_credential_check,leaked_credential_check_rule,list,logpull_retention,logpush_dataset_field,logpush_dataset_job,logpush_job,logpush_ownership_challenge,magic_network_monitoring_configuration,magic_network_monitoring_rule,magic_transit_connector,magic_transit_site,magic_transit_site_acl,magic_transit_site_lan,magic_transit_site_wan,magic_wan_gre_tunnel,magic_wan_ipsec_tunnel,magic_wan_static_route,observatory_scheduled_test,origin_ca_certificate,page_rule,page_shield_connections,page_shield_cookies,page_shield_policy,page_shield_scripts,pages_domain,pages_project,queue,queue_consumer,r2_bucket,r2_bucket_cors,r2_bucket_event_notification,r2_bucket_lifecycle,r2_bucket_lock,r2_bucket_sippy,r2_custom_domain,r2_managed_domain,regional_hostname,regional_tiered_cache,registrar_domain,resource_group,ruleset,snippet_rules,snippets,stream,stream_audio_track,stream_caption_language,stream_download,stream_key,stream_live_input,stream_watermark,stream_webhook,tiered_cache,turnstile_widget,url_normalization_settings,user,waiting_room_settings,workers_cron_trigger,workers_custom_domain,workers_deployment,workers_for_platforms_dispatch_namespace,workers_kv_namespace,workers_route,workers_script,workers_script_subdomain,zero_trust_access_infrastructure_target,zero_trust_access_key_configuration,zero_trust_access_mtls_hostname_settings,zero_trust_access_service_token,zero_trust_access_tag,zero_trust_device_custom_profile,zero_trust_device_default_profile,zero_trust_device_default_profile_certificates,zero_trust_device_managed_networks,zero_trust_dlp_custom_profile,zero_trust_dlp_dataset,zero_trust_dlp_entry,zero_trust_dlp_predefined_profile,zero_trust_gateway_app_types,zero_trust_gateway_categories,zero_trust_gateway_certificate,zero_trust_gateway_logging,zero_trust_gateway_proxy_endpoint,zero_trust_list,zero_trust_risk_behavior,zero_trust_risk_scoring_integration,zero_trust_tunnel_cloudflared,zero_trust_tunnel_cloudflared_route,zero_trust_tunnel_cloudflared_token,zero_trust_tunnel_warp_connector_token,zone,zone_cache_reserve,zone_cache_variants,zone_dns_settings,zone_hold,zone_lockdown,zone_setting,zone_subscription} -run "^TestAcc" -count 1
++        env:
++          TF_ACC: 1
++    # when all resources support sweepers, re-enable.
++    #
++    # - name: Post-Sweeper
++    #  if: ${{ always() }}
++    #  run: go test ./internal/services/... -v -sweep="1" -timeout 60m

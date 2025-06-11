@@ -1,0 +1,11 @@
+diff --git a/internal/services/queue/testdata/queue.tf b/internal/services/queue/testdata/queue.tf
+new file mode 100644
+index 000000000..d890956cf
+--- /dev/null
++++ b/internal/services/queue/testdata/queue.tf
+@@ -0,0 +1,5 @@
++
++resource "cloudflare_queue" "%[1]s" {
++	account_id = "%[2]s"
++	queue_name = "%[3]s"
++}

@@ -1,0 +1,17 @@
+diff --git a/internal/services/access_rule/testdata/accessruleaccountconfig.tf b/internal/services/access_rule/testdata/accessruleaccountconfig.tf
+new file mode 100644
+index 000000000..9ac7ad6a0
+--- /dev/null
++++ b/internal/services/access_rule/testdata/accessruleaccountconfig.tf
+@@ -0,0 +1,10 @@
++
++resource "cloudflare_access_rule" "%[6]s" {
++  account_id = "%[1]s"
++  notes = "%[3]s"
++  mode = "%[2]s"
++  configuration = {
++  target = "%[4]s"
++    value = "%[5]s"
++}
++}
+\ No newline at end of file

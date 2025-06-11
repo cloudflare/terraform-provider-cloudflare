@@ -1,0 +1,25 @@
+diff --git a/internal/services/api_token/testdata/apitokendatasource.tf b/internal/services/api_token/testdata/apitokendatasource.tf
+new file mode 100644
+index 000000000..15d87c23a
+--- /dev/null
++++ b/internal/services/api_token/testdata/apitokendatasource.tf
+@@ -0,0 +1,18 @@
++resource "cloudflare_api_token" "%[1]s" {
++  name = "%[1]s"
++
++  policies = [{
++    effect = "allow"
++    permission_groups = [{
++      id = "%[2]s"
++    }]
++    resources = {
++      "com.cloudflare.api.account.zone.*" = "*"
++    }
++  }]
++}
++
++data "cloudflare_api_token" "%[1]s" {
++  token_id = cloudflare_api_token.%[1]s.id
++  depends_on = [cloudflare_api_token.%[1]s]
++}
+\ No newline at end of file

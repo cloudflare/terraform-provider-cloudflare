@@ -1,0 +1,13 @@
+diff --git a/internal/services/zone/testdata/zoneconfig.tf b/internal/services/zone/testdata/zoneconfig.tf
+new file mode 100644
+index 000000000..efd4c3906
+--- /dev/null
++++ b/internal/services/zone/testdata/zoneconfig.tf
+@@ -0,0 +1,7 @@
++
++resource "cloudflare_zone" "%[1]s" {
++	account = {
++    id = "%[5]s"
++  }
++	name = "%[2]s"
++}

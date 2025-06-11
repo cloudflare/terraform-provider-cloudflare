@@ -1,0 +1,154 @@
+diff --git a/.grit/patterns/cloudflare_terraform_v5_attribute_renames_configuration.grit b/.grit/patterns/cloudflare_terraform_v5_attribute_renames_configuration.grit
+new file mode 100644
+index 000000000..73251c8ee
+--- /dev/null
++++ b/.grit/patterns/cloudflare_terraform_v5_attribute_renames_configuration.grit
+@@ -0,0 +1,148 @@
++language hcl
++
++pattern cloudflare_terraform_v5_attribute_renames_configuration() {
++  any {
++    // provider
++    `version = $version` => `version = "~> 5"` where { $match <: within `provider "cloudflare" { $_ }` },
++
++    // cloudflare_origin_ca_certificate
++    `min_days_for_renewal = $days` as $attribute => . where { $attribute <: within `resource "cloudflare_origin_ca_certificate" $_ { $_ }` },
++
++    // cloudflare_api_token
++    `policy = $v` as $attribute => `policies = $v` where { $attribute <: within `resource "cloudflare_api_token" $_ { $_ }` },
++
++    // cloudflare_account_member
++    `role_ids = $v` as $attribute => `roles = $v` where { $attribute <: within `resource "cloudflare_account_member" $_ { $_ }` },
++    `email_address = $v` as $attribute => `email = $v` where { $attribute <: within `resource "cloudflare_account_member" $_ { $_ }` },
++
++    // cloudflare_account
++    `enforce_twofactor = $v` as $attribute => `settings = {
++      $attribute
++    }` where { $attribute <: within `resource "cloudflare_account" $_ { $_ }` },
++
++    // cloudflare_access_policy & cloudflare_zero_trust_access_group
++    `application_id = $id` as $attribute => . where { $attribute <: within `resource "cloudflare_access_policy" $_ { $_ }` },
++    `precedence = $p` as $attribute => . where { $attribute <: within `resource "cloudflare_access_policy" $_ { $_ }` },
++    `application_id = $id` as $attribute => . where { $attribute <: within `resource "cloudflare_zero_trust_access_group" $_ { $_ }` },
++    `precedence = $p` as $attribute => . where { $attribute <: within `resource "cloudflare_zero_trust_access_group" $_ { $_ }` },
++
++    // cloudflare_access_service_token
++    `min_days_for_renewal = $days` as $attribute => . where { $attribute <: within `resource "cloudflare_access_service_token" $_ { $_ }` },
++    `min_days_for_renewal = $days` as $attribute => . where { $attribute <: within `resource "cloudflare_zero_trust_access_service_token" $_ { $_ }` },
++
++    // cloudflare_byo_ip_prefix
++    `advertisement = $v` as $attribute => `advertised = $v` where { $attribute <: within `resource "cloudflare_byo_ip_prefix" $_ { $_ }` },
++
++    // cloudflare_hostname_tls_setting
++    `setting = $v` as $attribute => `setting_id = $v` where { $attribute <: within `resource "cloudflare_hostname_tls_setting" $_ { $_ }` },
++
++    // cloudflare_load_balancer
++    `fallback_pool_id = $v` as $attribute => `fallback_pool = $v` where { $attribute <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
++    `default_pool_ids = $v` as $attribute => `default_pools = $v` where { $attribute <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
++
++    // cloudflare_page_rule
++    `resource "cloudflare_page_rule" $_ { $body }` where {
++        $body <: contains `cache_key_fields = $ckf` where {
++            $ckf <: contains `query_string = $qs` where and {
++                $qs <: contains `ignore = false` => `include = ["*"]`,
++                $qs <: contains `ignore = true` => `exclude = ["*"]`,
++            }
++        }
++    },
++
++    // cloudflare_teams_list & cloudflare_zero_trust_list
++    `items = [$items]` as $all_items where {
++        $values = [],
++        $items <: some bubble($values) `$item` where {
++            $values += `{ value = $item}`
++        },
++        $new_colors = join(list=$values, separator=", ")
++    } => `items = [$new_colors]` where $all_items <: within `resource "cloudflare_teams_list" $_ { $_ }`,
++    `items = [$items]` as $all_items where {
++        $values = [],
++        $items <: some bubble($values) `$item` where {
++            $values += `{ value = $item}`
++        },
++        $new_colors = join(list=$values, separator=", ")
++    } => `items = [$new_colors]` where $all_items <: within `resource "cloudflare_zero_trust_list" $_ { $_ }`,
++
++    // cloudflare_queue
++    `name = $v` as $attribute => `queue_name = $v` where { $attribute <: within `resource "cloudflare_queue" $_ { $_ }` },
++
++    // cloudflare_r2_bucket
++    `location_hint = $v` as $attribute => `location = $v` where { $attribute <: within `resource "cloudflare_r2_bucket" $_ { $_ }` },
++
++    // cloudflare_worker_kv
++    `key = $v` as $attribute => `key_name = $v` where { $attribute <: within `resource "cloudflare_workers_kv" $_ { $_ }` },
++
++    // cloudflare_zone_cache_reserve
++    `enabled = $v` as $capture => `value = $v` where {
++      and {
++        {  $capture <: within `resource "cloudflare_zone_cache_reserve" $_ { $_ }` },
++        if ($v <: "true") { $v => `"on"` } else { $v => `"off"` }
++      }
++    },
++
++    // cloudflare_zone_cache_variants
++    `resource "cloudflare_zone_cache_variants" $_ {
++    	$body
++    }` where {
++        $body <: contains `zone_id = $_` as $zone,
++        $zone_copy = text($zone),
++        $zone => .,
++        $body => `$zone_copy
++        value = { $body
++        }`
++    },
++
++    // cloudflare_tunnel & zero_trust_tunnel_cloudflared
++    `secret = $v` as $attribute => `tunnel_secret = $v` where { $attribute <: within `resource "zero_trust_tunnel_cloudflared" $_ { $_ }` },
++    `cname = $v` as $attribute => . where { $attribute <: within `resource "zero_trust_tunnel_cloudflared" $_ { $_ }` },
++    `secret = $v` as $attribute => `tunnel_secret = $v` where { $attribute <: within `resource "zero_trust_tunnel_cloudflared" $_ { $_ }` },
++    `cname = $v` as $attribute => . where { $attribute <: within `resource "zero_trust_tunnel_cloudflared" $_ { $_ }` },
++
++    // cloudflare_zone
++    `account_id = $id` => `account = {
++      id = $id
++    }` where { $id <: within `resource "cloudflare_zone" $_ { $_ }`},
++    `plan = $id` => . where { $id <: within `resource "cloudflare_zone" $_ { $_ }`},
++    `jump_start = $id` => . where { $id <: within `resource "cloudflare_zone" $_ { $_ }` },
++    `zone = $zone` => `name = $zone` where { $zone <: within `resource "cloudflare_zone" $_ { $_ }` },
++
++    // cloudflare_logpull_retention
++    `enabled = $v` as $attribute => `flag = $v` where { $attribute <: within `resource "cloudflare_logpull_retention" $_ { $_ }` },
++
++    // cloudflare_logpush_ownership_challenge
++    `ownership_challenge_filename = $v` as $attribute => `filename = $v` where { $attribute <: within `resource "cloudflare_logpush_ownership_challenge" $_ { $_ }` },
++
++    // cloudflare_zero_trust_tunnel_cloudflared
++    `secret = $v` as $attribute => `tunnel_secret = $v` where { $attribute <: within `resource "cloudflare_zero_trust_tunnel_cloudflared" $_ { $_ }` },
++
++    // cloudflare_zero_trust_access_short_lived_certificate
++    `application_id = $v` as $attribute => `app_id = $v` where { $attribute <: within `resource "cloudflare_zero_trust_access_short_lived_certificate" $_ { $_ }` },
++
++    // cloudflare_workers_secret
++    `secret_text = $v` as $attribute => `text = $v` where { $attribute <: within `resource "cloudflare_workers_secret" $_ { $_ }` },
++
++    // cloudflare_workers_kv
++    `key = $v` as $attribute => `key_name = $v` where { $attribute <: within `resource "cloudflare_workers_kv" $_ { $_ }` },
++
++    // cloudflare_tiered_cache
++    `cache_type = $v` as $attribute => `value = $v` where { $attribute <: within `resource "cloudflare_tiered_cache" $_ { $_ }` },
++
++    // cloudflare_dns_record
++    `hostname = $v` as $hostname => . where { $attribute <: within `resource "cloudflare_dns_record" $_ { $_ }` },
++
++    // cloudflare_web_analytics_site
++    `ruleset_id = $v` as $attribute => `ruleset = {
++      id = $v
++    }` where { $attribute <: within `resource "cloudflare_web_analytics_site" $_ { $_ }` },
++
++    // cloudflare_record
++    `allow_overwrite = $id` => . where { $id <: within `resource "cloudflare_record" $_ { $_ }` },
++    `flags = "$v"`as $flag => `flags = $v` where { $flag <: within `resource "cloudflare_record" $_ { $_ }` },
++    `data { $inner }` as $data => `data = {
++        $inner
++    } `where { $data <: within `resource "cloudflare_record" $_ { $_ }` },
++  }
++}

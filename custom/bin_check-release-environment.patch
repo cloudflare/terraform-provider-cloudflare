@@ -1,0 +1,31 @@
+diff --git a/bin/check-release-environment b/bin/check-release-environment
+deleted file mode 100644
+index a0ea0aa8c..000000000
+--- a/bin/check-release-environment
++++ /dev/null
+@@ -1,25 +0,0 @@
+-#!/usr/bin/env bash
+-
+-errors=()
+-
+-if [ -z "${GPG_SIGNING_KEY}" ]; then
+-  errors+=("The CLOUDFLARE_GPG_SIGNING_KEY secret has not been set. Please set it in either this repository's secrets or your organization secrets")
+-fi
+-
+-if [ -z "${GPG_SIGNING_PASSWORD}" ]; then
+-  errors+=("The CLOUDFLARE_GPG_SIGNING_PASSWORD secret has not been set. Please set it in either this repository's secrets or your organization secrets")
+-fi
+-
+-lenErrors=${#errors[@]}
+-
+-if [[ lenErrors -gt 0 ]]; then
+-  echo -e "Found the following errors in the release environment:\n"
+-
+-  for error in "${errors[@]}"; do
+-    echo -e "- $error\n"
+-  done
+-
+-  exit 1
+-fi
+-
+-echo "The environment is ready to push releases!"

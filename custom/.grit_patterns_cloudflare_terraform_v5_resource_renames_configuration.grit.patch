@@ -1,0 +1,63 @@
+diff --git a/.grit/patterns/cloudflare_terraform_v5_resource_renames_configuration.grit b/.grit/patterns/cloudflare_terraform_v5_resource_renames_configuration.grit
+new file mode 100644
+index 000000000..cc38989dc
+--- /dev/null
++++ b/.grit/patterns/cloudflare_terraform_v5_resource_renames_configuration.grit
+@@ -0,0 +1,57 @@
++// You likely don't want to run this _unless_ you know what you're doing.
++//
++// See https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/migrating-renamed-resources
++// for full details on how to handle mass renames.
++language hcl
++
++pattern cloudflare_terraform_v5_resource_renames_configuration() {
++  any {
++    `"cloudflare_access_application"` => `"cloudflare_zero_trust_access_application"`,
++    `"cloudflare_access_ca_certificate"` => `"cloudflare_zero_trust_access_short_lived_certificate"`,
++    `"cloudflare_access_custom_page"` => `"cloudflare_zero_trust_access_custom_page"`,
++    `"cloudflare_access_group"` => `"cloudflare_zero_trust_access_group"`,
++    `"cloudflare_access_identity_provider"` => `"cloudflare_zero_trust_access_identity_provider"`,
++    `"cloudflare_access_keys_configuration"` => `"cloudflare_zero_trust_access_key_configuration"`,
++    `"cloudflare_access_mutual_tls_certificate"` => `"cloudflare_zero_trust_access_mtls_certificate"`,
++    `"cloudflare_access_mutual_tls_hostname_settings"` => `"cloudflare_zero_trust_access_mtls_hostname_settings"`,
++    `"cloudflare_access_organization"` => `"cloudflare_zero_trust_organization"`,
++    `"cloudflare_access_policy"` => `"cloudflare_zero_trust_access_policy"`,
++    `"cloudflare_access_service_token"` => `"cloudflare_zero_trust_access_service_token"`,
++    `"cloudflare_access_tag"` => `"cloudflare_zero_trust_access_tag"`,
++    `"cloudflare_device_dex_test"` => `"cloudflare_zero_trust_dex_test"`,
++    `"cloudflare_device_managed_networks"` => `"cloudflare_zero_trust_device_managed_networks"`,
++    `"cloudflare_device_policy_certificates"` => `"cloudflare_zero_trust_device_certificates"`,
++    `"cloudflare_device_posture_integration"` => `"cloudflare_zero_trust_device_posture_integration"`,
++    `"cloudflare_device_posture_rule"` => `"cloudflare_zero_trust_device_posture_rule"`,
++    `"cloudflare_device_settings_policy"` => `"cloudflare_zero_trust_device_profiles"`,
++    `"cloudflare_dlp_custom_profile"` => `"cloudflare_zero_trust_dlp_custom_profile"`,
++    `"cloudflare_dlp_predefined_profile"` => `"cloudflare_zero_trust_dlp_predefined_profile"`,
++    `"cloudflare_dlp_profile"` => `"cloudflare_zero_trust_dlp_profile"`,
++    `"cloudflare_gateway_app_types"` => `"cloudflare_zero_trust_gateway_app_types"`,
++    `"cloudflare_gre_tunnel"` => `"cloudflare_magic_wan_gre_tunnel"`,
++    `"cloudflare_ipsec_tunnel"` => `"cloudflare_magic_wan_ipsec_tunnel"`,
++    `"cloudflare_record"` => `"cloudflare_dns_record"`,
++    `"cloudflare_risk_behavior"` => `"cloudflare_zero_trust_risk_behavior"`,
++    `"cloudflare_split_tunnel"` => `"cloudflare_zero_trust_split_tunnels"`,
++    `"cloudflare_static_route"` => `"cloudflare_magic_wan_static_route"`,
++    `"cloudflare_teams_account"` => `"cloudflare_zero_trust_gateway_settings"`,
++    `"cloudflare_teams_list"` => `"cloudflare_zero_trust_list"`,
++    `"cloudflare_teams_location"` => `"cloudflare_zero_trust_dns_location"`,
++    `"cloudflare_teams_proxy_endpoint"` => `"cloudflare_zero_trust_gateway_proxy_endpoint"`,
++    `"cloudflare_teams_rule"` => `"cloudflare_zero_trust_gateway_policy"`,
++    `"cloudflare_tunnel"` => `"cloudflare_zero_trust_tunnel_cloudflared"`,
++    `"cloudflare_tunnel_config"` => `"cloudflare_zero_trust_tunnel_cloudflared_config"`,
++    `"cloudflare_tunnel_route"` => `"cloudflare_zero_trust_tunnel_cloudflared_route"`,
++    `"cloudflare_tunnel_virtual_network"` => `"cloudflare_zero_trust_tunnel_cloudflared_virtual_network"`,
++    `"cloudflare_worker_cron_trigger"` => `"cloudflare_workers_cron_trigger"`,
++    `"cloudflare_worker_domain"` => `"cloudflare_workers_custom_domain"`,
++    `"cloudflare_worker_script"` => `"cloudflare_workers_script"`,
++    `"cloudflare_worker_secret"` => `"cloudflare_workers_secret"`,
++    `"cloudflare_workers_for_platforms_namespace"` => `"cloudflare_workers_for_platforms_dispatch_namespace"`,
++    `"cloudflare_managed_headers"` => `"cloudflare_managed_transforms"`,
++  } as $old_name where {
++    $old_name <: within `resource $_ { $_ }`
++  }
++}
++
++cloudflare_terraform_v5_resource_renames_configuration()

@@ -1,0 +1,15 @@
+diff --git a/internal/services/zero_trust_access_group/testdata/accessgroupconfigbasicwithupdate.tf b/internal/services/zero_trust_access_group/testdata/accessgroupconfigbasicwithupdate.tf
+new file mode 100644
+index 000000000..eb07d5263
+--- /dev/null
++++ b/internal/services/zero_trust_access_group/testdata/accessgroupconfigbasicwithupdate.tf
+@@ -0,0 +1,9 @@
++resource "cloudflare_zero_trust_access_group" "%[1]s" {
++  account_id = "%[2]s"
++  name = "%[1]s-updated"
++
++  include = [{
++    email = "%[3]s"
++    email_domain = "example.com"
++  }]
++}

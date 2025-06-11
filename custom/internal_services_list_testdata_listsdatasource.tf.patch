@@ -1,0 +1,18 @@
+diff --git a/internal/services/list/testdata/listsdatasource.tf b/internal/services/list/testdata/listsdatasource.tf
+new file mode 100644
+index 000000000..dc56bda05
+--- /dev/null
++++ b/internal/services/list/testdata/listsdatasource.tf
+@@ -0,0 +1,12 @@
++
++	resource "cloudflare_list" "%[1]s" {
++		account_id = "%[2]s"
++		name = "%[1]s"
++		description = "example list"
++		kind = "ip"
++	}
++
++data "cloudflare_lists" "%[1]s" {
++  account_id = "%[2]s"
++  depends_on = [ cloudflare_list.%[1]s ]
++}

@@ -1,0 +1,15 @@
+diff --git a/internal/services/dns_record/testdata/recordconfigexplicitproxied.tf b/internal/services/dns_record/testdata/recordconfigexplicitproxied.tf
+new file mode 100644
+index 000000000..f941b705b
+--- /dev/null
++++ b/internal/services/dns_record/testdata/recordconfigexplicitproxied.tf
+@@ -0,0 +1,9 @@
++
++resource "cloudflare_dns_record" "%[2]s" {
++	zone_id = "%[1]s"
++	name = "%[2]s.%[3]s"
++	content = "%[3]s"
++	type = "CNAME"
++	proxied = %[4]s
++	ttl = %[5]s
++}

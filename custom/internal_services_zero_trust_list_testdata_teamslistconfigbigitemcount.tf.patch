@@ -1,0 +1,14 @@
+diff --git a/internal/services/zero_trust_list/testdata/teamslistconfigbigitemcount.tf b/internal/services/zero_trust_list/testdata/teamslistconfigbigitemcount.tf
+new file mode 100644
+index 000000000..5d4dcde4d
+--- /dev/null
++++ b/internal/services/zero_trust_list/testdata/teamslistconfigbigitemcount.tf
+@@ -0,0 +1,8 @@
++
++resource "cloudflare_zero_trust_list" "%[1]s" {
++	account_id  = "%[2]s"
++	name        = "%[1]s"
++	description = "My description"
++	type        = "SERIAL"
++	items       = [%[3]s]
++}

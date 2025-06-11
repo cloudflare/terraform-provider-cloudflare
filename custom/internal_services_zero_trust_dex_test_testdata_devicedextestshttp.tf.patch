@@ -1,0 +1,21 @@
+diff --git a/internal/services/zero_trust_dex_test/testdata/devicedextestshttp.tf b/internal/services/zero_trust_dex_test/testdata/devicedextestshttp.tf
+new file mode 100644
+index 000000000..5e9498fde
+--- /dev/null
++++ b/internal/services/zero_trust_dex_test/testdata/devicedextestshttp.tf
+@@ -0,0 +1,14 @@
++
++	resource "cloudflare_zero_trust_dex_test" "%[1]s" {
++		account_id = "%[2]s"
++		name = "%[1]s"
++		description = "%[1]s"
++		interval = "0h30m0s"
++		enabled = true
++		data = {
++  host = "https://dash.cloudflare.com/home"
++			kind = "http"
++			method = "GET"
++}
++	}
++	
+\ No newline at end of file

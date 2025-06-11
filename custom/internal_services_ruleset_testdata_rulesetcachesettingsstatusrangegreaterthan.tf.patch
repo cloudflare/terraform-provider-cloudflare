@@ -1,0 +1,41 @@
+diff --git a/internal/services/ruleset/testdata/rulesetcachesettingsstatusrangegreaterthan.tf b/internal/services/ruleset/testdata/rulesetcachesettingsstatusrangegreaterthan.tf
+new file mode 100644
+index 000000000..1b865be68
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesetcachesettingsstatusrangegreaterthan.tf
+@@ -0,0 +1,34 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[2]s"
++  name        = "%[1]s"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_request_cache_settings"
++
++  rules = [{
++    action = "set_cache_settings"
++    action_parameters = {
++      edge_ttl = {
++        status_code_ttl = [{
++          status_code_range = { 
++    from = 105 
++}
++          value = 1
++          },
++          {
++            status_code_range = { 
++    from = 100
++              to   = 101 
++}
++            value = 1
++        }]
++        mode = "respect_origin"
++      }
++      cache = true
++    }
++    expression  = "true"
++    description = "%[1]s set cache settings rule"
++    enabled     = true
++  }]
++}
+\ No newline at end of file

@@ -1,0 +1,24 @@
+diff --git a/internal/services/ruleset/testdata/rulesetcachereserve.tf b/internal/services/ruleset/testdata/rulesetcachereserve.tf
+new file mode 100644
+index 000000000..fad9507ab
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesetcachereserve.tf
+@@ -0,0 +1,18 @@
++resource "cloudflare_ruleset" "%[1]s" {
++	zone_id     = "%[3]s"
++  name        = "%[2]s"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_request_cache_settings"
++  rules = [{
++    action = "set_cache_settings"
++    action_parameters = {
++  		cache_reserve = {
++  			eligible = false
++      }
++		}
++	  expression = "true"
++	  description = "%[1]s set cache settings rule"
++	  enabled = true
++  }]
++}

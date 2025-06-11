@@ -1,0 +1,14 @@
+diff --git a/internal/services/zone/testdata/zoneconfigwithtypesetup.tf b/internal/services/zone/testdata/zoneconfigwithtypesetup.tf
+new file mode 100644
+index 000000000..a0eb87095
+--- /dev/null
++++ b/internal/services/zone/testdata/zoneconfigwithtypesetup.tf
+@@ -0,0 +1,8 @@
++
++resource "cloudflare_zone" "%[1]s" {
++	account = {
++    id = "%[6]s"
++  }
++	name = "%[2]s"
++	type = "%[7]s"
++}

@@ -1,0 +1,20 @@
+diff --git a/internal/services/email_routing_catch_all/testdata/emailroutingrulecatchallconfig.tf b/internal/services/email_routing_catch_all/testdata/emailroutingrulecatchallconfig.tf
+new file mode 100644
+index 000000000..19467f29d
+--- /dev/null
++++ b/internal/services/email_routing_catch_all/testdata/emailroutingrulecatchallconfig.tf
+@@ -0,0 +1,14 @@
++resource "cloudflare_email_routing_catch_all" "%[1]s" {
++	zone_id = "%[2]s"
++	enabled = "%[3]t"
++	name = "terraform rule catch all"
++
++	matchers = [{
++		type  = "all"
++	}]
++
++	actions = [{
++		type = "forward"
++		value = ["destinationaddress@example.net"]
++	}]
++}

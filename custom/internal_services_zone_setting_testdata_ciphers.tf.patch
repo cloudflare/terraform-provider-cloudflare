@@ -1,0 +1,14 @@
+diff --git a/internal/services/zone_setting/testdata/ciphers.tf b/internal/services/zone_setting/testdata/ciphers.tf
+new file mode 100644
+index 000000000..e2dd76beb
+--- /dev/null
++++ b/internal/services/zone_setting/testdata/ciphers.tf
+@@ -0,0 +1,8 @@
++resource "cloudflare_zone_setting" "%[1]s" {
++  zone_id = "%[2]s"
++  setting_id = "ciphers"
++  value = [
++    "ECDHE-ECDSA-AES128-GCM-SHA256",
++    "ECDHE-ECDSA-CHACHA20-POLY1305"
++  ]
++}

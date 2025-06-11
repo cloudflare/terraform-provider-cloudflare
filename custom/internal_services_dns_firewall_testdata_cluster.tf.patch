@@ -1,0 +1,16 @@
+diff --git a/internal/services/dns_firewall/testdata/cluster.tf b/internal/services/dns_firewall/testdata/cluster.tf
+new file mode 100644
+index 000000000..9f9e7b84e
+--- /dev/null
++++ b/internal/services/dns_firewall/testdata/cluster.tf
+@@ -0,0 +1,10 @@
++resource "cloudflare_dns_firewall" "%[1]s" {
++  account_id = "%[2]s"
++  name = "%[3]s"
++  upstream_ips = ["%[4]s"]
++  ratelimit = %[5]s
++
++  attack_mitigation = {
++    enabled = false
++  }
++}

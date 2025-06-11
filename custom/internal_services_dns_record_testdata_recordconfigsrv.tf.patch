@@ -1,0 +1,22 @@
+diff --git a/internal/services/dns_record/testdata/recordconfigsrv.tf b/internal/services/dns_record/testdata/recordconfigsrv.tf
+new file mode 100644
+index 000000000..7a56bb4f7
+--- /dev/null
++++ b/internal/services/dns_record/testdata/recordconfigsrv.tf
+@@ -0,0 +1,16 @@
++
++resource "cloudflare_dns_record" "%[2]s" {
++  zone_id = "%[1]s"
++  name = "_xmpp-client._tcp.%[2]s.%[3]s"
++  priority = 5
++  data = {
++    priority = 5
++    weight = 0
++    port = 5222
++    target = "talk.l.google.com"
++    proto = "_tcp"
++    name = "%[2]s.%[3]s"
++}
++  type = "SRV"
++  ttl = 3600
++}

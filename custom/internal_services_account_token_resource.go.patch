@@ -1,0 +1,36 @@
+diff --git a/internal/services/account_token/resource.go b/internal/services/account_token/resource.go
+index 7d6e8d494..5652bcafa 100644
+--- a/internal/services/account_token/resource.go
++++ b/internal/services/account_token/resource.go
+@@ -111,6 +111,7 @@ func (r *AccountTokenResource) Update(ctx context.Context, req resource.UpdateRe
+ 	if resp.Diagnostics.HasError() {
+ 		return
+ 	}
++	tokenValue := state.Value
+ 
+ 	dataBytes, err := data.MarshalJSONForUpdate(*state)
+ 	if err != nil {
+@@ -140,6 +141,7 @@ func (r *AccountTokenResource) Update(ctx context.Context, req resource.UpdateRe
+ 		return
+ 	}
+ 	data = &env.Result
++	data.Value = tokenValue
+ 
+ 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+ }
+@@ -153,6 +155,7 @@ func (r *AccountTokenResource) Read(ctx context.Context, req resource.ReadReques
+ 		return
+ 	}
+ 
++	tokenValue := data.Value
+ 	res := new(http.Response)
+ 	env := AccountTokenResultEnvelope{*data}
+ 	_, err := r.client.Accounts.Tokens.Get(
+@@ -180,6 +183,7 @@ func (r *AccountTokenResource) Read(ctx context.Context, req resource.ReadReques
+ 		return
+ 	}
+ 	data = &env.Result
++	data.Value = tokenValue
+ 
+ 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+ }

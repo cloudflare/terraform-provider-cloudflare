@@ -1,0 +1,10 @@
+diff --git a/internal/services/observatory_scheduled_test/testdata/observatoryscheduledtest.tf b/internal/services/observatory_scheduled_test/testdata/observatoryscheduledtest.tf
+new file mode 100644
+index 000000000..49a273f79
+--- /dev/null
++++ b/internal/services/observatory_scheduled_test/testdata/observatoryscheduledtest.tf
+@@ -0,0 +1,4 @@
++resource "cloudflare_observatory_scheduled_test" "%[1]s" {
++  zone_id   = "%[2]s"
++  url       = urlencode("%[3]s/%[1]s")
++}

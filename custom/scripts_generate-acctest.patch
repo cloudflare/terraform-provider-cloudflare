@@ -1,0 +1,13 @@
+diff --git a/scripts/generate-acctest b/scripts/generate-acctest
+new file mode 100755
+index 000000000..8a63ec31f
+--- /dev/null
++++ b/scripts/generate-acctest
+@@ -0,0 +1,7 @@
++#!/usr/bin/env bash
++
++set -e
++
++cd "$(dirname "$0")/.."
++
++go run tools/acctestgen/main.go "$@"

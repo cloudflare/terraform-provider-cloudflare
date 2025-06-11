@@ -1,0 +1,15 @@
+diff --git a/internal/services/custom_hostname/testdata/customhostnamewaitforactive.tf b/internal/services/custom_hostname/testdata/customhostnamewaitforactive.tf
+new file mode 100644
+index 000000000..38ca02bd3
+--- /dev/null
++++ b/internal/services/custom_hostname/testdata/customhostnamewaitforactive.tf
+@@ -0,0 +1,9 @@
++
++resource "cloudflare_custom_hostname" "%[2]s" {
++  zone_id = "%[1]s"
++  hostname = "%[2]s.%[3]s"
++  ssl = {
++    method = "txt"
++    type = "dv"
++  }
++}

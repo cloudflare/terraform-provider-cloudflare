@@ -1,0 +1,25 @@
+diff --git a/internal/services/ruleset/testdata/rulesettwocustomrulesreversed.tf b/internal/services/ruleset/testdata/rulesettwocustomrulesreversed.tf
+new file mode 100644
+index 000000000..61f3a6d72
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesettwocustomrulesreversed.tf
+@@ -0,0 +1,18 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[2]s"
++  name        = "Terraform provider test"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_request_firewall_custom"
++  rules = [{
++    action     = "challenge"
++    enabled    = true
++    expression = "(http.request.uri.path eq \"/login\")"
++    },
++    {
++      action     = "log"
++      enabled    = true
++      expression = "(http.request.uri.path eq \"/admin\")"
++  }]
++}
+\ No newline at end of file

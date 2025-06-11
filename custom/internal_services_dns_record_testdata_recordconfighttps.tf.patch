@@ -1,0 +1,18 @@
+diff --git a/internal/services/dns_record/testdata/recordconfighttps.tf b/internal/services/dns_record/testdata/recordconfighttps.tf
+new file mode 100644
+index 000000000..cc48a26fe
+--- /dev/null
++++ b/internal/services/dns_record/testdata/recordconfighttps.tf
+@@ -0,0 +1,12 @@
++
++resource "cloudflare_dns_record" "%[2]s" {
++	zone_id = "%[1]s"
++	name = "%[2]s.%[3]s"
++	type = "HTTPS"
++	data = {
++  priority = "1"
++		target   = "."
++		value    = "alpn=\"h2\""
++}
++	ttl = 300
++}

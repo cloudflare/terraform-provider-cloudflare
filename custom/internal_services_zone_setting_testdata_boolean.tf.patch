@@ -1,0 +1,11 @@
+diff --git a/internal/services/zone_setting/testdata/boolean.tf b/internal/services/zone_setting/testdata/boolean.tf
+new file mode 100644
+index 000000000..6af42cd30
+--- /dev/null
++++ b/internal/services/zone_setting/testdata/boolean.tf
+@@ -0,0 +1,5 @@
++resource "cloudflare_zone_setting" "%[1]s" {
++  zone_id = "%[2]s"
++  setting_id = "http3"
++  value = true
++}

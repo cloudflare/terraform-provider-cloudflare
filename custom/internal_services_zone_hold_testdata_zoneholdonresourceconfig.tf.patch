@@ -1,0 +1,10 @@
+diff --git a/internal/services/zone_hold/testdata/zoneholdonresourceconfig.tf b/internal/services/zone_hold/testdata/zoneholdonresourceconfig.tf
+new file mode 100644
+index 000000000..939dcdf75
+--- /dev/null
++++ b/internal/services/zone_hold/testdata/zoneholdonresourceconfig.tf
+@@ -0,0 +1,4 @@
++
++resource "cloudflare_zone_hold" "%s" {
++	zone_id = "%s"
++}

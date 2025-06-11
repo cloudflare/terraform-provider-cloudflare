@@ -1,0 +1,24 @@
+diff --git a/internal/services/spectrum_application/testdata/spectrumapplicationconfigbasic.tf b/internal/services/spectrum_application/testdata/spectrumapplicationconfigbasic.tf
+new file mode 100644
+index 000000000..f305efbe3
+--- /dev/null
++++ b/internal/services/spectrum_application/testdata/spectrumapplicationconfigbasic.tf
+@@ -0,0 +1,18 @@
++
++resource "cloudflare_spectrum_application" "%[3]s" {
++  zone_id  = "%[1]s"
++  protocol = "tcp/22"
++
++  dns = {
++    type = "CNAME"
++    name = "%[3]s.%[2]s"
++  }
++
++  origin_direct = ["tcp://128.66.0.1:23"]
++  origin_port   = 22
++
++  edge_ips = {
++    type = "dynamic"
++  	connectivity = "all"
++  }
++}

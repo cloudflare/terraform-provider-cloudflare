@@ -1,0 +1,14 @@
+diff --git a/internal/services/dns_record/testdata/recordconfignotags.tf b/internal/services/dns_record/testdata/recordconfignotags.tf
+new file mode 100644
+index 000000000..6c2c77c9f
+--- /dev/null
++++ b/internal/services/dns_record/testdata/recordconfignotags.tf
+@@ -0,0 +1,8 @@
++
++resource "cloudflare_dns_record" "%[3]s" {
++	zone_id = "%[1]s"
++	name = "%[2]s.%[4]s"
++	content = "192.168.0.10"
++	type = "A"
++	ttl = 3600
++}

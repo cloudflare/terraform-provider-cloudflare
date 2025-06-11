@@ -1,0 +1,28 @@
+diff --git a/internal/services/pages_project/testdata/pagesprojectsource.tf b/internal/services/pages_project/testdata/pagesprojectsource.tf
+new file mode 100644
+index 000000000..2aa1ec168
+--- /dev/null
++++ b/internal/services/pages_project/testdata/pagesprojectsource.tf
+@@ -0,0 +1,21 @@
++
++		resource "cloudflare_pages_project" "%[1]s" {
++		  account_id = "%[2]s"
++		  name = "%[1]s"
++		  production_branch = "main"
++		  source = [{
++			type = "github"
++			config = [{
++				owner = "%[4]s"
++				repo_name = "%[5]s"
++				production_branch = "main"
++				pr_comments_enabled = true
++				deployments_enabled = true
++				production_deployment_enabled = true
++				preview_deployment_setting = "custom"
++				preview_branch_includes = ["dev","preview"]
++				preview_branch_excludes = ["main", "prod"]
++			}]
++		  }]
++		}
++		
+\ No newline at end of file

@@ -1,0 +1,70 @@
+diff --git a/internal/services/zero_trust_access_identity_provider/resource.go b/internal/services/zero_trust_access_identity_provider/resource.go
+index 3d8cf0441..5c42bdb92 100644
+--- a/internal/services/zero_trust_access_identity_provider/resource.go
++++ b/internal/services/zero_trust_access_identity_provider/resource.go
+@@ -14,6 +14,7 @@ import (
+ 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+ 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
+ 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
++	"github.com/hashicorp/terraform-plugin-framework/path"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource"
+ 	"github.com/hashicorp/terraform-plugin-framework/types"
+ )
+@@ -58,12 +59,17 @@ func (r *ZeroTrustAccessIdentityProviderResource) Configure(ctx context.Context,
+ func (r *ZeroTrustAccessIdentityProviderResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+ 	var data *ZeroTrustAccessIdentityProviderModel
+ 
++	secret := types.StringNull()
++	req.Config.GetAttribute(ctx, path.Root("config").AtName("client_secret"), &secret)
++
+ 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+ 
+ 	if resp.Diagnostics.HasError() {
+ 		return
+ 	}
+ 
++	data.Config.ClientSecret = secret
++
+ 	dataBytes, err := data.MarshalJSON()
+ 	if err != nil {
+ 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+@@ -97,12 +103,15 @@ func (r *ZeroTrustAccessIdentityProviderResource) Create(ctx context.Context, re
+ 		return
+ 	}
+ 	data = &env.Result
++	data.Config.ClientSecret = types.StringNull()
+ 
+ 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+ }
+ 
+ func (r *ZeroTrustAccessIdentityProviderResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+ 	var data *ZeroTrustAccessIdentityProviderModel
++	secret := types.StringNull()
++	req.State.GetAttribute(ctx, path.Root("scim_config").AtName("secret"), &secret)
+ 
+ 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+ 
+@@ -154,10 +163,15 @@ func (r *ZeroTrustAccessIdentityProviderResource) Update(ctx context.Context, re
+ 	data = &env.Result
+ 
+ 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
++	if !secret.IsNull() {
++		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("scim_config").AtName("secret"), secret)...)
++	}
+ }
+ 
+ func (r *ZeroTrustAccessIdentityProviderResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+ 	var data *ZeroTrustAccessIdentityProviderModel
++	secret := types.StringNull()
++	req.State.GetAttribute(ctx, path.Root("scim_config").AtName("secret"), &secret)
+ 
+ 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+ 
+@@ -200,6 +214,7 @@ func (r *ZeroTrustAccessIdentityProviderResource) Read(ctx context.Context, req
+ 	data = &env.Result
+ 
+ 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
++	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("scim_config").AtName("secret"), secret)...)
+ }
+ 
+ func (r *ZeroTrustAccessIdentityProviderResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

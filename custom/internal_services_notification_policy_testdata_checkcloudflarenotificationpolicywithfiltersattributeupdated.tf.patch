@@ -1,0 +1,24 @@
+diff --git a/internal/services/notification_policy/testdata/checkcloudflarenotificationpolicywithfiltersattributeupdated.tf b/internal/services/notification_policy/testdata/checkcloudflarenotificationpolicywithfiltersattributeupdated.tf
+new file mode 100644
+index 000000000..9232a0b82
+--- /dev/null
++++ b/internal/services/notification_policy/testdata/checkcloudflarenotificationpolicywithfiltersattributeupdated.tf
+@@ -0,0 +1,17 @@
++
++resource "cloudflare_notification_policy" "%[1]s" {
++  name        = "%[2]s"
++  account_id  = "%[4]s"
++  description = "%[3]s"
++  enabled     =  true
++  alert_type  = "billing_usage_alert"
++  mechanisms = {
++    "email": [{"id": "test@example.com"}]
++  }
++  filters = {
++    product = [
++      "worker_requests",
++    ]
++    limit = ["100"]
++  }
++}
+\ No newline at end of file

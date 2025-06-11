@@ -1,0 +1,18 @@
+diff --git a/internal/services/page_rule/testdata/pageruleconfigforwardingandothers.tf b/internal/services/page_rule/testdata/pageruleconfigforwardingandothers.tf
+new file mode 100644
+index 000000000..ea122b4cc
+--- /dev/null
++++ b/internal/services/page_rule/testdata/pageruleconfigforwardingandothers.tf
+@@ -0,0 +1,12 @@
++
++resource "cloudflare_page_rule" "%[3]s" {
++  zone_id = "%[1]s"
++  target  = "%[2]s"
++  actions = {
++    disable_security = true
++    forwarding_url = {
++      url         = "http://%[4]s/forward"
++      status_code = 301
++    }
++  }
++}

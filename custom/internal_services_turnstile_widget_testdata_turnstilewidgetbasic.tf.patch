@@ -1,0 +1,16 @@
+diff --git a/internal/services/turnstile_widget/testdata/turnstilewidgetbasic.tf b/internal/services/turnstile_widget/testdata/turnstilewidgetbasic.tf
+new file mode 100644
+index 000000000..0ab5d3c71
+--- /dev/null
++++ b/internal/services/turnstile_widget/testdata/turnstilewidgetbasic.tf
+@@ -0,0 +1,9 @@
++
++  resource "cloudflare_turnstile_widget" "%[1]s" {
++    account_id     = "%[2]s"
++    name        = "%[1]s"
++	bot_fight_mode = false
++	domains = [ "example.com" ]
++	mode = "invisible"
++	region = "world"
++  }
+\ No newline at end of file

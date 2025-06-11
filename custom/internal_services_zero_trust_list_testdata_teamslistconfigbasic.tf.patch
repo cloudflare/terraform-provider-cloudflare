@@ -1,0 +1,14 @@
+diff --git a/internal/services/zero_trust_list/testdata/teamslistconfigbasic.tf b/internal/services/zero_trust_list/testdata/teamslistconfigbasic.tf
+new file mode 100644
+index 000000000..3c8ad8721
+--- /dev/null
++++ b/internal/services/zero_trust_list/testdata/teamslistconfigbasic.tf
+@@ -0,0 +1,8 @@
++
++resource "cloudflare_zero_trust_list" "%[1]s" {
++	account_id  = "%[2]s"
++	name        = "%[1]s"
++	description = "My description"
++	type        = "SERIAL"
++	items = [{ value = "asdf-1234"}, { value = "asdf-5678"}]
++}

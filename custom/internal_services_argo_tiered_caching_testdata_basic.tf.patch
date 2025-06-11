@@ -1,0 +1,10 @@
+diff --git a/internal/services/argo_tiered_caching/testdata/basic.tf b/internal/services/argo_tiered_caching/testdata/basic.tf
+new file mode 100644
+index 000000000..60e61666f
+--- /dev/null
++++ b/internal/services/argo_tiered_caching/testdata/basic.tf
+@@ -0,0 +1,4 @@
++resource "cloudflare_argo_tiered_caching" "%[2]s" {
++	zone_id = "%[1]s"
++  value   = "on"
++}

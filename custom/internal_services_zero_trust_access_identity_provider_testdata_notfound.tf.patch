@@ -1,0 +1,20 @@
+diff --git a/internal/services/zero_trust_access_identity_provider/testdata/notfound.tf b/internal/services/zero_trust_access_identity_provider/testdata/notfound.tf
+new file mode 100644
+index 000000000..38fae8223
+--- /dev/null
++++ b/internal/services/zero_trust_access_identity_provider/testdata/notfound.tf
+@@ -0,0 +1,14 @@
++data "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
++  account_id = "%[2]s"
++  identity_provider_id = "abcdef"
++}
++
++resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
++  account_id = "%[2]s"
++  name = "%[1]s"
++  type = "github"
++  config = {
++    client_id = "test"
++    client_secret = "secret"
++  }
++}

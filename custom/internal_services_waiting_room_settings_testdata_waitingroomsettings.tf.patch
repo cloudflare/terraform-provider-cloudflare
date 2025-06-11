@@ -1,0 +1,11 @@
+diff --git a/internal/services/waiting_room_settings/testdata/waitingroomsettings.tf b/internal/services/waiting_room_settings/testdata/waitingroomsettings.tf
+new file mode 100644
+index 000000000..1c9849b38
+--- /dev/null
++++ b/internal/services/waiting_room_settings/testdata/waitingroomsettings.tf
+@@ -0,0 +1,5 @@
++
++resource "cloudflare_waiting_room_settings" "%[1]s" {
++  zone_id                      = "%[2]s"
++  search_engine_crawler_bypass = true
++}

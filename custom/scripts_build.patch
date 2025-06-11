@@ -1,0 +1,19 @@
+diff --git a/scripts/build b/scripts/build
+index eec31ce16..e8239a956 100755
+--- a/scripts/build
++++ b/scripts/build
+@@ -2,4 +2,13 @@
+ 
+ set -e
+ 
+-go build -o terraform-provider-cloudflare
++cd "$(dirname "$0")/.."
++
++if [ -z "$1" ]; then
++  echo "Error: You must define a version number to inject into the build"
++  exit 1
++fi
++
++VERSION=$1
++echo "==> Building provider version $VERSION"
++go build -ldflags="-s -w -X main.version=$VERSION" -o terraform-provider-cloudflare

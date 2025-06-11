@@ -1,0 +1,17 @@
+diff --git a/internal/services/workers_kv/testdata/workerskvwithaccount.tf b/internal/services/workers_kv/testdata/workerskvwithaccount.tf
+new file mode 100644
+index 000000000..ba98a93f3
+--- /dev/null
++++ b/internal/services/workers_kv/testdata/workerskvwithaccount.tf
+@@ -0,0 +1,11 @@
++resource "cloudflare_workers_kv_namespace" "%[1]s" {
++	account_id = "%[4]s"
++	title = "%[1]s"
++}
++
++resource "cloudflare_workers_kv" "%[1]s" {
++	account_id = "%[4]s"
++	namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
++	key_name = "%[2]s"
++	value = "%[3]s"
++}

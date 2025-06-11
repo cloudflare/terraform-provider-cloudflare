@@ -1,0 +1,13 @@
+diff --git a/internal/services/cloud_connector_rules/schema.go b/internal/services/cloud_connector_rules/schema.go
+index ed86059c8..b4e6770ca 100644
+--- a/internal/services/cloud_connector_rules/schema.go
++++ b/internal/services/cloud_connector_rules/schema.go
+@@ -33,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 				NestedObject: schema.NestedAttributeObject{
+ 					Attributes: map[string]schema.Attribute{
+ 						"id": schema.StringAttribute{
+-							Optional: true,
++							Computed: true,
+ 						},
+ 						"description": schema.StringAttribute{
+ 							Optional: true,

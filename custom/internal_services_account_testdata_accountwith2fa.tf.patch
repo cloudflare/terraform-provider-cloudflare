@@ -1,0 +1,12 @@
+diff --git a/internal/services/account/testdata/accountwith2fa.tf b/internal/services/account/testdata/accountwith2fa.tf
+new file mode 100644
+index 000000000..51d0eb607
+--- /dev/null
++++ b/internal/services/account/testdata/accountwith2fa.tf
+@@ -0,0 +1,5 @@
++
++  resource "cloudflare_account" "%[1]s" {
++	  name = "%[2]s"
++	  enforce_twofactor = true
++  }
+\ No newline at end of file

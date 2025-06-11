@@ -1,0 +1,18 @@
+diff --git a/internal/services/zero_trust_tunnel_cloudflared/testdata/cloudflaretunnelmatchname.tf b/internal/services/zero_trust_tunnel_cloudflared/testdata/cloudflaretunnelmatchname.tf
+new file mode 100644
+index 000000000..e5e6589f1
+--- /dev/null
++++ b/internal/services/zero_trust_tunnel_cloudflared/testdata/cloudflaretunnelmatchname.tf
+@@ -0,0 +1,12 @@
++
++resource "cloudflare_zero_trust_tunnel_cloudflared" "%[2]s" {
++	account_id = "%[1]s"
++	name       = "%[2]s"
++	tunnel_secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
++}
++
++data "cloudflare_zero_trust_tunnel_cloudflared" "%[2]s" {
++	account_id = cloudflare_zero_trust_tunnel_cloudflared.%[2]s.account_id
++	name       = cloudflare_zero_trust_tunnel_cloudflared.%[2]s.name
++	depends_on = [cloudflare_zero_trust_tunnel_cloudflared.%[2]s]
++}

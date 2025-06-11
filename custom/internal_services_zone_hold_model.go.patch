@@ -1,0 +1,13 @@
+diff --git a/internal/services/zone_hold/model.go b/internal/services/zone_hold/model.go
+index afa80a616..e90e4e3b0 100644
+--- a/internal/services/zone_hold/model.go
++++ b/internal/services/zone_hold/model.go
+@@ -14,7 +14,7 @@ type ZoneHoldResultEnvelope struct {
+ type ZoneHoldModel struct {
+ 	ID                types.String `tfsdk:"id" json:"-,computed"`
+ 	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id,required"`
+-	HoldAfter         types.String `tfsdk:"hold_after" json:"hold_after,computed_optional"`
++	HoldAfter         types.String `tfsdk:"hold_after" json:"hold_after,computed_optional,"`
+ 	IncludeSubdomains types.Bool   `tfsdk:"include_subdomains" json:"include_subdomains,computed_optional,no_refresh"`
+ 	Hold              types.Bool   `tfsdk:"hold" json:"hold,computed"`
+ }

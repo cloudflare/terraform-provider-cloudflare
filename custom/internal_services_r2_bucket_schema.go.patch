@@ -1,0 +1,51 @@
+diff --git a/internal/services/r2_bucket/schema.go b/internal/services/r2_bucket/schema.go
+index 81990b97f..8416bc8af 100644
+--- a/internal/services/r2_bucket/schema.go
++++ b/internal/services/r2_bucket/schema.go
+@@ -50,6 +50,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 				},
+ 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
+ 			},
++			"jurisdiction": schema.StringAttribute{
++				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\".",
++				Optional:    true,
++				Computed:    true,
++				Default:     stringdefault.StaticString("default"),
++				Validators: []validator.String{
++					stringvalidator.OneOfCaseInsensitive(
++						"default",
++						"eu",
++						"fedramp",
++					),
++				},
++			},
+ 			"storage_class": schema.StringAttribute{
+ 				Description: "Storage class for newly uploaded objects, unless specified otherwise.\nAvailable values: \"Standard\", \"InfrequentAccess\".",
+ 				Computed:    true,
+@@ -57,25 +70,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 				Validators: []validator.String{
+ 					stringvalidator.OneOfCaseInsensitive("Standard", "InfrequentAccess"),
+ 				},
+-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
+-				Default:       stringdefault.StaticString("Standard"),
++				Default: stringdefault.StaticString("Standard"),
+ 			},
+ 			"creation_date": schema.StringAttribute{
+ 				Description: "Creation timestamp.",
+ 				Computed:    true,
+ 			},
+-			"jurisdiction": schema.StringAttribute{
+-				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\".",
+-				Computed:    true,
+-				Validators: []validator.String{
+-					stringvalidator.OneOfCaseInsensitive(
+-						"default",
+-						"eu",
+-						"fedramp",
+-					),
+-				},
+-				Default: stringdefault.StaticString("default"),
+-			},
+ 		},
+ 	}
+ }

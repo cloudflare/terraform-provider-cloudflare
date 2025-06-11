@@ -1,0 +1,15 @@
+diff --git a/internal/services/bot_management/testdata/cloudflarebotmanagemententsubscription.tf b/internal/services/bot_management/testdata/cloudflarebotmanagemententsubscription.tf
+new file mode 100644
+index 000000000..2f1880a2f
+--- /dev/null
++++ b/internal/services/bot_management/testdata/cloudflarebotmanagemententsubscription.tf
+@@ -0,0 +1,9 @@
++
++	resource "cloudflare_bot_management" "%[1]s" {
++		zone_id = "%[2]s"
++
++		enable_js = "%[3]t"
++
++		suppress_session_score = "%[4]t"
++		auto_update_model = "%[5]t"
++	}

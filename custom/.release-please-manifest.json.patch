@@ -1,0 +1,10 @@
+diff --git a/.release-please-manifest.json b/.release-please-manifest.json
+index f425d9706..9bf38528e 100644
+--- a/.release-please-manifest.json
++++ b/.release-please-manifest.json
+@@ -1,3 +1,3 @@
+ {
+   ".": "5.5.0"
+-}
+\ No newline at end of file
++}

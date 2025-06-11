@@ -1,0 +1,33 @@
+diff --git a/templates/resources/zone.md.tmpl b/templates/resources/zone.md.tmpl
+new file mode 100644
+index 000000000..fd0d93dae
+--- /dev/null
++++ b/templates/resources/zone.md.tmpl
+@@ -0,0 +1,27 @@
++---
++page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
++subcategory: ""
++description: |-
++{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
++---
++
++# {{.Name}} ({{.Type}})
++
++{{ .Description | trimspace }}
++
++-> If you are attempting to sign up a subdomain of a zone you must first have Subdomain Support entitlement for your account.
++
++{{ if .HasExample -}}
++## Example Usage
++
++{{codefile "terraform" .ExampleFile}}
++{{- end }}
++{{ .SchemaMarkdown | trimspace }}
++
++{{ if .HasImport -}}
++## Import
++
++Import is supported using the following syntax:
++
++{{codefile "shell" .ImportFile}}
++{{- end }}

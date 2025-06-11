@@ -1,0 +1,44 @@
+diff --git a/internal/services/r2_custom_domain/resource.go b/internal/services/r2_custom_domain/resource.go
+index 4897f0f9e..02ce81352 100644
+--- a/internal/services/r2_custom_domain/resource.go
++++ b/internal/services/r2_custom_domain/resource.go
+@@ -12,6 +12,7 @@ import (
+ 	"github.com/cloudflare/cloudflare-go/v4/option"
+ 	"github.com/cloudflare/cloudflare-go/v4/r2"
+ 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
++	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+ 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource"
+ )
+@@ -74,6 +75,7 @@ func (r *R2CustomDomainResource) Create(ctx context.Context, req resource.Create
+ 		r2.BucketDomainCustomNewParams{
+ 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+ 		},
++		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+ 		option.WithRequestBody("application/json", dataBytes),
+ 		option.WithResponseBodyInto(&res),
+ 		option.WithMiddleware(logging.Middleware(ctx)),
+@@ -124,6 +126,7 @@ func (r *R2CustomDomainResource) Update(ctx context.Context, req resource.Update
+ 		r2.BucketDomainCustomUpdateParams{
+ 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+ 		},
++		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+ 		option.WithRequestBody("application/json", dataBytes),
+ 		option.WithResponseBodyInto(&res),
+ 		option.WithMiddleware(logging.Middleware(ctx)),
+@@ -161,6 +164,7 @@ func (r *R2CustomDomainResource) Read(ctx context.Context, req resource.ReadRequ
+ 		r2.BucketDomainCustomGetParams{
+ 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+ 		},
++		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+ 		option.WithResponseBodyInto(&res),
+ 		option.WithMiddleware(logging.Middleware(ctx)),
+ 	)
+@@ -200,6 +204,7 @@ func (r *R2CustomDomainResource) Delete(ctx context.Context, req resource.Delete
+ 		r2.BucketDomainCustomDeleteParams{
+ 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+ 		},
++		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+ 		option.WithMiddleware(logging.Middleware(ctx)),
+ 	)
+ 	if err != nil {

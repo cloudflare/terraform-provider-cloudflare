@@ -1,0 +1,19 @@
+diff --git a/internal/services/zero_trust_access_application/testdata/accessapplicationwithmissingcorsmethods.tf b/internal/services/zero_trust_access_application/testdata/accessapplicationwithmissingcorsmethods.tf
+new file mode 100644
+index 000000000..8305ca2b7
+--- /dev/null
++++ b/internal/services/zero_trust_access_application/testdata/accessapplicationwithmissingcorsmethods.tf
+@@ -0,0 +1,12 @@
++
++    resource "cloudflare_zero_trust_access_application" "%[1]s" {
++      name    = "%[1]s-updated"
++      zone_id = "%[3]s"
++      domain  = "%[1]s.%[2]s"
++      type    = "self_hosted"
++
++    cors_headers = {
++  allow_all_origins = true
++}
++  }
++  
+\ No newline at end of file

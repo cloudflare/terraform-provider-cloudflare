@@ -1,0 +1,30 @@
+diff --git a/internal/services/turnstile_widget/schema.go b/internal/services/turnstile_widget/schema.go
+index eeba82596..df42e2a91 100644
+--- a/internal/services/turnstile_widget/schema.go
++++ b/internal/services/turnstile_widget/schema.go
+@@ -58,10 +58,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 			"bot_fight_mode": schema.BoolAttribute{
+ 				Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).",
+ 				Optional:    true,
++				Computed:    true,
+ 			},
+ 			"clearance_level": schema.StringAttribute{
+ 				Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\nAvailable values: \"no_clearance\", \"jschallenge\", \"managed\", \"interactive\".",
+ 				Optional:    true,
++				Computed:    true,
+ 				Validators: []validator.String{
+ 					stringvalidator.OneOfCaseInsensitive(
+ 						"no_clearance",
+@@ -74,10 +76,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 			"ephemeral_id": schema.BoolAttribute{
+ 				Description: "Return the Ephemeral ID in /siteverify (ENT only).",
+ 				Optional:    true,
++				Computed:    true,
+ 			},
+ 			"offlabel": schema.BoolAttribute{
+ 				Description: "Do not show any Cloudflare branding on the widget (ENT only).",
+ 				Optional:    true,
++				Computed:    true,
+ 			},
+ 			"region": schema.StringAttribute{
+ 				Description: "Region where this widget can be used. This cannot be changed after creation.\nAvailable values: \"world\", \"china\".",

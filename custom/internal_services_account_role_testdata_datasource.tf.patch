@@ -1,0 +1,9 @@
+diff --git a/internal/services/account_role/testdata/datasource.tf b/internal/services/account_role/testdata/datasource.tf
+new file mode 100644
+index 000000000..e4b5694a6
+--- /dev/null
++++ b/internal/services/account_role/testdata/datasource.tf
+@@ -0,0 +1,3 @@
++data "cloudflare_account_roles" "%[1]s" {
++  account_id = "%[2]s"
++}

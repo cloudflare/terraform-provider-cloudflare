@@ -1,0 +1,18 @@
+diff --git a/examples/resources/cloudflare_page_rule/resource.tf b/examples/resources/cloudflare_page_rule/resource.tf
+index 46466c687..8a7362c93 100644
+--- a/examples/resources/cloudflare_page_rule/resource.tf
++++ b/examples/resources/cloudflare_page_rule/resource.tf
+@@ -1,5 +1,12 @@
+ resource "cloudflare_page_rule" "example_page_rule" {
+   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+-  priority = 0
++  target = "example.com/*"
++  priority = 1
+   status = "active"
++  actions = {
++    forwarding_url = {
++      url = "https://example.com/foo"
++      status_code = 301
++    }
++  }
+ }

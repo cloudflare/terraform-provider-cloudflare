@@ -1,0 +1,11 @@
+diff --git a/internal/services/dns_zone_transfers_acl/testdata/acl.tf b/internal/services/dns_zone_transfers_acl/testdata/acl.tf
+new file mode 100644
+index 000000000..1c6b9beb6
+--- /dev/null
++++ b/internal/services/dns_zone_transfers_acl/testdata/acl.tf
+@@ -0,0 +1,5 @@
++resource "cloudflare_dns_zone_transfers_acl" "%[1]s" {
++  account_id = "%[2]s"
++  name = "%[3]s"
++  ip_range = "%[4]s"
++}

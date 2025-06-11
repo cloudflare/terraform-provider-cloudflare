@@ -1,0 +1,21 @@
+diff --git a/internal/services/email_routing_rule/testdata/emailroutingruleconfigdrop.tf b/internal/services/email_routing_rule/testdata/emailroutingruleconfigdrop.tf
+new file mode 100644
+index 000000000..55aa58bad
+--- /dev/null
++++ b/internal/services/email_routing_rule/testdata/emailroutingruleconfigdrop.tf
+@@ -0,0 +1,15 @@
++resource "cloudflare_email_routing_rule" "%[1]s" {
++  zone_id = "%[2]s"
++  enabled = "%[3]t"
++  priority = "%[4]d"
++  name = "%[1]s"
++  matchers = [{
++    field  = "to"
++    type = "literal"
++    value = "test@example.com"
++  }]
++  actions = [{
++    type = "drop"
++    value = []
++  }]
++}

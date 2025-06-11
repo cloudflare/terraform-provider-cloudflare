@@ -1,0 +1,89 @@
+diff --git a/internal/services/cloud_connector_rules/data_source_schema.go b/internal/services/cloud_connector_rules/data_source_schema.go
+index 1d704dbed..de7360550 100644
+--- a/internal/services/cloud_connector_rules/data_source_schema.go
++++ b/internal/services/cloud_connector_rules/data_source_schema.go
+@@ -5,7 +5,6 @@ package cloud_connector_rules
+ import (
+ 	"context"
+ 
+-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+ 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+ 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+ 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+@@ -21,38 +20,47 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
+ 				Description: "Identifier.",
+ 				Required:    true,
+ 			},
+-			"description": schema.StringAttribute{
+-				Computed: true,
+-			},
+-			"enabled": schema.BoolAttribute{
+-				Computed: true,
+-			},
+-			"expression": schema.StringAttribute{
+-				Computed: true,
+-			},
+ 			"id": schema.StringAttribute{
+ 				Computed: true,
+ 			},
+-			"provider": schema.StringAttribute{
+-				Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"cloudflare_r2\", \"gcp_storage\", \"azure_storage\".",
+-				Computed:    true,
+-				Validators: []validator.String{
+-					stringvalidator.OneOfCaseInsensitive(
+-						"aws_s3",
+-						"cloudflare_r2",
+-						"gcp_storage",
+-						"azure_storage",
+-					),
+-				},
+-			},
+-			"parameters": schema.SingleNestedAttribute{
+-				Description: "Parameters of Cloud Connector Rule",
+-				Computed:    true,
+-				CustomType:  customfield.NewNestedObjectType[CloudConnectorRulesParametersDataSourceModel](ctx),
+-				Attributes: map[string]schema.Attribute{
+-					"host": schema.StringAttribute{
+-						Description: "Host to perform Cloud Connection to",
+-						Computed:    true,
++			"rules": schema.ListNestedAttribute{
++				Computed: true,
++				NestedObject: schema.NestedAttributeObject{
++					Attributes: map[string]schema.Attribute{
++						"id": schema.StringAttribute{
++							Computed: true,
++						},
++						"description": schema.StringAttribute{
++							Computed: true,
++						},
++						"enabled": schema.BoolAttribute{
++							Computed: true,
++						},
++						"expression": schema.StringAttribute{
++							Computed: true,
++						},
++						"parameters": schema.SingleNestedAttribute{
++							Description: "Parameters of Cloud Connector Rule",
++							Computed:    true,
++							Attributes: map[string]schema.Attribute{
++								"host": schema.StringAttribute{
++									Description: "Host to perform Cloud Connection to",
++									Computed:    true,
++								},
++							},
++						},
++						"provider": schema.StringAttribute{
++							Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"cloudflare_r2\", \"gcp_storage\", \"azure_storage\".",
++							Computed:    true,
++							Validators: []validator.String{
++								stringvalidator.OneOfCaseInsensitive(
++									"aws_s3",
++									"cloudflare_r2",
++									"gcp_storage",
++									"azure_storage",
++								),
++							},
++						},
+ 					},
+ 				},
+ 			},

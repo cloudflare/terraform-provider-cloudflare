@@ -1,0 +1,12 @@
+diff --git a/internal/services/notification_policy_webhooks/testdata/checkcloudflarenotificationpolicywebhooks.tf b/internal/services/notification_policy_webhooks/testdata/checkcloudflarenotificationpolicywebhooks.tf
+new file mode 100644
+index 000000000..b4abf0785
+--- /dev/null
++++ b/internal/services/notification_policy_webhooks/testdata/checkcloudflarenotificationpolicywebhooks.tf
+@@ -0,0 +1,6 @@
++resource "cloudflare_notification_policy_webhooks" "%[1]s" {
++    account_id  = "%[2]s"
++    name        = "my webhooks destination for receiving Cloudflare notifications"
++    url         = "https://httpbin.org/post"
++    secret      =  "my-secret"
++}

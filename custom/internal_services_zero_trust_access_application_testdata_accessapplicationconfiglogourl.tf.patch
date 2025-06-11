@@ -1,0 +1,15 @@
+diff --git a/internal/services/zero_trust_access_application/testdata/accessapplicationconfiglogourl.tf b/internal/services/zero_trust_access_application/testdata/accessapplicationconfiglogourl.tf
+new file mode 100644
+index 000000000..6ee155469
+--- /dev/null
++++ b/internal/services/zero_trust_access_application/testdata/accessapplicationconfiglogourl.tf
+@@ -0,0 +1,9 @@
++
++resource "cloudflare_zero_trust_access_application" "%[1]s" {
++  zone_id                    = "%[2]s"
++  name                       = "%[1]s"
++  domain                     = "%[1]s.%[3]s"
++  type                       = "self_hosted"
++  session_duration           = "24h"
++  logo_url          		 = "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
++}

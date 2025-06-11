@@ -1,0 +1,13 @@
+diff --git a/internal/services/email_routing_settings/testdata/emailroutingsettingsconfig.tf b/internal/services/email_routing_settings/testdata/emailroutingsettingsconfig.tf
+new file mode 100644
+index 000000000..5340cc727
+--- /dev/null
++++ b/internal/services/email_routing_settings/testdata/emailroutingsettingsconfig.tf
+@@ -0,0 +1,6 @@
++
++		resource "cloudflare_email_routing_settings" "%[1]s" {
++		  zone_id = "%[2]s"
++		  enabled = "%[3]t"
++		}
++		
+\ No newline at end of file

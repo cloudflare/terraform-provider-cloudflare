@@ -1,0 +1,18 @@
+diff --git a/internal/services/dns_record/testdata/recordconfigcaa.tf b/internal/services/dns_record/testdata/recordconfigcaa.tf
+new file mode 100644
+index 000000000..0ec9b29ca
+--- /dev/null
++++ b/internal/services/dns_record/testdata/recordconfigcaa.tf
+@@ -0,0 +1,12 @@
++
++resource "cloudflare_dns_record" "%[1]s" {
++  zone_id = "%[2]s"
++  name = "%[3]s"
++  data = {
++  flags = "0"
++    tag   = "issue"
++    value = "letsencrypt.org"
++  }
++  type = "CAA"
++  ttl = %[4]d
++}

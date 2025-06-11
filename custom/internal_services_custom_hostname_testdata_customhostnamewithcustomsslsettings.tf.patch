@@ -1,0 +1,24 @@
+diff --git a/internal/services/custom_hostname/testdata/customhostnamewithcustomsslsettings.tf b/internal/services/custom_hostname/testdata/customhostnamewithcustomsslsettings.tf
+new file mode 100644
+index 000000000..c2989094d
+--- /dev/null
++++ b/internal/services/custom_hostname/testdata/customhostnamewithcustomsslsettings.tf
+@@ -0,0 +1,18 @@
++
++resource "cloudflare_custom_hostname" "%[2]s" {
++  zone_id = "%[1]s"
++  hostname = "%[2]s.%[3]s"
++  ssl = {
++    method = "http"
++    type = "dv"
++    settings = {
++      http2 = "off"
++      min_tls_version = "1.2"
++      ciphers = [
++        "ECDHE-RSA-AES128-GCM-SHA256",
++        "AES128-SHA"
++      ]
++      early_hints = "off"
++    }
++  }
++}

@@ -1,0 +1,15 @@
+diff --git a/internal/services/pages_project/testdata/pagesprojectdirectupload.tf b/internal/services/pages_project/testdata/pagesprojectdirectupload.tf
+new file mode 100644
+index 000000000..5e6e3db83
+--- /dev/null
++++ b/internal/services/pages_project/testdata/pagesprojectdirectupload.tf
+@@ -0,0 +1,8 @@
++
++		resource "cloudflare_pages_project" "%[1]s" {
++		  account_id = "%[2]s"
++		  name = "%[1]s"
++		  production_branch = "main"
++		}
++
++		
+\ No newline at end of file

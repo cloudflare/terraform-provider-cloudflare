@@ -1,0 +1,12 @@
+diff --git a/internal/services/authenticated_origin_pulls/testdata/authenticatedoriginpullsglobalconfig.tf b/internal/services/authenticated_origin_pulls/testdata/authenticatedoriginpullsglobalconfig.tf
+new file mode 100644
+index 000000000..0c6786035
+--- /dev/null
++++ b/internal/services/authenticated_origin_pulls/testdata/authenticatedoriginpullsglobalconfig.tf
+@@ -0,0 +1,5 @@
++
++  resource "cloudflare_authenticated_origin_pulls" "%[2]s" {
++	  zone_id        = "%[1]s"
++	  enabled = true
++  }
+\ No newline at end of file

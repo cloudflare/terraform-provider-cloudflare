@@ -1,0 +1,21 @@
+diff --git a/internal/services/zero_trust_access_application/testdata/data_accessapplicationaccountname.tf b/internal/services/zero_trust_access_application/testdata/data_accessapplicationaccountname.tf
+new file mode 100644
+index 000000000..6f1f75fe4
+--- /dev/null
++++ b/internal/services/zero_trust_access_application/testdata/data_accessapplicationaccountname.tf
+@@ -0,0 +1,15 @@
++
++	resource "cloudflare_zero_trust_access_application" "%[1]s" {
++		account_id = "%[2]s"
++		name = "%[1]s"
++		domain = "%[1]s.%[3]s"
++		type = "self_hosted"
++	}
++
++	data "cloudflare_zero_trust_access_application" "%[1]s" {
++  	account_id = "%[2]s"
++    filter = {
++     	name = "%[1]s"
++  	}
++		depends_on = [cloudflare_zero_trust_access_application.%[1]s]
++	}

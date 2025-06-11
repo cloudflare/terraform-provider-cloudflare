@@ -1,0 +1,32 @@
+diff --git a/internal/services/zone_setting/schema.go b/internal/services/zone_setting/schema.go
+index e2ebeb71a..06dcd003e 100644
+--- a/internal/services/zone_setting/schema.go
++++ b/internal/services/zone_setting/schema.go
+@@ -5,7 +5,6 @@ package zone_setting
+ import (
+ 	"context"
+ 
+-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+ 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+@@ -34,16 +33,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 				Required:      true,
+ 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+ 			},
+-			"value": schema.StringAttribute{
+-				Description: "Value of the zone setting.",
+-				Optional:    true,
+-				CustomType:  jsontypes.NormalizedType{},
++			"value": schema.DynamicAttribute{
++				Description: "Current value of the zone setting.",
++				Required:    true,
+ 			},
+ 			"enabled": schema.BoolAttribute{
+ 				Description: "ssl-recommender enrollment setting.",
+ 				Computed:    true,
+ 				Optional:    true,
+-				Default:     booldefault.StaticBool(false),
+ 			},
+ 			"editable": schema.BoolAttribute{
+ 				Description: "Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).",

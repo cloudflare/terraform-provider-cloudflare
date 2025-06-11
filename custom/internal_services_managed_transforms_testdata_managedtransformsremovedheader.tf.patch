@@ -1,0 +1,20 @@
+diff --git a/internal/services/managed_transforms/testdata/managedtransformsremovedheader.tf b/internal/services/managed_transforms/testdata/managedtransformsremovedheader.tf
+new file mode 100644
+index 000000000..b6553ae4b
+--- /dev/null
++++ b/internal/services/managed_transforms/testdata/managedtransformsremovedheader.tf
+@@ -0,0 +1,13 @@
++
++  resource "cloudflare_managed_transforms" "%[1]s" {
++	zone_id  = "%[2]s"
++	managed_request_headers = [{
++		id = "add_true_client_ip_headers"
++		enabled = true
++	}]
++
++	managed_response_headers = [{
++		id = "add_security_headers"
++		enabled = true
++	}]
++  }
+\ No newline at end of file

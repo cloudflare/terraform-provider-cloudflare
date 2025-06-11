@@ -1,0 +1,13 @@
+diff --git a/internal/services/email_routing_dns/testdata/emailroutingdnsconfig.tf b/internal/services/email_routing_dns/testdata/emailroutingdnsconfig.tf
+new file mode 100644
+index 000000000..16944e98d
+--- /dev/null
++++ b/internal/services/email_routing_dns/testdata/emailroutingdnsconfig.tf
+@@ -0,0 +1,6 @@
++
++resource "cloudflare_email_routing_dns" "%[1]s" {
++	zone_id = "%[2]s"
++	name = "%[3]s"
++}
++		
+\ No newline at end of file

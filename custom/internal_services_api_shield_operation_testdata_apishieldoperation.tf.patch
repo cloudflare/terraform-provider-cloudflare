@@ -1,0 +1,12 @@
+diff --git a/internal/services/api_shield_operation/testdata/apishieldoperation.tf b/internal/services/api_shield_operation/testdata/apishieldoperation.tf
+new file mode 100644
+index 000000000..a749df2dc
+--- /dev/null
++++ b/internal/services/api_shield_operation/testdata/apishieldoperation.tf
+@@ -0,0 +1,6 @@
++resource "cloudflare_api_shield_operation" "%[1]s" {
++	zone_id  = "%[2]s"
++	method   = "%[3]s"
++	host     = "%[4]s"
++	endpoint = "%[5]s"
++}

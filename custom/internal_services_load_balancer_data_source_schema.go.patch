@@ -1,0 +1,54 @@
+diff --git a/internal/services/load_balancer/data_source_schema.go b/internal/services/load_balancer/data_source_schema.go
+index e207a9fe9..a04c53c3b 100644
+--- a/internal/services/load_balancer/data_source_schema.go
++++ b/internal/services/load_balancer/data_source_schema.go
+@@ -91,9 +91,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
+ 				Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
+ 				Computed:    true,
+ 			},
+-			"zone_name": schema.StringAttribute{
+-				Computed: true,
+-			},
+ 			"country_pools": schema.MapAttribute{
+ 				Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
+ 				Computed:    true,
+@@ -117,6 +114,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
+ 			"pop_pools": schema.MapAttribute{
+ 				Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
+ 				Computed:    true,
++				Optional:    true,
+ 				CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
+ 				ElementType: types.ListType{
+ 					ElemType: types.StringType,
+@@ -125,6 +123,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
+ 			"region_pools": schema.MapAttribute{
+ 				Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
+ 				Computed:    true,
++				Optional:    true,
+ 				CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
+ 				ElementType: types.ListType{
+ 					ElemType: types.StringType,
+@@ -291,6 +290,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
+ 								"pop_pools": schema.MapAttribute{
+ 									Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
+ 									Computed:    true,
++									Optional:    true,
+ 									CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
+ 									ElementType: types.ListType{
+ 										ElemType: types.StringType,
+@@ -344,6 +344,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
+ 										"drain_duration": schema.Float64Attribute{
+ 											Description: "Configures the drain duration in seconds. This field is only used when session affinity is enabled on the load balancer.",
+ 											Computed:    true,
++											Optional:    true,
+ 										},
+ 										"headers": schema.ListAttribute{
+ 											Description: "Configures the names of HTTP headers to base session affinity on when header `session_affinity` is enabled. At least one HTTP header name must be provided. To specify the exact cookies to be used, include an item in the following format: `\"cookie:<cookie-name-1>,<cookie-name-2>\"` (example) where everything after the colon is a comma-separated list of cookie names. Providing only `\"cookie\"` will result in all cookies being used. The default max number of HTTP header names that can be provided depends on your plan: 5 for Enterprise, 1 for all other plans.",
+@@ -439,6 +440,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
+ 					"drain_duration": schema.Float64Attribute{
+ 						Description: "Configures the drain duration in seconds. This field is only used when session affinity is enabled on the load balancer.",
+ 						Computed:    true,
++						Optional:    true,
+ 					},
+ 					"headers": schema.ListAttribute{
+ 						Description: "Configures the names of HTTP headers to base session affinity on when header `session_affinity` is enabled. At least one HTTP header name must be provided. To specify the exact cookies to be used, include an item in the following format: `\"cookie:<cookie-name-1>,<cookie-name-2>\"` (example) where everything after the colon is a comma-separated list of cookie names. Providing only `\"cookie\"` will result in all cookies being used. The default max number of HTTP header names that can be provided depends on your plan: 5 for Enterprise, 1 for all other plans.",

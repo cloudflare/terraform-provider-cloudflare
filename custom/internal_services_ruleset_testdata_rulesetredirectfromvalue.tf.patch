@@ -1,0 +1,31 @@
+diff --git a/internal/services/ruleset/testdata/rulesetredirectfromvalue.tf b/internal/services/ruleset/testdata/rulesetredirectfromvalue.tf
+new file mode 100644
+index 000000000..911a40a71
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesetredirectfromvalue.tf
+@@ -0,0 +1,24 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[2]s"
++  name        = "%[1]s"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_request_dynamic_redirect"
++
++  rules = [{
++    action = "redirect"
++    action_parameters = {
++      from_value = {
++        status_code = 301
++        target_url = {
++          value = "some_host.com"
++        }
++        preserve_query_string = true
++      }
++    }
++    expression  = "true"
++    description = "Apply redirect from value"
++    enabled     = true
++  }]
++}
+\ No newline at end of file

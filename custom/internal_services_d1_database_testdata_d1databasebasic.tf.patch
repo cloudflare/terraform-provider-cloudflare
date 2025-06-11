@@ -1,0 +1,12 @@
+diff --git a/internal/services/d1_database/testdata/d1databasebasic.tf b/internal/services/d1_database/testdata/d1databasebasic.tf
+new file mode 100644
+index 000000000..94ac0f082
+--- /dev/null
++++ b/internal/services/d1_database/testdata/d1databasebasic.tf
+@@ -0,0 +1,5 @@
++
++  resource "cloudflare_d1_database" "%[1]s" {
++    account_id = "%[2]s"
++    name       = "%[1]s"
++  }
+\ No newline at end of file

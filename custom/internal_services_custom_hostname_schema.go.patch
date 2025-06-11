@@ -1,0 +1,12 @@
+diff --git a/internal/services/custom_hostname/schema.go b/internal/services/custom_hostname/schema.go
+index e1dba5fe2..15fd48fbb 100644
+--- a/internal/services/custom_hostname/schema.go
++++ b/internal/services/custom_hostname/schema.go
+@@ -57,6 +57,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 					"certificate_authority": schema.StringAttribute{
+ 						Description: "The Certificate Authority that will issue the certificate\nAvailable values: \"digicert\", \"google\", \"lets_encrypt\", \"ssl_com\".",
+ 						Optional:    true,
++						Computed:    true,
+ 						Validators: []validator.String{
+ 							stringvalidator.OneOfCaseInsensitive(
+ 								"digicert",

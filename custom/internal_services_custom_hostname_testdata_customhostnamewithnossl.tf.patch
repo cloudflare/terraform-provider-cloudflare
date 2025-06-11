@@ -1,0 +1,12 @@
+diff --git a/internal/services/custom_hostname/testdata/customhostnamewithnossl.tf b/internal/services/custom_hostname/testdata/customhostnamewithnossl.tf
+new file mode 100644
+index 000000000..140d0bbd5
+--- /dev/null
++++ b/internal/services/custom_hostname/testdata/customhostnamewithnossl.tf
+@@ -0,0 +1,6 @@
++
++resource "cloudflare_custom_hostname" "%[2]s" {
++  zone_id = "%[1]s"
++  hostname = "%[2]s.%[3]s"
++  ssl = {}
++}

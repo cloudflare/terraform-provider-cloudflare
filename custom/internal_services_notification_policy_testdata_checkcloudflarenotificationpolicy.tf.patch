@@ -1,0 +1,18 @@
+diff --git a/internal/services/notification_policy/testdata/checkcloudflarenotificationpolicy.tf b/internal/services/notification_policy/testdata/checkcloudflarenotificationpolicy.tf
+new file mode 100644
+index 000000000..a8b440d53
+--- /dev/null
++++ b/internal/services/notification_policy/testdata/checkcloudflarenotificationpolicy.tf
+@@ -0,0 +1,11 @@
++
++resource "cloudflare_notification_policy" "%[1]s" {
++  name        = "test SSL policy from terraform provider"
++  account_id  = "%[2]s"
++  description = "test description"
++  enabled     =  true
++  alert_type  = "universal_ssl_event_type"
++  mechanisms = {
++    "email": [{"id": "test@example.com"},{"id": "test2@example.com"}]
++  }
++}
+\ No newline at end of file

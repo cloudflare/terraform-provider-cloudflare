@@ -1,0 +1,22 @@
+diff --git a/internal/services/custom_hostname/testdata/customhostnamewithcertificate.tf b/internal/services/custom_hostname/testdata/customhostnamewithcertificate.tf
+new file mode 100644
+index 000000000..4bf2d9255
+--- /dev/null
++++ b/internal/services/custom_hostname/testdata/customhostnamewithcertificate.tf
+@@ -0,0 +1,16 @@
++
++resource "cloudflare_custom_hostname" "%[2]s" {
++  zone_id = "%[1]s"
++  hostname = "%[2]s.%[3]s"
++  ssl = {
++    method             = "http"
++    type               = "dv"
++    bundle_method      = "force"
++    custom_certificate = <<EOT
++%[4]s
++	EOT
++    custom_key = <<EOT
++%[5]s
++	EOT
++  }
++}

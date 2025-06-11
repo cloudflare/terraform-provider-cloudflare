@@ -1,0 +1,38 @@
+diff --git a/internal/services/page_rule/testdata/pageruleconfigcachekeyfieldswithunorderedentries.tf b/internal/services/page_rule/testdata/pageruleconfigcachekeyfieldswithunorderedentries.tf
+new file mode 100644
+index 000000000..b8b05996d
+--- /dev/null
++++ b/internal/services/page_rule/testdata/pageruleconfigcachekeyfieldswithunorderedentries.tf
+@@ -0,0 +1,32 @@
++
++resource "cloudflare_page_rule" "%[3]s" {
++  zone_id = "%[1]s"
++  target  = "%[3]s"
++  actions = {
++    cache_key_fields = {
++      cookie = {
++        check_presence = ["cookie_presence"]
++        include        = ["cookie_include"]
++      }
++      header = {
++        check_presence = ["header_presence"]
++        include        = ["header_include"]
++      }
++      host = {
++        resolved = true
++      }
++      query_string = {
++        include = [
++          "test.anothertest",
++          "test.regiontest",
++          "test.devicetest",
++          "test.testthis",
++          "test.hello",
++          "test.segmenttest",
++          "test.usertype"
++        ]
++      }
++      user = {}
++    }
++  }
++}

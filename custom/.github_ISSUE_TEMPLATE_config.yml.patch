@@ -1,0 +1,14 @@
+diff --git a/.github/ISSUE_TEMPLATE/config.yml b/.github/ISSUE_TEMPLATE/config.yml
+new file mode 100644
+index 000000000..4942b3914
+--- /dev/null
++++ b/.github/ISSUE_TEMPLATE/config.yml
+@@ -0,0 +1,8 @@
++blank_issues_enabled: false
++contact_links:
++  - name: Cloudflare Support
++    url: https://dash.cloudflare.com/redirect?account=support
++    about: Get in contact with Support regarding account or zone issues not related to Terraform
++  - name: Cloudflare Community
++    url: https://community.cloudflare.com/
++    about: Start a new discussion with the community for guidance or assistance with an issue

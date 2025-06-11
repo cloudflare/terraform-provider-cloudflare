@@ -1,0 +1,12 @@
+diff --git a/internal/services/url_normalization_settings/testdata/urlnormalizationsettingsconfig.tf b/internal/services/url_normalization_settings/testdata/urlnormalizationsettingsconfig.tf
+new file mode 100644
+index 000000000..c8e14aad3
+--- /dev/null
++++ b/internal/services/url_normalization_settings/testdata/urlnormalizationsettingsconfig.tf
+@@ -0,0 +1,6 @@
++
++resource "cloudflare_url_normalization_settings" "%[4]s" {
++	zone_id = "%[1]s"
++	type = "%[2]s"
++	scope = "%[3]s"
++}

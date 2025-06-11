@@ -1,0 +1,16 @@
+diff --git a/internal/services/load_balancer_monitor/testdata/loadbalancermonitorconfigicmpping.tf b/internal/services/load_balancer_monitor/testdata/loadbalancermonitorconfigicmpping.tf
+new file mode 100644
+index 000000000..6a9f84daf
+--- /dev/null
++++ b/internal/services/load_balancer_monitor/testdata/loadbalancermonitorconfigicmpping.tf
+@@ -0,0 +1,9 @@
++
++resource "cloudflare_load_balancer_monitor" "%[1]s" {
++  account_id = "%[2]s"
++  type = "icmp_ping"
++  timeout = 2
++  interval = 60
++  retries = 5
++  description = "test setup icmp_ping"
++}
+\ No newline at end of file

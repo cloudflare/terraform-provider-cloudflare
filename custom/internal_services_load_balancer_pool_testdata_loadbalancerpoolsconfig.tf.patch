@@ -1,0 +1,32 @@
+diff --git a/internal/services/load_balancer_pool/testdata/loadbalancerpoolsconfig.tf b/internal/services/load_balancer_pool/testdata/loadbalancerpoolsconfig.tf
+new file mode 100644
+index 000000000..2d3606b56
+--- /dev/null
++++ b/internal/services/load_balancer_pool/testdata/loadbalancerpoolsconfig.tf
+@@ -0,0 +1,26 @@
++
++resource "cloudflare_load_balancer_pool" "pool1" {
++	account_id = "%[2]s"
++	name = "pool1"
++	origins = [{
++		name = "example-1"
++		address = "example.com"
++		enabled = true
++	}]
++}
++
++resource "cloudflare_load_balancer_pool" "pool2" {
++	account_id = "%[2]s"
++	name = "pool2"
++	origins = [{
++		name = "example-2"
++		address = "example.com"
++		enabled = true
++	}]
++}
++
++data "cloudflare_load_balancer_pools" "%[1]s" {
++	account_id = "%[2]s"
++
++	depends_on = ["cloudflare_load_balancer_pool.pool1", "cloudflare_load_balancer_pool.pool2"]
++}

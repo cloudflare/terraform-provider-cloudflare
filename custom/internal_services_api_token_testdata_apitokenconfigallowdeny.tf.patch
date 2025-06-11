@@ -1,0 +1,19 @@
+diff --git a/internal/services/api_token/testdata/apitokenconfigallowdeny.tf b/internal/services/api_token/testdata/apitokenconfigallowdeny.tf
+new file mode 100644
+index 000000000..1614716f0
+--- /dev/null
++++ b/internal/services/api_token/testdata/apitokenconfigallowdeny.tf
+@@ -0,0 +1,13 @@
++resource "cloudflare_api_token" "%[1]s" {
++  name = "%[1]s"
++
++  policies = [{
++		effect = "allow"
++		permission_groups = [{
++		  id = "%[2]s"
++		}]
++		resources = {
++		  "com.cloudflare.api.account.zone.*" = "*"
++		}
++  }]
++}

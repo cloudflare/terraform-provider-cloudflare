@@ -1,0 +1,17 @@
+diff --git a/internal/services/api_shield_operation_schema_validation_settings/testdata/apishieldoperationschemavalidationsettingsnomitigation.tf b/internal/services/api_shield_operation_schema_validation_settings/testdata/apishieldoperationschemavalidationsettingsnomitigation.tf
+new file mode 100644
+index 000000000..ae6f942b2
+--- /dev/null
++++ b/internal/services/api_shield_operation_schema_validation_settings/testdata/apishieldoperationschemavalidationsettingsnomitigation.tf
+@@ -0,0 +1,11 @@
++
++	resource "cloudflare_api_shield_operation" "terraform_test_acc_operation" {
++		zone_id = "%[2]s"
++		host = "foo.com"
++		method = "GET"
++        endpoint = "/api"
++	}
++	resource "cloudflare_api_shield_operation_schema_validation_settings" "%[1]s" {
++		zone_id = "%[2]s"
++		operation_id = cloudflare_api_shield_operation.terraform_test_acc_operation.id
++	}

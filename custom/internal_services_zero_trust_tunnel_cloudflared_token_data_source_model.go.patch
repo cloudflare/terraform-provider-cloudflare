@@ -1,0 +1,19 @@
+diff --git a/internal/services/zero_trust_tunnel_cloudflared_token/data_source_model.go b/internal/services/zero_trust_tunnel_cloudflared_token/data_source_model.go
+index 6427a4f40..95b86f92c 100644
+--- a/internal/services/zero_trust_tunnel_cloudflared_token/data_source_model.go
++++ b/internal/services/zero_trust_tunnel_cloudflared_token/data_source_model.go
+@@ -12,12 +12,13 @@ import (
+ )
+ 
+ type ZeroTrustTunnelCloudflaredTokenResultDataSourceEnvelope struct {
+-	Result ZeroTrustTunnelCloudflaredTokenDataSourceModel `json:"result,computed"`
++	Result types.String `json:"result,computed"`
+ }
+ 
+ type ZeroTrustTunnelCloudflaredTokenDataSourceModel struct {
+ 	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+ 	TunnelID  types.String `tfsdk:"tunnel_id" path:"tunnel_id,required"`
++	Token     types.String `tfsdk:"token" json:"-,computed"`
+ }
+ 
+ func (m *ZeroTrustTunnelCloudflaredTokenDataSourceModel) toReadParams(_ context.Context) (params zero_trust.TunnelCloudflaredTokenGetParams, diags diag.Diagnostics) {

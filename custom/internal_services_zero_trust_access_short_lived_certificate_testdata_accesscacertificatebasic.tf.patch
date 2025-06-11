@@ -1,0 +1,19 @@
+diff --git a/internal/services/zero_trust_access_short_lived_certificate/testdata/accesscacertificatebasic.tf b/internal/services/zero_trust_access_short_lived_certificate/testdata/accesscacertificatebasic.tf
+new file mode 100644
+index 000000000..ea46f4296
+--- /dev/null
++++ b/internal/services/zero_trust_access_short_lived_certificate/testdata/accesscacertificatebasic.tf
+@@ -0,0 +1,12 @@
++
++resource "cloudflare_zero_trust_access_application" "%[1]s" {
++	name     = "%[1]s"
++	%[3]s_id = "%[4]s"
++	domain   = "%[1]s.%[2]s"
++	type     = "self_hosted"
++}
++
++resource "cloudflare_zero_trust_access_short_lived_certificate" "%[1]s" {
++  %[3]s_id       = "%[4]s"
++  app_id = cloudflare_zero_trust_access_application.%[1]s.id
++}
+\ No newline at end of file

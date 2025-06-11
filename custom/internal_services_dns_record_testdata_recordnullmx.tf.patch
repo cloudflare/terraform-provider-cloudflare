@@ -1,0 +1,15 @@
+diff --git a/internal/services/dns_record/testdata/recordnullmx.tf b/internal/services/dns_record/testdata/recordnullmx.tf
+new file mode 100644
+index 000000000..1ca062586
+--- /dev/null
++++ b/internal/services/dns_record/testdata/recordnullmx.tf
+@@ -0,0 +1,9 @@
++
++	resource "cloudflare_dns_record" "%[1]s" {
++		zone_id  = "%[2]s"
++		type     = "MX"
++		name     = "%[1]s.%[3]s"
++		content    = "."
++		priority = 0
++		ttl = 300
++	  }

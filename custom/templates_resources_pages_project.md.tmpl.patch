@@ -1,0 +1,35 @@
+diff --git a/templates/resources/pages_project.md.tmpl b/templates/resources/pages_project.md.tmpl
+new file mode 100644
+index 000000000..6f4f7997a
+--- /dev/null
++++ b/templates/resources/pages_project.md.tmpl
+@@ -0,0 +1,29 @@
++---
++page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
++subcategory: ""
++description: |-
++{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
++---
++
++# {{.Name}} ({{.Type}})
++
++{{ .Description | trimspace }}
++
++-> If you are using a `source` block configuration, you must first have a
++   connected GitHub or GitLab account connected to Cloudflare. See the
++   [Getting Started with Pages] documentation on how to link your accounts.
++
++{{ if .HasExample -}}
++## Example Usage
++
++{{codefile "terraform" .ExampleFile}}
++{{- end }}
++{{ .SchemaMarkdown | trimspace }}
++
++## Import
++
++!> It is not possible to import a pages project with secret environment variables. If you have a secret environment variable, you must remove it from your project before importing it.
++
++Import is supported using the following syntax:
++
++{{codefile "shell" .ImportFile}}

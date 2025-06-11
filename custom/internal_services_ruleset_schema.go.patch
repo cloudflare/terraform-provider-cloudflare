@@ -1,0 +1,108 @@
+diff --git a/internal/services/ruleset/schema.go b/internal/services/ruleset/schema.go
+index da247e4a8..ac951262a 100644
+--- a/internal/services/ruleset/schema.go
++++ b/internal/services/ruleset/schema.go
+@@ -96,14 +96,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 			},
+ 			"rules": schema.ListNestedAttribute{
+ 				Description: "The list of rules in the ruleset.",
+-				Computed:    true,
+ 				Optional:    true,
+ 				CustomType:  customfield.NewNestedObjectListType[RulesetRulesModel](ctx),
+ 				NestedObject: schema.NestedAttributeObject{
+ 					Attributes: map[string]schema.Attribute{
+ 						"id": schema.StringAttribute{
+ 							Description: "The unique ID of the rule.",
+-							Optional:    true,
++							Computed:    true,
+ 						},
+ 						"action": schema.StringAttribute{
+ 							Description: "The action to perform when the rule matches.\nAvailable values: \"block\", \"challenge\", \"compress_response\", \"execute\", \"js_challenge\", \"log\", \"managed_challenge\", \"redirect\", \"rewrite\", \"route\", \"score\", \"serve_error\", \"set_config\", \"skip\", \"set_cache_settings\", \"log_custom_field\", \"ddos_dynamic\", \"force_connection_close\".",
+@@ -620,6 +619,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 								"rules": schema.MapAttribute{
+ 									Description: "A mapping of ruleset IDs to a list of rule IDs in that ruleset to skip the execution of. This option is incompatible with the ruleset option.",
+ 									Optional:    true,
++									CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
+ 									ElementType: types.ListType{
+ 										ElemType: types.StringType,
+ 									},
+@@ -669,6 +669,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 								"cache_key": schema.SingleNestedAttribute{
+ 									Description: "Define which components of the request are included or excluded from the cache key Cloudflare uses to store the response in cache.",
+ 									Optional:    true,
++									// CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyModel](ctx),
+ 									Attributes: map[string]schema.Attribute{
+ 										"cache_by_device_type": schema.BoolAttribute{
+ 											Description: "Separate cached content based on the visitor’s device type.",
+@@ -815,7 +816,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 									Attributes: map[string]schema.Attribute{
+ 										"default": schema.Int64Attribute{
+ 											Description: "The TTL (in seconds) if you choose override_origin mode.",
+-											Required:    true,
++											Optional:    true,
+ 											Validators: []validator.Int64{
+ 												int64validator.Between(0, math.MaxInt64),
+ 											},
+@@ -833,7 +834,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 										},
+ 										"status_code_ttl": schema.ListNestedAttribute{
+ 											Description: "List of single status codes, or status code ranges to apply the selected mode.",
+-											Required:    true,
++											Optional:    true,
+ 											NestedObject: schema.NestedAttributeObject{
+ 												Attributes: map[string]schema.Attribute{
+ 													"value": schema.Int64Attribute{
+@@ -846,15 +847,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 														Attributes: map[string]schema.Attribute{
+ 															"from": schema.Int64Attribute{
+ 																Description: "Response status code lower bound.",
+-																Required:    true,
++																Optional:    true,
+ 															},
+ 															"to": schema.Int64Attribute{
+ 																Description: "Response status code upper bound.",
+-																Required:    true,
++																Optional:    true,
+ 															},
+ 														},
+ 													},
+-													"status_code_value": schema.Int64Attribute{
++													"status_code": schema.Int64Attribute{
+ 														Description: "Set the TTL for responses with this specific status code.",
+ 														Optional:    true,
+ 													},
+@@ -904,6 +905,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 								"raw_response_fields": schema.ListNestedAttribute{
+ 									Description: "The raw response fields to log.",
+ 									Optional:    true,
++									// Computed:    true,
++									// CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersRawResponseFieldsModel](ctx),
+ 									NestedObject: schema.NestedAttributeObject{
+ 										Attributes: map[string]schema.Attribute{
+ 											"name": schema.StringAttribute{
+@@ -932,6 +935,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 								"response_fields": schema.ListNestedAttribute{
+ 									Description: "The transformed response fields to log.",
+ 									Optional:    true,
++									// Computed:    true,
++									// CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersResponseFieldsModel](ctx),
+ 									NestedObject: schema.NestedAttributeObject{
+ 										Attributes: map[string]schema.Attribute{
+ 											"name": schema.StringAttribute{
+@@ -961,7 +966,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 						},
+ 						"categories": schema.ListAttribute{
+ 							Description: "The categories of the rule.",
+-							Computed:    true,
++							Optional:    true,
+ 							CustomType:  customfield.NewListType[types.String](ctx),
+ 							ElementType: types.StringType,
+ 						},
+@@ -1050,6 +1055,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 						"ref": schema.StringAttribute{
+ 							Description: "The reference of the rule (the rule ID by default).",
+ 							Optional:    true,
++							Computed:    true,
+ 						},
+ 					},
+ 				},

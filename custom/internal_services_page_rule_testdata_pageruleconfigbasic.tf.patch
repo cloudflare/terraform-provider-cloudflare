@@ -1,0 +1,14 @@
+diff --git a/internal/services/page_rule/testdata/pageruleconfigbasic.tf b/internal/services/page_rule/testdata/pageruleconfigbasic.tf
+new file mode 100644
+index 000000000..a1a0bd70e
+--- /dev/null
++++ b/internal/services/page_rule/testdata/pageruleconfigbasic.tf
+@@ -0,0 +1,8 @@
++
++resource "cloudflare_page_rule" "%[3]s" {
++  zone_id = "%[1]s"
++  target  = "%[2]s"
++  actions = {
++    ssl = "flexible"
++  }
++}

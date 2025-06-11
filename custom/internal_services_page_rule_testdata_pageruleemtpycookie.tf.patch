@@ -1,0 +1,26 @@
+diff --git a/internal/services/page_rule/testdata/pageruleemtpycookie.tf b/internal/services/page_rule/testdata/pageruleemtpycookie.tf
+new file mode 100644
+index 000000000..3d05bd8a0
+--- /dev/null
++++ b/internal/services/page_rule/testdata/pageruleemtpycookie.tf
+@@ -0,0 +1,20 @@
++
++resource "cloudflare_page_rule" "%[3]s" {
++  zone_id = "%[1]s"
++  target  = "%[3]s"
++  actions = {
++    cache_key_fields = {
++      host = {
++        resolved = true
++      }
++      query_string = {
++        ignore = true
++      }
++      user = {
++        device_type = true
++        geo         = false
++        lang        = false
++      }
++    }
++  }
++}

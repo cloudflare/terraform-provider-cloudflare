@@ -1,0 +1,95 @@
+diff --git a/.grit/patterns/cloudflare_terraform_v5_resource_renames_state.grit b/.grit/patterns/cloudflare_terraform_v5_resource_renames_state.grit
+new file mode 100644
+index 000000000..98efa7057
+--- /dev/null
++++ b/.grit/patterns/cloudflare_terraform_v5_resource_renames_state.grit
+@@ -0,0 +1,89 @@
++// You likely don't want to run this _unless_ you know what you're doing.
++//
++// See https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/migrating-renamed-resources
++// for full details on how to handle mass renames.
++engine marzano(0.1)
++language json
++
++pattern cloudflare_terraform_v5_resource_renames_state() {
++  any {
++    `"cloudflare_access_application"` => `"cloudflare_zero_trust_access_application"`,
++    `"cloudflare_access_ca_certificate"` => `"cloudflare_zero_trust_access_short_lived_certificate"`,
++    `"cloudflare_access_custom_page"` => `"cloudflare_zero_trust_access_custom_page"`,
++    `"cloudflare_access_group"` => `"cloudflare_zero_trust_access_group"`,
++    `"cloudflare_access_identity_provider"` => `"cloudflare_zero_trust_access_identity_provider"`,
++    `"cloudflare_access_keys_configuration"` => `"cloudflare_zero_trust_access_key_configuration"`,
++    `"cloudflare_access_mutual_tls_certificate"` => `"cloudflare_zero_trust_access_mtls_certificate"`,
++    `"cloudflare_access_mutual_tls_hostname_settings"` => `"cloudflare_zero_trust_access_mtls_hostname_settings"`,
++    `"cloudflare_access_organization"` => `"cloudflare_zero_trust_organization"`,
++    `"cloudflare_access_policy"` => `"cloudflare_zero_trust_access_policy"`,
++    `"cloudflare_access_service_token"` => `"cloudflare_zero_trust_access_service_token"`,
++    `"cloudflare_access_tag"` => `"cloudflare_zero_trust_access_tag"`,
++    `"cloudflare_device_dex_test"` => `"cloudflare_zero_trust_dex_test"`,
++    `"cloudflare_device_managed_networks"` => `"cloudflare_zero_trust_device_managed_networks"`,
++    `"cloudflare_device_policy_certificates"` => `"cloudflare_zero_trust_device_certificates"`,
++    `"cloudflare_device_posture_integration"` => `"cloudflare_zero_trust_device_posture_integration"`,
++    `"cloudflare_device_posture_rule"` => `"cloudflare_zero_trust_device_posture_rule"`,
++    `"cloudflare_device_settings_policy"` => `"cloudflare_zero_trust_device_profiles"`,
++    `"cloudflare_record"` => `"cloudflare_dns_record"`,
++    `"cloudflare_dlp_profile"` => `"cloudflare_zero_trust_dlp_profile"`,
++    `"cloudflare_dlp_custom_profile"` => `"cloudflare_zero_trust_dlp_custom_profile"`,
++    `"cloudflare_dlp_predefined_profile"` => `"cloudflare_zero_trust_dlp_predefined_profile"`,
++    `"cloudflare_risk_behavior"` => `"cloudflare_zero_trust_risk_behavior"`,
++    `"cloudflare_split_tunnel"` => `"cloudflare_zero_trust_split_tunnels"`,
++    `"cloudflare_teams_account"` => `"cloudflare_zero_trust_gateway_settings"`,
++    `"cloudflare_teams_list"` => `"cloudflare_zero_trust_list"`,
++    `"cloudflare_teams_location"` => `"cloudflare_zero_trust_dns_location"`,
++    `"cloudflare_teams_proxy_endpoint"` => `"cloudflare_zero_trust_gateway_proxy_endpoint"`,
++    `"cloudflare_teams_rule"` => `"cloudflare_zero_trust_gateway_policy"`,
++    `"cloudflare_tunnel"` => `"cloudflare_zero_trust_tunnel_cloudflared"`,
++    `"cloudflare_tunnel_config"` => `"cloudflare_zero_trust_tunnel_cloudflared_config"`,
++    `"cloudflare_tunnel_route"` => `"cloudflare_zero_trust_tunnel_cloudflared_route"`,
++    `"cloudflare_tunnel_virtual_network"` => `"cloudflare_zero_trust_tunnel_cloudflared_virtual_network"`,
++
++    // handle dependencies
++    `"cloudflare_access_application.$dep"` => `"cloudflare_zero_trust_access_application.$dep"`,
++    `"cloudflare_access_ca_certificate.$dep"` => `"cloudflare_zero_trust_access_short_lived_certificate.$dep"`,
++    `"cloudflare_access_custom_page.$dep"` => `"cloudflare_zero_trust_access_custom_page.$dep"`,
++    `"cloudflare_access_group.$dep"` => `"cloudflare_zero_trust_access_group.$dep"`,
++    `"cloudflare_access_identity_provider.$dep"` => `"cloudflare_zero_trust_access_identity_provider.$dep"`,
++    `"cloudflare_access_keys_configuration.$dep"` => `"cloudflare_zero_trust_access_key_configuration.$dep"`,
++    `"cloudflare_access_mutual_tls_certificate.$dep"` => `"cloudflare_zero_trust_access_mtls_certificate.$dep"`,
++    `"cloudflare_access_mutual_tls_hostname_settings.$dep"` => `"cloudflare_zero_trust_access_mtls_hostname_settings.$dep"`,
++    `"cloudflare_access_organization.$dep"` => `"cloudflare_zero_trust_organization.$dep"`,
++    `"cloudflare_access_policy.$dep"` => `"cloudflare_zero_trust_access_policy.$dep"`,
++    `"cloudflare_access_service_token.$dep"` => `"cloudflare_zero_trust_access_service_token.$dep"`,
++    `"cloudflare_access_tag.$dep"` => `"cloudflare_zero_trust_access_tag.$dep"`,
++    `"cloudflare_device_dex_test.$dep"` => `"cloudflare_zero_trust_dex_test.$dep"`,
++    `"cloudflare_device_managed_networks.$dep"` => `"cloudflare_zero_trust_device_managed_networks.$dep"`,
++    `"cloudflare_device_policy_certificates.$dep"` => `"cloudflare_zero_trust_device_certificates.$dep"`,
++    `"cloudflare_device_posture_integration.$dep"` => `"cloudflare_zero_trust_device_posture_integration.$dep"`,
++    `"cloudflare_device_posture_rule.$dep"` => `"cloudflare_zero_trust_device_posture_rule.$dep"`,
++    `"cloudflare_dlp_custom_profile.$dep"` => `"cloudflare_zero_trust_dlp_custom_profile.$dep"`,
++    `"cloudflare_dlp_predefined_profile.$dep"` => `"cloudflare_zero_trust_dlp_predefined_profile.$dep"`,
++    `"cloudflare_dlp_profile.$dep"` => `"cloudflare_zero_trust_dlp_profile.$dep"`,
++    `"cloudflare_gateway_app_types.$dep"` => `"cloudflare_zero_trust_gateway_app_types.$dep"`,
++    `"cloudflare_gre_tunnel.$dep"` => `"cloudflare_magic_wan_gre_tunnel.$dep"`,
++    `"cloudflare_ipsec_tunnel.$dep"` => `"cloudflare_magic_wan_ipsec_tunnel.$dep"`,
++    `"cloudflare_record.$dep"` => `"cloudflare_dns_record.$dep"`,
++    `"cloudflare_risk_behavior.$dep"` => `"cloudflare_zero_trust_risk_behavior.$dep"`,
++    `"cloudflare_static_route.$dep"` => `"cloudflare_magic_wan_static_route.$dep"`,
++    `"cloudflare_teams_account.$dep"` => `"cloudflare_zero_trust_gateway_settings.$dep"`,
++    `"cloudflare_teams_list.$dep"` => `"cloudflare_zero_trust_list.$dep"`,
++    `"cloudflare_teams_location.$dep"` => `"cloudflare_zero_trust_dns_location.$dep"`,
++    `"cloudflare_teams_proxy_endpoint.$dep"` => `"cloudflare_zero_trust_gateway_proxy_endpoint.$dep"`,
++    `"cloudflare_teams_rule.$dep"` => `"cloudflare_zero_trust_gateway_policy.$dep"`,
++    `"cloudflare_tunnel.$dep"` => `"cloudflare_zero_trust_tunnel_cloudflared.$dep"`,
++    `"cloudflare_tunnel_config.$dep"` => `"cloudflare_zero_trust_tunnel_cloudflared_config.$dep"`,
++    `"cloudflare_tunnel_route.$dep"` => `"cloudflare_zero_trust_tunnel_cloudflared_route.$dep"`,
++    `"cloudflare_tunnel_virtual_network.$dep"` => `"cloudflare_zero_trust_tunnel_cloudflared_virtual_network.$dep"`,
++    `"cloudflare_worker_cron_trigger.$dep"` => `"cloudflare_workers_cron_trigger.$dep"`,
++    `"cloudflare_worker_domain.$dep"` => `"cloudflare_workers_custom_domain.$dep"`,
++    `"cloudflare_worker_script.$dep"` => `"cloudflare_workers_script.$dep"`,
++    `"cloudflare_worker_secret.$dep"` => `"cloudflare_workers_secret.$dep"`,
++    `"cloudflare_workers_for_platforms_namespace.$dep"` => `"cloudflare_workers_for_platforms_dispatch_namespace.$dep"`,
++    `"cloudflare_managed_headers.$dep"` => `"cloudflare_managed_transforms.$dep"`,
++  }
++}
++
++cloudflare_terraform_v4_40_0_zero_trust_namespace_renames_state()

@@ -1,0 +1,41 @@
+diff --git a/internal/services/zero_trust_device_default_profile/schema.go b/internal/services/zero_trust_device_default_profile/schema.go
+index 14342c102..3df65a24b 100644
+--- a/internal/services/zero_trust_device_default_profile/schema.go
++++ b/internal/services/zero_trust_device_default_profile/schema.go
+@@ -6,6 +6,8 @@ import (
+ 	"context"
+ 
+ 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
++	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
++	"github.com/hashicorp/terraform-plugin-framework/path"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+@@ -13,6 +15,7 @@ import (
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
++	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+ 	"github.com/hashicorp/terraform-plugin-framework/types"
+ )
+ 
+@@ -40,6 +43,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 			"exclude": schema.ListNestedAttribute{
+ 				Description: "List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
+ 				Optional:    true,
++				Validators: []validator.List{
++					listvalidator.ConflictsWith(path.MatchRoot("include")),
++				},
+ 				NestedObject: schema.NestedAttributeObject{
+ 					Attributes: map[string]schema.Attribute{
+ 						"address": schema.StringAttribute{
+@@ -60,6 +66,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 			"include": schema.ListNestedAttribute{
+ 				Description: "List of routes included in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request.",
+ 				Optional:    true,
++				Validators: []validator.List{
++					listvalidator.ConflictsWith(path.MatchRoot("exclude")),
++				},
+ 				NestedObject: schema.NestedAttributeObject{
+ 					Attributes: map[string]schema.Attribute{
+ 						"address": schema.StringAttribute{

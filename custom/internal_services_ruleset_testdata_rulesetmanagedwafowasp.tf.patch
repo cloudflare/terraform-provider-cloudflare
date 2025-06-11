@@ -1,0 +1,25 @@
+diff --git a/internal/services/ruleset/testdata/rulesetmanagedwafowasp.tf b/internal/services/ruleset/testdata/rulesetmanagedwafowasp.tf
+new file mode 100644
+index 000000000..57e2456a6
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesetmanagedwafowasp.tf
+@@ -0,0 +1,18 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[3]s"
++  name        = "%[2]s"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_request_firewall_managed"
++
++  rules = [{
++    action = "execute"
++    action_parameters = {
++      id = "4814384a9e5d4991b9815dcfc25d2f1f"
++    }
++    expression  = "true"
++    description = "Execute Cloudflare Managed OWASP Ruleset on my zone-level phase ruleset"
++    enabled     = true
++  }]
++}
+\ No newline at end of file

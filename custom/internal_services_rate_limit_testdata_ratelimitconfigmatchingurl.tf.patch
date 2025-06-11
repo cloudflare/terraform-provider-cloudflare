@@ -1,0 +1,22 @@
+diff --git a/internal/services/rate_limit/testdata/ratelimitconfigmatchingurl.tf b/internal/services/rate_limit/testdata/ratelimitconfigmatchingurl.tf
+new file mode 100644
+index 000000000..017867dd0
+--- /dev/null
++++ b/internal/services/rate_limit/testdata/ratelimitconfigmatchingurl.tf
+@@ -0,0 +1,15 @@
++
++resource "cloudflare_rate_limit" "%[1]s" {
++  zone_id = "%[2]s"
++  threshold = 1000
++  period = 10
++  match = [{
++    request = [{
++      url_pattern = "%[3]s/tfacc-url-%[1]s"
++    }]
++  }]
++  action = [{
++    mode = "simulate"
++    timeout = 86400
++  }]
++}
+\ No newline at end of file

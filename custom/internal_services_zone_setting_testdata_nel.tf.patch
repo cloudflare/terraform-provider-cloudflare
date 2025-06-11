@@ -1,0 +1,13 @@
+diff --git a/internal/services/zone_setting/testdata/nel.tf b/internal/services/zone_setting/testdata/nel.tf
+new file mode 100644
+index 000000000..c94b2cec6
+--- /dev/null
++++ b/internal/services/zone_setting/testdata/nel.tf
+@@ -0,0 +1,7 @@
++resource "cloudflare_zone_setting" "%[1]s" {
++  zone_id = "%[2]s"
++  setting_id = "nel"
++  value = {
++    enabled = true
++  }
++}

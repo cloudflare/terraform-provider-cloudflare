@@ -1,0 +1,11 @@
+diff --git a/internal/services/account/testdata/accountname.tf b/internal/services/account/testdata/accountname.tf
+new file mode 100644
+index 000000000..9508fce3d
+--- /dev/null
++++ b/internal/services/account/testdata/accountname.tf
+@@ -0,0 +1,4 @@
++
++  resource "cloudflare_account" "%[1]s" {
++	  name = "%[2]s"
++  }
+\ No newline at end of file

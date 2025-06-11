@@ -1,0 +1,31 @@
+diff --git a/internal/services/ruleset/testdata/rulesetthreecustomruleswithref.tf b/internal/services/ruleset/testdata/rulesetthreecustomruleswithref.tf
+new file mode 100644
+index 000000000..b2912edf3
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesetthreecustomruleswithref.tf
+@@ -0,0 +1,24 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[2]s"
++  name        = "Terraform provider test"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_request_firewall_custom"
++  rules = [{
++    action     = "log"
++    enabled    = false
++    expression = "(http.request.uri.path eq \"/admin\")"
++    },
++    {
++      action     = "log"
++      enabled    = false
++      expression = "(http.request.uri.path eq \"/admin\")"
++      ref        = "foo"
++    },
++    {
++      action     = "challenge"
++      enabled    = true
++      expression = "(http.request.uri.path eq \"/login\")"
++  }]
++}
+\ No newline at end of file

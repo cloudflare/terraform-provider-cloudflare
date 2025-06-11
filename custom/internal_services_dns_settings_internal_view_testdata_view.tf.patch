@@ -1,0 +1,11 @@
+diff --git a/internal/services/dns_settings_internal_view/testdata/view.tf b/internal/services/dns_settings_internal_view/testdata/view.tf
+new file mode 100644
+index 000000000..48b13383c
+--- /dev/null
++++ b/internal/services/dns_settings_internal_view/testdata/view.tf
+@@ -0,0 +1,5 @@
++resource "cloudflare_dns_settings_internal_view" "%[1]s" {
++  account_id = "%[2]s"
++  name = "%[3]s"
++  zones = ["%[4]s"]
++}

@@ -1,0 +1,32 @@
+diff --git a/internal/services/ruleset/testdata/rulesetorigin.tf b/internal/services/ruleset/testdata/rulesetorigin.tf
+new file mode 100644
+index 000000000..7690bd144
+--- /dev/null
++++ b/internal/services/ruleset/testdata/rulesetorigin.tf
+@@ -0,0 +1,25 @@
++
++resource "cloudflare_ruleset" "%[1]s" {
++  zone_id     = "%[3]s"
++  name        = "%[2]s"
++  description = "%[1]s ruleset description"
++  kind        = "zone"
++  phase       = "http_request_origin"
++
++  rules = [{
++    action = "route"
++    action_parameters = {
++      host_header = "%[1]s.%[4]s"
++      origin = {
++        host = "%[1]s.%[4]s"
++        port = 80
++      }
++      sni = {
++        value = "%[1]s.%[4]s"
++      }
++    }
++    expression  = "(http.request.uri.path matches \"^/api/\")"
++    description = "example http request origin"
++    enabled     = true
++  }]
++}
+\ No newline at end of file

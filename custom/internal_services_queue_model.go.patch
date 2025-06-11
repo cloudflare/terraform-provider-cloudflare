@@ -1,0 +1,26 @@
+diff --git a/internal/services/queue/model.go b/internal/services/queue/model.go
+index 928290a75..5dac49a4c 100644
+--- a/internal/services/queue/model.go
++++ b/internal/services/queue/model.go
+@@ -17,7 +17,7 @@ type QueueModel struct {
+ 	QueueID             types.String                                      `tfsdk:"queue_id" json:"queue_id,computed"`
+ 	AccountID           types.String                                      `tfsdk:"account_id" path:"account_id,required"`
+ 	QueueName           types.String                                      `tfsdk:"queue_name" json:"queue_name,required"`
+-	Settings            *QueueSettingsModel                               `tfsdk:"settings" json:"settings,optional"`
++	Settings            customfield.NestedObject[QueueSettingsModel]      `tfsdk:"settings" json:"settings,computed_optional"`
+ 	ConsumersTotalCount types.Float64                                     `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
+ 	CreatedOn           types.String                                      `tfsdk:"created_on" json:"created_on,computed"`
+ 	ModifiedOn          types.String                                      `tfsdk:"modified_on" json:"modified_on,computed"`
+@@ -35,9 +35,9 @@ func (m QueueModel) MarshalJSONForUpdate(state QueueModel) (data []byte, err err
+ }
+ 
+ type QueueSettingsModel struct {
+-	DeliveryDelay          types.Float64 `tfsdk:"delivery_delay" json:"delivery_delay,optional"`
+-	DeliveryPaused         types.Bool    `tfsdk:"delivery_paused" json:"delivery_paused,optional"`
+-	MessageRetentionPeriod types.Float64 `tfsdk:"message_retention_period" json:"message_retention_period,optional"`
++	DeliveryDelay          types.Float64 `tfsdk:"delivery_delay" json:"delivery_delay,computed_optional"`
++	DeliveryPaused         types.Bool    `tfsdk:"delivery_paused" json:"delivery_paused,computed_optional"`
++	MessageRetentionPeriod types.Float64 `tfsdk:"message_retention_period" json:"message_retention_period,computed_optional"`
+ }
+ 
+ type QueueConsumersModel struct {

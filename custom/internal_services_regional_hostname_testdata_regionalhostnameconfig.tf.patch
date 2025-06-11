@@ -1,0 +1,13 @@
+diff --git a/internal/services/regional_hostname/testdata/regionalhostnameconfig.tf b/internal/services/regional_hostname/testdata/regionalhostnameconfig.tf
+new file mode 100644
+index 000000000..54cf04b3a
+--- /dev/null
++++ b/internal/services/regional_hostname/testdata/regionalhostnameconfig.tf
+@@ -0,0 +1,6 @@
++
++resource "cloudflare_regional_hostname" "%[1]s" {
++	zone_id = "%[2]s"
++	hostname = "%[3]s"
++	region_key = "%[4]s"
++}
+\ No newline at end of file

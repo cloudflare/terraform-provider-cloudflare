@@ -1,0 +1,21 @@
+diff --git a/internal/services/notification_policy/testdata/checkcloudflarenotificationpolicywithcomponents.tf b/internal/services/notification_policy/testdata/checkcloudflarenotificationpolicywithcomponents.tf
+new file mode 100644
+index 000000000..715a77935
+--- /dev/null
++++ b/internal/services/notification_policy/testdata/checkcloudflarenotificationpolicywithcomponents.tf
+@@ -0,0 +1,14 @@
++
++resource "cloudflare_notification_policy" "%[1]s" {
++  name        = "traffic anomalies alert"
++  account_id  = "%[2]s"
++  description = "test description"
++  enabled     =  true
++  alert_type  = "incident_alert"
++  mechanisms = {
++    "email": [{"id": "test@example.com"}]
++  }
++  filters = {
++    affected_components = ["API"]
++  }
++}
+\ No newline at end of file

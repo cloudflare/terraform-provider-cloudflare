@@ -1,0 +1,18 @@
+diff --git a/internal/services/r2_bucket_lifecycle/model.go b/internal/services/r2_bucket_lifecycle/model.go
+index 8732e3bea..93b28a3fc 100644
+--- a/internal/services/r2_bucket_lifecycle/model.go
++++ b/internal/services/r2_bucket_lifecycle/model.go
+@@ -13,9 +13,10 @@ type R2BucketLifecycleResultEnvelope struct {
+ }
+ 
+ type R2BucketLifecycleModel struct {
+-	AccountID  types.String                    `tfsdk:"account_id" path:"account_id,required"`
+-	BucketName types.String                    `tfsdk:"bucket_name" path:"bucket_name,required"`
+-	Rules      *[]*R2BucketLifecycleRulesModel `tfsdk:"rules" json:"rules,optional"`
++	AccountID    types.String                    `tfsdk:"account_id" path:"account_id,required"`
++	BucketName   types.String                    `tfsdk:"bucket_name" path:"bucket_name,required"`
++	Jurisdiction types.String                    `tfsdk:"jurisdiction" json:"-,computed_optional"`
++	Rules        *[]*R2BucketLifecycleRulesModel `tfsdk:"rules" json:"rules,optional"`
+ }
+ 
+ func (m R2BucketLifecycleModel) MarshalJSON() (data []byte, err error) {

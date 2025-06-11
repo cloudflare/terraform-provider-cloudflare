@@ -1,0 +1,70 @@
+diff --git a/internal/services/zero_trust_access_identity_provider/schema.go b/internal/services/zero_trust_access_identity_provider/schema.go
+index 143d65f48..1511b5e5a 100644
+--- a/internal/services/zero_trust_access_identity_provider/schema.go
++++ b/internal/services/zero_trust_access_identity_provider/schema.go
+@@ -10,6 +10,8 @@ import (
+ 	"github.com/hashicorp/terraform-plugin-framework/resource"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
++	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
++	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
+ 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+@@ -80,6 +82,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 						Description: "Your OAuth Client Secret",
+ 						Optional:    true,
+ 						Sensitive:   true,
++						WriteOnly:   true,
+ 					},
+ 					"conditional_access_enabled": schema.BoolAttribute{
+ 						Description: "Should Cloudflare try to load authentication contexts from your account",
+@@ -192,17 +195,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 						Optional:    true,
+ 					},
+ 					"sign_request": schema.BoolAttribute{
+-						Description: "Sign the SAML authentication request with Access credentials. To verify the signature, use the public key from the Access certs endpoints.",
+-						Computed:    true,
+-						Optional:    true,
+-						Default:     booldefault.StaticBool(false),
++						Description:   "Sign the SAML authentication request with Access credentials. To verify the signature, use the public key from the Access certs endpoints.",
++						Optional:      true,
++						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
+ 					},
+ 					"sso_target_url": schema.StringAttribute{
+ 						Description: "URL to send the SAML authentication requests to",
+ 						Optional:    true,
+ 					},
+ 					"redirect_url": schema.StringAttribute{
+-						Computed: true,
++						Computed:      true,
++						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+ 					},
+ 				},
+ 			},
+@@ -211,6 +214,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 				Computed:    true,
+ 				Optional:    true,
+ 				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessIdentityProviderSCIMConfigModel](ctx),
++				PlanModifiers: []planmodifier.Object{
++					objectplanmodifier.UseStateForUnknown(),
++				},
+ 				Attributes: map[string]schema.Attribute{
+ 					"enabled": schema.BoolAttribute{
+ 						Description: "A flag to enable or disable SCIM for the identity provider.",
+@@ -222,6 +228,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 						Description: "Indicates how a SCIM event updates a user identity used for policy evaluation. Use \"automatic\" to automatically update a user's identity and augment it with fields from the SCIM user resource. Use \"reauth\" to force re-authentication on group membership updates, user identity update will only occur after successful re-authentication. With \"reauth\" identities will not contain fields from the SCIM user resource. With \"no_action\" identities will not be changed by SCIM updates in any way and users will not be prompted to reauthenticate.\nAvailable values: \"automatic\", \"reauth\", \"no_action\".",
+ 						Computed:    true,
+ 						Optional:    true,
++						Default:     stringdefault.StaticString("no_action"),
+ 						Validators: []validator.String{
+ 							stringvalidator.OneOfCaseInsensitive(
+ 								"automatic",
+@@ -229,7 +236,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
+ 								"no_action",
+ 							),
+ 						},
+-						Default: stringdefault.StaticString("no_action"),
+ 					},
+ 					"scim_base_url": schema.StringAttribute{
+ 						Description: "The base URL of Cloudflare's SCIM V2.0 API endpoint.",
