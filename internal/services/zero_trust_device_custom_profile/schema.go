@@ -8,7 +8,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -42,40 +45,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.",
 				Required:    true,
 			},
-			"allow_mode_switch": schema.BoolAttribute{
-				Description: "Whether to allow the user to switch WARP between modes.",
-				Optional:    true,
-			},
-			"allow_updates": schema.BoolAttribute{
-				Description: "Whether to receive update notifications when a new version of the client is available.",
-				Optional:    true,
-			},
-			"allowed_to_leave": schema.BoolAttribute{
-				Description: "Whether to allow devices to leave the organization.",
-				Optional:    true,
-			},
-			"auto_connect": schema.Float64Attribute{
-				Description: "The amount of time in seconds to reconnect after having been disabled.",
-				Optional:    true,
-			},
-			"captive_portal": schema.Float64Attribute{
-				Description: "Turn on the captive portal after the specified amount of time.",
-				Optional:    true,
-			},
 			"description": schema.StringAttribute{
 				Description: "A description of the policy.",
 				Optional:    true,
 			},
-			"disable_auto_fallback": schema.BoolAttribute{
-				Description: "If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.",
-				Optional:    true,
-			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether the policy will be applied to matching devices.",
-				Optional:    true,
-			},
-			"exclude_office_ips": schema.BoolAttribute{
-				Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
 				Optional:    true,
 			},
 			"lan_allow_minutes": schema.Float64Attribute{
@@ -84,26 +59,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"lan_allow_subnet_size": schema.Float64Attribute{
 				Description: "The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.",
-				Optional:    true,
-			},
-			"register_interface_ip_with_dns": schema.BoolAttribute{
-				Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
-				Optional:    true,
-			},
-			"sccm_vpn_boundary_support": schema.BoolAttribute{
-				Description: "Determines whether the WARP client indicates to SCCM that it is inside a VPN boundary. (Windows only).",
-				Optional:    true,
-			},
-			"support_url": schema.StringAttribute{
-				Description: "The URL to launch when the Send Feedback button is clicked.",
-				Optional:    true,
-			},
-			"switch_locked": schema.BoolAttribute{
-				Description: "Whether to allow the user to turn off the WARP switch and disconnect the client.",
-				Optional:    true,
-			},
-			"tunnel_protocol": schema.StringAttribute{
-				Description: "Determines which tunnel protocol to use.",
 				Optional:    true,
 			},
 			"exclude": schema.ListNestedAttribute{
@@ -158,6 +113,78 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
+			},
+			"allow_mode_switch": schema.BoolAttribute{
+				Description: "Whether to allow the user to switch WARP between modes.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"allow_updates": schema.BoolAttribute{
+				Description: "Whether to receive update notifications when a new version of the client is available.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"allowed_to_leave": schema.BoolAttribute{
+				Description: "Whether to allow devices to leave the organization.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
+			},
+			"auto_connect": schema.Float64Attribute{
+				Description: "The amount of time in seconds to reconnect after having been disabled.",
+				Computed:    true,
+				Optional:    true,
+				Default:     float64default.StaticFloat64(0),
+			},
+			"captive_portal": schema.Float64Attribute{
+				Description: "Turn on the captive portal after the specified amount of time.",
+				Computed:    true,
+				Optional:    true,
+				Default:     float64default.StaticFloat64(180),
+			},
+			"disable_auto_fallback": schema.BoolAttribute{
+				Description: "If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"exclude_office_ips": schema.BoolAttribute{
+				Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"register_interface_ip_with_dns": schema.BoolAttribute{
+				Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
+			},
+			"sccm_vpn_boundary_support": schema.BoolAttribute{
+				Description: "Determines whether the WARP client indicates to SCCM that it is inside a VPN boundary. (Windows only).",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"support_url": schema.StringAttribute{
+				Description: "The URL to launch when the Send Feedback button is clicked.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"switch_locked": schema.BoolAttribute{
+				Description: "Whether to allow the user to turn off the WARP switch and disconnect the client.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"tunnel_protocol": schema.StringAttribute{
+				Description: "Determines which tunnel protocol to use.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
 			},
 			"default": schema.BoolAttribute{
 				Description: "Whether the policy is the default policy for an account.",
