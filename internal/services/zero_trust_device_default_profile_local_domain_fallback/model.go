@@ -12,6 +12,7 @@ type ZeroTrustDeviceDefaultProfileLocalDomainFallbackResultEnvelope struct {
 }
 
 type ZeroTrustDeviceDefaultProfileLocalDomainFallbackModel struct {
+	ID        types.String                                                     `tfsdk:"id" json:"-,computed"`
 	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
 	Domains   *[]*ZeroTrustDeviceDefaultProfileLocalDomainFallbackDomainsModel `tfsdk:"domains" json:"domains,required"`
 }
