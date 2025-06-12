@@ -36,28 +36,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"comment": schema.StringAttribute{
-				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
-				Optional:    true,
-			},
-			"content": schema.StringAttribute{
-				Description: "A valid IPv4 address.",
-				Optional:    true,
-			},
 			"name": schema.StringAttribute{
 				Description: "DNS record name (or @ for the zone apex) in Punycode.",
-				Optional:    true,
-			},
-			"priority": schema.Float64Attribute{
-				Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(0, 65535),
-				},
+				Required:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "Record type.\nAvailable values: \"A\", \"AAAA\", \"CNAME\", \"MX\", \"NS\", \"OPENPGPKEY\", \"PTR\", \"TXT\", \"CAA\", \"CERT\", \"DNSKEY\", \"DS\", \"HTTPS\", \"LOC\", \"NAPTR\", \"SMIMEA\", \"SRV\", \"SSHFP\", \"SVCB\", \"TLSA\", \"URI\".",
-				Optional:    true,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"A",
@@ -82,6 +67,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"TLSA",
 						"URI",
 					),
+				},
+			},
+			"comment": schema.StringAttribute{
+				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
+				Optional:    true,
+			},
+			"content": schema.StringAttribute{
+				Description: "A valid IPv4 address.",
+				Optional:    true,
+			},
+			"priority": schema.Float64Attribute{
+				Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(0, 65535),
 				},
 			},
 			"data": schema.SingleNestedAttribute{
