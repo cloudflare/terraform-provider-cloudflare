@@ -32,6 +32,7 @@ func (m ZeroTrustGatewaySettingsModel) MarshalJSONForUpdate(state ZeroTrustGatew
 type ZeroTrustGatewaySettingsSettingsModel struct {
 	ActivityLog           *ZeroTrustGatewaySettingsSettingsActivityLogModel                                `tfsdk:"activity_log" json:"activity_log,optional"`
 	Antivirus             *ZeroTrustGatewaySettingsSettingsAntivirusModel                                  `tfsdk:"antivirus" json:"antivirus,optional"`
+	AppControlSettings    *ZeroTrustGatewaySettingsSettingsAppControlSettingsModel                         `tfsdk:"app_control_settings" json:"app-control-settings,optional"`
 	BlockPage             customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBlockPageModel]         `tfsdk:"block_page" json:"block_page,computed_optional"`
 	BodyScanning          *ZeroTrustGatewaySettingsSettingsBodyScanningModel                               `tfsdk:"body_scanning" json:"body_scanning,optional"`
 	BrowserIsolation      *ZeroTrustGatewaySettingsSettingsBrowserIsolationModel                           `tfsdk:"browser_isolation" json:"browser_isolation,optional"`
@@ -61,6 +62,10 @@ type ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel struct {
 	IncludeContext types.Bool   `tfsdk:"include_context" json:"include_context,optional"`
 	Msg            types.String `tfsdk:"msg" json:"msg,optional"`
 	SupportURL     types.String `tfsdk:"support_url" json:"support_url,optional"`
+}
+
+type ZeroTrustGatewaySettingsSettingsAppControlSettingsModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,optional"`
 }
 
 type ZeroTrustGatewaySettingsSettingsBlockPageModel struct {

@@ -33,6 +33,7 @@ type ZeroTrustGatewayPolicyDataSourceModel struct {
 	Traffic       types.String                                                                `tfsdk:"traffic" json:"traffic,computed"`
 	UpdatedAt     timetypes.RFC3339                                                           `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Version       types.Int64                                                                 `tfsdk:"version" json:"version,computed"`
+	WarningStatus types.String                                                                `tfsdk:"warning_status" json:"warning_status,computed"`
 	Filters       customfield.List[types.String]                                              `tfsdk:"filters" json:"filters,computed"`
 	Expiration    customfield.NestedObject[ZeroTrustGatewayPolicyExpirationDataSourceModel]   `tfsdk:"expiration" json:"expiration,computed"`
 	RuleSettings  customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsDataSourceModel] `tfsdk:"rule_settings" json:"rule_settings,computed"`

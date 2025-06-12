@@ -584,6 +584,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "version number of the rule",
 				Computed:    true,
 			},
+			"warning_status": schema.StringAttribute{
+				Description: "Warning for a misconfigured rule, if any.",
+				Computed:    true,
+			},
 		},
 	}
 }
