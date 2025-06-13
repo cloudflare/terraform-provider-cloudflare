@@ -260,7 +260,11 @@ func (r *ZeroTrustTunnelCloudflaredResource) ImportState(ctx context.Context, re
 		return
 	}
 	data = &env.Result
-
+	if data.RemoteConfig.ValueBool() {
+		data.ConfigSrc = types.StringValue("cloudflare")
+	} else {
+		data.ConfigSrc = types.StringValue("local")
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
