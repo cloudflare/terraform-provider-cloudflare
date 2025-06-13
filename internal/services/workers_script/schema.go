@@ -291,6 +291,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Sensitive:   true,
 							CustomType:  jsontypes.NormalizedType{},
 						},
+						"workflow_name": schema.StringAttribute{
+							Description: "Name of the Workflow to bind to.",
+							Optional:    true,
+						},
 					},
 				},
 			},
