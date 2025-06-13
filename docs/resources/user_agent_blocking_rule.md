@@ -15,8 +15,8 @@ description: |-
 resource "cloudflare_user_agent_blocking_rule" "example_user_agent_blocking_rule" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   configuration = {
-    target = "ip"
-    value = "198.51.100.4"
+    target = "ua"
+    value = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)"
   }
   mode = "challenge"
 }
@@ -27,7 +27,7 @@ resource "cloudflare_user_agent_blocking_rule" "example_user_agent_blocking_rule
 
 ### Required
 
-- `configuration` (Attributes) The rule configuration. (see [below for nested schema](#nestedatt--configuration))
+- `configuration` (Attributes) (see [below for nested schema](#nestedatt--configuration))
 - `mode` (String) The action to apply to a matched request.
 Available values: "block", "challenge", "whitelist", "js_challenge", "managed_challenge".
 - `zone_id` (String) Defines an identifier.
@@ -41,8 +41,8 @@ Available values: "block", "challenge", "whitelist", "js_challenge", "managed_ch
 
 Optional:
 
-- `target` (String) The configuration target. You must set the target to `ip` when specifying an IP address in the rule.
-Available values: "ip", "ip6", "ip_range", "asn", "country".
-- `value` (String) The IP address to match. This address will be compared to the IP address of incoming requests.
+- `target` (String) The configuration target. You must set the target to `ua` when specifying a user agent in the rule.
+Available values: "ua".
+- `value` (String) the user agent to exactly match
 
 

@@ -19,6 +19,9 @@ resource "cloudflare_zone_lockdown" "example_zone_lockdown" {
     value = "198.51.100.4"
   }]
   urls = ["shop.example.com/*"]
+  description = "Prevent multiple login failures to mitigate brute force attacks"
+  paused = false
+  priority = 5
 }
 ```
 
@@ -31,13 +34,17 @@ resource "cloudflare_zone_lockdown" "example_zone_lockdown" {
 - `urls` (List of String) The URLs to include in the current WAF override. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.
 - `zone_id` (String) Defines an identifier.
 
+### Optional
+
+- `description` (String) An informative summary of the rate limit. This value is sanitized and any tags will be removed.
+- `paused` (Boolean) When true, indicates that the rule is currently paused.
+- `priority` (Number) The priority of the rule to control the processing order. A lower number indicates higher priority. If not provided, any rules with a configured priority will be processed before rules without a priority.
+
 ### Read-Only
 
 - `created_on` (String) The timestamp of when the rule was created.
-- `description` (String) An informative summary of the rule.
 - `id` (String) The unique identifier of the Zone Lockdown rule.
 - `modified_on` (String) The timestamp of when the rule was last modified.
-- `paused` (Boolean) When true, indicates that the rule is currently paused.
 
 <a id="nestedatt--configurations"></a>
 ### Nested Schema for `configurations`

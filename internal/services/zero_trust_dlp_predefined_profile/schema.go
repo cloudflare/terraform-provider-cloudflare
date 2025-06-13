@@ -31,19 +31,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"entries": schema.ListNestedAttribute{
-				Required: true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Required: true,
-						},
-						"enabled": schema.BoolAttribute{
-							Required: true,
-						},
-					},
-				},
-			},
 			"ai_context_enabled": schema.BoolAttribute{
 				Optional: true,
 			},
@@ -72,6 +59,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "If the content type is a file, skip context analysis and return all matches.",
 								Required:    true,
 							},
+						},
+					},
+				},
+			},
+			"entries": schema.ListNestedAttribute{
+				Optional:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Required: true,
+						},
+						"enabled": schema.BoolAttribute{
+							Required: true,
 						},
 					},
 				},

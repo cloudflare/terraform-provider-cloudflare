@@ -3665,6 +3665,36 @@ func TestAccCloudflarePageRule_CacheTTLByStatus(t *testing.T) {
 	})
 }
 
+func TestAccCloudflarePageRule_CacheTTLByStatusEmptyBlockExpectAPIError(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_page_rule." + rnd
+	target := fmt.Sprintf("%s.%s", rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflarePageRuleConfigCacheTTLByStatusEmptyBlock(zoneID, target, rnd),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("400 Bad Request")),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheTTLByStatusEmptyBlock(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflarePageRuleRecreated(before, after *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
@@ -3885,6 +3915,10 @@ func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIncludeMultipleValuesQuer
 
 func testAccCheckCloudflarePageRuleConfigCacheTTLByStatus(zoneID, target, rnd string) string {
 	return acctest.LoadTestCase("pageruleconfigcachettlbystatus.tf", zoneID, target, rnd)
+}
+
+func testAccCheckCloudflarePageRuleConfigCacheTTLByStatusEmptyBlock(zoneID, target, rnd string) string {
+	return acctest.LoadTestCase("pageruleconfigcachettlbystatusemptyblock.tf", zoneID, target, rnd)
 }
 
 func buildPageRuleConfig(rnd, zoneID, actions, target string) string {

@@ -27,24 +27,24 @@ data "cloudflare_zone" "example_zone" {
 
 ### Read-Only
 
-- `account` (Attributes) The account the zone belongs to (see [below for nested schema](#nestedatt--account))
+- `account` (Attributes) The account the zone belongs to. (see [below for nested schema](#nestedatt--account))
 - `activated_on` (String) The last time proof of ownership was detected and the zone was made
-active
+active.
 - `cname_suffix` (String) Allows the customer to use a custom apex.
 *Tenants Only Configuration*.
-- `created_on` (String) When the zone was created
+- `created_on` (String) When the zone was created.
 - `development_mode` (Number) The interval (in seconds) from when development mode expires
 (positive integer) or last expired (negative integer) for the
 domain. If development mode has never been enabled, this value is 0.
 - `id` (String) Identifier
-- `meta` (Attributes) Metadata about the zone (see [below for nested schema](#nestedatt--meta))
-- `modified_on` (String) When the zone was last modified
-- `name` (String) The domain name
-- `name_servers` (List of String) The name servers Cloudflare assigns to a zone
-- `original_dnshost` (String) DNS host at the time of switching to Cloudflare
-- `original_name_servers` (List of String) Original name servers before moving to Cloudflare
-- `original_registrar` (String) Registrar for the domain at the time of switching to Cloudflare
-- `owner` (Attributes) The owner of the zone (see [below for nested schema](#nestedatt--owner))
+- `meta` (Attributes) Metadata about the zone. (see [below for nested schema](#nestedatt--meta))
+- `modified_on` (String) When the zone was last modified.
+- `name` (String) The domain name.
+- `name_servers` (List of String) The name servers Cloudflare assigns to a zone.
+- `original_dnshost` (String) DNS host at the time of switching to Cloudflare.
+- `original_name_servers` (List of String) Original name servers before moving to Cloudflare.
+- `original_registrar` (String) Registrar for the domain at the time of switching to Cloudflare.
+- `owner` (Attributes) The owner of the zone. (see [below for nested schema](#nestedatt--owner))
 - `paused` (Boolean) Indicates whether the zone is only using Cloudflare DNS services. A
 true value means the zone will not receive security or performance
 benefits.
@@ -81,7 +81,7 @@ Available values: "any", "all".
   * `contains_case_sensitive`
 - `order` (String) Field to order zones by.
 Available values: "name", "status", "account.id", "account.name", "plan.id".
-- `status` (String) A zone status
+- `status` (String) Specify a zone status to filter by.
 Available values: "initializing", "pending", "active", "moved".
 
 <a id="nestedatt--filter--account"></a>
@@ -89,7 +89,7 @@ Available values: "initializing", "pending", "active", "moved".
 
 Optional:
 
-- `id` (String) An account ID
+- `id` (String) Filter by an account ID.
 - `name` (String) An account Name. Optional filter operators can be provided to extend refine the search:
   * `equal` (default)
   * `not_equal`
@@ -108,7 +108,7 @@ Optional:
 Read-Only:
 
 - `id` (String) Identifier
-- `name` (String) The name of the account
+- `name` (String) The name of the account.
 
 
 <a id="nestedatt--meta"></a>
@@ -116,12 +116,12 @@ Read-Only:
 
 Read-Only:
 
-- `cdn_only` (Boolean) The zone is only configured for CDN
-- `custom_certificate_quota` (Number) Number of Custom Certificates the zone can have
-- `dns_only` (Boolean) The zone is only configured for DNS
-- `foundation_dns` (Boolean) The zone is setup with Foundation DNS
-- `page_rule_quota` (Number) Number of Page Rules a zone can have
-- `phishing_detected` (Boolean) The zone has been flagged for phishing
+- `cdn_only` (Boolean) The zone is only configured for CDN.
+- `custom_certificate_quota` (Number) Number of Custom Certificates the zone can have.
+- `dns_only` (Boolean) The zone is only configured for DNS.
+- `foundation_dns` (Boolean) The zone is setup with Foundation DNS.
+- `page_rule_quota` (Number) Number of Page Rules a zone can have.
+- `phishing_detected` (Boolean) The zone has been flagged for phishing.
 - `step` (Number)
 
 
@@ -131,8 +131,8 @@ Read-Only:
 Read-Only:
 
 - `id` (String) Identifier
-- `name` (String) Name of the owner
-- `type` (String) The type of owner
+- `name` (String) Name of the owner.
+- `type` (String) The type of owner.
 
 
 <a id="nestedatt--plan"></a>
@@ -148,7 +148,7 @@ Read-Only:
 - `is_subscribed` (Boolean) States if the subscription active.
 - `legacy_discount` (Boolean) If the legacy discount applies to this Zone.
 - `legacy_id` (String) The legacy name of the plan.
-- `name` (String) Name of the owner
+- `name` (String) Name of the owner.
 - `price` (Number) How much the customer is paying.
 
 

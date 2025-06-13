@@ -1,5 +1,59 @@
 # Changelog
 
+## 5.6.0 (2025-06-13)
+
+Full Changelog: [v5.5.0...v5.6.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.5.0...v5.6.0)
+
+### Features
+
+* **api:** Add IAM User Groups and AutoRAG ([56dcaf3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/56dcaf31aebbfe8ae99f87c2a0b2fe38d83ecde8))
+* **api:** api update ([38cc34f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/38cc34fea8002cd1c5c83617f60c46c2de01ca06))
+* **api:** api update ([87dfb9f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/87dfb9f059e9984aa36b5e97d09bd155f1370c37))
+* **api:** api update ([9d65aaf](https://github.com/cloudflare/terraform-provider-cloudflare/commit/9d65aaf7d3e22702c79aba0ed4479116910aaf3c))
+* **api:** api update ([db05444](https://github.com/cloudflare/terraform-provider-cloudflare/commit/db0544438c9f56acf0c4be302789daa0e0f991b7))
+* **api:** api update ([d373046](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d373046d31d1b8c58551be0a0337e0352a63ff6c))
+* **api:** api update ([7f788ec](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7f788ecb6311aff5bc6fa9bf99afa3bf6c6fd777))
+* **api:** api update ([c412337](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c4123371db02b61b2d7cbbdf9c863797153f575e))
+* **api:** api update ([39a8871](https://github.com/cloudflare/terraform-provider-cloudflare/commit/39a88712180bf132d3ebf9b81983677af9bc21e5))
+* **api:** api update ([7af8e9c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7af8e9c1d92dfaeb220cb971570ce81f555720f1))
+* **api:** api update ([10873d4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/10873d41e2f2ab50245265a2d512a500e2d3f264))
+* **api:** api update ([b298896](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b298896494cc12a127083f12796bb27629225ce0))
+* **api:** api update ([2f3e6c2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2f3e6c25eed2d21a0464f3f795ea073d802791a5))
+* **api:** api update ([280f050](https://github.com/cloudflare/terraform-provider-cloudflare/commit/280f050d22739a9351e58a76f9f9432bd85e3fd8))
+* **api:** api update ([df6b8bf](https://github.com/cloudflare/terraform-provider-cloudflare/commit/df6b8bfe1635c5b1809564a15c6ed0c1a39375f2))
+* **api:** api update ([557f7d0](https://github.com/cloudflare/terraform-provider-cloudflare/commit/557f7d0a022fdd6dbc0da0bae8e0ac2325fbe831))
+* **api:** api update ([b53ba74](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b53ba74d449817f94ae28d437c732b1a5692d68f))
+* **api:** api update ([971ca4a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/971ca4a579c8a50655a1afc9719d191c4a99e3f8))
+* **api:** api update ([ef92b4a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ef92b4a7e62baac6c4dfe58064f87ec44cd12549))
+* **api:** api update ([79649c8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/79649c8ba974f224895979b8f2d4ee42ae8d297c))
+* **api:** api update ([dbc97dc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/dbc97dc1e0008c9f56a9e1c3bc5c99d8efdff7d1))
+* **api:** api update ([d09845d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d09845d053e978111aaa8a9c180439fdeb32ede3))
+* **api:** api update ([1ec0389](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1ec03896c0c7d3d77c0e7351e71f2027e031ee6e))
+* **client:** support environments property from Stainless config ([2e9ad1c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2e9ad1c69772948c177c9620953d195a1acdd7ef))
+* **schema_validation:** add terraform resource mappings ([e2f968e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e2f968ef5ed32c60b9c06c66ffb1cedc790221ac))
+* support import when resource ID is in read method request body ([500f710](https://github.com/cloudflare/terraform-provider-cloudflare/commit/500f7109d0422f084c30944c81685db9ce61db1a))
+
+
+### Bug Fixes
+
+* add missing properties ([a21b2bc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a21b2bc74d9287580756feb9479075acca78e65b))
+* page rule panic [#5577](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5577) ([a3c643d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a3c643d61dd8bbd01bcdc4e7a588214da5ebe612))
+* **schema:** better support top-level arrays in paginated responses ([e6331d5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e6331d547930bcafffbbcb31a1ab2dc1b53e5b73))
+* **static_route:** API can accept single routes now ([ac52503](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ac52503e070b2a448130c638eff82be5c3814d72))
+* **WDAPI:** Fix 'id_property' for zero_trust_device_default_profile_local_domain_fallback ([c409fd4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c409fd42a57a6f32f09e27067e2f23e7497d8e03))
+
+
+### Chores
+
+* bump deps to avoid GetResourceIdentitySchemas errors for Terraform CLI v1.12+ ([7bceb8f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7bceb8f53cdf0388c096c0c64c735856112a0ea2))
+* **internal:** codegen related update ([50b8e95](https://github.com/cloudflare/terraform-provider-cloudflare/commit/50b8e95ee60a57f72ff7c34f2c7380b4f4f8442e))
+
+
+### Documentation
+
+* generate ([#5625](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5625)) ([220f457](https://github.com/cloudflare/terraform-provider-cloudflare/commit/220f457d5159ce98cb19e3e60ed49d80f5a437ec))
+* generate ([#5626](https://github.com/cloudflare/terraform-provider-cloudflare/issues/5626)) ([6a83c54](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6a83c54ad97b1206e9a6d57ffba1783f93ed3c30))
+
 ## 5.5.0 (2025-05-19)
 
 Full Changelog: [v5.4.0...v5.5.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.4.0...v5.5.0)

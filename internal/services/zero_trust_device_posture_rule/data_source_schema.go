@@ -208,6 +208,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"subject_alternative_names": schema.ListAttribute{
+						Description: "List of certificate Subject Alternative Names.",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
 					"compliance_status": schema.StringAttribute{
 						Description: "Compliance Status.\nAvailable values: \"compliant\", \"noncompliant\", \"unknown\", \"notapplicable\", \"ingraceperiod\", \"error\".",
 						Computed:    true,

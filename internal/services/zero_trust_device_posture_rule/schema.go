@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -62,10 +63,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"custom_s2s",
 					),
 				},
-			},
-			"description": schema.StringAttribute{
-				Description: "The description of the device posture rule.",
-				Optional:    true,
 			},
 			"expiration": schema.StringAttribute{
 				Description: "Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.",
@@ -200,6 +197,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								ElementType: types.StringType,
 							},
 						},
+					},
+					"subject_alternative_names": schema.ListAttribute{
+						Description: "List of certificate Subject Alternative Names.",
+						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"compliance_status": schema.StringAttribute{
 						Description: "Compliance Status.\nAvailable values: \"compliant\", \"noncompliant\", \"unknown\", \"notapplicable\", \"ingraceperiod\", \"error\".",
@@ -375,6 +377,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"description": schema.StringAttribute{
+				Description: "The description of the device posture rule.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
 			},
 		},
 	}

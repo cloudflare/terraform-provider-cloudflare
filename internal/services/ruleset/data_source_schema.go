@@ -528,18 +528,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"polish": schema.StringAttribute{
-									Description: "Configure the Polish level.\nAvailable values: \"off\", \"lossless\", \"lossy\".",
+									Description: "Configure the Polish level.\nAvailable values: \"off\", \"lossless\", \"lossy\", \"webp\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
 											"off",
 											"lossless",
 											"lossy",
+											"webp",
 										),
 									},
 								},
 								"rocket_loader": schema.BoolAttribute{
-									Description: "Turn on or off Rocket Loader",
+									Description: "Turn on or off Rocket Loader.",
 									Computed:    true,
 								},
 								"security_level": schema.StringAttribute{
@@ -690,11 +691,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"cache_by_device_type": schema.BoolAttribute{
-											Description: "Separate cached content based on the visitor’s device type",
+											Description: "Separate cached content based on the visitor’s device type.",
 											Computed:    true,
 										},
 										"cache_deception_armor": schema.BoolAttribute{
-											Description: "Protect from web cache deception attacks while allowing static assets to be cached",
+											Description: "Protect from web cache deception attacks while allowing static assets to be cached.",
 											Computed:    true,
 										},
 										"custom_key": schema.SingleNestedAttribute{
@@ -857,7 +858,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"mode": schema.StringAttribute{
-											Description: "edge ttl options\nAvailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\".",
+											Description: "Edge TTL options.\nAvailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\".",
 											Computed:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
@@ -868,7 +869,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"status_code_ttl": schema.ListNestedAttribute{
-											Description: "List of single status codes, or status code ranges to apply the selected mode",
+											Description: "List of single status codes, or status code ranges to apply the selected mode.",
 											Computed:    true,
 											CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersEdgeTTLStatusCodeTTLDataSourceModel](ctx),
 											NestedObject: schema.NestedAttributeObject{
@@ -883,17 +884,17 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 														CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersEdgeTTLStatusCodeTTLStatusCodeRangeDataSourceModel](ctx),
 														Attributes: map[string]schema.Attribute{
 															"from": schema.Int64Attribute{
-																Description: "response status code lower bound",
+																Description: "Response status code lower bound.",
 																Computed:    true,
 															},
 															"to": schema.Int64Attribute{
-																Description: "response status code upper bound",
+																Description: "Response status code upper bound.",
 																Computed:    true,
 															},
 														},
 													},
 													"status_code_value": schema.Int64Attribute{
-														Description: "Set the ttl for responses with this specific status code",
+														Description: "Set the TTL for responses with this specific status code.",
 														Computed:    true,
 													},
 												},
@@ -906,7 +907,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"origin_error_page_passthru": schema.BoolAttribute{
-									Description: "Generate Cloudflare error pages from issues sent from the origin server. When on, error pages will trigger for issues from the origin",
+									Description: "Generate Cloudflare error pages from issues sent from the origin server. When on, error pages will trigger for issues from the origin.",
 									Computed:    true,
 								},
 								"read_timeout": schema.Int64Attribute{

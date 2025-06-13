@@ -97,7 +97,7 @@ Available values: "application/json", "text/xml", "text/plain", "text/html".
 - `overrides` (Attributes) A set of overrides to apply to the target ruleset. (see [below for nested schema](#nestedatt--rules--action_parameters--overrides))
 - `phases` (List of String) A list of phases to skip the execution of. This option is incompatible with the rulesets option.
 - `polish` (String) Configure the Polish level.
-Available values: "off", "lossless", "lossy".
+Available values: "off", "lossless", "lossy", "webp".
 - `products` (List of String) A list of legacy security products to skip the execution of.
 - `raw_response_fields` (Attributes List) The raw response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--raw_response_fields))
 - `read_timeout` (Number) Define a timeout value between two successive read operations to your origin server. Historically, the timeout value between two read options from Cloudflare to an origin server is 100 seconds. If you are attempting to reduce HTTP 524 errors because of timeouts from an origin server, try increasing this timeout value.

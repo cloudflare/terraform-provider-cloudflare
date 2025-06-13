@@ -102,12 +102,11 @@ type WorkersScriptMetadataAssetsModel struct {
 }
 
 type WorkersScriptMetadataAssetsConfigModel struct {
-	Headers          types.String `tfsdk:"_headers" json:"_headers,optional"`
-	Redirects        types.String `tfsdk:"_redirects" json:"_redirects,optional"`
-	HTMLHandling     types.String `tfsdk:"html_handling" json:"html_handling,optional"`
-	NotFoundHandling types.String `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
-	RunWorkerFirst   types.Bool   `tfsdk:"run_worker_first" json:"run_worker_first,optional"`
-	ServeDirectly    types.Bool   `tfsdk:"serve_directly" json:"serve_directly,optional"`
+	Headers          types.String    `tfsdk:"_headers" json:"_headers,optional"`
+	Redirects        types.String    `tfsdk:"_redirects" json:"_redirects,optional"`
+	HTMLHandling     types.String    `tfsdk:"html_handling" json:"html_handling,optional"`
+	NotFoundHandling types.String    `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
+	RunWorkerFirst   *[]types.String `tfsdk:"run_worker_first" json:"run_worker_first,optional"`
 }
 
 type WorkersScriptMetadataBindingsModel struct {
@@ -136,6 +135,7 @@ type WorkersScriptMetadataBindingsModel struct {
 	Usages        *[]types.String                             `tfsdk:"usages" json:"usages,optional"`
 	KeyBase64     types.String                                `tfsdk:"key_base64" json:"key_base64,optional"`
 	KeyJwk        jsontypes.Normalized                        `tfsdk:"key_jwk" json:"key_jwk,optional"`
+	WorkflowName  types.String                                `tfsdk:"workflow_name" json:"workflow_name,optional"`
 }
 
 type WorkersScriptMetadataBindingsOutboundModel struct {
