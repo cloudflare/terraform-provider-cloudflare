@@ -20,14 +20,14 @@ var _ resource.ResourceWithConfigValidators = (*AccountSubscriptionResource)(nil
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "Subscription identifier tag.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"subscription_identifier": schema.StringAttribute{
-				Description:   "Subscription identifier tag.",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"frequency": schema.StringAttribute{
@@ -104,10 +104,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the current billing period started. May match initial_period_start if this is the first period.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Subscription identifier tag.",
-				Computed:    true,
 			},
 			"price": schema.Float64Attribute{
 				Description: "The price of the subscription that will be billed, in US dollars.",
