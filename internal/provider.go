@@ -218,6 +218,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -393,6 +394,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zone.NewResource,
 		zone_setting.NewResource,
 		zone_hold.NewResource,
+		zone_subscription.NewResource,
 		load_balancer.NewResource,
 		load_balancer_monitor.NewResource,
 		load_balancer_pool.NewResource,
@@ -598,6 +600,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zone.NewZonesDataSource,
 		zone_setting.NewZoneSettingDataSource,
 		zone_hold.NewZoneHoldDataSource,
+		zone_subscription.NewZoneSubscriptionDataSource,
 		load_balancer.NewLoadBalancerDataSource,
 		load_balancer.NewLoadBalancersDataSource,
 		load_balancer_monitor.NewLoadBalancerMonitorDataSource,
