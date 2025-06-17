@@ -22,44 +22,44 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "example_zero_trust_t
       origin_request = {
         access = {
           aud_tag = ["string"]
-          team_name = "teamName"
-          required = true
+          team_name = "zero-trust-organization-name"
+          required = false
         }
         ca_pool = "caPool"
-        connect_timeout = 0
+        connect_timeout = 10
         disable_chunked_encoding = true
         http2_origin = true
         http_host_header = "httpHostHeader"
-        keep_alive_connections = 0
-        keep_alive_timeout = 0
-        no_happy_eyeballs = true
-        no_tls_verify = true
+        keep_alive_connections = 100
+        keep_alive_timeout = 90
+        no_happy_eyeballs = false
+        no_tls_verify = false
         origin_server_name = "originServerName"
         proxy_type = "proxyType"
-        tcp_keep_alive = 0
-        tls_timeout = 0
+        tcp_keep_alive = 30
+        tls_timeout = 10
       }
       path = "subpath"
     }]
     origin_request = {
       access = {
         aud_tag = ["string"]
-        team_name = "teamName"
-        required = true
+        team_name = "zero-trust-organization-name"
+        required = false
       }
       ca_pool = "caPool"
-      connect_timeout = 0
+      connect_timeout = 10
       disable_chunked_encoding = true
       http2_origin = true
       http_host_header = "httpHostHeader"
-      keep_alive_connections = 0
-      keep_alive_timeout = 0
-      no_happy_eyeballs = true
-      no_tls_verify = true
+      keep_alive_connections = 100
+      keep_alive_timeout = 90
+      no_happy_eyeballs = false
+      no_tls_verify = false
       origin_server_name = "originServerName"
       proxy_type = "proxyType"
-      tcp_keep_alive = 0
-      tls_timeout = 0
+      tcp_keep_alive = 30
+      tls_timeout = 10
     }
   }
 }
@@ -133,11 +133,11 @@ Optional:
 Required:
 
 - `aud_tag` (List of String) Access applications that are allowed to reach this hostname for this Tunnel. Audience tags can be identified in the dashboard or via the List Access policies API.
+- `team_name` (String)
 
 Optional:
 
 - `required` (Boolean) Deny traffic that has not fulfilled Access authorization.
-- `team_name` (String)
 
 
 
@@ -168,11 +168,11 @@ Optional:
 Required:
 
 - `aud_tag` (List of String) Access applications that are allowed to reach this hostname for this Tunnel. Audience tags can be identified in the dashboard or via the List Access policies API.
+- `team_name` (String)
 
 Optional:
 
 - `required` (Boolean) Deny traffic that has not fulfilled Access authorization.
-- `team_name` (String)
 
 
 

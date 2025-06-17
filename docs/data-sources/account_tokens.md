@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_account_tokens" "example_account_tokens" {
-  account_id = "eb78d65290b24279ba6f44721b3ea3c4"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   direction = "desc"
 }
 ```
@@ -85,9 +85,9 @@ Available values: "allow", "deny".
 
 Read-Only:
 
-- `id` (String) Identifier of the group.
+- `id` (String) Identifier of the permission group.
 - `meta` (Attributes) Attributes associated to the permission group. (see [below for nested schema](#nestedatt--result--policies--permission_groups--meta))
-- `name` (String) Name of the group.
+- `name` (String) Name of the permission group.
 
 <a id="nestedatt--result--policies--permission_groups--meta"></a>
 ### Nested Schema for `result.policies.permission_groups.meta`

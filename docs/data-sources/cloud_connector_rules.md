@@ -40,7 +40,7 @@ Read-Only:
 - `id` (String)
 - `parameters` (Attributes) Parameters of Cloud Connector Rule (see [below for nested schema](#nestedatt--rules--parameters))
 - `provider` (String) Cloud Provider type
-Available values: "aws_s3", "r2", "gcp_storage", "azure_storage".
+Available values: "aws_s3", "cloudflare_r2", "gcp_storage", "azure_storage".
 
 <a id="nestedatt--rules--parameters"></a>
 ### Nested Schema for `rules.parameters`

@@ -32,4 +32,28 @@ resource "cloudflare_user" "example_user" {
 - `telephone` (String) User's telephone number
 - `zipcode` (String) The zipcode or postal code where the user lives.
 
+### Read-Only
+
+- `betas` (List of String) Lists the betas that the user is participating in.
+- `has_business_zones` (Boolean) Indicates whether user has any business zones
+- `has_enterprise_zones` (Boolean) Indicates whether user has any enterprise zones
+- `has_pro_zones` (Boolean) Indicates whether user has any pro zones
+- `id` (String) Identifier of the user.
+- `organizations` (Attributes List) (see [below for nested schema](#nestedatt--organizations))
+- `suspended` (Boolean) Indicates whether user has been suspended
+- `two_factor_authentication_enabled` (Boolean) Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.
+- `two_factor_authentication_locked` (Boolean) Indicates whether two-factor authentication is required by one of the accounts that the user is a member of.
+
+<a id="nestedatt--organizations"></a>
+### Nested Schema for `organizations`
+
+Read-Only:
+
+- `id` (String) Identifier
+- `name` (String) Organization name.
+- `permissions` (List of String) Access permissions for this User.
+- `roles` (List of String) List of roles that a user has within an organization.
+- `status` (String) Whether the user is a member of the organization or has an invitation pending.
+Available values: "member", "invited".
+
 

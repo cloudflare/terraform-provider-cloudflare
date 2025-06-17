@@ -58,6 +58,7 @@ This does not apply to HTTP or network policies. (see [below for nested schema](
 - `traffic` (String) The wirefilter expression used for traffic matching.
 - `updated_at` (String)
 - `version` (Number) version number of the rule
+- `warning_status` (String) Warning for a misconfigured rule, if any.
 
 <a id="nestedatt--result--expiration"></a>
 ### Nested Schema for `result.expiration`
