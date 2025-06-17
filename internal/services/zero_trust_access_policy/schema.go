@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -804,7 +803,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"app_count": schema.Int64Attribute{
 				Description: "Number of access applications currently using this policy.",
 				Computed:    true,
-				Default:     int64default.StaticInt64(0),
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,

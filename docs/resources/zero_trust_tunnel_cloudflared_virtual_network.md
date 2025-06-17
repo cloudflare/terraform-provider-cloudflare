@@ -17,6 +17,7 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_virtual_network" "example_zer
   name = "us-east-1-vpc"
   comment = "Staging VPC for data science"
   is_default = true
+  is_default_network = false
 }
 ```
 
@@ -31,7 +32,7 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_virtual_network" "example_zer
 ### Optional
 
 - `comment` (String) Optional remark describing the virtual network.
-- `is_default` (Boolean) If `true`, this virtual network is the default for the account.
+- `is_default` (Boolean, Deprecated) If `true`, this virtual network is the default for the account.
 - `is_default_network` (Boolean) If `true`, this virtual network is the default for the account.
 
 ### Read-Only

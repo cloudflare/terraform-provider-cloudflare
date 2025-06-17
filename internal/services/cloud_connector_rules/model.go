@@ -14,7 +14,7 @@ type CloudConnectorRulesResultEnvelope struct {
 type CloudConnectorRulesModel struct {
 	ID     types.String                      `tfsdk:"id" json:"-,computed"`
 	ZoneID types.String                      `tfsdk:"zone_id" path:"zone_id,required"`
-	Rules  *[]*CloudConnectorRulesRulesModel `tfsdk:"rules" json:"rules,optional,no_refresh"`
+	Rules  *[]*CloudConnectorRulesRulesModel `tfsdk:"rules" json:"rules,optional"`
 }
 
 func (m CloudConnectorRulesModel) MarshalJSON() (data []byte, err error) {

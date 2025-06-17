@@ -13,8 +13,8 @@ description: |-
 
 ```terraform
 data "cloudflare_resource_group" "example_resource_group" {
-  account_id = "eb78d65290b24279ba6f44721b3ea3c4"
-  resource_group_id = "6d7f2f5f5b1d4a0e9081fdc98d432fd1"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  resource_group_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }
 ```
 
@@ -28,7 +28,7 @@ data "cloudflare_resource_group" "example_resource_group" {
 
 ### Read-Only
 
-- `id` (String) Identifier of the group.
+- `id` (String) Identifier of the resource group.
 - `meta` (Attributes) Attributes associated to the resource group. (see [below for nested schema](#nestedatt--meta))
 - `name` (String) Name of the resource group.
 - `scope` (Attributes List) The scope associated to the resource group (see [below for nested schema](#nestedatt--scope))

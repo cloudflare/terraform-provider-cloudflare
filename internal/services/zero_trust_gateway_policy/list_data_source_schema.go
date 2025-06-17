@@ -193,10 +193,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 										},
 										"download": schema.StringAttribute{
-											Description: "Configure whether downloading enabled or not. When absent, downloading is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\".",
+											Description: "Configure whether downloading enabled or not. When set with \"remote_only\", downloads are only available for viewing. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
 											Computed:    true,
 											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
+												stringvalidator.OneOfCaseInsensitive(
+													"enabled",
+													"disabled",
+													"remote_only",
+												),
 											},
 										},
 										"dp": schema.BoolAttribute{
@@ -581,6 +585,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"version": schema.Int64Attribute{
 							Description: "version number of the rule",
+							Computed:    true,
+						},
+						"warning_status": schema.StringAttribute{
+							Description: "Warning for a misconfigured rule, if any.",
 							Computed:    true,
 						},
 					},

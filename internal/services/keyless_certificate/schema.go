@@ -49,7 +49,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"force",
 					),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 				Default:       stringdefault.StaticString("ubiquitous"),
 			},
 			"host": schema.StringAttribute{

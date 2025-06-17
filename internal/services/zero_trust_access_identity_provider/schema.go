@@ -10,7 +10,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -79,6 +82,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Your OAuth Client Secret",
 						Optional:    true,
 						Sensitive:   true,
+						WriteOnly:   true,
 					},
 					"conditional_access_enabled": schema.BoolAttribute{
 						Description: "Should Cloudflare try to load authentication contexts from your account",
@@ -191,17 +195,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"sign_request": schema.BoolAttribute{
-						Description: "Sign the SAML authentication request with Access credentials. To verify the signature, use the public key from the Access certs endpoints.",
-						Computed:    true,
-						Optional:    true,
-						Default:     booldefault.StaticBool(false),
+						Description:   "Sign the SAML authentication request with Access credentials. To verify the signature, use the public key from the Access certs endpoints.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 					},
 					"sso_target_url": schema.StringAttribute{
 						Description: "URL to send the SAML authentication requests to",
 						Optional:    true,
 					},
 					"redirect_url": schema.StringAttribute{
-						Computed: true,
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 				},
 			},
@@ -210,14 +214,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessIdentityProviderSCIMConfigModel](ctx),
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.UseStateForUnknown(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "A flag to enable or disable SCIM for the identity provider.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"identity_update_behavior": schema.StringAttribute{
 						Description: "Indicates how a SCIM event updates a user identity used for policy evaluation. Use \"automatic\" to automatically update a user's identity and augment it with fields from the SCIM user resource. Use \"reauth\" to force re-authentication on group membership updates, user identity update will only occur after successful re-authentication. With \"reauth\" identities will not contain fields from the SCIM user resource. With \"no_action\" identities will not be changed by SCIM updates in any way and users will not be prompted to reauthenticate.\nAvailable values: \"automatic\", \"reauth\", \"no_action\".",
+						Computed:    true,
 						Optional:    true,
+						Default:     stringdefault.StaticString("no_action"),
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"automatic",
@@ -232,7 +243,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"seat_deprovision": schema.BoolAttribute{
 						Description: "A flag to remove a user's seat in Zero Trust when they have been deprovisioned in the Identity Provider.  This cannot be enabled unless user_deprovision is also enabled.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"secret": schema.StringAttribute{
 						Description: "A read-only token generated when the SCIM integration is enabled for the first time.  It is redacted on subsequent requests.  If you lose this you will need to refresh it at /access/identity_providers/:idpID/refresh_scim_secret.",
@@ -241,7 +254,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"user_deprovision": schema.BoolAttribute{
 						Description: "A flag to enable revoking a user's session in Access and Gateway when they have been deprovisioned in the Identity Provider.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 				},
 			},

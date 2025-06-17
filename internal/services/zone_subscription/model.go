@@ -4,6 +4,7 @@ package zone_subscription
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -12,9 +13,15 @@ type ZoneSubscriptionResultEnvelope struct {
 }
 
 type ZoneSubscriptionModel struct {
-	Identifier types.String                   `tfsdk:"identifier" path:"identifier,required"`
-	Frequency  types.String                   `tfsdk:"frequency" json:"frequency,optional,no_refresh"`
-	RatePlan   *ZoneSubscriptionRatePlanModel `tfsdk:"rate_plan" json:"rate_plan,optional,no_refresh"`
+	ID                 types.String                   `tfsdk:"id" json:"id,computed"`
+	ZoneID             types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
+	Frequency          types.String                   `tfsdk:"frequency" json:"frequency,optional"`
+	RatePlan           *ZoneSubscriptionRatePlanModel `tfsdk:"rate_plan" json:"rate_plan,optional"`
+	Currency           types.String                   `tfsdk:"currency" json:"currency,computed"`
+	CurrentPeriodEnd   timetypes.RFC3339              `tfsdk:"current_period_end" json:"current_period_end,computed" format:"date-time"`
+	CurrentPeriodStart timetypes.RFC3339              `tfsdk:"current_period_start" json:"current_period_start,computed" format:"date-time"`
+	Price              types.Float64                  `tfsdk:"price" json:"price,computed"`
+	State              types.String                   `tfsdk:"state" json:"state,computed"`
 }
 
 func (m ZoneSubscriptionModel) MarshalJSON() (data []byte, err error) {

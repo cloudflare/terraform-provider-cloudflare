@@ -5,7 +5,6 @@ package zero_trust_device_default_profile_local_domain_fallback
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -18,9 +17,13 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDeviceDefaultProfileLoc
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"account_id": schema.StringAttribute{
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"domains": schema.ListNestedAttribute{
 				Required: true,
@@ -41,20 +44,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"description": schema.StringAttribute{
-				Description: "A description of the fallback domain, displayed in the client UI.",
-				Computed:    true,
-			},
-			"suffix": schema.StringAttribute{
-				Description: "The domain suffix to match when resolving locally.",
-				Computed:    true,
-			},
-			"dns_server": schema.ListAttribute{
-				Description: "A list of IP addresses to handle domain resolution.",
-				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
 			},
 		},
 	}

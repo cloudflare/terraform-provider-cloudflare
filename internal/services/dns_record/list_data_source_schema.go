@@ -217,16 +217,49 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[DNSRecordsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							Description: "DNS record name (or @ for the zone apex) in Punycode.",
+							Computed:    true,
+						},
+						"ttl": schema.Float64Attribute{
+							Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
+							Computed:    true,
+						},
+						"type": schema.StringAttribute{
+							Description: "Record type.\nAvailable values: \"A\", \"AAAA\", \"CNAME\", \"MX\", \"NS\", \"OPENPGPKEY\", \"PTR\", \"TXT\", \"CAA\", \"CERT\", \"DNSKEY\", \"DS\", \"HTTPS\", \"LOC\", \"NAPTR\", \"SMIMEA\", \"SRV\", \"SSHFP\", \"SVCB\", \"TLSA\", \"URI\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"A",
+									"AAAA",
+									"CNAME",
+									"MX",
+									"NS",
+									"OPENPGPKEY",
+									"PTR",
+									"TXT",
+									"CAA",
+									"CERT",
+									"DNSKEY",
+									"DS",
+									"HTTPS",
+									"LOC",
+									"NAPTR",
+									"SMIMEA",
+									"SRV",
+									"SSHFP",
+									"SVCB",
+									"TLSA",
+									"URI",
+								),
+							},
+						},
 						"comment": schema.StringAttribute{
 							Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
 							Computed:    true,
 						},
 						"content": schema.StringAttribute{
 							Description: "A valid IPv4 address.",
-							Computed:    true,
-						},
-						"name": schema.StringAttribute{
-							Description: "DNS record name (or @ for the zone apex) in Punycode.",
 							Computed:    true,
 						},
 						"proxied": schema.BoolAttribute{
@@ -257,39 +290,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
-						},
-						"ttl": schema.Float64Attribute{
-							Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
-							Computed:    true,
-						},
-						"type": schema.StringAttribute{
-							Description: "Record type.\nAvailable values: \"A\", \"AAAA\", \"CAA\", \"CERT\", \"CNAME\", \"DNSKEY\", \"DS\", \"HTTPS\", \"LOC\", \"MX\", \"NAPTR\", \"NS\", \"OPENPGPKEY\", \"PTR\", \"SMIMEA\", \"SRV\", \"SSHFP\", \"SVCB\", \"TLSA\", \"TXT\", \"URI\".",
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(
-									"A",
-									"AAAA",
-									"CAA",
-									"CERT",
-									"CNAME",
-									"DNSKEY",
-									"DS",
-									"HTTPS",
-									"LOC",
-									"MX",
-									"NAPTR",
-									"NS",
-									"OPENPGPKEY",
-									"PTR",
-									"SMIMEA",
-									"SRV",
-									"SSHFP",
-									"SVCB",
-									"TLSA",
-									"TXT",
-									"URI",
-								),
-							},
 						},
 						"id": schema.StringAttribute{
 							Description: "Identifier.",
@@ -323,6 +323,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "When the record tags were last modified. Omitted if there are no tags.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
+						},
+						"priority": schema.Float64Attribute{
+							Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
+							Computed:    true,
+							Validators: []validator.Float64{
+								float64validator.Between(0, 65535),
+							},
 						},
 						"data": schema.SingleNestedAttribute{
 							Description: "Components of a CAA record.",
@@ -551,13 +558,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "fingerprint.",
 									Computed:    true,
 								},
-							},
-						},
-						"priority": schema.Float64Attribute{
-							Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
-							Computed:    true,
-							Validators: []validator.Float64{
-								float64validator.Between(0, 65535),
 							},
 						},
 					},

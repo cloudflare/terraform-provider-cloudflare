@@ -5,6 +5,7 @@ package zone_subscription
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -19,7 +20,12 @@ var _ resource.ResourceWithConfigValidators = (*ZoneSubscriptionResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"identifier": schema.StringAttribute{
+			"id": schema.StringAttribute{
+				Description:   "Subscription identifier tag.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
+			"zone_id": schema.StringAttribute{
 				Description:   "Subscription identifier tag.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
@@ -83,6 +89,39 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						ElementType: types.StringType,
 					},
+				},
+			},
+			"currency": schema.StringAttribute{
+				Description: "The monetary unit in which pricing information is displayed.",
+				Computed:    true,
+			},
+			"current_period_end": schema.StringAttribute{
+				Description: "The end of the current period and also when the next billing is due.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"current_period_start": schema.StringAttribute{
+				Description: "When the current billing period started. May match initial_period_start if this is the first period.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"price": schema.Float64Attribute{
+				Description: "The price of the subscription that will be billed, in US dollars.",
+				Computed:    true,
+			},
+			"state": schema.StringAttribute{
+				Description: "The state that the subscription is in.\nAvailable values: \"Trial\", \"Provisioned\", \"Paid\", \"AwaitingPayment\", \"Cancelled\", \"Failed\", \"Expired\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"Trial",
+						"Provisioned",
+						"Paid",
+						"AwaitingPayment",
+						"Cancelled",
+						"Failed",
+						"Expired",
+					),
 				},
 			},
 		},

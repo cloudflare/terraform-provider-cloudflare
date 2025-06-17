@@ -14,9 +14,10 @@ description: |-
 ```terraform
 resource "cloudflare_dns_record" "example_dns_record" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  name = "example.com"
+  type = "A"
   comment = "Domain verification record"
   content = "198.51.100.4"
-  name = "example.com"
   proxied = true
   settings = {
     ipv4_only = true
@@ -24,7 +25,6 @@ resource "cloudflare_dns_record" "example_dns_record" {
   }
   tags = ["owner:dns-team"]
   ttl = 3600
-  type = "A"
 }
 ```
 
@@ -36,7 +36,7 @@ resource "cloudflare_dns_record" "example_dns_record" {
 - `name` (String) DNS record name (or @ for the zone apex) in Punycode.
 - `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
 - `type` (String) Record type.
-Available values: "A", "AAAA", "CAA", "CERT", "CNAME", "DNSKEY", "DS", "HTTPS", "LOC", "MX", "NAPTR", "NS", "OPENPGPKEY", "PTR", "SMIMEA", "SRV", "SSHFP", "SVCB", "TLSA", "TXT", "URI".
+Available values: "A", "AAAA", "CNAME", "MX", "NS", "OPENPGPKEY", "PTR", "TXT", "CAA", "CERT", "DNSKEY", "DS", "HTTPS", "LOC", "NAPTR", "SMIMEA", "SRV", "SSHFP", "SVCB", "TLSA", "URI".
 - `zone_id` (String) Identifier.
 
 ### Optional

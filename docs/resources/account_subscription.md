@@ -39,7 +39,6 @@ resource "cloudflare_account_subscription" "example_account_subscription" {
 - `frequency` (String) How often the subscription is renewed automatically.
 Available values: "weekly", "monthly", "quarterly", "yearly".
 - `rate_plan` (Attributes) The rate plan applied to the subscription. (see [below for nested schema](#nestedatt--rate_plan))
-- `subscription_identifier` (String) Subscription identifier tag.
 
 ### Read-Only
 
@@ -65,4 +64,10 @@ Available values: "free", "lite", "pro", "pro_plus", "business", "enterprise", "
 - `scope` (String) The scope that this rate plan applies to.
 - `sets` (List of String) The list of sets this rate plan applies to.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_account_subscription.example '<account_id>'
+```

@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZoneSubscriptionResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ZoneSubscriptionResource)(nil)
+var _ resource.ResourceWithImportState = (*ZoneSubscriptionResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZoneSubscriptionResource{}
@@ -70,8 +73,9 @@ func (r *ZoneSubscriptionResource) Create(ctx context.Context, req resource.Crea
 	env := ZoneSubscriptionResultEnvelope{*data}
 	_, err = r.client.Zones.Subscriptions.New(
 		ctx,
-		data.Identifier.ValueString(),
-		zones.SubscriptionNewParams{},
+		zones.SubscriptionNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,8 +121,9 @@ func (r *ZoneSubscriptionResource) Update(ctx context.Context, req resource.Upda
 	env := ZoneSubscriptionResultEnvelope{*data}
 	_, err = r.client.Zones.Subscriptions.Update(
 		ctx,
-		data.Identifier.ValueString(),
-		zones.SubscriptionUpdateParams{},
+		zones.SubscriptionUpdateParams{
+			ZoneID: cloudflare.F(data.ID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -151,7 +156,9 @@ func (r *ZoneSubscriptionResource) Read(ctx context.Context, req resource.ReadRe
 	env := ZoneSubscriptionResultEnvelope{*data}
 	_, err := r.client.Zones.Subscriptions.Get(
 		ctx,
-		data.Identifier.ValueString(),
+		zones.SubscriptionGetParams{
+			ZoneID: cloudflare.F(data.ID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -177,6 +184,47 @@ func (r *ZoneSubscriptionResource) Read(ctx context.Context, req resource.ReadRe
 
 func (r *ZoneSubscriptionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 
+}
+
+func (r *ZoneSubscriptionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZoneSubscriptionModel = new(ZoneSubscriptionModel)
+
+	path := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ZoneID = types.StringValue(path)
+
+	res := new(http.Response)
+	env := ZoneSubscriptionResultEnvelope{*data}
+	_, err := r.client.Zones.Subscriptions.Get(
+		ctx,
+		zones.SubscriptionGetParams{
+			ZoneID: cloudflare.F(path),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZoneSubscriptionResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {

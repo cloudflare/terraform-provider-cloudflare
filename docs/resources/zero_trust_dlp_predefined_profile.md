@@ -15,10 +15,6 @@ description: |-
 resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_predefined_profile" {
   account_id = "account_id"
   profile_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-  entries = [{
-    id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-    enabled = true
-  }]
   ai_context_enabled = true
   allowed_match_count = 0
   confidence_threshold = "confidence_threshold"
@@ -28,6 +24,10 @@ resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_
       files = true
     }
   }
+  entries = [{
+    id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+    enabled = true
+  }]
   ocr_enabled = true
 }
 ```
@@ -38,7 +38,6 @@ resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_
 ### Required
 
 - `account_id` (String)
-- `entries` (Attributes List) (see [below for nested schema](#nestedatt--entries))
 - `profile_id` (String)
 
 ### Optional
@@ -47,6 +46,7 @@ resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_
 - `allowed_match_count` (Number)
 - `confidence_threshold` (String)
 - `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
+- `entries` (Attributes List, Deprecated) (see [below for nested schema](#nestedatt--entries))
 - `ocr_enabled` (Boolean)
 
 ### Read-Only
@@ -58,15 +58,6 @@ resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_
 - `open_access` (Boolean) Whether this profile can be accessed by anyone.
 - `type` (String) Available values: "custom", "predefined", "integration".
 - `updated_at` (String) When the profile was lasted updated.
-
-<a id="nestedatt--entries"></a>
-### Nested Schema for `entries`
-
-Required:
-
-- `enabled` (Boolean)
-- `id` (String)
-
 
 <a id="nestedatt--context_awareness"></a>
 ### Nested Schema for `context_awareness`
@@ -82,6 +73,16 @@ Required:
 Required:
 
 - `files` (Boolean) If the content type is a file, skip context analysis and return all matches.
+
+
+
+<a id="nestedatt--entries"></a>
+### Nested Schema for `entries`
+
+Required:
+
+- `enabled` (Boolean)
+- `id` (String)
 
 ## Import
 

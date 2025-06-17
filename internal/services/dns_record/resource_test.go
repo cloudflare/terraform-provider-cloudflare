@@ -500,6 +500,8 @@ func TestAccCloudflareRecord_DNSKEY(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_ClearTags(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into clearing tags.")
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")

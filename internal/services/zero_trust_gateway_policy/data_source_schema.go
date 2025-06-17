@@ -101,6 +101,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "version number of the rule",
 				Computed:    true,
 			},
+			"warning_status": schema.StringAttribute{
+				Description: "Warning for a misconfigured rule, if any.",
+				Computed:    true,
+			},
 			"filters": schema.ListAttribute{
 				Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
 				Computed:    true,
@@ -196,10 +200,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"download": schema.StringAttribute{
-								Description: "Configure whether downloading enabled or not. When absent, downloading is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\".",
+								Description: "Configure whether downloading enabled or not. When set with \"remote_only\", downloads are only available for viewing. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
 								Computed:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
+									stringvalidator.OneOfCaseInsensitive(
+										"enabled",
+										"disabled",
+										"remote_only",
+									),
 								},
 							},
 							"dp": schema.BoolAttribute{

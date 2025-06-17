@@ -39,10 +39,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
-			"payload": schema.StringAttribute{
-				Description: "Defines the ruleset expression to use in matching content objects.",
-				Computed:    true,
-			},
 		},
 	}
 }
