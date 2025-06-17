@@ -57,7 +57,7 @@ Available values: "inactive", "degraded", "healthy", "down".
 Read-Only:
 
 - `account_tag` (String) Cloudflare account ID
-- `connections` (Attributes List) The Cloudflare Tunnel connections between your origin and Cloudflare's edge. (see [below for nested schema](#nestedatt--result--connections))
+- `connections` (Attributes List, Deprecated) The Cloudflare Tunnel connections between your origin and Cloudflare's edge. (see [below for nested schema](#nestedatt--result--connections))
 - `conns_active_at` (String) Timestamp of when the tunnel established at least one connection to Cloudflare's edge. If `null`, the tunnel is inactive.
 - `conns_inactive_at` (String) Timestamp of when the tunnel became inactive (no connections to Cloudflare's edge). If `null`, the tunnel is active.
 - `created_at` (String) Timestamp of when the resource was created.

@@ -32,9 +32,7 @@ resource "cloudflare_zero_trust_device_default_profile_local_domain_fallback" "e
 
 ### Read-Only
 
-- `description` (String) A description of the fallback domain, displayed in the client UI.
-- `dns_server` (List of String) A list of IP addresses to handle domain resolution.
-- `suffix` (String) The domain suffix to match when resolving locally.
+- `id` (String) The ID of this resource.
 
 <a id="nestedatt--domains"></a>
 ### Nested Schema for `domains`
@@ -48,4 +46,10 @@ Optional:
 - `description` (String) A description of the fallback domain, displayed in the client UI.
 - `dns_server` (List of String) A list of IP addresses to handle domain resolution.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_zero_trust_device_default_profile_local_domain_fallback.example '<account_id>'
+```

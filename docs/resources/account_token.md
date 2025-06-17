@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 resource "cloudflare_account_token" "example_account_token" {
-  account_id = "eb78d65290b24279ba6f44721b3ea3c4"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   name = "readonly token"
   policies = [{
     effect = "allow"
@@ -90,7 +90,7 @@ Read-Only:
 
 Required:
 
-- `id` (String) Identifier of the group.
+- `id` (String) Identifier of the permission group.
 
 Optional:
 
@@ -98,7 +98,7 @@ Optional:
 
 Read-Only:
 
-- `name` (String) Name of the group.
+- `name` (String) Name of the permission group.
 
 <a id="nestedatt--policies--permission_groups--meta"></a>
 ### Nested Schema for `policies.permission_groups.meta`

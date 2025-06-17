@@ -105,8 +105,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The application type.",
+				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\".",
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"self_hosted",
+						"saas",
+						"ssh",
+						"vnc",
+						"app_launcher",
+						"warp",
+						"biso",
+						"bookmark",
+						"dash_sso",
+						"infrastructure",
+						"rdp",
+					),
+				},
 			},
 			"allowed_idps": schema.ListAttribute{
 				Description: "The identity providers your users can select when connecting to this application. Defaults to all IdPs configured in your account.",
@@ -325,10 +340,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"protocol": schema.StringAttribute{
-							Description: "The communication protocol your application secures.\nAvailable values: \"ssh\".",
+							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\".",
 							Required:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("ssh"),
+								stringvalidator.OneOfCaseInsensitive("SSH"),
 							},
 						},
 						"target_attributes": schema.MapAttribute{

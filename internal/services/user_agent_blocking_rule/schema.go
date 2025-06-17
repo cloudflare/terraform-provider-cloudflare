@@ -42,24 +42,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"configuration": schema.SingleNestedAttribute{
-				Description: "The rule configuration.",
-				Required:    true,
+				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"target": schema.StringAttribute{
-						Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the rule.\nAvailable values: \"ip\", \"ip6\", \"ip_range\", \"asn\", \"country\".",
+						Description: "The configuration target. You must set the target to `ua` when specifying a user agent in the rule.\nAvailable values: \"ua\".",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"ip",
-								"ip6",
-								"ip_range",
-								"asn",
-								"country",
-							),
+							stringvalidator.OneOfCaseInsensitive("ua"),
 						},
 					},
 					"value": schema.StringAttribute{
-						Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
+						Description: "the user agent to exactly match",
 						Optional:    true,
 					},
 				},

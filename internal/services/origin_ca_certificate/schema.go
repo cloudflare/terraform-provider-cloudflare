@@ -66,7 +66,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						5475,
 					),
 				},
-				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplaceIfConfigured()},
 				Default:       float64default.StaticFloat64(5475),
 			},
 			"certificate": schema.StringAttribute{

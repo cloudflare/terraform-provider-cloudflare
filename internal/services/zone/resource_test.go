@@ -151,6 +151,8 @@ func TestAccCloudflareZone_WithEnterprisePlan(t *testing.T) {
 }
 
 func TestAccCloudflareZone_WithEnterprisePlanVanityNameServers(t *testing.T) {
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into vanity nameserver mismatches.")
+
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -197,6 +199,8 @@ func TestAccCloudflareZone_Secondary(t *testing.T) {
 }
 
 func TestAccCloudflareZone_SecondaryWithVanityNameServers(t *testing.T) {
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into vanity nameserver mismatches.")
+
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

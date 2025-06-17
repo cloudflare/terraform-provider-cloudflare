@@ -93,11 +93,11 @@ Available values: "application/json", "text/xml", "text/plain", "text/html".
 - `opportunistic_encryption` (Boolean) Turn on or off Opportunistic Encryption.
 - `origin` (Attributes) Override the IP/TCP destination. (see [below for nested schema](#nestedatt--rules--action_parameters--origin))
 - `origin_cache_control` (Boolean) When enabled, Cloudflare will aim to strictly adhere to RFC 7234.
-- `origin_error_page_passthru` (Boolean) Generate Cloudflare error pages from issues sent from the origin server. When on, error pages will trigger for issues from the origin
+- `origin_error_page_passthru` (Boolean) Generate Cloudflare error pages from issues sent from the origin server. When on, error pages will trigger for issues from the origin.
 - `overrides` (Attributes) A set of overrides to apply to the target ruleset. (see [below for nested schema](#nestedatt--rules--action_parameters--overrides))
 - `phases` (List of String) A list of phases to skip the execution of. This option is incompatible with the rulesets option.
 - `polish` (String) Configure the Polish level.
-Available values: "off", "lossless", "lossy".
+Available values: "off", "lossless", "lossy", "webp".
 - `products` (List of String) A list of legacy security products to skip the execution of.
 - `raw_response_fields` (Attributes List) The raw response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--raw_response_fields))
 - `read_timeout` (Number) Define a timeout value between two successive read operations to your origin server. Historically, the timeout value between two read options from Cloudflare to an origin server is 100 seconds. If you are attempting to reduce HTTP 524 errors because of timeouts from an origin server, try increasing this timeout value.
@@ -105,7 +105,7 @@ Available values: "off", "lossless", "lossy".
 - `respect_strong_etags` (Boolean) Specify whether or not Cloudflare should respect strong ETag (entity tag) headers. When off, Cloudflare converts strong ETag headers to weak ETag headers.
 - `response` (Attributes) The response to show when the block is applied. (see [below for nested schema](#nestedatt--rules--action_parameters--response))
 - `response_fields` (Attributes List) The transformed response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--response_fields))
-- `rocket_loader` (Boolean) Turn on or off Rocket Loader
+- `rocket_loader` (Boolean) Turn on or off Rocket Loader.
 - `rules` (Map of List of String) A mapping of ruleset IDs to a list of rule IDs in that ruleset to skip the execution of. This option is incompatible with the ruleset option.
 - `ruleset` (String) A ruleset to skip the execution of. This option is incompatible with the rulesets option.
 Available values: "current".
@@ -156,8 +156,8 @@ Available values: "respect_origin", "bypass_by_default", "override_origin".
 
 Read-Only:
 
-- `cache_by_device_type` (Boolean) Separate cached content based on the visitor’s device type
-- `cache_deception_armor` (Boolean) Protect from web cache deception attacks while allowing static assets to be cached
+- `cache_by_device_type` (Boolean) Separate cached content based on the visitor’s device type.
+- `cache_deception_armor` (Boolean) Protect from web cache deception attacks while allowing static assets to be cached.
 - `custom_key` (Attributes) Customize which components of the request are included or excluded from the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key))
 - `ignore_query_strings_order` (Boolean) Treat requests with the same query parameters the same, regardless of the order those query parameters are in. A value of true ignores the query strings' order.
 
@@ -262,9 +262,9 @@ Read-Only:
 Read-Only:
 
 - `default` (Number) The TTL (in seconds) if you choose override_origin mode.
-- `mode` (String) edge ttl options
+- `mode` (String) Edge TTL options.
 Available values: "respect_origin", "bypass_by_default", "override_origin".
-- `status_code_ttl` (Attributes List) List of single status codes, or status code ranges to apply the selected mode (see [below for nested schema](#nestedatt--rules--action_parameters--edge_ttl--status_code_ttl))
+- `status_code_ttl` (Attributes List) List of single status codes, or status code ranges to apply the selected mode. (see [below for nested schema](#nestedatt--rules--action_parameters--edge_ttl--status_code_ttl))
 
 <a id="nestedatt--rules--action_parameters--edge_ttl--status_code_ttl"></a>
 ### Nested Schema for `rules.action_parameters.edge_ttl.status_code_ttl`
@@ -272,7 +272,7 @@ Available values: "respect_origin", "bypass_by_default", "override_origin".
 Read-Only:
 
 - `status_code_range` (Attributes) The range of status codes used to apply the selected mode. (see [below for nested schema](#nestedatt--rules--action_parameters--edge_ttl--status_code_ttl--status_code_range))
-- `status_code_value` (Number) Set the ttl for responses with this specific status code
+- `status_code_value` (Number) Set the TTL for responses with this specific status code.
 - `value` (Number) Time to cache a response (in seconds). A value of 0 is equivalent to setting the Cache-Control header with the value "no-cache". A value of -1 is equivalent to setting Cache-Control header with the value of "no-store".
 
 <a id="nestedatt--rules--action_parameters--edge_ttl--status_code_ttl--status_code_range"></a>
@@ -280,8 +280,8 @@ Read-Only:
 
 Read-Only:
 
-- `from` (Number) response status code lower bound
-- `to` (Number) response status code upper bound
+- `from` (Number) Response status code lower bound.
+- `to` (Number) Response status code upper bound.
 
 
 

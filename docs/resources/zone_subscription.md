@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 resource "cloudflare_zone_subscription" "example_zone_subscription" {
-  identifier = "506e3185e9c882d175a2d0cb0093d9f2"
+  zone_id = "506e3185e9c882d175a2d0cb0093d9f2"
   frequency = "monthly"
   rate_plan = {
     id = "free"
@@ -32,13 +32,23 @@ resource "cloudflare_zone_subscription" "example_zone_subscription" {
 
 ### Required
 
-- `identifier` (String) Subscription identifier tag.
+- `zone_id` (String) Subscription identifier tag.
 
 ### Optional
 
 - `frequency` (String) How often the subscription is renewed automatically.
 Available values: "weekly", "monthly", "quarterly", "yearly".
 - `rate_plan` (Attributes) The rate plan applied to the subscription. (see [below for nested schema](#nestedatt--rate_plan))
+
+### Read-Only
+
+- `currency` (String) The monetary unit in which pricing information is displayed.
+- `current_period_end` (String) The end of the current period and also when the next billing is due.
+- `current_period_start` (String) When the current billing period started. May match initial_period_start if this is the first period.
+- `id` (String) Subscription identifier tag.
+- `price` (Number) The price of the subscription that will be billed, in US dollars.
+- `state` (String) The state that the subscription is in.
+Available values: "Trial", "Provisioned", "Paid", "AwaitingPayment", "Cancelled", "Failed", "Expired".
 
 <a id="nestedatt--rate_plan"></a>
 ### Nested Schema for `rate_plan`
@@ -54,4 +64,10 @@ Available values: "free", "lite", "pro", "pro_plus", "business", "enterprise", "
 - `scope` (String) The scope that this rate plan applies to.
 - `sets` (List of String) The list of sets this rate plan applies to.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_zone_subscription.example '<zone_id>'
+```

@@ -165,6 +165,7 @@ Available values: "raw", "pkcs8", "spki", "jwk".
 - `store_id` (String) ID of the store containing the secret.
 - `text` (String, Sensitive) The text value to use.
 - `usages` (List of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
+- `workflow_name` (String) Name of the Workflow to bind to.
 
 <a id="nestedatt--bindings--outbound"></a>
 ### Nested Schema for `bindings.outbound`

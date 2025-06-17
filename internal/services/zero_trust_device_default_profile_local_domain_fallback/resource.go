@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustDeviceDefaultProfileLocalDomainFallbackResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ZeroTrustDeviceDefaultProfileLocalDomainFallbackResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustDeviceDefaultProfileLocalDomainFallbackResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustDeviceDefaultProfileLocalDomainFallbackResource{}
@@ -88,6 +91,7 @@ func (r *ZeroTrustDeviceDefaultProfileLocalDomainFallbackResource) Create(ctx co
 		return
 	}
 	data.Domains = env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -136,6 +140,7 @@ func (r *ZeroTrustDeviceDefaultProfileLocalDomainFallbackResource) Update(ctx co
 		return
 	}
 	data.Domains = env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -175,12 +180,55 @@ func (r *ZeroTrustDeviceDefaultProfileLocalDomainFallbackResource) Read(ctx cont
 		return
 	}
 	data.Domains = env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustDeviceDefaultProfileLocalDomainFallbackResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 
+}
+
+func (r *ZeroTrustDeviceDefaultProfileLocalDomainFallbackResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZeroTrustDeviceDefaultProfileLocalDomainFallbackModel = new(ZeroTrustDeviceDefaultProfileLocalDomainFallbackModel)
+
+	path := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path)
+
+	res := new(http.Response)
+	env := ZeroTrustDeviceDefaultProfileLocalDomainFallbackResultEnvelope{data.Domains}
+	_, err := r.client.ZeroTrust.Devices.Policies.Default.FallbackDomains.Get(
+		ctx,
+		zero_trust.DevicePolicyDefaultFallbackDomainGetParams{
+			AccountID: cloudflare.F(path),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data.Domains = env.Result
+	data.ID = data.AccountID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustDeviceDefaultProfileLocalDomainFallbackResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {

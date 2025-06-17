@@ -34,10 +34,7 @@ resource "cloudflare_zero_trust_device_custom_profile_local_domain_fallback" "ex
 
 ### Read-Only
 
-- `description` (String) A description of the fallback domain, displayed in the client UI.
-- `dns_server` (List of String) A list of IP addresses to handle domain resolution.
 - `id` (String) The ID of this resource.
-- `suffix` (String) The domain suffix to match when resolving locally.
 
 <a id="nestedatt--domains"></a>
 ### Nested Schema for `domains`

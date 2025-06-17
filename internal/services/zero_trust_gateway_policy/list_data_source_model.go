@@ -49,6 +49,7 @@ type ZeroTrustGatewayPoliciesResultDataSourceModel struct {
 	Traffic       types.String                                                                  `tfsdk:"traffic" json:"traffic,computed"`
 	UpdatedAt     timetypes.RFC3339                                                             `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Version       types.Int64                                                                   `tfsdk:"version" json:"version,computed"`
+	WarningStatus types.String                                                                  `tfsdk:"warning_status" json:"warning_status,computed"`
 }
 
 type ZeroTrustGatewayPoliciesExpirationDataSourceModel struct {

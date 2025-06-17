@@ -41,7 +41,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "A short description of the watermark profile.",
 				Computed:      true,
 				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 				Default:       stringdefault.StaticString(""),
 			},
 			"opacity": schema.Float64Attribute{
@@ -51,7 +51,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.Float64{
 					float64validator.Between(0, 1),
 				},
-				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplaceIfConfigured()},
 				Default:       float64default.StaticFloat64(1),
 			},
 			"padding": schema.Float64Attribute{
@@ -61,14 +61,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.Float64{
 					float64validator.Between(0, 1),
 				},
-				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplaceIfConfigured()},
 				Default:       float64default.StaticFloat64(0.05),
 			},
 			"position": schema.StringAttribute{
 				Description:   "The location of the image. Valid positions are: `upperRight`, `upperLeft`, `lowerLeft`, `lowerRight`, and `center`. Note that `center` ignores the `padding` parameter.",
 				Computed:      true,
 				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 				Default:       stringdefault.StaticString("upperRight"),
 			},
 			"scale": schema.Float64Attribute{
@@ -78,7 +78,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.Float64{
 					float64validator.Between(0, 1),
 				},
-				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplaceIfConfigured()},
 				Default:       float64default.StaticFloat64(0.15),
 			},
 			"created": schema.StringAttribute{

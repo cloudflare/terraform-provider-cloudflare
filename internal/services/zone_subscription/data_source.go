@@ -57,11 +57,17 @@ func (d *ZoneSubscriptionDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
+	params, diags := data.toReadParams(ctx)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	res := new(http.Response)
 	env := ZoneSubscriptionResultDataSourceEnvelope{*data}
 	_, err := d.client.Zones.Subscriptions.Get(
 		ctx,
-		data.Identifier.ValueString(),
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

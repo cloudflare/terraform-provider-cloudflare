@@ -88,7 +88,7 @@ Read-Only:
 
 Required:
 
-- `id` (String) Identifier of the group.
+- `id` (String) Identifier of the permission group.
 
 Optional:
 
@@ -96,7 +96,7 @@ Optional:
 
 Read-Only:
 
-- `name` (String) Name of the group.
+- `name` (String) Name of the permission group.
 
 <a id="nestedatt--policies--permission_groups--meta"></a>
 ### Nested Schema for `policies.permission_groups.meta`

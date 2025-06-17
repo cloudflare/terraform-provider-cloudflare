@@ -31,7 +31,6 @@ resource "cloudflare_content_scanning_expression" "example_content_scanning_expr
 ### Read-Only
 
 - `id` (String) defines the unique ID for this custom scan expression.
-- `payload` (String) Defines the ruleset expression to use in matching content objects.
 
 <a id="nestedatt--body"></a>
 ### Nested Schema for `body`

@@ -51,7 +51,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
-										Description: "Identifier of the group.",
+										Description: "Identifier of the permission group.",
 										Required:    true,
 									},
 									"meta": schema.SingleNestedAttribute{
@@ -67,7 +67,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"name": schema.StringAttribute{
-										Description: "Name of the group.",
+										Description: "Name of the permission group.",
 										Computed:    true,
 									},
 								},
