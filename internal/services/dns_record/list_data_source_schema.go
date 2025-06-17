@@ -221,6 +221,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "DNS record name (or @ for the zone apex) in Punycode.",
 							Computed:    true,
 						},
+						"ttl": schema.Float64Attribute{
+							Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
+							Computed:    true,
+						},
 						"type": schema.StringAttribute{
 							Description: "Record type.\nAvailable values: \"A\", \"AAAA\", \"CNAME\", \"MX\", \"NS\", \"OPENPGPKEY\", \"PTR\", \"TXT\", \"CAA\", \"CERT\", \"DNSKEY\", \"DS\", \"HTTPS\", \"LOC\", \"NAPTR\", \"SMIMEA\", \"SRV\", \"SSHFP\", \"SVCB\", \"TLSA\", \"URI\".",
 							Computed:    true,
@@ -286,10 +290,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
-						},
-						"ttl": schema.Float64Attribute{
-							Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
-							Computed:    true,
 						},
 						"id": schema.StringAttribute{
 							Description: "Identifier.",
