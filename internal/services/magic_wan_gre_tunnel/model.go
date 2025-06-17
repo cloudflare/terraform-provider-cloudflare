@@ -14,21 +14,18 @@ type MagicWANGRETunnelResultEnvelope struct {
 }
 
 type MagicWANGRETunnelModel struct {
-	ID                    types.String                                                      `tfsdk:"id" json:"id,computed"`
-	AccountID             types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
-	CloudflareGREEndpoint types.String                                                      `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,required,no_refresh"`
-	CustomerGREEndpoint   types.String                                                      `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,required,no_refresh"`
-	InterfaceAddress      types.String                                                      `tfsdk:"interface_address" json:"interface_address,required,no_refresh"`
-	Name                  types.String                                                      `tfsdk:"name" json:"name,required,no_refresh"`
-	Description           types.String                                                      `tfsdk:"description" json:"description,optional,no_refresh"`
-	Mtu                   types.Int64                                                       `tfsdk:"mtu" json:"mtu,computed_optional,no_refresh"`
-	TTL                   types.Int64                                                       `tfsdk:"ttl" json:"ttl,computed_optional,no_refresh"`
-	HealthCheck           customfield.NestedObject[MagicWANGRETunnelHealthCheckModel]       `tfsdk:"health_check" json:"health_check,computed_optional,no_refresh"`
-	CreatedOn             timetypes.RFC3339                                                 `tfsdk:"created_on" json:"created_on,computed,no_refresh" format:"date-time"`
-	Modified              types.Bool                                                        `tfsdk:"modified" json:"modified,computed,no_refresh"`
-	ModifiedOn            timetypes.RFC3339                                                 `tfsdk:"modified_on" json:"modified_on,computed,no_refresh" format:"date-time"`
-	GRETunnel             customfield.NestedObject[MagicWANGRETunnelGRETunnelModel]         `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
-	ModifiedGRETunnel     customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelModel] `tfsdk:"modified_gre_tunnel" json:"modified_gre_tunnel,computed,no_refresh"`
+	ID                    types.String                                                `tfsdk:"id" json:"id,computed"`
+	AccountID             types.String                                                `tfsdk:"account_id" path:"account_id,required"`
+	CloudflareGREEndpoint types.String                                                `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,required,no_refresh"`
+	CustomerGREEndpoint   types.String                                                `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,required,no_refresh"`
+	InterfaceAddress      types.String                                                `tfsdk:"interface_address" json:"interface_address,required,no_refresh"`
+	Name                  types.String                                                `tfsdk:"name" json:"name,required,no_refresh"`
+	Description           types.String                                                `tfsdk:"description" json:"description,optional,no_refresh"`
+	Mtu                   types.Int64                                                 `tfsdk:"mtu" json:"mtu,computed_optional,no_refresh"`
+	TTL                   types.Int64                                                 `tfsdk:"ttl" json:"ttl,computed_optional,no_refresh"`
+	HealthCheck           customfield.NestedObject[MagicWANGRETunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed_optional,no_refresh"`
+	CreatedOn             timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed,no_refresh" format:"date-time"`
+	ModifiedOn            timetypes.RFC3339                                           `tfsdk:"modified_on" json:"modified_on,computed,no_refresh" format:"date-time"`
 }
 
 func (m MagicWANGRETunnelModel) MarshalJSON() (data []byte, err error) {

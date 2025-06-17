@@ -21,6 +21,7 @@ func TestAccCloudflareStaticRoute_Exists(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	cfIP := utils.LookupMagicWanCfIP(t, accountID)
 
 	var StaticRoute cloudflare.MagicTransitStaticRoute
 
@@ -29,16 +30,14 @@ func TestAccCloudflareStaticRoute_Exists(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					resource.TestCheckResourceAttr(name, "description", rnd),
 					resource.TestCheckResourceAttr(name, "prefix", "10.100.0.0/24"),
-					resource.TestCheckResourceAttr(name, "nexthop", "10.0.0.0"),
+					resource.TestCheckResourceAttr(name, "nexthop", "10.212.0.8"),
 					resource.TestCheckResourceAttr(name, "priority", "100"),
 					resource.TestCheckResourceAttr(name, "weight", "100"),
-					resource.TestCheckResourceAttr(name, "colo_regions.0", "APAC"),
-					resource.TestCheckResourceAttr(name, "colo_names.0", "den01"),
 				),
 			},
 		},
@@ -78,6 +77,7 @@ func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	cfIP := utils.LookupMagicWanCfIP(t, accountID)
 
 	var StaticRoute cloudflare.MagicTransitStaticRoute
 
@@ -86,14 +86,14 @@ func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					resource.TestCheckResourceAttr(name, "description", rnd),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd+"-updated", accountID, 100),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd+"-updated", accountID, 100, cfIP),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					resource.TestCheckResourceAttr(name, "description", rnd+"-updated"),
@@ -109,6 +109,7 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	cfIP := utils.LookupMagicWanCfIP(t, accountID)
 
 	var StaticRoute cloudflare.MagicTransitStaticRoute
 	var initialID string
@@ -118,7 +119,7 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					resource.TestCheckResourceAttr(name, "weight", "100"),
@@ -128,12 +129,12 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 				PreConfig: func() {
 					initialID = StaticRoute.ID
 				},
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd+"-updated", accountID, 200),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd+"-updated", accountID, 200, cfIP),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					func(state *terraform.State) error {
-						if initialID == StaticRoute.ID {
-							return fmt.Errorf("forced recreation but Static Route got updated (id %q)", StaticRoute.ID)
+						if initialID != StaticRoute.ID {
+							return fmt.Errorf("Static Route should be updated but foreced created instead (id %q -> %q)", initialID, StaticRoute.ID)
 						}
 						return nil
 					},
@@ -145,6 +146,6 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareStaticRouteSimple(ID, description, accountID string, weight int) string {
-	return acctest.LoadTestCase("staticroutesimple.tf", ID, description, accountID, weight)
+func testAccCheckCloudflareStaticRouteSimple(ID, description, accountID string, weight int, cfIP string) string {
+	return acctest.LoadTestCase("staticroutesimple.tf", ID, description, accountID, weight, cfIP)
 }
