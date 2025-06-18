@@ -24,19 +24,10 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
   policies     = [
     { 
       id = cloudflare_zero_trust_access_policy.%[1]s_p1.id
-      decision = cloudflare_zero_trust_access_policy.%[1]s_p1.decision
-      name = cloudflare_zero_trust_access_policy.%[1]s_p1.name
-      include = [{
-	email = { email = cloudflare_zero_trust_access_policy.%[1]s_p1.include.0.email.email }
-      }]
+      precedence = 4
     },
     {
       id = cloudflare_zero_trust_access_policy.%[1]s_p2.id
-      decision = cloudflare_zero_trust_access_policy.%[1]s_p2.decision
-      name = cloudflare_zero_trust_access_policy.%[1]s_p2.name
-      include = [{
-	ip = { ip = cloudflare_zero_trust_access_policy.%[1]s_p2.include.0.ip.ip }
-      }]
     }
   ]
 }
