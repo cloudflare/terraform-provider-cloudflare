@@ -124,10 +124,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"kind": schema.StringAttribute{
-				Description: "The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs. Currently, Edge Log Delivery is only supported for the `http_requests` dataset.\nAvailable values: \"edge\".",
+				Description: "The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs (when supported by the dataset).\nAvailable values: \"\", \"edge\".",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("edge"),
+					stringvalidator.OneOfCaseInsensitive("", "edge"),
 				},
 			},
 			"last_complete": schema.StringAttribute{
