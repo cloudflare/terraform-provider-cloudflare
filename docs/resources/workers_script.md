@@ -28,10 +28,10 @@ resource "cloudflare_workers_script" "example_workers_script" {
     name = "MY_ENV_VAR"
     type = "plain_text"
   }]
-  body_part = "worker.js"
   compatibility_date = "2021-01-01"
   compatibility_flags = ["nodejs_compat"]
-  content = file("worker.js")
+  content_file = "worker.js"
+  content_sha256 = filesha256("worker.js")
   keep_assets = false
   keep_bindings = ["string"]
   logpush = false
