@@ -22,9 +22,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Image unique identifier.",
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Description: "An optional custom unique identifier for your image.",
+				Required:    true,
+				CustomType:  jsontypes.NormalizedType{},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Account identifier tag.",
