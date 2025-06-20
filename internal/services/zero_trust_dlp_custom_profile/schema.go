@@ -112,7 +112,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required: true,
 						},
 						"entry_type": schema.StringAttribute{
-							Description: `Available values: "custom", "predefined", "integration", "exact_data".`,
+							Description: `Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint".`,
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -120,6 +120,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"predefined",
 									"integration",
 									"exact_data",
+									"document_fingerprint",
 								),
 							},
 						},
