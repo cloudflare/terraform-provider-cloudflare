@@ -21,6 +21,8 @@ description: Guide for handling renamed resources in the Cloudflare Provider
 environment or a small subset resources before performing the changes to
 all resources.
 
+NOTE: use the environment variable `GRIT_MAX_FILE_SIZE_BYTES=0` if the state file is too big and grit errors out.
+
 ## Using import
 
 -> Recommended for most users and migrations.
