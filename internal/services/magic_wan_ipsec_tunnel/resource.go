@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -79,6 +80,7 @@ func (r *MagicWANIPSECTunnelResource) Create(ctx context.Context, req resource.C
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithHeader("x-magic-new-hc-target", "true"),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -128,12 +130,19 @@ func (r *MagicWANIPSECTunnelResource) Update(ctx context.Context, req resource.U
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithHeader("x-magic-new-hc-target", "true"),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	// remove extra wrapper field
+	bytes, err = utils.StripWrapper(bytes, "modified_ipsec_tunnel")
+	if err != nil {
+		resp.Diagnostics.AddError("failed to parse response", err.Error())
+		return
+	}
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -163,6 +172,7 @@ func (r *MagicWANIPSECTunnelResource) Read(ctx context.Context, req resource.Rea
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithHeader("x-magic-new-hc-target", "true"),
 	)
 	if res != nil && res.StatusCode == 404 {
 		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
@@ -174,6 +184,13 @@ func (r *MagicWANIPSECTunnelResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	// remove extra wrapper field
+	bytes, err = utils.StripWrapper(bytes, "ipsec_tunnel")
+	if err != nil {
+		resp.Diagnostics.AddError("failed to parse response", err.Error())
+		return
+	}
+
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
