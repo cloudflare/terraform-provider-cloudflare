@@ -2,11 +2,15 @@ package workers_script_test
 
 import (
 	"context"
+	"fmt"
 	"os"
+	"path"
+	"regexp"
 	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -90,8 +94,6 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_workers_script." + rnd
-	r2AccesKeyID := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
-	r2AccesKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -103,7 +105,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 		// CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccesKeyID, r2AccesKeySecret),
+				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "script_name", rnd),
 					resource.TestCheckResourceAttr(name, "content", moduleContent),
@@ -137,6 +139,150 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 	})
 }
 
+func TestAcc_WorkerScriptWithContentFile(t *testing.T) {
+	t.Parallel()
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_workers_script." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	tmpDir := t.TempDir()
+	contentFile := path.Join(tmpDir, "worker.mjs")
+
+	writeContentFile := func(t *testing.T, content string) {
+		err := os.WriteFile(contentFile, []byte(content), 0644)
+		if err != nil {
+			t.Fatalf("Error creating temp file at path %s: %s", contentFile, err.Error())
+		}
+	}
+
+	cleanup := func(t *testing.T) {
+		err := os.Remove(contentFile)
+		if err != nil {
+			t.Logf("Error removing temp file at path %s: %s", contentFile, err.Error())
+		}
+	}
+
+	defer cleanup(t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					writeContentFile(t, moduleContent)
+				},
+				Config: testAccWorkersScriptConfigWithContentFile(rnd, accountID, contentFile),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "script_name", rnd),
+					resource.TestCheckResourceAttr(name, "content_file", contentFile),
+				),
+			},
+			{
+				PreConfig: func() {
+					writeContentFile(t, fmt.Sprintf("%s // v2", moduleContent))
+				},
+				Config: testAccWorkersScriptConfigWithContentFile(rnd, accountID, contentFile),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+					},
+				},
+			},
+			{
+				Config: testAccWorkersScriptConfigWithContentFile(rnd, accountID, contentFile),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				PreConfig: func() {
+					// revert remote state back to the original module content
+					client := acctest.SharedClient()
+					boundary := "--form-data-boundary-tkqpb9sps99x33zg"
+					body := []byte(fmt.Sprintf(`--%s
+Content-Disposition: form-data; name="files"; filename="worker.mjs"
+Content-Type: application/javascript+module
+
+%s
+--%s
+Content-Disposition: form-data; name="metadata"; filename="metadata.json"
+Content-Type: application/json
+
+{"main_module": "worker.mjs"}
+--%s--
+`,
+						boundary, moduleContent, boundary, boundary,
+					))
+					result, err := client.Workers.Scripts.Update(context.Background(),
+						rnd,
+						workers.ScriptUpdateParams{AccountID: cloudflare.F(accountID)},
+						option.WithRequestBody("multipart/form-data;boundary="+boundary, body),
+					)
+					if err != nil {
+						t.Errorf("Error updating script content out-of-band to test drift detection: %s", err)
+					}
+					if result == nil {
+						t.Error("Could not update script content out-of-band to test drift detection.")
+					}
+				},
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				RefreshPlanChecks: resource.RefreshPlanChecks{
+					PostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAcc_WorkerScriptWithInvalidContentSHA256(t *testing.T) {
+	t.Parallel()
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	tmpDir := t.TempDir()
+	contentFile := path.Join(tmpDir, "worker.mjs")
+
+	writeContentFile := func(t *testing.T, content string) {
+		err := os.WriteFile(contentFile, []byte(content), 0644)
+		if err != nil {
+			t.Fatalf("Error creating temp file at path %s: %s", contentFile, err.Error())
+		}
+	}
+
+	cleanup := func(t *testing.T) {
+		err := os.Remove(contentFile)
+		if err != nil {
+			t.Logf("Error removing temp file at path %s: %s", contentFile, err.Error())
+		}
+	}
+
+	defer cleanup(t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					writeContentFile(t, moduleContent)
+				},
+				Config:      testAccWorkersScriptConfigWithInvalidContentSHA256(rnd, accountID, contentFile),
+				ExpectError: regexp.MustCompile(`SHA-256 Hash Mismatch`),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareWorkerScriptConfigServiceWorkerInitial(rnd, accountID string) string {
 	return acctest.LoadTestCase("service_worker_initial.tf", rnd, scriptContent1, accountID)
 }
@@ -149,6 +295,14 @@ func testAccCheckCloudflareWorkerScriptConfigServiceWorkerUpdateBinding(rnd, acc
 	return acctest.LoadTestCase("service_worker_update_binding.tf", rnd, scriptContent2, encodedWasm, accountID)
 }
 
-func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccessKeyID, r2AccessKeySecret string) string {
-	return acctest.LoadTestCase("module.tf", rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`), r2AccessKeyID, r2AccessKeySecret, d1DatabaseID)
+func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID string) string {
+	return acctest.LoadTestCase("module.tf", rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`))
+}
+
+func testAccWorkersScriptConfigWithContentFile(rnd, accountID, contentFile string) string {
+	return acctest.LoadTestCase("module_with_content_file.tf", rnd, accountID, contentFile)
+}
+
+func testAccWorkersScriptConfigWithInvalidContentSHA256(rnd, accountID, contentFile string) string {
+	return acctest.LoadTestCase("module_with_invalid_content_sha256.tf", rnd, accountID, contentFile)
 }

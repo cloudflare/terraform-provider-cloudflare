@@ -68,6 +68,17 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	contentSHA256 := data.ContentSHA256
+
+	if !data.ContentFile.IsNull() {
+		content, err := readFile((data.ContentFile.ValueString()))
+		if err != nil {
+			resp.Diagnostics.AddError("failed to read file", err.Error())
+			return
+		}
+		data.Content = types.StringValue(content)
+	}
+
 	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
@@ -97,6 +108,12 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 	}
 	data = &env.Result
 	data.ID = data.ScriptName
+	data.ContentSHA256 = contentSHA256
+
+	// avoid storing `content` in state if `content_file` is configured
+	if !data.ContentFile.IsNull() {
+		data.Content = types.StringNull()
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -118,6 +135,17 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
+	contentSHA256 := data.ContentSHA256
+
+	if !data.ContentFile.IsNull() {
+		content, err := readFile((data.ContentFile.ValueString()))
+		if err != nil {
+			resp.Diagnostics.AddError("failed to read file", err.Error())
+			return
+		}
+		data.Content = types.StringValue(content)
+	}
+
 	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
@@ -147,6 +175,12 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 	}
 	data = &env.Result
 	data.ID = data.ScriptName
+	data.ContentSHA256 = contentSHA256
+
+	// avoid storing `content` in state if `content_file` is configured
+	if !data.ContentFile.IsNull() {
+		data.Content = types.StringNull()
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -253,7 +287,17 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 		content = string(bytes)
 	}
 
-	data.Content = types.StringValue(content)
+	// only update `content` if it was already present in state
+	// which might not be the case if `content_file` is used instead
+	if !data.Content.IsNull() {
+		data.Content = types.StringValue(content)
+	}
+
+	// refresh the content hash in case the remote state has drifted
+	if !data.ContentSHA256.IsNull() {
+		hash, _ := calculateStringHash(content)
+		data.ContentSHA256 = types.StringValue(hash)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
