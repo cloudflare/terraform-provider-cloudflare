@@ -551,6 +551,18 @@ var decode_only_tests = map[string]struct {
 	},
 }
 
+var decode_if_unset_behavior_tests = map[string]struct {
+	buf string
+	val interface{}
+}{
+	"nested_object_list_is_null": {
+		`{}`,
+		ListWithNestedObj{
+			A: customfield.NullObjectList[Embedded2](ctx),
+		},
+	},
+}
+
 var encodeOnlyTests = map[string]struct {
 	buf string
 	val interface{}
@@ -654,6 +666,27 @@ func TestDecode(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			resultValue := reflect.New(reflect.TypeOf(test.val))
 			if err := Unmarshal([]byte(test.buf), resultValue.Interface()); err != nil {
+				t.Fatalf("deserialization of %v failed with error %v", resultValue, err)
+			}
+			result := resultValue.Elem().Interface()
+			if !reflect.DeepEqual(result, test.val) {
+				t.Fatalf("incorrect deserialization for '%s':\nexpected:\n%s\nactual:\n%s\n", test.buf, spew.Sdump(test.val), spew.Sdump(result))
+			}
+		})
+	}
+}
+
+func TestDecode_IfUnsetBehaviour(t *testing.T) {
+	spew.Config.SortKeys = true
+	for name, test := range merge(decode_if_unset_behavior_tests) {
+		t.Run(name, func(t *testing.T) {
+			resultValue := reflect.New(reflect.TypeOf(test.val))
+			d := &decoderBuilder{
+				dateFormat:            time.RFC3339,
+				unmarshalComputedOnly: false,
+				updateBehavior:        IfUnset,
+			}
+			if err := d.unmarshal([]byte(test.buf), resultValue.Interface()); err != nil {
 				t.Fatalf("deserialization of %v failed with error %v", resultValue, err)
 			}
 			result := resultValue.Elem().Interface()
