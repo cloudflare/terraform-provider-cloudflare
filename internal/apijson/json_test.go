@@ -555,10 +555,22 @@ var decode_if_unset_behavior_tests = map[string]struct {
 	buf string
 	val interface{}
 }{
-	"nested_object_list_is_null": {
+	"nested_object_list_is_ommited_null": {
 		`{}`,
 		ListWithNestedObj{
 			A: customfield.NullObjectList[Embedded2](ctx),
+		},
+	},
+	"nested_object_list_is_explicit_null": {
+		`{"a": null}`,
+		ListWithNestedObj{
+			A: customfield.NullObjectList[Embedded2](ctx),
+		},
+	},
+	"nested_object_list_is_empty": {
+		`{"a": []}`,
+		ListWithNestedObj{
+			A: customfield.NewObjectListMust(ctx, []Embedded2{}),
 		},
 	},
 }
