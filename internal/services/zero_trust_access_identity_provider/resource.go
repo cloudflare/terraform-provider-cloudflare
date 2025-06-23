@@ -213,6 +213,8 @@ func (r *ZeroTrustAccessIdentityProviderResource) Read(ctx context.Context, req 
 	}
 	data = &env.Result
 
+	normalizeReadZeroTrustIDPData(ctx, data, &req.State)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("scim_config").AtName("secret"), secret)...)
 }
@@ -302,6 +304,6 @@ func (r *ZeroTrustAccessIdentityProviderResource) ImportState(ctx context.Contex
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustAccessIdentityProviderResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *ZeroTrustAccessIdentityProviderResource) ModifyPlan(context.Context, resource.ModifyPlanRequest, *resource.ModifyPlanResponse) {
 
 }
