@@ -4,15 +4,18 @@ package zero_trust_access_application
 
 import (
 	"context"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -47,14 +50,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"allow_iframe": schema.BoolAttribute{
 				Description: "Enables loading application content in an iFrame.",
 				Optional:    true,
+				Validators: []validator.Bool{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+				},
 			},
 			"app_launcher_logo_url": schema.StringAttribute{
 				Description: "The image URL of the logo shown in the App Launcher header.",
 				Optional:    true,
+				Validators: []validator.String{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "app_launcher"),
+				},
 			},
 			"bg_color": schema.StringAttribute{
 				Description: "The background color of the App Launcher page.",
 				Optional:    true,
+				Validators: []validator.String{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "app_launcher"),
+				},
 			},
 			"custom_deny_message": schema.StringAttribute{
 				Description: "The custom error message shown to a user when they are denied access to the application.",
@@ -71,38 +83,59 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"domain": schema.StringAttribute{
 				Description: "The primary hostname and path secured by Access. This domain will be displayed if the app is visible in the App Launcher.",
 				Optional:    true,
+				Computed:    true,
 			},
 			"header_bg_color": schema.StringAttribute{
 				Description: "The background color of the App Launcher header.",
 				Optional:    true,
+				Validators: []validator.String{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "app_launcher"),
+				},
 			},
 			"logo_url": schema.StringAttribute{
 				Description: "The image URL for the logo shown in the App Launcher dashboard.",
 				Optional:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of the application.",
-				Optional:    true,
+				Description:   "The name of the application.",
+				Optional:      true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"options_preflight_bypass": schema.BoolAttribute{
 				Description: "Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.",
 				Optional:    true,
+				Validators: []validator.Bool{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+				},
 			},
 			"read_service_tokens_from_header": schema.StringAttribute{
 				Description: "Allows matching Access Service Tokens passed HTTP in a single header with this name.\nThis works as an alternative to the (CF-Access-Client-Id, CF-Access-Client-Secret) pair of headers.\nThe header value will be interpreted as a json object similar to: \n  {\n    \"cf-access-client-id\": \"88bf3b6d86161464f6509f7219099e57.access.example.com\",\n    \"cf-access-client-secret\": \"bdd31cbc4dec990953e39163fbbb194c93313ca9f0a6e420346af9d326b1d2a5\"\n  }",
 				Optional:    true,
+				Validators: []validator.String{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+				},
 			},
 			"same_site_cookie_attribute": schema.StringAttribute{
 				Description: "Sets the SameSite cookie setting, which provides increased security against CSRF attacks.",
 				Optional:    true,
+				Validators: []validator.String{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+				},
 			},
 			"service_auth_401_redirect": schema.BoolAttribute{
 				Description: "Returns a 401 status code when the request is blocked by a Service Auth policy.",
 				Optional:    true,
+				Validators: []validator.Bool{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+				},
 			},
 			"skip_interstitial": schema.BoolAttribute{
 				Description: "Enables automatic authentication through cloudflared.",
 				Optional:    true,
+				Validators: []validator.Bool{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+				},
 			},
 			"type": schema.StringAttribute{
 				Description: "The application type.\nAvailable values: \"self_hosted\", \"saas\", \"ssh\", \"vnc\", \"app_launcher\", \"warp\", \"biso\", \"bookmark\", \"dash_sso\", \"infrastructure\", \"rdp\".",
@@ -123,7 +156,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"allowed_idps": schema.ListAttribute{
+			"allowed_idps": schema.SetAttribute{
 				Description: "The identity providers your users can select when connecting to this application. Defaults to all IdPs configured in your account.",
 				Optional:    true,
 				ElementType: types.StringType,
@@ -135,33 +168,48 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"cors_headers": schema.SingleNestedAttribute{
 				Optional: true,
+				Validators: []validator.Object{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+				},
 				Attributes: map[string]schema.Attribute{
 					"allow_all_headers": schema.BoolAttribute{
 						Description: "Allows all HTTP request headers.",
 						Optional:    true,
+						Validators: []validator.Bool{
+							boolvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("allowed_headers")),
+						},
 					},
 					"allow_all_methods": schema.BoolAttribute{
 						Description: "Allows all HTTP request methods.",
 						Optional:    true,
+						Validators: []validator.Bool{
+							boolvalidator.ExactlyOneOf(path.MatchRelative().AtParent().AtName("allowed_methods")),
+						},
 					},
 					"allow_all_origins": schema.BoolAttribute{
 						Description: "Allows all origins.",
 						Optional:    true,
+						Validators: []validator.Bool{
+							boolvalidator.ExactlyOneOf(path.MatchRelative().AtParent().AtName("allowed_origins")),
+						},
 					},
 					"allow_credentials": schema.BoolAttribute{
 						Description: "When set to `true`, includes credentials (cookies, authorization headers, or TLS client certificates) with requests.",
 						Optional:    true,
+						Validators: []validator.Bool{
+							boolvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("allow_all_origins")),
+						},
 					},
-					"allowed_headers": schema.ListAttribute{
+					"allowed_headers": schema.SetAttribute{
 						Description: "Allowed HTTP request headers.",
 						Optional:    true,
 						ElementType: types.StringType,
 					},
-					"allowed_methods": schema.ListAttribute{
+					"allowed_methods": schema.SetAttribute{
 						Description: "Allowed HTTP request methods.",
 						Optional:    true,
-						Validators: []validator.List{
-							listvalidator.ValueStringsAre(
+						Validators: []validator.Set{
+							setvalidator.ValueStringsAre(
 								stringvalidator.OneOfCaseInsensitive(
 									"GET",
 									"POST",
@@ -177,7 +225,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						ElementType: types.StringType,
 					},
-					"allowed_origins": schema.ListAttribute{
+					"allowed_origins": schema.SetAttribute{
 						Description: "Allowed origins.",
 						Optional:    true,
 						ElementType: types.StringType,
@@ -194,6 +242,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"footer_links": schema.ListNestedAttribute{
 				Description: "The links in the App Launcher footer.",
 				Optional:    true,
+				Validators: []validator.List{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "app_launcher"),
+				},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
@@ -226,6 +277,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"password": schema.StringAttribute{
 								Description: "Password used to authenticate with the remote SCIM service.",
 								Optional:    true,
+								Sensitive:   true,
 							},
 							"scheme": schema.StringAttribute{
 								Description: "The authentication scheme to use when making SCIM requests to this application.\nAvailable values: \"httpbasic\", \"oauthbearertoken\", \"oauth2\", \"access_service_token\".",
@@ -333,6 +385,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"target_criteria": schema.ListNestedAttribute{
 				Optional: true,
+				Validators: []validator.List{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), targetCompatibleAppTypes...),
+				},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"port": schema.Int64Attribute{
@@ -360,64 +415,85 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Displays the application in the App Launcher.",
 				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(true),
+				Validators: []validator.Bool{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), appLauncherVisibleAppTypes...),
+				},
 			},
 			"auto_redirect_to_identity": schema.BoolAttribute{
 				Description: "When set to `true`, users skip the identity provider selection step during login. You must specify only one identity provider in allowed_idps.",
-				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 			"enable_binding_cookie": schema.BoolAttribute{
 				Description: "Enables the binding cookie, which increases security against compromised authorization tokens and CSRF attacks.",
-				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(false),
+				Validators: []validator.Bool{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+				},
 			},
 			"http_only_cookie_attribute": schema.BoolAttribute{
 				Description: "Enables the HttpOnly cookie attribute, which increases security against XSS attacks.",
 				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(true),
+				Validators: []validator.Bool{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+				},
 			},
 			"path_cookie_attribute": schema.BoolAttribute{
 				Description: "Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default",
-				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(false),
+				Validators: []validator.Bool{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+				},
 			},
 			"session_duration": schema.StringAttribute{
 				Description: "The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. Note: unsupported for infrastructure type applications.",
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString("24h"),
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(durationRegex, `"session_duration" only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units`),
+				},
 			},
 			"skip_app_launcher_login_page": schema.BoolAttribute{
 				Description: "Determines when to skip the App Launcher landing page.",
-				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(false),
+				Computed:    true,
+				Validators: []validator.Bool{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "app_launcher"),
+				},
 			},
 			"self_hosted_domains": schema.ListAttribute{
 				Description:        "List of public domains that Access will secure. This field is deprecated in favor of `destinations` and will be supported until **November 21, 2025.** If `destinations` are provided, then `self_hosted_domains` will be ignored.",
-				Computed:           true,
 				Optional:           true,
+				Computed:           true,
 				DeprecationMessage: "This attribute is deprecated.",
 				CustomType:         customfield.NewListType[types.String](ctx),
 				ElementType:        types.StringType,
+
+				Validators: []validator.List{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+					listvalidator.ConflictsWith(path.Expressions{
+						path.MatchRoot("destinations"),
+					}...),
+				},
 			},
 			"tags": schema.ListAttribute{
 				Description: "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",
-				Computed:    true,
-				Optional:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
+				Optional:    true,
 				ElementType: types.StringType,
 			},
 			"destinations": schema.ListNestedAttribute{
 				Description: "List of destinations secured by Access. This supersedes `self_hosted_domains` to allow for more flexibility in defining different types of domains. If `destinations` are provided, then `self_hosted_domains` will be ignored.",
-				Computed:    true,
 				Optional:    true,
+				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationDestinationsModel](ctx),
+				Validators: []validator.List{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
+					listvalidator.ConflictsWith(path.Expressions{
+						path.MatchRoot("self_hosted_domains"),
+					}...),
+				},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
@@ -459,9 +535,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"landing_page_design": schema.SingleNestedAttribute{
 				Description: "The design of the App Launcher landing page shown to users when they log in.",
-				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationLandingPageDesignModel](ctx),
+				Validators: []validator.Object{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "app_launcher"),
+				},
 				Attributes: map[string]schema.Attribute{
 					"button_color": schema.StringAttribute{
 						Description: "The background color of the log in button on the landing page.",
@@ -489,18 +567,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"policies": schema.ListNestedAttribute{
 				Description: "The policies that Access applies to the application, in ascending order of precedence. Items can reference existing policies or create new policies exclusive to the application.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
 							Description: "The UUID of the policy",
 							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.ExactlyOneOf(path.MatchRelative().AtParent().AtName("include")),
+							},
 						},
 						"precedence": schema.Int64Attribute{
 							Description: "The order of execution for this policy. Must be unique for each policy within an app.",
 							Optional:    true,
+							Computed:    true,
 						},
 						"decision": schema.StringAttribute{
 							Description: "The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.\nAvailable values: \"allow\", \"deny\", \"non_identity\", \"bypass\".",
@@ -512,13 +592,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"non_identity",
 									"bypass",
 								),
+								stringvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
 							},
 						},
 						"include": schema.ListNestedAttribute{
 							Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx),
+							Validators: []validator.List{
+								listvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("decision")),
+							},
+							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -752,10 +835,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "The name of the Access policy.",
 							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
+							},
 						},
 						"connection_rules": schema.SingleNestedAttribute{
 							Description: "The rules that define how users may connect to the targets secured by your application.",
 							Optional:    true,
+							Validators: []validator.Object{
+								objectvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
+							},
 							Attributes: map[string]schema.Attribute{
 								"ssh": schema.SingleNestedAttribute{
 									Description: "The SSH-specific rules that define how users may connect to the targets secured by your application.",
@@ -776,9 +865,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"exclude": schema.ListNestedAttribute{
 							Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx),
+							Validators: []validator.List{
+								listvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
+							},
+							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -1011,9 +1102,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"require": schema.ListNestedAttribute{
 							Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesRequireModel](ctx),
+							Validators: []validator.List{
+								listvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
+							},
+							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesRequireModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -1248,14 +1341,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"saas_app": schema.SingleNestedAttribute{
-				Computed:   true,
 				Optional:   true,
 				CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationSaaSAppModel](ctx),
+				Validators: []validator.Object{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), saasAppTypes...),
+					customvalidator.RequiredWhenOtherStringIsOneOf(path.MatchRoot("type"), saasAppTypes...),
+				},
 				Attributes: map[string]schema.Attribute{
 					"auth_type": schema.StringAttribute{
-						Computed:    true,
 						Description: "Optional identifier indicating the authentication protocol used for the saas app. Required for OIDC. Default if unset is \"saml\"\nAvailable values: \"saml\", \"oidc\".",
 						Optional:    true,
+						Computed:    true,
+						Default:     stringdefault.StaticString("saml"),
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("saml", "oidc"),
 						},
@@ -1263,13 +1360,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"consumer_service_url": schema.StringAttribute{
 						Description: "The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToNullOrBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "saml"),
+						},
 					},
 					"created_at": schema.StringAttribute{
 						Computed:   true,
 						CustomType: timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
 					},
 					"custom_attributes": schema.ListNestedAttribute{
 						Optional: true,
+						Validators: []validator.List{
+							customvalidator.RequiresOtherStringAttributeToNullOrBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "saml"),
+						},
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"friendly_name": schema.StringAttribute{
@@ -1326,40 +1432,71 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"default_relay_state": schema.StringAttribute{
 						Description: "The URL that the user will be redirected to after a successful login for IDP initiated logins.",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToNullOrBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "saml"),
+						},
 					},
 					"idp_entity_id": schema.StringAttribute{
 						Description: "The unique identifier for your SaaS application.",
 						Computed:    true,
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToNullOrBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "saml"),
+						},
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
 					},
 					"name_id_format": schema.StringAttribute{
 						Description: "The format of the name identifier sent to the SaaS application.\nAvailable values: \"id\", \"email\".",
 						Optional:    true,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("id", "email"),
+							customvalidator.RequiresOtherStringAttributeToNullOrBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "saml"),
+						},
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
 						},
 					},
 					"name_id_transform_jsonata": schema.StringAttribute{
 						Description: "A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToNullOrBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "saml"),
+						},
 					},
 					"public_key": schema.StringAttribute{
 						Description: "The Access public certificate that will be used to verify your identity.",
 						Computed:    true,
-						Optional:    true,
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
 					},
 					"saml_attribute_transform_jsonata": schema.StringAttribute{
 						Description: "A [JSONata] (https://jsonata.org/) expression that transforms an application's user identities into attribute assertions in the SAML response. The expression can transform id, email, name, and groups values. It can also transform fields listed in the saml_attributes or oidc_fields of the identity provider used to authenticate. The output of this expression must be a JSON object.",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToNullOrBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "saml"),
+						},
 					},
 					"sp_entity_id": schema.StringAttribute{
 						Description: "A globally unique name for an identity or service provider.",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToNullOrBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "saml"),
+						},
 					},
 					"sso_endpoint": schema.StringAttribute{
 						Description: "The endpoint where your SaaS application will send login requests.",
 						Computed:    true,
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToNullOrBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "saml"),
+						},
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
 					},
 					"updated_at": schema.StringAttribute{
 						Computed:   true,
@@ -1368,10 +1505,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"access_token_lifetime": schema.StringAttribute{
 						Description: "The lifetime of the OIDC Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",
 						Optional:    true,
+						Computed:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "oidc"),
+						},
 					},
 					"allow_pkce_without_client_secret": schema.BoolAttribute{
 						Description: "If client secret should be required on the token endpoint when authorization_code_with_pkce grant is used.",
 						Optional:    true,
+						Validators: []validator.Bool{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "oidc"),
+						},
 					},
 					"app_launcher_url": schema.StringAttribute{
 						Description: "The URL where this applications tile redirects users",
@@ -1380,16 +1524,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"client_id": schema.StringAttribute{
 						Description: "The application client id",
 						Computed:    true,
-						Optional:    true,
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
 					},
 					"client_secret": schema.StringAttribute{
 						Description: "The application client secret, only returned on POST request.",
 						Computed:    true,
-						Optional:    true,
 						Sensitive:   true,
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
 					},
 					"custom_claims": schema.ListNestedAttribute{
 						Optional: true,
+						Validators: []validator.List{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "oidc"),
+						},
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"name": schema.StringAttribute{
@@ -1433,6 +1584,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The OIDC flows supported by this application",
 						Optional:    true,
 						Validators: []validator.List{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "oidc"),
 							listvalidator.ValueStringsAre(
 								stringvalidator.OneOfCaseInsensitive(
 									"authorization_code",
@@ -1448,9 +1600,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"group_filter_regex": schema.StringAttribute{
 						Description: "A regex to filter Cloudflare groups returned in ID token and userinfo endpoint",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "oidc"),
+						},
 					},
 					"hybrid_and_implicit_options": schema.SingleNestedAttribute{
 						Optional: true,
+						Validators: []validator.Object{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "oidc"),
+						},
 						Attributes: map[string]schema.Attribute{
 							"return_access_token_from_authorization_endpoint": schema.BoolAttribute{
 								Description: "If an Access Token should be returned from the OIDC Authorization endpoint",
@@ -1466,9 +1624,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens",
 						Optional:    true,
 						ElementType: types.StringType,
+						Validators: []validator.List{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "oidc"),
+						},
 					},
 					"refresh_token_options": schema.SingleNestedAttribute{
 						Optional: true,
+						Validators: []validator.Object{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "oidc"),
+						},
 						Attributes: map[string]schema.Attribute{
 							"lifetime": schema.StringAttribute{
 								Description: "How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.",
@@ -1480,6 +1644,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: `Define the user information shared with access, "offline_access" scope will be automatically enabled if refresh tokens are enabled`,
 						Optional:    true,
 						Validators: []validator.List{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("saas_app").AtName("auth_type"), "oidc"),
 							listvalidator.ValueStringsAre(
 								stringvalidator.OneOfCaseInsensitive(
 									"openid",
@@ -1496,14 +1661,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"aud": schema.StringAttribute{
 				Description: "Audience tag.",
 				Computed:    true,
-			},
-			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 		},
 	}
