@@ -85,16 +85,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"app_control_settings": schema.SingleNestedAttribute{
-						Description: "Setting to enable App Control",
-						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Description: "Enable App Control",
-								Optional:    true,
-							},
-						},
-					},
 					"block_page": schema.SingleNestedAttribute{
 						Description: "Block page layout settings.",
 						Computed:    true,
