@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -91,8 +92,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			// `status` for api_tokens is an odd case that needs to be
+			// maintained for legacy purposes.
+			// `status` is not accepted during create actions but can be set
+			// during update actions. After create, a status is handed back as
+			// either active or expired depending on the `expires_on` date.
+			// Updating the status to 'active' or 'expired' may also be
+			// overridden by the server.
 			"status": schema.StringAttribute{
-				Description: "Status of the token.\nAvailable values: \"active\", \"disabled\", \"expired\".",
+				Description: "Status of the token. If not provided, the default status is \"active\".\nAvailable values: \"active\", \"disabled\", \"expired\".",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -101,6 +110,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"expired",
 					),
 				},
+				Default: stringdefault.StaticString("active"),
 			},
 			"condition": schema.SingleNestedAttribute{
 				Optional: true,
