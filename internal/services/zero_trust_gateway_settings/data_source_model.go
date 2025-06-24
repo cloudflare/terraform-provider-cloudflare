@@ -35,7 +35,6 @@ func (m *ZeroTrustGatewaySettingsDataSourceModel) toReadParams(_ context.Context
 type ZeroTrustGatewaySettingsSettingsDataSourceModel struct {
 	ActivityLog           customfield.NestedObject[ZeroTrustGatewaySettingsSettingsActivityLogDataSourceModel]           `tfsdk:"activity_log" json:"activity_log,computed"`
 	Antivirus             customfield.NestedObject[ZeroTrustGatewaySettingsSettingsAntivirusDataSourceModel]             `tfsdk:"antivirus" json:"antivirus,computed"`
-	AppControlSettings    customfield.NestedObject[ZeroTrustGatewaySettingsSettingsAppControlSettingsDataSourceModel]    `tfsdk:"app_control_settings" json:"app-control-settings,computed"`
 	BlockPage             customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBlockPageDataSourceModel]             `tfsdk:"block_page" json:"block_page,computed"`
 	BodyScanning          customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBodyScanningDataSourceModel]          `tfsdk:"body_scanning" json:"body_scanning,computed"`
 	BrowserIsolation      customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBrowserIsolationDataSourceModel]      `tfsdk:"browser_isolation" json:"browser_isolation,computed"`
@@ -65,10 +64,6 @@ type ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsDataSourceMode
 	IncludeContext types.Bool   `tfsdk:"include_context" json:"include_context,computed"`
 	Msg            types.String `tfsdk:"msg" json:"msg,computed"`
 	SupportURL     types.String `tfsdk:"support_url" json:"support_url,computed"`
-}
-
-type ZeroTrustGatewaySettingsSettingsAppControlSettingsDataSourceModel struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 type ZeroTrustGatewaySettingsSettingsBlockPageDataSourceModel struct {
