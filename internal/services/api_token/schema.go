@@ -100,7 +100,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			// Updating the status to 'active' or 'expired' may also be
 			// overridden by the server.
 			"status": schema.StringAttribute{
-				Description: "Status of the token. If not provided, the default status is \"active\".\nAvailable values: \"active\", \"disabled\", \"expired\".",
+				Description: "Status of the token.\nAvailable values: \"active\", \"disabled\", \"expired\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
