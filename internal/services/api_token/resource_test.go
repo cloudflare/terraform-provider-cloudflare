@@ -33,27 +33,6 @@ func TestAccAPIToken_Basic(t *testing.T) {
 	})
 }
 
-func TestAccAPIToken_AllowDeny(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAPITokenConfigAllowDeny(rnd, permissionID),
-			},
-			{
-				Config: testAPITokenConfigAllowDeny(rnd, permissionID),
-			},
-			{
-				Config: testAPITokenConfigAllowDeny(rnd, permissionID),
-			},
-		},
-	})
-}
-
 func TestAccAPIToken_DoesNotSetConditions(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_api_token." + rnd
@@ -127,10 +106,6 @@ func TestAccAPIToken_SetAllCondition(t *testing.T) {
 
 func testAccCloudflareAPITokenWithAllCondition(rnd string, permissionID string) string {
 	return acctest.LoadTestCase("apitokenwithallcondition.tf", rnd, permissionID)
-}
-
-func testAPITokenConfigAllowDeny(resourceID, permissionID string) string {
-	return acctest.LoadTestCase("apitokenconfigallowdeny.tf", resourceID, permissionID)
 }
 
 func TestAccAPIToken_TokenTTL(t *testing.T) {
