@@ -108,6 +108,7 @@ type NestedObjectListLike interface {
 	NullValue(ctx context.Context) NestedObjectListLike
 	UnknownValue(ctx context.Context) NestedObjectListLike
 	KnownValue(ctx context.Context, T any) NestedObjectListLike
+	IsNullOrUnknown() bool
 }
 
 var _ NestedObjectListLike = (*NestedObjectList[basetypes.StringValue])(nil)
@@ -141,6 +142,10 @@ func (v NestedObjectList[T]) KnownValue(ctx context.Context, anyValues any) Nest
 		panic(fmt.Errorf("unexpected error creating NestedObjectList: %v", diags))
 	}
 	return r
+}
+
+func (v NestedObjectList[T]) IsNullOrUnknown() bool {
+	return v.IsNull() || v.IsUnknown()
 }
 
 func (v NestedObjectList[T]) Equal(o attr.Value) bool {
