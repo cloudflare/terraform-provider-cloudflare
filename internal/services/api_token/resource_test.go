@@ -120,8 +120,8 @@ func TestAccAPIToken_SetIndividualCondition(t *testing.T) {
 				Config: testAccCloudflareAPITokenWithIndividualCondition(rnd, permissionID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "condition.0.request_ip.0.in.0", "192.0.2.1/32"),
-					resource.TestCheckNoResourceAttr(name, "condition.0.request_ip.0.not_in"),
+					resource.TestCheckResourceAttr(name, "condition.request_ip.in.0", "192.0.2.1/32"),
+					resource.TestCheckNoResourceAttr(name, "condition.request_ip.not_in"),
 				),
 			},
 		},
@@ -153,8 +153,8 @@ func TestAccAPIToken_SetAllCondition(t *testing.T) {
 				Config: testAccCloudflareAPITokenWithAllCondition(rnd, permissionID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "condition.0.request_ip.0.in.0", "192.0.2.1/32"),
-					resource.TestCheckResourceAttr(name, "condition.0.request_ip.0.not_in.0", "198.51.100.1/32"),
+					resource.TestCheckResourceAttr(name, "condition.request_ip.in.0", "192.0.2.1/32"),
+					resource.TestCheckResourceAttr(name, "condition.request_ip.not_in.0", "198.51.100.1/32"),
 				),
 			},
 		},
