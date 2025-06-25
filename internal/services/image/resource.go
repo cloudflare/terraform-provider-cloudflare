@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -226,7 +227,7 @@ func (r *ImageResource) ImportState(ctx context.Context, req resource.ImportStat
 	}
 
 	data.AccountID = types.StringValue(path_account_id)
-	data.ID = types.StringValue(path_image_id)
+	data.ID = jsontypes.NewNormalizedValue(path_image_id)
 
 	res := new(http.Response)
 	env := ImageResultEnvelope{*data}

@@ -1,36 +1,41 @@
 package zero_trust_tunnel_warp_connector_test
 
 import (
-	"errors"
+	"fmt"
+	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-func TestAccCloudflareZeroTrustTunnelWarpConnectorDataSource_Basic(t *testing.T) {
+func TestAccWARPConnectorDatasourceBasic(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zero_trust_tunnel_warp_connector." + rnd
+	name := fmt.Sprintf("data.cloudflare_zero_trust_tunnel_warp_connector.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccZeroTrustTunnelWarpConnectorDataSourceConfig(rnd),
+				Config: testAccCheckCloudflareTunnelDatasourceBasic(accID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					func(s *terraform.State) error {
-						return errors.New("test not implemented")
-					},
-					resource.TestCheckResourceAttr(name, "some_string_attribute", "string_value"),
+					resource.TestCheckResourceAttrSet(name, "name"),
 				),
 			},
 		},
 	})
 }
 
-func testAccZeroTrustTunnelWarpConnectorDataSourceConfig(rnd string) string {
-	return acctest.LoadTestCase("datasource_basic.tf", rnd)
+func testAccCheckCloudflareTunnelDatasourceBasic(accID, name string) string {
+	return acctest.LoadTestCase("datasource_basic.tf", accID, name)
 }
