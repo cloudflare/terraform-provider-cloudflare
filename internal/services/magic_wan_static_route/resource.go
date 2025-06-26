@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -134,6 +135,13 @@ func (r *MagicWANStaticRouteResource) Update(ctx context.Context, req resource.U
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	// remove extra wrapper field
+	bytes, err = utils.StripWrapper(bytes, "modified_route")
+	if err != nil {
+		resp.Diagnostics.AddError("failed to parse response", err.Error())
+		return
+	}
+
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -174,6 +182,12 @@ func (r *MagicWANStaticRouteResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	// remove extra wrapper field
+	bytes, err = utils.StripWrapper(bytes, "route")
+	if err != nil {
+		resp.Diagnostics.AddError("failed to parse response", err.Error())
+		return
+	}
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
