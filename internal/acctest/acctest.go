@@ -295,3 +295,8 @@ func DumpState(s *terraform.State) error {
 
 	return nil
 }
+
+// / PtrTo is a small helper to get a pointer to a particular value
+func PtrTo[T any](v T) *T {
+	return &v
+}
