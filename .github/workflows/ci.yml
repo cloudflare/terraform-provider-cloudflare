@@ -15,6 +15,7 @@ on:
 jobs:
   lint:
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +32,7 @@ jobs:
 
   test:
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
     steps:
       - uses: actions/checkout@v4
 
