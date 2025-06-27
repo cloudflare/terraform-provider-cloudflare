@@ -603,6 +603,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
+								Validators: []validator.Object{
+									customvalidator.ObjectSizeAtMost(1),
+								},
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
 										Optional: true,
@@ -871,6 +874,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
+								Validators: []validator.Object{
+									customvalidator.ObjectSizeAtMost(1),
+								},
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
 										Optional: true,
@@ -1108,6 +1114,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesRequireModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
+								Validators: []validator.Object{
+									customvalidator.ObjectSizeAtMost(1),
+								},
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
 										Optional: true,
