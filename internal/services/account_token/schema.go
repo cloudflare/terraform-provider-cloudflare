@@ -81,9 +81,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"resources": schema.MapAttribute{
 							Description: "A list of resource names that the policy applies to.",
 							Required:    true,
-							ElementType: types.MapType{
-								ElemType: types.StringType,
-							},
+							ElementType: types.StringType,
 						},
 					},
 				},
