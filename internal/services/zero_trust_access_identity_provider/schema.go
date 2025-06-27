@@ -4,6 +4,8 @@ package zero_trust_access_identity_provider
 
 import (
 	"context"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -88,10 +90,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"conditional_access_enabled": schema.BoolAttribute{
 						Description: "Should Cloudflare try to load authentication contexts from your account",
 						Optional:    true,
+						Validators: []validator.Bool{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "azureAD"),
+						},
 					},
 					"directory_id": schema.StringAttribute{
 						Description: "Your Azure directory uuid",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "azureAD"),
+						},
 					},
 					"email_claim_name": schema.StringAttribute{
 						Description: "The claim name for email in the id_token response.",
@@ -106,31 +114,50 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"select_account",
 								"none",
 							),
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "azureAD"),
 						},
 					},
 					"support_groups": schema.BoolAttribute{
 						Description: "Should Cloudflare try to load groups from your account",
 						Optional:    true,
+						Validators: []validator.Bool{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "azureAD"),
+						},
 					},
 					"centrify_account": schema.StringAttribute{
 						Description: "Your centrify account url",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "centrify"),
+						},
 					},
 					"centrify_app_id": schema.StringAttribute{
 						Description: "Your centrify app id",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "centrify"),
+						},
 					},
 					"apps_domain": schema.StringAttribute{
 						Description: "Your companies TLD",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "google-apps"),
+						},
 					},
 					"auth_url": schema.StringAttribute{
 						Description: "The authorization_endpoint URL of your IdP",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "oidc"),
+						},
 					},
 					"certs_url": schema.StringAttribute{
 						Description: "The jwks_uri endpoint of your IdP to allow the IdP keys to sign the tokens",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "oidc"),
+						},
 					},
 					"pkce_enabled": schema.BoolAttribute{
 						Description: "Enable Proof Key for Code Exchange (PKCE)",
@@ -140,39 +167,66 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "OAuth scopes",
 						Optional:    true,
 						ElementType: types.StringType,
+						Validators: []validator.List{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "oidc"),
+						},
 					},
 					"token_url": schema.StringAttribute{
 						Description: "The token_endpoint URL of your IdP",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "oidc"),
+						},
 					},
 					"authorization_server_id": schema.StringAttribute{
 						Description: "Your okta authorization server id",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "okta"),
+						},
 					},
 					"okta_account": schema.StringAttribute{
 						Description: "Your okta account url",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "okta"),
+						},
 					},
 					"onelogin_account": schema.StringAttribute{
 						Description: "Your OneLogin account url",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "onelogin"),
+						},
 					},
 					"ping_env_id": schema.StringAttribute{
 						Description: "Your PingOne environment identifier",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "pingone"),
+						},
 					},
 					"attributes": schema.ListAttribute{
 						Description: "A list of SAML attribute names that will be added to your signed JWT token and can be used in SAML policy rules.",
 						Optional:    true,
 						ElementType: types.StringType,
+						Validators: []validator.List{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
+						},
 					},
 					"email_attribute_name": schema.StringAttribute{
 						Description: "The attribute name for email in the SAML response.",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
+						},
 					},
 					"header_attributes": schema.ListNestedAttribute{
 						Description: "Add a list of attribute names that will be returned in the response header from the Access callback.",
 						Optional:    true,
+						Validators: []validator.List{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
+						},
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"attribute_name": schema.StringAttribute{
@@ -190,23 +244,38 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "X509 certificate to verify the signature in the SAML authentication response",
 						Optional:    true,
 						ElementType: types.StringType,
+						Validators: []validator.List{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
+						},
 					},
 					"issuer_url": schema.StringAttribute{
 						Description: "IdP Entity ID or Issuer URL",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
+						},
 					},
 					"sign_request": schema.BoolAttribute{
 						Description:   "Sign the SAML authentication request with Access credentials. To verify the signature, use the public key from the Access certs endpoints.",
 						Optional:      true,
 						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
+						Validators: []validator.Bool{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
+						},
 					},
 					"sso_target_url": schema.StringAttribute{
 						Description: "URL to send the SAML authentication requests to",
 						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
+						},
 					},
 					"redirect_url": schema.StringAttribute{
 						Computed:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
+						},
 					},
 				},
 			},
@@ -252,6 +321,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "A read-only token generated when the SCIM integration is enabled for the first time.  It is redacted on subsequent requests.  If you lose this you will need to refresh it at /access/identity_providers/:idpID/refresh_scim_secret.",
 						Computed:    true,
 						Sensitive:   true,
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
 					},
 					"user_deprovision": schema.BoolAttribute{
 						Description: "A flag to enable revoking a user's session in Access and Gateway when they have been deprovisioned in the Identity Provider.",
