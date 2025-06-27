@@ -9,9 +9,8 @@ resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
     support_groups = true
   }
   scim_config = {
-    enabled                  = true
-    group_member_deprovision = true
-    seat_deprovision         = true
-    user_deprovision         = true
+    enabled          = true
+    seat_deprovision = true
+    user_deprovision = true
   }
 }
