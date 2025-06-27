@@ -114,6 +114,7 @@ go test -run "^TestAcc" -count 1 \
     ./internal/services/workers_script \
     ./internal/services/workers_script_subdomain \
     ./internal/services/zero_trust_access_application \
+    ./internal/services/zero_trust_access_identity_provider \
     ./internal/services/zero_trust_access_infrastructure_target \
     ./internal/services/zero_trust_access_key_configuration \
     ./internal/services/zero_trust_access_mtls_hostname_settings \
