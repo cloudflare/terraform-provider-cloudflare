@@ -40,7 +40,7 @@ type AccountTokenPoliciesModel struct {
 	ID               types.String                                  `tfsdk:"id" json:"id,computed"`
 	Effect           types.String                                  `tfsdk:"effect" json:"effect,required"`
 	PermissionGroups *[]*AccountTokenPoliciesPermissionGroupsModel `tfsdk:"permission_groups" json:"permission_groups,required"`
-	Resources        *map[string]types.String                      `tfsdk:"resources" json:"resources,required"`
+	Resources        *map[string]*map[string]types.String          `tfsdk:"resources" json:"resources,required"`
 }
 
 type AccountTokenPoliciesPermissionGroupsModel struct {
