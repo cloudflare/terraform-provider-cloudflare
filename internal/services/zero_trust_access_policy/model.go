@@ -4,8 +4,6 @@ package zero_trust_access_policy
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -14,21 +12,19 @@ type ZeroTrustAccessPolicyResultEnvelope struct {
 }
 
 type ZeroTrustAccessPolicyModel struct {
-	ID                           types.String                                                    `tfsdk:"id" json:"id,computed"`
-	AccountID                    types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
-	Decision                     types.String                                                    `tfsdk:"decision" json:"decision,required"`
-	Name                         types.String                                                    `tfsdk:"name" json:"name,required"`
-	ApprovalRequired             types.Bool                                                      `tfsdk:"approval_required" json:"approval_required,optional"`
-	IsolationRequired            types.Bool                                                      `tfsdk:"isolation_required" json:"isolation_required,optional"`
-	PurposeJustificationPrompt   types.String                                                    `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,optional"`
-	PurposeJustificationRequired types.Bool                                                      `tfsdk:"purpose_justification_required" json:"purpose_justification_required,optional"`
-	ApprovalGroups               *[]*ZeroTrustAccessPolicyApprovalGroupsModel                    `tfsdk:"approval_groups" json:"approval_groups,optional"`
-	SessionDuration              types.String                                                    `tfsdk:"session_duration" json:"session_duration,computed_optional"`
-	Exclude                      customfield.NestedObjectList[ZeroTrustAccessPolicyExcludeModel] `tfsdk:"exclude" json:"exclude,computed_optional"`
-	Include                      customfield.NestedObjectList[ZeroTrustAccessPolicyIncludeModel] `tfsdk:"include" json:"include,computed_optional"`
-	Require                      customfield.NestedObjectList[ZeroTrustAccessPolicyRequireModel] `tfsdk:"require" json:"require,computed_optional"`
-	CreatedAt                    timetypes.RFC3339                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	UpdatedAt                    timetypes.RFC3339                                               `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	ID                           types.String                                 `tfsdk:"id" json:"id,computed"`
+	AccountID                    types.String                                 `tfsdk:"account_id" path:"account_id,required"`
+	Decision                     types.String                                 `tfsdk:"decision" json:"decision,required"`
+	Name                         types.String                                 `tfsdk:"name" json:"name,required"`
+	ApprovalRequired             types.Bool                                   `tfsdk:"approval_required" json:"approval_required,optional"`
+	IsolationRequired            types.Bool                                   `tfsdk:"isolation_required" json:"isolation_required,optional"`
+	PurposeJustificationPrompt   types.String                                 `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,optional"`
+	PurposeJustificationRequired types.Bool                                   `tfsdk:"purpose_justification_required" json:"purpose_justification_required,optional"`
+	ApprovalGroups               *[]*ZeroTrustAccessPolicyApprovalGroupsModel `tfsdk:"approval_groups" json:"approval_groups,optional"`
+	SessionDuration              types.String                                 `tfsdk:"session_duration" json:"session_duration,computed_optional"`
+	Exclude                      *[]*ZeroTrustAccessPolicyExcludeModel        `tfsdk:"exclude" json:"exclude,optional"`
+	Include                      *[]*ZeroTrustAccessPolicyIncludeModel        `tfsdk:"include" json:"include,optional"`
+	Require                      *[]*ZeroTrustAccessPolicyRequireModel        `tfsdk:"require" json:"require,optional"`
 }
 
 func (m ZeroTrustAccessPolicyModel) MarshalJSON() (data []byte, err error) {
