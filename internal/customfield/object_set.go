@@ -131,6 +131,10 @@ func (v NestedObjectSet[T]) KnownValue(ctx context.Context, anyValues any) Neste
 	return r
 }
 
+func (v NestedObjectSet[T]) IsNullOrUnknown() bool {
+	return v.IsNull() || v.IsUnknown()
+}
+
 func (v NestedObjectSet[T]) Equal(o attr.Value) bool {
 	other, ok := o.(NestedObjectSet[T])
 	if !ok {

@@ -800,16 +800,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"app_count": schema.Int64Attribute{
-				Description: "Number of access applications currently using this policy.",
-				Computed:    true,
-			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
-			},
-			"reusable": schema.BoolAttribute{
-				Computed: true,
 			},
 			"updated_at": schema.StringAttribute{
 				Computed:   true,

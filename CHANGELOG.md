@@ -1,5 +1,35 @@
 # Changelog
 
+## 5.7.0 (2025-06-29)
+
+Full Changelog: [v5.6.0...v5.7.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.6.0...v5.7.0)
+
+### Features
+
+* **api:** Add 'zero_trust_tunnel_warp_connector' Terraform resource ([f165be6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f165be65a34d7940f431be1bd2f856c86154a64e))
+* **api:** api update ([454d8c4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/454d8c4ba33ca1448eaa800383ef40cccb04b1e1))
+* **api:** api update ([51192a2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/51192a2ed86171989eb5e866b8d7f0c2fc5835e7))
+* **api:** api update ([8072877](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8072877b6af1fd0da9ff28c87767f3dbc3d06aa4))
+* **api:** api update ([5b94525](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5b945252a5452161d14cd5582c24ed03c6ddfbae))
+* **api:** api update ([bedbc6b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bedbc6b27666917c5ab428d92b2fb863d6cdaf29))
+* **api:** api update ([4fd31f8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4fd31f81fb06d9d5819ff886a1b6c93ee2bb0f76))
+* **api:** api update ([aebd184](https://github.com/cloudflare/terraform-provider-cloudflare/commit/aebd184c1279a5397a423adf7168f129748904cd))
+
+
+### Bug Fixes
+
+* **ci:** release-doctor — report correct token name ([5e54984](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5e54984169d926b968227464cef5bfb3cc7d1081))
+* **logpull_retention:** Fix Terraform ID property ([e1cca18](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e1cca1826aefd44e7429f949c22e4236c14cce1c))
+* null nested attribute decoding ([36280df](https://github.com/cloudflare/terraform-provider-cloudflare/commit/36280df2515a1a3b2246c8d0eb753fee4cbffc54))
+
+
+### Chores
+
+* **ci:** only run for pushes and fork pull requests ([bdb65b0](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bdb65b06b3699e7eb584805e57a22607b6c383a6))
+* **internal:** codegen related update ([bd93752](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bd93752d335e647ca9682d88e3717cc661798c48))
+* update docs ([42613a4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/42613a44dc1651429063d01c2df089c9cd1ece3d))
+* update docs ([95c75d5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/95c75d5fa290f9d602e835094af9bbb1b7878076))
+
 ## 5.6.0 (2025-06-17)
 
 Full Changelog: [v5.5.0...v5.6.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.5.0...v5.6.0)
