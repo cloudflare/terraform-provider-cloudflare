@@ -31,18 +31,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"ai_bots_protection": schema.StringAttribute{
-				Description: "Enable rule to block AI Scrapers and Crawlers.\nAvailable values: \"block\", \"disabled\".",
+				Description: "Enable rule to block AI Scrapers and Crawlers.\nAvailable values: \"block\", \"disabled\", \"only_on_ad_pages\".",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("block", "disabled"),
+					stringvalidator.OneOfCaseInsensitive(
+						"block",
+						"disabled",
+						"only_on_ad_pages",
+					),
 				},
 			},
 			"auto_update_model": schema.BoolAttribute{
 				Description: "Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)",
+				Computed:    true,
 				Optional:    true,
 			},
 			"crawler_protection": schema.StringAttribute{
 				Description: "Enable rule to punish AI Scrapers and Crawlers via a link maze.\nAvailable values: \"enabled\", \"disabled\".",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
@@ -50,18 +57,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"enable_js": schema.BoolAttribute{
 				Description: "Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).",
+				Computed:    true,
 				Optional:    true,
 			},
 			"fight_mode": schema.BoolAttribute{
 				Description: "Whether to enable Bot Fight Mode.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"optimize_wordpress": schema.BoolAttribute{
 				Description: "Whether to optimize Super Bot Fight Mode protections for Wordpress.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"sbfm_definitely_automated": schema.StringAttribute{
 				Description: "Super Bot Fight Mode (SBFM) action to take on definitely automated requests.\nAvailable values: \"allow\", \"block\", \"managed_challenge\".",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -73,6 +84,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"sbfm_likely_automated": schema.StringAttribute{
 				Description: "Super Bot Fight Mode (SBFM) action to take on likely automated requests.\nAvailable values: \"allow\", \"block\", \"managed_challenge\".",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -84,10 +96,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"sbfm_static_resource_protection": schema.BoolAttribute{
 				Description: "Super Bot Fight Mode (SBFM) to enable static resource protection.\nEnable if static resources on your application need bot protection.\nNote: Static resource protection can also result in legitimate traffic being blocked.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"sbfm_verified_bots": schema.StringAttribute{
 				Description: "Super Bot Fight Mode (SBFM) action to take on verified bots requests.\nAvailable values: \"allow\", \"block\".",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("allow", "block"),

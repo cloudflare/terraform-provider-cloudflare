@@ -22,10 +22,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"ai_bots_protection": schema.StringAttribute{
-				Description: "Enable rule to block AI Scrapers and Crawlers.\nAvailable values: \"block\", \"disabled\".",
+				Description: "Enable rule to block AI Scrapers and Crawlers.\nAvailable values: \"block\", \"disabled\", \"only_on_ad_pages\".",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("block", "disabled"),
+					stringvalidator.OneOfCaseInsensitive(
+						"block",
+						"disabled",
+						"only_on_ad_pages",
+					),
 				},
 			},
 			"auto_update_model": schema.BoolAttribute{
