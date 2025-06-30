@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/firewall"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*UserAgentBlockingRuleResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*UserAgentBlockingRuleResource)(nil)
+var _ resource.ResourceWithImportState = (*UserAgentBlockingRuleResource)(nil)
 
 func NewResource() resource.Resource {
 	return &UserAgentBlockingRuleResource{}
@@ -118,7 +121,7 @@ func (r *UserAgentBlockingRuleResource) Update(ctx context.Context, req resource
 	env := UserAgentBlockingRuleResultEnvelope{*data}
 	_, err = r.client.Firewall.UARules.Update(
 		ctx,
-		data.UARuleID.ValueString(),
+		data.ID.ValueString(),
 		firewall.UARuleUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -154,7 +157,7 @@ func (r *UserAgentBlockingRuleResource) Read(ctx context.Context, req resource.R
 	env := UserAgentBlockingRuleResultEnvelope{*data}
 	_, err := r.client.Firewall.UARules.Get(
 		ctx,
-		data.UARuleID.ValueString(),
+		data.ID.ValueString(),
 		firewall.UARuleGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -192,7 +195,7 @@ func (r *UserAgentBlockingRuleResource) Delete(ctx context.Context, req resource
 
 	_, err := r.client.Firewall.UARules.Delete(
 		ctx,
-		data.UARuleID.ValueString(),
+		data.ID.ValueString(),
 		firewall.UARuleDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -202,6 +205,51 @@ func (r *UserAgentBlockingRuleResource) Delete(ctx context.Context, req resource
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *UserAgentBlockingRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *UserAgentBlockingRuleModel = new(UserAgentBlockingRuleModel)
+
+	path_zone_id := ""
+	path_ua_rule_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<ua_rule_id>",
+		&path_zone_id,
+		&path_ua_rule_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ZoneID = types.StringValue(path_zone_id)
+	data.ID = types.StringValue(path_ua_rule_id)
+
+	res := new(http.Response)
+	env := UserAgentBlockingRuleResultEnvelope{*data}
+	_, err := r.client.Firewall.UARules.Get(
+		ctx,
+		path_ua_rule_id,
+		firewall.UARuleGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

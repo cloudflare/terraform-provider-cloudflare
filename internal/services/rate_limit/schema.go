@@ -157,7 +157,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"description": schema.StringAttribute{
-				Description: "An informative summary of the rate limit. This value is sanitized and any tags will be removed.",
+				Description: "An informative summary of the rule. This value is sanitized and any tags will be removed.",
 				Computed:    true,
 			},
 			"disabled": schema.BoolAttribute{
