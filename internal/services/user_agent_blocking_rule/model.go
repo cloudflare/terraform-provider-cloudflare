@@ -12,10 +12,12 @@ type UserAgentBlockingRuleResultEnvelope struct {
 }
 
 type UserAgentBlockingRuleModel struct {
+	ID            types.String                             `tfsdk:"id" json:"id,computed"`
 	ZoneID        types.String                             `tfsdk:"zone_id" path:"zone_id,required"`
-	UARuleID      types.String                             `tfsdk:"ua_rule_id" path:"ua_rule_id,optional"`
-	Mode          types.String                             `tfsdk:"mode" json:"mode,required,no_refresh"`
-	Configuration *UserAgentBlockingRuleConfigurationModel `tfsdk:"configuration" json:"configuration,required,no_refresh"`
+	Mode          types.String                             `tfsdk:"mode" json:"mode,required"`
+	Configuration *UserAgentBlockingRuleConfigurationModel `tfsdk:"configuration" json:"configuration,required"`
+	Description   types.String                             `tfsdk:"description" json:"description,optional"`
+	Paused        types.Bool                               `tfsdk:"paused" json:"paused,optional"`
 }
 
 func (m UserAgentBlockingRuleModel) MarshalJSON() (data []byte, err error) {
