@@ -4,7 +4,6 @@ package zero_trust_access_group
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,8 +20,6 @@ type ZeroTrustAccessGroupModel struct {
 	IsDefault types.Bool                           `tfsdk:"is_default" json:"is_default,optional,no_refresh"`
 	Exclude   *[]*ZeroTrustAccessGroupExcludeModel `tfsdk:"exclude" json:"exclude,optional"`
 	Require   *[]*ZeroTrustAccessGroupRequireModel `tfsdk:"require" json:"require,optional"`
-	CreatedAt timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	UpdatedAt timetypes.RFC3339                    `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 func (m ZeroTrustAccessGroupModel) MarshalJSON() (data []byte, err error) {
