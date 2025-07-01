@@ -77,6 +77,8 @@ type ZeroTrustGatewaySettingsSettingsBlockPageDataSourceModel struct {
 	MailtoSubject   types.String `tfsdk:"mailto_subject" json:"mailto_subject,computed"`
 	Mode            types.String `tfsdk:"mode" json:"mode,computed"`
 	Name            types.String `tfsdk:"name" json:"name,computed"`
+	ReadOnly        types.Bool   `tfsdk:"read_only" json:"read_only,computed"`
+	SourceAccount   types.String `tfsdk:"source_account" json:"source_account,computed"`
 	SuppressFooter  types.Bool   `tfsdk:"suppress_footer" json:"suppress_footer,computed"`
 	TargetURI       types.String `tfsdk:"target_uri" json:"target_uri,computed"`
 }
@@ -102,7 +104,9 @@ type ZeroTrustGatewaySettingsSettingsCustomCertificateDataSourceModel struct {
 }
 
 type ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingDataSourceModel struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+	Enabled       types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+	ReadOnly      types.Bool   `tfsdk:"read_only" json:"read_only,computed"`
+	SourceAccount types.String `tfsdk:"source_account" json:"source_account,computed"`
 }
 
 type ZeroTrustGatewaySettingsSettingsFipsDataSourceModel struct {
