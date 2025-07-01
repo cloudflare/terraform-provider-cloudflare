@@ -5,9 +5,9 @@ package magic_transit_connector
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -26,9 +26,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"connector_id": schema.StringAttribute{
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			"device": schema.SingleNestedAttribute{
+				Required: true,
+				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Optional: true,
+					},
+					"serial_number": schema.StringAttribute{
+						Optional: true,
+					},
+				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"activated": schema.BoolAttribute{
 				Optional: true,
@@ -53,18 +61,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"last_updated": schema.StringAttribute{
 				Computed: true,
-			},
-			"device": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[MagicTransitConnectorDeviceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"id": schema.StringAttribute{
-						Computed: true,
-					},
-					"serial_number": schema.StringAttribute{
-						Computed: true,
-					},
-				},
 			},
 		},
 	}
