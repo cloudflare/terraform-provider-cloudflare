@@ -18,10 +18,10 @@ type ImageResultEnvelope struct {
 }
 
 type ImageModel struct {
-	ID                jsontypes.Normalized           `tfsdk:"id" json:"id,required"`
+	ID                types.String                   `tfsdk:"id" json:"id,required"`
 	AccountID         types.String                   `tfsdk:"account_id" path:"account_id,required"`
+	File              types.String                   `tfsdk:"file" json:"file,optional,no_refresh"`
 	URL               types.String                   `tfsdk:"url" json:"url,optional,no_refresh"`
-	File              jsontypes.Normalized           `tfsdk:"file" json:"file,optional,no_refresh"`
 	Metadata          jsontypes.Normalized           `tfsdk:"metadata" json:"metadata,optional,no_refresh"`
 	RequireSignedURLs types.Bool                     `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed_optional"`
 	Filename          types.String                   `tfsdk:"filename" json:"filename,computed"`
