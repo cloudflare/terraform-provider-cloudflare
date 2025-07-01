@@ -71,10 +71,9 @@ func (r *MagicTransitConnectorResource) Create(ctx context.Context, req resource
 	}
 	res := new(http.Response)
 	env := MagicTransitConnectorResultEnvelope{*data}
-	_, err = r.client.MagicTransit.Connectors.Update(
+	_, err = r.client.MagicTransit.Connectors.New(
 		ctx,
-		data.ConnectorID.ValueString(),
-		magic_transit.ConnectorUpdateParams{
+		magic_transit.ConnectorNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -186,7 +185,28 @@ func (r *MagicTransitConnectorResource) Read(ctx context.Context, req resource.R
 }
 
 func (r *MagicTransitConnectorResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *MagicTransitConnectorModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	_, err := r.client.MagicTransit.Connectors.Delete(
+		ctx,
+		data.ID.ValueString(),
+		magic_transit.ConnectorDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *MagicTransitConnectorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
@@ -206,7 +226,7 @@ func (r *MagicTransitConnectorResource) ImportState(ctx context.Context, req res
 	}
 
 	data.AccountID = types.StringValue(path_account_id)
-	data.ConnectorID = types.StringValue(path_connector_id)
+	data.ID = types.StringValue(path_connector_id)
 
 	res := new(http.Response)
 	env := MagicTransitConnectorResultEnvelope{*data}
@@ -234,20 +254,6 @@ func (r *MagicTransitConnectorResource) ImportState(ctx context.Context, req res
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *MagicTransitConnectorResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	if req.State.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
-				"present in the API until manually deleted.",
-		)
-	}
-	if req.Plan.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"Applying this resource destruction will remove the resource from the Terraform state "+
-				"but will not change it in the API. If you would like to destroy or reset this resource "+
-				"in the API, refer to the documentation for how to do it manually.",
-		)
-	}
+func (r *MagicTransitConnectorResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }
