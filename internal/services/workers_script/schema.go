@@ -86,6 +86,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Optional:    true,
 										ElementType: types.StringType,
 									},
+									"serve_directly": schema.BoolAttribute{
+										Description:        "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
+										Optional:           true,
+										DeprecationMessage: "This attribute is deprecated.",
+									},
 								},
 							},
 							"jwt": schema.StringAttribute{

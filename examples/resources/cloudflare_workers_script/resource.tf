@@ -18,6 +18,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
         html_handling = "auto-trailing-slash"
         not_found_handling = "404-page"
         run_worker_first = ["string"]
+        serve_directly = true
       }
       jwt = "jwt"
     }
