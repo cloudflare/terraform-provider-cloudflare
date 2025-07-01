@@ -135,6 +135,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Description: "If mode is customized_block_page: block page title.",
 								Computed:    true,
 							},
+							"read_only": schema.BoolAttribute{
+								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
+								Computed:    true,
+							},
+							"source_account": schema.StringAttribute{
+								Description: "Account tag of account that shared this setting",
+								Computed:    true,
+							},
 							"suppress_footer": schema.BoolAttribute{
 								Description: "If mode is customized_block_page: suppress detailed info at the bottom of the block page.",
 								Computed:    true,
@@ -213,6 +221,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable matching all variants of user emails (with + or . modifiers) used as criteria in Firewall policies.",
+								Computed:    true,
+							},
+							"read_only": schema.BoolAttribute{
+								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
+								Computed:    true,
+							},
+							"source_account": schema.StringAttribute{
+								Description: "Account tag of account that shared this setting",
 								Computed:    true,
 							},
 						},
