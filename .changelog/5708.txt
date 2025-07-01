@@ -1,0 +1,3 @@
+```release-note:new-resource
+cloudflare_zero_trust_connectivity_settings
+```
