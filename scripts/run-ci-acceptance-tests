@@ -13,6 +13,7 @@ go test -run "^TestAcc" -count 1 \
     ./internal/services/api_shield \
     ./internal/services/api_shield_discovery_operation \
     ./internal/services/api_shield_schema \
+    ./internal/services/api_token \
     ./internal/services/api_token_permission_groups \
     ./internal/services/argo_smart_routing \
     ./internal/services/argo_tiered_caching \
