@@ -5,4 +5,6 @@ set -e
 cd "$(dirname "$0")/.."
 
 echo "==> Running Go build"
+go get github.com/cloudflare/cloudflare-go/v4@next
+go mod tidy
 go build ./...
