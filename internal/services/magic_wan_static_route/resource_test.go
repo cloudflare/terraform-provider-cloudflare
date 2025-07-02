@@ -16,8 +16,6 @@ import (
 )
 
 func TestAccCloudflareStaticRoute_Exists(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -91,8 +89,6 @@ func testAccCheckCloudflareStaticRouteExists(n string, route *cloudflare.MagicTr
 }
 
 func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -123,8 +119,6 @@ func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 }
 
 func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

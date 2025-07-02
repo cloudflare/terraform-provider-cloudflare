@@ -53,6 +53,11 @@ jobs:
         run: ./scripts/run-ci-acceptance-tests
         env:
           TF_ACC: 1
+      - name: Run Magic acceptance tests
+        # tests need to be run one-by-one to avoid account lock contention
+        run: go test -parallel=1 -p=1 -count=1 ./internal/services/{magic_wan_ipsec_tunnel,magic_wan_gre_tunnel,magic_wan_static_route} -run "^TestAcc"
+        env:
+          TF_ACC: 1
     # when all resources support sweepers, re-enable.
     #
     # - name: Post-Sweeper
