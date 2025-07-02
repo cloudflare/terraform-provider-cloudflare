@@ -50,11 +50,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "Configuration for assets within a Worker.",
 								Optional:    true,
 								Attributes: map[string]schema.Attribute{
-									"_headers": schema.StringAttribute{
+									"headers": schema.StringAttribute{
 										Description: "The contents of a _headers file (used to attach custom headers on asset responses).",
 										Optional:    true,
 									},
-									"_redirects": schema.StringAttribute{
+									"redirects": schema.StringAttribute{
 										Description: "The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving).",
 										Optional:    true,
 									},

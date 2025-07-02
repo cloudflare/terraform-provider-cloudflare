@@ -4,14 +4,14 @@ resource "cloudflare_workers_script" "example_workers_script" {
   metadata = {
     assets = {
       config = {
-        _headers = <<EOT
+        headers = <<EOT
         /dashboard/*
         X-Frame-Options: DENY
 
         /static/*
         Access-Control-Allow-Origin: *
         EOT
-        _redirects = <<EOT
+        redirects = <<EOT
         /foo /bar 301
         /news/* /blog/:splat
         EOT

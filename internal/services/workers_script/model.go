@@ -75,8 +75,8 @@ type WorkersScriptMetadataAssetsModel struct {
 }
 
 type WorkersScriptMetadataAssetsConfigModel struct {
-	Headers          types.String    `tfsdk:"_headers" json:"_headers,optional"`
-	Redirects        types.String    `tfsdk:"_redirects" json:"_redirects,optional"`
+	Headers          types.String    `tfsdk:"headers" json:"_headers,optional"`
+	Redirects        types.String    `tfsdk:"redirects" json:"_redirects,optional"`
 	HTMLHandling     types.String    `tfsdk:"html_handling" json:"html_handling,optional"`
 	NotFoundHandling types.String    `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
 	RunWorkerFirst   *[]types.String `tfsdk:"run_worker_first" json:"run_worker_first,optional"`
