@@ -17,8 +17,6 @@ import (
 )
 
 func TestAccCloudflareGRETunnelExists(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit.")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -91,8 +89,6 @@ func testAccCheckCloudflareGRETunnelExists(n string, tunnel *cloudflare.MagicTra
 }
 
 func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -123,8 +119,6 @@ func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
 }
 
 func TestAccCloudflareGRETunnelUpdateMulti(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
