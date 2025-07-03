@@ -6,6 +6,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 )
 
 func TestAccAPIToken_Basic(t *testing.T) {
@@ -21,12 +22,14 @@ func TestAccAPIToken_Basic(t *testing.T) {
 				Config: testAccCloudflareAPITokenWithoutCondition(rnd, rnd, permissionID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, "name", rnd),
+					resource.TestCheckResourceAttr(resourceID, "policies.0.permission_groups.0.id", permissionID),
 				),
 			},
 			{
 				Config: testAccCloudflareAPITokenWithoutCondition(rnd, rnd+"-updated", permissionID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, "name", rnd+"-updated"),
+					resource.TestCheckResourceAttr(resourceID, "policies.0.permission_groups.0.id", permissionID),
 				),
 			},
 		},
@@ -131,4 +134,68 @@ func TestAccAPIToken_TokenTTL(t *testing.T) {
 
 func testAccCloudflareAPITokenWithTTL(rnd string, permissionID string) string {
 	return acctest.LoadTestCase("apitokenwithttl.tf", rnd, permissionID)
+}
+
+func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_api_token." + rnd
+	permissionID1 := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
+	permissionID2 := "e199d584e69344eba202452019deafe3" // Disable ESC read
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID1, permissionID2),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.0.id", permissionID1),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.1.id", permissionID2),
+				),
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID2, permissionID1),
+				// changing the order of permission groups should not affect plan
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID2, permissionID1),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.0.id", permissionID1),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.1.id", permissionID2),
+				),
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID2, permissionID1),
+				// re-applying same change does not produce drift
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID1, permissionID2),
+				// changing the order of permission groups should not affect plan
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
 }
