@@ -78,6 +78,11 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_Simple(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "settings.0.client_certificate_forwarding", "true"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessMutualTLSHostnameSettingsConfig(rnd, cfv1.AccountIdentifier(accountID), domain),
+				PlanOnly: true,
+			},
 		},
 	})
 }

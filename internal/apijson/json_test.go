@@ -1366,6 +1366,51 @@ func TestDecodeFromValue(t *testing.T) {
 	}
 }
 
+var decode_unset_tests = map[string]struct {
+	buf string
+	val interface{}
+}{
+	"nested_object_list_is_omitted_null": {
+		`{}`,
+		ListWithNestedObj{
+			A: customfield.NullObjectList[Embedded2](ctx),
+		},
+	},
+	"nested_object_list_is_explicit_null": {
+		`{"a": null}`,
+		ListWithNestedObj{
+			A: customfield.NullObjectList[Embedded2](ctx),
+		},
+	},
+	"nested_object_list_is_empty": {
+		`{"a": []}`,
+		ListWithNestedObj{
+			A: customfield.NewObjectListMust(ctx, []Embedded2{}),
+		},
+	},
+}
+
+func TestDecodeUnsetBehaviour(t *testing.T) {
+	spew.Config.SortKeys = true
+	for name, test := range merge(decode_unset_tests) {
+		t.Run(name, func(t *testing.T) {
+			resultValue := reflect.New(reflect.TypeOf(test.val))
+			d := &decoderBuilder{
+				dateFormat:            time.RFC3339,
+				unmarshalComputedOnly: false,
+				updateBehavior:        IfUnset,
+			}
+			if err := d.unmarshal([]byte(test.buf), resultValue.Interface()); err != nil {
+				t.Fatalf("deserialization of %v failed with error %v", resultValue, err)
+			}
+			result := resultValue.Elem().Interface()
+			if !reflect.DeepEqual(result, test.val) {
+				t.Fatalf("incorrect deserialization for '%s':\nexpected:\n%s\nactual:\n%s\n", test.buf, spew.Sdump(test.val), spew.Sdump(result))
+			}
+		})
+	}
+}
+
 type StructWithComputedFields struct {
 	RegStr            types.String                                             `tfsdk:"str" json:"str,optional"`
 	CompStr           types.String                                             `tfsdk:"comp_str" json:"comp_str,computed"`

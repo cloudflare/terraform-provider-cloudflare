@@ -1,5 +1,6 @@
 resource "cloudflare_api_token" "%[1]s" {
 	name = "%[1]s"
+	status = "active"
 
 	policies = [{
 		effect = "allow"
@@ -10,8 +11,8 @@ resource "cloudflare_api_token" "%[1]s" {
 	}]
 
 	condition = {
-    request_ip = {
-			in = ["192.0.2.1/32"]
-		}
+		request_ip = {
+				in = ["192.0.2.1/32"]
+			}
 	}
 }
