@@ -42,26 +42,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the certificate.",
 				Required:    true,
 			},
-			"associated_hostnames": schema.ListAttribute{
+			"associated_hostnames": schema.SetAttribute{
 				Description: "The hostnames of the applications that will use this certificate.",
 				Optional:    true,
 				ElementType: types.StringType,
 			},
-			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
 			"expires_on": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"fingerprint": schema.StringAttribute{
 				Description: "The MD5 fingerprint of the certificate.",
 				Computed:    true,
-			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 		},
 	}
