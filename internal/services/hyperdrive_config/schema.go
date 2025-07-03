@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -77,6 +78,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Sensitive:   true,
 					},
+				},
+			},
+			"origin_connection_limit": schema.Int64Attribute{
+				Description: "The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.",
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(5, 100),
 				},
 			},
 			"caching": schema.SingleNestedAttribute{

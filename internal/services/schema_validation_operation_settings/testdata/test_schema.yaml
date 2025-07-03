@@ -1,0 +1,53 @@
+openapi: 3.0.0
+info:
+  title: Test API
+  description: A simple API for testing schema validation
+  version: 1.0.0
+servers:
+  - url: https://api.example.com
+    description: Production server
+paths:
+  /products:
+    get:
+      summary: Get all products
+      description: Retrieves a list of all available products.
+      operationId: getAllProducts
+      responses:
+        '200':
+          description: A list of products.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                      description: The product ID.
+                      example: 101
+                    name:
+                      type: string
+                      description: The name of the product.
+                      example: Laptop Pro
+                    price:
+                      type: number
+                      format: float
+                      description: The price of the product.
+                      example: 1200.50
+                    inStock:
+                      type: boolean
+                      description: Indicates if the product is currently in stock.
+                      example: true
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string

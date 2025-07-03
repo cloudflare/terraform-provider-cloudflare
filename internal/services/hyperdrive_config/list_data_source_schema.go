@@ -136,6 +136,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"origin_connection_limit": schema.Int64Attribute{
+							Description: "The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.",
+							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.Between(5, 100),
+							},
+						},
 					},
 				},
 			},
