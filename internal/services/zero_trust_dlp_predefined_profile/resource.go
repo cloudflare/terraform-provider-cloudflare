@@ -71,10 +71,9 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Create(ctx context.Context, req 
 	}
 	res := new(http.Response)
 	env := ZeroTrustDLPPredefinedProfileResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.DLP.Profiles.Predefined.Update(
+	_, err = r.client.ZeroTrust.DLP.Profiles.Predefined.New(
 		ctx,
-		data.ProfileID.ValueString(),
-		zero_trust.DLPProfilePredefinedUpdateParams{
+		zero_trust.DLPProfilePredefinedNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -92,7 +91,6 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Create(ctx context.Context, req 
 		return
 	}
 	data = &env.Result
-	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -123,7 +121,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Update(ctx context.Context, req 
 	env := ZeroTrustDLPPredefinedProfileResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.DLP.Profiles.Predefined.Update(
 		ctx,
-		data.ProfileID.ValueString(),
+		data.ID.ValueString(),
 		zero_trust.DLPProfilePredefinedUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -142,7 +140,6 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Update(ctx context.Context, req 
 		return
 	}
 	data = &env.Result
-	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -160,7 +157,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Read(ctx context.Context, req re
 	env := ZeroTrustDLPPredefinedProfileResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.DLP.Profiles.Predefined.Get(
 		ctx,
-		data.ProfileID.ValueString(),
+		data.ID.ValueString(),
 		zero_trust.DLPProfilePredefinedGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -183,13 +180,33 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Read(ctx context.Context, req re
 		return
 	}
 	data = &env.Result
-	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustDLPPredefinedProfileResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *ZeroTrustDLPPredefinedProfileModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	_, err := r.client.ZeroTrust.DLP.Profiles.Predefined.Delete(
+		ctx,
+		data.ID.ValueString(),
+		zero_trust.DLPProfilePredefinedDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustDLPPredefinedProfileResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
@@ -233,25 +250,10 @@ func (r *ZeroTrustDLPPredefinedProfileResource) ImportState(ctx context.Context,
 		return
 	}
 	data = &env.Result
-	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustDLPPredefinedProfileResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	if req.State.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
-				"present in the API until manually deleted.",
-		)
-	}
-	if req.Plan.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"Applying this resource destruction will remove the resource from the Terraform state "+
-				"but will not change it in the API. If you would like to destroy or reset this resource "+
-				"in the API, refer to the documentation for how to do it manually.",
-		)
-	}
+func (r *ZeroTrustDLPPredefinedProfileResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

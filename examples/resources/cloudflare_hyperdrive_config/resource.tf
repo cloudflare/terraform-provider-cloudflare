@@ -17,4 +17,5 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
     mtls_certificate_id = "00000000-0000-0000-0000-0000000000"
     sslmode = "verify-full"
   }
+  origin_connection_limit = 60
 }

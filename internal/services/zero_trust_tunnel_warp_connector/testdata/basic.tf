@@ -1,0 +1,1 @@
+resource "cloudflare_zero_trust_tunnel_warp_connector" "%[1]s" {}

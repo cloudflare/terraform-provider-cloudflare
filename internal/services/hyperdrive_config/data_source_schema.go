@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -42,6 +43,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Computed: true,
+			},
+			"origin_connection_limit": schema.Int64Attribute{
+				Description: "The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.",
+				Computed:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(5, 100),
+				},
 			},
 			"caching": schema.SingleNestedAttribute{
 				Computed:   true,
