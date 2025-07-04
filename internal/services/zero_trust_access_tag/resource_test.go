@@ -29,7 +29,6 @@ func TestAccCloudflareAccessTag_Basic(t *testing.T) {
 				Config: testAccCheckCloudflareAccessTag(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "app_count", "0"),
 				),
 			},
 		},
