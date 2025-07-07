@@ -289,6 +289,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"oidc": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupExcludeOIDCDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"claim_name": schema.StringAttribute{
+									Description: "The name of the OIDC claim.",
+									Computed:    true,
+								},
+								"claim_value": schema.StringAttribute{
+									Description: "The OIDC claim value to look for.",
+									Computed:    true,
+								},
+								"identity_provider_id": schema.StringAttribute{
+									Description: "The ID of your OIDC identity provider.",
+									Computed:    true,
+								},
+							},
+						},
 						"service_token": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupExcludeServiceTokenDataSourceModel](ctx),
@@ -541,6 +559,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 								"identity_provider_id": schema.StringAttribute{
 									Description: "The ID of your SAML identity provider.",
+									Computed:    true,
+								},
+							},
+						},
+						"oidc": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIncludeOIDCDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"claim_name": schema.StringAttribute{
+									Description: "The name of the OIDC claim.",
+									Computed:    true,
+								},
+								"claim_value": schema.StringAttribute{
+									Description: "The OIDC claim value to look for.",
+									Computed:    true,
+								},
+								"identity_provider_id": schema.StringAttribute{
+									Description: "The ID of your OIDC identity provider.",
 									Computed:    true,
 								},
 							},
@@ -801,6 +837,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"oidc": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIsDefaultOIDCDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"claim_name": schema.StringAttribute{
+									Description: "The name of the OIDC claim.",
+									Computed:    true,
+								},
+								"claim_value": schema.StringAttribute{
+									Description: "The OIDC claim value to look for.",
+									Computed:    true,
+								},
+								"identity_provider_id": schema.StringAttribute{
+									Description: "The ID of your OIDC identity provider.",
+									Computed:    true,
+								},
+							},
+						},
 						"service_token": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIsDefaultServiceTokenDataSourceModel](ctx),
@@ -1053,6 +1107,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 								"identity_provider_id": schema.StringAttribute{
 									Description: "The ID of your SAML identity provider.",
+									Computed:    true,
+								},
+							},
+						},
+						"oidc": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupRequireOIDCDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"claim_name": schema.StringAttribute{
+									Description: "The name of the OIDC claim.",
+									Computed:    true,
+								},
+								"claim_value": schema.StringAttribute{
+									Description: "The OIDC claim value to look for.",
+									Computed:    true,
+								},
+								"identity_provider_id": schema.StringAttribute{
+									Description: "The ID of your OIDC identity provider.",
 									Computed:    true,
 								},
 							},

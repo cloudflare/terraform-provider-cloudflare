@@ -175,6 +175,7 @@ type ZeroTrustAccessApplicationPoliciesIncludeModel struct {
 	IP                   *ZeroTrustAccessApplicationPoliciesIncludeIPModel                   `tfsdk:"ip" json:"ip,optional"`
 	Okta                 *ZeroTrustAccessApplicationPoliciesIncludeOktaModel                 `tfsdk:"okta" json:"okta,optional"`
 	SAML                 *ZeroTrustAccessApplicationPoliciesIncludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
+	OIDC                 *ZeroTrustAccessApplicationPoliciesIncludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessApplicationPoliciesIncludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
 }
 
@@ -269,6 +270,12 @@ type ZeroTrustAccessApplicationPoliciesIncludeSAMLModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
 }
 
+type ZeroTrustAccessApplicationPoliciesIncludeOIDCModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,required"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,required"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
+}
+
 type ZeroTrustAccessApplicationPoliciesIncludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
@@ -304,6 +311,7 @@ type ZeroTrustAccessApplicationPoliciesExcludeModel struct {
 	IP                   *ZeroTrustAccessApplicationPoliciesExcludeIPModel                   `tfsdk:"ip" json:"ip,optional"`
 	Okta                 *ZeroTrustAccessApplicationPoliciesExcludeOktaModel                 `tfsdk:"okta" json:"okta,optional"`
 	SAML                 *ZeroTrustAccessApplicationPoliciesExcludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
+	OIDC                 *ZeroTrustAccessApplicationPoliciesExcludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessApplicationPoliciesExcludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
 }
 
@@ -398,6 +406,12 @@ type ZeroTrustAccessApplicationPoliciesExcludeSAMLModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
 }
 
+type ZeroTrustAccessApplicationPoliciesExcludeOIDCModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,required"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,required"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
+}
+
 type ZeroTrustAccessApplicationPoliciesExcludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
@@ -424,6 +438,7 @@ type ZeroTrustAccessApplicationPoliciesRequireModel struct {
 	IP                   *ZeroTrustAccessApplicationPoliciesRequireIPModel                   `tfsdk:"ip" json:"ip,optional"`
 	Okta                 *ZeroTrustAccessApplicationPoliciesRequireOktaModel                 `tfsdk:"okta" json:"okta,optional"`
 	SAML                 *ZeroTrustAccessApplicationPoliciesRequireSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
+	OIDC                 *ZeroTrustAccessApplicationPoliciesRequireOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessApplicationPoliciesRequireServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
 }
 
@@ -515,6 +530,12 @@ type ZeroTrustAccessApplicationPoliciesRequireOktaModel struct {
 type ZeroTrustAccessApplicationPoliciesRequireSAMLModel struct {
 	AttributeName      types.String `tfsdk:"attribute_name" json:"attribute_name,required"`
 	AttributeValue     types.String `tfsdk:"attribute_value" json:"attribute_value,required"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
+}
+
+type ZeroTrustAccessApplicationPoliciesRequireOIDCModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,required"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,required"`
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
 }
 
