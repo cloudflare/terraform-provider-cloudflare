@@ -47,12 +47,13 @@ func (i requiresOtherAttributeToBeOneOfValidator) MarkdownDescription(ctx contex
 	return i.Description(ctx)
 }
 
-func (i requiresOtherAttributeToBeOneOfValidator) validateAny(ctx context.Context, cfg *tfsdk.Config, attrPath path.Path, value attr.Value, resDiagnostics *diag.Diagnostics) {
+func (i requiresOtherAttributeToBeOneOfValidator) validateAny(ctx context.Context, cfg *tfsdk.Config, attrPathExpr path.Expression, attrPath path.Path, value attr.Value, resDiagnostics *diag.Diagnostics) {
 	if value.IsNull() || value.IsUnknown() {
 		return
 	}
 
-	matchedPaths, diags := cfg.PathMatches(ctx, i.pathExpr)
+	expression := attrPathExpr.Merge(i.pathExpr)
+	matchedPaths, diags := cfg.PathMatches(ctx, expression)
 	resDiagnostics.Append(diags...)
 
 	for _, mp := range matchedPaths {
@@ -94,17 +95,17 @@ func (i requiresOtherAttributeToBeOneOfValidator) validateAny(ctx context.Contex
 }
 
 func (i requiresOtherAttributeToBeOneOfValidator) ValidateBool(ctx context.Context, req validator.BoolRequest, res *validator.BoolResponse) {
-	i.validateAny(ctx, &req.Config, req.Path, req.ConfigValue, &res.Diagnostics)
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
 }
 
 func (i requiresOtherAttributeToBeOneOfValidator) ValidateString(ctx context.Context, req validator.StringRequest, res *validator.StringResponse) {
-	i.validateAny(ctx, &req.Config, req.Path, req.ConfigValue, &res.Diagnostics)
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
 }
 
 func (i requiresOtherAttributeToBeOneOfValidator) ValidateObject(ctx context.Context, req validator.ObjectRequest, res *validator.ObjectResponse) {
-	i.validateAny(ctx, &req.Config, req.Path, req.ConfigValue, &res.Diagnostics)
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
 }
 
 func (i requiresOtherAttributeToBeOneOfValidator) ValidateList(ctx context.Context, req validator.ListRequest, res *validator.ListResponse) {
-	i.validateAny(ctx, &req.Config, req.Path, req.ConfigValue, &res.Diagnostics)
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
 }

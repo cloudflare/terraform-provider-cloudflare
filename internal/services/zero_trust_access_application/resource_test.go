@@ -1360,6 +1360,60 @@ func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) 
 	})
 }
 
+func TestAccCloudflareAccessApplicationWithInvalidPrivateDestination(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationWithInvalidPrivateDestination(rnd, accountID),
+				ExpectError: regexp.MustCompile(`"destinations\[0]\.(hostname|port_range)" can only be set if "<\.type" is one of: "private"`),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplicationWithDestinations(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	publicDomain := fmt.Sprintf("d1.%[1]s.%[2]s", rnd, domain)
+	privateDomain := fmt.Sprintf("%[1]s.private", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessApplicationWithDestinations(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "destinations.#", "2"),
+					resource.TestCheckResourceAttr(name, "destinations.0.type", "private"),
+					resource.TestCheckResourceAttr(name, "destinations.0.hostname", privateDomain),
+					resource.TestCheckResourceAttr(name, "destinations.1.type", "public"),
+					resource.TestCheckResourceAttr(name, "destinations.1.uri", publicDomain),
+				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessApplicationWithDestinations(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingAllOrigins(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -1417,6 +1471,14 @@ func testAccessApplicationWithMissingCORSOrigins(resourceID, zone, zoneID string
 
 func testAccessApplicationWithInvalidSessionDuration(resourceID, zone, zoneID string) string {
 	return acctest.LoadTestCase("accessapplicationwithinvalidsessionduration.tf", resourceID, zone, zoneID)
+}
+
+func testAccessApplicationWithInvalidPrivateDestination(resourceID, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationconfiginvalidprivatedestination.tf", resourceID, accountID)
+}
+
+func testAccessApplicationWithDestinations(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
+	return acctest.LoadTestCase("accessapplicationconfigwithdestinations.tf", rnd, domain, identifier.Type, identifier.Identifier)
 }
 
 func testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(resourceID, zone, zoneID string) string {
