@@ -20,14 +20,6 @@ var _ datasource.DataSourceWithConfigValidators = (*APITokenPermissionGroupsList
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"name": schema.StringAttribute{
-				Description: "Filter by the name of the permission group.\nThe value must be URL-encoded.",
-				Optional:    true,
-			},
-			"scope": schema.StringAttribute{
-				Description: "Filter by the scope of the permission group.\nThe value must be URL-encoded.",
-				Optional:    true,
-			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,

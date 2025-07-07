@@ -5,8 +5,13 @@ package account_api_token_permission_groups
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*AccountAPITokenPermissionGroupsDataSource)(nil)
@@ -18,13 +23,29 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Account identifier tag.",
 				Required:    true,
 			},
-			"name": schema.StringAttribute{
-				Description: "Filter by the name of the permission group.\nThe value must be URL-encoded.",
-				Optional:    true,
+			"id": schema.StringAttribute{
+				Description: "Public ID.",
+				Computed:    true,
 			},
-			"scope": schema.StringAttribute{
-				Description: "Filter by the scope of the permission group.\nThe value must be URL-encoded.",
-				Optional:    true,
+			"name": schema.StringAttribute{
+				Description: "Permission Group Name",
+				Computed:    true,
+			},
+			"scopes": schema.ListAttribute{
+				Description: "Resources to which the Permission Group is scoped",
+				Computed:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"com.cloudflare.api.account",
+							"com.cloudflare.api.account.zone",
+							"com.cloudflare.api.user",
+							"com.cloudflare.edge.r2.bucket",
+						),
+					),
+				},
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 		},
 	}
