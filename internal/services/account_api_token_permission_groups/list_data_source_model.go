@@ -18,6 +18,8 @@ type AccountAPITokenPermissionGroupsListResultListDataSourceEnvelope struct {
 
 type AccountAPITokenPermissionGroupsListDataSourceModel struct {
 	AccountID types.String                                                                           `tfsdk:"account_id" path:"account_id,required"`
+	Name      types.String                                                                           `tfsdk:"name" query:"name,optional"`
+	Scope     types.String                                                                           `tfsdk:"scope" query:"scope,optional"`
 	MaxItems  types.Int64                                                                            `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[AccountAPITokenPermissionGroupsListResultDataSourceModel] `tfsdk:"result"`
 }
@@ -25,6 +27,13 @@ type AccountAPITokenPermissionGroupsListDataSourceModel struct {
 func (m *AccountAPITokenPermissionGroupsListDataSourceModel) toListParams(_ context.Context) (params accounts.TokenPermissionGroupListParams, diags diag.Diagnostics) {
 	params = accounts.TokenPermissionGroupListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Name.IsNull() {
+		params.Name = cloudflare.F(m.Name.ValueString())
+	}
+	if !m.Scope.IsNull() {
+		params.Scope = cloudflare.F(m.Scope.ValueString())
 	}
 
 	return
