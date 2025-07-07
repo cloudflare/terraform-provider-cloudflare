@@ -96,17 +96,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"status": schema.StringAttribute{
-				Description: "Status of the token.\nAvailable values: \"active\", \"disabled\", \"expired\".",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"active",
-						"disabled",
-						"expired",
-					),
-				},
-			},
 			"condition": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
@@ -126,6 +115,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+				},
+			},
+			"status": schema.StringAttribute{
+				Description: "Status of the token.\nAvailable values: \"active\", \"disabled\", \"expired\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"active",
+						"disabled",
+						"expired",
+					),
 				},
 			},
 			"issued_on": schema.StringAttribute{
