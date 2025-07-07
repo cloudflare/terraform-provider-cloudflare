@@ -123,7 +123,7 @@ type ZeroTrustAccessApplicationTargetCriteriaModel struct {
 }
 
 type ZeroTrustAccessApplicationDestinationsModel struct {
-	Type       types.String `tfsdk:"type" json:"type,optional"`
+	Type       types.String `tfsdk:"type" json:"type,computed_optional"`
 	URI        types.String `tfsdk:"uri" json:"uri,optional"`
 	CIDR       types.String `tfsdk:"cidr" json:"cidr,optional"`
 	Hostname   types.String `tfsdk:"hostname" json:"hostname,optional"`

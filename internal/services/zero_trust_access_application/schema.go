@@ -499,6 +499,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"type": schema.StringAttribute{
 							Description: `Available values: "public", "private".`,
 							Optional:    true,
+							Computed:    true,
+							Default:     stringdefault.StaticString("public"),
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("public", "private"),
 							},
@@ -506,29 +508,45 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"uri": schema.StringAttribute{
 							Description: "The URI of the destination. Public destinations' URIs can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/).",
 							Optional:    true,
+							Validators: []validator.String{
+								customvalidator.RequiresOtherStringAttributeToNullOrBeOneOf(path.MatchRelative().AtParent().AtName("type"), "public"),
+							},
 						},
 						"cidr": schema.StringAttribute{
 							Description: "The CIDR range of the destination. Single IPs will be computed as /32.",
 							Optional:    true,
+							Validators: []validator.String{
+								customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRelative().AtParent().AtName("type"), "private"),
+							},
 						},
 						"hostname": schema.StringAttribute{
 							Description: "The hostname of the destination. Matches a valid SNI served by an HTTPS origin.",
 							Optional:    true,
+							Validators: []validator.String{
+								customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRelative().AtParent().AtName("type"), "private"),
+							},
 						},
 						"l4_protocol": schema.StringAttribute{
 							Description: "The L4 protocol of the destination. When omitted, both UDP and TCP traffic will match.\nAvailable values: \"tcp\", \"udp\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("tcp", "udp"),
+								customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRelative().AtParent().AtName("type"), "private"),
 							},
 						},
 						"port_range": schema.StringAttribute{
 							Description: "The port range of the destination. Can be a single port or a range of ports. When omitted, all ports will match.",
 							Optional:    true,
+							Validators: []validator.String{
+								customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRelative().AtParent().AtName("type"), "private"),
+							},
 						},
 						"vnet_id": schema.StringAttribute{
 							Description: "The VNET ID to match the destination. When omitted, all VNETs will match.",
 							Optional:    true,
+							Validators: []validator.String{
+								customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRelative().AtParent().AtName("type"), "private"),
+							},
 						},
 					},
 				},

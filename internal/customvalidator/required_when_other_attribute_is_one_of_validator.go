@@ -41,12 +41,13 @@ func (i requiredWhenOtherAttributeIsOneOfValidator) MarkdownDescription(ctx cont
 	return i.Description(ctx)
 }
 
-func (i requiredWhenOtherAttributeIsOneOfValidator) validateAny(ctx context.Context, cfg *tfsdk.Config, attrPath path.Path, value attr.Value, resDiagnostics *diag.Diagnostics) {
+func (i requiredWhenOtherAttributeIsOneOfValidator) validateAny(ctx context.Context, cfg *tfsdk.Config, attrPathExpr path.Expression, attrPath path.Path, value attr.Value, resDiagnostics *diag.Diagnostics) {
 	if !value.IsNull() || value.IsUnknown() {
 		return
 	}
 
-	matchedPaths, diags := cfg.PathMatches(ctx, i.pathExpr)
+	expression := attrPathExpr.Merge(i.pathExpr)
+	matchedPaths, diags := cfg.PathMatches(ctx, expression)
 	resDiagnostics.Append(diags...)
 
 	for _, mp := range matchedPaths {
@@ -82,5 +83,5 @@ func (i requiredWhenOtherAttributeIsOneOfValidator) validateAny(ctx context.Cont
 }
 
 func (i requiredWhenOtherAttributeIsOneOfValidator) ValidateObject(ctx context.Context, req validator.ObjectRequest, res *validator.ObjectResponse) {
-	i.validateAny(ctx, &req.Config, req.Path, req.ConfigValue, &res.Diagnostics)
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
 }
