@@ -14,7 +14,7 @@ type R2BucketSippyResultEnvelope struct {
 type R2BucketSippyModel struct {
 	AccountID    types.String                   `tfsdk:"account_id" path:"account_id,required"`
 	BucketName   types.String                   `tfsdk:"bucket_name" path:"bucket_name,required"`
-	Jurisdiction types.String                   `tfsdk:"jurisdiction" json:"-,computed_optional"`
+	Jurisdiction types.String                   `tfsdk:"jurisdiction" json:"-,computed_optional,no_refresh"`
 	Destination  *R2BucketSippyDestinationModel `tfsdk:"destination" json:"destination,optional"`
 	Source       *R2BucketSippySourceModel      `tfsdk:"source" json:"source,optional"`
 	Enabled      types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
