@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -43,8 +44,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"content": schema.StringAttribute{
-				Description: "Module or Service Worker contents of the Worker.",
-				Required:    true,
+				Description: "Module or Service Worker contents of the Worker. Exactly one of `content` or `content_file` must be specified.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.ConflictsWith(path.Expressions{
+						path.MatchRoot("content_file"),
+					}...),
+				},
+			},
+			"content_file": schema.StringAttribute{
+				Description: "Path to a file containing the Module or Service Worker contents of the Worker. Exactly one of `content` or `content_file` must be specified. Must be paired with `content_sha256`.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.ConflictsWith(path.Expressions{
+						path.MatchRoot("content"),
+					}...),
+					stringvalidator.AlsoRequires(path.Expressions{
+						path.MatchRoot("content_sha256"),
+					}...),
+				},
+			},
+			"content_sha256": schema.StringAttribute{
+				Description: "SHA-256 hash of the Worker contents. Used to trigger updates when source code changes. Must be provided when `content_file` is specified.",
+				Optional:    true,
+				Validators: []validator.String{
+					ValidateContentSHA256(),
+				},
 			},
 			"assets": schema.SingleNestedAttribute{
 				Description: "Configuration for assets within a Worker",
