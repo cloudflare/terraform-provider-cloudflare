@@ -108,6 +108,137 @@ resource "cloudflare_access_policy" "test_policy" {
 }
 ```
 
+## test-rulesets: collapse list, nested blocks mapped
+```hcl
+resource "cloudflare_ruleset" "test_ruleset" {
+  kind        = "zone"
+  name        = "test"
+  phase       = "http_request_dynamic_redirect"
+  zone_id     = "f037e56e89293a057740de681ac9abbe"
+
+  rules {
+    action = "redirect"
+    action_parameters {
+      from_value {
+        preserve_query_string = true
+        status_code           = 301
+        target_url {
+          value = "https://example.com"
+        }
+      }
+    }
+    description = "foo"
+    enabled     = false
+    expression  = "(http.host in {\"www.foo.com\"} and (http.user_agent contains \"foo\" or http.user_agent contains \"foo\"))"
+    ref         = "f037e56e89293a057740de681ac9abbe"
+  }
+  rules {
+    action = "redirect"
+    action_parameters {
+      from_value {
+        preserve_query_string = false
+        status_code           = 301
+        target_url {
+          value = "https://example.com"
+        }
+      }
+    }
+    description = "foo"
+    enabled     = false
+    expression  = "(http.host in {\"www.foo.com\"} and (http.user_agent contains \"foo\" or http.user_agent contains \"foo\"))"
+    ref         = "f037e56e89293a057740de681ac9abbe"
+  }
+  rules {
+    action = "execute"
+    action_parameters {
+      id = "f037e56e89293a057740de681ac9abbe"
+      overrides {
+        enabled = true
+        categories {
+          category = "drupal"
+          action   = "managed_challenge"
+        }
+        categories {
+          category = "command-injection"
+          action   = "block"
+        }
+        categories {
+          category = "apache-struts"
+          action   = "challenge"
+        }
+      }
+    }
+    enabled    = true
+    expression = "true"
+  }
+}
+```
+```hcl
+resource "cloudflare_ruleset" "test_ruleset" {
+  kind    = "zone"
+  name    = "test"
+  phase   = "http_request_dynamic_redirect"
+  zone_id = "f037e56e89293a057740de681ac9abbe"
+
+  rules = [{
+    action = "redirect"
+    action_parameters = {
+      from_value = {
+        preserve_query_string = true
+        status_code           = 301
+        target_url = {
+          value = "https://example.com"
+        }
+      }
+    }
+    description = "foo"
+    enabled     = false
+    expression  = "(http.host in {\"www.foo.com\"} and (http.user_agent contains \"foo\" or http.user_agent contains \"foo\"))"
+    ref         = "f037e56e89293a057740de681ac9abbe"
+    },
+    {
+      action = "redirect"
+      action_parameters = {
+        from_value = {
+          preserve_query_string = false
+          status_code           = 301
+          target_url = {
+            value = "https://example.com"
+          }
+        }
+      }
+      description = "foo"
+      enabled     = false
+      expression  = "(http.host in {\"www.foo.com\"} and (http.user_agent contains \"foo\" or http.user_agent contains \"foo\"))"
+      ref         = "f037e56e89293a057740de681ac9abbe"
+    },
+    {
+      action = "execute"
+      action_parameters = {
+        id = "f037e56e89293a057740de681ac9abbe"
+        overrides = {
+          enabled = true
+          categories = [{
+            category = "drupal"
+            action   = "managed_challenge"
+            },
+            {
+              category = "command-injection"
+              action   = "block"
+            },
+            {
+              category = "apache-struts"
+              action   = "challenge"
+          }]
+
+
+        }
+      }
+      enabled    = true
+      expression = "true"
+  }]
+}
+```
 ## test: single blocks
 
 Blocks which are not lists should become attribute objects. This is based on the schema, not the number of blocks.
