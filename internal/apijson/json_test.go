@@ -1414,6 +1414,14 @@ var decode_from_value_tests = map[string]struct {
 			DateTimeCustom: timetypes.NewRFC3339Null(),
 		},
 	},
+
+	"tfsdk_custom_list_field_with_newlines": {
+		`[
+			  "sejlsxqjbh.bacalhauaescadote.org"
+			]`,
+		customfield.UnknownList[types.String](ctx),
+		customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("bananas")}),
+	},
 }
 
 func TestDecodeFromValue(t *testing.T) {
