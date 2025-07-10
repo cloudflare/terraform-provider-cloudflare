@@ -1163,12 +1163,96 @@ func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.
 	})
 }
 
+func TestAccCloudflareAccessApplication_Infrastructure(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationInfrastructure(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckNoResourceAttr(name, "session_duration"),
+					resource.TestCheckResourceAttr(name, "type", "infrastructure"),
+					resource.TestCheckResourceAttr(name, "target_criteria.#", "1"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.port", "22"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.protocol", "SSH"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.hostname.#", "1"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.hostname.0", rnd),
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+					resource.TestCheckResourceAttr(name, "policies.0.connection_rules.ssh.usernames.#", "1"),
+					resource.TestCheckResourceAttr(name, "policies.0.connection_rules.ssh.usernames.0", "root"),
+				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationInfrastructure(rnd, accountID),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_RDP(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	appDomain := fmt.Sprintf("%[1]s.%[2]s", rnd, domain)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationRDP(rnd, accountID, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "type", "rdp"),
+					resource.TestCheckResourceAttr(name, "domain", appDomain),
+					resource.TestCheckResourceAttr(name, "destinations.#", "1"),
+					resource.TestCheckResourceAttr(name, "destinations.0.uri", appDomain),
+					resource.TestCheckResourceAttr(name, "target_criteria.#", "1"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.port", "3389"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.protocol", "RDP"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.hostname.#", "1"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.hostname.0", rnd),
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationRDP(rnd, accountID, domain),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
 	return acctest.LoadTestCase("accessapplicationconfigbasic.tf", rnd, domain, identifier.Type, identifier.Identifier)
 }
 
 func testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain string) string {
 	return acctest.LoadTestCase("accessapplicationconfigwithcors.tf", rnd, zoneID, domain)
+}
+
+func testAccCloudflareAccessApplicationInfrastructure(rnd, accID string) string {
+	return acctest.LoadTestCase("accessapplicationconfiginfrastructure.tf", rnd, accID)
+}
+
+func testAccCloudflareAccessApplicationRDP(rnd, accID, domain string) string {
+	return acctest.LoadTestCase("accessapplicationconfigrdp.tf", rnd, accID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID string) string {
