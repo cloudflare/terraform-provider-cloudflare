@@ -684,7 +684,6 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithPayloadLogging(t *testing.T) 
 }
 
 func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
-	t.Skip(`'zone' is not a valid value for kind because exceeded maximum number of zone rulesets for phase http_ratelimit`)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -735,7 +734,6 @@ func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
-	t.Skip(`'zone' is not a valid value for kind because exceeded maximum number of zone rulesets for phase http_ratelimit`)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -1984,7 +1982,6 @@ func TestAccCloudflareRuleset_Redirect(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_DynamicRedirect(t *testing.T) {
-	t.Skip(`'zone' is not a valid value for kind because exceeded maximum number of zone rulesets for phase http_ratelimit`)
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
@@ -2014,7 +2011,6 @@ func TestAccCloudflareRuleset_DynamicRedirect(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_DynamicRedirectWithoutPreservingQueryString(t *testing.T) {
-	t.Skip(`'zone' is not a valid value for kind because exceeded maximum number of zone rulesets for phase http_ratelimit`)
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
