@@ -1,0 +1,66 @@
+language json
+
+pattern cloudflare_terraform_v5_attribute_remove_brackets_state() {
+  any {
+    // cloudflare_logpush_job
+    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_logpush_job`,
+        $instances <: any {
+          contains `"output_options": [$q]` => `"output_options": $q`,
+          contains `"output_options": []` => `"output_options": null`,
+        }
+    },
+    // cloudflare_ruleset
+    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_ruleset`,
+        $instances <: any {
+          contains `"rules": $rules` where { 
+            $rules <: any {
+              contains `"exposed_credential_check": [$ecc]` => `"exposed_credential_check": $ecc`,
+              contains `"exposed_credential_check": []` => `"exposed_credential_check": null`,
+              contains `"logging": [$l]` => `"logging": $l`,
+              contains `"logging": []` => `"logging": null`,
+              contains `"ratelimit": [$r]` => `"ratelimit": $r`,
+              contains `"ratelimit": []` => `"ratelimit": null`,
+              contains `"action_parameters": [$ap]` where {
+                $ap <: any {
+                  contains `"autominify": [$a]` => `"autominify": $a`,
+                  contains `"autominify": []` => `"autominify": null`,
+                  contains `"browser_ttl": [$bttl]` => `"browser_ttl": $bttl`,
+                  contains `"browser_ttl": []` => `"browser_ttl": null`,
+                  contains `"cache_key": [$ck]` => `"cache_key": $ck`,
+                  contains `"cache_key": []` => `"cache_key": null`,
+                  contains `"cache_reserve": [$cr]` => `"cache_reserve": $cr`,
+                  contains `"cache_reserve": []` => `"cache_reserve": null`,
+                  contains `"edge_ttl": [$ettl]` => `"edge_ttl": $ettl`,
+                  contains `"edge_ttl": []` => `"edge_ttl": null`,
+                  contains `"from_list": [$fl]` => `"from_list": $fl`,
+                  contains `"from_list": []` => `"from_list": null`,
+                  contains `"from_value": [$fv]` => `"from_value": $fv`,
+                  contains `"from_value": []` => `"from_value": null`,
+                  contains `"headers": [$h]` => `"headers": $h`,
+                  contains `"headers": []` => `"headers": null`,
+                  contains `"matched_data": [$md]` => `"matched_data": $md`,
+                  contains `"matched_data": []` => `"matched_data": null`,
+                  contains `"origin": [$o]` => `"origin": $o`,
+                  contains `"origin": []` => `"origin": null`,
+                  contains `"overrides": [$or]` => `"overrides": $or`,
+                  contains `"overrides": []` => `"overrides": null`,
+                  contains `"response": [$r]` => `"response": $r`,
+                  contains `"response": []` => `"response": null`,
+                  contains `"serve_stale": [$ss]` => `"serve_stale": $ss`,
+                  contains `"serve_stale": []` => `"serve_stale": null`,
+                  contains `"sni": [$sni]` => `"sni": $sni`,
+                  contains `"sni": []` => `"sni": null`,
+                  contains `"uri": [$uri]` => `"uri": $uri`,
+                  contains `"uri": []` => `"uri": null`,
+                }
+              },
+              contains `"action_parameters": [$ap]` => `"action_parameters": $ap`,
+              contains `"action_parameters": []` => `"action_parameters": null`,
+            }
+          }
+        }
+    },
+  }
+}
