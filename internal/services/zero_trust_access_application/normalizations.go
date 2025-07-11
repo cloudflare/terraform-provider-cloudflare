@@ -83,6 +83,34 @@ func normalizeReadZeroTrustApplicationOidcAppData(data *ZeroTrustAccessApplicati
 	normalizeFalseAndNullBool(&data.AllowPKCEWithoutClientSecret, stateData.AllowPKCEWithoutClientSecret)
 }
 
+func normalizeZeroTrustApplicationPolicyConnectionRulesAPIData(_ context.Context, data, stateData *ZeroTrustAccessApplicationPoliciesConnectionRulesModel) {
+	if data.SSH != nil && stateData.SSH != nil {
+		normalizeFalseAndNullBool(&data.SSH.AllowEmailAlias, stateData.SSH.AllowEmailAlias)
+	}
+}
+
+func normalizeZeroTrustApplicationPolicyAPIData(ctx context.Context, data, stateData *ZeroTrustAccessApplicationPoliciesModel) {
+	// Preserve null values from the Terraform state, even if the API response returns actual values.
+	// This is important because the API may populate these fields when it expands the attached reusable policy
+	// from its given ID.
+	//
+	// However, we intentionally avoid storing the full expanded policy inside the application resource's
+	// nested block, as its source of truth is the reusable policy resource itself.
+	// Only the policy ID should be persisted in state for reusable policies.
+	// For legacy policies, the ID should be ignored as they are not a standalone resource, but rather
+	// live as a nested object owned by the application.
+	persistNullFromState(&data.ID, stateData.ID)
+	persistNullFromState(&data.Decision, stateData.Decision)
+	persistNullFromState(&data.Name, stateData.Name)
+	persistNullFromState(&data.Include, stateData.Include)
+	persistNullFromState(&data.Require, stateData.Require)
+	persistNullFromState(&data.Exclude, stateData.Exclude)
+
+	if data.ConnectionRules != nil && stateData.ConnectionRules != nil {
+		normalizeZeroTrustApplicationPolicyConnectionRulesAPIData(ctx, data.ConnectionRules, stateData.ConnectionRules)
+	}
+}
+
 // Normalizing function to ensure consistency between the state and the meaning of the API response.
 // Alters the API response before applying it to the state by laxing equalities between null & zero-value
 // for some attributes, and nullifies fields that terraform should not be saving in the state.
@@ -129,21 +157,7 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 
 	if data.Policies != nil && stateData.Policies != nil {
 		for i := range *data.Policies {
-			// Preserve null values from the Terraform state, even if the API response returns actual values.
-			// This is important because the API may populate these fields when it expands the attached reusable policy
-			// from its given ID.
-			//
-			// However, we intentionally avoid storing the full expanded policy inside the application resource's
-			// nested block, as its source of truth is the reusable policy resource itself.
-			// Only the policy ID should be persisted in state for reusable policies.
-			// For legacy policies, the ID should be ignored as they are not a standalone resource, but rather
-			// live as a nested object owned by the application.
-			persistNullFromState(&(*data.Policies)[i].ID, (*stateData.Policies)[i].ID)
-			persistNullFromState(&(*data.Policies)[i].Decision, (*stateData.Policies)[i].Decision)
-			persistNullFromState(&(*data.Policies)[i].Name, (*stateData.Policies)[i].Name)
-			persistNullFromState(&(*data.Policies)[i].Include, (*stateData.Policies)[i].Include)
-			persistNullFromState(&(*data.Policies)[i].Require, (*stateData.Policies)[i].Require)
-			persistNullFromState(&(*data.Policies)[i].Exclude, (*stateData.Policies)[i].Exclude)
+			normalizeZeroTrustApplicationPolicyAPIData(ctx, &(*data.Policies)[i], &(*stateData.Policies)[i])
 		}
 	}
 
