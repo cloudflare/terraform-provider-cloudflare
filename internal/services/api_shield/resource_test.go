@@ -11,7 +11,6 @@ import (
 )
 
 func TestAccCloudflareAPIShieldBasic(t *testing.T) {
-	t.Skip(`FIXME: "errors":[{"code":10403,"message":"You are not entitled for this service"}]`)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
 	// endpoint does not yet support the API tokens without an explicit scope.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
