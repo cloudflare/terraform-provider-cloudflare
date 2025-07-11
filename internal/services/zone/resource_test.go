@@ -46,6 +46,7 @@ func TestAccCloudflareZone_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareZone_WithPlan(t *testing.T) {
+	t.Skip(`FIXME: {"success":false,"errors":[{"code":10000,"message":"Authentication error"}]}`)
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
