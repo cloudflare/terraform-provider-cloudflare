@@ -56,7 +56,7 @@ func (r *MagicWANGRETunnelResource) Configure(ctx context.Context, req resource.
 }
 
 func (r *MagicWANGRETunnelResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *MagicWANGRETunnelModel
+	var data *CustomMagicWANGRETunnelModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -70,7 +70,7 @@ func (r *MagicWANGRETunnelResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 	res := new(http.Response)
-	env := MagicWANGRETunnelResultEnvelope{*data}
+	env := CustomMagicWANGRETunnelResultEnvelope{*data}
 	_, err = r.client.MagicTransit.GRETunnels.New(
 		ctx,
 		magic_transit.GRETunnelNewParams{
@@ -79,6 +79,7 @@ func (r *MagicWANGRETunnelResource) Create(ctx context.Context, req resource.Cre
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithHeader("x-magic-new-hc-target", "true"),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -96,7 +97,7 @@ func (r *MagicWANGRETunnelResource) Create(ctx context.Context, req resource.Cre
 }
 
 func (r *MagicWANGRETunnelResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *MagicWANGRETunnelModel
+	var data *CustomMagicWANGRETunnelModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -104,7 +105,7 @@ func (r *MagicWANGRETunnelResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-	var state *MagicWANGRETunnelModel
+	var state *CustomMagicWANGRETunnelModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -118,7 +119,7 @@ func (r *MagicWANGRETunnelResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 	res := new(http.Response)
-	env := MagicWANGRETunnelResultEnvelope{*data}
+	env := CustomMagicWANGRETunnelResultEnvelope{*data}
 	_, err = r.client.MagicTransit.GRETunnels.Update(
 		ctx,
 		data.ID.ValueString(),
@@ -128,13 +129,14 @@ func (r *MagicWANGRETunnelResource) Update(ctx context.Context, req resource.Upd
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithHeader("x-magic-new-hc-target", "true"),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = unmarshalGRETunnelModel(bytes, &env, "modified_gre_tunnel", true)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -145,7 +147,7 @@ func (r *MagicWANGRETunnelResource) Update(ctx context.Context, req resource.Upd
 }
 
 func (r *MagicWANGRETunnelResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *MagicWANGRETunnelModel
+	var data *CustomMagicWANGRETunnelModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -154,7 +156,7 @@ func (r *MagicWANGRETunnelResource) Read(ctx context.Context, req resource.ReadR
 	}
 
 	res := new(http.Response)
-	env := MagicWANGRETunnelResultEnvelope{*data}
+	env := CustomMagicWANGRETunnelResultEnvelope{*data}
 	_, err := r.client.MagicTransit.GRETunnels.Get(
 		ctx,
 		data.ID.ValueString(),
@@ -163,6 +165,7 @@ func (r *MagicWANGRETunnelResource) Read(ctx context.Context, req resource.ReadR
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithHeader("x-magic-new-hc-target", "true"),
 	)
 	if res != nil && res.StatusCode == 404 {
 		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
@@ -174,7 +177,7 @@ func (r *MagicWANGRETunnelResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = unmarshalGRETunnelModel(bytes, &env, "gre_tunnel", false)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -185,7 +188,7 @@ func (r *MagicWANGRETunnelResource) Read(ctx context.Context, req resource.ReadR
 }
 
 func (r *MagicWANGRETunnelResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *MagicWANGRETunnelModel
+	var data *CustomMagicWANGRETunnelModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -210,7 +213,7 @@ func (r *MagicWANGRETunnelResource) Delete(ctx context.Context, req resource.Del
 }
 
 func (r *MagicWANGRETunnelResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *MagicWANGRETunnelModel = new(MagicWANGRETunnelModel)
+	var data *CustomMagicWANGRETunnelModel = new(CustomMagicWANGRETunnelModel)
 
 	path_account_id := ""
 	path_gre_tunnel_id := ""
@@ -229,7 +232,7 @@ func (r *MagicWANGRETunnelResource) ImportState(ctx context.Context, req resourc
 	data.ID = types.StringValue(path_gre_tunnel_id)
 
 	res := new(http.Response)
-	env := MagicWANGRETunnelResultEnvelope{*data}
+	env := CustomMagicWANGRETunnelResultEnvelope{*data}
 	_, err := r.client.MagicTransit.GRETunnels.Get(
 		ctx,
 		path_gre_tunnel_id,
@@ -238,13 +241,14 @@ func (r *MagicWANGRETunnelResource) ImportState(ctx context.Context, req resourc
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithHeader("x-magic-new-hc-target", "true"),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = unmarshalGRETunnelModel(bytes, &env, "gre_tunnel", false)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

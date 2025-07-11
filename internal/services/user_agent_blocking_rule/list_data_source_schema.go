@@ -26,11 +26,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "A string to search for in the description of existing rules.",
 				Optional:    true,
 			},
-			"description_search": schema.StringAttribute{
-				Description: "A string to search for in the description of existing rules.",
+			"paused": schema.BoolAttribute{
+				Description: "When true, indicates that the rule is currently paused.",
 				Optional:    true,
 			},
-			"ua_search": schema.StringAttribute{
+			"user_agent": schema.StringAttribute{
 				Description: "A string to search for in the user agent values of existing rules.",
 				Optional:    true,
 			},

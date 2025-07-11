@@ -15,9 +15,6 @@ resource "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_se
         support_url = "support_url"
       }
     }
-    app_control_settings = {
-      enabled = false
-    }
     block_page = {
       background_color = "background_color"
       enabled = true

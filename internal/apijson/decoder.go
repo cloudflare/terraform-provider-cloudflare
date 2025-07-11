@@ -758,9 +758,10 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			}
 			existingObjectListValue := value.Interface().(customfield.NestedObjectListLike)
 			if node.Type == gjson.Null {
-				if b == Always {
+				if b == Always || existingObjectListValue.IsNullOrUnknown() {
 					nullValue := existingObjectListValue.NullValue(ctx)
 					value.Set(reflect.ValueOf(nullValue))
+					return nil
 				}
 			}
 

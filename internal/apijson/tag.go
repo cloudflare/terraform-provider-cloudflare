@@ -18,6 +18,19 @@ type parsedStructTag struct {
 	computed          bool
 	computed_optional bool
 	noRefresh         bool
+	// Don't skip this value, even if it's computed (no-op for computed optional fields)
+	// If encodeStateForUnknown is set on a computed field, this flag should also be set;
+	// otherwise this flag will have no effect
+	// NOTE: won't work if update behavior is 'patch'
+	forceEncode bool
+	// If the value in the plan is unknown,
+	// encode the value from the state instead
+	// This is similar to the UseStateForUnknown plan modifier,
+	// but it only impacts serialization of request bodies, not planning.
+	// NOTE #1: only use this for computed/computed_optional values that may be changed by the server;
+	// otherwise just use the UseStateForUnknown plan modifier
+	// NOTE #2: won't work if update behavior is 'patch'
+	encodeStateValueWhenPlanUnknown bool
 }
 
 func parseJSONStructTag(field reflect.StructField) (tag parsedStructTag, ok bool) {
@@ -48,6 +61,10 @@ func parseJSONStructTag(field reflect.StructField) (tag parsedStructTag, ok bool
 			tag.computed_optional = true
 		case "no_refresh":
 			tag.noRefresh = true
+		case "encode_state_for_unknown":
+			tag.encodeStateValueWhenPlanUnknown = true
+		case "force_encode":
+			tag.forceEncode = true
 		}
 	}
 	return

@@ -123,6 +123,19 @@ type InlineArray struct {
 	InlineField []string `json:"-,inline"`
 }
 
+type EncodeStateForUnknownStruct struct {
+	NormalField types.String `tfsdk:"normal_field" json:"normal_field"`
+	// force_encode flag: don't skip this field even though it's computed
+	ComputedWithForceEncode types.String `tfsdk:"computed_force_encode" json:"computed_force_encode,computed,force_encode"`
+	// force_encode+encode_state_for_unknown: don't skip this field even though it's computed,
+	// AND encode value from state if value from plan is unknown
+	ComputedWithStateEncode types.String `tfsdk:"computed_state_encode" json:"computed_state_encode,computed,force_encode,encode_state_for_unknown"`
+	// encode_state_for_unknown: encode value from state if value from plan is unknown
+	ComputedOptionalWithStateEncode types.String `tfsdk:"computed_optional_state_encode" json:"computed_optional_state_encode,computed_optional,encode_state_for_unknown"`
+	ComputedRegular                 types.String `tfsdk:"computed_regular" json:"computed_regular,computed"`
+	ComputedOptionalRegular         types.String `tfsdk:"computed_optional_regular" json:"computed_optional_regular,computed_optional"`
+}
+
 func init() {
 	RegisterUnion(reflect.TypeOf((*Union)(nil)).Elem(), "type",
 		UnionVariant{
@@ -1083,6 +1096,74 @@ var updateTests = map[string]struct {
 		`{"OuterKey":{"nested_object_map":{"NestedKey":{"embedded_int":17,"embedded_string":"nested_string_value"}}}}`,
 		`{"OuterKey":{"nested_object_map":{"NestedKey":{"embedded_int":17,"embedded_string":"nested_string_value"}}}}`,
 	},
+
+	"encode_state_for_unknown with unknown plan": {
+		EncodeStateForUnknownStruct{
+			NormalField:                     types.StringValue("state_normal"),
+			ComputedWithForceEncode:         types.StringValue("computed value from state"),
+			ComputedWithStateEncode:         types.StringValue("computed value 2"),
+			ComputedOptionalWithStateEncode: types.StringValue("computed optional from state"),
+			ComputedOptionalRegular:         types.StringValue("computed optional regular"),
+			ComputedRegular:                 types.StringValue("computed regular"),
+		},
+		EncodeStateForUnknownStruct{
+			NormalField:                     types.StringUnknown(),
+			ComputedWithForceEncode:         types.StringUnknown(),
+			ComputedWithStateEncode:         types.StringUnknown(),
+			ComputedOptionalWithStateEncode: types.StringUnknown(),
+			ComputedOptionalRegular:         types.StringUnknown(),
+			ComputedRegular:                 types.StringUnknown(),
+		},
+		// Expected result: only values with "encode_state_for_unknown" are encoded
+		`{"computed_optional_state_encode":"computed optional from state","computed_state_encode":"computed value 2"}`,
+		// NOTE: force_encode should probably override patch behavior, but we don't support that for now
+		``,
+	},
+
+	"encode_state_for_unknown with known plan": {
+		EncodeStateForUnknownStruct{
+			NormalField:                     types.StringValue("state_normal"),
+			ComputedWithForceEncode:         types.StringValue("computed value from state"),
+			ComputedWithStateEncode:         types.StringValue("computed value 2"),
+			ComputedOptionalWithStateEncode: types.StringValue("computed optional from state"),
+			ComputedOptionalRegular:         types.StringValue("computed optional regular"),
+			ComputedRegular:                 types.StringValue("computed regular"),
+		},
+		EncodeStateForUnknownStruct{
+			NormalField:                     types.StringValue("plan normal"),
+			ComputedWithForceEncode:         types.StringValue("plan A"),
+			ComputedWithStateEncode:         types.StringValue("plan B"),
+			ComputedOptionalWithStateEncode: types.StringValue("plan C"),
+			ComputedOptionalRegular:         types.StringValue("plan D"),
+			ComputedRegular:                 types.StringValue("plan E"),
+		},
+		// Expected result: we use value from plan for all computed optional fields
+		// & for computed fields with force_encode state
+		`{"computed_force_encode":"plan A","computed_optional_regular":"plan D","computed_optional_state_encode":"plan C","computed_state_encode":"plan B","normal_field":"plan normal"}`,
+		// These show up even w/ patch b/c plan and state values are different; in reality, computed value shouldn't differ b/t plan and state
+		`{"computed_force_encode":"plan A","computed_optional_regular":"plan D","computed_optional_state_encode":"plan C","computed_state_encode":"plan B","normal_field":"plan normal"}`},
+
+	"encode_state_for_unknown with null state": {
+		EncodeStateForUnknownStruct{
+			NormalField:                     types.StringNull(),
+			ComputedWithForceEncode:         types.StringNull(),
+			ComputedWithStateEncode:         types.StringNull(),
+			ComputedOptionalWithStateEncode: types.StringNull(),
+			ComputedOptionalRegular:         types.StringNull(),
+			ComputedRegular:                 types.StringNull(),
+		},
+		EncodeStateForUnknownStruct{
+			NormalField:                     types.StringUnknown(),
+			ComputedWithForceEncode:         types.StringUnknown(),
+			ComputedWithStateEncode:         types.StringUnknown(),
+			ComputedOptionalWithStateEncode: types.StringUnknown(),
+			ComputedOptionalRegular:         types.StringUnknown(),
+			ComputedRegular:                 types.StringUnknown(),
+		},
+		// Don't copy null fields from state
+		`{}`,
+		``,
+	},
 }
 
 func TestUpdateEncoding(t *testing.T) {
@@ -1361,6 +1442,51 @@ func TestDecodeFromValue(t *testing.T) {
 				if !reflect.DeepEqual(startingIFace, test.expected) {
 					t.Fatalf("expected '%s' to deserialize to \n%s\nbut got\n%s", test.buf, spew.Sdump(test.expected), spew.Sdump(startingIFace))
 				}
+			}
+		})
+	}
+}
+
+var decode_unset_tests = map[string]struct {
+	buf string
+	val interface{}
+}{
+	"nested_object_list_is_omitted_null": {
+		`{}`,
+		ListWithNestedObj{
+			A: customfield.NullObjectList[Embedded2](ctx),
+		},
+	},
+	"nested_object_list_is_explicit_null": {
+		`{"a": null}`,
+		ListWithNestedObj{
+			A: customfield.NullObjectList[Embedded2](ctx),
+		},
+	},
+	"nested_object_list_is_empty": {
+		`{"a": []}`,
+		ListWithNestedObj{
+			A: customfield.NewObjectListMust(ctx, []Embedded2{}),
+		},
+	},
+}
+
+func TestDecodeUnsetBehaviour(t *testing.T) {
+	spew.Config.SortKeys = true
+	for name, test := range merge(decode_unset_tests) {
+		t.Run(name, func(t *testing.T) {
+			resultValue := reflect.New(reflect.TypeOf(test.val))
+			d := &decoderBuilder{
+				dateFormat:            time.RFC3339,
+				unmarshalComputedOnly: false,
+				updateBehavior:        IfUnset,
+			}
+			if err := d.unmarshal([]byte(test.buf), resultValue.Interface()); err != nil {
+				t.Fatalf("deserialization of %v failed with error %v", resultValue, err)
+			}
+			result := resultValue.Elem().Interface()
+			if !reflect.DeepEqual(result, test.val) {
+				t.Fatalf("incorrect deserialization for '%s':\nexpected:\n%s\nactual:\n%s\n", test.buf, spew.Sdump(test.val), spew.Sdump(result))
 			}
 		})
 	}

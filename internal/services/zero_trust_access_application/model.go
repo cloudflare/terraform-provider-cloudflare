@@ -24,10 +24,10 @@ type ZeroTrustAccessApplicationModel struct {
 	CustomDenyMessage           types.String                                                               `tfsdk:"custom_deny_message" json:"custom_deny_message,optional"`
 	CustomDenyURL               types.String                                                               `tfsdk:"custom_deny_url" json:"custom_deny_url,optional"`
 	CustomNonIdentityDenyURL    types.String                                                               `tfsdk:"custom_non_identity_deny_url" json:"custom_non_identity_deny_url,optional"`
-	Domain                      types.String                                                               `tfsdk:"domain" json:"domain,optional"`
+	Domain                      types.String                                                               `tfsdk:"domain" json:"domain,computed_optional"`
 	HeaderBgColor               types.String                                                               `tfsdk:"header_bg_color" json:"header_bg_color,optional"`
 	LogoURL                     types.String                                                               `tfsdk:"logo_url" json:"logo_url,optional"`
-	Name                        types.String                                                               `tfsdk:"name" json:"name,optional"`
+	Name                        types.String                                                               `tfsdk:"name" json:"name,computed_optional"`
 	OptionsPreflightBypass      types.Bool                                                                 `tfsdk:"options_preflight_bypass" json:"options_preflight_bypass,optional"`
 	ReadServiceTokensFromHeader types.String                                                               `tfsdk:"read_service_tokens_from_header" json:"read_service_tokens_from_header,optional"`
 	SameSiteCookieAttribute     types.String                                                               `tfsdk:"same_site_cookie_attribute" json:"same_site_cookie_attribute,optional"`
@@ -41,21 +41,19 @@ type ZeroTrustAccessApplicationModel struct {
 	SCIMConfig                  *ZeroTrustAccessApplicationSCIMConfigModel                                 `tfsdk:"scim_config" json:"scim_config,optional"`
 	TargetCriteria              *[]*ZeroTrustAccessApplicationTargetCriteriaModel                          `tfsdk:"target_criteria" json:"target_criteria,optional"`
 	AppLauncherVisible          types.Bool                                                                 `tfsdk:"app_launcher_visible" json:"app_launcher_visible,computed_optional"`
-	AutoRedirectToIdentity      types.Bool                                                                 `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
-	EnableBindingCookie         types.Bool                                                                 `tfsdk:"enable_binding_cookie" json:"enable_binding_cookie,computed_optional"`
+	AutoRedirectToIdentity      types.Bool                                                                 `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,optional"`
+	EnableBindingCookie         types.Bool                                                                 `tfsdk:"enable_binding_cookie" json:"enable_binding_cookie,optional"`
 	HTTPOnlyCookieAttribute     types.Bool                                                                 `tfsdk:"http_only_cookie_attribute" json:"http_only_cookie_attribute,computed_optional"`
-	PathCookieAttribute         types.Bool                                                                 `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute,computed_optional"`
+	PathCookieAttribute         types.Bool                                                                 `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute,optional"`
 	SessionDuration             types.String                                                               `tfsdk:"session_duration" json:"session_duration,computed_optional"`
 	SkipAppLauncherLoginPage    types.Bool                                                                 `tfsdk:"skip_app_launcher_login_page" json:"skip_app_launcher_login_page,computed_optional"`
 	SelfHostedDomains           customfield.List[types.String]                                             `tfsdk:"self_hosted_domains" json:"self_hosted_domains,computed_optional"`
-	Tags                        customfield.List[types.String]                                             `tfsdk:"tags" json:"tags,computed_optional"`
+	Tags                        customfield.List[types.String]                                             `tfsdk:"tags" json:"tags,optional"`
 	Destinations                customfield.NestedObjectList[ZeroTrustAccessApplicationDestinationsModel]  `tfsdk:"destinations" json:"destinations,computed_optional"`
-	LandingPageDesign           customfield.NestedObject[ZeroTrustAccessApplicationLandingPageDesignModel] `tfsdk:"landing_page_design" json:"landing_page_design,computed_optional"`
-	Policies                    customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesModel]      `tfsdk:"policies" json:"policies,computed_optional"`
-	SaaSApp                     customfield.NestedObject[ZeroTrustAccessApplicationSaaSAppModel]           `tfsdk:"saas_app" json:"saas_app,computed_optional"`
+	LandingPageDesign           customfield.NestedObject[ZeroTrustAccessApplicationLandingPageDesignModel] `tfsdk:"landing_page_design" json:"landing_page_design,optional"`
+	Policies                    *[]ZeroTrustAccessApplicationPoliciesModel                                 `tfsdk:"policies" json:"policies,optional"`
+	SaaSApp                     customfield.NestedObject[ZeroTrustAccessApplicationSaaSAppModel]           `tfsdk:"saas_app" json:"saas_app,optional"`
 	AUD                         types.String                                                               `tfsdk:"aud" json:"aud,computed"`
-	CreatedAt                   timetypes.RFC3339                                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	UpdatedAt                   timetypes.RFC3339                                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 func (m ZeroTrustAccessApplicationModel) MarshalJSON() (data []byte, err error) {
@@ -125,7 +123,7 @@ type ZeroTrustAccessApplicationTargetCriteriaModel struct {
 }
 
 type ZeroTrustAccessApplicationDestinationsModel struct {
-	Type       types.String `tfsdk:"type" json:"type,optional"`
+	Type       types.String `tfsdk:"type" json:"type,computed_optional"`
 	URI        types.String `tfsdk:"uri" json:"uri,optional"`
 	CIDR       types.String `tfsdk:"cidr" json:"cidr,optional"`
 	Hostname   types.String `tfsdk:"hostname" json:"hostname,optional"`
@@ -144,13 +142,13 @@ type ZeroTrustAccessApplicationLandingPageDesignModel struct {
 
 type ZeroTrustAccessApplicationPoliciesModel struct {
 	ID              types.String                                                                 `tfsdk:"id" json:"id,optional"`
-	Precedence      types.Int64                                                                  `tfsdk:"precedence" json:"precedence,optional"`
+	Precedence      types.Int64                                                                  `tfsdk:"precedence" json:"precedence,computed_optional"`
 	Decision        types.String                                                                 `tfsdk:"decision" json:"decision,optional"`
-	Include         customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesIncludeModel] `tfsdk:"include" json:"include,computed_optional"`
+	Include         customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesIncludeModel] `tfsdk:"include" json:"include,optional"`
 	Name            types.String                                                                 `tfsdk:"name" json:"name,optional"`
 	ConnectionRules *ZeroTrustAccessApplicationPoliciesConnectionRulesModel                      `tfsdk:"connection_rules" json:"connection_rules,optional"`
-	Exclude         customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesExcludeModel] `tfsdk:"exclude" json:"exclude,computed_optional"`
-	Require         customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesRequireModel] `tfsdk:"require" json:"require,computed_optional"`
+	Exclude         customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesExcludeModel] `tfsdk:"exclude" json:"exclude,optional"`
+	Require         customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesRequireModel] `tfsdk:"require" json:"require,optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesIncludeModel struct {
@@ -175,6 +173,7 @@ type ZeroTrustAccessApplicationPoliciesIncludeModel struct {
 	IP                   *ZeroTrustAccessApplicationPoliciesIncludeIPModel                   `tfsdk:"ip" json:"ip,optional"`
 	Okta                 *ZeroTrustAccessApplicationPoliciesIncludeOktaModel                 `tfsdk:"okta" json:"okta,optional"`
 	SAML                 *ZeroTrustAccessApplicationPoliciesIncludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
+	OIDC                 *ZeroTrustAccessApplicationPoliciesIncludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessApplicationPoliciesIncludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
 }
 
@@ -269,6 +268,12 @@ type ZeroTrustAccessApplicationPoliciesIncludeSAMLModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
 }
 
+type ZeroTrustAccessApplicationPoliciesIncludeOIDCModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,required"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,required"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
+}
+
 type ZeroTrustAccessApplicationPoliciesIncludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
@@ -304,6 +309,7 @@ type ZeroTrustAccessApplicationPoliciesExcludeModel struct {
 	IP                   *ZeroTrustAccessApplicationPoliciesExcludeIPModel                   `tfsdk:"ip" json:"ip,optional"`
 	Okta                 *ZeroTrustAccessApplicationPoliciesExcludeOktaModel                 `tfsdk:"okta" json:"okta,optional"`
 	SAML                 *ZeroTrustAccessApplicationPoliciesExcludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
+	OIDC                 *ZeroTrustAccessApplicationPoliciesExcludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessApplicationPoliciesExcludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
 }
 
@@ -398,6 +404,12 @@ type ZeroTrustAccessApplicationPoliciesExcludeSAMLModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
 }
 
+type ZeroTrustAccessApplicationPoliciesExcludeOIDCModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,required"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,required"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
+}
+
 type ZeroTrustAccessApplicationPoliciesExcludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
@@ -424,6 +436,7 @@ type ZeroTrustAccessApplicationPoliciesRequireModel struct {
 	IP                   *ZeroTrustAccessApplicationPoliciesRequireIPModel                   `tfsdk:"ip" json:"ip,optional"`
 	Okta                 *ZeroTrustAccessApplicationPoliciesRequireOktaModel                 `tfsdk:"okta" json:"okta,optional"`
 	SAML                 *ZeroTrustAccessApplicationPoliciesRequireSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
+	OIDC                 *ZeroTrustAccessApplicationPoliciesRequireOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessApplicationPoliciesRequireServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
 }
 
@@ -518,6 +531,12 @@ type ZeroTrustAccessApplicationPoliciesRequireSAMLModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
 }
 
+type ZeroTrustAccessApplicationPoliciesRequireOIDCModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,required"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,required"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
+}
+
 type ZeroTrustAccessApplicationPoliciesRequireServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
@@ -529,18 +548,18 @@ type ZeroTrustAccessApplicationSaaSAppModel struct {
 	CustomAttributes              *[]*ZeroTrustAccessApplicationSaaSAppCustomAttributesModel      `tfsdk:"custom_attributes" json:"custom_attributes,optional"`
 	DefaultRelayState             types.String                                                    `tfsdk:"default_relay_state" json:"default_relay_state,optional"`
 	IdPEntityID                   types.String                                                    `tfsdk:"idp_entity_id" json:"idp_entity_id,computed_optional"`
-	NameIDFormat                  types.String                                                    `tfsdk:"name_id_format" json:"name_id_format,optional"`
+	NameIDFormat                  types.String                                                    `tfsdk:"name_id_format" json:"name_id_format,computed_optional"`
 	NameIDTransformJsonata        types.String                                                    `tfsdk:"name_id_transform_jsonata" json:"name_id_transform_jsonata,optional"`
-	PublicKey                     types.String                                                    `tfsdk:"public_key" json:"public_key,computed_optional"`
+	PublicKey                     types.String                                                    `tfsdk:"public_key" json:"public_key,computed"`
 	SAMLAttributeTransformJsonata types.String                                                    `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata,optional"`
 	SPEntityID                    types.String                                                    `tfsdk:"sp_entity_id" json:"sp_entity_id,optional"`
 	SSOEndpoint                   types.String                                                    `tfsdk:"sso_endpoint" json:"sso_endpoint,computed_optional"`
 	UpdatedAt                     timetypes.RFC3339                                               `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	AccessTokenLifetime           types.String                                                    `tfsdk:"access_token_lifetime" json:"access_token_lifetime,optional"`
+	AccessTokenLifetime           types.String                                                    `tfsdk:"access_token_lifetime" json:"access_token_lifetime,computed_optional"`
 	AllowPKCEWithoutClientSecret  types.Bool                                                      `tfsdk:"allow_pkce_without_client_secret" json:"allow_pkce_without_client_secret,optional"`
 	AppLauncherURL                types.String                                                    `tfsdk:"app_launcher_url" json:"app_launcher_url,optional"`
-	ClientID                      types.String                                                    `tfsdk:"client_id" json:"client_id,computed_optional"`
-	ClientSecret                  types.String                                                    `tfsdk:"client_secret" json:"client_secret,computed_optional"`
+	ClientID                      types.String                                                    `tfsdk:"client_id" json:"client_id,computed"`
+	ClientSecret                  types.String                                                    `tfsdk:"client_secret" json:"client_secret,computed"`
 	CustomClaims                  *[]*ZeroTrustAccessApplicationSaaSAppCustomClaimsModel          `tfsdk:"custom_claims" json:"custom_claims,optional"`
 	GrantTypes                    *[]types.String                                                 `tfsdk:"grant_types" json:"grant_types,optional"`
 	GroupFilterRegex              types.String                                                    `tfsdk:"group_filter_regex" json:"group_filter_regex,optional"`

@@ -5,7 +5,6 @@ resource "cloudflare_ruleset" "example_ruleset" {
   zone_id = "zone_id"
   description = "My ruleset to execute managed rulesets"
   rules = [{
-    id = "3a03d665bac047339bb530ecb439a90d"
     action = "block"
     action_parameters = {
       response = {

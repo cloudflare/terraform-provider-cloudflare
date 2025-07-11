@@ -5,6 +5,7 @@ package workers_kv
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -27,7 +28,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -36,13 +37,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"metadata": schema.StringAttribute{
-				Description: "Arbitrary JSON to be associated with a key/value pair.",
-				Optional:    true,
-			},
 			"value": schema.StringAttribute{
 				Description: "A byte sequence to be stored, up to 25 MiB in length.",
 				Required:    true,
+			},
+			"metadata": schema.StringAttribute{
+				Optional:   true,
+				CustomType: jsontypes.NormalizedType{},
 			},
 		},
 	}

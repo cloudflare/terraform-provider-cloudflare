@@ -87,17 +87,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"app_control_settings": schema.SingleNestedAttribute{
-						Description: "Setting to enable App Control",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsAppControlSettingsDataSourceModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Description: "Enable App Control",
-								Computed:    true,
-							},
-						},
-					},
 					"block_page": schema.SingleNestedAttribute{
 						Description: "Block page layout settings.",
 						Computed:    true,
@@ -144,6 +133,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 							"name": schema.StringAttribute{
 								Description: "If mode is customized_block_page: block page title.",
+								Computed:    true,
+							},
+							"read_only": schema.BoolAttribute{
+								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
+								Computed:    true,
+							},
+							"source_account": schema.StringAttribute{
+								Description: "Account tag of account that shared this setting",
 								Computed:    true,
 							},
 							"suppress_footer": schema.BoolAttribute{
@@ -224,6 +221,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable matching all variants of user emails (with + or . modifiers) used as criteria in Firewall policies.",
+								Computed:    true,
+							},
+							"read_only": schema.BoolAttribute{
+								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
+								Computed:    true,
+							},
+							"source_account": schema.StringAttribute{
+								Description: "Account tag of account that shared this setting",
 								Computed:    true,
 							},
 						},

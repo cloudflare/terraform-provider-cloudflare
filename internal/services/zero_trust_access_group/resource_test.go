@@ -95,14 +95,29 @@ func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
-					resource.TestCheckResourceAttrSet(name, "include.0.any_valid_service_token.%"),
-					resource.TestCheckResourceAttr(name, "include.0.ip.ip", "192.0.2.1/32"),
-					resource.TestCheckResourceAttr(name, "include.1.ip.ip", "192.0.2.2/32"),
-					resource.TestCheckResourceAttr(name, "include.0.ip_list.id", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
-					resource.TestCheckResourceAttr(name, "include.1.ip_list.id", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
+					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token.%", "0"),
+					resource.TestCheckResourceAttr(name, "include.1.email.email", email),
+					resource.TestCheckResourceAttr(name, "include.2.email_domain.domain", "example.com"),
+					resource.TestCheckResourceAttr(name, "include.3.ip.ip", "192.0.2.1/32"),
+					resource.TestCheckResourceAttr(name, "include.4.ip_list.id", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
+					resource.TestCheckResourceAttr(name, "include.5.saml.attribute_name", "Name1"),
+					resource.TestCheckResourceAttr(name, "include.5.saml.attribute_value", "Value1"),
+					resource.TestCheckResourceAttr(name, "include.5.saml.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.6.azure_ad.id", "group1"),
+					resource.TestCheckResourceAttr(name, "include.6.azure_ad.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.7.ip.ip", "192.0.2.2/32"),
+					resource.TestCheckResourceAttr(name, "include.8.ip_list.id", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
+					resource.TestCheckResourceAttr(name, "include.9.saml.attribute_name", "Name2"),
+					resource.TestCheckResourceAttr(name, "include.9.saml.attribute_value", "Value2"),
+					resource.TestCheckResourceAttr(name, "include.9.saml.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.10.azure_ad.id", "group2"),
+					resource.TestCheckResourceAttr(name, "include.10.azure_ad.identity_provider_id", "5678"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
 			},
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
@@ -110,14 +125,29 @@ func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
-					resource.TestCheckResourceAttrSet(name, "include.0.any_valid_service_token.%"),
-					resource.TestCheckResourceAttr(name, "include.0.ip.ip", "192.0.2.1/32"),
-					resource.TestCheckResourceAttr(name, "include.1.ip.ip", "192.0.2.2/32"),
-					resource.TestCheckResourceAttr(name, "include.0.ip_list.id", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
-					resource.TestCheckResourceAttr(name, "include.1.ip_list.id", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
+					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token.%", "0"),
+					resource.TestCheckResourceAttr(name, "include.1.email.email", email),
+					resource.TestCheckResourceAttr(name, "include.2.email_domain.domain", "example.com"),
+					resource.TestCheckResourceAttr(name, "include.3.ip.ip", "192.0.2.1/32"),
+					resource.TestCheckResourceAttr(name, "include.4.ip_list.id", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
+					resource.TestCheckResourceAttr(name, "include.5.saml.attribute_name", "Name1"),
+					resource.TestCheckResourceAttr(name, "include.5.saml.attribute_value", "Value1"),
+					resource.TestCheckResourceAttr(name, "include.5.saml.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.6.azure_ad.id", "group1"),
+					resource.TestCheckResourceAttr(name, "include.6.azure_ad.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.7.ip.ip", "192.0.2.2/32"),
+					resource.TestCheckResourceAttr(name, "include.8.ip_list.id", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
+					resource.TestCheckResourceAttr(name, "include.9.saml.attribute_name", "Name2"),
+					resource.TestCheckResourceAttr(name, "include.9.saml.attribute_value", "Value2"),
+					resource.TestCheckResourceAttr(name, "include.9.saml.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.10.azure_ad.id", "group2"),
+					resource.TestCheckResourceAttr(name, "include.10.azure_ad.identity_provider_id", "5678"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -140,22 +170,29 @@ func TestAccCloudflareAccessGroup_ConfigBasicZone(t *testing.T) {
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.ZoneIdentifier(zoneID), &accessGroup),
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
-					resource.TestCheckResourceAttrSet(name, "include.0.any_valid_service_token.%"),
-					resource.TestCheckResourceAttr(name, "include.0.ip.ip", "192.0.2.1/32"),
-					resource.TestCheckResourceAttr(name, "include.1.ip.ip", "192.0.2.2/32"),
-					resource.TestCheckResourceAttr(name, "include.0.ip_list.id", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
-					resource.TestCheckResourceAttr(name, "include.1.ip_list.id", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
-					resource.TestCheckResourceAttr(name, "include.0.saml.attribute_name", "Name1"),
-					resource.TestCheckResourceAttr(name, "include.0.saml.attribute_value", "Value1"),
-					resource.TestCheckResourceAttr(name, "include.1.saml.attribute_name", "Name2"),
-					resource.TestCheckResourceAttr(name, "include.1.saml.attribute_value", "Value2"),
-					resource.TestCheckResourceAttr(name, "include.0.azure_ad.id", "group1"),
-					resource.TestCheckResourceAttr(name, "include.0.azure_ad.identity_provider_id", "1234"),
-					resource.TestCheckResourceAttr(name, "include.1.azure_ad.id", "group2"),
-					resource.TestCheckResourceAttr(name, "include.1.azure_ad.identity_provider_id", "5678"),
+					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token.%", "0"),
+					resource.TestCheckResourceAttr(name, "include.1.email.email", email),
+					resource.TestCheckResourceAttr(name, "include.2.email_domain.domain", "example.com"),
+					resource.TestCheckResourceAttr(name, "include.3.ip.ip", "192.0.2.1/32"),
+					resource.TestCheckResourceAttr(name, "include.4.ip_list.id", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
+					resource.TestCheckResourceAttr(name, "include.5.saml.attribute_name", "Name1"),
+					resource.TestCheckResourceAttr(name, "include.5.saml.attribute_value", "Value1"),
+					resource.TestCheckResourceAttr(name, "include.5.saml.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.6.azure_ad.id", "group1"),
+					resource.TestCheckResourceAttr(name, "include.6.azure_ad.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.7.ip.ip", "192.0.2.2/32"),
+					resource.TestCheckResourceAttr(name, "include.8.ip_list.id", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
+					resource.TestCheckResourceAttr(name, "include.9.saml.attribute_name", "Name2"),
+					resource.TestCheckResourceAttr(name, "include.9.saml.attribute_value", "Value2"),
+					resource.TestCheckResourceAttr(name, "include.9.saml.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.10.azure_ad.id", "group2"),
+					resource.TestCheckResourceAttr(name, "include.10.azure_ad.identity_provider_id", "5678"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.ZoneIdentifier(zoneID)),
+				PlanOnly: true,
 			},
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.ZoneIdentifier(zoneID)),
@@ -163,22 +200,29 @@ func TestAccCloudflareAccessGroup_ConfigBasicZone(t *testing.T) {
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.ZoneIdentifier(zoneID), &accessGroup),
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
-					resource.TestCheckResourceAttrSet(name, "include.0.any_valid_service_token.%"),
-					resource.TestCheckResourceAttr(name, "include.0.ip.ip", "192.0.2.1/32"),
-					resource.TestCheckResourceAttr(name, "include.1.ip.ip", "192.0.2.2/32"),
-					resource.TestCheckResourceAttr(name, "include.0.ip_list.id", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
-					resource.TestCheckResourceAttr(name, "include.1.ip_list.id", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
-					resource.TestCheckResourceAttr(name, "include.0.saml.attribute_name", "Name1"),
-					resource.TestCheckResourceAttr(name, "include.0.saml.attribute_value", "Value1"),
-					resource.TestCheckResourceAttr(name, "include.1.saml.attribute_name", "Name2"),
-					resource.TestCheckResourceAttr(name, "include.1.saml.attribute_value", "Value2"),
-					resource.TestCheckResourceAttr(name, "include.0.azure_ad.id", "group1"),
-					resource.TestCheckResourceAttr(name, "include.0.azure_ad.identity_provider_id", "1234"),
-					resource.TestCheckResourceAttr(name, "include.1.azure_ad.id", "group2"),
-					resource.TestCheckResourceAttr(name, "include.1.azure_ad.identity_provider_id", "5678"),
+					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token.%", "0"),
+					resource.TestCheckResourceAttr(name, "include.1.email.email", email),
+					resource.TestCheckResourceAttr(name, "include.2.email_domain.domain", "example.com"),
+					resource.TestCheckResourceAttr(name, "include.3.ip.ip", "192.0.2.1/32"),
+					resource.TestCheckResourceAttr(name, "include.4.ip_list.id", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
+					resource.TestCheckResourceAttr(name, "include.5.saml.attribute_name", "Name1"),
+					resource.TestCheckResourceAttr(name, "include.5.saml.attribute_value", "Value1"),
+					resource.TestCheckResourceAttr(name, "include.5.saml.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.6.azure_ad.id", "group1"),
+					resource.TestCheckResourceAttr(name, "include.6.azure_ad.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.7.ip.ip", "192.0.2.2/32"),
+					resource.TestCheckResourceAttr(name, "include.8.ip_list.id", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
+					resource.TestCheckResourceAttr(name, "include.9.saml.attribute_name", "Name2"),
+					resource.TestCheckResourceAttr(name, "include.9.saml.attribute_value", "Value2"),
+					resource.TestCheckResourceAttr(name, "include.9.saml.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.10.azure_ad.id", "group2"),
+					resource.TestCheckResourceAttr(name, "include.10.azure_ad.identity_provider_id", "5678"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.ZoneIdentifier(zoneID)),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -211,6 +255,11 @@ func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
 					resource.TestCheckResourceAttr(emailListName, "items.0.value", "test@example.com"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessGroupConfigEmailList(rnd, rnd2, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -234,9 +283,14 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
+					resource.TestCheckResourceAttr(name, "include.1.email_domain.domain", "example.com"),
 					resource.TestCheckResourceAttr(name, "exclude.0.email.email", email),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessGroupConfigExclude(rnd, accountID, email),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -261,9 +315,14 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
+					resource.TestCheckResourceAttr(name, "include.1.email_domain.domain", "example.com"),
 					resource.TestCheckResourceAttr(name, "require.0.email.email", email),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessGroupConfigRequire(rnd, accountID, email),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -288,12 +347,17 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
+					resource.TestCheckResourceAttr(name, "include.1.email_domain.domain", "example.com"),
+					resource.TestCheckResourceAttr(name, "include.2.common_name.common_name", "common"),
+					resource.TestCheckResourceAttr(name, "include.3.common_name.common_name", "name"),
 					resource.TestCheckResourceAttr(name, "exclude.0.email.email", email),
 					resource.TestCheckResourceAttr(name, "require.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.common_name.common_name", "common"),
-					resource.TestCheckResourceAttr(name, "include.1.common_name.common_name", "name"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessGroupConfigFullConfig(rnd, accountID, email),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -324,6 +388,11 @@ func TestAccCloudflareAccessGroup_WithIDP(t *testing.T) {
 					resource.TestCheckResourceAttr(groupName, "include.0.github_organization.team", team),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessGroupWithIDP(accountID, rnd, githubOrg, team),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -353,6 +422,11 @@ func TestAccCloudflareAccessGroup_WithIDPAuthContext(t *testing.T) {
 					resource.TestCheckResourceAttr(groupName, "require.0.auth_context.ac_id", ctxACID),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessGroupWithIDPAuthContext(accountID, rnd, ctxID, ctxACID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -377,12 +451,22 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 				),
 			},
 			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
+			},
+			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, "test-changed@example.com", cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &after),
 					testAccCheckCloudflareAccessGroupIDUnchanged(&before, &after),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", "test-changed@example.com"),
+					resource.TestCheckResourceAttr(name, "include.1.email.email", "test-changed@example.com"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessGroupConfigBasic(rnd, "test-changed@example.com", cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -408,6 +492,11 @@ func TestAccCloudflareAccessGroup_UpdatedFromCommonNameToCommonNames(t *testing.
 				),
 			},
 			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessGroupConfigBasicWithCommonName(rnd, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
+			},
+			{
 				Config: testAccCloudflareAccessGroupConfigBasicWithCommonNames(rnd, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &after),
@@ -415,6 +504,11 @@ func TestAccCloudflareAccessGroup_UpdatedFromCommonNameToCommonNames(t *testing.
 					resource.TestCheckResourceAttr(name, "include.0.common_name.common_name", "common"),
 					resource.TestCheckResourceAttr(name, "include.1.common_name.common_name", "name"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessGroupConfigBasicWithCommonNames(rnd, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
 			},
 		},
 	})

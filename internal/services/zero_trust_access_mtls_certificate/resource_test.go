@@ -89,8 +89,13 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttrSet(name, "certificate"),
-					resource.TestCheckResourceAttr(name, "associated_hostnames.0", domain),
+					resource.TestCheckResourceAttr(name, "associated_hostnames.#", "2"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessMutualTLSCertificateConfigBasic(rnd, cloudflare.AccountIdentifier(accountID), cert, domain),
+				PlanOnly: true,
 			},
 			{
 				Config: testAccessMutualTLSCertificateUpdated(rnd, cloudflare.AccountIdentifier(accountID), cert),
@@ -100,6 +105,11 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "certificate"),
 					resource.TestCheckResourceAttr(name, "associated_hostnames.#", "0"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessMutualTLSCertificateUpdated(rnd, cloudflare.AccountIdentifier(accountID), cert),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -132,8 +142,13 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttrSet(name, "certificate"),
-					resource.TestCheckResourceAttr(name, "associated_hostnames.0", domain),
+					resource.TestCheckResourceAttr(name, "associated_hostnames.#", "2"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessMutualTLSCertificateConfigBasic(rnd, cloudflare.ZoneIdentifier(zoneID), cert, domain),
+				PlanOnly: true,
 			},
 			{
 				Config: testAccessMutualTLSCertificateUpdated(rnd, cloudflare.ZoneIdentifier(zoneID), cert),
@@ -143,6 +158,11 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "certificate"),
 					resource.TestCheckResourceAttr(name, "associated_hostnames.#", "0"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessMutualTLSCertificateUpdated(rnd, cloudflare.ZoneIdentifier(zoneID), cert),
+				PlanOnly: true,
 			},
 		},
 	})

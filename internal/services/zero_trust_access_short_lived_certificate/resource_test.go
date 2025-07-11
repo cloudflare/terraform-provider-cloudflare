@@ -38,6 +38,11 @@ func TestAccCloudflareAccessCACertificate_AccountLevel(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "public_key"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessCACertificateBasic(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -64,6 +69,11 @@ func TestAccCloudflareAccessCACertificate_ZoneLevel(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "aud"),
 					resource.TestCheckResourceAttrSet(name, "public_key"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessCACertificateBasic(rnd, domain, cloudflare.ZoneIdentifier(zoneID)),
+				PlanOnly: true,
 			},
 		},
 	})
