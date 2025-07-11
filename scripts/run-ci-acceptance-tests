@@ -81,7 +81,8 @@ go test -run "^TestAcc" -count 1 \
     ./internal/services/queue_consumer \
     ./internal/services/r2_bucket \
     ./internal/services/r2_bucket_cors \
-    ./internal/services/r2_bucket_event_notification \ ./internal/services/r2_bucket_lifecycle \
+    ./internal/services/r2_bucket_event_notification \
+    ./internal/services/r2_bucket_lifecycle \
     ./internal/services/r2_bucket_lock \
     ./internal/services/r2_bucket_sippy \
     ./internal/services/r2_custom_domain \

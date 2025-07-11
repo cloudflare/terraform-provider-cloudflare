@@ -64,7 +64,7 @@ func LookupMagicWanCfIP(t *testing.T, accountID string) string {
 	case "f037e56e89293a057740de681ac9abbe":
 		cfIP = "162.159.73.109"
 	default:
-		t.Fatalf("need to specify an anycast IP for account %s", accountID)
+		t.Skipf("need to specify an anycast IP for account %s", accountID)
 	}
 	return cfIP
 }
