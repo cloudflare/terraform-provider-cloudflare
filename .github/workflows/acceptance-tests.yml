@@ -48,17 +48,24 @@ jobs:
       #
       # - name: Pre-Sweeper
       #  run: go test ./internal/services/... -v -sweep="1" -timeout 60m
-      - name: Run acceptance tests
-        # note: not all resources are covered here, only passing ones should be included here (for now).
-        run: ./scripts/run-ci-acceptance-tests
-        env:
-          TF_ACC: 1
-        continue-on-error: true
       - name: Run Magic acceptance tests
+        id: magic_acc_tests
         # tests need to be run one-by-one to avoid account lock contention
         run: go test -parallel=1 -p=1 -count=1 ./internal/services/{magic_wan_ipsec_tunnel,magic_wan_gre_tunnel,magic_wan_static_route} -run "^TestAcc"
         env:
           TF_ACC: 1
+        continue-on-error: true
+      - name: Run acceptance tests
+        id: acc_tests
+        # note: not all resources are covered here, only passing ones should be included here (for now).
+        run: ./scripts/run-ci-acceptance-tests
+        env:
+          TF_ACC: 1
+      - name: Check Test Status
+        if: ${{ steps.magic_acc_tests.outcome == 'failure' || steps.acc_tests.outcome == 'failure' }}
+        run: exit 1
+
+
     # when all resources support sweepers, re-enable.
     #
     # - name: Post-Sweeper
