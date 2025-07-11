@@ -23,7 +23,7 @@ func TestAccCloudflareAPITokenData(t *testing.T) {
 				Config: testAccCloudflareZoneConfigBasic(rnd, permissionID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(dataSourceName, "name", rnd),
-					resource.TestCheckResourceAttrSet(dataSourceName, "id"),
+					resource.TestCheckResourceAttrSet(dataSourceName, "token_id"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "status"),
 					resource.TestCheckResourceAttr(dataSourceName, "status", "active"),
 				),
