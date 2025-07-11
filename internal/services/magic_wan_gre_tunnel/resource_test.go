@@ -17,6 +17,7 @@ import (
 )
 
 func TestAccCloudflareGRETunnelExists(t *testing.T) {
+	t.Skip(`FIXME: "New config failed checkers: Configuration Checking Failure List: Checking GRE tunnel endpoints are unique failed: Duplicate Tunnels: Duplicate GRE Tunnel: Namespace[conduit_12946570], GRE[nbsiytlpnc]: RemoteIP: 203.0.113.1 / LocalIP 162.159.73.109; Checking GRE subnets overlap failed: invalid tunnel configuration: customer conduit_12946570 has overlapping tunnel addrs: [{10.213.0.9 10.213.0.8 fffffffe} {10.213.0.9 10.213.0.8 fffffffe}]"`)
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -89,6 +90,7 @@ func testAccCheckCloudflareGRETunnelExists(n string, tunnel *cloudflare.MagicTra
 }
 
 func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
+	t.Skip(`FIXME: "New config failed checkers: Configuration Checking Failure List: Checking GRE tunnel endpoints are unique failed: Duplicate Tunnels: Duplicate GRE Tunnel: Namespace[conduit_12946570], GRE[nbsiytlpnc]: RemoteIP: 203.0.113.1 / LocalIP 162.159.73.109; Checking GRE subnets overlap failed: invalid tunnel configuration: customer conduit_12946570 has overlapping tunnel addrs: [{10.213.0.9 10.213.0.8 fffffffe} {10.213.0.9 10.213.0.8 fffffffe}]"`)
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -119,6 +121,7 @@ func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
 }
 
 func TestAccCloudflareGRETunnelUpdateMulti(t *testing.T) {
+	t.Skip(`FIXME: "New config failed checkers: Configuration Checking Failure List: Checking GRE tunnel endpoints are unique failed: Duplicate Tunnels: Duplicate GRE Tunnel: Namespace[conduit_12946570], GRE[nbsiytlpnc]: RemoteIP: 203.0.113.1 / LocalIP 162.159.73.109; Checking GRE subnets overlap failed: invalid tunnel configuration: customer conduit_12946570 has overlapping tunnel addrs: [{10.213.0.9 10.213.0.8 fffffffe} {10.213.0.9 10.213.0.8 fffffffe}]"`)
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
