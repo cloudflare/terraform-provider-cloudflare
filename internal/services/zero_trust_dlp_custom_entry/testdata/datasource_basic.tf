@@ -1,1 +1,0 @@
-data "cloudflare_zero_trust_dlp_custom_entry" "%[1]s" {}
