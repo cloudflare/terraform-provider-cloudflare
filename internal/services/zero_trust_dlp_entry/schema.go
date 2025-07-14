@@ -20,6 +20,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPEntryResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		DeprecationMessage: "This resource is no longer used but has been split into `zero_trust_dlp_custom_entry`, `zero_trust_dlp_predefined_entry`, and `zero_trust_dlp_integration_entry`",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
