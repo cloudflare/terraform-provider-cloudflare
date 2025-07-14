@@ -17,7 +17,7 @@ type UserAgentBlockingRuleModel struct {
 	Mode          types.String                             `tfsdk:"mode" json:"mode,required"`
 	Configuration *UserAgentBlockingRuleConfigurationModel `tfsdk:"configuration" json:"configuration,required"`
 	Description   types.String                             `tfsdk:"description" json:"description,optional"`
-	Paused        types.Bool                               `tfsdk:"paused" json:"paused,optional"`
+	Paused        types.Bool                               `tfsdk:"paused" json:"paused,computed_optional"`
 }
 
 func (m UserAgentBlockingRuleModel) MarshalJSON() (data []byte, err error) {

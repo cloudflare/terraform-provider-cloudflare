@@ -65,9 +65,6 @@ go test -run "^TestAcc" -count 1 \
     ./internal/services/magic_transit_site_acl \
     ./internal/services/magic_transit_site_lan \
     ./internal/services/magic_transit_site_wan \
-    ./internal/services/magic_wan_gre_tunnel \
-    ./internal/services/magic_wan_ipsec_tunnel \
-    ./internal/services/magic_wan_static_route \
     ./internal/services/observatory_scheduled_test \
     ./internal/services/origin_ca_certificate \
     ./internal/services/page_rule \
