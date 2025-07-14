@@ -12,6 +12,7 @@ import (
 )
 
 func TestAccCloudflareListItem_Basic(t *testing.T) {
+	t.Skip("FIXME: Step 1/1 error: Error running apply: exit status 1. Getting rate limited, causing flaky tests.")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
