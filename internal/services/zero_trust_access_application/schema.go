@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
@@ -598,6 +599,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The order of execution for this policy. Must be unique for each policy within an app.",
 							Optional:    true,
 							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.AtLeast(1),
+							},
 						},
 						"decision": schema.StringAttribute{
 							Description: "The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.\nAvailable values: \"allow\", \"deny\", \"non_identity\", \"bypass\".",
