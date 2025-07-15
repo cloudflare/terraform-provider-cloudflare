@@ -18,15 +18,16 @@ type HyperdriveConfigResultDataSourceEnvelope struct {
 }
 
 type HyperdriveConfigDataSourceModel struct {
-	ID           types.String                                                     `tfsdk:"id" path:"hyperdrive_id,computed"`
-	HyperdriveID types.String                                                     `tfsdk:"hyperdrive_id" path:"hyperdrive_id,optional"`
-	AccountID    types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
-	CreatedOn    timetypes.RFC3339                                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedOn   timetypes.RFC3339                                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name         types.String                                                     `tfsdk:"name" json:"name,computed"`
-	Caching      customfield.NestedObject[HyperdriveConfigCachingDataSourceModel] `tfsdk:"caching" json:"caching,computed"`
-	MTLS         customfield.NestedObject[HyperdriveConfigMTLSDataSourceModel]    `tfsdk:"mtls" json:"mtls,computed"`
-	Origin       customfield.NestedObject[HyperdriveConfigOriginDataSourceModel]  `tfsdk:"origin" json:"origin,computed"`
+	ID                    types.String                                                     `tfsdk:"id" path:"hyperdrive_id,computed"`
+	HyperdriveID          types.String                                                     `tfsdk:"hyperdrive_id" path:"hyperdrive_id,optional"`
+	AccountID             types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
+	CreatedOn             timetypes.RFC3339                                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn            timetypes.RFC3339                                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name                  types.String                                                     `tfsdk:"name" json:"name,computed"`
+	OriginConnectionLimit types.Int64                                                      `tfsdk:"origin_connection_limit" json:"origin_connection_limit,computed"`
+	Caching               customfield.NestedObject[HyperdriveConfigCachingDataSourceModel] `tfsdk:"caching" json:"caching,computed"`
+	MTLS                  customfield.NestedObject[HyperdriveConfigMTLSDataSourceModel]    `tfsdk:"mtls" json:"mtls,computed"`
+	Origin                customfield.NestedObject[HyperdriveConfigOriginDataSourceModel]  `tfsdk:"origin" json:"origin,computed"`
 }
 
 func (m *HyperdriveConfigDataSourceModel) toReadParams(_ context.Context) (params hyperdrive.ConfigGetParams, diags diag.Diagnostics) {

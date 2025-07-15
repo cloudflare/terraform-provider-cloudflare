@@ -38,7 +38,9 @@ type WorkersScriptModel struct {
 	ID            types.String      `tfsdk:"id" json:"-,computed"`
 	ScriptName    types.String      `tfsdk:"script_name" path:"script_name,required"`
 	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
-	Content       types.String      `tfsdk:"content" json:"content,required"`
+	Content       types.String      `tfsdk:"content" json:"-"`
+	ContentFile   types.String      `tfsdk:"content_file" json:"-"`
+	ContentSHA256 types.String      `tfsdk:"content_sha256" json:"-"`
 	CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Etag          types.String      `tfsdk:"etag" json:"etag,computed"`
 	HasAssets     types.Bool        `tfsdk:"has_assets" json:"has_assets,computed"`
@@ -102,11 +104,12 @@ type WorkersScriptMetadataAssetsModel struct {
 }
 
 type WorkersScriptMetadataAssetsConfigModel struct {
-	Headers          types.String    `tfsdk:"_headers" json:"_headers,optional"`
-	Redirects        types.String    `tfsdk:"_redirects" json:"_redirects,optional"`
+	Headers          types.String    `tfsdk:"headers" json:"_headers,optional"`
+	Redirects        types.String    `tfsdk:"redirects" json:"_redirects,optional"`
 	HTMLHandling     types.String    `tfsdk:"html_handling" json:"html_handling,optional"`
 	NotFoundHandling types.String    `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
 	RunWorkerFirst   *[]types.String `tfsdk:"run_worker_first" json:"run_worker_first,optional"`
+	ServeDirectly    types.Bool      `tfsdk:"serve_directly" json:"serve_directly,optional"`
 }
 
 type WorkersScriptMetadataBindingsModel struct {

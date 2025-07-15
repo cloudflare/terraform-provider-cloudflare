@@ -24,7 +24,7 @@ data "cloudflare_workers_kv_namespaces" "example_workers_kv_namespaces" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
