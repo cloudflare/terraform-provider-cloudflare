@@ -73,6 +73,7 @@ Read-Only:
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--ip_list))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--service_token))
@@ -224,6 +225,16 @@ Read-Only:
 - `id` (String) The ID of an identity provider.
 
 
+<a id="nestedatt--result--exclude--oidc"></a>
+### Nested Schema for `result.exclude.oidc`
+
+Read-Only:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
+
+
 <a id="nestedatt--result--exclude--okta"></a>
 ### Nested Schema for `result.exclude.okta`
 
@@ -276,6 +287,7 @@ Read-Only:
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--include--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--include--ip_list))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--include--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--include--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--include--service_token))
@@ -427,6 +439,16 @@ Read-Only:
 - `id` (String) The ID of an identity provider.
 
 
+<a id="nestedatt--result--include--oidc"></a>
+### Nested Schema for `result.include.oidc`
+
+Read-Only:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
+
+
 <a id="nestedatt--result--include--okta"></a>
 ### Nested Schema for `result.include.okta`
 
@@ -479,6 +501,7 @@ Read-Only:
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--ip_list))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--service_token))
@@ -630,6 +653,16 @@ Read-Only:
 - `id` (String) The ID of an identity provider.
 
 
+<a id="nestedatt--result--is_default--oidc"></a>
+### Nested Schema for `result.is_default.oidc`
+
+Read-Only:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
+
+
 <a id="nestedatt--result--is_default--okta"></a>
 ### Nested Schema for `result.is_default.okta`
 
@@ -682,6 +715,7 @@ Read-Only:
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--require--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--require--ip_list))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--require--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--require--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--require--service_token))
@@ -831,6 +865,16 @@ Read-Only:
 Read-Only:
 
 - `id` (String) The ID of an identity provider.
+
+
+<a id="nestedatt--result--require--oidc"></a>
+### Nested Schema for `result.require.oidc`
+
+Read-Only:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
 
 
 <a id="nestedatt--result--require--okta"></a>

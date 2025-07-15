@@ -38,6 +38,7 @@ data "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 - `mtls` (Attributes) (see [below for nested schema](#nestedatt--mtls))
 - `name` (String)
 - `origin` (Attributes) (see [below for nested schema](#nestedatt--origin))
+- `origin_connection_limit` (Number) The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.
 
 <a id="nestedatt--caching"></a>
 ### Nested Schema for `caching`

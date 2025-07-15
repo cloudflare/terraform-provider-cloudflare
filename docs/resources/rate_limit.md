@@ -62,7 +62,7 @@ resource "cloudflare_rate_limit" "example_rate_limit" {
 ### Read-Only
 
 - `bypass` (Attributes List) Criteria specifying when the current rate limit should be bypassed. You can specify that the rate limit should not apply to one or more URLs. (see [below for nested schema](#nestedatt--bypass))
-- `description` (String) An informative summary of the rate limit. This value is sanitized and any tags will be removed.
+- `description` (String) An informative summary of the rule. This value is sanitized and any tags will be removed.
 - `disabled` (Boolean) When true, indicates that the rate limit is currently disabled.
 - `id` (String) The unique identifier of the rate limit.
 
