@@ -75,7 +75,7 @@ Cannot be set to false if secret is true
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--entries--pattern))
 - `profile_id` (String)
 - `secret` (Boolean)
-- `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_template", "word_list".
+- `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
 - `word_list` (String)
 
