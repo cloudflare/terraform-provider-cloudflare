@@ -1124,6 +1124,25 @@ func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplication_WithReusablePolicies_InvalidPrecedence(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCloudflareAccessApplicationConfigWithReusablePoliciesInvalidPrecedence(rnd, domain, accountID),
+				ExpectError: regexp.MustCompile(`Attribute policies\[0].precedence value must be at least 1, got: 0`),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
@@ -1607,6 +1626,10 @@ func testAccCloudflareAccessApplicationConfigWithLegacyPolicies(rnd, domain stri
 
 func testAccCloudflareAccessApplicationConfigWithReusablePolicies(rnd, domain string, accountID string) string {
 	return acctest.LoadTestCase("accessapplicationconfigwithreusablepolicies.tf", rnd, domain, accountID)
+}
+
+func testAccCloudflareAccessApplicationConfigWithReusablePoliciesInvalidPrecedence(rnd, domain string, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationconfigwithreusablepolicies_invalid_precedence.tf", rnd, domain, accountID)
 }
 
 func testAccessApplicationWithInvalidSaas(resourceID, accountID string) string {
