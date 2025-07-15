@@ -1,20 +1,19 @@
 ---
-page_title: "cloudflare_list Data Source - Cloudflare"
+page_title: "cloudflare_lists Data Source - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_list (Data Source)
+# cloudflare_lists (Data Source)
 
 
 
 ## Example Usage
 
 ```terraform
-data "cloudflare_list" "example_list" {
+data "cloudflare_lists" "example_lists" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  list_id = "2c0fc9fa937b11eaa1b71c4d701ab86e"
 }
 ```
 
@@ -27,9 +26,16 @@ data "cloudflare_list" "example_list" {
 
 ### Optional
 
-- `list_id` (String) The unique ID of the list.
+- `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only
+
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
+
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
+
+Read-Only:
 
 - `created_on` (String) The RFC 3339 timestamp of when the list was created.
 - `description` (String) An informative summary of the list.
