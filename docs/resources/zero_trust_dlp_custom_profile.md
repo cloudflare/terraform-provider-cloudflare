@@ -119,7 +119,7 @@ Required:
 
 - `enabled` (Boolean)
 - `entry_id` (String)
-- `entry_type` (String) Available values: "custom", "predefined", "integration", "exact_data".
+- `entry_type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint".
 
 ## Import
 

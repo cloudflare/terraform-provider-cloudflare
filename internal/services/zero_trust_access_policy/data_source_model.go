@@ -74,6 +74,7 @@ type ZeroTrustAccessPolicyExcludeDataSourceModel struct {
 	IP                   customfield.NestedObject[ZeroTrustAccessPolicyExcludeIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	Okta                 customfield.NestedObject[ZeroTrustAccessPolicyExcludeOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
 	SAML                 customfield.NestedObject[ZeroTrustAccessPolicyExcludeSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
+	OIDC                 customfield.NestedObject[ZeroTrustAccessPolicyExcludeOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessPolicyExcludeServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
 }
 
@@ -168,6 +169,12 @@ type ZeroTrustAccessPolicyExcludeSAMLDataSourceModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
 }
 
+type ZeroTrustAccessPolicyExcludeOIDCDataSourceModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,computed"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,computed"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+}
+
 type ZeroTrustAccessPolicyExcludeServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
@@ -194,6 +201,7 @@ type ZeroTrustAccessPolicyIncludeDataSourceModel struct {
 	IP                   customfield.NestedObject[ZeroTrustAccessPolicyIncludeIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	Okta                 customfield.NestedObject[ZeroTrustAccessPolicyIncludeOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
 	SAML                 customfield.NestedObject[ZeroTrustAccessPolicyIncludeSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
+	OIDC                 customfield.NestedObject[ZeroTrustAccessPolicyIncludeOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessPolicyIncludeServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
 }
 
@@ -288,6 +296,12 @@ type ZeroTrustAccessPolicyIncludeSAMLDataSourceModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
 }
 
+type ZeroTrustAccessPolicyIncludeOIDCDataSourceModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,computed"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,computed"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+}
+
 type ZeroTrustAccessPolicyIncludeServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
@@ -314,6 +328,7 @@ type ZeroTrustAccessPolicyRequireDataSourceModel struct {
 	IP                   customfield.NestedObject[ZeroTrustAccessPolicyRequireIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	Okta                 customfield.NestedObject[ZeroTrustAccessPolicyRequireOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
 	SAML                 customfield.NestedObject[ZeroTrustAccessPolicyRequireSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
+	OIDC                 customfield.NestedObject[ZeroTrustAccessPolicyRequireOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessPolicyRequireServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
 }
 
@@ -405,6 +420,12 @@ type ZeroTrustAccessPolicyRequireOktaDataSourceModel struct {
 type ZeroTrustAccessPolicyRequireSAMLDataSourceModel struct {
 	AttributeName      types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
 	AttributeValue     types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+}
+
+type ZeroTrustAccessPolicyRequireOIDCDataSourceModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,computed"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,computed"`
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
 }
 
