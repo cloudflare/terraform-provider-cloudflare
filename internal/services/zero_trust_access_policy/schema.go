@@ -4,9 +4,8 @@ package zero_trust_access_policy
 
 import (
 	"context"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -97,10 +96,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"exclude": schema.ListNestedAttribute{
 				Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessPolicyExcludeModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						customvalidator.ObjectSizeAtMost(1),
+					},
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -314,6 +314,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"identity_provider_id": schema.StringAttribute{
 									Description: "The ID of your SAML identity provider.",
+									Required:    true,
+								},
+							},
+						},
+						"oidc": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"claim_name": schema.StringAttribute{
+									Description: "The name of the OIDC claim.",
+									Required:    true,
+								},
+								"claim_value": schema.StringAttribute{
+									Description: "The OIDC claim value to look for.",
+									Required:    true,
+								},
+								"identity_provider_id": schema.StringAttribute{
+									Description: "The ID of your OIDC identity provider.",
 									Required:    true,
 								},
 							},
@@ -332,10 +349,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"include": schema.ListNestedAttribute{
 				Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessPolicyIncludeModel](ctx),
+				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						customvalidator.ObjectSizeAtMost(1),
+					},
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -549,6 +567,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"identity_provider_id": schema.StringAttribute{
 									Description: "The ID of your SAML identity provider.",
+									Required:    true,
+								},
+							},
+						},
+						"oidc": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"claim_name": schema.StringAttribute{
+									Description: "The name of the OIDC claim.",
+									Required:    true,
+								},
+								"claim_value": schema.StringAttribute{
+									Description: "The OIDC claim value to look for.",
+									Required:    true,
+								},
+								"identity_provider_id": schema.StringAttribute{
+									Description: "The ID of your OIDC identity provider.",
 									Required:    true,
 								},
 							},
@@ -567,10 +602,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"require": schema.ListNestedAttribute{
 				Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessPolicyRequireModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						customvalidator.ObjectSizeAtMost(1),
+					},
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -788,6 +824,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"oidc": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"claim_name": schema.StringAttribute{
+									Description: "The name of the OIDC claim.",
+									Required:    true,
+								},
+								"claim_value": schema.StringAttribute{
+									Description: "The OIDC claim value to look for.",
+									Required:    true,
+								},
+								"identity_provider_id": schema.StringAttribute{
+									Description: "The ID of your OIDC identity provider.",
+									Required:    true,
+								},
+							},
+						},
 						"service_token": schema.SingleNestedAttribute{
 							Optional: true,
 							Attributes: map[string]schema.Attribute{
@@ -799,21 +852,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"app_count": schema.Int64Attribute{
-				Description: "Number of access applications currently using this policy.",
-				Computed:    true,
-			},
-			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"reusable": schema.BoolAttribute{
-				Computed: true,
-			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

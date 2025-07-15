@@ -17,7 +17,7 @@ type R2BucketEventNotificationModel struct {
 	QueueID      types.String                            `tfsdk:"queue_id" path:"queue_id,required"`
 	Rules        *[]*R2BucketEventNotificationRulesModel `tfsdk:"rules" json:"rules,optional"`
 	QueueName    types.String                            `tfsdk:"queue_name" json:"queueName,computed"`
-	Jurisdiction types.String                            `tfsdk:"jurisdiction" json:"-,computed_optional"`
+	Jurisdiction types.String                            `tfsdk:"jurisdiction" json:"-,computed_optional,no_refresh"`
 }
 
 func (m R2BucketEventNotificationModel) MarshalJSON() (data []byte, err error) {

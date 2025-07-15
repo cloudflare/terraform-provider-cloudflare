@@ -31,9 +31,9 @@ type LogpushDatasetJobDataSourceModel struct {
 	LastComplete             timetypes.RFC3339                                                       `tfsdk:"last_complete" json:"last_complete,computed" format:"date-time"`
 	LastError                timetypes.RFC3339                                                       `tfsdk:"last_error" json:"last_error,computed" format:"date-time"`
 	LogpullOptions           types.String                                                            `tfsdk:"logpull_options" json:"logpull_options,computed"`
-	MaxUploadBytes           types.Int64                                                             `tfsdk:"max_upload_bytes" json:"max_upload_bytes,computed"`
-	MaxUploadIntervalSeconds types.Int64                                                             `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds,computed"`
-	MaxUploadRecords         types.Int64                                                             `tfsdk:"max_upload_records" json:"max_upload_records,computed"`
+	MaxUploadBytes           types.Float64                                                           `tfsdk:"max_upload_bytes" json:"max_upload_bytes,computed"`
+	MaxUploadIntervalSeconds types.Float64                                                           `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds,computed"`
+	MaxUploadRecords         types.Float64                                                           `tfsdk:"max_upload_records" json:"max_upload_records,computed"`
 	Name                     types.String                                                            `tfsdk:"name" json:"name,computed"`
 	OutputOptions            customfield.NestedObject[LogpushDatasetJobOutputOptionsDataSourceModel] `tfsdk:"output_options" json:"output_options,computed"`
 }

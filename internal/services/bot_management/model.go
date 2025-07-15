@@ -15,16 +15,16 @@ type BotManagementResultEnvelope struct {
 type BotManagementModel struct {
 	ID                           types.String                                                       `tfsdk:"id" json:"-,computed"`
 	ZoneID                       types.String                                                       `tfsdk:"zone_id" path:"zone_id,required"`
-	AIBotsProtection             types.String                                                       `tfsdk:"ai_bots_protection" json:"ai_bots_protection,optional"`
-	AutoUpdateModel              types.Bool                                                         `tfsdk:"auto_update_model" json:"auto_update_model,optional"`
-	CrawlerProtection            types.String                                                       `tfsdk:"crawler_protection" json:"crawler_protection,optional"`
-	EnableJS                     types.Bool                                                         `tfsdk:"enable_js" json:"enable_js,optional"`
-	FightMode                    types.Bool                                                         `tfsdk:"fight_mode" json:"fight_mode,optional"`
-	OptimizeWordpress            types.Bool                                                         `tfsdk:"optimize_wordpress" json:"optimize_wordpress,optional"`
-	SBFMDefinitelyAutomated      types.String                                                       `tfsdk:"sbfm_definitely_automated" json:"sbfm_definitely_automated,optional"`
-	SBFMLikelyAutomated          types.String                                                       `tfsdk:"sbfm_likely_automated" json:"sbfm_likely_automated,optional"`
-	SBFMStaticResourceProtection types.Bool                                                         `tfsdk:"sbfm_static_resource_protection" json:"sbfm_static_resource_protection,optional"`
-	SBFMVerifiedBots             types.String                                                       `tfsdk:"sbfm_verified_bots" json:"sbfm_verified_bots,optional"`
+	AIBotsProtection             types.String                                                       `tfsdk:"ai_bots_protection" json:"ai_bots_protection,computed_optional"`
+	AutoUpdateModel              types.Bool                                                         `tfsdk:"auto_update_model" json:"auto_update_model,computed_optional"`
+	CrawlerProtection            types.String                                                       `tfsdk:"crawler_protection" json:"crawler_protection,computed_optional"`
+	EnableJS                     types.Bool                                                         `tfsdk:"enable_js" json:"enable_js,computed_optional"`
+	FightMode                    types.Bool                                                         `tfsdk:"fight_mode" json:"fight_mode,computed_optional"`
+	OptimizeWordpress            types.Bool                                                         `tfsdk:"optimize_wordpress" json:"optimize_wordpress,computed_optional"`
+	SBFMDefinitelyAutomated      types.String                                                       `tfsdk:"sbfm_definitely_automated" json:"sbfm_definitely_automated,computed_optional"`
+	SBFMLikelyAutomated          types.String                                                       `tfsdk:"sbfm_likely_automated" json:"sbfm_likely_automated,computed_optional"`
+	SBFMStaticResourceProtection types.Bool                                                         `tfsdk:"sbfm_static_resource_protection" json:"sbfm_static_resource_protection,computed_optional"`
+	SBFMVerifiedBots             types.String                                                       `tfsdk:"sbfm_verified_bots" json:"sbfm_verified_bots,computed_optional"`
 	SuppressSessionScore         types.Bool                                                         `tfsdk:"suppress_session_score" json:"suppress_session_score,computed_optional"`
 	UsingLatestModel             types.Bool                                                         `tfsdk:"using_latest_model" json:"using_latest_model,computed"`
 	StaleZoneConfiguration       customfield.NestedObject[BotManagementStaleZoneConfigurationModel] `tfsdk:"stale_zone_configuration" json:"stale_zone_configuration,computed"`

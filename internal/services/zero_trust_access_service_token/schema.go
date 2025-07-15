@@ -44,8 +44,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     stringdefault.StaticString("8760h"),
 			},
 			"client_id": schema.StringAttribute{
-				Description: "The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.",
-				Computed:    true,
+				Description:   "The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"client_secret": schema.StringAttribute{
 				Description:   "The Client Secret for the service token. Access will check for this value in the `CF-Access-Client-Secret` request header.",
@@ -53,19 +54,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Sensitive:     true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
-			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
 			"expires_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"last_seen_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"updated_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
