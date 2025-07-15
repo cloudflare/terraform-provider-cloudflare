@@ -75,7 +75,6 @@ resource "cloudflare_workers_script" "example_workers_script" {
 ### Required
 
 - `account_id` (String) Identifier.
-- `content` (String) Module or Service Worker contents of the Worker.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 
 ### Optional
@@ -85,6 +84,9 @@ resource "cloudflare_workers_script" "example_workers_script" {
 - `body_part` (String) Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
 - `compatibility_flags` (List of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
+- `content` (String) Module or Service Worker contents of the Worker. Exactly one of `content` or `content_file` must be specified.
+- `content_file` (String) Path to a file containing the Module or Service Worker contents of the Worker. Exactly one of `content` or `content_file` must be specified. Must be paired with `content_sha256`.
+- `content_sha256` (String) SHA-256 hash of the Worker contents. Used to trigger updates when source code changes. Must be provided when `content_file` is specified.
 - `keep_assets` (Boolean) Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.
 - `keep_bindings` (List of String) List of binding types to keep from previous_upload.
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.

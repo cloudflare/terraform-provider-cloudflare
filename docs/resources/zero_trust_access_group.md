@@ -52,9 +52,7 @@ resource "cloudflare_zero_trust_access_group" "example_zero_trust_access_group" 
 
 ### Read-Only
 
-- `created_at` (String)
 - `id` (String) UUID.
-- `updated_at` (String)
 
 <a id="nestedatt--include"></a>
 ### Nested Schema for `include`
@@ -80,6 +78,7 @@ Optional:
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--include--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--include--ip_list))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--include--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--include--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--include--service_token))
@@ -234,6 +233,16 @@ Required:
 - `id` (String) The ID of an identity provider.
 
 
+<a id="nestedatt--include--oidc"></a>
+### Nested Schema for `include.oidc`
+
+Required:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
+
+
 <a id="nestedatt--include--okta"></a>
 ### Nested Schema for `include.okta`
 
@@ -286,6 +295,7 @@ Optional:
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--exclude--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--exclude--ip_list))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--exclude--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--exclude--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--exclude--service_token))
@@ -440,6 +450,16 @@ Required:
 - `id` (String) The ID of an identity provider.
 
 
+<a id="nestedatt--exclude--oidc"></a>
+### Nested Schema for `exclude.oidc`
+
+Required:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
+
+
 <a id="nestedatt--exclude--okta"></a>
 ### Nested Schema for `exclude.okta`
 
@@ -492,6 +512,7 @@ Optional:
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--require--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--require--ip_list))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--require--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--require--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--require--service_token))
@@ -644,6 +665,16 @@ Required:
 Required:
 
 - `id` (String) The ID of an identity provider.
+
+
+<a id="nestedatt--require--oidc"></a>
+### Nested Schema for `require.oidc`
+
+Required:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
 
 
 <a id="nestedatt--require--okta"></a>
