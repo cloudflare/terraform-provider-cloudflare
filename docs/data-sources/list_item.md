@@ -35,7 +35,7 @@ data "cloudflare_list_item" "example_list_item" {
 - `created_on` (String) The RFC 3339 timestamp of when the item was created.
 - `hostname` (Attributes) Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-). (see [below for nested schema](#nestedatt--hostname))
 - `id` (String) The unique ID of the list.
-- `ip` (String) An IPv4 address, an IPv4 CIDR, or an IPv6 CIDR. IPv6 CIDRs are limited to a maximum of /64.
+- `ip` (String) An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.
 - `modified_on` (String) The RFC 3339 timestamp of when the item was last modified.
 - `redirect` (Attributes) The definition of the redirect. (see [below for nested schema](#nestedatt--redirect))
 

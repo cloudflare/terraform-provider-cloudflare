@@ -165,6 +165,11 @@ Available values: "customized_block_page", "redirect_uri".
 - `suppress_footer` (Boolean) If mode is customized_block_page: suppress detailed info at the bottom of the block page.
 - `target_uri` (String) If mode is redirect_uri: URI to which the user should be redirected.
 
+Read-Only:
+
+- `read_only` (Boolean) This setting was shared via the Orgs API and cannot be edited by the current account
+- `source_account` (String) Account tag of account that shared this setting
+
 
 <a id="nestedatt--settings--body_scanning"></a>
 ### Nested Schema for `settings.body_scanning`
@@ -214,6 +219,11 @@ Read-Only:
 Optional:
 
 - `enabled` (Boolean) Enable matching all variants of user emails (with + or . modifiers) used as criteria in Firewall policies.
+
+Read-Only:
+
+- `read_only` (Boolean) This setting was shared via the Orgs API and cannot be edited by the current account
+- `source_account` (String) Account tag of account that shared this setting
 
 
 <a id="nestedatt--settings--fips"></a>

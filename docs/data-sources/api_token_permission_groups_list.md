@@ -13,7 +13,8 @@ description: |-
 
 ```terraform
 data "cloudflare_api_token_permission_groups_list" "example_api_token_permission_groups_list" {
-
+  name = "Account%20Settings%20Write"
+  scope = "com.cloudflare.api.account.zone"
 }
 ```
 
@@ -23,6 +24,10 @@ data "cloudflare_api_token_permission_groups_list" "example_api_token_permission
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
+- `name` (String) Filter by the name of the permission group.
+The value must be URL-encoded.
+- `scope` (String) Filter by the scope of the permission group.
+The value must be URL-encoded.
 
 ### Read-Only
 

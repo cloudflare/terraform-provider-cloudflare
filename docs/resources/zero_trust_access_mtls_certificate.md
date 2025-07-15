@@ -36,16 +36,14 @@ resource "cloudflare_zero_trust_access_mtls_certificate" "example_zero_trust_acc
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `associated_hostnames` (List of String) The hostnames of the applications that will use this certificate.
+- `associated_hostnames` (Set of String) The hostnames of the applications that will use this certificate.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
 
-- `created_at` (String)
 - `expires_on` (String)
 - `fingerprint` (String) The MD5 fingerprint of the certificate.
 - `id` (String) The ID of the application that will use this certificate.
-- `updated_at` (String)
 
 ## Import
 

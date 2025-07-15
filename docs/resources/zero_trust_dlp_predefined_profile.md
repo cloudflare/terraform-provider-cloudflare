@@ -53,7 +53,7 @@ resource "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_
 
 - `created_at` (String) When the profile was created.
 - `description` (String) The description of the profile.
-- `id` (String) The ID of this resource.
+- `id` (String) The id of the profile (uuid).
 - `name` (String) The name of the profile.
 - `open_access` (Boolean) Whether this profile can be accessed by anyone.
 - `type` (String) Available values: "custom", "predefined", "integration".
