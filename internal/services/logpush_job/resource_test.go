@@ -1,5 +1,14 @@
 package logpush_job_test
 
+import (
+	"os"
+	"testing"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+)
+
 // func TestToAPIOutputOptions(t *testing.T) {
 // 	cve202144228 := true
 // 	testData := cloudflare.LogpushOutputOptions{
@@ -59,3 +68,40 @@ package logpush_job_test
 // 		t.Fatalf("output and testData are not equal: %s != %s", string(outJSON), string(testJSON))
 // 	}
 // }
+
+func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_logpush_job." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	destinationConf := `https://logpush-receiver.sd.cfplat.com`
+	dataset := "gateway_dns"
+	jobName := "terraform-test-job"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareLogpushJobBasic(rnd, accountID, destinationConf, dataset, jobName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "destination_conf", destinationConf),
+					resource.TestCheckResourceAttr(resourceName, "dataset", dataset),
+					resource.TestCheckResourceAttr(resourceName, "name", jobName),
+				),
+			},
+			{
+				Config: testCloudflareLogpushJobBasic(rnd, accountID, destinationConf, dataset, jobName+"-updated"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "destination_conf", destinationConf),
+					resource.TestCheckResourceAttr(resourceName, "dataset", dataset),
+					resource.TestCheckResourceAttr(resourceName, "name", jobName+"-updated"),
+				),
+			},
+		},
+	})
+}
+
+func testCloudflareLogpushJobBasic(resourceID, zoneID, destinationConf, dataset, jobName string) string {
+	return acctest.LoadTestCase("basic.tf", resourceID, zoneID, destinationConf, dataset, jobName)
+}
