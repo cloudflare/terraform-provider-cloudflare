@@ -19,11 +19,11 @@ type LogpushJobModel struct {
 	Dataset                  types.String                  `tfsdk:"dataset" json:"dataset,computed_optional"`
 	DestinationConf          types.String                  `tfsdk:"destination_conf" json:"destination_conf,required"`
 	Filter                   types.String                  `tfsdk:"filter" json:"filter,optional,no_refresh"`
-	LogpullOptions           types.String                  `tfsdk:"logpull_options" json:"logpull_options,optional"`
-	MaxUploadBytes           types.Int64                   `tfsdk:"max_upload_bytes" json:"max_upload_bytes,optional"`
-	MaxUploadIntervalSeconds types.Int64                   `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds,optional"`
-	MaxUploadRecords         types.Int64                   `tfsdk:"max_upload_records" json:"max_upload_records,optional"`
-	Name                     types.String                  `tfsdk:"name" json:"name,optional"`
+	LogpullOptions           types.String                  `tfsdk:"logpull_options" json:"logpull_options,optional,no_refresh"`
+	MaxUploadBytes           types.Int64                   `tfsdk:"max_upload_bytes" json:"max_upload_bytes,optional,no_refresh"`
+	MaxUploadIntervalSeconds types.Int64                   `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds,optional,no_refresh"`
+	MaxUploadRecords         types.Int64                   `tfsdk:"max_upload_records" json:"max_upload_records,optional,no_refresh"`
+	Name                     types.String                  `tfsdk:"name" json:"name,optional,no_refresh"`
 	OwnershipChallenge       types.String                  `tfsdk:"ownership_challenge" json:"ownership_challenge,optional,no_refresh"`
 	OutputOptions            *LogpushJobOutputOptionsModel `tfsdk:"output_options" json:"output_options,optional"`
 	Enabled                  types.Bool                    `tfsdk:"enabled" json:"enabled,computed_optional"`
@@ -45,7 +45,7 @@ func (m LogpushJobModel) MarshalJSONForUpdate(state LogpushJobModel) (data []byt
 type LogpushJobOutputOptionsModel struct {
 	BatchPrefix     types.String    `tfsdk:"batch_prefix" json:"batch_prefix,optional"`
 	BatchSuffix     types.String    `tfsdk:"batch_suffix" json:"batch_suffix,optional"`
-	Cve2021_44228   types.Bool      `tfsdk:"cve_2021_44228" json:"CVE-2021-44228,optional"`
+	Cve2021_44228   types.Bool      `tfsdk:"cve_2021_44228" json:"CVE-2021-44228,optional,no_refresh"`
 	FieldDelimiter  types.String    `tfsdk:"field_delimiter" json:"field_delimiter,optional"`
 	FieldNames      *[]types.String `tfsdk:"field_names" json:"field_names,optional"`
 	OutputType      types.String    `tfsdk:"output_type" json:"output_type,optional"`
