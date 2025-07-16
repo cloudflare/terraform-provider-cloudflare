@@ -9,8 +9,8 @@ description: Terraform Cloudflare Provider Version 5 Upgrade Guide
 Version 5 of the Cloudflare Terraform Provider is a ground-up rewrite of the
 provider, using code generation from our OpenAPI spec. While this introduces
 attribute and resource changes, it moves the provider to align more closely
-with the service endpoints. This allows automation the steps to get changes
-into the provider lowering the delay between new features and complete
+with the service endpoints. This allows easier automation of the steps to get
+changes into the provider, lowering the delay between new features and complete
 coverage.
 
 ## Provider Version Configuration
@@ -857,8 +857,8 @@ This has been removed. Users should instead use the:
 
 ## cloudflare_zone
 
-- Zone subscriptions are now controlled independently using `cloudflare_zone_subscription` resource.
-- `zone` is now an `name`.
+- Zone subscriptions are now controlled independently using the `cloudflare_zone_subscription` resource so the `plan` attribute has been removed.
+- The `zone` attribute has been renamed to `name`.
 
   Before
 
@@ -876,7 +876,7 @@ This has been removed. Users should instead use the:
   }
   ```
 
-- `account_id` is now an `account` object with the `id` attribute inside.
+- The `account_id` attribute has been replaced with an `account` attribute of type object with the `id` attribute inside.
 
   Before
 
