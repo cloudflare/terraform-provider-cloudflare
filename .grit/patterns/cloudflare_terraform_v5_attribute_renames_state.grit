@@ -56,7 +56,18 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
     `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
         $resource_type <: contains `cloudflare_queue`,
         $instances <: any {
-          contains `"name": $q` => `"queue_name": $q`
+          contains `"name": $q` => `"queue_name": $q`,
+          contains `"id": $id` => `"id": $id, 
+            "queue_id": $id`
+        }
+    },
+
+    // cloudflare_turnstile_widget
+    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_turnstile_widget`,
+        $instances <: any {
+          contains `"id": $id` => `"id": $id, 
+            "sitekey": $id`
         }
     },
 
