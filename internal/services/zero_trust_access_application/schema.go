@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
@@ -398,7 +399,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\".",
 							Required:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("SSH"),
+								stringvalidator.OneOfCaseInsensitive("SSH", "RDP"),
 							},
 						},
 						"target_attributes": schema.MapAttribute{
@@ -449,9 +450,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. Note: unsupported for infrastructure type applications.",
 				Computed:    true,
 				Optional:    true,
-				Default:     stringdefault.StaticString("24h"),
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(durationRegex, `"session_duration" only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units`),
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), sessionDurationCompatibleAppTypes...),
 				},
 			},
 			"skip_app_launcher_login_page": schema.BoolAttribute{
@@ -469,7 +470,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				DeprecationMessage: "This attribute is deprecated.",
 				CustomType:         customfield.NewListType[types.String](ctx),
 				ElementType:        types.StringType,
-
 				Validators: []validator.List{
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
 					listvalidator.ConflictsWith(path.Expressions{
@@ -599,6 +599,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The order of execution for this policy. Must be unique for each policy within an app.",
 							Optional:    true,
 							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.AtLeast(1),
+							},
 						},
 						"decision": schema.StringAttribute{
 							Description: "The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.\nAvailable values: \"allow\", \"deny\", \"non_identity\", \"bypass\".",
@@ -882,6 +885,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 							Validators: []validator.Object{
 								objectvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
+								customvalidator.RequiredWhenOtherStringIsOneOf(path.MatchRoot("type"), "infrastructure"),
 							},
 							Attributes: map[string]schema.Attribute{
 								"ssh": schema.SingleNestedAttribute{

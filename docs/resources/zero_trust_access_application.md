@@ -114,7 +114,7 @@ resource "cloudflare_zero_trust_access_application" "example_zero_trust_access_a
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `allow_authenticate_via_warp` (Boolean) When set to true, users can authenticate to this application using their WARP session.  When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.
 - `allow_iframe` (Boolean) Enables loading application content in an iFrame.
-- `allowed_idps` (List of String) The identity providers your users can select when connecting to this application. Defaults to all IdPs configured in your account.
+- `allowed_idps` (Set of String) The identity providers your users can select when connecting to this application. Defaults to all IdPs configured in your account.
 - `app_launcher_logo_url` (String) The image URL of the logo shown in the App Launcher header.
 - `app_launcher_visible` (Boolean) Displays the application in the App Launcher.
 - `auto_redirect_to_identity` (Boolean) When set to `true`, users skip the identity provider selection step during login. You must specify only one identity provider in allowed_idps.
@@ -160,9 +160,7 @@ Available values: "self_hosted", "saas", "ssh", "vnc", "app_launcher", "warp", "
 ### Read-Only
 
 - `aud` (String) Audience tag.
-- `created_at` (String)
 - `id` (String) UUID.
-- `updated_at` (String)
 
 <a id="nestedatt--cors_headers"></a>
 ### Nested Schema for `cors_headers`
@@ -173,9 +171,9 @@ Optional:
 - `allow_all_methods` (Boolean) Allows all HTTP request methods.
 - `allow_all_origins` (Boolean) Allows all origins.
 - `allow_credentials` (Boolean) When set to `true`, includes credentials (cookies, authorization headers, or TLS client certificates) with requests.
-- `allowed_headers` (List of String) Allowed HTTP request headers.
-- `allowed_methods` (List of String) Allowed HTTP request methods.
-- `allowed_origins` (List of String) Allowed origins.
+- `allowed_headers` (Set of String) Allowed HTTP request headers.
+- `allowed_methods` (Set of String) Allowed HTTP request methods.
+- `allowed_origins` (Set of String) Allowed origins.
 - `max_age` (Number) The maximum number of seconds the results of a preflight request can be cached.
 
 
@@ -274,6 +272,7 @@ Optional:
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--ip_list))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--service_token))
@@ -428,6 +427,16 @@ Required:
 - `id` (String) The ID of an identity provider.
 
 
+<a id="nestedatt--policies--exclude--oidc"></a>
+### Nested Schema for `policies.exclude.oidc`
+
+Required:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
+
+
 <a id="nestedatt--policies--exclude--okta"></a>
 ### Nested Schema for `policies.exclude.okta`
 
@@ -480,6 +489,7 @@ Optional:
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--policies--include--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--policies--include--ip_list))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--policies--include--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--policies--include--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--policies--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--policies--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--policies--include--service_token))
@@ -634,6 +644,16 @@ Required:
 - `id` (String) The ID of an identity provider.
 
 
+<a id="nestedatt--policies--include--oidc"></a>
+### Nested Schema for `policies.include.oidc`
+
+Required:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
+
+
 <a id="nestedatt--policies--include--okta"></a>
 ### Nested Schema for `policies.include.okta`
 
@@ -686,6 +706,7 @@ Optional:
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--policies--require--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--policies--require--ip_list))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--policies--require--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--policies--require--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--policies--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--policies--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--policies--require--service_token))
@@ -840,6 +861,16 @@ Required:
 - `id` (String) The ID of an identity provider.
 
 
+<a id="nestedatt--policies--require--oidc"></a>
+### Nested Schema for `policies.require.oidc`
+
+Required:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
+
+
 <a id="nestedatt--policies--require--okta"></a>
 ### Nested Schema for `policies.require.okta`
 
@@ -879,8 +910,6 @@ Optional:
 - `app_launcher_url` (String) The URL where this applications tile redirects users
 - `auth_type` (String) Optional identifier indicating the authentication protocol used for the saas app. Required for OIDC. Default if unset is "saml"
 Available values: "saml", "oidc".
-- `client_id` (String) The application client id
-- `client_secret` (String, Sensitive) The application client secret, only returned on POST request.
 - `consumer_service_url` (String) The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.
 - `custom_attributes` (Attributes List) (see [below for nested schema](#nestedatt--saas_app--custom_attributes))
 - `custom_claims` (Attributes List) (see [below for nested schema](#nestedatt--saas_app--custom_claims))
@@ -892,7 +921,6 @@ Available values: "saml", "oidc".
 - `name_id_format` (String) The format of the name identifier sent to the SaaS application.
 Available values: "id", "email".
 - `name_id_transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.
-- `public_key` (String) The Access public certificate that will be used to verify your identity.
 - `redirect_uris` (List of String) The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens
 - `refresh_token_options` (Attributes) (see [below for nested schema](#nestedatt--saas_app--refresh_token_options))
 - `saml_attribute_transform_jsonata` (String) A [JSONata] (https://jsonata.org/) expression that transforms an application's user identities into attribute assertions in the SAML response. The expression can transform id, email, name, and groups values. It can also transform fields listed in the saml_attributes or oidc_fields of the identity provider used to authenticate. The output of this expression must be a JSON object.
@@ -902,7 +930,10 @@ Available values: "id", "email".
 
 Read-Only:
 
+- `client_id` (String) The application client id
+- `client_secret` (String, Sensitive) The application client secret, only returned on POST request.
 - `created_at` (String)
+- `public_key` (String) The Access public certificate that will be used to verify your identity.
 - `updated_at` (String)
 
 <a id="nestedatt--saas_app--custom_attributes"></a>
@@ -1003,7 +1034,7 @@ Optional:
 - `authorization_url` (String) URL used to generate the auth code used during token generation.
 - `client_id` (String) Client ID used to authenticate when generating a token for authenticating with the remote SCIM service.
 - `client_secret` (String, Sensitive) Secret used to authenticate when generating a token for authenticating with the remove SCIM service.
-- `password` (String) Password used to authenticate with the remote SCIM service.
+- `password` (String, Sensitive) Password used to authenticate with the remote SCIM service.
 - `scopes` (List of String) The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.
 - `token` (String, Sensitive) Token used to authenticate with the remote SCIM service.
 - `token_url` (String) URL used to generate the token used to authenticate with the remote SCIM service.

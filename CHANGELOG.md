@@ -1,5 +1,21 @@
 # Changelog
 
+## 5.7.1 (2025-07-15)
+
+Full Changelog: [v5.7.0...v5.7.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.7.0...v5.7.1)
+
+### Bug Fixes
+
+* **api:** Fix update/read path parameter for zone subscription ([c763edf](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c763edf824d7c624a5386d5d0c9c4f10dc7dbb15))
+
+
+### Chores
+
+* **internal:** version bump ([5d9412c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5d9412ca93034ed24c449ccaa4b5347680d26b99))
+* **internal:** version bump ([93e874a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/93e874ac0a2edfa8d72e4eda2b53b1c0cec8c760))
+* **internal:** version bump ([5fa684d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5fa684de7c86bd7774940ad8ec191331f769fd6f))
+* **internal:** version bump ([68327f2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/68327f2dde2b2ce5b4178c09d9d01c305335a950))
+
 ## 5.7.0 (2025-07-14)
 
 Full Changelog: [v5.6.0...v5.7.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.6.0...v5.7.0)

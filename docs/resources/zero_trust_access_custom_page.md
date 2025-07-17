@@ -32,16 +32,10 @@ resource "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_c
 - `type` (String) Custom page type.
 Available values: "identity_denied", "forbidden".
 
-### Optional
-
-- `app_count` (Number) Number of apps the custom page is assigned to.
-
 ### Read-Only
 
-- `created_at` (String)
 - `id` (String) UUID.
 - `uid` (String) UUID.
-- `updated_at` (String)
 
 ## Import
 
