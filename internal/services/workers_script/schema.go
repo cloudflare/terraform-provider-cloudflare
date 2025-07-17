@@ -8,11 +8,12 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -100,7 +101,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"bindings": schema.ListNestedAttribute{
+					"bindings": schema.SetNestedAttribute{
 						Description: "List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.",
 						Optional:    true,
 						NestedObject: schema.NestedAttributeObject{
@@ -254,23 +255,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										),
 									},
 								},
-								"usages": schema.ListAttribute{
+								"usages": schema.SetAttribute{
 									Description: "Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).",
 									Optional:    true,
-									Validators: []validator.List{
-										listvalidator.ValueStringsAre(
-											stringvalidator.OneOfCaseInsensitive(
-												"encrypt",
-												"decrypt",
-												"sign",
-												"verify",
-												"deriveKey",
-												"deriveBits",
-												"wrapKey",
-												"unwrapKey",
-											),
-										),
-									},
 									ElementType: types.StringType,
 								},
 								"key_base64": schema.StringAttribute{
@@ -299,23 +286,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
 						Optional:    true,
 					},
-					"compatibility_flags": schema.ListAttribute{
+					"compatibility_flags": schema.SetAttribute{
 						Description: "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewSetType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"keep_assets": schema.BoolAttribute{
 						Description: "Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.",
 						Optional:    true,
 					},
-					"keep_bindings": schema.ListAttribute{
+					"keep_bindings": schema.SetAttribute{
 						Description: "List of binding types to keep from previous_upload.",
 						Optional:    true,
 						ElementType: types.StringType,
 					},
 					"logpush": schema.BoolAttribute{
 						Description: "Whether Logpush is turned on for the Worker.",
+						Computed:    true,
 						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"main_module": schema.StringAttribute{
 						Description: "Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
@@ -496,12 +487,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"tags": schema.ListAttribute{
+					"tags": schema.SetAttribute{
 						Description: "List of strings to use as tags for this Worker.",
 						Optional:    true,
 						ElementType: types.StringType,
 					},
-					"tail_consumers": schema.ListNestedAttribute{
+					"tail_consumers": schema.SetNestedAttribute{
 						Description: "List of Workers that will consume logs from the attached Worker.",
 						Optional:    true,
 						NestedObject: schema.NestedAttributeObject{
@@ -523,12 +514,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"usage_model": schema.StringAttribute{
 						Description: "Usage model for the Worker invocations.\nAvailable values: \"standard\".",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("standard"),
 						},
+						Default: stringdefault.StaticString("standard"),
 					},
 				},
+			},
+			"files": schema.SetAttribute{
+				Description: "An array of modules (often JavaScript files) comprising a Worker script. At least one module must be present and referenced in the metadata as `main_module` or `body_part` by filename.<br/>Possible Content-Type(s) are: `application/javascript+module`, `text/javascript+module`, `application/javascript`, `text/javascript`, `application/wasm`, `text/plain`, `application/octet-stream`, `application/source-map`.",
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the script was created.",
@@ -550,6 +548,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"logpush": schema.BoolAttribute{
 				Description: "Whether Logpush is turned on for the Worker.",
 				Computed:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the script was last modified.",
@@ -585,6 +584,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("standard"),
 				},
+				Default: stringdefault.StaticString("standard"),
 			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
@@ -616,10 +616,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"tail_consumers": schema.ListNestedAttribute{
+			"tail_consumers": schema.SetNestedAttribute{
 				Description: "List of Workers that will consume logs from the attached Worker.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[WorkersScriptTailConsumersModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[WorkersScriptTailConsumersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"service": schema.StringAttribute{

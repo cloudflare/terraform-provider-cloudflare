@@ -344,6 +344,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"linked_app_token": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"app_uid": schema.StringAttribute{
+									Description: "The ID of an Access OIDC SaaS application",
+									Required:    true,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -596,6 +605,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"linked_app_token": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"app_uid": schema.StringAttribute{
+									Description: "The ID of an Access OIDC SaaS application",
+									Required:    true,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -844,6 +862,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"token_id": schema.StringAttribute{
 									Description: "The ID of a Service Token.",
+									Required:    true,
+								},
+							},
+						},
+						"linked_app_token": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"app_uid": schema.StringAttribute{
+									Description: "The ID of an Access OIDC SaaS application",
 									Required:    true,
 								},
 							},

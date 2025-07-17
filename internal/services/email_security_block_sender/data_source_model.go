@@ -48,6 +48,9 @@ func (m *EmailSecurityBlockSenderDataSourceModel) toListParams(_ context.Context
 	if !m.Filter.Order.IsNull() {
 		params.Order = cloudflare.F(email_security.SettingBlockSenderListParamsOrder(m.Filter.Order.ValueString()))
 	}
+	if !m.Filter.Pattern.IsNull() {
+		params.Pattern = cloudflare.F(m.Filter.Pattern.ValueString())
+	}
 	if !m.Filter.PatternType.IsNull() {
 		params.PatternType = cloudflare.F(email_security.SettingBlockSenderListParamsPatternType(m.Filter.PatternType.ValueString()))
 	}
@@ -61,6 +64,7 @@ func (m *EmailSecurityBlockSenderDataSourceModel) toListParams(_ context.Context
 type EmailSecurityBlockSenderFindOneByDataSourceModel struct {
 	Direction   types.String `tfsdk:"direction" query:"direction,optional"`
 	Order       types.String `tfsdk:"order" query:"order,optional"`
+	Pattern     types.String `tfsdk:"pattern" query:"pattern,optional"`
 	PatternType types.String `tfsdk:"pattern_type" query:"pattern_type,optional"`
 	Search      types.String `tfsdk:"search" query:"search,optional"`
 }

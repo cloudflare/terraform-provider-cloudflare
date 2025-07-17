@@ -45,7 +45,8 @@ type ListItemBodyModel struct {
 }
 
 type ListItemBodyHostnameModel struct {
-	URLHostname types.String `tfsdk:"url_hostname" json:"url_hostname,required"`
+	URLHostname          types.String `tfsdk:"url_hostname" json:"url_hostname,required"`
+	ExcludeExactHostname types.Bool   `tfsdk:"exclude_exact_hostname" json:"exclude_exact_hostname,optional"`
 }
 
 type ListItemBodyRedirectModel struct {
@@ -59,7 +60,8 @@ type ListItemBodyRedirectModel struct {
 }
 
 type ListItemHostnameModel struct {
-	URLHostname types.String `tfsdk:"url_hostname" json:"url_hostname,computed"`
+	URLHostname          types.String `tfsdk:"url_hostname" json:"url_hostname,computed"`
+	ExcludeExactHostname types.Bool   `tfsdk:"exclude_exact_hostname" json:"exclude_exact_hostname,computed"`
 }
 
 type ListItemRedirectModel struct {

@@ -576,6 +576,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"not_sharable": schema.BoolAttribute{
+				Description: "The rule cannot be shared via the Orgs API",
+				Computed:    true,
+			},
+			"read_only": schema.BoolAttribute{
+				Description: "The rule was shared via the Orgs API and cannot be edited by the current account",
+				Computed:    true,
+			},
+			"source_account": schema.StringAttribute{
+				Description: "account tag of account that created the rule",
+				Computed:    true,
+			},
 			"updated_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},

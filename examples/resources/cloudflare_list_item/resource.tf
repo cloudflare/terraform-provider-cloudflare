@@ -6,6 +6,7 @@ resource "cloudflare_list_item" "example_list_item" {
     comment = "Private IP address"
     hostname = {
       url_hostname = "example.com"
+      exclude_exact_hostname = true
     }
     ip = "10.0.0.1"
     redirect = {

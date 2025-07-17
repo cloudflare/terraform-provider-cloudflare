@@ -37,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "DNS record name (or @ for the zone apex) in Punycode.",
+				Description: "Complete DNS record name, including the zone name, in Punycode.",
 				Required:    true,
 			},
 			"type": schema.StringAttribute{

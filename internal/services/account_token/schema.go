@@ -78,10 +78,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"resources": schema.MapAttribute{
-							Description: "A list of resource names that the policy applies to.",
+						"resources": schema.SingleNestedAttribute{
+							Description: "Resource permissions for the policy. Use either simple or nested permissions.",
 							Required:    true,
-							ElementType: types.StringType,
+							Attributes: map[string]schema.Attribute{
+								"nested": schema.MapAttribute{
+									Description: "Nested resource permissions for hierarchical scoping.",
+									Optional:    true,
+									ElementType: types.MapType{
+										ElemType: types.StringType,
+									},
+								},
+								"simple": schema.MapAttribute{
+									Description: "Simple resource permissions where each resource maps to a permission string.",
+									Optional:    true,
+									ElementType: types.StringType,
+								},
+							},
 						},
 					},
 				},

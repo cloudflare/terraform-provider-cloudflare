@@ -340,10 +340,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"protocol": schema.StringAttribute{
-							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\".",
+							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\", \"RDP\".",
 							Required:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("SSH"),
+								stringvalidator.OneOfCaseInsensitive("SSH", "RDP"),
 							},
 						},
 						"target_attributes": schema.MapAttribute{
@@ -763,6 +763,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
+												Required:    true,
+											},
+										},
+									},
 								},
 							},
 						},
@@ -1040,6 +1049,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
+												Required:    true,
+											},
+										},
+									},
 								},
 							},
 						},
@@ -1288,6 +1306,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
+												Required:    true,
+											},
+										},
+									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
 												Required:    true,
 											},
 										},
