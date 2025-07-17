@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -23,7 +24,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"script_name": schema.StringAttribute{
-				Description: "Name of the script.",
+				Description: "Name of the script, used in URLs and route configuration.",
 				Required:    true,
 			},
 			"deployments": schema.ListNestedAttribute{
@@ -31,6 +32,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectListType[WorkersDeploymentDeploymentsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Computed: true,
+						},
+						"created_on": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
+						},
+						"source": schema.StringAttribute{
+							Computed: true,
+						},
 						"strategy": schema.StringAttribute{
 							Description: `Available values: "percentage".`,
 							Computed:    true,
@@ -55,9 +66,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"id": schema.StringAttribute{
-							Computed: true,
-						},
 						"annotations": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[WorkersDeploymentDeploymentsAnnotationsDataSourceModel](ctx),
@@ -69,12 +77,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"author_email": schema.StringAttribute{
-							Computed: true,
-						},
-						"created_on": schema.StringAttribute{
-							Computed: true,
-						},
-						"source": schema.StringAttribute{
 							Computed: true,
 						},
 					},

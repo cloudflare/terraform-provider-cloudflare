@@ -162,7 +162,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"state": schema.StringAttribute{
-						Description: "Specifies the processing status for all quality levels for a video.\nAvailable values: \"pendingupload\", \"downloading\", \"queued\", \"inprogress\", \"ready\", \"error\".",
+						Description: "Specifies the processing status for all quality levels for a video.\nAvailable values: \"pendingupload\", \"downloading\", \"queued\", \"inprogress\", \"ready\", \"error\", \"live-inprogress\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -172,6 +172,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								"inprogress",
 								"ready",
 								"error",
+								"live-inprogress",
 							),
 						},
 					},

@@ -170,6 +170,7 @@ type ZeroTrustAccessApplicationsPoliciesExcludeDataSourceModel struct {
 	SAML                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
 	OIDC                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
+	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesExcludeGroupDataSourceModel struct {
@@ -273,6 +274,10 @@ type ZeroTrustAccessApplicationsPoliciesExcludeServiceTokenDataSourceModel struc
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
+type ZeroTrustAccessApplicationsPoliciesExcludeLinkedAppTokenDataSourceModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
+}
+
 type ZeroTrustAccessApplicationsPoliciesIncludeDataSourceModel struct {
 	Group                customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
 	AnyValidServiceToken customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeAnyValidServiceTokenDataSourceModel] `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
@@ -297,6 +302,7 @@ type ZeroTrustAccessApplicationsPoliciesIncludeDataSourceModel struct {
 	SAML                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
 	OIDC                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
+	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesIncludeGroupDataSourceModel struct {
@@ -400,6 +406,10 @@ type ZeroTrustAccessApplicationsPoliciesIncludeServiceTokenDataSourceModel struc
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
+type ZeroTrustAccessApplicationsPoliciesIncludeLinkedAppTokenDataSourceModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
+}
+
 type ZeroTrustAccessApplicationsPoliciesRequireDataSourceModel struct {
 	Group                customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
 	AnyValidServiceToken customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireAnyValidServiceTokenDataSourceModel] `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
@@ -424,6 +434,7 @@ type ZeroTrustAccessApplicationsPoliciesRequireDataSourceModel struct {
 	SAML                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
 	OIDC                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
+	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesRequireGroupDataSourceModel struct {
@@ -525,6 +536,10 @@ type ZeroTrustAccessApplicationsPoliciesRequireOIDCDataSourceModel struct {
 
 type ZeroTrustAccessApplicationsPoliciesRequireServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
+}
+
+type ZeroTrustAccessApplicationsPoliciesRequireLinkedAppTokenDataSourceModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesConnectionRulesDataSourceModel struct {

@@ -59,7 +59,7 @@ type APITokensPoliciesDataSourceModel struct {
 	ID               types.String                                                                   `tfsdk:"id" json:"id,computed"`
 	Effect           types.String                                                                   `tfsdk:"effect" json:"effect,computed"`
 	PermissionGroups customfield.NestedObjectList[APITokensPoliciesPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
-	Resources        customfield.Map[types.String]                                                  `tfsdk:"resources" json:"resources,computed"`
+	Resources        customfield.NestedObject[APITokensPoliciesResourcesDataSourceModel]            `tfsdk:"resources" json:"resources,computed"`
 }
 
 type APITokensPoliciesPermissionGroupsDataSourceModel struct {
@@ -71,4 +71,9 @@ type APITokensPoliciesPermissionGroupsDataSourceModel struct {
 type APITokensPoliciesPermissionGroupsMetaDataSourceModel struct {
 	Key   types.String `tfsdk:"key" json:"key,computed"`
 	Value types.String `tfsdk:"value" json:"value,computed"`
+}
+
+type APITokensPoliciesResourcesDataSourceModel struct {
+	Nested customfield.Map[customfield.Map[types.String]] `tfsdk:"nested" json:"nested,computed"`
+	Simple customfield.Map[types.String]                  `tfsdk:"simple" json:"simple,computed"`
 }

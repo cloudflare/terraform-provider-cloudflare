@@ -4,6 +4,8 @@ package workers_script
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
@@ -14,10 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -79,11 +78,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Configuration for assets within a Worker.",
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
-							"_headers": schema.StringAttribute{
+							"headers": schema.StringAttribute{
 								Description: "The contents of a _headers file (used to attach custom headers on asset responses)",
 								Optional:    true,
 							},
-							"_redirects": schema.StringAttribute{
+							"redirects": schema.StringAttribute{
 								Description: "The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving)",
 								Optional:    true,
 							},
@@ -132,11 +131,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"bindings": schema.ListNestedAttribute{
+			"bindings": schema.SetNestedAttribute{
 				Description: "List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataBindingsModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[WorkersScriptMetadataBindingsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
@@ -170,6 +169,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"version_metadata",
 									"secrets_store_secret",
 									"secret_key",
+									"workflow",
 								),
 							},
 						},
@@ -334,13 +334,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:       stringdefault.StaticString(""),
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
-			"compatibility_flags": schema.ListAttribute{
+			"compatibility_flags": schema.SetAttribute{
 				Description:   "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
 				Computed:      true,
 				Optional:      true,
 				ElementType:   types.StringType,
-				CustomType:    customfield.NewListType[types.String](ctx),
-				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
+				CustomType:    customfield.NewSetType[types.String](ctx),
+				PlanModifiers: []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 			},
 			"keep_assets": schema.BoolAttribute{
 				Description: "Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.",
@@ -528,8 +528,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"startup_time_ms": schema.Int64Attribute{
-				Computed:      true,
-				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
+				Computed: true,
 			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
@@ -562,11 +561,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"tail_consumers": schema.ListNestedAttribute{
+			"tail_consumers": schema.SetNestedAttribute{
 				Description: "List of Workers that will consume logs from the attached Worker.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataTailConsumersModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[WorkersScriptMetadataTailConsumersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"service": schema.StringAttribute{

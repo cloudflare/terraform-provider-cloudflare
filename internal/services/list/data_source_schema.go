@@ -25,7 +25,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Defines an identifier.",
+				Description: "The Account ID for this resource.",
 				Required:    true,
 			},
 			"created_on": schema.StringAttribute{
