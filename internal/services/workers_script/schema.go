@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -320,8 +319,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "Name of the Workflow to bind to.",
 							Optional:    true,
 						},
+						Default: stringdefault.StaticString("standard"),
 					},
 				},
+			},
+			"files": schema.SetAttribute{
+				Description: "An array of modules (often JavaScript files) comprising a Worker script. At least one module must be present and referenced in the metadata as `main_module` or `body_part` by filename.<br/>Possible Content-Type(s) are: `application/javascript+module`, `text/javascript+module`, `application/javascript`, `text/javascript`, `application/wasm`, `text/plain`, `application/octet-stream`, `application/source-map`.",
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"body_part": schema.StringAttribute{
 				Description: "Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
@@ -562,7 +567,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"tail_consumers": schema.ListNestedAttribute{
+			"tail_consumers": schema.SetNestedAttribute{
 				Description: "List of Workers that will consume logs from the attached Worker.",
 				Computed:    true,
 				Optional:    true,

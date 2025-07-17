@@ -30,6 +30,9 @@ type ZeroTrustGatewayPolicyModel struct {
 	RuleSettings  customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsModel] `tfsdk:"rule_settings" json:"rule_settings,computed_optional"`
 	CreatedAt     timetypes.RFC3339                                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt     timetypes.RFC3339                                                 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
+	NotSharable   types.Bool                                                        `tfsdk:"not_sharable" json:"not_sharable,computed"`
+	ReadOnly      types.Bool                                                        `tfsdk:"read_only" json:"read_only,computed"`
+	SourceAccount types.String                                                      `tfsdk:"source_account" json:"source_account,computed"`
 	UpdatedAt     timetypes.RFC3339                                                 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Version       types.Int64                                                       `tfsdk:"version" json:"version,computed"`
 	WarningStatus types.String                                                      `tfsdk:"warning_status" json:"warning_status,computed"`

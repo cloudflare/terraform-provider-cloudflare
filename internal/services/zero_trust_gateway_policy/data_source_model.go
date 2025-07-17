@@ -29,7 +29,10 @@ type ZeroTrustGatewayPolicyDataSourceModel struct {
 	Enabled       types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed"`
 	Identity      types.String                                                                `tfsdk:"identity" json:"identity,computed"`
 	Name          types.String                                                                `tfsdk:"name" json:"name,computed"`
+	NotSharable   types.Bool                                                                  `tfsdk:"not_sharable" json:"not_sharable,computed"`
 	Precedence    types.Int64                                                                 `tfsdk:"precedence" json:"precedence,computed"`
+	ReadOnly      types.Bool                                                                  `tfsdk:"read_only" json:"read_only,computed"`
+	SourceAccount types.String                                                                `tfsdk:"source_account" json:"source_account,computed"`
 	Traffic       types.String                                                                `tfsdk:"traffic" json:"traffic,computed"`
 	UpdatedAt     timetypes.RFC3339                                                           `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Version       types.Int64                                                                 `tfsdk:"version" json:"version,computed"`
