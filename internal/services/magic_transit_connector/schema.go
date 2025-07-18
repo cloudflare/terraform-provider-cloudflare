@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -30,28 +29,36 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Optional: true,
+						Optional:      true,
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 					},
 					"serial_number": schema.StringAttribute{
-						Optional: true,
+						Optional:      true,
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"activated": schema.BoolAttribute{
 				Optional: true,
+				Computed: true,
 			},
 			"interrupt_window_duration_hours": schema.Float64Attribute{
 				Optional: true,
+				Computed: true,
 			},
 			"interrupt_window_hour_of_day": schema.Float64Attribute{
 				Optional: true,
+				Computed: true,
 			},
 			"notes": schema.StringAttribute{
 				Optional: true,
+				Computed: true,
 			},
 			"timezone": schema.StringAttribute{
 				Optional: true,
+				Computed: true,
 			},
 			"last_heartbeat": schema.StringAttribute{
 				Computed: true,
