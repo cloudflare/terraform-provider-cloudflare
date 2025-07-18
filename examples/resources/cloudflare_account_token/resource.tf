@@ -17,14 +17,7 @@ resource "cloudflare_account_token" "example_account_token" {
       }
     }]
     resources = {
-      nested = {
-        "com.cloudflare.api.account.472e41d66440f10635de39c7ffaf6080" = {
-          "com.cloudflare.api.account.zone.*" = "*"
-        }
-      }
-      simple = {
-        "com.cloudflare.api.account.472e41d66440f10635de39c7ffaf6080" = "*"
-      }
+      foo = "string"
     }
   }]
   condition = {
