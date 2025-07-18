@@ -38,7 +38,7 @@ type APITokenPoliciesModel struct {
 	ID               types.String                              `tfsdk:"id" json:"id,computed"`
 	Effect           types.String                              `tfsdk:"effect" json:"effect,required"`
 	PermissionGroups *[]*APITokenPoliciesPermissionGroupsModel `tfsdk:"permission_groups" json:"permission_groups,required"`
-	Resources        *APITokenPoliciesResourcesModel           `tfsdk:"resources" json:"resources,required"`
+	Resources        *map[string]types.String                  `tfsdk:"resources" json:"resources,required"`
 }
 
 type APITokenPoliciesPermissionGroupsModel struct {
@@ -50,11 +50,6 @@ type APITokenPoliciesPermissionGroupsModel struct {
 type APITokenPoliciesPermissionGroupsMetaModel struct {
 	Key   types.String `tfsdk:"key" json:"key,optional"`
 	Value types.String `tfsdk:"value" json:"value,optional"`
-}
-
-type APITokenPoliciesResourcesModel struct {
-	Nested *map[string]*map[string]types.String `tfsdk:"nested" json:"nested,optional"`
-	Simple *map[string]types.String             `tfsdk:"simple" json:"simple,optional"`
 }
 
 type APITokenConditionModel struct {

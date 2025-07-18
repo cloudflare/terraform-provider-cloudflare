@@ -141,26 +141,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"resources": schema.SingleNestedAttribute{
-							Description: "Resource permissions for the policy. Use either simple or nested permissions.",
+						"resources": schema.MapAttribute{
+							Description: "A list of resource names that the policy applies to.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectType[APITokenPoliciesResourcesDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"nested": schema.MapAttribute{
-									Description: "Nested resource permissions for hierarchical scoping.",
-									Computed:    true,
-									CustomType:  customfield.NewMapType[customfield.Map[types.String]](ctx),
-									ElementType: types.MapType{
-										ElemType: types.StringType,
-									},
-								},
-								"simple": schema.MapAttribute{
-									Description: "Simple resource permissions where each resource maps to a permission string.",
-									Computed:    true,
-									CustomType:  customfield.NewMapType[types.String](ctx),
-									ElementType: types.StringType,
-								},
-							},
+							CustomType:  customfield.NewMapType[types.String](ctx),
+							ElementType: types.StringType,
 						},
 					},
 				},
