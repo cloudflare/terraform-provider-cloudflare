@@ -1,5 +1,24 @@
 # Changelog
 
+## 5.8.0 (2025-07-19)
+
+Full Changelog: [v5.7.1...v5.8.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.7.1...v5.8.0)
+
+### Features
+
+* **api:** api update ([d973284](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d973284cdfe2df7bff4c673f53c65e196c27881d))
+* **api:** api update ([b68c4c6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b68c4c674590a7c1a7867547f80b35979ee3ddc0))
+
+
+### Bug Fixes
+
+* **schema:** ensure nested computed properties mark their children as computed ([5ce9597](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5ce9597e5cc8307ee20fac142bd4a2dc57bdc8c9))
+
+
+### Chores
+
+* **internal:** version bump ([b014a27](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b014a27a24164030fe843780e4e2675313c0c4de))
+
 ## 5.7.1 (2025-07-15)
 
 Full Changelog: [v5.7.0...v5.7.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.7.0...v5.7.1)

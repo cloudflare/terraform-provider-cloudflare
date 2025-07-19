@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -31,13 +32,13 @@ func (m *WorkersDeploymentDataSourceModel) toReadParams(_ context.Context) (para
 }
 
 type WorkersDeploymentDeploymentsDataSourceModel struct {
+	ID          types.String                                                                      `tfsdk:"id" json:"id,computed"`
+	CreatedOn   timetypes.RFC3339                                                                 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Source      types.String                                                                      `tfsdk:"source" json:"source,computed"`
 	Strategy    types.String                                                                      `tfsdk:"strategy" json:"strategy,computed"`
 	Versions    customfield.NestedObjectList[WorkersDeploymentDeploymentsVersionsDataSourceModel] `tfsdk:"versions" json:"versions,computed"`
-	ID          types.String                                                                      `tfsdk:"id" json:"id,computed"`
 	Annotations customfield.NestedObject[WorkersDeploymentDeploymentsAnnotationsDataSourceModel]  `tfsdk:"annotations" json:"annotations,computed"`
 	AuthorEmail types.String                                                                      `tfsdk:"author_email" json:"author_email,computed"`
-	CreatedOn   types.String                                                                      `tfsdk:"created_on" json:"created_on,computed"`
-	Source      types.String                                                                      `tfsdk:"source" json:"source,computed"`
 }
 
 type WorkersDeploymentDeploymentsVersionsDataSourceModel struct {

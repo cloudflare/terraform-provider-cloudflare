@@ -5,6 +5,7 @@ package workers_deployment
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,7 +21,7 @@ type WorkersDeploymentModel struct {
 	Versions    *[]*WorkersDeploymentVersionsModel                              `tfsdk:"versions" json:"versions,required,no_refresh"`
 	Annotations *WorkersDeploymentAnnotationsModel                              `tfsdk:"annotations" json:"annotations,optional,no_refresh"`
 	AuthorEmail types.String                                                    `tfsdk:"author_email" json:"author_email,computed,no_refresh"`
-	CreatedOn   types.String                                                    `tfsdk:"created_on" json:"created_on,computed,no_refresh"`
+	CreatedOn   timetypes.RFC3339                                               `tfsdk:"created_on" json:"created_on,computed,no_refresh" format:"date-time"`
 	Source      types.String                                                    `tfsdk:"source" json:"source,computed,no_refresh"`
 	Deployments customfield.NestedObjectList[WorkersDeploymentDeploymentsModel] `tfsdk:"deployments" json:"deployments,computed"`
 }
@@ -43,13 +44,13 @@ type WorkersDeploymentAnnotationsModel struct {
 }
 
 type WorkersDeploymentDeploymentsModel struct {
+	ID          types.String                                                            `tfsdk:"id" json:"id,computed"`
+	CreatedOn   timetypes.RFC3339                                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Source      types.String                                                            `tfsdk:"source" json:"source,computed"`
 	Strategy    types.String                                                            `tfsdk:"strategy" json:"strategy,computed"`
 	Versions    customfield.NestedObjectList[WorkersDeploymentDeploymentsVersionsModel] `tfsdk:"versions" json:"versions,computed"`
-	ID          types.String                                                            `tfsdk:"id" json:"id,computed"`
 	Annotations customfield.NestedObject[WorkersDeploymentDeploymentsAnnotationsModel]  `tfsdk:"annotations" json:"annotations,computed"`
 	AuthorEmail types.String                                                            `tfsdk:"author_email" json:"author_email,computed"`
-	CreatedOn   types.String                                                            `tfsdk:"created_on" json:"created_on,computed"`
-	Source      types.String                                                            `tfsdk:"source" json:"source,computed"`
 }
 
 type WorkersDeploymentDeploymentsVersionsModel struct {

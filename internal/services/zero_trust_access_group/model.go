@@ -54,6 +54,7 @@ type ZeroTrustAccessGroupIncludeModel struct {
 	SAML                 *ZeroTrustAccessGroupIncludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
 	OIDC                 *ZeroTrustAccessGroupIncludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessGroupIncludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
+	LinkedAppToken       *ZeroTrustAccessGroupIncludeLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 }
 
 type ZeroTrustAccessGroupIncludeGroupModel struct {
@@ -157,6 +158,10 @@ type ZeroTrustAccessGroupIncludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
 
+type ZeroTrustAccessGroupIncludeLinkedAppTokenModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
+}
+
 type ZeroTrustAccessGroupExcludeModel struct {
 	Group                *ZeroTrustAccessGroupExcludeGroupModel                `tfsdk:"group" json:"group,optional"`
 	AnyValidServiceToken *ZeroTrustAccessGroupExcludeAnyValidServiceTokenModel `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
@@ -181,6 +186,7 @@ type ZeroTrustAccessGroupExcludeModel struct {
 	SAML                 *ZeroTrustAccessGroupExcludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
 	OIDC                 *ZeroTrustAccessGroupExcludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessGroupExcludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
+	LinkedAppToken       *ZeroTrustAccessGroupExcludeLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 }
 
 type ZeroTrustAccessGroupExcludeGroupModel struct {
@@ -284,6 +290,10 @@ type ZeroTrustAccessGroupExcludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
 
+type ZeroTrustAccessGroupExcludeLinkedAppTokenModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
+}
+
 type ZeroTrustAccessGroupRequireModel struct {
 	Group                *ZeroTrustAccessGroupRequireGroupModel                `tfsdk:"group" json:"group,optional"`
 	AnyValidServiceToken *ZeroTrustAccessGroupRequireAnyValidServiceTokenModel `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
@@ -308,6 +318,7 @@ type ZeroTrustAccessGroupRequireModel struct {
 	SAML                 *ZeroTrustAccessGroupRequireSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
 	OIDC                 *ZeroTrustAccessGroupRequireOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessGroupRequireServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
+	LinkedAppToken       *ZeroTrustAccessGroupRequireLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 }
 
 type ZeroTrustAccessGroupRequireGroupModel struct {
@@ -409,4 +420,8 @@ type ZeroTrustAccessGroupRequireOIDCModel struct {
 
 type ZeroTrustAccessGroupRequireServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
+}
+
+type ZeroTrustAccessGroupRequireLinkedAppTokenModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
 }
