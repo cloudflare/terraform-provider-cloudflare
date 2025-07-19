@@ -12,8 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
@@ -86,6 +84,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Flag that indicates if the job is enabled.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"filter": schema.StringAttribute{
@@ -96,13 +95,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:        "This field is deprecated. Use `output_options` instead. Configuration string. It specifies things like requested fields and timestamp formats. If migrating from the logpull api, copy the url (full url or just the query string) of your call here, and logpush will keep on making this call for you, setting start and end times appropriately.",
 				Optional:           true,
 				DeprecationMessage: "This attribute is deprecated.",
-			},
-			"max_upload_bytes": schema.Float64Attribute{
-				Description: "The maximum uncompressed file size of a batch of logs. This setting value must be between `5 MB` and `1 GB`, or `0` to disable it. Note that you cannot set a minimum file size; this means that log files may be much smaller than this batch size.\nAvailable values: 0.",
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.OneOf(0),
-				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Optional human readable job name. Not unique. Cloudflare suggests that you set this to a meaningful string, like the domain name, to make it easier to identify your job.",
@@ -132,25 +124,38 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Default: stringdefault.StaticString(""),
 			},
-			"max_upload_interval_seconds": schema.Float64Attribute{
-				Description: "The maximum interval in seconds for log batches. This setting must be between 30 and 300 seconds (5 minutes), or `0` to disable it. Note that you cannot specify a minimum interval for log batches; this means that log files may be sent in shorter intervals than this.\nAvailable values: 0.",
-				Computed:    true,
+			"max_upload_bytes": schema.Int64Attribute{
+				Description: "The maximum uncompressed file size of a batch of logs. This setting value must be between `5 MB` and `1 GB`, or `0` to disable it. Note that you cannot set a minimum file size; this means that log files may be much smaller than this batch size.\nAvailable values: 0.",
 				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.OneOf(0),
+				Validators: []validator.Int64{
+					int64validator.Any(
+						int64validator.OneOf(0),
+						int64validator.Between(5000000, 1000000000),
+					),
 				},
 			},
-			"max_upload_records": schema.Float64Attribute{
+			"max_upload_records": schema.Int64Attribute{
 				Description: "The maximum number of log lines per batch. This setting must be between 1000 and 1,000,000 lines, or `0` to disable it. Note that you cannot specify a minimum number of log lines per batch; this means that log files may contain many fewer lines than this.\nAvailable values: 0.",
-				Computed:    true,
 				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.OneOf(0),
+				Validators: []validator.Int64{
+					int64validator.Any(
+						int64validator.OneOf(0),
+						int64validator.Between(1000, 1000000),
+					),
+				},
+			},
+			"max_upload_interval_seconds": schema.Int64Attribute{
+				Description: "The maximum interval in seconds for log batches. This setting must be between 30 and 300 seconds (5 minutes), or `0` to disable it. Note that you cannot specify a minimum interval for log batches; this means that log files may be sent in shorter intervals than this.\nAvailable values: 0.",
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Any(
+						int64validator.OneOf(0),
+						int64validator.Between(30, 300),
+					),
 				},
 			},
 			"output_options": schema.SingleNestedAttribute{
 				Description: "The structured replacement for `logpull_options`. When including this field, the `logpull_option` field will be ignored.",
-				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[LogpushJobOutputOptionsModel](ctx),
 				Attributes: map[string]schema.Attribute{
@@ -164,9 +169,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"cve_2021_44228": schema.BoolAttribute{
 						Description: "If set to true, will cause all occurrences of `${` in the generated files to be replaced with `x{`.",
-						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"field_delimiter": schema.StringAttribute{
 						Description: "String to join fields. This field be ignored when `record_template` is set.",
@@ -179,12 +182,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"output_type": schema.StringAttribute{
 						Description: "Specifies the output type, such as `ndjson` or `csv`. This sets default values for the rest of the settings, depending on the chosen output type. Some formatting rules, like string quoting, are different between output types.\nAvailable values: \"ndjson\", \"csv\".",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("ndjson", "csv"),
 						},
-						Default: stringdefault.StaticString("ndjson"),
 					},
 					"record_delimiter": schema.StringAttribute{
 						Description: "String to be inserted in-between the records as separator.",
@@ -204,16 +205,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"sample_rate": schema.Float64Attribute{
 						Description: "Floating number to specify sampling rate. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 1),
 						},
-						Default: float64default.StaticFloat64(1),
 					},
 					"timestamp_format": schema.StringAttribute{
 						Description: "String to specify the format for timestamps, such as `unixnano`, `unix`, or `rfc3339`.\nAvailable values: \"unixnano\", \"unix\", \"rfc3339\".",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -222,7 +220,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"rfc3339",
 							),
 						},
-						Default: stringdefault.StaticString("unixnano"),
 					},
 				},
 			},
