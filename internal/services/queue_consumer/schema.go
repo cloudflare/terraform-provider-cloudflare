@@ -29,9 +29,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"consumer_id": schema.StringAttribute{
-				Description:   "A Resource identifier.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "A Resource identifier.",
+				Computed:    true,
 			},
 			"dead_letter_queue": schema.StringAttribute{
 				Optional: true,
