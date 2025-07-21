@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -84,7 +85,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"resources": schema.MapAttribute{
 							Description: "A list of resource names that the policy applies to.",
 							Required:    true,
-							ElementType: types.StringType,
+							ElementType: jsontypes.NormalizedType{},
 						},
 					},
 				},

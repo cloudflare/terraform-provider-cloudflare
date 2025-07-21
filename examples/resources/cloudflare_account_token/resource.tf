@@ -17,7 +17,8 @@ resource "cloudflare_account_token" "example_account_token" {
       }
     }]
     resources = {
-      foo = "string"
+      object = "bar"
+      string = "bar"
     }
   }]
   condition = {
