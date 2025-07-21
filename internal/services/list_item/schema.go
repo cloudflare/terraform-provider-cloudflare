@@ -40,29 +40,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"asn": schema.Int64Attribute{
-							Description: "Defines a non-negative 32 bit integer.",
+						"ip": schema.StringAttribute{
+							Description: "An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.",
 							Optional:    true,
 						},
 						"comment": schema.StringAttribute{
 							Description: "Defines an informative summary of the list item.",
-							Optional:    true,
-						},
-						"hostname": schema.SingleNestedAttribute{
-							Description: "Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-).",
-							Optional:    true,
-							Attributes: map[string]schema.Attribute{
-								"url_hostname": schema.StringAttribute{
-									Required: true,
-								},
-								"exclude_exact_hostname": schema.BoolAttribute{
-									Description: "Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.",
-									Optional:    true,
-								},
-							},
-						},
-						"ip": schema.StringAttribute{
-							Description: "An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.",
 							Optional:    true,
 						},
 						"redirect": schema.SingleNestedAttribute{
@@ -110,6 +93,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Default:  booldefault.StaticBool(false),
 								},
 							},
+						},
+						"hostname": schema.SingleNestedAttribute{
+							Description: "Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-).",
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"url_hostname": schema.StringAttribute{
+									Required: true,
+								},
+								"exclude_exact_hostname": schema.BoolAttribute{
+									Description: "Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.",
+									Optional:    true,
+								},
+							},
+						},
+						"asn": schema.Int64Attribute{
+							Description: "Defines a non-negative 32 bit integer.",
+							Optional:    true,
 						},
 					},
 				},

@@ -63,7 +63,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"num_referencing_filters": schema.Float64Attribute{
-				Description: "The number of [filters](/operations/filters-list-filters) referencing the list.",
+				Description: "The number of [filters](/api/resources/filters/) referencing the list.",
 				Computed:    true,
 			},
 		},

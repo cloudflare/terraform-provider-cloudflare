@@ -37,16 +37,11 @@ func (m ListItemModel) MarshalJSONForUpdate(state ListItemModel) (data []byte, e
 }
 
 type ListItemBodyModel struct {
-	ASN      types.Int64                `tfsdk:"asn" json:"asn,optional"`
-	Comment  types.String               `tfsdk:"comment" json:"comment,optional"`
-	Hostname *ListItemBodyHostnameModel `tfsdk:"hostname" json:"hostname,optional"`
 	IP       types.String               `tfsdk:"ip" json:"ip,optional"`
+	Comment  types.String               `tfsdk:"comment" json:"comment,optional"`
 	Redirect *ListItemBodyRedirectModel `tfsdk:"redirect" json:"redirect,optional"`
-}
-
-type ListItemBodyHostnameModel struct {
-	URLHostname          types.String `tfsdk:"url_hostname" json:"url_hostname,required"`
-	ExcludeExactHostname types.Bool   `tfsdk:"exclude_exact_hostname" json:"exclude_exact_hostname,optional"`
+	Hostname *ListItemBodyHostnameModel `tfsdk:"hostname" json:"hostname,optional"`
+	ASN      types.Int64                `tfsdk:"asn" json:"asn,optional"`
 }
 
 type ListItemBodyRedirectModel struct {
@@ -57,6 +52,11 @@ type ListItemBodyRedirectModel struct {
 	PreserveQueryString types.Bool   `tfsdk:"preserve_query_string" json:"preserve_query_string,computed_optional"`
 	StatusCode          types.Int64  `tfsdk:"status_code" json:"status_code,computed_optional"`
 	SubpathMatching     types.Bool   `tfsdk:"subpath_matching" json:"subpath_matching,computed_optional"`
+}
+
+type ListItemBodyHostnameModel struct {
+	URLHostname          types.String `tfsdk:"url_hostname" json:"url_hostname,required"`
+	ExcludeExactHostname types.Bool   `tfsdk:"exclude_exact_hostname" json:"exclude_exact_hostname,optional"`
 }
 
 type ListItemHostnameModel struct {
