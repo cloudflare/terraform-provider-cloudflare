@@ -4,7 +4,6 @@ package workers_deployment
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,16 +13,15 @@ type WorkersDeploymentResultEnvelope struct {
 }
 
 type WorkersDeploymentModel struct {
-	ID          types.String                                                    `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
-	ScriptName  types.String                                                    `tfsdk:"script_name" path:"script_name,required"`
-	Strategy    types.String                                                    `tfsdk:"strategy" json:"strategy,required,no_refresh"`
-	Versions    *[]*WorkersDeploymentVersionsModel                              `tfsdk:"versions" json:"versions,required,no_refresh"`
-	Annotations *WorkersDeploymentAnnotationsModel                              `tfsdk:"annotations" json:"annotations,optional,no_refresh"`
-	AuthorEmail types.String                                                    `tfsdk:"author_email" json:"author_email,computed,no_refresh"`
-	CreatedOn   timetypes.RFC3339                                               `tfsdk:"created_on" json:"created_on,computed,no_refresh" format:"date-time"`
-	Source      types.String                                                    `tfsdk:"source" json:"source,computed,no_refresh"`
-	Deployments customfield.NestedObjectList[WorkersDeploymentDeploymentsModel] `tfsdk:"deployments" json:"deployments,computed"`
+	ID          types.String                       `tfsdk:"id" json:"id,computed"`
+	AccountID   types.String                       `tfsdk:"account_id" path:"account_id,required"`
+	ScriptName  types.String                       `tfsdk:"script_name" path:"script_name,required"`
+	Strategy    types.String                       `tfsdk:"strategy" json:"strategy,required"`
+	Versions    *[]*WorkersDeploymentVersionsModel `tfsdk:"versions" json:"versions,required"`
+	Annotations *WorkersDeploymentAnnotationsModel `tfsdk:"annotations" json:"annotations,optional"`
+	AuthorEmail types.String                       `tfsdk:"author_email" json:"author_email,computed"`
+	CreatedOn   timetypes.RFC3339                  `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Source      types.String                       `tfsdk:"source" json:"source,computed"`
 }
 
 func (m WorkersDeploymentModel) MarshalJSON() (data []byte, err error) {
@@ -41,23 +39,4 @@ type WorkersDeploymentVersionsModel struct {
 
 type WorkersDeploymentAnnotationsModel struct {
 	WorkersMessage types.String `tfsdk:"workers_message" json:"workers/message,optional"`
-}
-
-type WorkersDeploymentDeploymentsModel struct {
-	ID          types.String                                                            `tfsdk:"id" json:"id,computed"`
-	CreatedOn   timetypes.RFC3339                                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Source      types.String                                                            `tfsdk:"source" json:"source,computed"`
-	Strategy    types.String                                                            `tfsdk:"strategy" json:"strategy,computed"`
-	Versions    customfield.NestedObjectList[WorkersDeploymentDeploymentsVersionsModel] `tfsdk:"versions" json:"versions,computed"`
-	Annotations customfield.NestedObject[WorkersDeploymentDeploymentsAnnotationsModel]  `tfsdk:"annotations" json:"annotations,computed"`
-	AuthorEmail types.String                                                            `tfsdk:"author_email" json:"author_email,computed"`
-}
-
-type WorkersDeploymentDeploymentsVersionsModel struct {
-	Percentage types.Float64 `tfsdk:"percentage" json:"percentage,computed"`
-	VersionID  types.String  `tfsdk:"version_id" json:"version_id,computed"`
-}
-
-type WorkersDeploymentDeploymentsAnnotationsModel struct {
-	WorkersMessage types.String `tfsdk:"workers_message" json:"workers/message,computed"`
 }

@@ -23,60 +23,55 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Required:    true,
 			},
+			"deployment_id": schema.StringAttribute{
+				Required: true,
+			},
 			"script_name": schema.StringAttribute{
 				Description: "Name of the script, used in URLs and route configuration.",
 				Required:    true,
 			},
-			"deployments": schema.ListNestedAttribute{
+			"author_email": schema.StringAttribute{
+				Computed: true,
+			},
+			"created_on": schema.StringAttribute{
 				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[WorkersDeploymentDeploymentsDataSourceModel](ctx),
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Computed: true,
+			},
+			"source": schema.StringAttribute{
+				Computed: true,
+			},
+			"strategy": schema.StringAttribute{
+				Description: `Available values: "percentage".`,
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("percentage"),
+				},
+			},
+			"annotations": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[WorkersDeploymentAnnotationsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"workers_message": schema.StringAttribute{
+						Description: "Human-readable message about the deployment. Truncated to 100 bytes.",
+						Computed:    true,
+					},
+				},
+			},
+			"versions": schema.ListNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[WorkersDeploymentVersionsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
+						"percentage": schema.Float64Attribute{
 							Computed: true,
-						},
-						"created_on": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
-						},
-						"source": schema.StringAttribute{
-							Computed: true,
-						},
-						"strategy": schema.StringAttribute{
-							Description: `Available values: "percentage".`,
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("percentage"),
+							Validators: []validator.Float64{
+								float64validator.Between(0.01, 100),
 							},
 						},
-						"versions": schema.ListNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectListType[WorkersDeploymentDeploymentsVersionsDataSourceModel](ctx),
-							NestedObject: schema.NestedAttributeObject{
-								Attributes: map[string]schema.Attribute{
-									"percentage": schema.Float64Attribute{
-										Computed: true,
-										Validators: []validator.Float64{
-											float64validator.Between(0.01, 100),
-										},
-									},
-									"version_id": schema.StringAttribute{
-										Computed: true,
-									},
-								},
-							},
-						},
-						"annotations": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[WorkersDeploymentDeploymentsAnnotationsDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"workers_message": schema.StringAttribute{
-									Description: "Human-readable message about the deployment. Truncated to 100 bytes.",
-									Computed:    true,
-								},
-							},
-						},
-						"author_email": schema.StringAttribute{
+						"version_id": schema.StringAttribute{
 							Computed: true,
 						},
 					},

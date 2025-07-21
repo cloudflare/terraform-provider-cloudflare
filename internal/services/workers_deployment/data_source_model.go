@@ -18,9 +18,16 @@ type WorkersDeploymentResultDataSourceEnvelope struct {
 }
 
 type WorkersDeploymentDataSourceModel struct {
-	AccountID   types.String                                                              `tfsdk:"account_id" path:"account_id,required"`
-	ScriptName  types.String                                                              `tfsdk:"script_name" path:"script_name,required"`
-	Deployments customfield.NestedObjectList[WorkersDeploymentDeploymentsDataSourceModel] `tfsdk:"deployments" json:"deployments,computed"`
+	AccountID    types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
+	DeploymentID types.String                                                           `tfsdk:"deployment_id" path:"deployment_id,required"`
+	ScriptName   types.String                                                           `tfsdk:"script_name" path:"script_name,required"`
+	AuthorEmail  types.String                                                           `tfsdk:"author_email" json:"author_email,computed"`
+	CreatedOn    timetypes.RFC3339                                                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ID           types.String                                                           `tfsdk:"id" json:"id,computed"`
+	Source       types.String                                                           `tfsdk:"source" json:"source,computed"`
+	Strategy     types.String                                                           `tfsdk:"strategy" json:"strategy,computed"`
+	Annotations  customfield.NestedObject[WorkersDeploymentAnnotationsDataSourceModel]  `tfsdk:"annotations" json:"annotations,computed"`
+	Versions     customfield.NestedObjectList[WorkersDeploymentVersionsDataSourceModel] `tfsdk:"versions" json:"versions,computed"`
 }
 
 func (m *WorkersDeploymentDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptDeploymentGetParams, diags diag.Diagnostics) {
@@ -31,21 +38,11 @@ func (m *WorkersDeploymentDataSourceModel) toReadParams(_ context.Context) (para
 	return
 }
 
-type WorkersDeploymentDeploymentsDataSourceModel struct {
-	ID          types.String                                                                      `tfsdk:"id" json:"id,computed"`
-	CreatedOn   timetypes.RFC3339                                                                 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Source      types.String                                                                      `tfsdk:"source" json:"source,computed"`
-	Strategy    types.String                                                                      `tfsdk:"strategy" json:"strategy,computed"`
-	Versions    customfield.NestedObjectList[WorkersDeploymentDeploymentsVersionsDataSourceModel] `tfsdk:"versions" json:"versions,computed"`
-	Annotations customfield.NestedObject[WorkersDeploymentDeploymentsAnnotationsDataSourceModel]  `tfsdk:"annotations" json:"annotations,computed"`
-	AuthorEmail types.String                                                                      `tfsdk:"author_email" json:"author_email,computed"`
+type WorkersDeploymentAnnotationsDataSourceModel struct {
+	WorkersMessage types.String `tfsdk:"workers_message" json:"workers/message,computed"`
 }
 
-type WorkersDeploymentDeploymentsVersionsDataSourceModel struct {
+type WorkersDeploymentVersionsDataSourceModel struct {
 	Percentage types.Float64 `tfsdk:"percentage" json:"percentage,computed"`
 	VersionID  types.String  `tfsdk:"version_id" json:"version_id,computed"`
-}
-
-type WorkersDeploymentDeploymentsAnnotationsDataSourceModel struct {
-	WorkersMessage types.String `tfsdk:"workers_message" json:"workers/message,computed"`
 }
