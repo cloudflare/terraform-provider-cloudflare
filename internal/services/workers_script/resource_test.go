@@ -21,7 +21,7 @@ import (
 const (
 	scriptContent1    = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
 	scriptContent2    = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
-	moduleContent     = `export default { fetch() { return new Response('Hello world'); }, };`
+	moduleContent     = `import {DurableObject} from 'cloudflare:workers'; export class MyDurableObject extends DurableObject {}; export default { fetch() { return new Response('Hello world'); }, };`
 	encodedWasm       = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
 	compatibilityDate = "2023-03-19"
 	d1DatabaseID      = "ce8b95dc-b376-4ff8-9b9e-1801ed6d745d"

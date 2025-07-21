@@ -89,7 +89,7 @@ type WorkersScriptMetadataModel struct {
 	KeepBindings       *[]types.String                                                  `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
 	Logpush            types.Bool                                                       `tfsdk:"logpush" json:"logpush,computed_optional"`
 	MainModule         types.String                                                     `tfsdk:"main_module" json:"main_module,optional"`
-	Migrations         customfield.NestedObject[WorkersScriptMetadataMigrationsModel]   `tfsdk:"migrations" json:"migrations,computed_optional"`
+	Migrations         customfield.NestedObject[WorkersScriptMetadataMigrationsModel]   `tfsdk:"migrations" json:"migrations,optional"`
 	Observability      *WorkersScriptMetadataObservabilityModel                         `tfsdk:"observability" json:"observability,optional"`
 	Placement          customfield.NestedObject[WorkersScriptMetadataPlacementModel]    `tfsdk:"placement" json:"placement,computed_optional"`
 	// Tags               *[]types.String                                                       `tfsdk:"tags" json:"tags,optional"`

@@ -18,6 +18,10 @@ resource "cloudflare_workers_script" "%[1]s" {
   placement = {
     mode = "smart"
   }
+migrations = {
+    new_tag = "v1"
+    new_sqlite_classes = ["MyDurableObject"]
+  }
   bindings = [
     {
       name = "MY_KV_NAMESPACE"
