@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -309,6 +310,11 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 	if !data.ContentSHA256.IsNull() {
 		hash, _ := calculateStringHash(content)
 		data.ContentSHA256 = types.StringValue(hash)
+	}
+
+	// If the API returned an empty object for `placement`, treat it as null
+	if data.Placement.Attributes()["mode"].IsNull() {
+		data.Placement = data.Placement.NullValue(ctx).(customfield.NestedObject[WorkersScriptMetadataPlacementModel])
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
