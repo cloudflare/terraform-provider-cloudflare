@@ -17,6 +17,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/jinzhu/copier"
@@ -187,8 +188,10 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 
 func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data *WorkersScriptModel
+	var state *WorkersScriptModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -254,6 +257,15 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 	}
 
 	copier.CopyWithOption(&data.WorkersScriptMetadataModel, &metadata.Result, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+
+	// restore any secret_text `text` values from state since they aren't returned by the API
+	var diags diag.Diagnostics
+	data.Bindings, diags = UpdateSecretTextsFromState(
+		ctx,
+		data.Bindings,
+		state.Bindings,
+	)
+	resp.Diagnostics.Append(diags...)
 
 	// fetch the script content
 	scriptContentRes, err := r.client.Workers.Scripts.Content.Get(

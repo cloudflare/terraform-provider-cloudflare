@@ -12,7 +12,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 func writeFileBytes(partName string, filename string, contentType string, content io.Reader, writer *multipart.Writer) error {
@@ -172,4 +177,82 @@ func ValidateContentSHA256() validator.String {
 		ContentPath:     "content",
 		ContentFilePath: "content_file",
 	}
+}
+
+func UpdateSecretTextsFromState[T any](
+	ctx context.Context,
+	refreshed customfield.NestedObjectSet[T],
+	state customfield.NestedObjectSet[T],
+) (customfield.NestedObjectSet[T], diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	refreshedElems := refreshed.Elements()
+	stateElems := state.Elements()
+
+	updatedElems := make([]attr.Value, len(refreshedElems))
+
+	elemType := refreshed.ElementType(ctx)
+
+	objType, ok := elemType.(basetypes.ObjectType)
+	if !ok {
+		diags.AddError("Invalid element type", "Expected element type to be basetypes.ObjectType.")
+		return refreshed, diags
+	}
+
+	attrTypes := objType.AttributeTypes()
+
+	for i, val := range refreshedElems {
+		refreshedObj, ok := val.(basetypes.ObjectValue)
+		if !ok {
+			updatedElems[i] = val
+			continue
+		}
+
+		refreshedAttrs := refreshedObj.Attributes()
+		typeAttr := refreshedAttrs["type"]
+		nameAttr := refreshedAttrs["name"]
+
+		if typeAttr.IsNull() || nameAttr.IsNull() {
+			updatedElems[i] = val
+			continue
+		}
+
+		if typeAttr.(types.String).ValueString() != "secret_text" {
+			updatedElems[i] = val
+			continue
+		}
+
+		name := nameAttr.(types.String).ValueString()
+
+		var originalText attr.Value
+		for _, stateVal := range stateElems {
+			stateObj, ok := stateVal.(basetypes.ObjectValue)
+			if !ok {
+				continue
+			}
+			stateAttrs := stateObj.Attributes()
+			if stateAttrs["type"].(types.String).ValueString() == "secret_text" &&
+				stateAttrs["name"].(types.String).ValueString() == name {
+				originalText = stateAttrs["text"]
+				break
+			}
+		}
+
+		if originalText != nil && !originalText.IsNull() && !originalText.IsUnknown() {
+			refreshedAttrs["text"] = originalText
+
+			newObj, d := basetypes.NewObjectValue(attrTypes, refreshedAttrs)
+			diags.Append(d...)
+			refreshedObj = newObj
+		}
+
+		updatedElems[i] = refreshedObj
+	}
+
+	setValue, d := types.SetValue(refreshed.ElementType(ctx), updatedElems)
+	diags.Append(d...)
+
+	return customfield.NestedObjectSet[T]{
+		SetValue: setValue,
+	}, diags
 }

@@ -18,7 +18,7 @@ resource "cloudflare_workers_script" "%[1]s" {
   placement = {
     mode = "smart"
   }
-migrations = {
+  migrations = {
     new_tag = "v1"
     new_sqlite_classes = ["MyDurableObject"]
   }
@@ -27,6 +27,11 @@ migrations = {
       name = "MY_KV_NAMESPACE"
       type = "kv_namespace"
       namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
+    },
+    {
+      name = "SECRET"
+      type = "secret_text"
+      text = "shhh!!"
     },
     {
       name = "MY_QUEUE"
