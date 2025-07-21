@@ -212,17 +212,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"class_name": schema.StringAttribute{
 							Description: "The exported class name of the Durable Object.",
+							Computed:    true,
 							Optional:    true,
+							PlanModifiers: []planmodifier.String{
+								UnknownOnlyIf("type", "durable_object_namespace"),
+							},
 						},
 						"environment": schema.StringAttribute{
 							Description: "The environment of the script_name to bind to.",
 							Optional:    true,
 						},
 						"namespace_id": schema.StringAttribute{
-							Description:   "Namespace identifier tag.",
-							Computed:      true,
-							Optional:      true,
-							PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+							Description: "Namespace identifier tag.",
+							Computed:    true,
+							Optional:    true,
+							PlanModifiers: []planmodifier.String{
+								UnknownOnlyIf("type", "durable_object_namespace"),
+							},
 						},
 						"script_name": schema.StringAttribute{
 							Description: "The script where the Durable Object is defined, if it is external to this Worker.",
