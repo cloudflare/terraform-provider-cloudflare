@@ -16,7 +16,8 @@ resource "cloudflare_api_token" "example_api_token" {
       }
     }]
     resources = {
-      foo = "string"
+      object = "bar"
+      string = "bar"
     }
   }]
   condition = {

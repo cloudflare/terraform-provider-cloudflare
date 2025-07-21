@@ -4,6 +4,7 @@ package account_token
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -39,7 +40,7 @@ type AccountTokenPoliciesModel struct {
 	ID               types.String                                  `tfsdk:"id" json:"id,computed"`
 	Effect           types.String                                  `tfsdk:"effect" json:"effect,required"`
 	PermissionGroups *[]*AccountTokenPoliciesPermissionGroupsModel `tfsdk:"permission_groups" json:"permission_groups,required"`
-	Resources        *map[string]types.String                      `tfsdk:"resources" json:"resources,required"`
+	Resources        *map[string]jsontypes.Normalized              `tfsdk:"resources" json:"resources,required"`
 }
 
 type AccountTokenPoliciesPermissionGroupsModel struct {
