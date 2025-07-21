@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -32,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"script_name": schema.StringAttribute{
-				Description:   "Name of the script.",
+				Description:   "Name of the script, used in URLs and route configuration.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -75,7 +76,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"created_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"source": schema.StringAttribute{
 				Computed: true,
@@ -85,6 +87,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectListType[WorkersDeploymentDeploymentsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Computed: true,
+						},
+						"created_on": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
+						},
+						"source": schema.StringAttribute{
+							Computed: true,
+						},
 						"strategy": schema.StringAttribute{
 							Description: `Available values: "percentage".`,
 							Computed:    true,
@@ -109,9 +121,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"id": schema.StringAttribute{
-							Computed: true,
-						},
 						"annotations": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[WorkersDeploymentDeploymentsAnnotationsModel](ctx),
@@ -123,12 +132,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"author_email": schema.StringAttribute{
-							Computed: true,
-						},
-						"created_on": schema.StringAttribute{
-							Computed: true,
-						},
-						"source": schema.StringAttribute{
 							Computed: true,
 						},
 					},

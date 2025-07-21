@@ -34,7 +34,8 @@ type ListItemDataSourceModel struct {
 // }
 
 type ListItemHostnameDataSourceModel struct {
-	URLHostname types.String `tfsdk:"url_hostname" json:"url_hostname,computed"`
+	URLHostname          types.String `tfsdk:"url_hostname" json:"url_hostname,computed"`
+	ExcludeExactHostname types.Bool   `tfsdk:"exclude_exact_hostname" json:"exclude_exact_hostname,computed"`
 }
 
 type ListItemRedirectDataSourceModel struct {

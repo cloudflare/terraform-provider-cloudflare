@@ -23,6 +23,7 @@ type EmailSecurityTrustedDomainsListDataSourceModel struct {
 	IsRecent     types.Bool                                                                         `tfsdk:"is_recent" query:"is_recent,optional"`
 	IsSimilarity types.Bool                                                                         `tfsdk:"is_similarity" query:"is_similarity,optional"`
 	Order        types.String                                                                       `tfsdk:"order" query:"order,optional"`
+	Pattern      types.String                                                                       `tfsdk:"pattern" query:"pattern,optional"`
 	Search       types.String                                                                       `tfsdk:"search" query:"search,optional"`
 	MaxItems     types.Int64                                                                        `tfsdk:"max_items"`
 	Result       customfield.NestedObjectList[EmailSecurityTrustedDomainsListResultDataSourceModel] `tfsdk:"result"`
@@ -44,6 +45,9 @@ func (m *EmailSecurityTrustedDomainsListDataSourceModel) toListParams(_ context.
 	}
 	if !m.Order.IsNull() {
 		params.Order = cloudflare.F(email_security.SettingTrustedDomainListParamsOrder(m.Order.ValueString()))
+	}
+	if !m.Pattern.IsNull() {
+		params.Pattern = cloudflare.F(m.Pattern.ValueString())
 	}
 	if !m.Search.IsNull() {
 		params.Search = cloudflare.F(m.Search.ValueString())
