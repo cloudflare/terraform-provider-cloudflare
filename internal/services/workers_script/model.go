@@ -41,6 +41,7 @@ type WorkersScriptModel struct {
 	Content       types.String      `tfsdk:"content" json:"-"`
 	ContentFile   types.String      `tfsdk:"content_file" json:"-"`
 	ContentSHA256 types.String      `tfsdk:"content_sha256" json:"-"`
+	ContentType   types.String      `tfsdk:"content_type" json:"-"`
 	CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Etag          types.String      `tfsdk:"etag" json:"etag,computed"`
 	HasAssets     types.Bool        `tfsdk:"has_assets" json:"has_assets,computed"`
@@ -51,17 +52,25 @@ type WorkersScriptModel struct {
 	WorkersScriptMetadataModel
 }
 
-func (r WorkersScriptModel) MarshalMultipart() (data []byte, contentType string, err error) {
+func (r WorkersScriptModel) MarshalMultipart() (data []byte, formDataContentType string, err error) {
 	buf := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(buf)
 	var metadata WorkersScriptMetadataModel
 	workerBody := bytes.NewReader([]byte(r.Content.ValueString()))
 
+	contentType := r.ContentType.ValueString()
+
 	if r.MainModule.ValueString() != "" {
+		if contentType == "" {
+			contentType = "application/javascript+module"
+		}
 		mainModuleName := r.MainModule.ValueString()
-		writeFileBytes(mainModuleName, mainModuleName, "application/javascript+module", workerBody, writer)
+		writeFileBytes(mainModuleName, mainModuleName, contentType, workerBody, writer)
 	} else {
-		writeFileBytes("script", "script", "application/javascript", workerBody, writer)
+		if contentType == "" {
+			contentType = "application/javascript"
+		}
+		writeFileBytes("script", "script", contentType, workerBody, writer)
 		r.BodyPart = types.StringValue("script")
 	}
 
