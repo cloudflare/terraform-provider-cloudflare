@@ -31,31 +31,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the location.",
 				Required:    true,
 			},
-			"client_default": schema.BoolAttribute{
-				Description: "True if the location is the default location.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"dns_destination_ips_id": schema.StringAttribute{
-				Description: "The identifier of the pair of IPv4 addresses assigned to this location. When creating a location, if this field is absent or set with null, the pair of shared IPv4 addresses (0e4a32c6-6fb8-4858-9296-98f51631e8e6) is auto-assigned. When updating a location, if the field is absent or set with null, the pre-assigned pair remains unchanged.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"ecs_support": schema.BoolAttribute{
-				Description: "True if the location needs to resolve EDNS queries.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
 			"endpoints": schema.SingleNestedAttribute{
 				Description: "The destination endpoints configured for this location. When updating a location, if this field is absent or set with null, the endpoints configuration remains unchanged.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"doh": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsDOHModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
@@ -82,7 +65,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"dot": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsDOTModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
@@ -114,7 +99,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"ipv6": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsIPV6Model](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
@@ -137,6 +124,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"client_default": schema.BoolAttribute{
+				Description: "True if the location is the default location.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"dns_destination_ips_id": schema.StringAttribute{
+				Description: "The identifier of the pair of IPv4 addresses assigned to this location. When creating a location, if this field is absent or set with null, the pair of shared IPv4 addresses (0e4a32c6-6fb8-4858-9296-98f51631e8e6) is auto-assigned. When updating a location, if the field is absent or set with null, the pre-assigned pair remains unchanged.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"ecs_support": schema.BoolAttribute{
+				Description: "True if the location needs to resolve EDNS queries.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"networks": schema.ListNestedAttribute{
 				Description: "A list of network ranges that requests from this location would originate from. A non-empty list is only effective if the ipv4 endpoint is enabled for this location.",

@@ -86,97 +86,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				ElementType: types.StringType,
 			},
-			"schedule": schema.SingleNestedAttribute{
-				Description: "The schedule for activating DNS policies. This does not apply to HTTP or network policies.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"fri": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Fridays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Fridays.",
-						Optional:    true,
-					},
-					"mon": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Mondays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Mondays.",
-						Optional:    true,
-					},
-					"sat": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Saturdays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Saturdays.",
-						Optional:    true,
-					},
-					"sun": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Sundays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Sundays.",
-						Optional:    true,
-					},
-					"thu": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Thursdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Thursdays.",
-						Optional:    true,
-					},
-					"time_zone": schema.StringAttribute{
-						Description: "The time zone the rule will be evaluated against. If a [valid time zone city name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) is provided, Gateway will always use the current time at that time zone. If this parameter is omitted, then Gateway will use the time zone inferred from the user's source IP to evaluate the rule. If Gateway cannot determine the time zone from the IP, we will fall back to the time zone of the user's connected data center.",
-						Optional:    true,
-					},
-					"tue": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Tuesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Tuesdays.",
-						Optional:    true,
-					},
-					"wed": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Wednesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Wednesdays.",
-						Optional:    true,
-					},
-				},
-			},
-			"device_posture": schema.StringAttribute{
-				Description: "The wirefilter expression used for device posture check matching.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString(""),
-			},
-			"enabled": schema.BoolAttribute{
-				Description: "True if the rule is enabled.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"identity": schema.StringAttribute{
-				Description: "The wirefilter expression used for identity matching.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString(""),
-			},
-			"traffic": schema.StringAttribute{
-				Description: "The wirefilter expression used for traffic matching.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString(""),
-			},
-			"expiration": schema.SingleNestedAttribute{
-				Description: "The expiration time stamp and default duration of a DNS policy. Takes\nprecedence over the policy's `schedule` configuration, if any.\n\nThis does not apply to HTTP or network policies.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyExpirationModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"expires_at": schema.StringAttribute{
-						Description: "The time stamp at which the policy will expire and cease to be\napplied.\n\nMust adhere to RFC 3339 and include a UTC offset. Non-zero\noffsets are accepted but will be converted to the equivalent\nvalue with offset zero (UTC+00:00) and will be returned as time\nstamps with offset zero denoted by a trailing 'Z'.\n\nPolicies with an expiration do not consider the timezone of\nclients they are applied to, and expire \"globally\" at the point\ngiven by their `expires_at` value.",
-						Required:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"duration": schema.Int64Attribute{
-						Description: "The default duration a policy will be active in minutes. Must be set in order to use the `reset_expiration` endpoint on this rule.",
-						Optional:    true,
-						Validators: []validator.Int64{
-							int64validator.AtLeast(5),
-						},
-					},
-					"expired": schema.BoolAttribute{
-						Description: "Whether the policy has expired.",
-						Computed:    true,
-					},
-				},
-			},
 			"rule_settings": schema.SingleNestedAttribute{
 				Description: "Additional settings that modify the rule's action.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"add_headers": schema.MapAttribute{
 						Description: "Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).",
@@ -201,9 +113,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"biso_admin_controls": schema.SingleNestedAttribute{
 						Description: "Configure how browser isolation behaves.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"copy": schema.StringAttribute{
 								Description: "Configure whether copy is enabled or not. When set with \"remote_only\", copying isolated content from the remote browser to the user's local clipboard is disabled. When absent, copy is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
@@ -566,6 +476,92 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+					},
+				},
+			},
+			"schedule": schema.SingleNestedAttribute{
+				Description: "The schedule for activating DNS policies. This does not apply to HTTP or network policies.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"fri": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Fridays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Fridays.",
+						Optional:    true,
+					},
+					"mon": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Mondays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Mondays.",
+						Optional:    true,
+					},
+					"sat": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Saturdays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Saturdays.",
+						Optional:    true,
+					},
+					"sun": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Sundays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Sundays.",
+						Optional:    true,
+					},
+					"thu": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Thursdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Thursdays.",
+						Optional:    true,
+					},
+					"time_zone": schema.StringAttribute{
+						Description: "The time zone the rule will be evaluated against. If a [valid time zone city name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) is provided, Gateway will always use the current time at that time zone. If this parameter is omitted, then Gateway will use the time zone inferred from the user's source IP to evaluate the rule. If Gateway cannot determine the time zone from the IP, we will fall back to the time zone of the user's connected data center.",
+						Optional:    true,
+					},
+					"tue": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Tuesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Tuesdays.",
+						Optional:    true,
+					},
+					"wed": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Wednesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Wednesdays.",
+						Optional:    true,
+					},
+				},
+			},
+			"device_posture": schema.StringAttribute{
+				Description: "The wirefilter expression used for device posture check matching.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "True if the rule is enabled.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"identity": schema.StringAttribute{
+				Description: "The wirefilter expression used for identity matching.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"traffic": schema.StringAttribute{
+				Description: "The wirefilter expression used for traffic matching.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"expiration": schema.SingleNestedAttribute{
+				Description: "The expiration time stamp and default duration of a DNS policy. Takes\nprecedence over the policy's `schedule` configuration, if any.\n\nThis does not apply to HTTP or network policies.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyExpirationModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"expires_at": schema.StringAttribute{
+						Description: "The time stamp at which the policy will expire and cease to be\napplied.\n\nMust adhere to RFC 3339 and include a UTC offset. Non-zero\noffsets are accepted but will be converted to the equivalent\nvalue with offset zero (UTC+00:00) and will be returned as time\nstamps with offset zero denoted by a trailing 'Z'.\n\nPolicies with an expiration do not consider the timezone of\nclients they are applied to, and expire \"globally\" at the point\ngiven by their `expires_at` value.",
+						Required:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"duration": schema.Int64Attribute{
+						Description: "The default duration a policy will be active in minutes. Must be set in order to use the `reset_expiration` endpoint on this rule.",
+						Optional:    true,
+						Validators: []validator.Int64{
+							int64validator.AtLeast(5),
+						},
+					},
+					"expired": schema.BoolAttribute{
+						Description: "Whether the policy has expired.",
+						Computed:    true,
 					},
 				},
 			},
