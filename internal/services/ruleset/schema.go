@@ -565,6 +565,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "Turn on or off Signed Exchanges (SXG).",
 									Optional:    true,
 								},
+								"phase": schema.StringAttribute{
+									Description: "A phase to skip the execution of. This property is only compatible with products.\nAvailable values: \"current\".",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("current"),
+									},
+								},
 								"phases": schema.ListAttribute{
 									Description: "A list of phases to skip the execution of. This option is incompatible with the rulesets option.",
 									Optional:    true,
@@ -646,13 +653,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional:    true,
 									Attributes: map[string]schema.Attribute{
 										"mode": schema.StringAttribute{
-											Description: "Determines which browser ttl mode to use.\nAvailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\".",
+											Description: "Determines which browser ttl mode to use.\nAvailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\", \"bypass\".",
 											Required:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
 													"respect_origin",
 													"bypass_by_default",
 													"override_origin",
+													"bypass",
 												),
 											},
 										},

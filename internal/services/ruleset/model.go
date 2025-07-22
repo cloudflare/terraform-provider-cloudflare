@@ -79,6 +79,7 @@ type RulesetRulesActionParametersModel struct {
 	ServerSideExcludes       types.Bool                                                    `tfsdk:"server_side_excludes" json:"server_side_excludes,optional"`
 	SSL                      types.String                                                  `tfsdk:"ssl" json:"ssl,optional"`
 	SXG                      types.Bool                                                    `tfsdk:"sxg" json:"sxg,optional"`
+	Phase                    types.String                                                  `tfsdk:"phase" json:"phase,optional"`
 	Phases                   *[]types.String                                               `tfsdk:"phases" json:"phases,optional"`
 	Products                 *[]types.String                                               `tfsdk:"products" json:"products,optional"`
 	Rules                    *map[string]*[]types.String                                   `tfsdk:"rules" json:"rules,optional"`
