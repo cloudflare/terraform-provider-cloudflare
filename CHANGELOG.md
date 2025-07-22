@@ -1,3 +1,9 @@
+## 4.52.1 (July 22th, 2025)
+
+ENHANCEMENTS:
+
+* internal/sdkv2provider/schema_cloudflare_load_balancer.go: remove "Computed" primitive from user configurable properties ([#5621](https://github.com/cloudflare/terraform-provider-cloudflare/pull/5621))
+
 ## 4.52.0 (February 5th, 2025)
 
 ENHANCEMENTS:
