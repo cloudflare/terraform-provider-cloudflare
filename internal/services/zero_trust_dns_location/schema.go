@@ -55,9 +55,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"doh": schema.SingleNestedAttribute{
-						Computed:   true,
-						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsDOHModel](ctx),
+						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
@@ -84,9 +82,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"dot": schema.SingleNestedAttribute{
-						Computed:   true,
-						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsDOTModel](ctx),
+						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
@@ -118,9 +114,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"ipv6": schema.SingleNestedAttribute{
-						Computed:   true,
-						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsIPV6Model](ctx),
+						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
