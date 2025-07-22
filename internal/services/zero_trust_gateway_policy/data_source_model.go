@@ -58,7 +58,7 @@ type ZeroTrustGatewayPolicyExpirationDataSourceModel struct {
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsDataSourceModel struct {
-	AddHeaders                      customfield.Map[types.String]                                                                   `tfsdk:"add_headers" json:"add_headers,computed"`
+	AddHeaders                      customfield.Map[customfield.List[types.String]]                                                 `tfsdk:"add_headers" json:"add_headers,computed"`
 	AllowChildBypass                types.Bool                                                                                      `tfsdk:"allow_child_bypass" json:"allow_child_bypass,computed"`
 	AuditSSH                        customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsAuditSSHDataSourceModel]             `tfsdk:"audit_ssh" json:"audit_ssh,computed"`
 	BISOAdminControls               customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsDataSourceModel]    `tfsdk:"biso_admin_controls" json:"biso_admin_controls,computed"`

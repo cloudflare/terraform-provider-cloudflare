@@ -64,7 +64,7 @@ type ZeroTrustGatewayPolicyExpirationModel struct {
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsModel struct {
-	AddHeaders                      *map[string]types.String                                                           `tfsdk:"add_headers" json:"add_headers,optional"`
+	AddHeaders                      *map[string]*[]types.String                                                        `tfsdk:"add_headers" json:"add_headers,optional"`
 	AllowChildBypass                types.Bool                                                                         `tfsdk:"allow_child_bypass" json:"allow_child_bypass,optional"`
 	AuditSSH                        *ZeroTrustGatewayPolicyRuleSettingsAuditSSHModel                                   `tfsdk:"audit_ssh" json:"audit_ssh,optional"`
 	BISOAdminControls               customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel] `tfsdk:"biso_admin_controls" json:"biso_admin_controls,computed_optional"`
