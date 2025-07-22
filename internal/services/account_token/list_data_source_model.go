@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -63,7 +62,7 @@ type AccountTokensPoliciesDataSourceModel struct {
 	ID               types.String                                                                       `tfsdk:"id" json:"id,computed"`
 	Effect           types.String                                                                       `tfsdk:"effect" json:"effect,computed"`
 	PermissionGroups customfield.NestedObjectList[AccountTokensPoliciesPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
-	Resources        customfield.Map[jsontypes.Normalized]                                              `tfsdk:"resources" json:"resources,computed"`
+	Resources        customfield.Map[types.String]                                                      `tfsdk:"resources" json:"resources,computed"`
 }
 
 type AccountTokensPoliciesPermissionGroupsDataSourceModel struct {
