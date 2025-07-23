@@ -47,9 +47,9 @@ type ZeroTrustDNSLocationEndpointsModel struct {
 }
 
 type ZeroTrustDNSLocationEndpointsDOHModel struct {
-	Enabled      types.Bool                                                                  `tfsdk:"enabled" json:"enabled,optional"`
+	Enabled      types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Networks     customfield.NestedObjectList[ZeroTrustDNSLocationEndpointsDOHNetworksModel] `tfsdk:"networks" json:"networks,computed_optional"`
-	RequireToken types.Bool                                                                  `tfsdk:"require_token" json:"require_token,optional"`
+	RequireToken types.Bool                                                                  `tfsdk:"require_token" json:"require_token,computed_optional"`
 }
 
 type ZeroTrustDNSLocationEndpointsDOHNetworksModel struct {
@@ -57,7 +57,7 @@ type ZeroTrustDNSLocationEndpointsDOHNetworksModel struct {
 }
 
 type ZeroTrustDNSLocationEndpointsDOTModel struct {
-	Enabled  types.Bool                                                                  `tfsdk:"enabled" json:"enabled,optional"`
+	Enabled  types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Networks customfield.NestedObjectList[ZeroTrustDNSLocationEndpointsDOTNetworksModel] `tfsdk:"networks" json:"networks,computed_optional"`
 }
 
@@ -66,11 +66,11 @@ type ZeroTrustDNSLocationEndpointsDOTNetworksModel struct {
 }
 
 type ZeroTrustDNSLocationEndpointsIPV4Model struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled,optional"`
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed_optional"`
 }
 
 type ZeroTrustDNSLocationEndpointsIPV6Model struct {
-	Enabled  types.Bool                                                                   `tfsdk:"enabled" json:"enabled,optional"`
+	Enabled  types.Bool                                                                   `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Networks customfield.NestedObjectList[ZeroTrustDNSLocationEndpointsIPV6NetworksModel] `tfsdk:"networks" json:"networks,computed_optional"`
 }
 
