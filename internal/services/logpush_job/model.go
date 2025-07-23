@@ -12,6 +12,7 @@ type LogpushJobResultEnvelope struct {
 	Result LogpushJobModel `json:"result"`
 }
 
+// test
 type LogpushJobModel struct {
 	ID                       types.Int64                   `tfsdk:"id" json:"id,computed"`
 	AccountID                types.String                  `tfsdk:"account_id" path:"account_id,optional"`
