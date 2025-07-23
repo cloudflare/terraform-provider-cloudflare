@@ -151,6 +151,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Description: "If mode is redirect_uri: URI to which the user should be redirected.",
 								Computed:    true,
 							},
+							"version": schema.Int64Attribute{
+								Description: "Version number of the setting",
+								Computed:    true,
+							},
 						},
 					},
 					"body_scanning": schema.SingleNestedAttribute{
@@ -229,6 +233,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 							"source_account": schema.StringAttribute{
 								Description: "Account tag of account that shared this setting",
+								Computed:    true,
+							},
+							"version": schema.Int64Attribute{
+								Description: "Version number of the setting",
 								Computed:    true,
 							},
 						},
