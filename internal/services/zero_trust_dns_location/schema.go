@@ -40,6 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
@@ -58,6 +59,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"require_token": schema.BoolAttribute{
 								Description: "True if the endpoint requires [user identity](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/agentless/dns/dns-over-https/#filter-doh-requests-by-user) authentication.",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
@@ -67,6 +69,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
@@ -90,6 +93,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
@@ -99,6 +103,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
