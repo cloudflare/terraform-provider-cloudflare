@@ -81,6 +81,7 @@ type ZeroTrustGatewaySettingsSettingsBlockPageDataSourceModel struct {
 	SourceAccount   types.String `tfsdk:"source_account" json:"source_account,computed"`
 	SuppressFooter  types.Bool   `tfsdk:"suppress_footer" json:"suppress_footer,computed"`
 	TargetURI       types.String `tfsdk:"target_uri" json:"target_uri,computed"`
+	Version         types.Int64  `tfsdk:"version" json:"version,computed"`
 }
 
 type ZeroTrustGatewaySettingsSettingsBodyScanningDataSourceModel struct {
@@ -107,6 +108,7 @@ type ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingDataSourceModel struct
 	Enabled       types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 	ReadOnly      types.Bool   `tfsdk:"read_only" json:"read_only,computed"`
 	SourceAccount types.String `tfsdk:"source_account" json:"source_account,computed"`
+	Version       types.Int64  `tfsdk:"version" json:"version,computed"`
 }
 
 type ZeroTrustGatewaySettingsSettingsFipsDataSourceModel struct {

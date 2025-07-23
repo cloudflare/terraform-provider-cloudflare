@@ -37,10 +37,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustGatewayPoliciesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Description: "The API resource UUID.",
-							Computed:    true,
-						},
 						"action": schema.StringAttribute{
 							Description: "The action to perform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\", \"redirect\".",
 							Computed:    true,
@@ -65,6 +61,43 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
+						"enabled": schema.BoolAttribute{
+							Description: "True if the rule is enabled.",
+							Computed:    true,
+						},
+						"filters": schema.ListAttribute{
+							Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
+							Computed:    true,
+							Validators: []validator.List{
+								listvalidator.ValueStringsAre(
+									stringvalidator.OneOfCaseInsensitive(
+										"http",
+										"dns",
+										"l4",
+										"egress",
+										"dns_resolver",
+									),
+								),
+							},
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"name": schema.StringAttribute{
+							Description: "The name of the rule.",
+							Computed:    true,
+						},
+						"precedence": schema.Int64Attribute{
+							Description: "Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) docs on how to manage precedence via Terraform.",
+							Computed:    true,
+						},
+						"traffic": schema.StringAttribute{
+							Description: "The wirefilter expression used for traffic matching.",
+							Computed:    true,
+						},
+						"id": schema.StringAttribute{
+							Description: "The API resource UUID.",
+							Computed:    true,
+						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
@@ -80,10 +113,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"device_posture": schema.StringAttribute{
 							Description: "The wirefilter expression used for device posture check matching.",
-							Computed:    true,
-						},
-						"enabled": schema.BoolAttribute{
-							Description: "True if the rule is enabled.",
 							Computed:    true,
 						},
 						"expiration": schema.SingleNestedAttribute{
@@ -109,37 +138,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"filters": schema.ListAttribute{
-							Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
-							Computed:    true,
-							Validators: []validator.List{
-								listvalidator.ValueStringsAre(
-									stringvalidator.OneOfCaseInsensitive(
-										"http",
-										"dns",
-										"l4",
-										"egress",
-										"dns_resolver",
-									),
-								),
-							},
-							CustomType:  customfield.NewListType[types.String](ctx),
-							ElementType: types.StringType,
-						},
 						"identity": schema.StringAttribute{
 							Description: "The wirefilter expression used for identity matching.",
 							Computed:    true,
 						},
-						"name": schema.StringAttribute{
-							Description: "The name of the rule.",
-							Computed:    true,
-						},
 						"not_sharable": schema.BoolAttribute{
 							Description: "The rule cannot be shared via the Orgs API",
-							Computed:    true,
-						},
-						"precedence": schema.Int64Attribute{
-							Description: "Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) docs on how to manage precedence via Terraform.",
 							Computed:    true,
 						},
 						"read_only": schema.BoolAttribute{
@@ -587,10 +591,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"source_account": schema.StringAttribute{
 							Description: "account tag of account that created the rule",
-							Computed:    true,
-						},
-						"traffic": schema.StringAttribute{
-							Description: "The wirefilter expression used for traffic matching.",
 							Computed:    true,
 						},
 						"updated_at": schema.StringAttribute{

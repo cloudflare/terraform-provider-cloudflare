@@ -32,24 +32,24 @@ func (m *ZeroTrustGatewayPoliciesDataSourceModel) toListParams(_ context.Context
 }
 
 type ZeroTrustGatewayPoliciesResultDataSourceModel struct {
-	ID            types.String                                                                  `tfsdk:"id" json:"id,computed"`
 	Action        types.String                                                                  `tfsdk:"action" json:"action,computed"`
+	Enabled       types.Bool                                                                    `tfsdk:"enabled" json:"enabled,computed"`
+	Filters       customfield.List[types.String]                                                `tfsdk:"filters" json:"filters,computed"`
+	Name          types.String                                                                  `tfsdk:"name" json:"name,computed"`
+	Precedence    types.Int64                                                                   `tfsdk:"precedence" json:"precedence,computed"`
+	Traffic       types.String                                                                  `tfsdk:"traffic" json:"traffic,computed"`
+	ID            types.String                                                                  `tfsdk:"id" json:"id,computed"`
 	CreatedAt     timetypes.RFC3339                                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt     timetypes.RFC3339                                                             `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
 	Description   types.String                                                                  `tfsdk:"description" json:"description,computed"`
 	DevicePosture types.String                                                                  `tfsdk:"device_posture" json:"device_posture,computed"`
-	Enabled       types.Bool                                                                    `tfsdk:"enabled" json:"enabled,computed"`
 	Expiration    customfield.NestedObject[ZeroTrustGatewayPoliciesExpirationDataSourceModel]   `tfsdk:"expiration" json:"expiration,computed"`
-	Filters       customfield.List[types.String]                                                `tfsdk:"filters" json:"filters,computed"`
 	Identity      types.String                                                                  `tfsdk:"identity" json:"identity,computed"`
-	Name          types.String                                                                  `tfsdk:"name" json:"name,computed"`
 	NotSharable   types.Bool                                                                    `tfsdk:"not_sharable" json:"not_sharable,computed"`
-	Precedence    types.Int64                                                                   `tfsdk:"precedence" json:"precedence,computed"`
 	ReadOnly      types.Bool                                                                    `tfsdk:"read_only" json:"read_only,computed"`
 	RuleSettings  customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel] `tfsdk:"rule_settings" json:"rule_settings,computed"`
 	Schedule      customfield.NestedObject[ZeroTrustGatewayPoliciesScheduleDataSourceModel]     `tfsdk:"schedule" json:"schedule,computed"`
 	SourceAccount types.String                                                                  `tfsdk:"source_account" json:"source_account,computed"`
-	Traffic       types.String                                                                  `tfsdk:"traffic" json:"traffic,computed"`
 	UpdatedAt     timetypes.RFC3339                                                             `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Version       types.Int64                                                                   `tfsdk:"version" json:"version,computed"`
 	WarningStatus types.String                                                                  `tfsdk:"warning_status" json:"warning_status,computed"`

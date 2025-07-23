@@ -37,7 +37,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"activity_log": schema.SingleNestedAttribute{
 						Description: "Activity log settings.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsActivityLogModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable activity logging.",
@@ -47,23 +49,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"antivirus": schema.SingleNestedAttribute{
 						Description: "Anti-virus settings.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsAntivirusModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled_download_phase": schema.BoolAttribute{
 								Description: "Enable anti-virus scanning on downloads.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"enabled_upload_phase": schema.BoolAttribute{
 								Description: "Enable anti-virus scanning on uploads.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"fail_closed": schema.BoolAttribute{
 								Description: "Block requests for files that cannot be scanned.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"notification_settings": schema.SingleNestedAttribute{
 								Description: "Configure a message to display on the user's device when an antivirus search is performed.",
+								Computed:    true,
 								Optional:    true,
+								CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{
 										Description: "Set notification on",
@@ -152,11 +161,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "If mode is redirect_uri: URI to which the user should be redirected.",
 								Optional:    true,
 							},
+							"version": schema.Int64Attribute{
+								Description: "Version number of the setting",
+								Computed:    true,
+							},
 						},
 					},
 					"body_scanning": schema.SingleNestedAttribute{
 						Description: "DLP body scanning settings.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBodyScanningModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"inspection_mode": schema.StringAttribute{
 								Description: "Set the inspection mode to either `deep` or `shallow`.",
@@ -166,7 +181,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"browser_isolation": schema.SingleNestedAttribute{
 						Description: "Browser isolation settings.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBrowserIsolationModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"non_identity_enabled": schema.BoolAttribute{
 								Description: "Enable non-identity onramp support for Browser Isolation.",
@@ -180,7 +197,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"certificate": schema.SingleNestedAttribute{
 						Description: "Certificate settings for Gateway TLS interception. If not specified, the Cloudflare Root CA will be used.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCertificateModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"id": schema.StringAttribute{
 								Description: "UUID of certificate to be used for interception. Certificate must be available (previously called 'active') on the edge. A nil UUID will indicate the Cloudflare Root CA should be used.",
@@ -231,11 +250,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "Account tag of account that shared this setting",
 								Computed:    true,
 							},
+							"version": schema.Int64Attribute{
+								Description: "Version number of the setting",
+								Computed:    true,
+							},
 						},
 					},
 					"fips": schema.SingleNestedAttribute{
 						Description: "FIPS settings.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsFipsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"tls": schema.BoolAttribute{
 								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
@@ -245,7 +270,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"host_selector": schema.SingleNestedAttribute{
 						Description: "Setting to enable host selector in egress policies.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsHostSelectorModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable filtering via hosts for egress policies.",
@@ -255,7 +282,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"protocol_detection": schema.SingleNestedAttribute{
 						Description: "Protocol Detection settings.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsProtocolDetectionModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable detecting protocol on initial bytes of client traffic.",
@@ -265,7 +294,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"sandbox": schema.SingleNestedAttribute{
 						Description: "Sandbox settings.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsSandboxModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable sandbox.",
@@ -282,7 +313,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"tls_decrypt": schema.SingleNestedAttribute{
 						Description: "TLS interception settings.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsTLSDecryptModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable inspecting encrypted HTTP traffic.",
