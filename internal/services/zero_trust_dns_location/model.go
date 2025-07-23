@@ -40,10 +40,10 @@ func (m ZeroTrustDNSLocationModel) MarshalJSONForUpdate(state ZeroTrustDNSLocati
 }
 
 type ZeroTrustDNSLocationEndpointsModel struct {
-	DOH  customfield.NestedObject[ZeroTrustDNSLocationEndpointsDOHModel]  `tfsdk:"doh" json:"doh,computed_optional"`
-	DOT  customfield.NestedObject[ZeroTrustDNSLocationEndpointsDOTModel]  `tfsdk:"dot" json:"dot,computed_optional"`
-	IPV4 *ZeroTrustDNSLocationEndpointsIPV4Model                          `tfsdk:"ipv4" json:"ipv4,optional"`
-	IPV6 customfield.NestedObject[ZeroTrustDNSLocationEndpointsIPV6Model] `tfsdk:"ipv6" json:"ipv6,computed_optional"`
+	DOH  *ZeroTrustDNSLocationEndpointsDOHModel  `tfsdk:"doh" json:"doh,required"`
+	DOT  *ZeroTrustDNSLocationEndpointsDOTModel  `tfsdk:"dot" json:"dot,required"`
+	IPV4 *ZeroTrustDNSLocationEndpointsIPV4Model `tfsdk:"ipv4" json:"ipv4,required"`
+	IPV6 *ZeroTrustDNSLocationEndpointsIPV6Model `tfsdk:"ipv6" json:"ipv6,required"`
 }
 
 type ZeroTrustDNSLocationEndpointsDOHModel struct {
