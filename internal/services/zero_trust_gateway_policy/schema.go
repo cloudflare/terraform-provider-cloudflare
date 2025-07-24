@@ -142,9 +142,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"add_headers": schema.MapAttribute{
 						Description: "Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 						ElementType: types.ListType{
 							ElemType: types.StringType,
 						},
@@ -156,9 +154,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"audit_ssh": schema.SingleNestedAttribute{
 						Description: "Settings for the Audit SSH action.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsAuditSSHModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"command_logging": schema.BoolAttribute{
 								Description: "Enable to turn on SSH command logging.",
@@ -168,9 +164,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"biso_admin_controls": schema.SingleNestedAttribute{
 						Description: "Configure how browser isolation behaves.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"copy": schema.StringAttribute{
 								Description: "Configure whether copy is enabled or not. When set with \"remote_only\", copying isolated content from the remote browser to the user's local clipboard is disabled. When absent, copy is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
@@ -269,9 +263,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"block_page": schema.SingleNestedAttribute{
 						Description: "Custom block page settings. If missing/null, blocking will use the the account settings.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsBlockPageModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"target_uri": schema.StringAttribute{
 								Description: "URI to which the user will be redirected",
@@ -295,14 +287,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"bypass_parent_rule": schema.BoolAttribute{
 						Description: "Set by children MSP accounts to bypass their parent's rules.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"check_session": schema.SingleNestedAttribute{
 						Description: "Configure how session check behaves.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsCheckSessionModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"duration": schema.StringAttribute{
 								Description: "Configure how fresh the session needs to be to be considered valid.",
@@ -316,9 +305,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"dns_resolvers": schema.SingleNestedAttribute{
 						Description: "Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when 'resolve_dns_through_cloudflare' or 'resolve_dns_internally' are set. DNS queries will route to the address closest to their origin. Only valid when a rule's action is set to 'resolve'.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsDNSResolversModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ipv4": schema.ListNestedAttribute{
 								Optional: true,
@@ -370,9 +357,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"egress": schema.SingleNestedAttribute{
 						Description: "Configure how Gateway Proxy traffic egresses. You can enable this setting for rules with Egress actions and filters, or omit it to indicate local egress via WARP IPs.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsEgressModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ipv4": schema.StringAttribute{
 								Description: "The IPv4 address to be used for egress.",
@@ -410,9 +395,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"l4override": schema.SingleNestedAttribute{
 						Description: "Send matching traffic to the supplied destination IP address and port.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsL4overrideModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ip": schema.StringAttribute{
 								Description: "IPv4 or IPv6 address.",
@@ -426,9 +409,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"notification_settings": schema.SingleNestedAttribute{
 						Description: "Configure a notification to display on the user's device when this rule is matched.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsNotificationSettingsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Set notification on",
@@ -462,9 +443,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"payload_log": schema.SingleNestedAttribute{
 						Description: "Configure DLP payload logging.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsPayloadLogModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Set to true to enable DLP payload logging for this rule.",
@@ -474,9 +453,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"quarantine": schema.SingleNestedAttribute{
 						Description: "Settings that apply to quarantine rules",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsQuarantineModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"file_types": schema.ListAttribute{
 								Description: "Types of files to sandbox.",
@@ -506,9 +483,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"redirect": schema.SingleNestedAttribute{
 						Description: "Settings that apply to redirect rules",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsRedirectModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"target_uri": schema.StringAttribute{
 								Description: "URI to which the user will be redirected",
@@ -526,9 +501,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"resolve_dns_internally": schema.SingleNestedAttribute{
 						Description: "Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action is set to 'resolve'.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsResolveDNSInternallyModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"fallback": schema.StringAttribute{
 								Description: "The fallback behavior to apply when the internal DNS response code is different from 'NOERROR' or when the response data only contains CNAME records for 'A' or 'AAAA' queries.\nAvailable values: \"none\", \"public_dns\".",
@@ -550,9 +523,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"untrusted_cert": schema.SingleNestedAttribute{
 						Description: "Configure behavior when an upstream cert is invalid or an SSL error occurs.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"action": schema.StringAttribute{
 								Description: "The action performed when an untrusted certificate is seen. The default action is an error with HTTP code 526.\nAvailable values: \"pass_through\", \"block\", \"error\".",
