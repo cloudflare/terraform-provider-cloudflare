@@ -125,6 +125,7 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 	// `tags` might not be in the configuration, so we need to normalize it here to avoid a diff
 	normalizeEmptyAndNullList(&data.Tags, stateData.Tags)
 
+	normalizeFalseAndNullBool(&data.ServiceAuth401Redirect, stateData.ServiceAuth401Redirect)
 	normalizeFalseAndNullBool(&data.EnableBindingCookie, stateData.EnableBindingCookie)
 	normalizeFalseAndNullBool(&data.OptionsPreflightBypass, stateData.OptionsPreflightBypass)
 	normalizeFalseAndNullBool(&data.AutoRedirectToIdentity, stateData.AutoRedirectToIdentity)

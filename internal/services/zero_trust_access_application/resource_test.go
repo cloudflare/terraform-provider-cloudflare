@@ -100,6 +100,7 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
 					resource.TestCheckResourceAttr(name, "saas_app.%", "0"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+					resource.TestCheckResourceAttr(name, "service_auth_401_redirect", "false"),
 				),
 			},
 			{
