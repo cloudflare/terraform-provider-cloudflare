@@ -30,19 +30,19 @@ func (m ZeroTrustGatewaySettingsModel) MarshalJSONForUpdate(state ZeroTrustGatew
 }
 
 type ZeroTrustGatewaySettingsSettingsModel struct {
-	ActivityLog           customfield.NestedObject[ZeroTrustGatewaySettingsSettingsActivityLogModel]           `tfsdk:"activity_log" json:"activity_log,computed_optional"`
-	Antivirus             customfield.NestedObject[ZeroTrustGatewaySettingsSettingsAntivirusModel]             `tfsdk:"antivirus" json:"antivirus,computed_optional"`
-	BlockPage             customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBlockPageModel]             `tfsdk:"block_page" json:"block_page,computed_optional"`
-	BodyScanning          customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBodyScanningModel]          `tfsdk:"body_scanning" json:"body_scanning,computed_optional"`
-	BrowserIsolation      customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBrowserIsolationModel]      `tfsdk:"browser_isolation" json:"browser_isolation,computed_optional"`
-	Certificate           customfield.NestedObject[ZeroTrustGatewaySettingsSettingsCertificateModel]           `tfsdk:"certificate" json:"certificate,computed_optional"`
-	CustomCertificate     customfield.NestedObject[ZeroTrustGatewaySettingsSettingsCustomCertificateModel]     `tfsdk:"custom_certificate" json:"custom_certificate,computed_optional"`
-	ExtendedEmailMatching customfield.NestedObject[ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingModel] `tfsdk:"extended_email_matching" json:"extended_email_matching,computed_optional"`
-	Fips                  customfield.NestedObject[ZeroTrustGatewaySettingsSettingsFipsModel]                  `tfsdk:"fips" json:"fips,computed_optional"`
-	HostSelector          customfield.NestedObject[ZeroTrustGatewaySettingsSettingsHostSelectorModel]          `tfsdk:"host_selector" json:"host_selector,computed_optional"`
-	ProtocolDetection     customfield.NestedObject[ZeroTrustGatewaySettingsSettingsProtocolDetectionModel]     `tfsdk:"protocol_detection" json:"protocol_detection,computed_optional"`
-	Sandbox               customfield.NestedObject[ZeroTrustGatewaySettingsSettingsSandboxModel]               `tfsdk:"sandbox" json:"sandbox,computed_optional"`
-	TLSDecrypt            customfield.NestedObject[ZeroTrustGatewaySettingsSettingsTLSDecryptModel]            `tfsdk:"tls_decrypt" json:"tls_decrypt,computed_optional"`
+	ActivityLog           *ZeroTrustGatewaySettingsSettingsActivityLogModel                           `tfsdk:"activity_log" json:"activity_log,optional"`
+	Antivirus             *ZeroTrustGatewaySettingsSettingsAntivirusModel                             `tfsdk:"antivirus" json:"antivirus,optional"`
+	BlockPage             *ZeroTrustGatewaySettingsSettingsBlockPageModel                             `tfsdk:"block_page" json:"block_page,optional"`
+	BodyScanning          *ZeroTrustGatewaySettingsSettingsBodyScanningModel                          `tfsdk:"body_scanning" json:"body_scanning,optional"`
+	BrowserIsolation      *ZeroTrustGatewaySettingsSettingsBrowserIsolationModel                      `tfsdk:"browser_isolation" json:"browser_isolation,optional"`
+	Certificate           *ZeroTrustGatewaySettingsSettingsCertificateModel                           `tfsdk:"certificate" json:"certificate,optional"`
+	CustomCertificate     *ZeroTrustGatewaySettingsSettingsCustomCertificateModel                     `tfsdk:"custom_certificate" json:"custom_certificate,optional"`
+	ExtendedEmailMatching *ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingModel                 `tfsdk:"extended_email_matching" json:"extended_email_matching,optional"`
+	Fips                  *ZeroTrustGatewaySettingsSettingsFipsModel                                  `tfsdk:"fips" json:"fips,optional"`
+	HostSelector          customfield.NestedObject[ZeroTrustGatewaySettingsSettingsHostSelectorModel] `tfsdk:"host_selector" json:"host_selector,computed_optional"`
+	ProtocolDetection     *ZeroTrustGatewaySettingsSettingsProtocolDetectionModel                     `tfsdk:"protocol_detection" json:"protocol_detection,optional"`
+	Sandbox               *ZeroTrustGatewaySettingsSettingsSandboxModel                               `tfsdk:"sandbox" json:"sandbox,optional"`
+	TLSDecrypt            *ZeroTrustGatewaySettingsSettingsTLSDecryptModel                            `tfsdk:"tls_decrypt" json:"tls_decrypt,optional"`
 }
 
 type ZeroTrustGatewaySettingsSettingsActivityLogModel struct {
@@ -72,7 +72,7 @@ type ZeroTrustGatewaySettingsSettingsBlockPageModel struct {
 	LogoPath        types.String `tfsdk:"logo_path" json:"logo_path,optional"`
 	MailtoAddress   types.String `tfsdk:"mailto_address" json:"mailto_address,optional"`
 	MailtoSubject   types.String `tfsdk:"mailto_subject" json:"mailto_subject,optional"`
-	Mode            types.String `tfsdk:"mode" json:"mode,computed_optional"`
+	Mode            types.String `tfsdk:"mode" json:"mode,optional"`
 	Name            types.String `tfsdk:"name" json:"name,optional"`
 	ReadOnly        types.Bool   `tfsdk:"read_only" json:"read_only,computed"`
 	SourceAccount   types.String `tfsdk:"source_account" json:"source_account,computed"`
