@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_logpush_job: mark both logpull_options and output_options as computed
+```
