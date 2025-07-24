@@ -4,7 +4,6 @@ package zero_trust_organization
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -26,8 +25,6 @@ type ZeroTrustOrganizationModel struct {
 	CustomPages                    *ZeroTrustOrganizationCustomPagesModel `tfsdk:"custom_pages" json:"custom_pages,optional"`
 	LoginDesign                    *ZeroTrustOrganizationLoginDesignModel `tfsdk:"login_design" json:"login_design,optional"`
 	AutoRedirectToIdentity         types.Bool                             `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
-	CreatedAt                      timetypes.RFC3339                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	UpdatedAt                      timetypes.RFC3339                      `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 func (m ZeroTrustOrganizationModel) MarshalJSON() (data []byte, err error) {
