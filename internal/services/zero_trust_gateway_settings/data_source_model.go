@@ -43,6 +43,7 @@ type ZeroTrustGatewaySettingsSettingsDataSourceModel struct {
 	ExtendedEmailMatching customfield.NestedObject[ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingDataSourceModel] `tfsdk:"extended_email_matching" json:"extended_email_matching,computed"`
 	Fips                  customfield.NestedObject[ZeroTrustGatewaySettingsSettingsFipsDataSourceModel]                  `tfsdk:"fips" json:"fips,computed"`
 	HostSelector          customfield.NestedObject[ZeroTrustGatewaySettingsSettingsHostSelectorDataSourceModel]          `tfsdk:"host_selector" json:"host_selector,computed"`
+	Inspection            customfield.NestedObject[ZeroTrustGatewaySettingsSettingsInspectionDataSourceModel]            `tfsdk:"inspection" json:"inspection,computed"`
 	ProtocolDetection     customfield.NestedObject[ZeroTrustGatewaySettingsSettingsProtocolDetectionDataSourceModel]     `tfsdk:"protocol_detection" json:"protocol_detection,computed"`
 	Sandbox               customfield.NestedObject[ZeroTrustGatewaySettingsSettingsSandboxDataSourceModel]               `tfsdk:"sandbox" json:"sandbox,computed"`
 	TLSDecrypt            customfield.NestedObject[ZeroTrustGatewaySettingsSettingsTLSDecryptDataSourceModel]            `tfsdk:"tls_decrypt" json:"tls_decrypt,computed"`
@@ -67,15 +68,15 @@ type ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsDataSourceMode
 }
 
 type ZeroTrustGatewaySettingsSettingsBlockPageDataSourceModel struct {
-	BackgroundColor types.String `tfsdk:"background_color" json:"background_color,computed"`
 	Enabled         types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+	Mode            types.String `tfsdk:"mode" json:"mode,computed"`
+	BackgroundColor types.String `tfsdk:"background_color" json:"background_color,computed"`
 	FooterText      types.String `tfsdk:"footer_text" json:"footer_text,computed"`
 	HeaderText      types.String `tfsdk:"header_text" json:"header_text,computed"`
 	IncludeContext  types.Bool   `tfsdk:"include_context" json:"include_context,computed"`
 	LogoPath        types.String `tfsdk:"logo_path" json:"logo_path,computed"`
 	MailtoAddress   types.String `tfsdk:"mailto_address" json:"mailto_address,computed"`
 	MailtoSubject   types.String `tfsdk:"mailto_subject" json:"mailto_subject,computed"`
-	Mode            types.String `tfsdk:"mode" json:"mode,computed"`
 	Name            types.String `tfsdk:"name" json:"name,computed"`
 	ReadOnly        types.Bool   `tfsdk:"read_only" json:"read_only,computed"`
 	SourceAccount   types.String `tfsdk:"source_account" json:"source_account,computed"`
@@ -117,6 +118,10 @@ type ZeroTrustGatewaySettingsSettingsFipsDataSourceModel struct {
 
 type ZeroTrustGatewaySettingsSettingsHostSelectorDataSourceModel struct {
 	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+}
+
+type ZeroTrustGatewaySettingsSettingsInspectionDataSourceModel struct {
+	Mode types.String `tfsdk:"mode" json:"mode,computed"`
 }
 
 type ZeroTrustGatewaySettingsSettingsProtocolDetectionDataSourceModel struct {
