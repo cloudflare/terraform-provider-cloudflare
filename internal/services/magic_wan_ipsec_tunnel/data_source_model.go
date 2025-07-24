@@ -41,6 +41,7 @@ type MagicWANIPSECTunnelIPSECTunnelDataSourceModel struct {
 	CustomerEndpoint   types.String                                                                       `tfsdk:"customer_endpoint" json:"customer_endpoint,computed"`
 	Description        types.String                                                                       `tfsdk:"description" json:"description,computed"`
 	HealthCheck        customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelHealthCheckDataSourceModel] `tfsdk:"health_check" json:"health_check,computed"`
+	InterfaceAddress6  types.String                                                                       `tfsdk:"interface_address6" json:"interface_address6,computed"`
 	ModifiedOn         timetypes.RFC3339                                                                  `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	PSKMetadata        customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelPSKMetadataDataSourceModel] `tfsdk:"psk_metadata" json:"psk_metadata,computed"`
 	ReplayProtection   types.Bool                                                                         `tfsdk:"replay_protection" json:"replay_protection,computed"`
