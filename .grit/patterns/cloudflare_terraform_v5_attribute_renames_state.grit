@@ -144,7 +144,6 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
             contains `"plan": $_` => .
         }
     },
-
     // cloudflare_access_policy & cloudflare_zero_trust_access_group
     `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
         $resource_type <: contains `cloudflare_access_policy`,
@@ -211,5 +210,18 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
           contains `"min_days_for_renewal": $_` => .
         }
     },
+    // cloudflare_page_rule
+    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_page_rule`,
+        $instances <: any {
+            contains `""` => `null`,
+            contains `[]` => `null`,
+            contains `false` => `null`,
+            contains `0` => `null`,
+            contains `"forwarding_url": []` => `"forwarding_url": null`,
+            contains `"forwarding_url": [{"status_code": $status_code, "url": $url}]` => `"forwarding_url": {"status_code": $status_code, "url": $url}`,
+            contains `"actions": [$action]` => `"actions": $action`
+        }
+    }
   }
 }
