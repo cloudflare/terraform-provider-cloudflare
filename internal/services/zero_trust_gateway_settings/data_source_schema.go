@@ -92,19 +92,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBlockPageDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
-								Computed:    true,
-							},
-							"mode": schema.StringAttribute{
-								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"customized_block_page\", \"redirect_uri\".",
-								Computed:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("customized_block_page", "redirect_uri"),
-								},
-							},
 							"background_color": schema.StringAttribute{
 								Description: "If mode is customized_block_page: block page background color in #rrggbb format.",
+								Computed:    true,
+							},
+							"enabled": schema.BoolAttribute{
+								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
 								Computed:    true,
 							},
 							"footer_text": schema.StringAttribute{
@@ -130,6 +123,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"mailto_subject": schema.StringAttribute{
 								Description: "If mode is customized_block_page: subject line for emails created from block page.",
 								Computed:    true,
+							},
+							"mode": schema.StringAttribute{
+								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"customized_block_page\", \"redirect_uri\".",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("customized_block_page", "redirect_uri"),
+								},
 							},
 							"name": schema.StringAttribute{
 								Description: "If mode is customized_block_page: block page title.",

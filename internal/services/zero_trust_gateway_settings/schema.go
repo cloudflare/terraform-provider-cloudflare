@@ -95,19 +95,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Block page layout settings.",
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
-								Required:    true,
-							},
-							"mode": schema.StringAttribute{
-								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"customized_block_page\", \"redirect_uri\".",
-								Required:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("customized_block_page", "redirect_uri"),
-								},
-							},
 							"background_color": schema.StringAttribute{
 								Description: "If mode is customized_block_page: block page background color in #rrggbb format.",
+								Optional:    true,
+							},
+							"enabled": schema.BoolAttribute{
+								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
 								Optional:    true,
 							},
 							"footer_text": schema.StringAttribute{
@@ -133,6 +126,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"mailto_subject": schema.StringAttribute{
 								Description: "If mode is customized_block_page: subject line for emails created from block page.",
 								Optional:    true,
+							},
+							"mode": schema.StringAttribute{
+								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"customized_block_page\", \"redirect_uri\".",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("customized_block_page", "redirect_uri"),
+								},
 							},
 							"name": schema.StringAttribute{
 								Description: "If mode is customized_block_page: block page title.",

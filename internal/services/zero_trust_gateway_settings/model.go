@@ -65,15 +65,15 @@ type ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel struct {
 }
 
 type ZeroTrustGatewaySettingsSettingsBlockPageModel struct {
-	Enabled         types.Bool   `tfsdk:"enabled" json:"enabled,required"`
-	Mode            types.String `tfsdk:"mode" json:"mode,required"`
 	BackgroundColor types.String `tfsdk:"background_color" json:"background_color,optional"`
+	Enabled         types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
 	FooterText      types.String `tfsdk:"footer_text" json:"footer_text,optional"`
 	HeaderText      types.String `tfsdk:"header_text" json:"header_text,optional"`
 	IncludeContext  types.Bool   `tfsdk:"include_context" json:"include_context,optional"`
 	LogoPath        types.String `tfsdk:"logo_path" json:"logo_path,optional"`
 	MailtoAddress   types.String `tfsdk:"mailto_address" json:"mailto_address,optional"`
 	MailtoSubject   types.String `tfsdk:"mailto_subject" json:"mailto_subject,optional"`
+	Mode            types.String `tfsdk:"mode" json:"mode,optional"`
 	Name            types.String `tfsdk:"name" json:"name,optional"`
 	ReadOnly        types.Bool   `tfsdk:"read_only" json:"read_only,computed"`
 	SourceAccount   types.String `tfsdk:"source_account" json:"source_account,computed"`
