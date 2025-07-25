@@ -3,6 +3,7 @@ package zero_trust_access_policy
 import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 type IsNull interface {
@@ -11,6 +12,13 @@ type IsNull interface {
 
 func normalizeEmptyAndNullSlice[T any](data **[]T, stateData *[]T) {
 	if (*data != nil && len(**data) != 0) || (stateData != nil && len(*stateData) != 0) {
+		return
+	}
+	*data = stateData
+}
+
+func normalizeFalseAndNullBool(data *basetypes.BoolValue, stateData basetypes.BoolValue) {
+	if data.ValueBool() || stateData.ValueBool() {
 		return
 	}
 	*data = stateData
@@ -25,6 +33,9 @@ func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, source
 	normalizeEmptyAndNullSlice(&data.Include, sourceData.Include)
 	normalizeEmptyAndNullSlice(&data.Require, sourceData.Require)
 	normalizeEmptyAndNullSlice(&data.Exclude, sourceData.Exclude)
+	normalizeFalseAndNullBool(&data.PurposeJustificationRequired, sourceData.PurposeJustificationRequired)
+	normalizeFalseAndNullBool(&data.ApprovalRequired, sourceData.ApprovalRequired)
+	normalizeFalseAndNullBool(&data.IsolationRequired, sourceData.IsolationRequired)
 
 	return diags
 }
