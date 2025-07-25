@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/logs"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*LogpullRetentionResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*LogpullRetentionResource)(nil)
+var _ resource.ResourceWithImportState = (*LogpullRetentionResource)(nil)
 
 func NewResource() resource.Resource {
 	return &LogpullRetentionResource{}
@@ -88,6 +91,7 @@ func (r *LogpullRetentionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -131,12 +135,55 @@ func (r *LogpullRetentionResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *LogpullRetentionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 
+}
+
+func (r *LogpullRetentionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *LogpullRetentionModel = new(LogpullRetentionModel)
+
+	path := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ZoneID = types.StringValue(path)
+
+	res := new(http.Response)
+	env := LogpullRetentionResultEnvelope{*data}
+	_, err := r.client.Logs.Control.Retention.Get(
+		ctx,
+		logs.ControlRetentionGetParams{
+			ZoneID: cloudflare.F(path),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.ZoneID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *LogpullRetentionResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {

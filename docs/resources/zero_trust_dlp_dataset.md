@@ -57,7 +57,7 @@ If false, the response has no secret and the dataset is uploaded in plaintext.
 - `id` (String) The ID of this resource.
 - `max_cells` (Number)
 - `num_cells` (Number)
-- `status` (String) Available values: "empty", "uploading", "processing", "failed", "complete".
+- `status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
 - `updated_at` (String) When the dataset was last updated.
 
 This includes name or description changes as well as uploads.
@@ -72,7 +72,7 @@ Read-Only:
 - `entry_id` (String)
 - `header_name` (String)
 - `num_cells` (Number)
-- `upload_status` (String) Available values: "empty", "uploading", "processing", "failed", "complete".
+- `upload_status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
 
 
 <a id="nestedatt--dataset"></a>
@@ -89,7 +89,7 @@ Read-Only:
 - `name` (String)
 - `num_cells` (Number)
 - `secret` (Boolean)
-- `status` (String) Available values: "empty", "uploading", "processing", "failed", "complete".
+- `status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
 - `updated_at` (String) When the dataset was last updated.
 
 This includes name or description changes as well as uploads.
@@ -103,7 +103,7 @@ Read-Only:
 - `entry_id` (String)
 - `header_name` (String)
 - `num_cells` (Number)
-- `upload_status` (String) Available values: "empty", "uploading", "processing", "failed", "complete".
+- `upload_status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
 
 
 <a id="nestedatt--dataset--uploads"></a>
@@ -112,7 +112,7 @@ Read-Only:
 Read-Only:
 
 - `num_cells` (Number)
-- `status` (String) Available values: "empty", "uploading", "processing", "failed", "complete".
+- `status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
 - `version` (Number)
 
 
@@ -123,7 +123,7 @@ Read-Only:
 Read-Only:
 
 - `num_cells` (Number)
-- `status` (String) Available values: "empty", "uploading", "processing", "failed", "complete".
+- `status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
 - `version` (Number)
 
 

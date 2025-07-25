@@ -14,6 +14,8 @@ description: |-
 ```terraform
 data "cloudflare_account_api_token_permission_groups" "example_account_api_token_permission_groups" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  name = "Account%20Settings%20Write"
+  scope = "com.cloudflare.api.account.zone"
 }
 ```
 
@@ -24,10 +26,11 @@ data "cloudflare_account_api_token_permission_groups" "example_account_api_token
 
 - `account_id` (String) Account identifier tag.
 
-### Read-Only
+### Optional
 
-- `id` (String) Public ID.
-- `name` (String) Permission Group Name
-- `scopes` (List of String) Resources to which the Permission Group is scoped
+- `name` (String) Filter by the name of the permission group.
+The value must be URL-encoded.
+- `scope` (String) Filter by the scope of the permission group.
+The value must be URL-encoded.
 
 

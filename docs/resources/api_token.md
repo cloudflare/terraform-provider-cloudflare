@@ -30,8 +30,7 @@ resource "cloudflare_api_token" "example_api_token" {
       }
     }]
     resources = {
-      "com.cloudflare.api.account.zone.22b1de5f1c0e4b3ea97bb1e963b06a43" = "*"
-      "com.cloudflare.api.account.zone.eb78d65290b24279ba6f44721b3ea3c4" = "*"
+      foo = "string"
     }
   }]
   condition = {
@@ -76,7 +75,7 @@ Required:
 
 - `effect` (String) Allow or deny operations against the resources.
 Available values: "allow", "deny".
-- `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
+- `permission_groups` (Attributes Set) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
 - `resources` (Map of String) A list of resource names that the policy applies to.
 
 Read-Only:
