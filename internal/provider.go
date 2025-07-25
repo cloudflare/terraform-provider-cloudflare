@@ -145,6 +145,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_webhook"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/turnstile_widget"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/url_normalization_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user"
@@ -588,6 +589,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		schema_validation_settings.NewResource,
 		schema_validation_operation_settings.NewResource,
 		argo_tunnel.NewResource,
+		tunnel.NewResource,
 	}
 }
 
