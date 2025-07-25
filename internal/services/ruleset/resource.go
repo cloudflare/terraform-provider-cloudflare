@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -305,27 +306,25 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 
 	ruleIDsByRef := make(map[string]types.String)
 
-	stateElements := make([]RulesetRulesModel, 0, len(state.Rules.Elements()))
-	diags := state.Rules.ElementsAs(ctx, &stateElements, false)
-	if diags != nil {
-		resp.Diagnostics.Append(diags...)
+	stateRules, diags := state.Rules.AsStructSliceT(ctx)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	for _, rule := range stateElements {
+	for _, rule := range stateRules {
 		if ref := rule.Ref.ValueString(); ref != "" {
 			ruleIDsByRef[ref] = rule.ID
 		}
 	}
 
-	planElements := make([]RulesetRulesModel, 0, len(state.Rules.Elements()))
-	diags = state.Rules.ElementsAs(ctx, &planElements, false)
-	if diags != nil {
-		resp.Diagnostics.Append(diags...)
+	planRules, diags := plan.Rules.AsStructSliceT(ctx)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	for _, rule := range planElements {
+	for i, rule := range planRules {
 		// Do nothing if the rule's ID is a known planned value.
 		if !rule.ID.IsUnknown() {
 			continue
@@ -335,9 +334,15 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 		// value of its ID with the corresponding ID from the state.
 		if ref := rule.Ref.ValueString(); ref != "" {
 			if id, ok := ruleIDsByRef[ref]; ok {
-				rule.ID = id
+				planRules[i].ID = id
 			}
 		}
+	}
+
+	plan.Rules, diags = customfield.NewObjectList(ctx, planRules)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
