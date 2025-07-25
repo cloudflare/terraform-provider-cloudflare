@@ -24,6 +24,9 @@ data "cloudflare_list" "example_list" {
 ### Required
 
 - `account_id` (String) Defines an identifier.
+
+### Optional
+
 - `list_id` (String) The unique ID of the list.
 
 ### Read-Only

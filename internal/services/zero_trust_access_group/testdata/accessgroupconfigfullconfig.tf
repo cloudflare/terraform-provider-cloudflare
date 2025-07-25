@@ -5,7 +5,11 @@ resource "cloudflare_zero_trust_access_group" "%[1]s" {
   include = [
     {
       email = { email = "%[3]s" }
+    },
+    {
       email_domain = { domain = "example.com" }
+    },
+    {
       common_name = { common_name = "common" }
     },
     {
@@ -13,11 +17,15 @@ resource "cloudflare_zero_trust_access_group" "%[1]s" {
     }
   ]
 
-  require = [{
-    email = { email = "%[3]s" }
-  }]
+  require = [
+    {
+      email = { email = "%[3]s" }
+    }
+  ]
 
-  exclude = [{
-    email = { email = "%[3]s" }
-  }]
+  exclude = [
+    {
+      email = { email = "%[3]s" }
+    }
+  ]
 }

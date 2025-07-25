@@ -37,7 +37,6 @@ Read-Only:
 
 - `activity_log` (Attributes) Activity log settings. (see [below for nested schema](#nestedatt--settings--activity_log))
 - `antivirus` (Attributes) Anti-virus settings. (see [below for nested schema](#nestedatt--settings--antivirus))
-- `app_control_settings` (Attributes) Setting to enable App Control (see [below for nested schema](#nestedatt--settings--app_control_settings))
 - `block_page` (Attributes) Block page layout settings. (see [below for nested schema](#nestedatt--settings--block_page))
 - `body_scanning` (Attributes) DLP body scanning settings. (see [below for nested schema](#nestedatt--settings--body_scanning))
 - `browser_isolation` (Attributes) Browser isolation settings. (see [below for nested schema](#nestedatt--settings--browser_isolation))
@@ -80,14 +79,6 @@ Read-Only:
 
 
 
-<a id="nestedatt--settings--app_control_settings"></a>
-### Nested Schema for `settings.app_control_settings`
-
-Read-Only:
-
-- `enabled` (Boolean) Enable App Control
-
-
 <a id="nestedatt--settings--block_page"></a>
 ### Nested Schema for `settings.block_page`
 
@@ -104,6 +95,8 @@ Read-Only:
 - `mode` (String) Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.
 Available values: "customized_block_page", "redirect_uri".
 - `name` (String) If mode is customized_block_page: block page title.
+- `read_only` (Boolean) This setting was shared via the Orgs API and cannot be edited by the current account
+- `source_account` (String) Account tag of account that shared this setting
 - `suppress_footer` (Boolean) If mode is customized_block_page: suppress detailed info at the bottom of the block page.
 - `target_uri` (String) If mode is redirect_uri: URI to which the user should be redirected.
 
@@ -150,6 +143,8 @@ Read-Only:
 Read-Only:
 
 - `enabled` (Boolean) Enable matching all variants of user emails (with + or . modifiers) used as criteria in Firewall policies.
+- `read_only` (Boolean) This setting was shared via the Orgs API and cannot be edited by the current account
+- `source_account` (String) Account tag of account that shared this setting
 
 
 <a id="nestedatt--settings--fips"></a>

@@ -17,12 +17,12 @@ type UserAgentBlockingRulesResultListDataSourceEnvelope struct {
 }
 
 type UserAgentBlockingRulesDataSourceModel struct {
-	ZoneID            types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
-	Description       types.String                                                              `tfsdk:"description" query:"description,optional"`
-	DescriptionSearch types.String                                                              `tfsdk:"description_search" query:"description_search,optional"`
-	UASearch          types.String                                                              `tfsdk:"ua_search" query:"ua_search,optional"`
-	MaxItems          types.Int64                                                               `tfsdk:"max_items"`
-	Result            customfield.NestedObjectList[UserAgentBlockingRulesResultDataSourceModel] `tfsdk:"result"`
+	ZoneID      types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
+	Description types.String                                                              `tfsdk:"description" query:"description,optional"`
+	Paused      types.Bool                                                                `tfsdk:"paused" query:"paused,optional"`
+	UserAgent   types.String                                                              `tfsdk:"user_agent" query:"user_agent,optional"`
+	MaxItems    types.Int64                                                               `tfsdk:"max_items"`
+	Result      customfield.NestedObjectList[UserAgentBlockingRulesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *UserAgentBlockingRulesDataSourceModel) toListParams(_ context.Context) (params firewall.UARuleListParams, diags diag.Diagnostics) {
@@ -33,11 +33,11 @@ func (m *UserAgentBlockingRulesDataSourceModel) toListParams(_ context.Context) 
 	if !m.Description.IsNull() {
 		params.Description = cloudflare.F(m.Description.ValueString())
 	}
-	if !m.DescriptionSearch.IsNull() {
-		params.DescriptionSearch = cloudflare.F(m.DescriptionSearch.ValueString())
+	if !m.Paused.IsNull() {
+		params.Paused = cloudflare.F(m.Paused.ValueBool())
 	}
-	if !m.UASearch.IsNull() {
-		params.UASearch = cloudflare.F(m.UASearch.ValueString())
+	if !m.UserAgent.IsNull() {
+		params.UserAgent = cloudflare.F(m.UserAgent.ValueString())
 	}
 
 	return

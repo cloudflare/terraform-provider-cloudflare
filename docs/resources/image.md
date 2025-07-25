@@ -14,9 +14,8 @@ description: |-
 ```terraform
 resource "cloudflare_image" "example_image" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  file = {
-
-  }
+  id = "id"
+  file = null
   metadata = {
 
   }
@@ -31,6 +30,7 @@ resource "cloudflare_image" "example_image" {
 ### Required
 
 - `account_id` (String) Account identifier tag.
+- `id` (String) An optional custom unique identifier for your image.
 
 ### Optional
 
@@ -42,7 +42,6 @@ resource "cloudflare_image" "example_image" {
 ### Read-Only
 
 - `filename` (String) Image file name.
-- `id` (String) Image unique identifier.
 - `meta` (String) User modifiable key-value store. Can be used for keeping references to another system of record for managing images. Metadata must not exceed 1024 bytes.
 - `uploaded` (String) When the media item was uploaded.
 - `variants` (List of String) Object specifying available variants for an image.

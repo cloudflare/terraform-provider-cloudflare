@@ -5,7 +5,7 @@ resource "cloudflare_logpush_job" "example_logpush_job" {
   enabled = false
   filter = "{\"where\":{\"and\":[{\"key\":\"ClientRequestPath\",\"operator\":\"contains\",\"value\":\"/static\"},{\"key\":\"ClientRequestHost\",\"operator\":\"eq\",\"value\":\"example.com\"}]}}"
   frequency = "high"
-  kind = "edge"
+  kind = ""
   logpull_options = "fields=RayID,ClientIP,EdgeStartTimestamp&timestamps=rfc3339"
   max_upload_bytes = 5000000
   max_upload_interval_seconds = 30
