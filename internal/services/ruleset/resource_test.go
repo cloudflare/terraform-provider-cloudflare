@@ -11,7 +11,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestMain(m *testing.M) {
@@ -2408,6 +2410,237 @@ func TestAccCloudflareRuleset_CacheSettingsHandleDefaultHeaderExcludeOrigin(t *t
 	})
 }
 
+func TestAccCloudflareRuleset_RuleRefs(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetWithRuleRefs(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "ip.src eq 1.1.1.1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ref", "one"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.expression", "ip.src eq 2.2.2.2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.ref", "two"),
+				),
+			},
+			{
+				Config: testAccCloudflareRulesetWithRuleRefs(rnd, zoneID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				Config: testAccCloudflareRulesetWithRuleRefsAdded(rnd, zoneID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(
+							resourceName,
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":         knownvalue.NotNull(),
+									"expression": knownvalue.StringExact("ip.src eq 1.1.1.1"),
+									"ref":        knownvalue.StringExact("one"),
+								}),
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"expression": knownvalue.StringExact("ip.src eq 3.3.3.3"),
+									"ref":        knownvalue.StringExact("three"),
+								}),
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":         knownvalue.NotNull(),
+									"expression": knownvalue.StringExact("ip.src eq 2.2.2.2"),
+									"ref":        knownvalue.StringExact("two"),
+								}),
+							}),
+						),
+						plancheck.ExpectUnknownValue(
+							resourceName,
+							tfjsonpath.New("rules").AtSliceIndex(1).AtMapKey("id"),
+						),
+					},
+				},
+			},
+			{
+				Config: testAccCloudflareRulesetWithRuleRefs(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "ip.src eq 1.1.1.1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ref", "one"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.expression", "ip.src eq 2.2.2.2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.ref", "two"),
+				),
+			},
+			{
+				Config: testAccCloudflareRulesetWithRuleRefsAppended(rnd, zoneID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(
+							resourceName,
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":         knownvalue.NotNull(),
+									"expression": knownvalue.StringExact("ip.src eq 1.1.1.1"),
+									"ref":        knownvalue.StringExact("one"),
+								}),
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":         knownvalue.NotNull(),
+									"expression": knownvalue.StringExact("ip.src eq 2.2.2.2"),
+									"ref":        knownvalue.StringExact("two"),
+								}),
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"expression": knownvalue.StringExact("ip.src eq 3.3.3.3"),
+									"ref":        knownvalue.StringExact("three"),
+								}),
+							}),
+						),
+						plancheck.ExpectUnknownValue(
+							resourceName,
+							tfjsonpath.New("rules").AtSliceIndex(2).AtMapKey("id"),
+						),
+					},
+				},
+			},
+			{
+				Config: testAccCloudflareRulesetWithRuleRefs(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "ip.src eq 1.1.1.1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ref", "one"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.expression", "ip.src eq 2.2.2.2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.ref", "two"),
+				),
+			},
+			{
+				Config: testAccCloudflareRulesetWithRuleRefsModified(rnd, zoneID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(
+							resourceName,
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":         knownvalue.NotNull(),
+									"expression": knownvalue.StringExact("ip.src eq 1.1.1.1"),
+									"ref":        knownvalue.StringExact("one"),
+								}),
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":         knownvalue.NotNull(),
+									"expression": knownvalue.StringExact("ip.src eq 3.3.3.3"),
+									"ref":        knownvalue.StringExact("two"),
+								}),
+							}),
+						),
+					},
+				},
+			},
+			{
+				Config: testAccCloudflareRulesetWithRuleRefs(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "ip.src eq 1.1.1.1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ref", "one"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.expression", "ip.src eq 2.2.2.2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.ref", "two"),
+				),
+			},
+			{
+				Config: testAccCloudflareRulesetWithRuleRefsRemoved(rnd, zoneID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(
+							resourceName,
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":         knownvalue.NotNull(),
+									"expression": knownvalue.StringExact("ip.src eq 2.2.2.2"),
+									"ref":        knownvalue.StringExact("two"),
+								}),
+							}),
+						),
+					},
+				},
+			},
+			{
+				Config: testAccCloudflareRulesetWithRuleRefs(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "ip.src eq 1.1.1.1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ref", "one"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.expression", "ip.src eq 2.2.2.2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.ref", "two"),
+				),
+			},
+			{
+				Config: testAccCloudflareRulesetWithRuleRefsReversed(rnd, zoneID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(
+							resourceName,
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":         knownvalue.NotNull(),
+									"expression": knownvalue.StringExact("ip.src eq 2.2.2.2"),
+									"ref":        knownvalue.StringExact("two"),
+								}),
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":         knownvalue.NotNull(),
+									"expression": knownvalue.StringExact("ip.src eq 1.1.1.1"),
+									"ref":        knownvalue.StringExact("one"),
+								}),
+							}),
+						),
+					},
+				},
+			},
+			{
+				Config: testAccCloudflareRulesetWithRuleRefs(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "ip.src eq 1.1.1.1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ref", "one"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.expression", "ip.src eq 2.2.2.2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.ref", "two"),
+				),
+			},
+			{
+				Config: testAccCloudflareRulesetWithRuleRefsTruncated(rnd, zoneID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(
+							resourceName,
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":         knownvalue.NotNull(),
+									"expression": knownvalue.StringExact("ip.src eq 1.1.1.1"),
+									"ref":        knownvalue.StringExact("one"),
+								}),
+							}),
+						),
+					},
+				},
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return acctest.LoadTestCase("rulesetmagictransitsingle.tf", rnd, name, accountID)
 }
@@ -2510,26 +2743,6 @@ func testAccCheckCloudflareRulesetRateLimitScorePerPeriod(rnd, name, zoneID, zon
 
 func testAccCheckCloudflareRulesetRateLimitWithMitigationTimeoutOfZero(rnd, name, zoneID, zoneName string) string {
 	return acctest.LoadTestCase("rulesetratelimitwithmitigationtimeoutofzero.tf", rnd, name, zoneID, zoneName)
-}
-
-func testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID string) string {
-	return acctest.LoadTestCase("rulesettwocustomrules.tf", rnd, zoneID)
-}
-
-func testAccCheckCloudflareRulesetTwoCustomRulesReversed(rnd, zoneID string) string {
-	return acctest.LoadTestCase("rulesettwocustomrulesreversed.tf", rnd, zoneID)
-}
-
-func testAccCheckCloudflareRulesetThreeCustomRules(rnd, zoneID string, enableLoginRule bool) string {
-	return acctest.LoadTestCase("rulesetthreecustomrules.tf", rnd, zoneID, enableLoginRule)
-}
-
-func testAccCheckCloudflareRulesetTwoCustomRulesWithRef(rnd, zoneID string, enableAdminRule bool) string {
-	return acctest.LoadTestCase("rulesettwocustomruleswithref.tf", rnd, zoneID, enableAdminRule)
-}
-
-func testAccCheckCloudflareRulesetThreeCustomRulesWithRef(rnd, zoneID string) string {
-	return acctest.LoadTestCase("rulesetthreecustomruleswithref.tf", rnd, zoneID)
 }
 
 func testAccCheckCloudflareRulesetActionParametersOverridesActionEnabled(rnd, name, zoneID, zoneName string) string {
@@ -2668,10 +2881,6 @@ func testAccCloudflareRulesetConfigSingleFalseyValue(rnd, zoneID string) string 
 	return acctest.LoadTestCase("rulesetconfigsinglefalseyvalue.tf", rnd, zoneID)
 }
 
-func testAccCloudflareRulesetConfigConflictingCacheByDeviceConfigs(rnd, zoneID string) string {
-	return acctest.LoadTestCase("rulesetconfigconflictingcachebydeviceconfigs.tf", rnd, zoneID)
-}
-
 func testAccCloudflareRulesetCacheSettingsExplicitCustomKeyCacheKeysQueryStringsExclude(rnd, zoneID string) string {
 	return acctest.LoadTestCase("rulesetcachesettingsexplicitcustomkeycachekeysquerystringsexclude.tf", rnd, zoneID)
 }
@@ -2708,6 +2917,30 @@ func testAccCloudflareRulesetCacheSettingsBypassBrowserInvalid(rnd, zoneID strin
 	return acctest.LoadTestCase("rulesetcachesettingsbypassbrowserinvalid.tf", rnd, zoneID)
 }
 
-func testAccCheckCloudflareRulesetDestroy(s *terraform.State) error {
-	return nil
+func testAccCloudflareRulesetWithRuleRefs(rnd, zoneID string) string {
+	return acctest.LoadTestCase("rulesetwithrulerefs.tf", rnd, zoneID)
+}
+
+func testAccCloudflareRulesetWithRuleRefsAdded(rnd, zoneID string) string {
+	return acctest.LoadTestCase("rulesetwithrulerefsadded.tf", rnd, zoneID)
+}
+
+func testAccCloudflareRulesetWithRuleRefsAppended(rnd, zoneID string) string {
+	return acctest.LoadTestCase("rulesetwithrulerefsappended.tf", rnd, zoneID)
+}
+
+func testAccCloudflareRulesetWithRuleRefsModified(rnd, zoneID string) string {
+	return acctest.LoadTestCase("rulesetwithrulerefsmodified.tf", rnd, zoneID)
+}
+
+func testAccCloudflareRulesetWithRuleRefsRemoved(rnd, zoneID string) string {
+	return acctest.LoadTestCase("rulesetwithrulerefsremoved.tf", rnd, zoneID)
+}
+
+func testAccCloudflareRulesetWithRuleRefsReversed(rnd, zoneID string) string {
+	return acctest.LoadTestCase("rulesetwithrulerefsreversed.tf", rnd, zoneID)
+}
+
+func testAccCloudflareRulesetWithRuleRefsTruncated(rnd, zoneID string) string {
+	return acctest.LoadTestCase("rulesetwithrulerefstruncated.tf", rnd, zoneID)
 }
