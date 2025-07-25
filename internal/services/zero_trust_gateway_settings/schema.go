@@ -36,9 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"activity_log": schema.SingleNestedAttribute{
 						Description: "Activity log settings.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsActivityLogModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable activity logging.",
@@ -199,10 +197,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"custom_certificate": schema.SingleNestedAttribute{
 						Description:        "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`)",
-						Computed:           true,
 						Optional:           true,
 						DeprecationMessage: "This attribute is deprecated.",
-						CustomType:         customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCustomCertificateModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable use of custom certificate authority for signing Gateway traffic.",
@@ -224,9 +220,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"extended_email_matching": schema.SingleNestedAttribute{
 						Description: "Extended e-mail matching settings.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable matching all variants of user emails (with + or . modifiers) used as criteria in Firewall policies.",
@@ -295,9 +289,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"sandbox": schema.SingleNestedAttribute{
 						Description: "Sandbox settings.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsSandboxModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable sandbox.",
