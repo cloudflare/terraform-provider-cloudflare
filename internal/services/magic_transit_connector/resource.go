@@ -92,6 +92,12 @@ func (r *MagicTransitConnectorResource) Create(ctx context.Context, req resource
 	}
 	data = &env.Result
 
+	// The create endpoint response does not include the last_heartbeat and
+	// last_seen_version fields, so we manually set them here to null from
+	// unknown.
+	data.LastHeartbeat = types.StringNull()
+	data.LastSeenVersion = types.StringNull()
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -117,6 +123,7 @@ func (r *MagicTransitConnectorResource) Update(ctx context.Context, req resource
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+
 	res := new(http.Response)
 	env := MagicTransitConnectorResultEnvelope{*data}
 	_, err = r.client.MagicTransit.Connectors.Edit(
