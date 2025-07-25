@@ -7,16 +7,17 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_dns_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_dns_settings_internal_view"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_member"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_permission_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_role"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_token"
@@ -36,7 +37,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/bot_management"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/botnet_feed_config_asn"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/byo_ip_prefix"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/calls_sfu_app"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/calls_turn_app"
@@ -126,7 +126,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_operation_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_schemas"
@@ -318,7 +317,6 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 }
 
 func (p *CloudflareProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-
 	var data CloudflareProviderModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -392,6 +390,7 @@ func (p *CloudflareProvider) ConfigValidators(_ context.Context) []provider.Conf
 
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		access_application.NewResource,
 		account.NewResource,
 		account_member.NewResource,
 		account_subscription.NewResource,
@@ -907,22 +906,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		cloudforce_one_request_message.NewCloudforceOneRequestMessageDataSource,
 		cloudforce_one_request_priority.NewCloudforceOneRequestPriorityDataSource,
 		cloudforce_one_request_asset.NewCloudforceOneRequestAssetDataSource,
-		account_permission_group.NewAccountPermissionGroupDataSource,
-		account_permission_group.NewAccountPermissionGroupsDataSource,
-		resource_group.NewResourceGroupDataSource,
-		resource_group.NewResourceGroupsDataSource,
-		cloud_connector_rules.NewCloudConnectorRulesDataSource,
-		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
-		leaked_credential_check.NewLeakedCredentialCheckDataSource,
-		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
-		content_scanning_expression.NewContentScanningExpressionsDataSource,
-		custom_pages.NewCustomPagesDataSource,
-		custom_pages.NewCustomPagesListDataSource,
-		schema_validation_schemas.NewSchemaValidationSchemasDataSource,
-		schema_validation_schemas.NewSchemaValidationSchemasListDataSource,
-		schema_validation_settings.NewSchemaValidationSettingsDataSource,
-		schema_validation_operation_settings.NewSchemaValidationOperationSettingsDataSource,
-		schema_validation_operation_settings.NewSchemaValidationOperationSettingsListDataSource,
 	}
 }
 
