@@ -283,6 +283,31 @@ func TestAcc_WorkerScriptWithInvalidContentSHA256(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareWorkerScript_PythonWorker(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_workers_script." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("python_worker.tf", rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "script_name", rnd),
+					resource.TestCheckResourceAttr(name, "main_module", "index.py"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareWorkerScriptConfigServiceWorkerInitial(rnd, accountID string) string {
 	return acctest.LoadTestCase("service_worker_initial.tf", rnd, scriptContent1, accountID)
 }
