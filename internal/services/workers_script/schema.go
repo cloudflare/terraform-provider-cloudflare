@@ -4,6 +4,7 @@ package workers_script
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 
@@ -68,6 +69,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Validators: []validator.String{
 					ValidateContentSHA256(),
+				},
+			},
+			"content_type": schema.StringAttribute{
+				Description: "Content-Type of the Worker. Required if uploading a non-JavaScript Worker (e.g. \"text/x-python\").",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"application/javascript+module",
+						"application/javascript",
+						"text/javascript+module",
+						"text/javascript",
+						"text/x-python",
+					),
 				},
 			},
 			"assets": schema.SingleNestedAttribute{

@@ -71,6 +71,7 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 	}
 
 	contentSHA256 := data.ContentSHA256
+	contentType := data.ContentType
 
 	if !data.ContentFile.IsNull() {
 		content, err := readFile((data.ContentFile.ValueString()))
@@ -81,7 +82,7 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		data.Content = types.StringValue(content)
 	}
 
-	dataBytes, contentType, err := data.MarshalMultipart()
+	dataBytes, formDataContentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
@@ -94,7 +95,7 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		workers.ScriptUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody(contentType, dataBytes),
+		option.WithRequestBody(formDataContentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -111,6 +112,7 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 	data = &env.Result
 	data.ID = data.ScriptName
 	data.ContentSHA256 = contentSHA256
+	data.ContentType = contentType
 
 	// avoid storing `content` in state if `content_file` is configured
 	if !data.ContentFile.IsNull() {
@@ -138,6 +140,7 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 	}
 
 	contentSHA256 := data.ContentSHA256
+	contentType := data.ContentType
 
 	if !data.ContentFile.IsNull() {
 		content, err := readFile((data.ContentFile.ValueString()))
@@ -148,7 +151,7 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 		data.Content = types.StringValue(content)
 	}
 
-	dataBytes, contentType, err := data.MarshalMultipart()
+	dataBytes, formDataContentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
@@ -161,7 +164,7 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 		workers.ScriptUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody(contentType, dataBytes),
+		option.WithRequestBody(formDataContentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -178,6 +181,7 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 	data = &env.Result
 	data.ID = data.ScriptName
 	data.ContentSHA256 = contentSHA256
+	data.ContentType = contentType
 
 	// avoid storing `content` in state if `content_file` is configured
 	if !data.ContentFile.IsNull() {
