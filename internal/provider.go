@@ -126,6 +126,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_custom_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_managed_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/record"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
@@ -424,6 +425,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		dns_firewall.NewResource,
 		zone_dnssec.NewResource,
 		dns_record.NewResource,
+		record.NewResource,
 		zone_dns_settings.NewResource,
 		account_dns_settings.NewResource,
 		account_dns_settings_internal_view.NewResource,
