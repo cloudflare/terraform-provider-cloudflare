@@ -104,9 +104,9 @@ type ZeroTrustGatewaySettingsSettingsCustomCertificateModel struct {
 
 type ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingModel struct {
 	Enabled       types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
-	ReadOnly      types.Bool   `tfsdk:"read_only" json:"read_only,computed"`
-	SourceAccount types.String `tfsdk:"source_account" json:"source_account,computed"`
-	Version       types.Int64  `tfsdk:"version" json:"version,computed"`
+	ReadOnly      types.Bool   `tfsdk:"read_only" json:"read_only,computed_optional"`
+	SourceAccount types.String `tfsdk:"source_account" json:"source_account,computed_optional"`
+	Version       types.Int64  `tfsdk:"version" json:"version,computed_optional"`
 }
 
 type ZeroTrustGatewaySettingsSettingsFipsModel struct {
