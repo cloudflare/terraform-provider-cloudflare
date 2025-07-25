@@ -31,6 +31,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_token_permission_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/argo_smart_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/argo_tiered_caching"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/argo_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_settings"
@@ -586,6 +587,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		schema_validation_schemas.NewResource,
 		schema_validation_settings.NewResource,
 		schema_validation_operation_settings.NewResource,
+		argo_tunnel.NewResource,
 	}
 }
 
