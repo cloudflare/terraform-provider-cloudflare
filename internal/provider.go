@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_application"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_api_token_permission_groups"
@@ -587,6 +588,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		schema_validation_schemas.NewResource,
 		schema_validation_settings.NewResource,
 		schema_validation_operation_settings.NewResource,
+		access_policy.NewResource,
 		argo_tunnel.NewResource,
 		tunnel.NewResource,
 	}
