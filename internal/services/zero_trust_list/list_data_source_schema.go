@@ -64,10 +64,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The description of the list.",
 							Computed:    true,
 						},
-						"items": schema.ListNestedAttribute{
+						"items": schema.SetNestedAttribute{
 							Description: "The items in the list.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustListsItemsDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustListsItemsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"created_at": schema.StringAttribute{

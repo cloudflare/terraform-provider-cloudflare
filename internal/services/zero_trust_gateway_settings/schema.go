@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
@@ -51,19 +50,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled_download_phase": schema.BoolAttribute{
 								Description: "Enable anti-virus scanning on downloads.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"enabled_upload_phase": schema.BoolAttribute{
 								Description: "Enable anti-virus scanning on uploads.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"fail_closed": schema.BoolAttribute{
 								Description: "Block requests for files that cannot be scanned.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"notification_settings": schema.SingleNestedAttribute{
 								Description: "Configure a message to display on the user's device when an antivirus search is performed.",
+								Computed:    true,
 								Optional:    true,
+								CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{
 										Description: "Set notification on",
@@ -87,9 +91,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"block_page": schema.SingleNestedAttribute{
 						Description: "Block page layout settings.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBlockPageModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"background_color": schema.StringAttribute{
 								Description: "If mode is customized_block_page: block page background color in #rrggbb format.",
@@ -125,12 +127,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"mode": schema.StringAttribute{
 								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"customized_block_page\", \"redirect_uri\".",
-								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("customized_block_page", "redirect_uri"),
 								},
-								Default: stringdefault.StaticString("customized_block_page"),
 							},
 							"name": schema.StringAttribute{
 								Description: "If mode is customized_block_page: block page title.",
@@ -152,6 +152,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "If mode is redirect_uri: URI to which the user should be redirected.",
 								Optional:    true,
 							},
+							"version": schema.Int64Attribute{
+								Description: "Version number of the setting",
+								Computed:    true,
+							},
 						},
 					},
 					"body_scanning": schema.SingleNestedAttribute{
@@ -159,8 +163,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"inspection_mode": schema.StringAttribute{
-								Description: "Set the inspection mode to either `deep` or `shallow`.",
+								Description: "Set the inspection mode to either `deep` or `shallow`.\nAvailable values: \"deep\", \"shallow\".",
 								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("deep", "shallow"),
+								},
 							},
 						},
 					},
@@ -190,10 +197,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"custom_certificate": schema.SingleNestedAttribute{
 						Description:        "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`)",
-						Computed:           true,
 						Optional:           true,
 						DeprecationMessage: "This attribute is deprecated.",
-						CustomType:         customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCustomCertificateModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable use of custom certificate authority for signing Gateway traffic.",
@@ -215,9 +220,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"extended_email_matching": schema.SingleNestedAttribute{
 						Description: "Extended e-mail matching settings.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable matching all variants of user emails (with + or . modifiers) used as criteria in Firewall policies.",
@@ -226,10 +229,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"read_only": schema.BoolAttribute{
 								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
 								Computed:    true,
+								Optional:    true,
 							},
 							"source_account": schema.StringAttribute{
 								Description: "Account tag of account that shared this setting",
 								Computed:    true,
+								Optional:    true,
+							},
+							"version": schema.Int64Attribute{
+								Description: "Version number of the setting",
+								Computed:    true,
+								Optional:    true,
 							},
 						},
 					},
@@ -245,11 +255,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"host_selector": schema.SingleNestedAttribute{
 						Description: "Setting to enable host selector in egress policies.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsHostSelectorModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable filtering via hosts for egress policies.",
 								Optional:    true,
+							},
+						},
+					},
+					"inspection": schema.SingleNestedAttribute{
+						Description: "Setting to define inspection settings",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsInspectionModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"mode": schema.StringAttribute{
+								Description: "Defines the mode of inspection the proxy will use.\n- static: Gateway will use static inspection to inspect HTTP on TCP(80). If TLS decryption is on, Gateway will inspect HTTPS traffic on TCP(443) & UDP(443).\n- dynamic: Gateway will use protocol detection to dynamically inspect HTTP and HTTPS traffic on any port. TLS decryption must be on to inspect HTTPS traffic.\nAvailable values: \"static\", \"dynamic\".",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("static", "dynamic"),
+								},
 							},
 						},
 					},

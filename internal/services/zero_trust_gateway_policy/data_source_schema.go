@@ -33,7 +33,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"action": schema.StringAttribute{
-				Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\", \"redirect\".",
+				Description: "The action to perform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\", \"redirect\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -85,8 +85,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the rule.",
 				Computed:    true,
 			},
+			"not_sharable": schema.BoolAttribute{
+				Description: "The rule cannot be shared via the Orgs API",
+				Computed:    true,
+			},
 			"precedence": schema.Int64Attribute{
 				Description: "Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) docs on how to manage precedence via Terraform.",
+				Computed:    true,
+			},
+			"read_only": schema.BoolAttribute{
+				Description: "The rule was shared via the Orgs API and cannot be edited by the current account",
+				Computed:    true,
+			},
+			"source_account": schema.StringAttribute{
+				Description: "account tag of account that created the rule",
 				Computed:    true,
 			},
 			"traffic": schema.StringAttribute{
@@ -153,8 +165,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"add_headers": schema.MapAttribute{
 						Description: "Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).",
 						Computed:    true,
-						CustomType:  customfield.NewMapType[types.String](ctx),
-						ElementType: types.StringType,
+						CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
+						ElementType: types.ListType{
+							ElemType: types.StringType,
+						},
 					},
 					"allow_child_bypass": schema.BoolAttribute{
 						Description: "Set by parent MSP accounts to enable their children to bypass this rule.",

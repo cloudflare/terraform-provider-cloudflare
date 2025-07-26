@@ -18,7 +18,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Defines an identifier.",
+				Description: "The Account ID for this resource.",
 				Required:    true,
 			},
 			"list_id": schema.StringAttribute{
@@ -65,6 +65,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"url_hostname": schema.StringAttribute{
 									Computed: true,
+								},
+								"exclude_exact_hostname": schema.BoolAttribute{
+									Description: "Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.",
+									Computed:    true,
 								},
 							},
 						},

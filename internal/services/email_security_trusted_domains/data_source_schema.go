@@ -79,6 +79,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("pattern", "created_at"),
 						},
 					},
+					"pattern": schema.StringAttribute{
+						Optional: true,
+					},
 					"search": schema.StringAttribute{
 						Description: "Allows searching in multiple properties of a record simultaneously.\nThis parameter is intended for human users, not automation. Its exact\nbehavior is intentionally left unspecified and is subject to change\nin the future.",
 						Optional:    true,

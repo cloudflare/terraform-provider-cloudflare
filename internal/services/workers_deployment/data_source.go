@@ -68,6 +68,7 @@ func (d *WorkersDeploymentDataSource) Read(ctx context.Context, req datasource.R
 	_, err := d.client.Workers.Scripts.Deployments.Get(
 		ctx,
 		data.ScriptName.ValueString(),
+		data.DeploymentID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

@@ -21,7 +21,7 @@ import (
 const (
 	scriptContent1    = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
 	scriptContent2    = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
-	moduleContent     = `export default { fetch() { return new Response('Hello world'); }, };`
+	moduleContent     = `import {DurableObject} from 'cloudflare:workers'; export class MyDurableObject extends DurableObject {}; export default { fetch() { return new Response('Hello world'); }, };`
 	encodedWasm       = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
 	compatibilityDate = "2023-03-19"
 	d1DatabaseID      = "ce8b95dc-b376-4ff8-9b9e-1801ed6d745d"
@@ -278,6 +278,31 @@ func TestAcc_WorkerScriptWithInvalidContentSHA256(t *testing.T) {
 				},
 				Config:      testAccWorkersScriptConfigWithInvalidContentSHA256(rnd, accountID, contentFile),
 				ExpectError: regexp.MustCompile(`SHA-256 Hash Mismatch`),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareWorkerScript_PythonWorker(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_workers_script." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("python_worker.tf", rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "script_name", rnd),
+					resource.TestCheckResourceAttr(name, "main_module", "index.py"),
+				),
 			},
 		},
 	})

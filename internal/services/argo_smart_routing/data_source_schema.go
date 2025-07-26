@@ -15,7 +15,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Specifies the zone associated with the API call.",
 				Required:    true,
 			},
 		},

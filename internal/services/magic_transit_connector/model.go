@@ -30,7 +30,7 @@ func (m MagicTransitConnectorModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m MagicTransitConnectorModel) MarshalJSONForUpdate(state MagicTransitConnectorModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForPatch(m, state)
 }
 
 type MagicTransitConnectorDeviceModel struct {
