@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareNotificationPolicyWebhooks(t *testing.T) {
+func TestAccCloudflareNotificationPolicyWebhooks_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the notification
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -19,9 +19,10 @@ func TestAccCloudflareNotificationPolicyWebhooks(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_notification_policy_webhooks." + rnd
-	webhooksDestination := "https://httpbin.org/post"
-	updatedWebhooksName := "my updated webhooks destination for notifications"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	webhookName := "my webhook destination for notifications"
+	webhookURL := "https://httpbin.org/post"
+	webhookSecret := "my-secret"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -30,27 +31,43 @@ func TestAccCloudflareNotificationPolicyWebhooks(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testCheckCloudflareNotificationPolicyWebhooks(rnd, accountID),
+				Config: testCloudflareNotificationPolicyWebhooksBasic(rnd, accountID, webhookName, webhookURL),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "my webhooks destination for receiving Cloudflare notifications"),
-					resource.TestCheckResourceAttr(resourceName, "url", webhooksDestination),
+					resource.TestCheckResourceAttr(resourceName, "name", webhookName),
+					resource.TestCheckResourceAttr(resourceName, "url", webhookURL),
 				),
 			},
 			{
-				Config: testCheckCloudflareNotificationPolicyWebhooksUpdated(rnd, updatedWebhooksName, accountID),
+				Config: testCloudflareNotificationPolicyWebhooksBasic(rnd, accountID, webhookName+" updated", webhookURL),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", updatedWebhooksName),
-					resource.TestCheckResourceAttr(resourceName, "url", webhooksDestination),
+					resource.TestCheckResourceAttr(resourceName, "name", webhookName+" updated"),
+					resource.TestCheckResourceAttr(resourceName, "url", webhookURL),
+				),
+			},
+			{
+				Config: testCloudflareNotificationPolicyWebhooksBasicWithSecret(rnd, accountID, webhookName+" updated", webhookURL, webhookSecret),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", webhookName+" updated"),
+					resource.TestCheckResourceAttr(resourceName, "url", webhookURL),
+					resource.TestCheckResourceAttr(resourceName, "secret", webhookSecret),
+				),
+			},
+			{
+				Config: testCloudflareNotificationPolicyWebhooksBasicWithSecret(rnd, accountID, webhookName+" updated", webhookURL, webhookSecret+" updated"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", webhookName+" updated"),
+					resource.TestCheckResourceAttr(resourceName, "url", webhookURL),
+					resource.TestCheckResourceAttr(resourceName, "secret", webhookSecret+" updated"),
 				),
 			},
 		},
 	})
 }
 
-func testCheckCloudflareNotificationPolicyWebhooks(name, accountID string) string {
-	return acctest.LoadTestCase("checkcloudflarenotificationpolicywebhooks.tf", name, accountID)
+func testCloudflareNotificationPolicyWebhooksBasic(resourceID, accountID, name, url string) string {
+	return acctest.LoadTestCase("basic.tf", resourceID, accountID, name, url)
 }
 
-func testCheckCloudflareNotificationPolicyWebhooksUpdated(resName, webhooksName, accountID string) string {
-	return acctest.LoadTestCase("checkcloudflarenotificationpolicywebhooksupdated.tf", resName, webhooksName, accountID)
+func testCloudflareNotificationPolicyWebhooksBasicWithSecret(resourceID, accountID, name, url, secret string) string {
+	return acctest.LoadTestCase("basic_with_secret.tf", resourceID, accountID, name, url, secret)
 }
