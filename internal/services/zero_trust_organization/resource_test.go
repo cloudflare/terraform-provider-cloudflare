@@ -3,6 +3,7 @@ package zero_trust_organization_test
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -12,10 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+const DEFAULT_AUTHDOMAIN = "terraform-cfapi.cloudflareaccess.com"
+
+func testAuthDomain() string {
+	result := os.Getenv("CLOUDFLARE_ZERO_TRUST_ORGANIZATION_AUTH_DOMAIN")
+	if result == "" {
+		result = DEFAULT_AUTHDOMAIN
+	}
+	return result
+}
+
 func TestAccCloudflareAccessOrganization(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_organization.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
 	headerText := "My header text"
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -24,14 +36,14 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID, headerText),
+				Config: testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID, headerText, testAuthDomain()),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", "terraform-cfapi.cloudflareaccess.com"),
-					resource.TestCheckResourceAttr(name, "auth_domain", rnd+"-terraform-cfapi.cloudflareaccess.com"),
+					resource.TestCheckResourceAttr(name, "name", testAuthDomain()),
+					resource.TestCheckResourceAttr(name, "auth_domain", rnd+"-"+testAuthDomain()),
 					resource.TestCheckResourceAttr(name, "is_ui_read_only", "false"),
 					resource.TestCheckResourceAttr(name, "user_seat_expiration_inactive_time", "1460h"),
-					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+					resource.TestCheckNoResourceAttr(name, "auto_redirect_to_identity"),
 					resource.TestCheckResourceAttr(name, "login_design.background_color", "#FFFFFF"),
 					resource.TestCheckResourceAttr(name, "login_design.text_color", "#000000"),
 					resource.TestCheckResourceAttr(name, "login_design.logo_path", "https://example.com/logo.png"),
@@ -41,20 +53,20 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "warp_auth_session_duration", "36h"),
 					resource.TestCheckResourceAttr(name, "allow_authenticate_via_warp", "false"),
 				),
-				ResourceName: name,
-				// ImportState:      true,
-				// ImportStateId:    accountID,
-				// ImportStateCheck: accessOrgImportStateCheck,
+				ResourceName:     name,
+				ImportState:      true,
+				ImportStateId:    accountID,
+				ImportStateCheck: accessOrgImportStateCheck,
 			},
 			{
-				Config: testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID, headerText+" updated"),
+				Config: testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID, headerText+" updated", testAuthDomain()),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", "terraform-cfapi.cloudflareaccess.com"),
-					resource.TestCheckResourceAttr(name, "auth_domain", rnd+"-terraform-cfapi.cloudflareaccess.com"),
+					resource.TestCheckResourceAttr(name, "name", testAuthDomain()),
+					resource.TestCheckResourceAttr(name, "auth_domain", rnd+"-"+testAuthDomain()),
 					resource.TestCheckResourceAttr(name, "is_ui_read_only", "false"),
 					resource.TestCheckResourceAttr(name, "user_seat_expiration_inactive_time", "1460h"),
-					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+					resource.TestCheckNoResourceAttr(name, "auto_redirect_to_identity"),
 					resource.TestCheckResourceAttr(name, "login_design.background_color", "#FFFFFF"),
 					resource.TestCheckResourceAttr(name, "login_design.text_color", "#000000"),
 					resource.TestCheckResourceAttr(name, "login_design.logo_path", "https://example.com/logo.png"),
@@ -64,10 +76,10 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "warp_auth_session_duration", "36h"),
 					resource.TestCheckResourceAttr(name, "allow_authenticate_via_warp", "false"),
 				),
-				ResourceName: name,
-				// ImportState:      true,
-				// ImportStateId:    accountID,
-				// ImportStateCheck: accessOrgImportStateCheck,
+				ResourceName:     name,
+				ImportState:      true,
+				ImportStateId:    accountID,
+				ImportStateCheck: accessOrgImportStateCheck,
 			},
 		},
 	})
@@ -76,22 +88,26 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 func accessOrgImportStateCheck(instanceStates []*terraform.InstanceState) error {
 	state := instanceStates[0]
 	attrs := state.Attributes
+	wantAuthDomain := testAuthDomain()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	if stateName := attrs["name"]; !strings.HasSuffix(stateName, wantAuthDomain) {
+		return fmt.Errorf("name has value %q and does not match expected suffix %q", stateName, wantAuthDomain)
+	}
+
+	if stateAuthdomain := attrs["auth_domain"]; !strings.HasSuffix(stateAuthdomain, wantAuthDomain) {
+		return fmt.Errorf("auth_domain has value %q and does not match expected suffix %q", stateAuthdomain, wantAuthDomain)
+	}
 
 	stateChecks := []struct {
 		field         string
 		stateValue    string
 		expectedValue string
 	}{
-		{field: "ID", stateValue: state.ID, expectedValue: accountID},
 		{field: consts.AccountIDSchemaKey, stateValue: attrs[consts.AccountIDSchemaKey], expectedValue: accountID},
-		{field: "name", stateValue: attrs["name"], expectedValue: "terraform-cfapi.cloudflareaccess.com"},
-		{field: "auth_domain", stateValue: attrs["auth_domain"], expectedValue: "terraform-cfapi.cloudflareaccess.com"},
 		{field: "is_ui_read_only", stateValue: attrs["is_ui_read_only"], expectedValue: "false"},
-		{field: "ui_read_only_toggle_reason", stateValue: attrs["ui_read_only_toggle_reason"], expectedValue: ""}, // UI read only is off so no message returned
 		{field: "user_seat_expiration_inactive_time", stateValue: attrs["user_seat_expiration_inactive_time"], expectedValue: "1460h"},
-		{field: "auto_redirect_to_identity", stateValue: attrs["auto_redirect_to_identity"], expectedValue: "false"},
-		{field: "login_design.#", stateValue: attrs["login_design.#"], expectedValue: "1"},
+		{field: "login_design.background_color", stateValue: attrs["login_design.background_color"], expectedValue: "#FFFFFF"},
 	}
 
 	for _, check := range stateChecks {
@@ -103,6 +119,6 @@ func accessOrgImportStateCheck(instanceStates []*terraform.InstanceState) error 
 	return nil
 }
 
-func testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID, headerText string) string {
-	return acctest.LoadTestCase("accessorganizationconfigbasic.tf", rnd, accountID, headerText)
+func testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID, headerText, authDomain string) string {
+	return acctest.LoadTestCase("accessorganizationconfigbasic.tf", rnd, accountID, headerText, authDomain)
 }
