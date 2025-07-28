@@ -139,6 +139,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/split_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_audio_track"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_caption_language"
@@ -601,6 +602,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		argo_tunnel.NewResource,
 		tunnel.NewResource,
 		fallback_domain.NewResource,
+		split_tunnel.NewResource,
 	}
 }
 
