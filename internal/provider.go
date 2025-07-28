@@ -71,6 +71,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_block_sender"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_impersonation_registry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/fallback_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/filter"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/healthcheck"
@@ -599,6 +600,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		access_policy.NewResource,
 		argo_tunnel.NewResource,
 		tunnel.NewResource,
+		fallback_domain.NewResource,
 	}
 }
 
