@@ -1,6 +1,6 @@
 language json
 
-pattern cloudflare_terraform_v5_attribute_remove_brackets_state() {
+pattern cloudflare_terraform_v5_attribute_list_to_block_state() {
   any {
     // cloudflare_logpush_job
     `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
