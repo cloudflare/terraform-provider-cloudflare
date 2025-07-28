@@ -149,6 +149,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tunnel"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tunnel_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/turnstile_widget"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/url_normalization_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user"
@@ -567,6 +568,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_gateway_policy.NewResource,
 		zero_trust_gateway_certificate.NewResource,
 		zero_trust_tunnel_cloudflared_route.NewResource,
+		tunnel_route.NewResource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewResource,
 		zero_trust_risk_behavior.NewResource,
 		zero_trust_risk_scoring_integration.NewResource,
