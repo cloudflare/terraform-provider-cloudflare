@@ -4,7 +4,6 @@ package list_item
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,17 +12,15 @@ type ListItemResultEnvelope struct {
 }
 
 type ListItemModel struct {
-	ListID      types.String                                    `tfsdk:"list_id" path:"list_id,required"`
-	AccountID   types.String                                    `tfsdk:"account_id" path:"account_id,required"`
-	ID          types.String                                    `tfsdk:"id" path:"item_id,computed"`
+	ListID      types.String          `tfsdk:"list_id" path:"list_id,required"`
+	AccountID   types.String          `tfsdk:"account_id" path:"account_id,required"`
+	ID          types.String          `tfsdk:"id" path:"item_id,computed"`
 	ASN         types.Int64                                     `tfsdk:"asn" json:"asn,optional"`
 	Comment     types.String                                    `tfsdk:"comment" json:"comment,optional"`
 	IP          types.String                                    `tfsdk:"ip" json:"ip,optional"`
 	Hostname    customfield.NestedObject[ListItemHostnameModel] `tfsdk:"hostname" json:"hostname,optional"`
 	Redirect    customfield.NestedObject[ListItemRedirectModel] `tfsdk:"redirect" json:"redirect,optional"`
-	OperationID types.String                                    `tfsdk:"operation_id" json:"operation_id,computed,no_refresh"`
-	ModifiedOn  types.String                                    `tfsdk:"modified_on" json:"modified_on,computed"`
-	CreatedOn   types.String                                    `tfsdk:"created_on" json:"created_on,computed"`
+	OperationID types.String          `tfsdk:"operation_id" json:"operation_id,computed,no_refresh"`
 }
 
 func (m ListItemModel) MarshalJSON() (data []byte, err error) {
