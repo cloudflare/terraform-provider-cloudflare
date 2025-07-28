@@ -85,6 +85,13 @@ func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 					},
 				},
 			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"startup_time_ms"},
+			},
 		},
 	})
 }
@@ -134,6 +141,13 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 						plancheck.ExpectNonEmptyPlan(),
 					},
 				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"bindings.2.text", "main_module", "startup_time_ms"},
 			},
 		},
 	})
@@ -238,6 +252,13 @@ Content-Type: application/json
 					},
 				},
 			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"content", "content_file", "content_sha256", "main_module", "startup_time_ms"},
+			},
 		},
 	})
 }
@@ -303,6 +324,13 @@ func TestAccCloudflareWorkerScript_PythonWorker(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "script_name", rnd),
 					resource.TestCheckResourceAttr(name, "main_module", "index.py"),
 				),
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"content_type", "has_modules", "main_module", "startup_time_ms"},
 			},
 		},
 	})
