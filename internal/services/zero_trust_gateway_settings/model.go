@@ -31,7 +31,7 @@ func (m ZeroTrustGatewaySettingsModel) MarshalJSONForUpdate(state ZeroTrustGatew
 
 type ZeroTrustGatewaySettingsSettingsModel struct {
 	Antivirus             *ZeroTrustGatewaySettingsSettingsAntivirusModel                             `tfsdk:"antivirus" json:"antivirus,optional"`
-	BlockPage             customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBlockPageModel]             `tfsdk:"block_page" json:"block_page,computed_optional"`
+	BlockPage             *ZeroTrustGatewaySettingsSettingsBlockPageModel                             `tfsdk:"block_page" json:"block_page,optional"`
 	BodyScanning          *ZeroTrustGatewaySettingsSettingsBodyScanningModel                          `tfsdk:"body_scanning" json:"body_scanning,optional"`
 	BrowserIsolation      *ZeroTrustGatewaySettingsSettingsBrowserIsolationModel                      `tfsdk:"browser_isolation" json:"browser_isolation,optional"`
 	Certificate           *ZeroTrustGatewaySettingsSettingsCertificateModel                           `tfsdk:"certificate" json:"certificate,optional"`
@@ -79,6 +79,7 @@ type ZeroTrustGatewaySettingsSettingsBlockPageModel struct {
 	SourceAccount   types.String `tfsdk:"source_account" json:"source_account,computed"`
 	SuppressFooter  types.Bool   `tfsdk:"suppress_footer" json:"suppress_footer,optional"`
 	TargetURI       types.String `tfsdk:"target_uri" json:"target_uri,optional"`
+	Version         types.Int64  `tfsdk:"version" json:"version,computed"`
 }
 
 type ZeroTrustGatewaySettingsSettingsBodyScanningModel struct {
@@ -105,6 +106,7 @@ type ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingModel struct {
 	Enabled       types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
 	ReadOnly      types.Bool   `tfsdk:"read_only" json:"read_only,computed"`
 	SourceAccount types.String `tfsdk:"source_account" json:"source_account,computed"`
+	Version       types.Int64  `tfsdk:"version" json:"version,computed"`
 }
 
 type ZeroTrustGatewaySettingsSettingsFipsModel struct {
