@@ -30,7 +30,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Account settings",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"activity_log": schema.SingleNestedAttribute{
 						Description: "Activity log settings.",
@@ -91,19 +93,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Block page layout settings.",
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
-								Required:    true,
-							},
-							"mode": schema.StringAttribute{
-								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"customized_block_page\", \"redirect_uri\".",
-								Required:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("customized_block_page", "redirect_uri"),
-								},
-							},
 							"background_color": schema.StringAttribute{
 								Description: "If mode is customized_block_page: block page background color in #rrggbb format.",
+								Optional:    true,
+							},
+							"enabled": schema.BoolAttribute{
+								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
 								Optional:    true,
 							},
 							"footer_text": schema.StringAttribute{
@@ -129,6 +124,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"mailto_subject": schema.StringAttribute{
 								Description: "If mode is customized_block_page: subject line for emails created from block page.",
 								Optional:    true,
+							},
+							"mode": schema.StringAttribute{
+								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"customized_block_page\", \"redirect_uri\".",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("customized_block_page", "redirect_uri"),
+								},
 							},
 							"name": schema.StringAttribute{
 								Description: "If mode is customized_block_page: block page title.",
@@ -227,14 +229,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"read_only": schema.BoolAttribute{
 								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
 								Computed:    true,
+								Optional:    true,
 							},
 							"source_account": schema.StringAttribute{
 								Description: "Account tag of account that shared this setting",
 								Computed:    true,
+								Optional:    true,
 							},
 							"version": schema.Int64Attribute{
 								Description: "Version number of the setting",
 								Computed:    true,
+								Optional:    true,
 							},
 						},
 					},
@@ -250,7 +255,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"host_selector": schema.SingleNestedAttribute{
 						Description: "Setting to enable host selector in egress policies.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsHostSelectorModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable filtering via hosts for egress policies.",
@@ -260,7 +267,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"inspection": schema.SingleNestedAttribute{
 						Description: "Setting to define inspection settings",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsInspectionModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"mode": schema.StringAttribute{
 								Description: "Defines the mode of inspection the proxy will use.\n- static: Gateway will use static inspection to inspect HTTP on TCP(80). If TLS decryption is on, Gateway will inspect HTTPS traffic on TCP(443) & UDP(443).\n- dynamic: Gateway will use protocol detection to dynamically inspect HTTP and HTTPS traffic on any port. TLS decryption must be on to inspect HTTPS traffic.\nAvailable values: \"static\", \"dynamic\".",

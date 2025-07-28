@@ -55,10 +55,53 @@ func TestAccCloudflareZoneSubscription_Basic(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareZoneSubscription_WithPlanChange(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_zone_subscription." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareZoneSubscriptionWithPlan(rnd, zoneID, "enterprise"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, "rate_plan.id", "enterprise"),
+				),
+			},
+			{
+				Config: testAccCloudflareZoneSubscriptionWithPlan(rnd, zoneID, "free"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, "rate_plan.id", "free"),
+				),
+			},
+			{
+				Config: testAccCloudflareZoneSubscriptionWithPlan(rnd, zoneID, "business"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, "rate_plan.id", "business"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccCloudflareZoneSubscriptionConfig(rnd, zoneID string) string {
 	return acctest.LoadTestCase("basic.tf", rnd, zoneID)
 }
 
 func testAccCloudflareZoneSubscriptionConfigUpdate(rnd, zoneID string) string {
 	return acctest.LoadTestCase("basic_update.tf", rnd, zoneID)
+}
+
+func testAccCloudflareZoneSubscriptionWithPlan(rnd, zoneID, plan string) string {
+	return acctest.LoadTestCase("with_plan.tf", rnd, zoneID, plan)
 }
