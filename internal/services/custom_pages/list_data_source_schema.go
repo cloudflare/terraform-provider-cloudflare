@@ -6,12 +6,15 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*CustomPagesListDataSource)(nil)
@@ -39,7 +42,41 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[CustomPagesListResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{},
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Computed: true,
+						},
+						"created_on": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
+						},
+						"description": schema.StringAttribute{
+							Computed: true,
+						},
+						"modified_on": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
+						},
+						"preview_target": schema.StringAttribute{
+							Computed: true,
+						},
+						"required_tokens": schema.ListAttribute{
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"state": schema.StringAttribute{
+							Description: "The custom page state.\nAvailable values: \"default\", \"customized\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("default", "customized"),
+							},
+						},
+						"url": schema.StringAttribute{
+							Description: "The URL associated with the custom page.",
+							Computed:    true,
+						},
+					},
 				},
 			},
 		},
