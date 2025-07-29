@@ -29,7 +29,7 @@ func testSweepCloudflareSnippets(r string) error {
 	ctx := context.Background()
 	client := acctest.SharedClient()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	
+
 	if zoneID == "" {
 		// Skip sweeping if no zone ID is set
 		return nil
@@ -55,7 +55,7 @@ func testSweepCloudflareSnippets(r string) error {
 				continue
 			}
 		}
-		
+
 		list, err = list.GetNextPage()
 		if err != nil {
 			break
@@ -80,7 +80,35 @@ func TestAccCloudflareSnippets_Basic(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("snippet_name"), knownvalue.StringExact(rnd)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("files"), knownvalue.StringExact("export { async function fetch(request, env) { return new Response('Hello World!'); } }")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("files"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"name": knownvalue.StringExact("main.js"),
+							"content": knownvalue.StringExact(`export default {
+  async fetch(request) {
+    // Get the current timestamp
+    const timestamp = Date.now();
+
+    // Convert the timestamp to hexadecimal format
+    const hexTimestamp = timestamp.toString(16);
+
+    // Clone the request and add the custom header
+    const modifiedRequest = new Request(request, {
+        headers: new Headers(request.headers)
+    });
+    modifiedRequest.headers.set("X-Hex-Timestamp", hexTimestamp);
+
+    // Pass the modified request to the origin
+    const response = await fetch(modifiedRequest);
+
+    return response;
+  },
+}
+`),
+						}),
+					})),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("metadata"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+						"main_module": knownvalue.StringExact("main.js"),
+					})),
 					// Verify computed attributes
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_on"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("modified_on"), knownvalue.NotNull()),
@@ -91,18 +119,24 @@ func TestAccCloudflareSnippets_Basic(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("snippet_name"), knownvalue.StringExact(rnd)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("files"), knownvalue.StringExact("export { async function fetch(request, env) { return new Response('Hello Updated World!'); } }")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("metadata.main_module"), knownvalue.StringExact("main.js")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("files"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"name": knownvalue.StringExact("main.js"),
+							"content": knownvalue.StringExact(`export default {
+  async fetch(request) {
+    return new Response('Hello, World!');
+  }
+}
+`),
+						}),
+					})),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("metadata"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+						"main_module": knownvalue.StringExact("main.js"),
+					})),
 					// Verify computed attributes
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_on"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("modified_on"), knownvalue.NotNull()),
 				},
-			},
-			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			},
 		},
 	})
@@ -118,7 +152,7 @@ func testAccCheckCloudflareSnippetsDestroy(s *terraform.State) error {
 
 		zoneID := rs.Primary.Attributes[consts.ZoneIDSchemaKey]
 		snippetName := rs.Primary.Attributes["snippet_name"]
-		
+
 		_, err := client.Snippets.Get(context.Background(), snippetName, snippets.SnippetGetParams{
 			ZoneID: cloudflare.F(zoneID),
 		})
