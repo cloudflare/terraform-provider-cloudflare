@@ -15,7 +15,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 const (
@@ -47,24 +50,24 @@ func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigServiceWorkerInitial(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "script_name", rnd),
-					resource.TestCheckResourceAttr(name, "content", scriptContent1),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("content"), knownvalue.StringExact(scriptContent1)),
+				},
 			},
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigServiceWorkerUpdate(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "script_name", rnd),
-					resource.TestCheckResourceAttr(name, "content", scriptContent2),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("content"), knownvalue.StringExact(scriptContent2)),
+				},
 			},
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigServiceWorkerUpdateBinding(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "script_name", rnd),
-					resource.TestCheckResourceAttr(name, "content", scriptContent2),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("content"), knownvalue.StringExact(scriptContent2)),
+				},
 			},
 			{
 				PreConfig: func() {
@@ -113,15 +116,15 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "script_name", rnd),
-					resource.TestCheckResourceAttr(name, "content", moduleContent),
-					resource.TestCheckResourceAttr(name, "compatibility_date", compatibilityDate),
-					resource.TestCheckResourceAttr(name, "compatibility_flags.#", "2"),
-					resource.TestCheckResourceAttr(name, "compatibility_flags.0", compatibilityFlags[0]),
-					// resource.TestCheckResourceAttr(name, "logpush", "true"),
-					resource.TestCheckResourceAttr(name, "placement.mode", "smart"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("content"), knownvalue.StringExact(moduleContent)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("compatibility_date"), knownvalue.StringExact(compatibilityDate)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("compatibility_flags"), knownvalue.SetSizeExact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("compatibility_flags").AtSliceIndex(0), knownvalue.StringExact(compatibilityFlags[0])),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("logpush"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("placement").AtMapKey("mode"), knownvalue.StringExact("smart")),
+				},
 			},
 			{
 				PreConfig: func() {
@@ -189,10 +192,10 @@ func TestAcc_WorkerScriptWithContentFile(t *testing.T) {
 					writeContentFile(t, moduleContent)
 				},
 				Config: testAccWorkersScriptConfigWithContentFile(rnd, accountID, contentFile),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "script_name", rnd),
-					resource.TestCheckResourceAttr(name, "content_file", contentFile),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("content_file"), knownvalue.StringExact(contentFile)),
+				},
 			},
 			{
 				PreConfig: func() {
@@ -320,10 +323,10 @@ func TestAccCloudflareWorkerScript_PythonWorker(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: acctest.LoadTestCase("python_worker.tf", rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "script_name", rnd),
-					resource.TestCheckResourceAttr(name, "main_module", "index.py"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("main_module"), knownvalue.StringExact("index.py")),
+				},
 			},
 			{
 				ResourceName:            name,
