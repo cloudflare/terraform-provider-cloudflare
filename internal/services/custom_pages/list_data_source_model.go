@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/custom_pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -36,4 +37,12 @@ func (m *CustomPagesListDataSourceModel) toListParams(_ context.Context) (params
 }
 
 type CustomPagesListResultDataSourceModel struct {
+	ID             types.String                   `tfsdk:"id" json:"id,computed"`
+	CreatedOn      timetypes.RFC3339              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description    types.String                   `tfsdk:"description" json:"description,computed"`
+	ModifiedOn     timetypes.RFC3339              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	PreviewTarget  types.String                   `tfsdk:"preview_target" json:"preview_target,computed"`
+	RequiredTokens customfield.List[types.String] `tfsdk:"required_tokens" json:"required_tokens,computed"`
+	State          types.String                   `tfsdk:"state" json:"state,computed"`
+	URL            types.String                   `tfsdk:"url" json:"url,computed"`
 }
