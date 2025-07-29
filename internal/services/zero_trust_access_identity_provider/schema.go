@@ -287,6 +287,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Object{
 					objectplanmodifier.UseStateForUnknown(),
 				},
+				Validators: []validator.Object{
+					customvalidator.RequiresOtherStringAttributeToNotBeOneOf(path.MatchRoot("type"), "onetimepin"),
+				},
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "A flag to enable or disable SCIM for the identity provider.",
