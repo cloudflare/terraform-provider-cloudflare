@@ -148,6 +148,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_live_input"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_watermark"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_webhook"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/teams_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tunnel"
@@ -603,6 +604,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		tunnel.NewResource,
 		fallback_domain.NewResource,
 		split_tunnel.NewResource,
+		teams_rule.NewResource,
 	}
 }
 
