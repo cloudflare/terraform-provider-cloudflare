@@ -144,7 +144,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
-					resource.TestCheckNoResourceAttr(resourceName, "config.client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "config.client_secret", "secret"),
 				),
 			},
 			{
@@ -175,7 +175,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
-					resource.TestCheckNoResourceAttr(resourceName, "config.client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "config.client_secret", "secret"),
 				),
 			},
 			{
@@ -190,7 +190,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd+"-updated"),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
-					resource.TestCheckNoResourceAttr(resourceName, "config.client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "config.client_secret", "secret"),
 				),
 			},
 			{
@@ -284,7 +284,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 		resource.TestCheckResourceAttr(resourceName, "name", rnd),
 		resource.TestCheckResourceAttr(resourceName, "type", "github"),
 		resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
-		resource.TestCheckNoResourceAttr(resourceName, "config.client_secret"),
+		resource.TestCheckResourceAttr(resourceName, "config.client_secret", "secret"),
 	)
 
 	resource.Test(t, resource.TestCase{
@@ -304,8 +304,12 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 				PlanOnly: true,
 			},
 			{
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					// cant import client_secret
+					"config.client_secret",
+				},
 				ResourceName:        resourceName,
 				ImportStateIdPrefix: fmt.Sprintf("accounts/%s/", accountID),
 				Check:               checkFn,
