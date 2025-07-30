@@ -29,7 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"body": schema.ListNestedAttribute{
+			"rules": schema.ListNestedAttribute{
 				Description: "A list of snippet rules.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -65,6 +65,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"description": schema.StringAttribute{
+				Description: "An informative description of the rule.",
+				Computed:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Whether the rule should be executed.",
+				Computed:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"expression": schema.StringAttribute{
+				Description: "The expression defining which traffic will match the rule.",
+				Computed:    true,
+			},
+			"last_updated": schema.StringAttribute{
+				Description: "The timestamp of when the rule was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"snippet_name": schema.StringAttribute{
+				Description: "The identifying name of the snippet.",
+				Computed:    true,
 			},
 		},
 	}
