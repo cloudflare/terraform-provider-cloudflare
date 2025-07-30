@@ -220,9 +220,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_hold"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_lockdown"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_setting"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -875,7 +875,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		hostname_tls_setting.NewHostnameTLSSettingDataSource,
 		snippets.NewSnippetsDataSource,
 		snippets.NewSnippetsListDataSource,
-		snippet_rules.NewSnippetRulesListDataSource,
+		snippet_rules.NewSnippetRulesDataSource,
 		calls_sfu_app.NewCallsSFUAppDataSource,
 		calls_sfu_app.NewCallsSFUAppsDataSource,
 		calls_turn_app.NewCallsTURNAppDataSource,

@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*SnippetRulesListDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*SnippetRulesDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -29,10 +29,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 					int64validator.AtLeast(0),
 				},
 			},
-			"result": schema.ListNestedAttribute{
-				Description: "The items returned by the data source",
+			"rules": schema.ListNestedAttribute{
+				Description: "A list of snippet rules.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[SnippetRulesListResultDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectListType[SnippetRuleDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -67,10 +67,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *SnippetRulesListDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *SnippetRulesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = ListDataSourceSchema(ctx)
 }
 
-func (d *SnippetRulesListDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *SnippetRulesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
 }

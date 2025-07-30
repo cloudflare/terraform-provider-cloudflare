@@ -10,9 +10,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
-func TestSnippetRulesListDataSourceModelSchemaParity(t *testing.T) {
+func TestSnippetRulesDataSourceModelSchemaParity(t *testing.T) {
 	t.Parallel()
-	model := (*snippet_rules.SnippetRulesListDataSourceModel)(nil)
+	model := (*snippet_rules.SnippetRulesDataSourceModel)(nil)
 	schema := snippet_rules.ListDataSourceSchema(context.TODO())
 	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
 	errs.Report(t)
