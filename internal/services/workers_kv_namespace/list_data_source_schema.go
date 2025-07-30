@@ -19,7 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Identifier",
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
@@ -55,10 +55,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"title": schema.StringAttribute{
 							Description: "A human-readable string name for a Namespace.",
-							Computed:    true,
-						},
-						"beta": schema.BoolAttribute{
-							Description: "True if new beta namespace, with additional preview features.",
 							Computed:    true,
 						},
 						"supports_url_encoding": schema.BoolAttribute{

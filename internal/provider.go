@@ -84,7 +84,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_monitor"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_pool"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpull_retention"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_dataset_field"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_dataset_job"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_job"
@@ -441,7 +440,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		keyless_certificate.NewResource,
 		logpush_job.NewResource,
 		logpush_ownership_challenge.NewResource,
-		logpull_retention.NewResource,
 		authenticated_origin_pulls_certificate.NewResource,
 		authenticated_origin_pulls.NewResource,
 		authenticated_origin_pulls_settings.NewResource,
@@ -677,7 +675,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		logpush_dataset_job.NewLogpushDatasetJobDataSource,
 		logpush_job.NewLogpushJobDataSource,
 		logpush_job.NewLogpushJobsDataSource,
-		logpull_retention.NewLogpullRetentionDataSource,
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificateDataSource,
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificatesDataSource,
 		authenticated_origin_pulls.NewAuthenticatedOriginPullsDataSource,
