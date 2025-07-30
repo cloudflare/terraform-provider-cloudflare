@@ -13,8 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_snippets" "example_snippets" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  snippet_name = "snippet_name_01"
+  zone_id = "9f1839b6152d298aca64c4e906b6d074"
 }
 ```
 
@@ -23,12 +22,23 @@ data "cloudflare_snippets" "example_snippets" {
 
 ### Required
 
-- `snippet_name` (String) Snippet identifying name
 - `zone_id` (String) Identifier
+
+### Optional
+
+- `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only
 
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
+
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
+
+Read-Only:
+
 - `created_on` (String) Creation time of the snippet
 - `modified_on` (String) Modification time of the snippet
+- `snippet_name` (String) Snippet identifying name
 
 

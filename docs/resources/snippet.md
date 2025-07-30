@@ -1,18 +1,18 @@
 ---
-page_title: "cloudflare_snippets Resource - Cloudflare"
+page_title: "cloudflare_snippet Resource - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_snippets (Resource)
+# cloudflare_snippet (Resource)
 
 
 
 ## Example Usage
 
 ```terraform
-resource "cloudflare_snippets" "example_snippets" {
+resource "cloudflare_snippet" "example_snippet" {
   zone_id      = "9f1839b6152d298aca64c4e906b6d074"
   snippet_name = "my_snippet"
   files = [

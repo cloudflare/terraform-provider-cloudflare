@@ -1,4 +1,4 @@
-package snippets_test
+package snippet_test
 
 import (
 	"errors"
@@ -10,17 +10,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-func TestAccCloudflareSnippetsDataSource_Basic(t *testing.T) {
+func TestAccCloudflareSnippetDataSource_Basic(t *testing.T) {
 	t.Skip("Not implemented yet")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_snippets." + rnd
+	name := "cloudflare_snippet." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSnippetsDataSourceConfig(rnd),
+				Config: testAccSnippetDataSourceConfig(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					func(s *terraform.State) error {
 						return errors.New("test not implemented")
@@ -32,6 +32,6 @@ func TestAccCloudflareSnippetsDataSource_Basic(t *testing.T) {
 	})
 }
 
-func testAccSnippetsDataSourceConfig(rnd string) string {
+func testAccSnippetDataSourceConfig(rnd string) string {
 	return acctest.LoadTestCase("datasource_basic.tf", rnd)
 }
