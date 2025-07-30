@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -28,6 +29,49 @@ func TestAccCloudflareListItem_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "ip", "192.0.2.0"),
 				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareListItem_Import(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	itemName := fmt.Sprintf("cloudflare_list_item.%s", rnd)
+	listName := fmt.Sprintf("cloudflare_list.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	ip := "192.0.2.0"
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_Credentials(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareIPListItem(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(itemName, "ip", ip),
+					resource.TestCheckResourceAttr(itemName, "comment", rnd),
+				),
+			},
+			{
+				ResourceName:      itemName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[listName]
+					if !ok {
+						return "", fmt.Errorf("list resource not found: %s", listName)
+					}
+					listID := rs.Primary.ID
+					rs, ok = s.RootModule().Resources[itemName]
+					if !ok {
+						return "", fmt.Errorf("list_item resource not found: %s", itemName)
+					}
+					itemID := rs.Primary.ID
+					return fmt.Sprintf("%s/%s/%s", accountID, listID, itemID), nil
+				},
 			},
 		},
 	})
