@@ -1,166 +1,257 @@
 package zone_setting_test
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go/v4"
+	"github.com/cloudflare/cloudflare-go/v4/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestAccCloudflareZoneSetting_OnOff(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone_setting." + rnd
+	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZoneSettingDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareZoneSettingConfigOnOff(rnd, zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("setting_id"), knownvalue.StringExact("http3")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("on")),
+				},
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s/http3", zoneID),
 			},
 		},
 	})
 }
 
 func TestAccCloudflareZoneSetting_Boolean(t *testing.T) {
-	t.Skip("pending finding a setting to test against")
-
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone_setting." + rnd
+	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZoneSettingDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareZoneSettingConfigBoolean(rnd, zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("setting_id"), knownvalue.StringExact("http3")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("on")),
+				},
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s/http3", zoneID),
 			},
 		},
 	})
 }
 
 func TestAccCloudflareZoneSetting_Number(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone_setting." + rnd
+	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZoneSettingDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareZoneSettingConfigNumber(rnd, zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("setting_id"), knownvalue.StringExact("browser_cache_ttl")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.Int64Exact(30)),
+				},
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s/browser_cache_ttl", zoneID),
 			},
 		},
 	})
 }
 
 func TestAccCloudflareZoneSetting_NEL(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone_setting." + rnd
+	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZoneSettingDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareZoneSettingConfigNEL(rnd, zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("setting_id"), knownvalue.StringExact("nel")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value").AtMapKey("enabled"), knownvalue.Bool(true)),
+				},
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s/nel", zoneID),
 			},
 		},
 	})
 }
 
 func TestAccCloudflareZoneSetting_SSLRecommender(t *testing.T) {
-	t.Skip("pending fixing schema to be nested")
-
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone_setting." + rnd
+	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZoneSettingDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareZoneSettingConfigSSLRecommender(rnd, zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("setting_id"), knownvalue.StringExact("ssl_recommender")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value").AtMapKey("enabled"), knownvalue.Bool(true)),
+				},
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s/ssl_recommender", zoneID),
 			},
 		},
 	})
 }
 
 func TestAccCloudflareZoneSetting_HSTS(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone_setting." + rnd
+	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZoneSettingDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareZoneSettingConfigHSTS(rnd, zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("setting_id"), knownvalue.StringExact("security_header")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value").AtMapKey("strict_transport_security").AtMapKey("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value").AtMapKey("strict_transport_security").AtMapKey("include_subdomains"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value").AtMapKey("strict_transport_security").AtMapKey("max_age"), knownvalue.Int64Exact(30)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value").AtMapKey("strict_transport_security").AtMapKey("nosniff"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value").AtMapKey("strict_transport_security").AtMapKey("preload"), knownvalue.Bool(false)),
+				},
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s/security_header", zoneID),
 			},
 		},
 	})
 }
 
 func TestAccCloudflareZoneSetting_MinTLSVersion(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone_setting." + rnd
+	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZoneSettingDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareZoneSettingConfigMinTLSVersion(rnd, zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("setting_id"), knownvalue.StringExact("min_tls_version")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("1.2")),
+				},
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s/min_tls_version", zoneID),
 			},
 		},
 	})
 }
 
 func TestAccCloudflareZoneSetting_Ciphers(t *testing.T) {
+	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone_setting." + rnd
+	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZoneSettingDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareZoneSettingConfigCiphers(rnd, zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("setting_id"), knownvalue.StringExact("ciphers")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("ECDHE-ECDSA-AES128-GCM-SHA256"),
+						knownvalue.StringExact("ECDHE-ECDSA-CHACHA20-POLY1305"),
+					})),
+				},
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s/ciphers", zoneID),
 			},
 		},
 	})
@@ -196,4 +287,28 @@ func testCloudflareZoneSettingConfigMinTLSVersion(resourceID, zoneID string) str
 
 func testCloudflareZoneSettingConfigCiphers(resourceID, zoneID string) string {
 	return acctest.LoadTestCase("ciphers.tf", resourceID, zoneID)
+}
+
+func testAccCheckCloudflareZoneSettingDestroy(s *terraform.State) error {
+	client := acctest.SharedClient()
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "cloudflare_zone_setting" {
+			continue
+		}
+
+		zoneID := rs.Primary.Attributes[consts.ZoneIDSchemaKey]
+		settingID := rs.Primary.Attributes["setting_id"]
+
+		// Zone settings cannot be destroyed, they always exist with default values
+		// We verify that we can still fetch the setting after "deletion"
+		_, err := client.Zones.Settings.Get(context.Background(), settingID, zones.SettingGetParams{
+			ZoneID: cloudflare.F(zoneID),
+		})
+		if err != nil {
+			return fmt.Errorf("error fetching zone setting after deletion: %v", err)
+		}
+	}
+
+	return nil
 }

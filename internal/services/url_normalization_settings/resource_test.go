@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v4"
@@ -39,10 +40,10 @@ func TestAccCloudflareURLNormalizationSettings_CreateThenUpdate(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateId:       zoneID,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     zoneID,
 			},
 			{
 				Config: testAccCheckCloudflareURLNormalizationSettingsConfig(zoneID, "cloudflare", "both", rnd),
@@ -53,10 +54,10 @@ func TestAccCloudflareURLNormalizationSettings_CreateThenUpdate(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateId:       zoneID,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     zoneID,
 			},
 		},
 	})
@@ -83,10 +84,10 @@ func TestAccCloudflareURLNormalizationSettings_AllCombinations(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateId:       zoneID,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     zoneID,
 			},
 			{
 				Config: testAccCheckCloudflareURLNormalizationSettingsConfig(zoneID, "cloudflare", "both", rnd),
@@ -97,10 +98,10 @@ func TestAccCloudflareURLNormalizationSettings_AllCombinations(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateId:       zoneID,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     zoneID,
 			},
 			{
 				Config: testAccCheckCloudflareURLNormalizationSettingsConfig(zoneID, "rfc3986", "incoming", rnd),
@@ -111,10 +112,10 @@ func TestAccCloudflareURLNormalizationSettings_AllCombinations(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateId:       zoneID,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     zoneID,
 			},
 			{
 				Config: testAccCheckCloudflareURLNormalizationSettingsConfig(zoneID, "rfc3986", "both", rnd),
@@ -146,6 +147,28 @@ func testAccCheckCloudflareURLNormalizationSettingsDestroy(s *terraform.State) e
 	}
 
 	return nil
+}
+
+func TestAccCloudflareURLNormalizationSettings_InvalidValues(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareURLNormalizationSettingsConfig(zoneID, "invalid_type", "incoming", rnd),
+				ExpectError: regexp.MustCompile(`value must be one of: \["cloudflare" "rfc3986"\]`),
+			},
+			{
+				Config:      testAccCheckCloudflareURLNormalizationSettingsConfig(zoneID, "cloudflare", "invalid_scope", rnd),
+				ExpectError: regexp.MustCompile(`value must be one of: \["incoming" "both"\]`),
+			},
+		},
+	})
 }
 
 func testAccCheckCloudflareURLNormalizationSettingsConfig(zoneID, _type, scope, name string) string {
