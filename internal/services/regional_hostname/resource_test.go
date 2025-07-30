@@ -9,9 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-var (
-	zoneID = os.Getenv("CLOUDFLARE_ZONE_ID")
-)
+var zoneID = os.Getenv("CLOUDFLARE_ZONE_ID")
 
 func TestAccCloudflareRegionalHostname_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
@@ -23,14 +21,14 @@ func TestAccCloudflareRegionalHostname_Basic(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testRegionalHostnameConfig(rnd, zoneName, "ca"),
+				Config: testRegionalHostnameConfig(rnd, zoneName, "ca", "dns"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "hostname", zoneName),
 					resource.TestCheckResourceAttr(name, "region_key", "ca"),
 				),
 			},
 			{
-				Config: testRegionalHostnameConfig(rnd, zoneName, "eu"),
+				Config: testRegionalHostnameConfig(rnd, zoneName, "eu", "dns"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "hostname", zoneName),
 					resource.TestCheckResourceAttr(name, "region_key", "eu"),
@@ -40,6 +38,6 @@ func TestAccCloudflareRegionalHostname_Basic(t *testing.T) {
 	})
 }
 
-func testRegionalHostnameConfig(name string, zoneName, regionKey string) string {
-	return acctest.LoadTestCase("regionalhostnameconfig.tf", name, zoneID, zoneName, regionKey)
+func testRegionalHostnameConfig(name string, zoneName, regionKey, routing string) string {
+	return acctest.LoadTestCase("regionalhostnameconfig.tf", name, zoneID, zoneName, regionKey, routing)
 }
