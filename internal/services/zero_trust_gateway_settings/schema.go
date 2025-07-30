@@ -137,10 +137,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"read_only": schema.BoolAttribute{
 								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
 								Computed:    true,
+								Optional:    true,
 							},
 							"source_account": schema.StringAttribute{
 								Description: "Account tag of account that shared this setting",
 								Computed:    true,
+								Optional:    true,
 							},
 							"suppress_footer": schema.BoolAttribute{
 								Description: "If mode is customized_block_page: suppress detailed info at the bottom of the block page.",
@@ -153,6 +155,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"version": schema.Int64Attribute{
 								Description: "Version number of the setting",
 								Computed:    true,
+								Optional:    true,
 							},
 						},
 					},
@@ -209,9 +212,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"binding_status": schema.StringAttribute{
 								Description: "Certificate status (internal).",
 								Computed:    true,
+								Optional:    true,
 							},
 							"updated_at": schema.StringAttribute{
 								Computed:   true,
+								Optional:   true,
 								CustomType: timetypes.RFC3339Type{},
 							},
 						},
@@ -227,14 +232,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"read_only": schema.BoolAttribute{
 								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
 								Optional:    true,
+								Computed:    true,
 							},
 							"source_account": schema.StringAttribute{
 								Description: "Account tag of account that shared this setting",
 								Optional:    true,
+								Computed:    true,
 							},
 							"version": schema.Int64Attribute{
 								Description: "Version number of the setting",
 								Optional:    true,
+								Computed:    true,
 							},
 						},
 					},

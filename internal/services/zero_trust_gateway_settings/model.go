@@ -4,7 +4,6 @@ package zero_trust_gateway_settings
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -51,10 +50,10 @@ type ZeroTrustGatewaySettingsSettingsActivityLogModel struct {
 }
 
 type ZeroTrustGatewaySettingsSettingsAntivirusModel struct {
-	EnabledDownloadPhase types.Bool                                                          `tfsdk:"enabled_download_phase" json:"enabled_download_phase,optional"`
-	EnabledUploadPhase   types.Bool                                                          `tfsdk:"enabled_upload_phase" json:"enabled_upload_phase,optional"`
-	FailClosed           types.Bool                                                          `tfsdk:"fail_closed" json:"fail_closed,optional"`
-	NotificationSettings *ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel `tfsdk:"notification_settings" json:"notification_settings,optional"`
+	EnabledDownloadPhase types.Bool                                                          `tfsdk:"enabled_download_phase" json:"enabled_download_phase,computed_optional"`
+	EnabledUploadPhase   types.Bool                                                          `tfsdk:"enabled_upload_phase" json:"enabled_upload_phase,computed_optional"`
+	FailClosed           types.Bool                                                          `tfsdk:"fail_closed" json:"fail_closed,computed_optional"`
+	NotificationSettings *ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel `tfsdk:"notification_settings" json:"notification_settings,computed_optional"`
 }
 
 type ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel struct {
@@ -75,11 +74,11 @@ type ZeroTrustGatewaySettingsSettingsBlockPageModel struct {
 	MailtoSubject   types.String `tfsdk:"mailto_subject" json:"mailto_subject,optional"`
 	Mode            types.String `tfsdk:"mode" json:"mode,optional"`
 	Name            types.String `tfsdk:"name" json:"name,optional"`
-	ReadOnly        types.Bool   `tfsdk:"read_only" json:"read_only,computed"`
-	SourceAccount   types.String `tfsdk:"source_account" json:"source_account,computed"`
+	ReadOnly        types.Bool   `tfsdk:"read_only" json:"read_only,computed_optional"`
+	SourceAccount   types.String `tfsdk:"source_account" json:"source_account,computed_optional"`
 	SuppressFooter  types.Bool   `tfsdk:"suppress_footer" json:"suppress_footer,optional"`
 	TargetURI       types.String `tfsdk:"target_uri" json:"target_uri,optional"`
-	Version         types.Int64  `tfsdk:"version" json:"version,computed"`
+	Version         types.Int64  `tfsdk:"version" json:"version,computed_optional"`
 }
 
 type ZeroTrustGatewaySettingsSettingsBodyScanningModel struct {
@@ -98,15 +97,15 @@ type ZeroTrustGatewaySettingsSettingsCertificateModel struct {
 type ZeroTrustGatewaySettingsSettingsCustomCertificateModel struct {
 	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled,required"`
 	ID            types.String      `tfsdk:"id" json:"id,optional"`
-	BindingStatus types.String      `tfsdk:"binding_status" json:"binding_status,computed"`
-	UpdatedAt     timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	BindingStatus types.String      `tfsdk:"binding_status" json:"binding_status,computed_optional"`
+	UpdatedAt     timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed_optional" format:"date-time"`
 }
 
 type ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingModel struct {
 	Enabled       types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
-	ReadOnly      types.Bool   `tfsdk:"read_only" json:"read_only,optional"`
-	SourceAccount types.String `tfsdk:"source_account" json:"source_account,optional"`
-	Version       types.Int64  `tfsdk:"version" json:"version,optional"`
+	ReadOnly      types.Bool   `tfsdk:"read_only" json:"read_only,computed_optional"`
+	SourceAccount types.String `tfsdk:"source_account" json:"source_account,computed_optional"`
+	Version       types.Int64  `tfsdk:"version" json:"version,computed_optional"`
 }
 
 type ZeroTrustGatewaySettingsSettingsFipsModel struct {
