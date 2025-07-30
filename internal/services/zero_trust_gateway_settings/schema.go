@@ -30,7 +30,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Account settings",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"activity_log": schema.SingleNestedAttribute{
 						Description: "Activity log settings.",
@@ -250,7 +252,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"host_selector": schema.SingleNestedAttribute{
 						Description: "Setting to enable host selector in egress policies.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsHostSelectorModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable filtering via hosts for egress policies.",
@@ -260,7 +264,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"inspection": schema.SingleNestedAttribute{
 						Description: "Setting to define inspection settings",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsInspectionModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"mode": schema.StringAttribute{
 								Description: "Defines the mode of inspection the proxy will use.\n- static: Gateway will use static inspection to inspect HTTP on TCP(80). If TLS decryption is on, Gateway will inspect HTTPS traffic on TCP(443) & UDP(443).\n- dynamic: Gateway will use protocol detection to dynamically inspect HTTP and HTTPS traffic on any port. TLS decryption must be on to inspect HTTPS traffic.\nAvailable values: \"static\", \"dynamic\".",

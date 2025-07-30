@@ -67,7 +67,7 @@ func (r *SnippetRulesResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	res := new(http.Response)
-	env := SnippetRulesResultEnvelope{*data}
+	env := SnippetRulesResultEnvelope{data.Body}
 	_, err = r.client.Snippets.Rules.Update(
 		ctx,
 		snippets.RuleUpdateParams{
@@ -87,7 +87,7 @@ func (r *SnippetRulesResource) Create(ctx context.Context, req resource.CreateRe
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -115,7 +115,7 @@ func (r *SnippetRulesResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	res := new(http.Response)
-	env := SnippetRulesResultEnvelope{*data}
+	env := SnippetRulesResultEnvelope{data.Body}
 	_, err = r.client.Snippets.Rules.Update(
 		ctx,
 		snippets.RuleUpdateParams{
@@ -135,7 +135,7 @@ func (r *SnippetRulesResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
