@@ -42,5 +42,6 @@ func (m *WorkersKVNamespacesDataSourceModel) toListParams(_ context.Context) (pa
 type WorkersKVNamespacesResultDataSourceModel struct {
 	ID                  types.String `tfsdk:"id" json:"id,computed"`
 	Title               types.String `tfsdk:"title" json:"title,computed"`
+	Beta                types.Bool   `tfsdk:"beta" json:"beta,computed"`
 	SupportsURLEncoding types.Bool   `tfsdk:"supports_url_encoding" json:"supports_url_encoding,computed"`
 }

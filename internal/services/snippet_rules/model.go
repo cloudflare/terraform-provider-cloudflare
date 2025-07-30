@@ -9,29 +9,24 @@ import (
 )
 
 type SnippetRulesResultEnvelope struct {
-	Result SnippetRulesModel `json:"result"`
+	Result *[]*SnippetRulesBodyModel `json:"result"`
 }
 
 type SnippetRulesModel struct {
-	ID          types.String               `tfsdk:"id" json:"id,computed"`
-	ZoneID      types.String               `tfsdk:"zone_id" path:"zone_id,required"`
-	Rules       *[]*SnippetRulesRulesModel `tfsdk:"rules" json:"rules,required"`
-	Description types.String               `tfsdk:"description" json:"description,computed"`
-	Enabled     types.Bool                 `tfsdk:"enabled" json:"enabled,computed"`
-	Expression  types.String               `tfsdk:"expression" json:"expression,computed"`
-	LastUpdated timetypes.RFC3339          `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	SnippetName types.String               `tfsdk:"snippet_name" json:"snippet_name,computed"`
+	ID     types.String              `tfsdk:"id" json:"id,computed"`
+	ZoneID types.String              `tfsdk:"zone_id" path:"zone_id,required"`
+	Body   *[]*SnippetRulesBodyModel `tfsdk:"body" json:"body,required"`
 }
 
 func (m SnippetRulesModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m)
+	return apijson.MarshalRoot(m.Body)
 }
 
 func (m SnippetRulesModel) MarshalJSONForUpdate(state SnippetRulesModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForUpdate(m.Body, state.Body)
 }
 
-type SnippetRulesRulesModel struct {
+type SnippetRulesBodyModel struct {
 	ID          types.String      `tfsdk:"id" json:"id,computed"`
 	Expression  types.String      `tfsdk:"expression" json:"expression,required"`
 	LastUpdated timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
