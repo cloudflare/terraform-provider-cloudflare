@@ -157,7 +157,6 @@ func (r *QueueConsumerResource) Read(ctx context.Context, req resource.ReadReque
 	_, err := r.client.Queues.Consumers.Get(
 		ctx,
 		data.QueueID.ValueString(),
-		data.ConsumerID.ValueString(),
 		queues.ConsumerGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
