@@ -39,7 +39,8 @@ func (m *WorkersDeploymentDataSourceModel) toReadParams(_ context.Context) (para
 }
 
 type WorkersDeploymentAnnotationsDataSourceModel struct {
-	WorkersMessage types.String `tfsdk:"workers_message" json:"workers/message,computed"`
+	WorkersMessage     types.String `tfsdk:"workers_message" json:"workers/message,computed"`
+	WorkersTriggeredBy types.String `tfsdk:"workers_triggered_by" json:"workers/triggered_by,computed"`
 }
 
 type WorkersDeploymentVersionsDataSourceModel struct {
