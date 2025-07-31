@@ -13,21 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type SnippetRulesListDataSource struct {
+type SnippetRulesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*SnippetRulesListDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*SnippetRulesDataSource)(nil)
 
-func NewSnippetRulesListDataSource() datasource.DataSource {
-	return &SnippetRulesListDataSource{}
+func NewSnippetRulesDataSource() datasource.DataSource {
+	return &SnippetRulesDataSource{}
 }
 
-func (d *SnippetRulesListDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_snippet_rules_list"
+func (d *SnippetRulesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_snippet_rules"
 }
 
-func (d *SnippetRulesListDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *SnippetRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,8 +46,8 @@ func (d *SnippetRulesListDataSource) Configure(ctx context.Context, req datasour
 	d.client = client
 }
 
-func (d *SnippetRulesListDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *SnippetRulesListDataSourceModel
+func (d *SnippetRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *SnippetRulesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -61,7 +61,7 @@ func (d *SnippetRulesListDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	env := SnippetRulesListResultListDataSourceEnvelope{}
+	env := SnippetRulesResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
 	if maxItems <= 0 {
@@ -92,9 +92,9 @@ func (d *SnippetRulesListDataSource) Read(ctx context.Context, req datasource.Re
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[SnippetRulesListResultDataSourceModel](ctx, acc)
+	rules, diags := customfield.NewObjectListFromAttributes[SnippetRuleDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
-	data.Result = result
+	data.Rules = rules
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

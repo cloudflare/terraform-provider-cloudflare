@@ -1,19 +1,19 @@
 ---
-page_title: "cloudflare_snippet_rules_list Data Source - Cloudflare"
+page_title: "cloudflare_snippet_rules Data Source - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_snippet_rules_list (Data Source)
+# cloudflare_snippet_rules (Data Source)
 
 
 
 ## Example Usage
 
 ```terraform
-data "cloudflare_snippet_rules_list" "example_snippet_rules_list" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+data "cloudflare_snippet_rules" "example_snippet_rules" {
+  zone_id = "9f1839b6152d298aca64c4e906b6d074"
 }
 ```
 

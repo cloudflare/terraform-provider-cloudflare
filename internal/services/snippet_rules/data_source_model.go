@@ -13,17 +13,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type SnippetRulesListResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[SnippetRulesListResultDataSourceModel] `json:"result,computed"`
+type SnippetRulesResultListDataSourceEnvelope struct {
+	Result customfield.NestedObjectList[SnippetRuleDataSourceModel] `json:"result,computed"`
 }
 
-type SnippetRulesListDataSourceModel struct {
-	ZoneID   types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
-	MaxItems types.Int64                                                         `tfsdk:"max_items"`
-	Result   customfield.NestedObjectList[SnippetRulesListResultDataSourceModel] `tfsdk:"result"`
+type SnippetRulesDataSourceModel struct {
+	ZoneID   types.String                                             `tfsdk:"zone_id" path:"zone_id,required"`
+	MaxItems types.Int64                                              `tfsdk:"max_items"`
+	Rules    customfield.NestedObjectList[SnippetRuleDataSourceModel] `tfsdk:"rules"`
 }
 
-func (m *SnippetRulesListDataSourceModel) toListParams(_ context.Context) (params snippets.RuleListParams, diags diag.Diagnostics) {
+func (m *SnippetRulesDataSourceModel) toListParams(_ context.Context) (params snippets.RuleListParams, diags diag.Diagnostics) {
 	params = snippets.RuleListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
@@ -31,7 +31,7 @@ func (m *SnippetRulesListDataSourceModel) toListParams(_ context.Context) (param
 	return
 }
 
-type SnippetRulesListResultDataSourceModel struct {
+type SnippetRuleDataSourceModel struct {
 	ID          types.String      `tfsdk:"id" json:"id,computed"`
 	Expression  types.String      `tfsdk:"expression" json:"expression,computed"`
 	LastUpdated timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
