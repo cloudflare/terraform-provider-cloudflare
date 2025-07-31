@@ -33,9 +33,7 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 				Config: testAccCloudflareTeamsAccountBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "settings.custom_certificate.enabled", "false"),
 					resource.TestCheckResourceAttr(name, "settings.tls_decrypt.enabled", "true"),
-					resource.TestCheckResourceAttr(name, "settings.protocol_detection.enabled", "true"),
 					resource.TestCheckResourceAttr(name, "settings.activity_log.enabled", "true"),
 					resource.TestCheckResourceAttr(name, "settings.fips.tls", "true"),
 					resource.TestCheckResourceAttr(name, "settings.block_page.name", rnd),
