@@ -11,13 +11,9 @@ const formatStructTag = "format"
 
 type parsedStructTag struct {
 	name     string
+	required bool
 	extras   bool
-	computed bool
-	// Don't skip this value, even if it's computed (no-op for computed optional fields)
-	// If encodeStateForUnknown is set on a computed field, this flag should also be set;
-	// otherwise this flag will have no effect
-	// NOTE: won't work if update behavior is 'patch'
-	forceEncode bool
+	metadata bool
 }
 
 func parseFormStructTag(field reflect.StructField) (tag parsedStructTag, ok bool) {
@@ -35,12 +31,12 @@ func parseFormStructTag(field reflect.StructField) (tag parsedStructTag, ok bool
 	tag.name = parts[0]
 	for _, part := range parts[1:] {
 		switch part {
+		case "required":
+			tag.required = true
 		case "extras":
 			tag.extras = true
-		case "computed":
-			tag.computed = true
-		case "force_encode":
-			tag.forceEncode = true
+		case "metadata":
+			tag.metadata = true
 		}
 	}
 	return

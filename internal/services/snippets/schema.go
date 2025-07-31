@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*SnippetsResource)(nil)
@@ -30,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"files": schema.ListAttribute{
 				Description: "The list of files belonging to the snippet.",
 				Required:    true,
-				ElementType: SnippetsFileType,
+				ElementType: types.StringType,
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Description: "Metadata about the snippet.",
@@ -43,10 +44,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Description:   "The timestamp of when the snippet was created.",
-				Computed:      true,
-				CustomType:    timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Description: "The timestamp of when the snippet was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "The timestamp of when the snippet was last modified.",
