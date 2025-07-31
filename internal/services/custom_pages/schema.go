@@ -23,10 +23,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 1,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Error Page Types\nAvailable values: \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
+				Description: "Error Page Types\nAvailable values: \"under_attack\", \"basic_challenge\", \"waf_challenge\", \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
+						"under_attack",
+						"basic_challenge",
+						"waf_challenge",
 						"waf_block",
 						"ip_block",
 						"country_challenge",
@@ -39,10 +42,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"identifier": schema.StringAttribute{
-				Description: "Error Page Types\nAvailable values: \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
+				Description: "Error Page Types\nAvailable values: \"under_attack\", \"basic_challenge\", \"waf_challenge\", \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
+						"under_attack",
+						"basic_challenge",
+						"waf_challenge",
 						"waf_block",
 						"ip_block",
 						"country_challenge",
@@ -73,7 +79,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"url": schema.StringAttribute{
 				Description: "The URL associated with the custom page.",
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Computed:   true,
