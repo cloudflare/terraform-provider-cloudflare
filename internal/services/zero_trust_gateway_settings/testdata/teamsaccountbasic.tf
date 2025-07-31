@@ -2,7 +2,7 @@ resource "cloudflare_zero_trust_gateway_settings" "%[1]s" {
   account_id = "%[2]s"
   settings = {
     protocol_detection = {
-        enabled = true
+        enabled = false
     }
     tls_decrypt = {
       enabled = true
@@ -23,6 +23,10 @@ resource "cloudflare_zero_trust_gateway_settings" "%[1]s" {
       background_color = "#000000"
       mailto_subject = "hello"
       mailto_address = "test@cloudflare.com"
+      include_context = true
+      mode = "customized_block_page"
+      suppress_footer = true
+      target_uri = "https://example.com"
     }
     body_scanning = {
       inspection_mode = "deep"
@@ -41,10 +45,8 @@ resource "cloudflare_zero_trust_gateway_settings" "%[1]s" {
       }
     }
     extended_email_matching = {
-      enabled = true
-    }
-    custom_certificate = {
       enabled = false
     }
+
   }
 }

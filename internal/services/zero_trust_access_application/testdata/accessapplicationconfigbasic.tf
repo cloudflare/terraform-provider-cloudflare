@@ -5,4 +5,5 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = false
+  service_auth_401_redirect = false
 }

@@ -24,6 +24,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Account identifier tag.",
 				Required:    true,
 			},
+			"creator": schema.StringAttribute{
+				Description: `Internal user ID set within the creator field. Setting to empty string "" will return images where creator field is not set`,
+				Optional:    true,
+			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
@@ -44,6 +48,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
 										Description: "Image unique identifier.",
+										Computed:    true,
+									},
+									"creator": schema.StringAttribute{
+										Description: "Can set the creator field with an internal user ID.",
 										Computed:    true,
 									},
 									"filename": schema.StringAttribute{

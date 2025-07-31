@@ -119,10 +119,10 @@ func (r *MagicTransitConnectorResource) Update(ctx context.Context, req resource
 	}
 	res := new(http.Response)
 	env := MagicTransitConnectorResultEnvelope{*data}
-	_, err = r.client.MagicTransit.Connectors.Update(
+	_, err = r.client.MagicTransit.Connectors.Edit(
 		ctx,
 		data.ID.ValueString(),
-		magic_transit.ConnectorUpdateParams{
+		magic_transit.ConnectorEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),

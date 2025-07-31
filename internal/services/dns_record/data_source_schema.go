@@ -61,7 +61,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
-				Description: "DNS record name (or @ for the zone apex) in Punycode.",
+				Description: "Complete DNS record name, including the zone name, in Punycode.",
 				Computed:    true,
 			},
 			"priority": schema.Float64Attribute{

@@ -77,6 +77,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("pattern", "created_at"),
 						},
 					},
+					"pattern": schema.StringAttribute{
+						Optional: true,
+					},
 					"pattern_type": schema.StringAttribute{
 						Description: `Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".`,
 						Optional:    true,

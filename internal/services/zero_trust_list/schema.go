@@ -50,7 +50,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The description of the list.",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"items": schema.SetNestedAttribute{
 				Description: "items to add to the list.",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{

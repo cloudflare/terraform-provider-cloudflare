@@ -24,6 +24,7 @@ type R2CustomDomainDataSourceModel struct {
 	MinTLS     types.String                                                  `tfsdk:"min_tls" json:"minTLS,computed"`
 	ZoneID     types.String                                                  `tfsdk:"zone_id" json:"zoneId,computed"`
 	ZoneName   types.String                                                  `tfsdk:"zone_name" json:"zoneName,computed"`
+	Ciphers    customfield.List[types.String]                                `tfsdk:"ciphers" json:"ciphers,computed"`
 	Status     customfield.NestedObject[R2CustomDomainStatusDataSourceModel] `tfsdk:"status" json:"status,computed"`
 }
 

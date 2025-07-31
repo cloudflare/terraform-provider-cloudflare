@@ -116,10 +116,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"tail_consumers": schema.ListNestedAttribute{
+						"tail_consumers": schema.SetNestedAttribute{
 							Description: "List of Workers that will consume logs from the attached Worker.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectListType[WorkersScriptsTailConsumersDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[WorkersScriptsTailConsumersDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"service": schema.StringAttribute{

@@ -151,6 +151,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Description: "If mode is redirect_uri: URI to which the user should be redirected.",
 								Computed:    true,
 							},
+							"version": schema.Int64Attribute{
+								Description: "Version number of the setting",
+								Computed:    true,
+							},
 						},
 					},
 					"body_scanning": schema.SingleNestedAttribute{
@@ -159,8 +163,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBodyScanningDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"inspection_mode": schema.StringAttribute{
-								Description: "Set the inspection mode to either `deep` or `shallow`.",
+								Description: "Set the inspection mode to either `deep` or `shallow`.\nAvailable values: \"deep\", \"shallow\".",
 								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("deep", "shallow"),
+								},
 							},
 						},
 					},
@@ -231,6 +238,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Description: "Account tag of account that shared this setting",
 								Computed:    true,
 							},
+							"version": schema.Int64Attribute{
+								Description: "Version number of the setting",
+								Computed:    true,
+							},
 						},
 					},
 					"fips": schema.SingleNestedAttribute{
@@ -252,6 +263,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"enabled": schema.BoolAttribute{
 								Description: "Enable filtering via hosts for egress policies.",
 								Computed:    true,
+							},
+						},
+					},
+					"inspection": schema.SingleNestedAttribute{
+						Description: "Setting to define inspection settings",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsInspectionDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"mode": schema.StringAttribute{
+								Description: "Defines the mode of inspection the proxy will use.\n- static: Gateway will use static inspection to inspect HTTP on TCP(80). If TLS decryption is on, Gateway will inspect HTTPS traffic on TCP(443) & UDP(443).\n- dynamic: Gateway will use protocol detection to dynamically inspect HTTP and HTTPS traffic on any port. TLS decryption must be on to inspect HTTPS traffic.\nAvailable values: \"static\", \"dynamic\".",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("static", "dynamic"),
+								},
 							},
 						},
 					},
