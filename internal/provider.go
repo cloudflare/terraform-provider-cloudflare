@@ -648,6 +648,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		queue.NewQueueDataSource,
 		queue.NewQueuesDataSource,
 		queue_consumer.NewQueueConsumerDataSource,
+		queue_consumer.NewQueueConsumersDataSource,
 		api_shield.NewAPIShieldDataSource,
 		api_shield_discovery_operation.NewAPIShieldDiscoveryOperationsDataSource,
 		api_shield_operation.NewAPIShieldOperationDataSource,
