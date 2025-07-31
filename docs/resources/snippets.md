@@ -13,20 +13,9 @@ description: |-
 
 ```terraform
 resource "cloudflare_snippets" "example_snippets" {
-  zone_id      = "9f1839b6152d298aca64c4e906b6d074"
-  snippet_name = "my_snippet"
-  files = [
-    {
-      name    = "main.js"
-      content = <<-EOT
-      export default {
-        async fetch(request) {
-          return new Response('Hello, World!');
-        }
-      }
-      EOT
-    }
-  ]
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  snippet_name = "snippet_name_01"
+  files = "export { async function fetch(request, env) {return new Response(\'some_response\') } }"
   metadata = {
     main_module = "main.js"
   }
