@@ -5,6 +5,7 @@ package workers_deployment
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -62,14 +63,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"annotations": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[WorkersDeploymentAnnotationsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"workers_message": schema.StringAttribute{
 						Description: "Human-readable message about the deployment. Truncated to 100 bytes.",
 						Optional:    true,
 					},
+					"workers_triggered_by": schema.StringAttribute{
+						Description: "Operation that triggered the creation of the deployment.",
+						Computed:    true,
+					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"author_email": schema.StringAttribute{
 				Computed: true,

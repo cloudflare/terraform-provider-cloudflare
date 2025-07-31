@@ -68,6 +68,7 @@ func (d *QueueConsumerDataSource) Read(ctx context.Context, req datasource.ReadR
 	_, err := d.client.Queues.Consumers.Get(
 		ctx,
 		data.QueueID.ValueString(),
+		data.ConsumerID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
