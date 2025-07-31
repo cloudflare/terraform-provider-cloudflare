@@ -4,5 +4,6 @@ data "cloudflare_email_security_trusted_domains_list" "example_email_security_tr
   is_recent = true
   is_similarity = true
   order = "pattern"
+  pattern = "pattern"
   search = "search"
 }

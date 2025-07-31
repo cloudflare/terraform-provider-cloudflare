@@ -85,9 +85,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"context_awareness": schema.SingleNestedAttribute{
-				Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileContextAwarenessDataSourceModel](ctx),
+				Description:        "Scan the context of predefined entries to only return matches surrounded by keywords.",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				CustomType:         customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileContextAwarenessDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "If true, scan the context of predefined entries to only return matches surrounded by keywords.",

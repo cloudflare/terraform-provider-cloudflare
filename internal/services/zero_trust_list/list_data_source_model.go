@@ -37,14 +37,14 @@ func (m *ZeroTrustListsDataSourceModel) toListParams(_ context.Context) (params 
 }
 
 type ZeroTrustListsResultDataSourceModel struct {
-	ID          types.String                                                     `tfsdk:"id" json:"id,computed"`
-	ListCount   types.Float64                                                    `tfsdk:"list_count" json:"count,computed"`
-	CreatedAt   timetypes.RFC3339                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Description types.String                                                     `tfsdk:"description" json:"description,computed"`
-	Items       customfield.NestedObjectList[ZeroTrustListsItemsDataSourceModel] `tfsdk:"items" json:"items,computed"`
-	Name        types.String                                                     `tfsdk:"name" json:"name,computed"`
-	Type        types.String                                                     `tfsdk:"type" json:"type,computed"`
-	UpdatedAt   timetypes.RFC3339                                                `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	ID          types.String                                                    `tfsdk:"id" json:"id,computed"`
+	ListCount   types.Float64                                                   `tfsdk:"list_count" json:"count,computed"`
+	CreatedAt   timetypes.RFC3339                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Description types.String                                                    `tfsdk:"description" json:"description,computed"`
+	Items       customfield.NestedObjectSet[ZeroTrustListsItemsDataSourceModel] `tfsdk:"items" json:"items,computed"`
+	Name        types.String                                                    `tfsdk:"name" json:"name,computed"`
+	Type        types.String                                                    `tfsdk:"type" json:"type,computed"`
+	UpdatedAt   timetypes.RFC3339                                               `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustListsItemsDataSourceModel struct {

@@ -5,6 +5,7 @@ package certificate_pack
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -114,6 +115,50 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"backup_issued",
 						"holding_deployment",
 					),
+				},
+			},
+			"validation_errors": schema.ListNestedAttribute{
+				Description: "Domain validation errors that have been received by the certificate authority (CA).",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[CertificatePackValidationErrorsModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"message": schema.StringAttribute{
+							Description: "A domain validation error.",
+							Computed:    true,
+						},
+					},
+				},
+			},
+			"validation_records": schema.ListNestedAttribute{
+				Description: `Certificates' validation records. Only present when certificate pack is in "pending_validation" status`,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[CertificatePackValidationRecordsModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"emails": schema.ListAttribute{
+							Description: "The set of email addresses that the certificate authority (CA) will use to complete domain validation.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"http_body": schema.StringAttribute{
+							Description: "The content that the certificate authority (CA) will expect to find at the http_url during the domain validation.",
+							Computed:    true,
+						},
+						"http_url": schema.StringAttribute{
+							Description: "The url that will be checked during domain validation.",
+							Computed:    true,
+						},
+						"txt_name": schema.StringAttribute{
+							Description: "The hostname that the certificate authority (CA) will check for a TXT record during domain validation .",
+							Computed:    true,
+						},
+						"txt_value": schema.StringAttribute{
+							Description: "The TXT record that the certificate authority (CA) will check during domain validation.",
+							Computed:    true,
+						},
+					},
 				},
 			},
 		},

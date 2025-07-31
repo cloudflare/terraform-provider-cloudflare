@@ -325,6 +325,10 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			if ptag.name == "-" {
 				continue
 			}
+			// Computed fields come from the server
+			if ptag.computed && !ptag.forceEncode {
+				continue
+			}
 
 			dateFormat, ok := parseFormatStructTag(field)
 			oldFormat := e.dateFormat

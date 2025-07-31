@@ -31,7 +31,7 @@ func (m AccountMemberModel) MarshalJSONForUpdate(state AccountMemberModel) (data
 }
 
 type AccountMemberPoliciesModel struct {
-	ID               types.String                                   `tfsdk:"id" json:"id,computed"`
+	ID               types.String                                   `tfsdk:"id" json:"id,computed,force_encode,encode_state_for_unknown"`
 	Access           types.String                                   `tfsdk:"access" json:"access,required"`
 	PermissionGroups *[]*AccountMemberPoliciesPermissionGroupsModel `tfsdk:"permission_groups" json:"permission_groups,required"`
 	ResourceGroups   *[]*AccountMemberPoliciesResourceGroupsModel   `tfsdk:"resource_groups" json:"resource_groups,required"`
