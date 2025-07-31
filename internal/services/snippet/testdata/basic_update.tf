@@ -1,6 +1,6 @@
-resource "cloudflare_snippets" "example_snippets" {
-  zone_id      = "9f1839b6152d298aca64c4e906b6d074"
-  snippet_name = "my_snippet"
+resource "cloudflare_snippet" "%[1]s" {
+  zone_id      = "%[2]s"
+  snippet_name = "%[1]s"
   files = [
     {
       name    = "main.js"

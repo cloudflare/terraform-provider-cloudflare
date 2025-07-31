@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package snippets
+package snippet
 
 import (
 	"bytes"
@@ -20,7 +20,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
-var SnippetsFileType = snippetsFileType{
+var SnippetFileType = snippetFileType{
 	ObjectType: types.ObjectType{
 		AttrTypes: map[string]attr.Type{
 			"name":    types.StringType,
@@ -29,20 +29,20 @@ var SnippetsFileType = snippetsFileType{
 	},
 }
 
-type SnippetsResultEnvelope struct {
-	Result SnippetsModel `json:"result"`
+type SnippetResultEnvelope struct {
+	Result SnippetModel `json:"result"`
 }
 
-type SnippetsModel struct {
-	SnippetName types.String           `tfsdk:"snippet_name" path:"snippet_name,required"`
-	ZoneID      types.String           `tfsdk:"zone_id" path:"zone_id,required"`
-	Files       *[]SnippetsFile        `tfsdk:"files" json:"files,metadata,required"`
-	Metadata    *SnippetsMetadataModel `tfsdk:"metadata" json:"metadata,metadata,required"`
-	CreatedOn   timetypes.RFC3339      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedOn  timetypes.RFC3339      `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+type SnippetModel struct {
+	SnippetName types.String          `tfsdk:"snippet_name" path:"snippet_name,required"`
+	ZoneID      types.String          `tfsdk:"zone_id" path:"zone_id,required"`
+	Files       *[]SnippetFile        `tfsdk:"files" json:"files,metadata,required"`
+	Metadata    *SnippetMetadataModel `tfsdk:"metadata" json:"metadata,metadata,required"`
+	CreatedOn   timetypes.RFC3339     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn  timetypes.RFC3339     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }
 
-func (r SnippetsModel) MarshalMultipart() (data []byte, contentType string, err error) {
+func (r SnippetModel) MarshalMultipart() (data []byte, contentType string, err error) {
 	buf := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(buf)
 	err = apiform.MarshalRoot(r, writer)
@@ -57,7 +57,7 @@ func (r SnippetsModel) MarshalMultipart() (data []byte, contentType string, err 
 	return buf.Bytes(), writer.FormDataContentType(), nil
 }
 
-func (r *SnippetsModel) UnmarshalMultipart(data []byte, contentType string) error {
+func (r *SnippetModel) UnmarshalMultipart(data []byte, contentType string) error {
 	mediaType, params, err := mime.ParseMediaType(contentType)
 	if err != nil {
 		return fmt.Errorf("failed to parse media type: %w", err)
@@ -66,7 +66,7 @@ func (r *SnippetsModel) UnmarshalMultipart(data []byte, contentType string) erro
 		return fmt.Errorf("expected media type %q, got %q", "multipart/form-data", mediaType)
 	}
 	reader := multipart.NewReader(bytes.NewReader(data), params["boundary"])
-	var files []SnippetsFile
+	var files []SnippetFile
 	for {
 		part, err := reader.NextPart()
 		if err == io.EOF {
@@ -80,7 +80,7 @@ func (r *SnippetsModel) UnmarshalMultipart(data []byte, contentType string) erro
 			if err != nil {
 				return fmt.Errorf("failed to read multipart part: %w", err)
 			}
-			files = append(files, NewSnippetsFileValueMust(
+			files = append(files, NewSnippetFileValueMust(
 				part.FileName(),
 				string(bytes),
 			))
@@ -90,21 +90,21 @@ func (r *SnippetsModel) UnmarshalMultipart(data []byte, contentType string) erro
 	return nil
 }
 
-type snippetsFileType struct {
+type snippetFileType struct {
 	types.ObjectType
 }
 
-func (t snippetsFileType) Equal(other attr.Type) bool {
-	_, ok := other.(snippetsFileType)
+func (t snippetFileType) Equal(other attr.Type) bool {
+	_, ok := other.(snippetFileType)
 
 	return ok
 }
 
-func (t snippetsFileType) String() string {
-	return "SnippetsFileContentType"
+func (t snippetFileType) String() string {
+	return "SnippetFileType"
 }
 
-func (t snippetsFileType) ValueFromTerraform(
+func (t snippetFileType) ValueFromTerraform(
 	ctx context.Context,
 	in tftypes.Value,
 ) (attr.Value, error) {
@@ -118,28 +118,28 @@ func (t snippetsFileType) ValueFromTerraform(
 		return nil, fmt.Errorf("unexpected value type of %T", val)
 	}
 
-	return SnippetsFile{obj, new(int64)}, nil
+	return SnippetFile{obj, new(int64)}, nil
 }
 
-func (t snippetsFileType) ValueType(_ context.Context) attr.Value {
-	return SnippetsFile{}
+func (t snippetFileType) ValueType(_ context.Context) attr.Value {
+	return SnippetFile{}
 }
 
-func (t snippetsFileType) ValueFromObject(
+func (t snippetFileType) ValueFromObject(
 	_ context.Context,
 	obj basetypes.ObjectValue,
 ) (basetypes.ObjectValuable, diag.Diagnostics) {
-	return SnippetsFile{obj, new(int64)}, nil
+	return SnippetFile{obj, new(int64)}, nil
 }
 
-type SnippetsFile struct {
+type SnippetFile struct {
 	types.Object
 	offset *int64
 }
 
-func NewSnippetsFileValueMust(name string, content string) SnippetsFile {
-	return SnippetsFile{types.ObjectValueMust(
-		SnippetsFileType.AttrTypes,
+func NewSnippetFileValueMust(name string, content string) SnippetFile {
+	return SnippetFile{types.ObjectValueMust(
+		SnippetFileType.AttrTypes,
 		map[string]attr.Value{
 			"name":    types.StringValue(name),
 			"content": types.StringValue(content),
@@ -147,12 +147,12 @@ func NewSnippetsFileValueMust(name string, content string) SnippetsFile {
 	), new(int64)}
 }
 
-func (f SnippetsFile) Type(_ context.Context) attr.Type {
-	return SnippetsFileType
+func (f SnippetFile) Type(_ context.Context) attr.Type {
+	return SnippetFileType
 }
 
-func (f SnippetsFile) Equal(other attr.Value) bool {
-	o, ok := other.(SnippetsFile)
+func (f SnippetFile) Equal(other attr.Value) bool {
+	o, ok := other.(SnippetFile)
 	if !ok {
 		return false
 	}
@@ -160,15 +160,15 @@ func (f SnippetsFile) Equal(other attr.Value) bool {
 	return f.Object.Equal(o.Object)
 }
 
-func (f SnippetsFile) Name() string {
+func (f SnippetFile) Name() string {
 	return f.Object.Attributes()["name"].(types.String).ValueString()
 }
 
-func (f SnippetsFile) ContentType() string {
+func (f SnippetFile) ContentType() string {
 	return "application/javascript+module"
 }
 
-func (f SnippetsFile) Read(p []byte) (n int, err error) {
+func (f SnippetFile) Read(p []byte) (n int, err error) {
 	content := f.Object.Attributes()["content"].(types.String).ValueString()
 
 	reader := strings.NewReader(content)
@@ -184,6 +184,6 @@ func (f SnippetsFile) Read(p []byte) (n int, err error) {
 	return n, err
 }
 
-type SnippetsMetadataModel struct {
+type SnippetMetadataModel struct {
 	MainModule types.String `tfsdk:"main_module" json:"main_module,required"`
 }

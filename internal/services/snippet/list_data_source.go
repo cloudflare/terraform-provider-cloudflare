@@ -1,17 +1,15 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package snippets
+package snippet
 
 import (
 	"context"
 	"fmt"
-	"io"
-	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -57,32 +55,46 @@ func (d *SnippetsDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	params, diags := data.toReadParams(ctx)
+	params, diags := data.toListParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	res := new(http.Response)
-	env := SnippetsResultDataSourceEnvelope{*data}
-	_, err := d.client.Snippets.Get(
-		ctx,
-		data.SnippetName.ValueString(),
-		params,
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
+	env := SnippetsResultListDataSourceEnvelope{}
+	maxItems := int(data.MaxItems.ValueInt64())
+	acc := []attr.Value{}
+	if maxItems <= 0 {
+		maxItems = 1000
+	}
+	page, err := d.client.Snippets.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
+
+	for page != nil && len(page.Result) > 0 {
+		bytes := []byte(page.JSON.RawJSON())
+		err = apijson.UnmarshalComputed(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+			return
+		}
+		acc = append(acc, env.Result.Elements()...)
+		if len(acc) >= maxItems {
+			break
+		}
+		page, err = page.GetNextPage()
+		if err != nil {
+			resp.Diagnostics.AddError("failed to fetch next page", err.Error())
+			return
+		}
 	}
-	data = &env.Result
+
+	acc = acc[:min(len(acc), maxItems)]
+	result, diags := customfield.NewObjectListFromAttributes[SnippetsResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
