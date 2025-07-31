@@ -47,6 +47,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"allow_authenticate_via_warp": schema.BoolAttribute{
 				Description: "When set to true, users can authenticate to this application using their WARP session.  When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.",
 				Optional:    true,
+				Validators: []validator.Bool{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), authenticateViaWarpCompatibleAppTypes...),
+				},
 			},
 			"allow_iframe": schema.BoolAttribute{
 				Description: "Enables loading application content in an iFrame.",

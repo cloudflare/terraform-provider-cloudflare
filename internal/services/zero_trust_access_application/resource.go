@@ -63,7 +63,11 @@ func (r *ZeroTrustAccessApplicationResource) Create(ctx context.Context, req res
 		return
 	}
 
-	resp.Diagnostics.Append(loadConfigSensitiveValuesForWriting(ctx, data, &req.Config)...)
+	res := new(http.Response)
+	env := ZeroTrustAccessApplicationResultEnvelope{*data}
+	params := zero_trust.AccessApplicationNewParams{}
+
+	resp.Diagnostics.Append(normalizeWriteZeroTrustApplicationAPIData(ctx, data, &req.Config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -73,10 +77,6 @@ func (r *ZeroTrustAccessApplicationResource) Create(ctx context.Context, req res
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
-
-	res := new(http.Response)
-	env := ZeroTrustAccessApplicationResultEnvelope{*data}
-	params := zero_trust.AccessApplicationNewParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
@@ -123,7 +123,11 @@ func (r *ZeroTrustAccessApplicationResource) Update(ctx context.Context, req res
 		return
 	}
 
-	resp.Diagnostics.Append(loadConfigSensitiveValuesForWriting(ctx, data, &req.Config)...)
+	res := new(http.Response)
+	env := ZeroTrustAccessApplicationResultEnvelope{*data}
+	params := zero_trust.AccessApplicationUpdateParams{}
+
+	resp.Diagnostics.Append(normalizeWriteZeroTrustApplicationAPIData(ctx, data, &req.Config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -133,9 +137,6 @@ func (r *ZeroTrustAccessApplicationResource) Update(ctx context.Context, req res
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
-	res := new(http.Response)
-	env := ZeroTrustAccessApplicationResultEnvelope{*data}
-	params := zero_trust.AccessApplicationUpdateParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
