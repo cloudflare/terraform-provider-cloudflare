@@ -218,7 +218,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
-							Description: "DNS record name (or @ for the zone apex) in Punycode.",
+							Description: "Complete DNS record name, including the zone name, in Punycode.",
 							Computed:    true,
 						},
 						"ttl": schema.Float64Attribute{

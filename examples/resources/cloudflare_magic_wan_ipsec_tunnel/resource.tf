@@ -14,6 +14,7 @@ resource "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
     }
     type = "request"
   }
+  interface_address6 = "2606:54c1:7:0:a9fe:12d2:1:200/127"
   psk = "O3bwKSjnaoCxDoUxjcq4Rk8ZKkezQUiy"
   replay_protection = false
 }

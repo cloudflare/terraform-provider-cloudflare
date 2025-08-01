@@ -5,10 +5,15 @@ package custom_pages
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*CustomPagesDataSource)(nil)
@@ -17,8 +22,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"identifier": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Error Page Types\nAvailable values: \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
 				Required:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"waf_block",
+						"ip_block",
+						"country_challenge",
+						"500_errors",
+						"1000_errors",
+						"managed_challenge",
+						"ratelimit_block",
+					),
+				},
 			},
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
@@ -27,6 +43,39 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"zone_id": schema.StringAttribute{
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
+			},
+			"created_on": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"description": schema.StringAttribute{
+				Computed: true,
+			},
+			"id": schema.StringAttribute{
+				Computed: true,
+			},
+			"modified_on": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"preview_target": schema.StringAttribute{
+				Computed: true,
+			},
+			"state": schema.StringAttribute{
+				Description: "The custom page state.\nAvailable values: \"default\", \"customized\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("default", "customized"),
+				},
+			},
+			"url": schema.StringAttribute{
+				Description: "The URL associated with the custom page.",
+				Computed:    true,
+			},
+			"required_tokens": schema.ListAttribute{
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 		},
 	}

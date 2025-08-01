@@ -13,12 +13,13 @@ import (
 )
 
 var (
-	selfHostedAppTypes                = []string{"self_hosted", "ssh", "vnc", "rdp"}
-	saasAppTypes                      = []string{"saas", "dash_sso"}
-	appLauncherVisibleAppTypes        = []string{"self_hosted", "ssh", "vnc", "rdp", "saas", "bookmark"}
-	targetCompatibleAppTypes          = []string{"rdp", "infrastructure"}
-	sessionDurationCompatibleAppTypes = []string{"saas", "dash_sso", "self_hosted", "ssh", "vnc", "rdp", "app_launcher"}
-	durationRegex                     = regexp.MustCompile(`^(?:0|[-+]?(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h)(?:(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h))*)$`)
+	selfHostedAppTypes                    = []string{"self_hosted", "ssh", "vnc", "rdp"}
+	saasAppTypes                          = []string{"saas", "dash_sso"}
+	appLauncherVisibleAppTypes            = []string{"self_hosted", "ssh", "vnc", "rdp", "saas", "bookmark"}
+	targetCompatibleAppTypes              = []string{"rdp", "infrastructure"}
+	sessionDurationCompatibleAppTypes     = []string{"saas", "dash_sso", "self_hosted", "ssh", "vnc", "rdp", "app_launcher", "warp"}
+	authenticateViaWarpCompatibleAppTypes = []string{"self_hosted", "ssh", "vnc", "rdp", "saas", "dash_sso"}
+	durationRegex                         = regexp.MustCompile(`^(?:0|[-+]?(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h)(?:(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h))*)$`)
 )
 
 // Sets a specific default value for a computed attribute specific to a set of app types, in case the attribute is unknown.

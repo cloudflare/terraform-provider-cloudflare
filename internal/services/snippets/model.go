@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,10 +18,10 @@ type SnippetsResultEnvelope struct {
 type SnippetsModel struct {
 	SnippetName types.String           `tfsdk:"snippet_name" path:"snippet_name,required"`
 	ZoneID      types.String           `tfsdk:"zone_id" path:"zone_id,required"`
-	Files       types.String           `tfsdk:"files" json:"files,optional,no_refresh"`
-	Metadata    *SnippetsMetadataModel `tfsdk:"metadata" json:"metadata,optional,no_refresh"`
-	CreatedOn   types.String           `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn  types.String           `tfsdk:"modified_on" json:"modified_on,computed"`
+	Files       *[]types.String        `tfsdk:"files" json:"files,required,no_refresh"`
+	Metadata    *SnippetsMetadataModel `tfsdk:"metadata" json:"metadata,required,no_refresh"`
+	CreatedOn   timetypes.RFC3339      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn  timetypes.RFC3339      `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }
 
 func (r SnippetsModel) MarshalMultipart() (data []byte, contentType string, err error) {
@@ -39,5 +40,5 @@ func (r SnippetsModel) MarshalMultipart() (data []byte, contentType string, err 
 }
 
 type SnippetsMetadataModel struct {
-	MainModule types.String `tfsdk:"main_module" json:"main_module,optional"`
+	MainModule types.String `tfsdk:"main_module" json:"main_module,required"`
 }

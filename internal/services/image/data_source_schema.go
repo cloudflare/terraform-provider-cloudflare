@@ -26,6 +26,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Image unique identifier.",
 				Required:    true,
 			},
+			"creator": schema.StringAttribute{
+				Description: "Can set the creator field with an internal user ID.",
+				Computed:    true,
+			},
 			"filename": schema.StringAttribute{
 				Description: "Image file name.",
 				Computed:    true,
