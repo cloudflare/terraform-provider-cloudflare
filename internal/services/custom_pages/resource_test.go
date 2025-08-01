@@ -399,6 +399,9 @@ func TestAccCloudflareCustomPages_ZoneRatelimitBlock(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("url"), knownvalue.StringExact("")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.Null()),
 				},
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: acctest.LogResourceDrift,
+				},
 			},
 			{
 				Config: testAccCustomPagesZoneConfig(rnd, zoneID, "ratelimit_block", "customized", "https://custom-pages-waf-challenge.terraform-provider-acceptance-testing.workers.dev/"),
