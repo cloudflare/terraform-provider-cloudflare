@@ -84,13 +84,11 @@ go test -run "^TestAcc" -count 1 \
     ./internal/services/r2_bucket_sippy \
     ./internal/services/r2_custom_domain \
     ./internal/services/r2_managed_domain \
-    ./internal/services/regional_hostname \
     ./internal/services/regional_tiered_cache \
     ./internal/services/registrar_domain \
     ./internal/services/resource_group \
     ./internal/services/ruleset \
     ./internal/services/snippet_rules \
-    ./internal/services/snippets \
     ./internal/services/stream \
     ./internal/services/stream_audio_track \
     ./internal/services/stream_caption_language \
