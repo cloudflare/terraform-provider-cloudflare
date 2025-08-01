@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.8.3 (2025-08-01)
+
+Full Changelog: [v5.8.2...v5.8.3](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.8.2...v5.8.3)
+
+### Chores
+
+* **api:** upload stainless config from cloudflare-config ([17f069f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/17f069fd243fde42250fde7b64f210012a9116f5))
+
 ## 5.8.2 (2025-08-01)
 
 Full Changelog: [v5.8.1...v5.8.2](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.8.1...v5.8.2)
