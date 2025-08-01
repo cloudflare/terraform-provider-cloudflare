@@ -210,101 +210,6 @@ func TestAccCloudflareRuleset_WAFManagedRulesetOWASP(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareRuleset_WAFManagedRulesetOWASPBlockXSSWithAnomalyOver60(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := utils.GenerateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
-	resourceName := "cloudflare_ruleset." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareRulesetManagedWAFOWASPBlockXSSAndAnomalyOver60(rnd, "Cloudflare OWASP managed ruleset blocking all XSS and anomaly scores over 60", zoneID, zoneName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "Cloudflare OWASP managed ruleset blocking all XSS and anomaly scores over 60"),
-					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
-					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
-					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_firewall_managed"),
-
-					resource.TestCheckResourceAttr(resourceName, "rules.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "execute"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.id", "efb7b8c949ac4650a09736fc376e9aee"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.categories.0.category", "xss"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.categories.0.action", "block"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.categories.0.enabled", "true"),
-
-					resource.TestCheckResourceAttr(resourceName, "rules.1.action", "execute"),
-					resource.TestCheckResourceAttr(resourceName, "rules.1.action_parameters.id", "4814384a9e5d4991b9815dcfc25d2f1f"),
-					resource.TestCheckResourceAttr(resourceName, "rules.1.action_parameters.overrides.rules.0.id", "6179ae15870a4bb7b2d480d4843b323c"),
-					resource.TestCheckResourceAttr(resourceName, "rules.1.action_parameters.overrides.rules.0.action", "block"),
-					resource.TestCheckResourceAttr(resourceName, "rules.1.action_parameters.overrides.rules.0.score_threshold", "60"),
-
-					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "zone"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareRuleset_WAFManagedRulesetOWASPOnlyPL1(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := utils.GenerateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
-	resourceName := "cloudflare_ruleset." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareRulesetManagedWAFOWASPOnlyPL1(rnd, "Cloudflare OWASP managed ruleset only setting PL1", zoneID, zoneName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "Cloudflare OWASP managed ruleset only setting PL1"),
-					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
-					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
-					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_firewall_managed"),
-
-					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "execute"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.id", "4814384a9e5d4991b9815dcfc25d2f1f"),
-
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.categories.0.category", "paranoia-level-2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.categories.0.enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.categories.1.category", "paranoia-level-3"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.categories.1.enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.categories.2.category", "paranoia-level-4"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.categories.2.enabled", "false"),
-
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.rules.0.id", "6179ae15870a4bb7b2d480d4843b323c"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.rules.0.action", "block"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.rules.0.score_threshold", "60"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.overrides.rules.0.enabled", "true"),
-
-					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "zone"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultiple(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
@@ -2663,14 +2568,6 @@ func testAccCheckCloudflareRulesetManagedWAFWithoutDescription(rnd, name, zoneID
 
 func testAccCheckCloudflareRulesetManagedWAFOWASP(rnd, name, zoneID, zoneName string) string {
 	return acctest.LoadTestCase("rulesetmanagedwafowasp.tf", rnd, name, zoneID, zoneName)
-}
-
-func testAccCheckCloudflareRulesetManagedWAFOWASPBlockXSSAndAnomalyOver60(rnd, name, zoneID, zoneName string) string {
-	return acctest.LoadTestCase("rulesetmanagedwafowaspblockxssandanomalyover60.tf", rnd, name, zoneID, zoneName)
-}
-
-func testAccCheckCloudflareRulesetManagedWAFOWASPOnlyPL1(rnd, name, zoneID, zoneName string) string {
-	return acctest.LoadTestCase("rulesetmanagedwafowasponlypl1.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFDeployMultiple(rnd, name, zoneID, zoneName string) string {

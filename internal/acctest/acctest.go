@@ -307,7 +307,7 @@ func (pc debugNonEmptyRefreshPlan) CheckPlan(ctx context.Context, req plancheck.
 		bytes, _ := json.MarshalIndent(d, "  ", "  ")
 		fmt.Printf("%s\n\n", string(bytes))
 	}
-	fmt.Println("---------\n")
+	fmt.Println("---------")
 }
 
 var pc plancheck.PlanCheck = debugNonEmptyRefreshPlan{}
