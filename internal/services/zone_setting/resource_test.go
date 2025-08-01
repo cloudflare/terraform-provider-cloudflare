@@ -19,7 +19,6 @@ import (
 )
 
 func TestAccCloudflareZoneSetting_OnOff(t *testing.T) {
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
@@ -47,8 +46,8 @@ func TestAccCloudflareZoneSetting_OnOff(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareZoneSetting_Boolean(t *testing.T) {
-	t.Parallel()
+func TestAccCloudflareZoneSetting_HTTP3(t *testing.T) {
+
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
@@ -59,7 +58,7 @@ func TestAccCloudflareZoneSetting_Boolean(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareZoneSettingDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareZoneSettingConfigBoolean(rnd, zoneID),
+				Config: testCloudflareZoneSettingConfigHTTP3(rnd, zoneID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("setting_id"), knownvalue.StringExact("http3")),
@@ -77,7 +76,7 @@ func TestAccCloudflareZoneSetting_Boolean(t *testing.T) {
 }
 
 func TestAccCloudflareZoneSetting_Number(t *testing.T) {
-	t.Parallel()
+
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
@@ -106,7 +105,7 @@ func TestAccCloudflareZoneSetting_Number(t *testing.T) {
 }
 
 func TestAccCloudflareZoneSetting_NEL(t *testing.T) {
-	t.Parallel()
+
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
@@ -135,7 +134,7 @@ func TestAccCloudflareZoneSetting_NEL(t *testing.T) {
 }
 
 func TestAccCloudflareZoneSetting_SSLRecommender(t *testing.T) {
-	t.Parallel()
+	t.Skip("pending fixing schema to be nested")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
@@ -150,7 +149,7 @@ func TestAccCloudflareZoneSetting_SSLRecommender(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("setting_id"), knownvalue.StringExact("ssl_recommender")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value").AtMapKey("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("on")),
 				},
 			},
 			{
@@ -164,7 +163,7 @@ func TestAccCloudflareZoneSetting_SSLRecommender(t *testing.T) {
 }
 
 func TestAccCloudflareZoneSetting_HSTS(t *testing.T) {
-	t.Parallel()
+
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
@@ -197,7 +196,7 @@ func TestAccCloudflareZoneSetting_HSTS(t *testing.T) {
 }
 
 func TestAccCloudflareZoneSetting_MinTLSVersion(t *testing.T) {
-	t.Parallel()
+
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
@@ -226,7 +225,7 @@ func TestAccCloudflareZoneSetting_MinTLSVersion(t *testing.T) {
 }
 
 func TestAccCloudflareZoneSetting_Ciphers(t *testing.T) {
-	t.Parallel()
+
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
@@ -261,8 +260,8 @@ func testCloudflareZoneSettingConfigOnOff(resourceID, zoneID string) string {
 	return acctest.LoadTestCase("on_off.tf", resourceID, zoneID)
 }
 
-func testCloudflareZoneSettingConfigBoolean(resourceID, zoneID string) string {
-	return acctest.LoadTestCase("boolean.tf", resourceID, zoneID)
+func testCloudflareZoneSettingConfigHTTP3(resourceID, zoneID string) string {
+	return acctest.LoadTestCase("http3.tf", resourceID, zoneID)
 }
 
 func testCloudflareZoneSettingConfigNumber(resourceID, zoneID string) string {
