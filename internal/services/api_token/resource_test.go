@@ -1,6 +1,7 @@
 package api_token_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -14,14 +15,21 @@ func TestAccAPIToken_Basic(t *testing.T) {
 	resourceID := "cloudflare_api_token." + rnd
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
+	var policyId string
+
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck_APIToken(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPITokenWithoutCondition(rnd, rnd, permissionID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, "name", rnd),
+					resource.TestCheckResourceAttrSet(resourceID, "policies.0.id"),
+					resource.TestCheckResourceAttrWith(resourceID, "policies.0.id", func(value string) error {
+						policyId = value
+						return nil
+					}),
 					resource.TestCheckResourceAttr(resourceID, "policies.0.permission_groups.0.id", permissionID),
 				),
 			},
@@ -29,6 +37,13 @@ func TestAccAPIToken_Basic(t *testing.T) {
 				Config: testAccCloudflareAPITokenWithoutCondition(rnd, rnd+"-updated", permissionID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, "name", rnd+"-updated"),
+					resource.TestCheckResourceAttrSet(resourceID, "policies.0.id"),
+					resource.TestCheckResourceAttrWith(resourceID, "policies.0.id", func(value string) error {
+						if value != policyId {
+							return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
+						}
+						return nil
+					}),
 					resource.TestCheckResourceAttr(resourceID, "policies.0.permission_groups.0.id", permissionID),
 				),
 			},
@@ -42,7 +57,7 @@ func TestAccAPIToken_DoesNotSetConditions(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck_APIToken(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -67,7 +82,7 @@ func TestAccAPIToken_SetIndividualCondition(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck_APIToken(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -92,7 +107,7 @@ func TestAccAPIToken_SetAllCondition(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck_APIToken(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -117,7 +132,7 @@ func TestAccAPIToken_TokenTTL(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck_APIToken(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -143,7 +158,7 @@ func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 	permissionID2 := "e199d584e69344eba202452019deafe3" // Disable ESC read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck_APIToken(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -167,7 +182,7 @@ func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck_APIToken(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
