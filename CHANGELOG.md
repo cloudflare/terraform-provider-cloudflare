@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.8.2 (2025-08-01)
+
+Full Changelog: [v5.8.1...v5.8.2](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.8.1...v5.8.2)
+
+### Features
+
+* **api:** api update ([54b3c10](https://github.com/cloudflare/terraform-provider-cloudflare/commit/54b3c1027b30ae9ad6f388a64ea04941faea6774))
+* **api:** api update ([8666096](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8666096e375e55731b286f30f3b722ad70761c1e))
+
+
+### Chores
+
+* update model for zt gateway settings ([a084e1b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a084e1bfbf36e6fe1b3799d585d20542f792c0f0))
+
 ## 5.8.1 (2025-08-01)
 
 Full Changelog: [v5.8.0...v5.8.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.8.0...v5.8.1)
