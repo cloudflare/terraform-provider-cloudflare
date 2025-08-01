@@ -63,7 +63,7 @@ func testSweepCloudflareRecord(r string) error {
 }
 
 func TestAccCloudflareRecord_Basic(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	var record cfold.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -96,7 +96,7 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_Apex(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	var record cfold.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -123,7 +123,7 @@ func TestAccCloudflareRecord_Apex(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_LOC(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	var record cfold.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -161,7 +161,7 @@ func TestAccCloudflareRecord_LOC(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_SRV(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	var record cfold.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -191,7 +191,7 @@ func TestAccCloudflareRecord_SRV(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_CAA(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	var record cfold.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -226,7 +226,7 @@ func TestAccCloudflareRecord_CAA(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_Proxied(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	var record cfold.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -253,7 +253,7 @@ func TestAccCloudflareRecord_Proxied(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_Updated(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	var record cfold.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -285,7 +285,7 @@ func TestAccCloudflareRecord_Updated(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_typeForceNewRecord(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	var afterCreate, afterUpdate cfold.DNSRecord
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -316,7 +316,7 @@ func TestAccCloudflareRecord_typeForceNewRecord(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_TtlValidation(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	recordName := "tf-acctest-ttl-validation"
@@ -336,7 +336,7 @@ func TestAccCloudflareRecord_TtlValidation(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_ExplicitProxiedFalse(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -373,7 +373,7 @@ func TestAccCloudflareRecord_ExplicitProxiedFalse(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_MXWithPriorityZero(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -396,7 +396,7 @@ func TestAccCloudflareRecord_MXWithPriorityZero(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_HTTPS(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
@@ -420,7 +420,7 @@ func TestAccCloudflareRecord_HTTPS(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_SVCB(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
