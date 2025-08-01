@@ -55,6 +55,7 @@ Available values: "asc", "desc".
 - `is_similarity` (Boolean)
 - `order` (String) The field to sort by.
 Available values: "pattern", "created_at".
+- `pattern` (String)
 - `search` (String) Allows searching in multiple properties of a record simultaneously.
 This parameter is intended for human users, not automation. Its exact
 behavior is intentionally left unspecified and is subject to change

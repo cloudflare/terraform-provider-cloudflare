@@ -17,6 +17,17 @@ resource "cloudflare_workers_script" "example_workers_script" {
   script_name = "this-is_my_script-01"
   assets = {
     config = {
+      headers = <<EOT
+        /dashboard/*
+        X-Frame-Options: DENY
+
+        /static/*
+        Access-Control-Allow-Origin: *
+        EOT
+      redirects = <<EOT
+        /foo /bar 301
+        /news/* /blog/:splat
+        EOT
       html_handling = "auto-trailing-slash"
       not_found_handling = "none"
       run_worker_first = false
@@ -26,6 +37,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
   }
   bindings = [{
     name = "MY_ENV_VAR"
+    text = "my_data"
     type = "plain_text"
   }]
   compatibility_date = "2021-01-01"
@@ -55,6 +67,11 @@ resource "cloudflare_workers_script" "example_workers_script" {
   observability = {
     enabled = true
     head_sampling_rate = 0.1
+    logs = {
+      enabled = true
+      invocation_logs = true
+      head_sampling_rate = 0.1
+    }
   }
   placement = {
     mode = "smart"
@@ -80,13 +97,14 @@ resource "cloudflare_workers_script" "example_workers_script" {
 ### Optional
 
 - `assets` (Attributes) Configuration for assets within a Worker (see [below for nested schema](#nestedatt--assets))
-- `bindings` (Attributes List) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--bindings))
+- `bindings` (Attributes Set) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--bindings))
 - `body_part` (String) Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
-- `compatibility_flags` (List of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
+- `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
 - `content` (String) Module or Service Worker contents of the Worker. Exactly one of `content` or `content_file` must be specified.
 - `content_file` (String) Path to a file containing the Module or Service Worker contents of the Worker. Exactly one of `content` or `content_file` must be specified. Must be paired with `content_sha256`.
 - `content_sha256` (String) SHA-256 hash of the Worker contents. Used to trigger updates when source code changes. Must be provided when `content_file` is specified.
+- `content_type` (String) Content-Type of the Worker. Required if uploading a non-JavaScript Worker (e.g. "text/x-python").
 - `keep_assets` (Boolean) Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.
 - `keep_bindings` (List of String) List of binding types to keep from previous_upload.
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
@@ -94,7 +112,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
 - `migrations` (Attributes) Migrations to apply for Durable Objects associated with this Worker. (see [below for nested schema](#nestedatt--migrations))
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--observability))
 - `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). (see [below for nested schema](#nestedatt--placement))
-- `tail_consumers` (Attributes List) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--tail_consumers))
+- `tail_consumers` (Attributes Set) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--tail_consumers))
 - `usage_model` (String) Usage model for the Worker invocations.
 Available values: "standard".
 
@@ -121,12 +139,12 @@ Optional:
 
 Optional:
 
-- `_headers` (String) The contents of a _headers file (used to attach custom headers on asset responses)
-- `_redirects` (String) The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving)
+- `headers` (String) The contents of a _headers file (used to attach custom headers on asset responses)
 - `html_handling` (String) Determines the redirects and rewrites of requests for HTML content.
 Available values: "auto-trailing-slash", "force-trailing-slash", "drop-trailing-slash", "none".
 - `not_found_handling` (String) Determines the response when a request does not match a static asset, and there is no Worker script.
 Available values: "none", "404-page", "single-page-application".
+- `redirects` (String) The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving)
 - `run_worker_first` (Boolean) When true, requests will always invoke the Worker script. Otherwise, attempt to serve an asset matching the request, falling back to the Worker script.
 - `serve_directly` (Boolean, Deprecated) When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.
 
@@ -139,7 +157,7 @@ Required:
 
 - `name` (String) A JavaScript variable name for the binding.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "analytics_engine", "assets", "browser", "d1", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "service", "tail_consumer", "vectorize", "version_metadata", "secrets_store_secret", "secret_key".
+Available values: "ai", "analytics_engine", "assets", "browser", "d1", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "json", "kv_namespace", "mtls_certificate", "plain_text", "pipelines", "queue", "r2_bucket", "secret_text", "service", "tail_consumer", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow".
 
 Optional:
 

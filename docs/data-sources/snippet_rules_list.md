@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_snippet_rules_list" "example_snippet_rules_list" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  zone_id = "9f1839b6152d298aca64c4e906b6d074"
 }
 ```
 
@@ -22,7 +22,7 @@ data "cloudflare_snippet_rules_list" "example_snippet_rules_list" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) The unique ID of the zone.
 
 ### Optional
 
@@ -37,9 +37,11 @@ data "cloudflare_snippet_rules_list" "example_snippet_rules_list" {
 
 Read-Only:
 
-- `description` (String)
-- `enabled` (Boolean)
-- `expression` (String)
-- `snippet_name` (String) Snippet identifying name
+- `description` (String) An informative description of the rule.
+- `enabled` (Boolean) Whether the rule should be executed.
+- `expression` (String) The expression defining which traffic will match the rule.
+- `id` (String) The unique ID of the rule.
+- `last_updated` (String) The timestamp of when the rule was last modified.
+- `snippet_name` (String) The identifying name of the snippet.
 
 

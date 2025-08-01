@@ -95,6 +95,8 @@ Available values: "application/json", "text/xml", "text/plain", "text/html".
 - `origin_cache_control` (Boolean) When enabled, Cloudflare will aim to strictly adhere to RFC 7234.
 - `origin_error_page_passthru` (Boolean) Generate Cloudflare error pages from issues sent from the origin server. When on, error pages will trigger for issues from the origin.
 - `overrides` (Attributes) A set of overrides to apply to the target ruleset. (see [below for nested schema](#nestedatt--rules--action_parameters--overrides))
+- `phase` (String) A phase to skip the execution of. This property is only compatible with products.
+Available values: "current".
 - `phases` (List of String) A list of phases to skip the execution of. This option is incompatible with the rulesets option.
 - `polish` (String) Configure the Polish level.
 Available values: "off", "lossless", "lossy", "webp".
@@ -148,7 +150,7 @@ Read-Only:
 
 - `default` (Number) The TTL (in seconds) if you choose override_origin mode.
 - `mode` (String) Determines which browser ttl mode to use.
-Available values: "respect_origin", "bypass_by_default", "override_origin".
+Available values: "respect_origin", "bypass_by_default", "override_origin", "bypass".
 
 
 <a id="nestedatt--rules--action_parameters--cache_key"></a>
