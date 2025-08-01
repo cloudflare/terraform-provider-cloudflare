@@ -1,8 +1,8 @@
 package url_normalization_settings_test
 
 import (
-	"fmt"
 	"context"
+	"fmt"
 	"github.com/cloudflare/cloudflare-go/v4/url_normalization"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"log"
@@ -34,7 +34,7 @@ func testSweepCloudflareURLNormalizationSettings(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-	settings, err := client.URLNormalization.Get(context.Background(), url_normalization.URLNormalizationGetParams {
+	settings, err := client.URLNormalization.Get(context.Background(), url_normalization.URLNormalizationGetParams{
 		ZoneID: cloudflare.F(zoneID),
 	})
 	if err != nil {
@@ -46,7 +46,7 @@ func testSweepCloudflareURLNormalizationSettings(r string) error {
 		return nil
 	}
 
-	err = client.URLNormalization.Delete(context.Background(), url_normalization.URLNormalizationDeleteParams {
+	err = client.URLNormalization.Delete(context.Background(), url_normalization.URLNormalizationDeleteParams{
 		ZoneID: cloudflare.F(zoneID),
 	})
 
@@ -83,6 +83,11 @@ func TestAccCloudflareURLNormalizationSettings_CreateThenUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "cloudflare"),
 					resource.TestCheckResourceAttr(name, "scope", "both"),
 				),
+			},
+			{
+				ResourceName:      name,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
