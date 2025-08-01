@@ -24,7 +24,7 @@ resource "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_se
       logo_path = "https://logos.com/a.png"
       mailto_address = "admin@example.com"
       mailto_subject = "Blocked User Inquiry"
-      mode = ""
+      mode = "customized_block_page"
       name = "Cloudflare"
       suppress_footer = false
       target_uri = "https://example.com"

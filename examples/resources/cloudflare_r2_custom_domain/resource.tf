@@ -4,6 +4,5 @@ resource "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
   domain = "domain"
   enabled = true
   zone_id = "zoneId"
-  ciphers = ["string"]
   min_tls = "1.0"
 }

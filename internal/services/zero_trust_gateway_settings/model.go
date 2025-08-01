@@ -4,6 +4,7 @@ package zero_trust_gateway_settings
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -50,10 +51,10 @@ type ZeroTrustGatewaySettingsSettingsActivityLogModel struct {
 }
 
 type ZeroTrustGatewaySettingsSettingsAntivirusModel struct {
-	EnabledDownloadPhase types.Bool                                                          `tfsdk:"enabled_download_phase" json:"enabled_download_phase,computed_optional"`
-	EnabledUploadPhase   types.Bool                                                          `tfsdk:"enabled_upload_phase" json:"enabled_upload_phase,computed_optional"`
-	FailClosed           types.Bool                                                          `tfsdk:"fail_closed" json:"fail_closed,computed_optional"`
-	NotificationSettings *ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel `tfsdk:"notification_settings" json:"notification_settings,optional"`
+	EnabledDownloadPhase types.Bool                                                                                   `tfsdk:"enabled_download_phase" json:"enabled_download_phase,computed_optional"`
+	EnabledUploadPhase   types.Bool                                                                                   `tfsdk:"enabled_upload_phase" json:"enabled_upload_phase,computed_optional"`
+	FailClosed           types.Bool                                                                                   `tfsdk:"fail_closed" json:"fail_closed,computed_optional"`
+	NotificationSettings customfield.NestedObject[ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel] `tfsdk:"notification_settings" json:"notification_settings,computed_optional"`
 }
 
 type ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel struct {
