@@ -22,6 +22,6 @@ data "cloudflare_argo_smart_routing" "example_argo_smart_routing" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Specifies the zone associated with the API call.
 
 

@@ -215,6 +215,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--policies--exclude--okta))
@@ -360,6 +361,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--policies--exclude--linked_app_token"></a>
+### Nested Schema for `policies.exclude.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--policies--exclude--login_method"></a>
 ### Nested Schema for `policies.exclude.login_method`
 
@@ -429,6 +438,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--policies--include--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--policies--include--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--policies--include--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--policies--include--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--policies--include--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--policies--include--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--policies--include--okta))
@@ -574,6 +584,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--policies--include--linked_app_token"></a>
+### Nested Schema for `policies.include.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--policies--include--login_method"></a>
 ### Nested Schema for `policies.include.login_method`
 
@@ -643,6 +661,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--policies--require--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--policies--require--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--policies--require--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--policies--require--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--policies--require--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--policies--require--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--policies--require--okta))
@@ -786,6 +805,14 @@ Read-Only:
 Read-Only:
 
 - `id` (String) The ID of a previously created IP list.
+
+
+<a id="nestedatt--policies--require--linked_app_token"></a>
+### Nested Schema for `policies.require.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
 
 
 <a id="nestedatt--policies--require--login_method"></a>
@@ -999,7 +1026,7 @@ Read-Only:
 
 - `port` (Number) The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.
 - `protocol` (String) The communication protocol your application secures.
-Available values: "SSH".
+Available values: "SSH", "RDP".
 - `target_attributes` (Map of List of String) Contains a map of target attribute keys to target attribute values.
 
 

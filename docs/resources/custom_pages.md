@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 resource "cloudflare_custom_pages" "example_custom_pages" {
-  identifier = "023e105f4ecef8ad9ca31a8372d0c353"
+  identifier = "ratelimit_block"
   state = "default"
   url = "http://www.example.com"
   zone_id = "zone_id"
@@ -25,7 +25,8 @@ resource "cloudflare_custom_pages" "example_custom_pages" {
 
 ### Required
 
-- `identifier` (String) Identifier
+- `identifier` (String) Error Page Types
+Available values: "waf_block", "ip_block", "country_challenge", "500_errors", "1000_errors", "managed_challenge", "ratelimit_block".
 - `state` (String) The custom page state.
 Available values: "default", "customized".
 - `url` (String) The URL associated with the custom page.
@@ -37,7 +38,13 @@ Available values: "default", "customized".
 
 ### Read-Only
 
-- `id` (String) Identifier
+- `created_on` (String)
+- `description` (String)
+- `id` (String) Error Page Types
+Available values: "waf_block", "ip_block", "country_challenge", "500_errors", "1000_errors", "managed_challenge", "ratelimit_block".
+- `modified_on` (String)
+- `preview_target` (String)
+- `required_tokens` (List of String)
 
 ## Import
 

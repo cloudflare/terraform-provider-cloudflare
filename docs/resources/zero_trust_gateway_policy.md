@@ -28,7 +28,8 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
   precedence = 0
   rule_settings = {
     add_headers = {
-      foo = "string"
+      My-Next-Header = ["foo", "bar"]
+      X-Custom-Header-Name = ["somecustomvalue"]
     }
     allow_child_bypass = false
     audit_ssh = {
@@ -134,7 +135,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
 ### Required
 
 - `account_id` (String)
-- `action` (String) The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.
+- `action` (String) The action to perform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.
 Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine", "redirect".
 - `name` (String) The name of the rule.
 
@@ -159,6 +160,9 @@ This does not apply to HTTP or network policies. (see [below for nested schema](
 - `created_at` (String)
 - `deleted_at` (String) Date of deletion, if any.
 - `id` (String) The API resource UUID.
+- `not_sharable` (Boolean) The rule cannot be shared via the Orgs API
+- `read_only` (Boolean) The rule was shared via the Orgs API and cannot be edited by the current account
+- `source_account` (String) account tag of account that created the rule
 - `updated_at` (String)
 - `version` (Number) version number of the rule
 - `warning_status` (String) Warning for a misconfigured rule, if any.
@@ -194,7 +198,7 @@ Read-Only:
 
 Optional:
 
-- `add_headers` (Map of String) Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).
+- `add_headers` (Map of List of String) Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).
 - `allow_child_bypass` (Boolean) Set by parent MSP accounts to enable their children to bypass this rule.
 - `audit_ssh` (Attributes) Settings for the Audit SSH action. (see [below for nested schema](#nestedatt--rule_settings--audit_ssh))
 - `biso_admin_controls` (Attributes) Configure how browser isolation behaves. (see [below for nested schema](#nestedatt--rule_settings--biso_admin_controls))

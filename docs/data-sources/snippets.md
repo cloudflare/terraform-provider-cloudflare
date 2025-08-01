@@ -13,8 +13,8 @@ description: |-
 
 ```terraform
 data "cloudflare_snippets" "example_snippets" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  snippet_name = "snippet_name_01"
+  zone_id = "9f1839b6152d298aca64c4e906b6d074"
+  snippet_name = "my_snippet"
 }
 ```
 
@@ -23,12 +23,12 @@ data "cloudflare_snippets" "example_snippets" {
 
 ### Required
 
-- `snippet_name` (String) Snippet identifying name
-- `zone_id` (String) Identifier
+- `snippet_name` (String) The identifying name of the snippet.
+- `zone_id` (String) The unique ID of the zone.
 
 ### Read-Only
 
-- `created_on` (String) Creation time of the snippet
-- `modified_on` (String) Modification time of the snippet
+- `created_on` (String) The timestamp of when the snippet was created.
+- `modified_on` (String) The timestamp of when the snippet was last modified.
 
 

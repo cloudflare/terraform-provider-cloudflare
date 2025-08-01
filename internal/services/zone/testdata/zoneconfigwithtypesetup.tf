@@ -1,8 +1,8 @@
 
 resource "cloudflare_zone" "%[1]s" {
 	account = {
-    id = "%[2]s"
+    id = "%[6]s"
   }
-	name = "%[3]s"
-	type = "%[4]s"
+	name = "%[2]s"
+	type = "%[7]s"
 }

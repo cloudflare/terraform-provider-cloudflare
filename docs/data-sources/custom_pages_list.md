@@ -34,4 +34,16 @@ data "cloudflare_custom_pages_list" "example_custom_pages_list" {
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
+Read-Only:
+
+- `created_on` (String)
+- `description` (String)
+- `id` (String)
+- `modified_on` (String)
+- `preview_target` (String)
+- `required_tokens` (List of String)
+- `state` (String) The custom page state.
+Available values: "default", "customized".
+- `url` (String) The URL associated with the custom page.
+
 

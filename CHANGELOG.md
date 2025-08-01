@@ -1,5 +1,21 @@
 # Changelog
 
+## 5.8.1 (2025-08-01)
+
+Full Changelog: [v5.8.0...v5.8.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.8.0...v5.8.1)
+
+### Bug Fixes
+
+* custom page tests ([bd3c296](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bd3c2964bb65d76eb8a03f74599483afba9854b9))
+
+
+### Chores
+
+* **docs:** generate provider documentation ([21a9cd4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/21a9cd43377897586295c4497f4e9f644ade1fb7))
+* skip flaky tests ([890d693](https://github.com/cloudflare/terraform-provider-cloudflare/commit/890d6936dc5be3291b8800215d7ec01876e884f0))
+* snippet rules not ready ([e2312e2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e2312e242230a64bb012dadba9ff9d419eb1d606))
+* update zone name for tests and not in parallel ([d3b0d00](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d3b0d00859c7fc2e8e1fc36133fcc8872e11517d))
+
 ## 5.8.0 (2025-08-01)
 
 Full Changelog: [v5.7.1...v5.8.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.7.1...v5.8.0)

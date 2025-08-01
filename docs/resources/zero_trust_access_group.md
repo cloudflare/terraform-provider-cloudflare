@@ -77,6 +77,7 @@ Optional:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--include--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--include--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--include--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--include--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--include--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--include--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--include--okta))
@@ -225,6 +226,14 @@ Required:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--include--linked_app_token"></a>
+### Nested Schema for `include.linked_app_token`
+
+Required:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--include--login_method"></a>
 ### Nested Schema for `include.login_method`
 
@@ -294,6 +303,7 @@ Optional:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--exclude--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--exclude--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--exclude--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--exclude--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--exclude--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--exclude--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--exclude--okta))
@@ -442,6 +452,14 @@ Required:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--exclude--linked_app_token"></a>
+### Nested Schema for `exclude.linked_app_token`
+
+Required:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--exclude--login_method"></a>
 ### Nested Schema for `exclude.login_method`
 
@@ -511,6 +529,7 @@ Optional:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--require--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--require--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--require--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--require--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--require--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--require--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--require--okta))
@@ -657,6 +676,14 @@ Required:
 Required:
 
 - `id` (String) The ID of a previously created IP list.
+
+
+<a id="nestedatt--require--linked_app_token"></a>
+### Nested Schema for `require.linked_app_token`
+
+Required:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
 
 
 <a id="nestedatt--require--login_method"></a>
