@@ -22,6 +22,8 @@ type ListItemModel struct {
 	Hostname    customfield.NestedObject[ListItemHostnameModel] `tfsdk:"hostname" json:"hostname,optional"`
 	Redirect    customfield.NestedObject[ListItemRedirectModel] `tfsdk:"redirect" json:"redirect,optional"`
 	OperationID types.String                                    `tfsdk:"operation_id" json:"operation_id,computed,no_refresh"`
+	ModifiedOn  types.String                                    `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn   types.String                                    `tfsdk:"created_on" json:"created_on,computed"`
 }
 
 func (m ListItemModel) MarshalJSON() (data []byte, err error) {
