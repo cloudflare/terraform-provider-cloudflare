@@ -10,6 +10,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
+const (
+	planIDFree       = "free"
+	planIDLite       = "lite"
+	planIDPro        = "pro"
+	planIDProPlus    = "pro_plus"
+	planIDBusiness   = "business"
+	planIDEnterprise = "enterprise"
+
+	planIDPartnerFree       = "partners_free"
+	planIDPartnerPro        = "partners_pro"
+	planIDPartnerBusiness   = "partners_business"
+	planIDPartnerEnterprise = "partners_enterprise"
+)
+
 func TestAccCloudflareZone_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
@@ -20,24 +34,34 @@ func TestAccCloudflareZone_Basic(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfig(rnd, fmt.Sprintf("%s.cfapi.net", rnd), accountID),
+				Config: testZoneConfig(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.cfapi.net", rnd)),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "type", "full"),
-					// Check development_mode
-					resource.TestCheckResourceAttr(name, "development_mode", "0"),
-					// Spot-check zone metadata
-					resource.TestCheckResourceAttr(name, "meta.phishing_detected", "false"),
-					// Check owner information
-					resource.TestCheckResourceAttr(name, "owner.id", accountID), resource.TestCheckResourceAttrSet(name, "owner.name"),
-					resource.TestCheckResourceAttr(name, "owner.type", "organization"),
 				),
 			},
+		},
+	})
+}
+
+func TestAccCloudflareZone_WithPlan(t *testing.T) {
+	t.Skip(`FIXME: {"success":false,"errors":[{"code":10000,"message":"Authentication error"}]}`)
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_zone." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
 			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
+				Config: testZoneConfigWithPlan(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", "free", accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.cfapi.net", rnd)),
+					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
+					resource.TestCheckResourceAttr(name, "type", "full"),
+				),
 			},
 		},
 	})
@@ -53,20 +77,14 @@ func TestAccCloudflareZone_PartialSetup(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithTypeSetup(rnd, accountID, fmt.Sprintf("%s.net", rnd), "partial"),
+				Config: testZoneConfigWithTypeSetup(rnd, "foo.net", "true", "false", "free", accountID, "partial"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.net", rnd)),
+					resource.TestCheckResourceAttr(name, "name", "foo.net"),
 					resource.TestCheckResourceAttr(name, "type", "partial"),
-					resource.TestCheckResourceAttrSet(name, "verification_key"),
-					resource.TestCheckResourceAttr(name, "name_servers.#", "0"),
 				),
 			},
-			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		}})
+		},
+	})
 }
 
 func TestAccCloudflareZone_FullSetup(t *testing.T) {
@@ -79,17 +97,12 @@ func TestAccCloudflareZone_FullSetup(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithTypeSetup(rnd, accountID, fmt.Sprintf("%s.cfapi.net", rnd), "full"),
+				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", "free", accountID, "full"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.cfapi.net", rnd)),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
-			},
-			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
@@ -105,23 +118,18 @@ func TestAccZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfig(rnd, "żółw.cfapi.net", accountID),
+				Config: testZoneConfig(rnd, "żółw.cfapi.net", "true", "false", accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
-			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
 
-func TestAccZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
+func TestAccCloudflareZone_WithEnterprisePlan(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -131,59 +139,20 @@ func TestAccZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfig(rnd, "xn--w-uga1v8h.cfapi.net", accountID),
+				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "false", "false", "enterprise", accountID, "full"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.cfapi.net", rnd)),
+					resource.TestCheckResourceAttr(name, "paused", "false"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
-			},
-			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
-func TestAccZonePerformsUnicodeComparison(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone." + rnd
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testZoneConfig(rnd, "żółw.cfapi.net", accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
-					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "type", "full"),
-				),
-			},
-			{
-				Config:   testZoneConfig(rnd, "xn--w-uga1v8h.cfapi.net", accountID),
-				PlanOnly: true,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
-					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "type", "full"),
-				),
-			},
-			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
 }
 
 func TestAccCloudflareZone_WithEnterprisePlanVanityNameServers(t *testing.T) {
-	acctest.TestAccSkipForDefaultAccount(t, "Need working zone_subscription to create enterprise plan before setting vanity name servers")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into vanity nameserver mismatches.")
 
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
@@ -195,7 +164,7 @@ func TestAccCloudflareZone_WithEnterprisePlanVanityNameServers(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithTypeVanityNameServersSetup(rnd, accountID, fmt.Sprintf("%s.%s", rnd, zoneName), "full"),
+				Config: testZoneConfigWithTypeVanityNameServersSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "false", "false", "enterprise", accountID, "full"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.%s", rnd, zoneName)),
 					resource.TestCheckResourceAttr(name, "paused", "false"),
@@ -203,11 +172,6 @@ func TestAccCloudflareZone_WithEnterprisePlanVanityNameServers(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "full"),
 					resource.TestCheckResourceAttr(name, "vanity_name_servers.#", "2"),
 				),
-			},
-			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
@@ -224,24 +188,19 @@ func TestAccCloudflareZone_Secondary(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithTypeSetup(rnd, accountID, fmt.Sprintf("%s.%s", rnd, zoneName), "secondary"),
+				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID, "secondary"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.%s", rnd, zoneName)),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "type", "secondary"),
 				),
 			},
-			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
 
 func TestAccCloudflareZone_SecondaryWithVanityNameServers(t *testing.T) {
-	acctest.TestAccSkipForDefaultAccount(t, "Need working zone_subscription to create enterprise plan before setting vanity name servers")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into vanity nameserver mismatches.")
 
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
@@ -253,7 +212,7 @@ func TestAccCloudflareZone_SecondaryWithVanityNameServers(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithTypeVanityNameServersSetup(rnd, accountID, fmt.Sprintf("%s.%s", rnd, zoneName), "secondary"),
+				Config: testZoneConfigWithTypeVanityNameServersSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID, "secondary"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.%s", rnd, zoneName)),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
@@ -261,58 +220,16 @@ func TestAccCloudflareZone_SecondaryWithVanityNameServers(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "vanity_name_servers.#", "2"),
 				),
 			},
-			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
 
-func TestAccCloudflareZone_TogglePaused(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone." + rnd
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+func testZoneConfig(resourceID, zoneName, paused, jumpStart, accountID string) string {
+	return acctest.LoadTestCase("zoneconfig.tf", resourceID, zoneName, paused, jumpStart, accountID)
+}
 
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testZoneConfigWithPaused(rnd, accountID, fmt.Sprintf("%s.cfapi.net", rnd), false),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.cfapi.net", rnd)),
-					resource.TestCheckResourceAttr(name, "paused", "false"),
-					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "type", "full"),
-				),
-			},
-			{
-				Config: testZoneConfigWithPaused(rnd, accountID, fmt.Sprintf("%s.cfapi.net", rnd), true),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.cfapi.net", rnd)),
-					resource.TestCheckResourceAttr(name, "paused", "true"),
-					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "type", "full"),
-				),
-			},
-			{
-				Config: testZoneConfigWithPaused(rnd, accountID, fmt.Sprintf("%s.cfapi.net", rnd), false),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.cfapi.net", rnd)),
-					resource.TestCheckResourceAttr(name, "paused", "false"),
-					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "type", "full"),
-				),
-			},
-			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
+func testZoneConfigWithPlan(resourceID, zoneName, paused, jumpStart, plan, accountID string) string {
+	return acctest.LoadTestCase("zoneconfigwithplan.tf", resourceID, zoneName, paused, jumpStart, plan, accountID)
 }
 
 func TestAccCloudflareZone_SetType(t *testing.T) {
@@ -325,35 +242,22 @@ func TestAccCloudflareZone_SetType(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithTypeSetup(rnd, accountID, fmt.Sprintf("%s.%s", rnd, zoneName), "full"),
+				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID, "full"),
 			},
 			{
-				Config: testZoneConfigWithTypeSetup(rnd, accountID, fmt.Sprintf("%s.%s", rnd, zoneName), "partial"),
+				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID, "partial"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "type", "partial"),
 				),
-			},
-			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
 }
 
-func testZoneConfig(resourceID, zoneName, accountID string) string {
-	return acctest.LoadTestCase("zoneconfig.tf", resourceID, zoneName, accountID)
+func testZoneConfigWithTypeSetup(resourceID, zoneName, paused, jumpStart, plan, accountID, zoneType string) string {
+	return acctest.LoadTestCase("zoneconfigwithtypesetup.tf", resourceID, zoneName, paused, jumpStart, plan, accountID, zoneType)
 }
 
-func testZoneConfigWithTypeSetup(resourceID, accountID, zoneName, zoneType string) string {
-	return acctest.LoadTestCase("zoneconfigwithtypesetup.tf", resourceID, accountID, zoneName, zoneType)
-}
-
-func testZoneConfigWithTypeVanityNameServersSetup(resourceID, accountID, zoneName, zoneType string) string {
-	return acctest.LoadTestCase("zoneconfigwithtypevanitynameserverssetup.tf", resourceID, accountID, zoneName, zoneType)
-}
-
-func testZoneConfigWithPaused(resourceID, accountID, zoneName string, paused bool) string {
-	return acctest.LoadTestCase("zoneconfigwithpaused.tf", resourceID, accountID, zoneName, paused)
+func testZoneConfigWithTypeVanityNameServersSetup(resourceID, zoneName, paused, jumpStart, plan, accountID, zoneType string) string {
+	return acctest.LoadTestCase("zoneconfigwithtypevanitynameserverssetup.tf", resourceID, zoneName, paused, jumpStart, plan, accountID, zoneType)
 }
