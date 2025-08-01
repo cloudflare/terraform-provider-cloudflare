@@ -85,7 +85,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Your OAuth Client Secret",
 						Optional:    true,
 						Sensitive:   true,
-						WriteOnly:   true,
 					},
 					"conditional_access_enabled": schema.BoolAttribute{
 						Description: "Should Cloudflare try to load authentication contexts from your account",
@@ -286,6 +285,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessIdentityProviderSCIMConfigModel](ctx),
 				PlanModifiers: []planmodifier.Object{
 					objectplanmodifier.UseStateForUnknown(),
+				},
+				Validators: []validator.Object{
+					customvalidator.RequiresOtherStringAttributeToNotBeOneOf(path.MatchRoot("type"), "onetimepin"),
 				},
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{

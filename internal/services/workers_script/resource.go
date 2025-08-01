@@ -11,9 +11,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/workers"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v5/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
@@ -304,9 +304,8 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 		content = string(bytes)
 	}
 
-	// only update `content` if it was already present in state
-	// which might not be the case if `content_file` is used instead
-	if !data.Content.IsNull() {
+	// only update `content` if `content_file` isn't being used instead
+	if data.ContentFile.IsNull() {
 		data.Content = types.StringValue(content)
 	}
 

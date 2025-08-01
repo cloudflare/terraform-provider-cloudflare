@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -61,11 +61,6 @@ func (r *ZeroTrustAccessIdentityProviderResource) Create(ctx context.Context, re
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	resp.Diagnostics.Append(loadConfigSensitiveValuesForWriting(ctx, data, &req.Config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -129,6 +124,9 @@ func (r *ZeroTrustAccessIdentityProviderResource) Update(ctx context.Context, re
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	res := new(http.Response)
 	env := ZeroTrustAccessIdentityProviderResultEnvelope{*data}
 	params := zero_trust.IdentityProviderUpdateParams{}
@@ -159,7 +157,13 @@ func (r *ZeroTrustAccessIdentityProviderResource) Update(ctx context.Context, re
 	}
 	data = &env.Result
 
-	normalizeReadZeroTrustIDPData(ctx, data, &req.State)
+	var planValue ZeroTrustAccessIdentityProviderModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &planValue)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	normalizeReadZeroTrustIDPData(ctx, data, &planValue)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -209,7 +213,13 @@ func (r *ZeroTrustAccessIdentityProviderResource) Read(ctx context.Context, req 
 	}
 	data = &env.Result
 
-	normalizeReadZeroTrustIDPData(ctx, data, &req.State)
+	var stateValue ZeroTrustAccessIdentityProviderModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &stateValue)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	normalizeReadZeroTrustIDPData(ctx, data, &stateValue)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("scim_config").AtName("secret"), secret)...)

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -143,7 +144,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
-					resource.TestCheckNoResourceAttr(resourceName, "config.client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "config.client_secret", "secret"),
 				),
 			},
 			{
@@ -174,7 +175,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
-					resource.TestCheckNoResourceAttr(resourceName, "config.client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "config.client_secret", "secret"),
 				),
 			},
 			{
@@ -189,7 +190,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd+"-updated"),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
-					resource.TestCheckNoResourceAttr(resourceName, "config.client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "config.client_secret", "secret"),
 				),
 			},
 			{
@@ -283,7 +284,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 		resource.TestCheckResourceAttr(resourceName, "name", rnd),
 		resource.TestCheckResourceAttr(resourceName, "type", "github"),
 		resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
-		resource.TestCheckNoResourceAttr(resourceName, "config.client_secret"),
+		resource.TestCheckResourceAttr(resourceName, "config.client_secret", "secret"),
 	)
 
 	resource.Test(t, resource.TestCase{
@@ -303,8 +304,12 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 				PlanOnly: true,
 			},
 			{
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					// cant import client_secret
+					"config.client_secret",
+				},
 				ResourceName:        resourceName,
 				ImportStateIdPrefix: fmt.Sprintf("accounts/%s/", accountID),
 				Check:               checkFn,
@@ -411,8 +416,37 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Secret_Enabled_After_Resource_
 	})
 }
 
+func TestAccCloudflareAccessIdentityProvider_OneTimePin_ConflictsWithSCIM(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the OTP Access
+	// endpoint does not yet support the API tokens for updates and it results in
+	// state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareAccessIdentityProviderOneTimePinWithScim(rnd, cloudflare.AccountIdentifier(accountID)),
+				ExpectError: regexp.MustCompile(`"scim_config" can not be set if "type" is one of: "onetimepin"`),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareAccessIdentityProviderOneTimePin(name string, identifier *cloudflare.ResourceContainer) string {
 	return acctest.LoadTestCase("accessidentityprovideronetimepin.tf", name, identifier.Type, identifier.Identifier)
+}
+
+func testAccCheckCloudflareAccessIdentityProviderOneTimePinWithScim(name string, identifier *cloudflare.ResourceContainer) string {
+	return acctest.LoadTestCase("accessidentityprovideronetimepinwithscim.tf", name, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, name string) string {

@@ -5,8 +5,8 @@ package workers_deployment
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/workers"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -39,7 +39,8 @@ func (m *WorkersDeploymentDataSourceModel) toReadParams(_ context.Context) (para
 }
 
 type WorkersDeploymentAnnotationsDataSourceModel struct {
-	WorkersMessage types.String `tfsdk:"workers_message" json:"workers/message,computed"`
+	WorkersMessage     types.String `tfsdk:"workers_message" json:"workers/message,computed"`
+	WorkersTriggeredBy types.String `tfsdk:"workers_triggered_by" json:"workers/triggered_by,computed"`
 }
 
 type WorkersDeploymentVersionsDataSourceModel struct {

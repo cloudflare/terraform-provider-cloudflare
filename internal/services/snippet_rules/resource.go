@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/snippets"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v5/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -67,7 +67,7 @@ func (r *SnippetRulesResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	res := new(http.Response)
-	env := SnippetRulesResultEnvelope{data.Body}
+	env := SnippetRulesResultEnvelope{*data}
 	_, err = r.client.Snippets.Rules.Update(
 		ctx,
 		snippets.RuleUpdateParams{
@@ -87,7 +87,7 @@ func (r *SnippetRulesResource) Create(ctx context.Context, req resource.CreateRe
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -115,7 +115,7 @@ func (r *SnippetRulesResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	res := new(http.Response)
-	env := SnippetRulesResultEnvelope{data.Body}
+	env := SnippetRulesResultEnvelope{*data}
 	_, err = r.client.Snippets.Rules.Update(
 		ctx,
 		snippets.RuleUpdateParams{
@@ -135,7 +135,7 @@ func (r *SnippetRulesResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

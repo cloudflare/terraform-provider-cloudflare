@@ -58,6 +58,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Human-readable message about the deployment. Truncated to 100 bytes.",
 						Computed:    true,
 					},
+					"workers_triggered_by": schema.StringAttribute{
+						Description: "Operation that triggered the creation of the deployment.",
+						Computed:    true,
+					},
 				},
 			},
 			"versions": schema.ListNestedAttribute{
