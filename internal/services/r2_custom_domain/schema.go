@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*R2CustomDomainResource)(nil)
@@ -68,6 +69,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"1.3",
 					),
 				},
+			},
+			"ciphers": schema.ListAttribute{
+				Description: "An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.",
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"zone_name": schema.StringAttribute{
 				Description: "Zone that the custom domain resides in.",
