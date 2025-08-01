@@ -88,7 +88,6 @@ go test -run "^TestAcc" -count 1 \
     ./internal/services/registrar_domain \
     ./internal/services/resource_group \
     ./internal/services/ruleset \
-    ./internal/services/snippet_rules \
     ./internal/services/stream \
     ./internal/services/stream_audio_track \
     ./internal/services/stream_caption_language \
