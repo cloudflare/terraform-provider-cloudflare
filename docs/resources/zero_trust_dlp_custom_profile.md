@@ -14,14 +14,6 @@ description: |-
 ```terraform
 resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_custom_profile" {
   account_id = "account_id"
-  entries = [{
-    enabled = true
-    name = "name"
-    pattern = {
-      regex = "regex"
-      validation = "luhn"
-    }
-  }]
   name = "name"
   ai_context_enabled = true
   allowed_match_count = 5
@@ -48,7 +40,6 @@ resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_cust
 ### Required
 
 - `account_id` (String)
-- `entries` (Attributes List) (see [below for nested schema](#nestedatt--entries))
 - `name` (String)
 
 ### Optional
@@ -56,8 +47,10 @@ resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_cust
 - `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String)
-- `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
+- `context_awareness` (Attributes, Deprecated) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
 - `description` (String) The description of the profile.
+- `entries` (Attributes List, Deprecated) Custom entries from this profile.
+If this field is omitted, entries owned by this profile will not be changed. (see [below for nested schema](#nestedatt--entries))
 - `ocr_enabled` (Boolean)
 - `shared_entries` (Attributes List) Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles). (see [below for nested schema](#nestedatt--shared_entries))
 
@@ -68,32 +61,6 @@ resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_cust
 - `open_access` (Boolean) Whether this profile can be accessed by anyone.
 - `type` (String) Available values: "custom", "predefined", "integration".
 - `updated_at` (String) When the profile was lasted updated.
-
-<a id="nestedatt--entries"></a>
-### Nested Schema for `entries`
-
-Required:
-
-- `enabled` (Boolean)
-- `name` (String)
-
-Optional:
-
-- `pattern` (Attributes) (see [below for nested schema](#nestedatt--entries--pattern))
-- `words` (List of String)
-
-<a id="nestedatt--entries--pattern"></a>
-### Nested Schema for `entries.pattern`
-
-Required:
-
-- `regex` (String)
-
-Optional:
-
-- `validation` (String, Deprecated) Available values: "luhn".
-
-
 
 <a id="nestedatt--context_awareness"></a>
 ### Nested Schema for `context_awareness`
@@ -109,6 +76,32 @@ Required:
 Required:
 
 - `files` (Boolean) If the content type is a file, skip context analysis and return all matches.
+
+
+
+<a id="nestedatt--entries"></a>
+### Nested Schema for `entries`
+
+Required:
+
+- `enabled` (Boolean)
+- `name` (String)
+- `pattern` (Attributes) (see [below for nested schema](#nestedatt--entries--pattern))
+
+Optional:
+
+- `entry_id` (String)
+
+<a id="nestedatt--entries--pattern"></a>
+### Nested Schema for `entries.pattern`
+
+Required:
+
+- `regex` (String)
+
+Optional:
+
+- `validation` (String, Deprecated) Available values: "luhn".
 
 
 

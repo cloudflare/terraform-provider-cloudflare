@@ -1,21 +1,20 @@
 ---
-page_title: "cloudflare_queue_consumer Data Source - Cloudflare"
+page_title: "cloudflare_queue_consumers Data Source - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_queue_consumer (Data Source)
+# cloudflare_queue_consumers (Data Source)
 
 
 
 ## Example Usage
 
 ```terraform
-data "cloudflare_queue_consumer" "example_queue_consumer" {
+data "cloudflare_queue_consumers" "example_queue_consumers" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   queue_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  consumer_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }
 ```
 
@@ -25,19 +24,31 @@ data "cloudflare_queue_consumer" "example_queue_consumer" {
 ### Required
 
 - `account_id` (String) A Resource identifier.
-- `consumer_id` (String) A Resource identifier.
 - `queue_id` (String) A Resource identifier.
+
+### Optional
+
+- `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only
 
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
+
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
+
+Read-Only:
+
+- `consumer_id` (String) A Resource identifier.
 - `created_on` (String)
+- `queue_id` (String) A Resource identifier.
 - `script` (String) Name of a Worker
 - `script_name` (String) Name of a Worker
-- `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))
+- `settings` (Attributes) (see [below for nested schema](#nestedatt--result--settings))
 - `type` (String) Available values: "worker", "http_pull".
 
-<a id="nestedatt--settings"></a>
-### Nested Schema for `settings`
+<a id="nestedatt--result--settings"></a>
+### Nested Schema for `result.settings`
 
 Read-Only:
 

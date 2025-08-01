@@ -72,6 +72,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--okta))
@@ -217,6 +218,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--result--exclude--linked_app_token"></a>
+### Nested Schema for `result.exclude.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--result--exclude--login_method"></a>
 ### Nested Schema for `result.exclude.login_method`
 
@@ -286,6 +295,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--include--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--include--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--include--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--result--include--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--include--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--include--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--include--okta))
@@ -431,6 +441,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--result--include--linked_app_token"></a>
+### Nested Schema for `result.include.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--result--include--login_method"></a>
 ### Nested Schema for `result.include.login_method`
 
@@ -500,6 +518,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--okta))
@@ -645,6 +664,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--result--is_default--linked_app_token"></a>
+### Nested Schema for `result.is_default.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--result--is_default--login_method"></a>
 ### Nested Schema for `result.is_default.login_method`
 
@@ -714,6 +741,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--require--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--require--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--require--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--result--require--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--require--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--require--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--require--okta))
@@ -857,6 +885,14 @@ Read-Only:
 Read-Only:
 
 - `id` (String) The ID of a previously created IP list.
+
+
+<a id="nestedatt--result--require--linked_app_token"></a>
+### Nested Schema for `result.require.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
 
 
 <a id="nestedatt--result--require--login_method"></a>

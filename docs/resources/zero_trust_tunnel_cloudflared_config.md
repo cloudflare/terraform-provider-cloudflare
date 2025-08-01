@@ -179,7 +179,7 @@ Optional:
 <a id="nestedatt--config--warp_routing"></a>
 ### Nested Schema for `config.warp_routing`
 
-Optional:
+Read-Only:
 
 - `enabled` (Boolean)
 

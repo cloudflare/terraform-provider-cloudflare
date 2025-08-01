@@ -37,7 +37,7 @@ data "cloudflare_zero_trust_gateway_policies" "example_zero_trust_gateway_polici
 
 Read-Only:
 
-- `action` (String) The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.
+- `action` (String) The action to perform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.
 Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine", "redirect".
 - `created_at` (String)
 - `deleted_at` (String) Date of deletion, if any.
@@ -52,9 +52,12 @@ This does not apply to HTTP or network policies. (see [below for nested schema](
 - `id` (String) The API resource UUID.
 - `identity` (String) The wirefilter expression used for identity matching.
 - `name` (String) The name of the rule.
+- `not_sharable` (Boolean) The rule cannot be shared via the Orgs API
 - `precedence` (Number) Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) docs on how to manage precedence via Terraform.
+- `read_only` (Boolean) The rule was shared via the Orgs API and cannot be edited by the current account
 - `rule_settings` (Attributes) Additional settings that modify the rule's action. (see [below for nested schema](#nestedatt--result--rule_settings))
 - `schedule` (Attributes) The schedule for activating DNS policies. This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--result--schedule))
+- `source_account` (String) account tag of account that created the rule
 - `traffic` (String) The wirefilter expression used for traffic matching.
 - `updated_at` (String)
 - `version` (Number) version number of the rule
@@ -85,7 +88,7 @@ given by their `expires_at` value.
 
 Read-Only:
 
-- `add_headers` (Map of String) Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).
+- `add_headers` (Map of List of String) Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).
 - `allow_child_bypass` (Boolean) Set by parent MSP accounts to enable their children to bypass this rule.
 - `audit_ssh` (Attributes) Settings for the Audit SSH action. (see [below for nested schema](#nestedatt--result--rule_settings--audit_ssh))
 - `biso_admin_controls` (Attributes) Configure how browser isolation behaves. (see [below for nested schema](#nestedatt--result--rule_settings--biso_admin_controls))

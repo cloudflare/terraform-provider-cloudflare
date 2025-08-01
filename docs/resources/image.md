@@ -15,6 +15,7 @@ description: |-
 resource "cloudflare_image" "example_image" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   id = "id"
+  creator = "creator"
   file = null
   metadata = {
 
@@ -34,6 +35,7 @@ resource "cloudflare_image" "example_image" {
 
 ### Optional
 
+- `creator` (String) Can set the creator field with an internal user ID.
 - `file` (String) An image binary data. Only needed when type is uploading a file.
 - `metadata` (String) User modifiable key-value store. Can use used for keeping references to another system of record for managing images.
 - `require_signed_urls` (Boolean) Indicates whether the image requires a signature token for the access.

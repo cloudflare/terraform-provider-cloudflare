@@ -18,7 +18,7 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
   strategy = "percentage"
   versions = [{
     percentage = 100
-    version_id = "bcf48806-b317-4351-9ee7-36e7d557d4de"
+    version_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
   }]
   annotations = {
     workers_message = "Deploy bug fix."
@@ -32,7 +32,7 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
 ### Required
 
 - `account_id` (String) Identifier.
-- `script_name` (String) Name of the script.
+- `script_name` (String) Name of the script, used in URLs and route configuration.
 - `strategy` (String) Available values: "percentage".
 - `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))
 
@@ -44,7 +44,6 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
 
 - `author_email` (String)
 - `created_on` (String)
-- `deployments` (Attributes List) (see [below for nested schema](#nestedatt--deployments))
 - `id` (String) The ID of this resource.
 - `source` (String)
 
@@ -64,40 +63,14 @@ Optional:
 
 - `workers_message` (String) Human-readable message about the deployment. Truncated to 100 bytes.
 
-
-<a id="nestedatt--deployments"></a>
-### Nested Schema for `deployments`
-
 Read-Only:
 
-- `annotations` (Attributes) (see [below for nested schema](#nestedatt--deployments--annotations))
-- `author_email` (String)
-- `created_on` (String)
-- `id` (String)
-- `source` (String)
-- `strategy` (String) Available values: "percentage".
-- `versions` (Attributes List) (see [below for nested schema](#nestedatt--deployments--versions))
-
-<a id="nestedatt--deployments--annotations"></a>
-### Nested Schema for `deployments.annotations`
-
-Read-Only:
-
-- `workers_message` (String) Human-readable message about the deployment. Truncated to 100 bytes.
-
-
-<a id="nestedatt--deployments--versions"></a>
-### Nested Schema for `deployments.versions`
-
-Read-Only:
-
-- `percentage` (Number)
-- `version_id` (String)
+- `workers_triggered_by` (String) Operation that triggered the creation of the deployment.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_workers_deployment.example '<account_id>/<script_name>'
+$ terraform import cloudflare_workers_deployment.example '<account_id>/<script_name>/<deployment_id>'
 ```
