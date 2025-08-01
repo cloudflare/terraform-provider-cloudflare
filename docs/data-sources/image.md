@@ -28,6 +28,7 @@ data "cloudflare_image" "example_image" {
 
 ### Read-Only
 
+- `creator` (String) Can set the creator field with an internal user ID.
 - `filename` (String) Image file name.
 - `id` (String) Image unique identifier.
 - `meta` (String) User modifiable key-value store. Can be used for keeping references to another system of record for managing images. Metadata must not exceed 1024 bytes.
