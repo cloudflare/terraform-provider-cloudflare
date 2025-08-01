@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*R2CustomDomainDataSource)(nil)
@@ -53,12 +52,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"zone_name": schema.StringAttribute{
 				Description: "Zone that the custom domain resides in.",
 				Computed:    true,
-			},
-			"ciphers": schema.ListAttribute{
-				Description: "An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.",
-				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
 			},
 			"status": schema.SingleNestedAttribute{
 				Computed:   true,

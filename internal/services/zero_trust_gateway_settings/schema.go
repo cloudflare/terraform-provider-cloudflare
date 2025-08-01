@@ -5,6 +5,7 @@ package zero_trust_gateway_settings
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -62,7 +63,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"notification_settings": schema.SingleNestedAttribute{
 								Description: "Configure a message to display on the user's device when an antivirus search is performed.",
+								Computed:    true,
 								Optional:    true,
+								CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{
 										Description: "Set notification on",
@@ -121,14 +124,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 							"mode": schema.StringAttribute{
-								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"\", \"customized_block_page\", \"redirect_uri\".",
+								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"customized_block_page\", \"redirect_uri\".",
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"",
-										"customized_block_page",
-										"redirect_uri",
-									),
+									stringvalidator.OneOfCaseInsensitive("customized_block_page", "redirect_uri"),
 								},
 							},
 							"name": schema.StringAttribute{
