@@ -14,7 +14,8 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
   precedence = 0
   rule_settings = {
     add_headers = {
-      foo = "string"
+      My-Next-Header = ["foo", "bar"]
+      X-Custom-Header-Name = ["somecustomvalue"]
     }
     allow_child_bypass = false
     audit_ssh = {

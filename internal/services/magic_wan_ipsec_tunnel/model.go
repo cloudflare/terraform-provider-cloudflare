@@ -21,6 +21,7 @@ type MagicWANIPSECTunnelModel struct {
 	Name                types.String                                                          `tfsdk:"name" json:"name,required,no_refresh"`
 	CustomerEndpoint    types.String                                                          `tfsdk:"customer_endpoint" json:"customer_endpoint,optional,no_refresh"`
 	Description         types.String                                                          `tfsdk:"description" json:"description,optional,no_refresh"`
+	InterfaceAddress6   types.String                                                          `tfsdk:"interface_address6" json:"interface_address6,optional,no_refresh"`
 	PSK                 types.String                                                          `tfsdk:"psk" json:"psk,optional,no_refresh"`
 	ReplayProtection    types.Bool                                                            `tfsdk:"replay_protection" json:"replay_protection,computed_optional,no_refresh"`
 	HealthCheck         customfield.NestedObject[MagicWANIPSECTunnelHealthCheckModel]         `tfsdk:"health_check" json:"health_check,computed_optional,no_refresh"`
@@ -64,6 +65,7 @@ type MagicWANIPSECTunnelIPSECTunnelModel struct {
 	CustomerEndpoint   types.String                                                             `tfsdk:"customer_endpoint" json:"customer_endpoint,computed"`
 	Description        types.String                                                             `tfsdk:"description" json:"description,computed"`
 	HealthCheck        customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed"`
+	InterfaceAddress6  types.String                                                             `tfsdk:"interface_address6" json:"interface_address6,computed"`
 	ModifiedOn         timetypes.RFC3339                                                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	PSKMetadata        customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelPSKMetadataModel] `tfsdk:"psk_metadata" json:"psk_metadata,computed"`
 	ReplayProtection   types.Bool                                                               `tfsdk:"replay_protection" json:"replay_protection,computed"`
@@ -96,6 +98,7 @@ type MagicWANIPSECTunnelModifiedIPSECTunnelModel struct {
 	CustomerEndpoint   types.String                                                                     `tfsdk:"customer_endpoint" json:"customer_endpoint,computed"`
 	Description        types.String                                                                     `tfsdk:"description" json:"description,computed"`
 	HealthCheck        customfield.NestedObject[MagicWANIPSECTunnelModifiedIPSECTunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed"`
+	InterfaceAddress6  types.String                                                                     `tfsdk:"interface_address6" json:"interface_address6,computed"`
 	ModifiedOn         timetypes.RFC3339                                                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	PSKMetadata        customfield.NestedObject[MagicWANIPSECTunnelModifiedIPSECTunnelPSKMetadataModel] `tfsdk:"psk_metadata" json:"psk_metadata,computed"`
 	ReplayProtection   types.Bool                                                                       `tfsdk:"replay_protection" json:"replay_protection,computed"`

@@ -1,6 +1,8 @@
 package acctest
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -14,6 +16,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
@@ -295,6 +298,20 @@ func DumpState(s *terraform.State) error {
 
 	return nil
 }
+
+type debugNonEmptyRefreshPlan struct{}
+
+func (pc debugNonEmptyRefreshPlan) CheckPlan(ctx context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
+	fmt.Println("\n---------\n\nRESOURCE DRIFT:")
+	for _, d := range req.Plan.ResourceDrift {
+		bytes, _ := json.MarshalIndent(d, "  ", "  ")
+		fmt.Printf("%s\n\n", string(bytes))
+	}
+	fmt.Println("---------")
+}
+
+var pc plancheck.PlanCheck = debugNonEmptyRefreshPlan{}
+var LogResourceDrift = []plancheck.PlanCheck{pc}
 
 // / PtrTo is a small helper to get a pointer to a particular value
 func PtrTo[T any](v T) *T {

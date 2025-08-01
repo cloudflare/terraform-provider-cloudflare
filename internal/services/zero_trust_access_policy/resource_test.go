@@ -91,14 +91,6 @@ func testAccessPolicyAnyServiceTokenConfig(resourceID, zone, accountID string) s
 	return acctest.LoadTestCase("accesspolicyanyservicetokenconfig.tf", resourceID, zone, accountID)
 }
 
-func testAccessPolicyWithZoneID(resourceID, zone, zoneID string) string {
-	return acctest.LoadTestCase("accesspolicywithzoneid.tf", resourceID, zone, zoneID)
-}
-
-func testAccessPolicyWithZoneIDUpdated(resourceID, zone, zoneID string) string {
-	return acctest.LoadTestCase("accesspolicywithzoneidupdated.tf", resourceID, zone, zoneID)
-}
-
 func TestAccCloudflareAccessPolicy_Group(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zero_trust_access_policy." + rnd

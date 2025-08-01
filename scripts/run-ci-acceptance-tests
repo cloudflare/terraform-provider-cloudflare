@@ -137,7 +137,9 @@ go test -run "^TestAcc" -count 1 \
     ./internal/services/zero_trust_gateway_certificate \
     ./internal/services/zero_trust_gateway_logging \
     ./internal/services/zero_trust_gateway_proxy_endpoint \
+    ./internal/services/zero_trust_gateway_settings \
     ./internal/services/zero_trust_list \
+    ./internal/services/zero_trust_organization \
     ./internal/services/zero_trust_risk_behavior \
     ./internal/services/zero_trust_risk_scoring_integration \
     ./internal/services/zero_trust_tunnel_cloudflared \

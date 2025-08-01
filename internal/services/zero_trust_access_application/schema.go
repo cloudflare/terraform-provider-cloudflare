@@ -47,6 +47,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"allow_authenticate_via_warp": schema.BoolAttribute{
 				Description: "When set to true, users can authenticate to this application using their WARP session.  When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.",
 				Optional:    true,
+				Validators: []validator.Bool{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), authenticateViaWarpCompatibleAppTypes...),
+				},
 			},
 			"allow_iframe": schema.BoolAttribute{
 				Description: "Enables loading application content in an iFrame.",
@@ -396,7 +399,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"protocol": schema.StringAttribute{
-							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\".",
+							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\", \"RDP\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("SSH", "RDP"),
@@ -870,6 +873,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
+												Required:    true,
+											},
+										},
+									},
 								},
 							},
 						},
@@ -1159,6 +1171,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
+												Required:    true,
+											},
+										},
+									},
 								},
 							},
 						},
@@ -1412,6 +1433,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
+												Required:    true,
+											},
+										},
+									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
 												Required:    true,
 											},
 										},

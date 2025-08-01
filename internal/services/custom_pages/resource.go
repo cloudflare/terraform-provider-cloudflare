@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/custom_pages"
-	"github.com/cloudflare/cloudflare-go/v4/option"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/custom_pages"
+	"github.com/cloudflare/cloudflare-go/v5/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -81,7 +81,7 @@ func (r *CustomPagesResource) Create(ctx context.Context, req resource.CreateReq
 
 	_, err = r.client.CustomPages.Update(
 		ctx,
-		data.Identifier.ValueString(),
+		custom_pages.CustomPageUpdateParamsIdentifier(data.Identifier.ValueString()),
 		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -137,7 +137,7 @@ func (r *CustomPagesResource) Update(ctx context.Context, req resource.UpdateReq
 
 	_, err = r.client.CustomPages.Update(
 		ctx,
-		data.Identifier.ValueString(),
+		custom_pages.CustomPageUpdateParamsIdentifier(data.Identifier.ValueString()),
 		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -180,7 +180,7 @@ func (r *CustomPagesResource) Read(ctx context.Context, req resource.ReadRequest
 
 	_, err := r.client.CustomPages.Get(
 		ctx,
-		data.Identifier.ValueString(),
+		custom_pages.CustomPageGetParamsIdentifier(data.Identifier.ValueString()),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -244,7 +244,7 @@ func (r *CustomPagesResource) ImportState(ctx context.Context, req resource.Impo
 	env := CustomPagesResultEnvelope{*data}
 	_, err := r.client.CustomPages.Get(
 		ctx,
-		path_identifier,
+		custom_pages.CustomPageGetParamsIdentifier(path_identifier),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

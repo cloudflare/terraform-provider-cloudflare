@@ -21,6 +21,7 @@ type MagicWANGRETunnelModel struct {
 	InterfaceAddress      types.String                                                      `tfsdk:"interface_address" json:"interface_address,required,no_refresh"`
 	Name                  types.String                                                      `tfsdk:"name" json:"name,required,no_refresh"`
 	Description           types.String                                                      `tfsdk:"description" json:"description,optional,no_refresh"`
+	InterfaceAddress6     types.String                                                      `tfsdk:"interface_address6" json:"interface_address6,optional,no_refresh"`
 	Mtu                   types.Int64                                                       `tfsdk:"mtu" json:"mtu,computed_optional,no_refresh"`
 	TTL                   types.Int64                                                       `tfsdk:"ttl" json:"ttl,computed_optional,no_refresh"`
 	HealthCheck           customfield.NestedObject[MagicWANGRETunnelHealthCheckModel]       `tfsdk:"health_check" json:"health_check,computed_optional,no_refresh"`
@@ -61,6 +62,7 @@ type MagicWANGRETunnelGRETunnelModel struct {
 	CreatedOn             timetypes.RFC3339                                                    `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description           types.String                                                         `tfsdk:"description" json:"description,computed"`
 	HealthCheck           customfield.NestedObject[MagicWANGRETunnelGRETunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed"`
+	InterfaceAddress6     types.String                                                         `tfsdk:"interface_address6" json:"interface_address6,computed"`
 	ModifiedOn            timetypes.RFC3339                                                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Mtu                   types.Int64                                                          `tfsdk:"mtu" json:"mtu,computed"`
 	TTL                   types.Int64                                                          `tfsdk:"ttl" json:"ttl,computed"`
@@ -88,6 +90,7 @@ type MagicWANGRETunnelModifiedGRETunnelModel struct {
 	CreatedOn             timetypes.RFC3339                                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description           types.String                                                                 `tfsdk:"description" json:"description,computed"`
 	HealthCheck           customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed"`
+	InterfaceAddress6     types.String                                                                 `tfsdk:"interface_address6" json:"interface_address6,computed"`
 	ModifiedOn            timetypes.RFC3339                                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Mtu                   types.Int64                                                                  `tfsdk:"mtu" json:"mtu,computed"`
 	TTL                   types.Int64                                                                  `tfsdk:"ttl" json:"ttl,computed"`

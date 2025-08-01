@@ -5,9 +5,10 @@ package snippets
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/snippets"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -31,7 +32,7 @@ func (m *SnippetsListDataSourceModel) toListParams(_ context.Context) (params sn
 }
 
 type SnippetsListResultDataSourceModel struct {
-	CreatedOn   types.String `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn  types.String `tfsdk:"modified_on" json:"modified_on,computed"`
-	SnippetName types.String `tfsdk:"snippet_name" json:"snippet_name,computed"`
+	CreatedOn   timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	SnippetName types.String      `tfsdk:"snippet_name" json:"snippet_name,computed"`
+	ModifiedOn  timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }

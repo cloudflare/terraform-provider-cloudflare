@@ -34,7 +34,7 @@ type ListItemDataSourceModel struct {
 // }
 
 type ListItemHostnameDataSourceModel struct {
-	URLHostname types.String `tfsdk:"url_hostname" json:"url_hostname,computed"`
+	URLHostname          types.String `tfsdk:"url_hostname" json:"url_hostname,computed"`
 }
 
 type ListItemRedirectDataSourceModel struct {

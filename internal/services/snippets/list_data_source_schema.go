@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -18,7 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "The unique ID of the zone.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -35,16 +36,18 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"created_on": schema.StringAttribute{
-							Description: "Creation time of the snippet",
+							Description: "The timestamp of when the snippet was created.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"snippet_name": schema.StringAttribute{
+							Description: "The identifying name of the snippet.",
 							Computed:    true,
 						},
 						"modified_on": schema.StringAttribute{
-							Description: "Modification time of the snippet",
+							Description: "The timestamp of when the snippet was last modified.",
 							Computed:    true,
-						},
-						"snippet_name": schema.StringAttribute{
-							Description: "Snippet identifying name",
-							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 					},
 				},
