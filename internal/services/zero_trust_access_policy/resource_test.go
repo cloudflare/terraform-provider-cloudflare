@@ -8,14 +8,15 @@ import (
 
 	cloudflare "github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
 func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
@@ -794,7 +795,6 @@ func testAccessPolicyDecisionTypesConfig(resourceID, zone, accountID string) str
 }
 
 func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
-	t.Skip("this test depends on zero trust gateway settings, which first must be modernized and patched")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -809,7 +809,7 @@ func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareZeroTrustAccessPolicyDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessPolicyIsolationRequiredConfig(rnd, zone, accountID),
+				Config: testAccessPolicyIsolationRequiredConfigSimple(rnd, zone, accountID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
@@ -824,15 +824,15 @@ func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
 			},
 			{
 				// Ensures no diff on last plan
-				Config:   testAccessPolicyIsolationRequiredConfig(rnd, zone, accountID),
+				Config:   testAccessPolicyIsolationRequiredConfigSimple(rnd, zone, accountID),
 				PlanOnly: true,
 			},
 		},
 	})
 }
 
-func testAccessPolicyIsolationRequiredConfig(resourceID, zone, accountID string) string {
-	return acctest.LoadTestCase("accesspolicyisolationrequiredconfig.tf", resourceID, zone, accountID)
+func testAccessPolicyIsolationRequiredConfigSimple(resourceID, zone, accountID string) string {
+	return acctest.LoadTestCase("accesspolicyisolationrequiredconfig_simple.tf", resourceID, zone, accountID)
 }
 
 func testAccessPolicyReusableConfig(resourceID, accountID string) string {

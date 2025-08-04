@@ -62,6 +62,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"notification_settings": schema.SingleNestedAttribute{
 								Description: "Configure a message to display on the user's device when an antivirus search is performed.",
+								Computed:    true,
 								Optional:    true,
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{
