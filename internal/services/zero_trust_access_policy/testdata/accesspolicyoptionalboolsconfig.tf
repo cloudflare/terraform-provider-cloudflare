@@ -10,11 +10,8 @@ resource "cloudflare_zero_trust_access_policy" "%[1]s" {
   account_id     = "%[3]s"
   decision       = "allow"
   include = [{
-    geo = {
-      country_code = "US"
+    auth_method = {
+      auth_method = "hwk"
     }
   }]
-  approval_required              = "false"
-  isolation_required             = "false"
-  purpose_justification_required = "false"
 }

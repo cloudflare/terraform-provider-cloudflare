@@ -19,4 +19,7 @@ resource "cloudflare_zero_trust_access_policy" "%[1]s" {
       token_id = "${cloudflare_zero_trust_access_service_token.%[1]s.id}"
     }
   }]
+  approval_required              = "false"
+  isolation_required             = "false"
+  purpose_justification_required = "false"
 }
