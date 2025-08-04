@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package ruleset
+package snippet
 
 import (
 	"context"
@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type RulesetDataSource struct {
+type SnippetDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*RulesetDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*SnippetDataSource)(nil)
 
-func NewRulesetDataSource() datasource.DataSource {
-	return &RulesetDataSource{}
+func NewSnippetDataSource() datasource.DataSource {
+	return &SnippetDataSource{}
 }
 
-func (d *RulesetDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_ruleset"
+func (d *SnippetDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_snippet"
 }
 
-func (d *RulesetDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *SnippetDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *RulesetDataSource) Configure(ctx context.Context, req datasource.Config
 	d.client = client
 }
 
-func (d *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *RulesetDataSourceModel
+func (d *SnippetDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *SnippetDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -64,10 +64,10 @@ func (d *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	}
 
 	res := new(http.Response)
-	env := RulesetResultDataSourceEnvelope{*data}
-	_, err := d.client.Rulesets.Get(
+	env := SnippetResultDataSourceEnvelope{*data}
+	_, err := d.client.Snippets.Get(
 		ctx,
-		data.RulesetID.ValueString(),
+		data.SnippetName.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
