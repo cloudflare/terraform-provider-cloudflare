@@ -1,19 +1,19 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package ruleset_test
+package snippet_test
 
 import (
 	"context"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
-func TestRulesetDataSourceModelSchemaParity(t *testing.T) {
+func TestSnippetDataSourceModelSchemaParity(t *testing.T) {
 	t.Parallel()
-	model := (*ruleset.RulesetDataSourceModel)(nil)
-	schema := ruleset.DataSourceSchema(context.TODO())
+	model := (*snippet.SnippetDataSourceModel)(nil)
+	schema := snippet.DataSourceSchema(context.TODO())
 	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
 	errs.Report(t)
 }
