@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/option"
@@ -97,6 +98,12 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
+	err = pollBulkOperation(ctx, data.AccountID.ValueString(), createEnv.Result.OperationID.ValueString(), r.client)
+	if err != nil {
+		resp.Diagnostics.AddError("list item bulk operation failed", err.Error())
+		return
+	}
+
 	searchTerm := getSearchTerm(data)
 	findItemRes := new(http.Response)
 	_, err = r.client.Rules.Lists.Items.List(
@@ -162,20 +169,23 @@ func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+
+	wrappedBytes := data.MarshalSingleToCollectionJSON(dataBytes)
+
 	res := new(http.Response)
-	env := ListItemResultEnvelope{*data}
-	_, err = r.client.Rules.Lists.Items.Update(
+	createEnv := ListItemResultEnvelope{*data}
+	_, err = r.client.Rules.Lists.Items.New(
 		ctx,
 		data.ListID.ValueString(),
-		rules.ListItemUpdateParams{
+		rules.ListItemNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
+		option.WithRequestBody("application/json", wrappedBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -184,11 +194,62 @@ func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+
+	err = apijson.UnmarshalComputed(bytes, &createEnv)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+
+	err = pollBulkOperation(ctx, data.AccountID.ValueString(), createEnv.Result.OperationID.ValueString(), r.client)
+	if err != nil {
+		resp.Diagnostics.AddError("list item bulk operation failed", err.Error())
+		return
+	}
+
+	searchTerm := getSearchTerm(data)
+	findItemRes := new(http.Response)
+	_, err = r.client.Rules.Lists.Items.List(
+		ctx,
+		data.ListID.ValueString(),
+		rules.ListItemListParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			Search:    cloudflare.F(searchTerm),
+		},
+		option.WithResponseBodyInto(&findItemRes),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
+		return
+	}
+	findListItem, _ := io.ReadAll(findItemRes.Body)
+	itemID := gjson.Get(string(findListItem), "result.0.id")
+	data.ID = types.StringValue(itemID.String())
+
+	env := ListItemResultEnvelope{*data}
+	listItemRes := new(http.Response)
+	_, err = r.client.Rules.Lists.Items.Get(
+		ctx,
+		data.ListID.ValueString(),
+		data.ID.ValueString(),
+		rules.ListItemGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithResponseBodyInto(&listItemRes),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
+		return
+	}
+	listItem, _ := io.ReadAll(listItemRes.Body)
+	err = apijson.UnmarshalComputed(listItem, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -267,6 +328,37 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 
 func (r *ListItemResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
+}
+
+func pollBulkOperation(ctx context.Context, accountID, operationID string, client *cloudflare.Client) error {
+	backoff := 1 * time.Second
+	maxBackoff := 30 * time.Second
+
+	for {
+		bulkOperation, err := client.Rules.Lists.BulkOperations.Get(
+			ctx,
+			operationID,
+			rules.ListBulkOperationGetParams{
+				AccountID: cloudflare.F(accountID),
+			},
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			return err
+		}
+		switch bulkOperation.Status {
+		case rules.ListBulkOperationGetResponseStatusCompleted:
+			return nil
+		case rules.ListBulkOperationGetResponseStatusFailed:
+			return fmt.Errorf("failed to create list item: %s", bulkOperation.Error)
+		default:
+			time.Sleep(backoff)
+			backoff *= 2
+			if backoff > maxBackoff {
+				backoff = maxBackoff
+			}
+		}
+	}
 }
 
 type bodyDeletePayload struct {
