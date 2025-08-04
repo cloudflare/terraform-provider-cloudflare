@@ -9,16 +9,17 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v5/packages/pagination"
 	"github.com/cloudflare/cloudflare-go/v5/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/tidwall/gjson"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -86,6 +87,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		option.WithRequestBody("application/json", wrappedBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -99,25 +101,54 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
+	err = pollBulkOperation(ctx, data.AccountID.ValueString(), createEnv.Result.OperationID.ValueString(), r.client)
+	if err != nil {
+		resp.Diagnostics.AddError("list item bulk operation failed", err.Error())
+		return
+	}
+
 	searchTerm := getSearchTerm(data)
 	findItemRes := new(http.Response)
-	_, err = r.client.Rules.Lists.Items.List(
+	listItems, err := r.client.Rules.Lists.Items.List(
 		ctx,
 		data.ListID.ValueString(),
 		rules.ListItemListParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			Search:    cloudflare.F(searchTerm),
+			// TODO: when pagination is fixed in the API schema (and go sdk) we should not need to set this (items we are looking for are expected to be sorted near the top of the result list)
+			PerPage: cloudflare.Int(500),
 		},
 		option.WithResponseBodyInto(&findItemRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
 		return
 	}
-	findListItem, _ := io.ReadAll(findItemRes.Body)
-	itemID := gjson.Get(string(findListItem), "result.0.id")
-	data.ID = types.StringValue(itemID.String())
+	if listItems == nil {
+		resp.Diagnostics.AddWarning("failed to fetch individual list item", "list item pagination was nil")
+	}
+
+	listItemsBytes, _ := io.ReadAll(findItemRes.Body)
+
+	// TODO: when pagination is fixed in the API schema (and go sdk) this should paginate properly
+	var apiResult pagination.SinglePage[ListItemModel]
+	err = apijson.Unmarshal(listItemsBytes, &apiResult)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
+	}
+
+	// find the actual list item, don't rely on the response to have the first entry be the correct one
+	var listItemID string
+	for _, item := range apiResult.Result {
+		if matchedItemID, ok := listItemMatchesOriginal(data, item); ok {
+			listItemID = matchedItemID
+			break
+		}
+	}
+
+	data.ID = types.StringValue(listItemID)
 
 	env := ListItemResultEnvelope{*data}
 	listItemRes := new(http.Response)
@@ -130,6 +161,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		},
 		option.WithResponseBodyInto(&listItemRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
@@ -148,52 +180,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 }
 
 func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *ListItemModel
-
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	var state *ListItemModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := ListItemResultEnvelope{*data}
-	_, err = r.client.Rules.Lists.Items.Update(
-		ctx,
-		data.ListID.ValueString(),
-		rules.ListItemUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.AddError("update is not supported for list items", "")
 }
 
 func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -213,6 +200,7 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 		rules.ListItemGetParams{AccountID: cloudflare.F(data.AccountID.ValueString())},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if res != nil && res.StatusCode == 404 {
 		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
@@ -258,6 +246,7 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 		option.WithRequestBody("application/json", deleteBody),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -320,6 +309,37 @@ func (r *ListItemResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRe
 
 }
 
+func pollBulkOperation(ctx context.Context, accountID, operationID string, client *cloudflare.Client) error {
+	backoff := 1 * time.Second
+	maxBackoff := 30 * time.Second
+
+	for {
+		bulkOperation, err := client.Rules.Lists.BulkOperations.Get(
+			ctx,
+			operationID,
+			rules.ListBulkOperationGetParams{
+				AccountID: cloudflare.F(accountID),
+			},
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			return err
+		}
+		switch bulkOperation.Status {
+		case rules.ListBulkOperationGetResponseStatusCompleted:
+			return nil
+		case rules.ListBulkOperationGetResponseStatusFailed:
+			return fmt.Errorf("failed to create list item: %s", bulkOperation.Error)
+		default:
+			time.Sleep(backoff)
+			backoff *= 2
+			if backoff > maxBackoff {
+				backoff = maxBackoff
+			}
+		}
+	}
+}
+
 type bodyDeletePayload struct {
 	Items []bodyDeleteItems `json:"items"`
 }
@@ -352,4 +372,24 @@ func getSearchTerm(d *ListItemModel) string {
 	}
 
 	return ""
+}
+
+func listItemMatchesOriginal(original *ListItemModel, item ListItemModel) (string, bool) {
+	if original.IP != item.IP {
+		return "", false
+	}
+
+	if original.ASN != item.ASN {
+		return "", false
+	}
+
+	if !original.Hostname.IsNull() && !item.Hostname.IsNull() && !original.Hostname.Equal(item.Hostname) {
+		return "", false
+	}
+
+	if !original.Redirect.IsNull() && !item.Redirect.IsNull() && !original.Redirect.Equal(item.Redirect) {
+		return "", false
+	}
+
+	return item.ID.ValueString(), true
 }

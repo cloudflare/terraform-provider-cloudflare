@@ -13,7 +13,6 @@ import (
 )
 
 func TestAccCloudflareListItem_Basic(t *testing.T) {
-	t.Skip("FIXME: Step 1/1 error: Error running apply: exit status 1. Getting rate limited, causing flaky tests.")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -73,12 +72,29 @@ func TestAccCloudflareListItem_Import(t *testing.T) {
 					return fmt.Sprintf("%s/%s/%s", accountID, listID, itemID), nil
 				},
 			},
+			{
+				ResourceName:    itemName,
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithID,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[listName]
+					if !ok {
+						return "", fmt.Errorf("list resource not found: %s", listName)
+					}
+					listID := rs.Primary.ID
+					rs, ok = s.RootModule().Resources[itemName]
+					if !ok {
+						return "", fmt.Errorf("list_item resource not found: %s", itemName)
+					}
+					itemID := rs.Primary.ID
+					return fmt.Sprintf("%s/%s/%s", accountID, listID, itemID), nil
+				},
+			},
 		},
 	})
 }
 
 func TestAccCloudflareListItem_MultipleItems(t *testing.T) {
-	t.Skip("FIXME: Getting rate limited. Probably causing the cascading failures with the rest.")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -102,8 +118,7 @@ func TestAccCloudflareListItem_MultipleItems(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareListItem_Update(t *testing.T) {
-	t.Skip("FIXME: Step 1/2 error: Error running apply: exit status 1. Getting rate limited, causing flaky tests.")
+func TestAccCloudflareListItem_MultipleItemsHostname(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -115,15 +130,128 @@ func TestAccCloudflareListItem_Update(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccCheckCloudflareHostnameListItemMultipleEntries(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name+"_1", "hostname.url_hostname", "a.example.com"),
+					resource.TestCheckResourceAttr(name+"_2", "hostname.url_hostname", "example.com"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareHostnameListItemMultipleEntries(rnd, rnd, rnd+"-updated", accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name+"_1", "hostname.url_hostname", "a.example.com"),
+					resource.TestCheckResourceAttr(name+"_1", "comment", rnd+"-updated"),
+					resource.TestCheckResourceAttr(name+"_2", "hostname.url_hostname", "example.com"),
+					resource.TestCheckResourceAttr(name+"_2", "comment", rnd+"-updated"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareListItem_Update(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var listItemID string
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
 				Config: testAccCheckCloudflareIPListItem(rnd, rnd, rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "ip", "192.0.2.0"),
+					func(s *terraform.State) error {
+						listItemID = s.RootModule().Resources[name].Primary.Attributes["id"]
+						return nil
+					},
 				),
 			},
 			{
 				Config: testAccCheckCloudflareIPListItem(rnd, rnd, rnd+"-updated", accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "comment", rnd+"-updated"),
+					func(s *terraform.State) error {
+						newID := s.RootModule().Resources[name].Primary.Attributes["id"]
+						if newID == listItemID {
+							return fmt.Errorf("ID of list item did not change when updating comment")
+						}
+						return nil
+					},
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareListItem_UpdateHostname(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var listItemID string
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHostnameListItem(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "hostname.url_hostname", "example.com"),
+					resource.TestCheckResourceAttr(name, "comment", rnd),
+					func(s *terraform.State) error {
+						listItemID = s.RootModule().Resources[name].Primary.Attributes["id"]
+						return nil
+					},
+				),
+			},
+			{
+				Config: testAccCheckCloudflareHostnameListItem(rnd, rnd, rnd+"-updated", accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "hostname.url_hostname", "example.com"),
+					resource.TestCheckResourceAttr(name, "comment", rnd+"-updated"),
+					func(s *terraform.State) error {
+						newID := s.RootModule().Resources[name].Primary.Attributes["id"]
+						if newID == listItemID {
+							return fmt.Errorf("ID of list item did not change when updating comment")
+						}
+						return nil
+					},
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareListItem_UpdateReplace(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareIPListItemNewIp(rnd, rnd, rnd, accountID, "192.0.2.0"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "ip", "192.0.2.0"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareIPListItemNewIp(rnd, rnd, rnd, accountID, "192.0.2.1"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "ip", "192.0.2.1"),
 				),
 			},
 		},
@@ -131,7 +259,6 @@ func TestAccCloudflareListItem_Update(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_ASN(t *testing.T) {
-	t.Skip("FIXME: Step 1/1 error: Error running apply: exit status 1. Getting rate limited, causing flaky tests.")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -154,7 +281,6 @@ func TestAccCloudflareListItem_ASN(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_Hostname(t *testing.T) {
-	t.Skip("FIXME: Getting rate limited, causing flaky tests.")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -176,7 +302,6 @@ func TestAccCloudflareListItem_Hostname(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_Redirect(t *testing.T) {
-	t.Skip("FIXME: Step 1/1 error: Error running apply: exit status 1. Getting rate limited, causing flaky tests.")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -203,8 +328,16 @@ func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) strin
 	return acctest.LoadTestCase("iplistitem.tf", ID, name, comment, accountID)
 }
 
+func testAccCheckCloudflareIPListItemNewIp(ID, name, comment, accountID, ip string) string {
+	return acctest.LoadTestCase("iplistitem_newip.tf", ID, name, comment, accountID, ip)
+}
+
 func testAccCheckCloudflareIPListItemMultipleEntries(ID, name, comment, accountID string) string {
 	return acctest.LoadTestCase("iplistitemmultipleentries.tf", ID, name, comment, accountID)
+}
+
+func testAccCheckCloudflareHostnameListItemMultipleEntries(ID, name, comment, accountID string) string {
+	return acctest.LoadTestCase("hostnamelistitemmultipleentries.tf", ID, name, comment, accountID)
 }
 
 func testAccCheckCloudflareBadListItemType(ID, name, comment, accountID string) string {
@@ -224,7 +357,6 @@ func testAccCheckCloudflareHostnameRedirectItem(ID, name, comment, accountID str
 }
 
 func TestAccCloudflareListItem_RedirectWithOverlappingSourceURL(t *testing.T) {
-	t.Skip("Step 1/1 error: After applying this test step, the refresh plan was not empty. Getting rate limited, causing flaky tests.")
 	rnd := utils.GenerateRandomResourceName()
 	firstResource := fmt.Sprintf("cloudflare_list_item.%s_1", rnd)
 	secondResource := fmt.Sprintf("cloudflare_list_item.%s_2", rnd)
