@@ -14,4 +14,7 @@ resource "cloudflare_zero_trust_access_policy" "%[1]s" {
       country_code = "US"
     }
   }]
+  approval_required              = "false"
+  isolation_required             = "false"
+  purpose_justification_required = "false"
 }
