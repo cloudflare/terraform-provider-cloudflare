@@ -79,6 +79,9 @@ func TestAccCloudflareLoadBalancerMonitor_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "header.%", "0"),
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerMonitorDates(name, &loadBalancerMonitor, testStartTime),
+					resource.TestCheckResourceAttr(name, "port", "0"),
+					resource.TestCheckResourceAttr(name, "consecutive_up", "0"),
+					resource.TestCheckResourceAttr(name, "consecutive_down", "0"),
 				),
 			},
 		},
@@ -261,6 +264,71 @@ func TestAccCloudflareLoadBalancerMonitor_Update(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareLoadBalancerMonitor_ConsecutiveUpDownDrift(t *testing.T) {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer_monitor." + rnd
+	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigWithConsecutiveValues(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "consecutive_up", "0"),
+					resource.TestCheckResourceAttr(name, "consecutive_down", "0"),
+					resource.TestCheckResourceAttr(name, "port", "0"),
+				),
+			},
+			{
+				Config:             testAccCheckCloudflareLoadBalancerMonitorConfigWithConsecutiveValues(rnd, accountID),
+				ExpectNonEmptyPlan: false,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareLoadBalancerMonitor_NonZeroConsecutiveValuesDrift(t *testing.T) {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer_monitor." + rnd
+	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigWithNonZeroConsecutiveValues(rnd, accountID, "Initial description"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "consecutive_up", "2"),
+					resource.TestCheckResourceAttr(name, "consecutive_down", "2"),
+					resource.TestCheckResourceAttr(name, "port", "8080"),
+					resource.TestCheckResourceAttr(name, "description", "Initial description"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigWithNonZeroConsecutiveValues(rnd, accountID, "Updated description"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					resource.TestCheckResourceAttr(name, "description", "Updated description"),
+					resource.TestCheckResourceAttr(name, "consecutive_up", "2"),
+					resource.TestCheckResourceAttr(name, "consecutive_down", "2"),
+					resource.TestCheckResourceAttr(name, "port", "8080"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareLoadBalancerMonitor_ChangingHeadersCauseReplacement(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -393,6 +461,14 @@ func testAccCheckCloudflareLoadBalancerMonitorConfigICMPPing(resourceName, accou
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigSMTP(resourceName, accountID string) string {
 	return acctest.LoadTestCase("loadbalancermonitorconfigsmtp.tf", resourceName, accountID)
+}
+
+func testAccCheckCloudflareLoadBalancerMonitorConfigWithConsecutiveValues(rnd, accountID string) string {
+	return acctest.LoadTestCase("loadbalancermonitorconfigwithconsecutivevalues.tf", rnd, accountID)
+}
+
+func testAccCheckCloudflareLoadBalancerMonitorConfigWithNonZeroConsecutiveValues(rnd, accountID, description string) string {
+	return acctest.LoadTestCase("loadbalancermonitorconfigwithnonzeroconsecutivevalues.tf", rnd, accountID, description)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigMissingRequired(accountID string) string {
