@@ -84,6 +84,10 @@ func (r *ZeroTrustAccessPolicyResource) Create(ctx context.Context, req resource
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	if res == nil || res.Body == nil {
+		resp.Diagnostics.AddError("failed to read response", "Response or response body is nil")
+		return
+	}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -133,6 +137,10 @@ func (r *ZeroTrustAccessPolicyResource) Update(ctx context.Context, req resource
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	if res == nil || res.Body == nil {
+		resp.Diagnostics.AddError("failed to read response", "Response or response body is nil")
+		return
+	}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -178,6 +186,10 @@ func (r *ZeroTrustAccessPolicyResource) Read(ctx context.Context, req resource.R
 	}
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	if res == nil || res.Body == nil {
+		resp.Diagnostics.AddError("failed to read response", "Response or response body is nil")
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
@@ -258,6 +270,10 @@ func (r *ZeroTrustAccessPolicyResource) ImportState(ctx context.Context, req res
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	if res == nil || res.Body == nil {
+		resp.Diagnostics.AddError("failed to read response", "Response or response body is nil")
+		return
+	}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
@@ -265,6 +281,9 @@ func (r *ZeroTrustAccessPolicyResource) ImportState(ctx context.Context, req res
 		return
 	}
 	data = &env.Result
+
+	// Apply import-specific normalizations to handle API omissions
+	resp.Diagnostics.Append(normalizeImportZeroTrustAccessPolicyAPIData(ctx, data)...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -78,5 +78,7 @@ resource "cloudflare_zero_trust_access_policy" "%[1]s" {
       email = "a@example.com"
     }
   }]
-  isolation_required = "true"
+  isolation_required             = "true"
+  approval_required              = "false"
+  purpose_justification_required = "false"
 }

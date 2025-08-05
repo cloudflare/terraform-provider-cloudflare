@@ -77,7 +77,7 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.
 }
 
 type ZeroTrustTunnelCloudflaredRouteFindOneByDataSourceModel struct {
-	Comment          types.String    `tfsdk:"comment" query:"comment,optional"`
+	Comment          types.String    `tfsdk:"comment" query:"comment,computed_optional"`
 	ExistedAt        types.String    `tfsdk:"existed_at" query:"existed_at,optional"`
 	IsDeleted        types.Bool      `tfsdk:"is_deleted" query:"is_deleted,optional"`
 	NetworkSubset    types.String    `tfsdk:"network_subset" query:"network_subset,optional"`
