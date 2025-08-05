@@ -5,14 +5,15 @@ package list_item
 import (
 	"context"
 	"fmt"
-	"github.com/cloudflare/cloudflare-go/v5/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	logging "github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"io"
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/option"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 )
 
 type ListItemDataSource struct {
