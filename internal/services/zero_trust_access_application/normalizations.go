@@ -129,8 +129,22 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 	normalizeFalseAndNullBool(&data.EnableBindingCookie, stateData.EnableBindingCookie)
 	normalizeFalseAndNullBool(&data.OptionsPreflightBypass, stateData.OptionsPreflightBypass)
 	normalizeFalseAndNullBool(&data.AutoRedirectToIdentity, stateData.AutoRedirectToIdentity)
+	normalizeFalseAndNullBool(&data.AllowIframe, stateData.AllowIframe)
+	normalizeFalseAndNullBool(&data.SkipInterstitial, stateData.SkipInterstitial)
+	normalizeFalseAndNullBool(&data.AllowAuthenticateViaWARP, stateData.AllowAuthenticateViaWARP)
+	normalizeFalseAndNullBool(&data.PathCookieAttribute, stateData.PathCookieAttribute)
+	normalizeFalseAndNullBool(&data.AppLauncherVisible, stateData.AppLauncherVisible)
+	normalizeFalseAndNullBool(&data.SkipAppLauncherLoginPage, stateData.SkipAppLauncherLoginPage)
 	if slices.Contains(selfHostedAppTypes, data.Type.String()) {
 		normalizeTrueAndNullBool(&data.HTTPOnlyCookieAttribute, stateData.HTTPOnlyCookieAttribute)
+	}
+
+	// Normalize CORS headers boolean fields
+	if data.CORSHeaders != nil && stateData.CORSHeaders != nil {
+		normalizeFalseAndNullBool(&data.CORSHeaders.AllowAllHeaders, stateData.CORSHeaders.AllowAllHeaders)
+		normalizeFalseAndNullBool(&data.CORSHeaders.AllowAllMethods, stateData.CORSHeaders.AllowAllMethods)
+		normalizeFalseAndNullBool(&data.CORSHeaders.AllowAllOrigins, stateData.CORSHeaders.AllowAllOrigins)
+		normalizeFalseAndNullBool(&data.CORSHeaders.AllowCredentials, stateData.CORSHeaders.AllowCredentials)
 	}
 
 	if !data.SaaSApp.IsNull() && !stateData.SaaSApp.IsNull() {
@@ -166,10 +180,29 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 	}
 
 	if data.SCIMConfig != nil && stateData.SCIMConfig != nil {
+		// Normalize SCIM config boolean fields
+		normalizeFalseAndNullBool(&data.SCIMConfig.Enabled, stateData.SCIMConfig.Enabled)
+		normalizeFalseAndNullBool(&data.SCIMConfig.DeactivateOnDelete, stateData.SCIMConfig.DeactivateOnDelete)
+
 		if data.SCIMConfig.Authentication != nil && stateData.SCIMConfig.Authentication != nil {
 			data.SCIMConfig.Authentication.Password = stateData.SCIMConfig.Authentication.Password
 			data.SCIMConfig.Authentication.Token = stateData.SCIMConfig.Authentication.Token
 			data.SCIMConfig.Authentication.ClientSecret = stateData.SCIMConfig.Authentication.ClientSecret
+		}
+
+		// Normalize SCIM mappings boolean fields
+		if data.SCIMConfig.Mappings != nil && stateData.SCIMConfig.Mappings != nil {
+			for i := range *data.SCIMConfig.Mappings {
+				if len(*stateData.SCIMConfig.Mappings) <= i {
+					break
+				}
+				normalizeFalseAndNullBool(&(*data.SCIMConfig.Mappings)[i].Enabled, (*stateData.SCIMConfig.Mappings)[i].Enabled)
+				if (*data.SCIMConfig.Mappings)[i].Operations != nil && (*stateData.SCIMConfig.Mappings)[i].Operations != nil {
+					normalizeFalseAndNullBool(&(*data.SCIMConfig.Mappings)[i].Operations.Create, (*stateData.SCIMConfig.Mappings)[i].Operations.Create)
+					normalizeFalseAndNullBool(&(*data.SCIMConfig.Mappings)[i].Operations.Delete, (*stateData.SCIMConfig.Mappings)[i].Operations.Delete)
+					normalizeFalseAndNullBool(&(*data.SCIMConfig.Mappings)[i].Operations.Update, (*stateData.SCIMConfig.Mappings)[i].Operations.Update)
+				}
+			}
 		}
 	}
 
