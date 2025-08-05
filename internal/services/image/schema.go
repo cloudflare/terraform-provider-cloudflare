@@ -41,6 +41,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"creator": schema.StringAttribute{
+				Description: "Can set the creator field with an internal user ID.",
+				Optional:    true,
+			},
 			"metadata": schema.StringAttribute{
 				Description: "User modifiable key-value store. Can use used for keeping references to another system of record for managing images.",
 				Optional:    true,

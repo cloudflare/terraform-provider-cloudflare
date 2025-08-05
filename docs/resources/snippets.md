@@ -13,9 +13,9 @@ description: |-
 
 ```terraform
 resource "cloudflare_snippets" "example_snippets" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  snippet_name = "snippet_name_01"
-  files = "export { async function fetch(request, env) {return new Response(\'some_response\') } }"
+  zone_id = "9f1839b6152d298aca64c4e906b6d074"
+  snippet_name = "my_snippet"
+  files = [null]
   metadata = {
     main_module = "main.js"
   }
@@ -27,24 +27,21 @@ resource "cloudflare_snippets" "example_snippets" {
 
 ### Required
 
-- `snippet_name` (String) Snippet identifying name
-- `zone_id` (String) Identifier
-
-### Optional
-
-- `files` (String) Content files of uploaded snippet
-- `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
+- `files` (List of String) The list of files belonging to the snippet.
+- `metadata` (Attributes) Metadata about the snippet. (see [below for nested schema](#nestedatt--metadata))
+- `snippet_name` (String) The identifying name of the snippet.
+- `zone_id` (String) The unique ID of the zone.
 
 ### Read-Only
 
-- `created_on` (String) Creation time of the snippet
-- `modified_on` (String) Modification time of the snippet
+- `created_on` (String) The timestamp of when the snippet was created.
+- `modified_on` (String) The timestamp of when the snippet was last modified.
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`
 
-Optional:
+Required:
 
-- `main_module` (String) Main module name of uploaded snippet
+- `main_module` (String) Name of the file that contains the main module of the snippet.
 
 

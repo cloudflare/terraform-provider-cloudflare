@@ -5,8 +5,8 @@ package email_security_block_sender
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/email_security"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/email_security"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -21,6 +21,7 @@ type EmailSecurityBlockSendersDataSourceModel struct {
 	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
 	Direction   types.String                                                                 `tfsdk:"direction" query:"direction,optional"`
 	Order       types.String                                                                 `tfsdk:"order" query:"order,optional"`
+	Pattern     types.String                                                                 `tfsdk:"pattern" query:"pattern,optional"`
 	PatternType types.String                                                                 `tfsdk:"pattern_type" query:"pattern_type,optional"`
 	Search      types.String                                                                 `tfsdk:"search" query:"search,optional"`
 	MaxItems    types.Int64                                                                  `tfsdk:"max_items"`
@@ -37,6 +38,9 @@ func (m *EmailSecurityBlockSendersDataSourceModel) toListParams(_ context.Contex
 	}
 	if !m.Order.IsNull() {
 		params.Order = cloudflare.F(email_security.SettingBlockSenderListParamsOrder(m.Order.ValueString()))
+	}
+	if !m.Pattern.IsNull() {
+		params.Pattern = cloudflare.F(m.Pattern.ValueString())
 	}
 	if !m.PatternType.IsNull() {
 		params.PatternType = cloudflare.F(email_security.SettingBlockSenderListParamsPatternType(m.PatternType.ValueString()))

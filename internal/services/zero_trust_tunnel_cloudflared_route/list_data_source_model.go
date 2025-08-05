@@ -5,8 +5,8 @@ package zero_trust_tunnel_cloudflared_route
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -19,7 +19,6 @@ type ZeroTrustTunnelCloudflaredRoutesResultListDataSourceEnvelope struct {
 
 type ZeroTrustTunnelCloudflaredRoutesDataSourceModel struct {
 	AccountID        types.String                                                                        `tfsdk:"account_id" path:"account_id,required"`
-	Comment          types.String                                                                        `tfsdk:"comment" query:"comment,optional"`
 	ExistedAt        types.String                                                                        `tfsdk:"existed_at" query:"existed_at,optional"`
 	IsDeleted        types.Bool                                                                          `tfsdk:"is_deleted" query:"is_deleted,optional"`
 	NetworkSubset    types.String                                                                        `tfsdk:"network_subset" query:"network_subset,optional"`
@@ -28,6 +27,7 @@ type ZeroTrustTunnelCloudflaredRoutesDataSourceModel struct {
 	TunnelID         types.String                                                                        `tfsdk:"tunnel_id" query:"tunnel_id,optional"`
 	VirtualNetworkID types.String                                                                        `tfsdk:"virtual_network_id" query:"virtual_network_id,optional"`
 	TunTypes         *[]types.String                                                                     `tfsdk:"tun_types" query:"tun_types,optional"`
+	Comment          types.String                                                                        `tfsdk:"comment" query:"comment,computed_optional"`
 	MaxItems         types.Int64                                                                         `tfsdk:"max_items"`
 	Result           customfield.NestedObjectList[ZeroTrustTunnelCloudflaredRoutesResultDataSourceModel] `tfsdk:"result"`
 }

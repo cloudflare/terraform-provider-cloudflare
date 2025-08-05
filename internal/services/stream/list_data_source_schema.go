@@ -36,7 +36,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"search": schema.StringAttribute{
-				Description: "Searches over the `name` key in the `meta` field. This field can be set with or after the upload request.",
+				Description: "Provides a partial word match of the `name` key in the `meta` field. Slow for medium to large video libraries. May be unavailable for very large libraries.",
 				Optional:    true,
 			},
 			"start": schema.StringAttribute{
@@ -45,7 +45,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
-				Description: "Specifies the processing status for all quality levels for a video.\nAvailable values: \"pendingupload\", \"downloading\", \"queued\", \"inprogress\", \"ready\", \"error\".",
+				Description: "Specifies the processing status for all quality levels for a video.\nAvailable values: \"pendingupload\", \"downloading\", \"queued\", \"inprogress\", \"ready\", \"error\", \"live-inprogress\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -55,11 +55,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"inprogress",
 						"ready",
 						"error",
+						"live-inprogress",
 					),
 				},
 			},
 			"type": schema.StringAttribute{
 				Description: "Specifies whether the video is `vod` or `live`.",
+				Optional:    true,
+			},
+			"video_name": schema.StringAttribute{
+				Description: "Provides a fast, exact string match on the `name` key in the `meta` field.",
 				Optional:    true,
 			},
 			"asc": schema.BoolAttribute{
@@ -197,7 +202,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"state": schema.StringAttribute{
-									Description: "Specifies the processing status for all quality levels for a video.\nAvailable values: \"pendingupload\", \"downloading\", \"queued\", \"inprogress\", \"ready\", \"error\".",
+									Description: "Specifies the processing status for all quality levels for a video.\nAvailable values: \"pendingupload\", \"downloading\", \"queued\", \"inprogress\", \"ready\", \"error\", \"live-inprogress\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -207,6 +212,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											"inprogress",
 											"ready",
 											"error",
+											"live-inprogress",
 										),
 									},
 								},

@@ -40,7 +40,7 @@ data "cloudflare_dns_record" "example_dns_record" {
 - `id` (String) Identifier.
 - `meta` (String) Extra Cloudflare-specific information about the record.
 - `modified_on` (String) When the record was last modified.
-- `name` (String) DNS record name (or @ for the zone apex) in Punycode.
+- `name` (String) Complete DNS record name, including the zone name, in Punycode.
 - `priority` (Number) Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.
 - `proxiable` (Boolean) Whether the record can be proxied by Cloudflare or not.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.

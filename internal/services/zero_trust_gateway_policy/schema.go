@@ -35,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"action": schema.StringAttribute{
-				Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\", \"redirect\".",
+				Description: "The action to perform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\", \"redirect\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -85,44 +85,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				ElementType: types.StringType,
-			},
-			"schedule": schema.SingleNestedAttribute{
-				Description: "The schedule for activating DNS policies. This does not apply to HTTP or network policies.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"fri": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Fridays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Fridays.",
-						Optional:    true,
-					},
-					"mon": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Mondays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Mondays.",
-						Optional:    true,
-					},
-					"sat": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Saturdays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Saturdays.",
-						Optional:    true,
-					},
-					"sun": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Sundays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Sundays.",
-						Optional:    true,
-					},
-					"thu": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Thursdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Thursdays.",
-						Optional:    true,
-					},
-					"time_zone": schema.StringAttribute{
-						Description: "The time zone the rule will be evaluated against. If a [valid time zone city name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) is provided, Gateway will always use the current time at that time zone. If this parameter is omitted, then Gateway will use the time zone inferred from the user's source IP to evaluate the rule. If Gateway cannot determine the time zone from the IP, we will fall back to the time zone of the user's connected data center.",
-						Optional:    true,
-					},
-					"tue": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Tuesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Tuesdays.",
-						Optional:    true,
-					},
-					"wed": schema.StringAttribute{
-						Description: "The time intervals when the rule will be active on Wednesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Wednesdays.",
-						Optional:    true,
-					},
-				},
 			},
 			"device_posture": schema.StringAttribute{
 				Description: "The wirefilter expression used for device posture check matching.",
@@ -181,10 +143,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"add_headers": schema.MapAttribute{
 						Description: "Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).",
 						Optional:    true,
-						ElementType: types.StringType,
+						ElementType: types.ListType{
+							ElemType: types.StringType,
+						},
 					},
 					"allow_child_bypass": schema.BoolAttribute{
 						Description: "Set by parent MSP accounts to enable their children to bypass this rule.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"audit_ssh": schema.SingleNestedAttribute{
@@ -199,9 +164,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"biso_admin_controls": schema.SingleNestedAttribute{
 						Description: "Configure how browser isolation behaves.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"copy": schema.StringAttribute{
 								Description: "Configure whether copy is enabled or not. When set with \"remote_only\", copying isolated content from the remote browser to the user's local clipboard is disabled. When absent, copy is enabled. Only applies when `version == \"v2\"`.\nAvailable values: \"enabled\", \"disabled\", \"remote_only\".",
@@ -314,10 +277,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"block_page_enabled": schema.BoolAttribute{
 						Description: "Enable the custom block page.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"block_reason": schema.StringAttribute{
 						Description: "The text describing why this block occurred, displayed on the custom block page (if enabled).",
+						Computed:    true,
 						Optional:    true,
 					},
 					"bypass_parent_rule": schema.BoolAttribute{
@@ -410,18 +375,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"ignore_cname_category_matches": schema.BoolAttribute{
 						Description: "Set to true, to ignore the category matches at CNAME domains in a response. If unchecked, the categories in this rule will be checked against all the CNAME domain categories in a response.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"insecure_disable_dnssec_validation": schema.BoolAttribute{
 						Description: "INSECURE - disable DNSSEC validation (for Allow actions).",
+						Computed:    true,
 						Optional:    true,
 					},
 					"ip_categories": schema.BoolAttribute{
 						Description: "Set to true to enable IPs in DNS resolver category blocks. By default categories only block based on domain names.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"ip_indicator_feeds": schema.BoolAttribute{
 						Description: "Set to true to include IPs in DNS resolver indicator feed blocks. By default indicator feeds only block based on domain names.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"l4override": schema.SingleNestedAttribute{
@@ -462,11 +431,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"override_host": schema.StringAttribute{
 						Description: "Override matching DNS queries with a hostname.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"override_ips": schema.ListAttribute{
 						Description: "Override matching DNS queries with an IP or set of IPs.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"payload_log": schema.SingleNestedAttribute{
@@ -546,6 +518,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"resolve_dns_through_cloudflare": schema.BoolAttribute{
 						Description: "Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_internally' is set. Only valid when a rule's action is set to 'resolve'.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"untrusted_cert": schema.SingleNestedAttribute{
@@ -567,6 +540,46 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"schedule": schema.SingleNestedAttribute{
+				Description: "The schedule for activating DNS policies. This does not apply to HTTP or network policies.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyScheduleModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"fri": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Fridays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Fridays.",
+						Optional:    true,
+					},
+					"mon": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Mondays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Mondays.",
+						Optional:    true,
+					},
+					"sat": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Saturdays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Saturdays.",
+						Optional:    true,
+					},
+					"sun": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Sundays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Sundays.",
+						Optional:    true,
+					},
+					"thu": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Thursdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Thursdays.",
+						Optional:    true,
+					},
+					"time_zone": schema.StringAttribute{
+						Description: "The time zone the rule will be evaluated against. If a [valid time zone city name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) is provided, Gateway will always use the current time at that time zone. If this parameter is omitted, then Gateway will use the time zone inferred from the user's source IP to evaluate the rule. If Gateway cannot determine the time zone from the IP, we will fall back to the time zone of the user's connected data center.",
+						Optional:    true,
+					},
+					"tue": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Tuesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Tuesdays.",
+						Optional:    true,
+					},
+					"wed": schema.StringAttribute{
+						Description: "The time intervals when the rule will be active on Wednesdays, in increasing order from 00:00-24:00. If this parameter is omitted, the rule will be deactivated on Wednesdays.",
+						Optional:    true,
+					},
+				},
+			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
@@ -575,6 +588,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Date of deletion, if any.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"not_sharable": schema.BoolAttribute{
+				Description: "The rule cannot be shared via the Orgs API",
+				Computed:    true,
+			},
+			"read_only": schema.BoolAttribute{
+				Description: "The rule was shared via the Orgs API and cannot be edited by the current account",
+				Computed:    true,
+			},
+			"source_account": schema.StringAttribute{
+				Description: "account tag of account that created the rule",
+				Computed:    true,
 			},
 			"updated_at": schema.StringAttribute{
 				Computed:   true,

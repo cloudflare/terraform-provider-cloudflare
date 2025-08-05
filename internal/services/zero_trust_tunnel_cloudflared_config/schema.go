@@ -221,7 +221,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Optional: true,
+								Computed: true,
 							},
 						},
 					},

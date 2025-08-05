@@ -49,6 +49,7 @@ Optional:
 Available values: "asc", "desc".
 - `order` (String) The field to sort by.
 Available values: "pattern", "created_at".
+- `pattern` (String)
 - `pattern_type` (String) Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
 - `search` (String) Allows searching in multiple properties of a record simultaneously.
 This parameter is intended for human users, not automation. Its exact

@@ -5,8 +5,8 @@ package zero_trust_tunnel_cloudflared_route
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -77,7 +77,7 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.
 }
 
 type ZeroTrustTunnelCloudflaredRouteFindOneByDataSourceModel struct {
-	Comment          types.String    `tfsdk:"comment" query:"comment,optional"`
+	Comment          types.String    `tfsdk:"comment" query:"comment,computed_optional"`
 	ExistedAt        types.String    `tfsdk:"existed_at" query:"existed_at,optional"`
 	IsDeleted        types.Bool      `tfsdk:"is_deleted" query:"is_deleted,optional"`
 	NetworkSubset    types.String    `tfsdk:"network_subset" query:"network_subset,optional"`

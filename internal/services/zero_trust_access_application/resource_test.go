@@ -100,6 +100,7 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
 					resource.TestCheckResourceAttr(name, "saas_app.%", "0"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+					resource.TestCheckResourceAttr(name, "service_auth_401_redirect", "false"),
 				),
 			},
 			{
@@ -1556,6 +1557,25 @@ func TestAccCloudflareAccessApplicationWithInvalidSaas(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplication_WarpInvalid(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accoundID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCloudflareAccessApplicationWarpInvalid(rnd, accoundID),
+				ExpectError: regexp.MustCompile(`"allow_authenticate_via_warp" can only be set if "type" is one of:\s"self_hosted", "ssh", "vnc", "rdp", "saas", "dash_sso"`),
+			},
+		},
+	})
+}
+
 func testAccessApplicationWithZoneID(resourceID, zone, zoneID string) string {
 	return acctest.LoadTestCase("accessapplicationwithzoneid.tf", resourceID, zone, zoneID)
 }
@@ -1634,4 +1654,8 @@ func testAccCloudflareAccessApplicationConfigWithReusablePoliciesInvalidPreceden
 
 func testAccessApplicationWithInvalidSaas(resourceID, accountID string) string {
 	return acctest.LoadTestCase("accessapplicationconfigwithinvalidsaas.tf", resourceID, accountID)
+}
+
+func testAccCloudflareAccessApplicationWarpInvalid(rnd, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationconfigwarpinvalid.tf", rnd, accountID)
 }

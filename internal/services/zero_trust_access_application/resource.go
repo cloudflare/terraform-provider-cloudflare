@@ -5,9 +5,9 @@ package zero_trust_access_application
 import (
 	"context"
 	"fmt"
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -63,7 +63,11 @@ func (r *ZeroTrustAccessApplicationResource) Create(ctx context.Context, req res
 		return
 	}
 
-	resp.Diagnostics.Append(loadConfigSensitiveValuesForWriting(ctx, data, &req.Config)...)
+	res := new(http.Response)
+	env := ZeroTrustAccessApplicationResultEnvelope{*data}
+	params := zero_trust.AccessApplicationNewParams{}
+
+	resp.Diagnostics.Append(normalizeWriteZeroTrustApplicationAPIData(ctx, data, &req.Config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -73,10 +77,6 @@ func (r *ZeroTrustAccessApplicationResource) Create(ctx context.Context, req res
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
-
-	res := new(http.Response)
-	env := ZeroTrustAccessApplicationResultEnvelope{*data}
-	params := zero_trust.AccessApplicationNewParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
@@ -123,7 +123,11 @@ func (r *ZeroTrustAccessApplicationResource) Update(ctx context.Context, req res
 		return
 	}
 
-	resp.Diagnostics.Append(loadConfigSensitiveValuesForWriting(ctx, data, &req.Config)...)
+	res := new(http.Response)
+	env := ZeroTrustAccessApplicationResultEnvelope{*data}
+	params := zero_trust.AccessApplicationUpdateParams{}
+
+	resp.Diagnostics.Append(normalizeWriteZeroTrustApplicationAPIData(ctx, data, &req.Config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -133,9 +137,6 @@ func (r *ZeroTrustAccessApplicationResource) Update(ctx context.Context, req res
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
-	res := new(http.Response)
-	env := ZeroTrustAccessApplicationResultEnvelope{*data}
-	params := zero_trust.AccessApplicationUpdateParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())

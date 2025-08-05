@@ -8,8 +8,8 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
@@ -131,6 +131,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_operation_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_schemas"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
@@ -220,9 +221,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_hold"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_lockdown"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_setting"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -565,7 +566,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		bot_management.NewResource,
 		observatory_scheduled_test.NewResource,
 		hostname_tls_setting.NewResource,
-		snippets.NewResource,
+		snippet.NewResource,
+		snippets.NewResource, // deprecated.
 		snippet_rules.NewResource,
 		calls_sfu_app.NewResource,
 		calls_turn_app.NewResource,
@@ -708,6 +710,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		queue.NewQueueDataSource,
 		queue.NewQueuesDataSource,
 		queue_consumer.NewQueueConsumerDataSource,
+		queue_consumer.NewQueueConsumersDataSource,
 		api_shield.NewAPIShieldDataSource,
 		api_shield_discovery_operation.NewAPIShieldDiscoveryOperationsDataSource,
 		api_shield_operation.NewAPIShieldOperationDataSource,
@@ -873,8 +876,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		observatory_scheduled_test.NewObservatoryScheduledTestDataSource,
 		dcv_delegation.NewDCVDelegationDataSource,
 		hostname_tls_setting.NewHostnameTLSSettingDataSource,
-		snippets.NewSnippetsDataSource,
-		snippets.NewSnippetsListDataSource,
+		snippet.NewSnippetDataSource,
+		snippet.NewSnippetsDataSource,
 		snippet_rules.NewSnippetRulesListDataSource,
 		calls_sfu_app.NewCallsSFUAppDataSource,
 		calls_sfu_app.NewCallsSFUAppsDataSource,

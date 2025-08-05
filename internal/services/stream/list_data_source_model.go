@@ -5,8 +5,8 @@ package stream
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/stream"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -26,6 +26,7 @@ type StreamsDataSourceModel struct {
 	Start         timetypes.RFC3339                                          `tfsdk:"start" query:"start,optional" format:"date-time"`
 	Status        types.String                                               `tfsdk:"status" query:"status,optional"`
 	Type          types.String                                               `tfsdk:"type" query:"type,optional"`
+	VideoName     types.String                                               `tfsdk:"video_name" query:"video_name,optional"`
 	Asc           types.Bool                                                 `tfsdk:"asc" query:"asc,computed_optional"`
 	IncludeCounts types.Bool                                                 `tfsdk:"include_counts" query:"include_counts,computed_optional"`
 	MaxItems      types.Int64                                                `tfsdk:"max_items"`
@@ -65,6 +66,9 @@ func (m *StreamsDataSourceModel) toListParams(_ context.Context) (params stream.
 	}
 	if !m.Type.IsNull() {
 		params.Type = cloudflare.F(m.Type.ValueString())
+	}
+	if !m.VideoName.IsNull() {
+		params.VideoName = cloudflare.F(m.VideoName.ValueString())
 	}
 
 	return

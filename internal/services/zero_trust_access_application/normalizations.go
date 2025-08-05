@@ -125,6 +125,7 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 	// `tags` might not be in the configuration, so we need to normalize it here to avoid a diff
 	normalizeEmptyAndNullList(&data.Tags, stateData.Tags)
 
+	normalizeFalseAndNullBool(&data.ServiceAuth401Redirect, stateData.ServiceAuth401Redirect)
 	normalizeFalseAndNullBool(&data.EnableBindingCookie, stateData.EnableBindingCookie)
 	normalizeFalseAndNullBool(&data.OptionsPreflightBypass, stateData.OptionsPreflightBypass)
 	normalizeFalseAndNullBool(&data.AutoRedirectToIdentity, stateData.AutoRedirectToIdentity)
@@ -157,6 +158,9 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 
 	if data.Policies != nil && stateData.Policies != nil {
 		for i := range *data.Policies {
+			if len(*stateData.Policies) <= i {
+				break
+			}
 			normalizeZeroTrustApplicationPolicyAPIData(ctx, &(*data.Policies)[i], &(*stateData.Policies)[i])
 		}
 	}
@@ -172,9 +176,8 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 	return diags
 }
 
-// Some fields are write-only sensitive and should not be stored in the state.
-// Usually these secrets are injected in the config from a secret store.
-func loadConfigSensitiveValuesForWriting(ctx context.Context, data *ZeroTrustAccessApplicationModel, cfg *tfsdk.Config) diag.Diagnostics {
+// Normalizes the API request before sending it to the API
+func normalizeWriteZeroTrustApplicationAPIData(ctx context.Context, data *ZeroTrustAccessApplicationModel, cfg *tfsdk.Config) diag.Diagnostics {
 	var (
 		diags   = make(diag.Diagnostics, 0)
 		cfgData *ZeroTrustAccessApplicationModel
@@ -182,11 +185,19 @@ func loadConfigSensitiveValuesForWriting(ctx context.Context, data *ZeroTrustAcc
 	diags.Append(cfg.Get(ctx, &cfgData)...)
 
 	if data.SCIMConfig != nil && cfgData.SCIMConfig != nil {
+		// load config sensitive write values directly from the config.
 		if data.SCIMConfig.Authentication != nil && cfgData.SCIMConfig.Authentication != nil {
 			data.SCIMConfig.Authentication.Password = cfgData.SCIMConfig.Authentication.Password
 			data.SCIMConfig.Authentication.Token = cfgData.SCIMConfig.Authentication.Token
 			data.SCIMConfig.Authentication.ClientSecret = cfgData.SCIMConfig.Authentication.ClientSecret
 		}
 	}
+
+	// If the API receives a null 'policies' array, it wont update the policies on the application, for historical reasons.
+	// To avoid a diff, we need to ensure that the array is not nil
+	if data.Policies == nil {
+		data.Policies = &[]ZeroTrustAccessApplicationPoliciesModel{}
+	}
+
 	return diags
 }
