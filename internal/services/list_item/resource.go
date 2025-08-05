@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v5/option"
 	"github.com/cloudflare/cloudflare-go/v5/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -23,6 +24,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ListItemResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ListItemResource)(nil)
+var _ resource.ResourceWithImportState = (*ListItemResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ListItemResource{}
@@ -261,6 +263,55 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ListItemResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ListItemModel = new(ListItemModel)
+
+	path_account_id := ""
+	path_list_id := ""
+	path_item_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<list_id>/<item_id>",
+		&path_account_id,
+		&path_list_id,
+		&path_item_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.ListID = types.StringValue(path_list_id)
+	data.ID = types.StringValue(path_item_id)
+
+	res := new(http.Response)
+	env := ListItemResultEnvelope{*data}
+	_, err := r.client.Rules.Lists.Items.Get(
+		ctx,
+		path_list_id,
+		path_item_id,
+		rules.ListItemGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
