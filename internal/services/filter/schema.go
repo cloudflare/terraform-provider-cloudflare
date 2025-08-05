@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -27,22 +28,49 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"expression": schema.StringAttribute{
-				Description:   "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			"body": schema.ListNestedAttribute{
+				Required: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "The unique identifier of the filter.",
+							Computed:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "An informative summary of the filter.",
+							Optional:    true,
+						},
+						"expression": schema.StringAttribute{
+							Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
+							Optional:    true,
+						},
+						"paused": schema.BoolAttribute{
+							Description: "When true, indicates that the filter is currently paused.",
+							Optional:    true,
+						},
+						"ref": schema.StringAttribute{
+							Description: "A short reference tag. Allows you to select related filters.",
+							Optional:    true,
+						},
+					},
+				},
+				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the filter.",
-				Computed:    true,
+				Optional:    true,
+			},
+			"expression": schema.StringAttribute{
+				Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
+				Optional:    true,
 			},
 			"paused": schema.BoolAttribute{
 				Description: "When true, indicates that the filter is currently paused.",
-				Computed:    true,
+				Optional:    true,
 			},
 			"ref": schema.StringAttribute{
 				Description: "A short reference tag. Allows you to select related filters.",
-				Computed:    true,
+				Optional:    true,
 			},
 		},
 	}
