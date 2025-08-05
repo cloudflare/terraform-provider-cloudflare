@@ -85,6 +85,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		option.WithRequestBody("application/json", wrappedBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -115,6 +116,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		},
 		option.WithResponseBodyInto(&findItemRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
@@ -135,6 +137,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		},
 		option.WithResponseBodyInto(&listItemRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
@@ -188,6 +191,7 @@ func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateReques
 		option.WithRequestBody("application/json", wrappedBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -218,6 +222,7 @@ func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateReques
 		},
 		option.WithResponseBodyInto(&findItemRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
@@ -238,6 +243,7 @@ func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateReques
 		},
 		option.WithResponseBodyInto(&listItemRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
@@ -272,6 +278,7 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 		rules.ListItemGetParams{AccountID: cloudflare.F(data.AccountID.ValueString())},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if res != nil && res.StatusCode == 404 {
 		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
@@ -317,6 +324,7 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 		option.WithRequestBody("application/json", deleteBody),
+		option.WithRequestTimeout(time.Second*3),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
