@@ -10,8 +10,8 @@ import (
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
