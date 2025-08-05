@@ -1,4 +1,4 @@
-package snippets_test
+package snippet_test
 
 import (
 	"errors"
