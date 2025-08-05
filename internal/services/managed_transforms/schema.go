@@ -28,7 +28,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
-			"managed_request_headers": schema.ListNestedAttribute{
+			"managed_request_headers": schema.SetNestedAttribute{
 				Description: "The list of Managed Request Transforms.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -54,7 +54,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"managed_response_headers": schema.ListNestedAttribute{
+			"managed_response_headers": schema.SetNestedAttribute{
 				Description: "The list of Managed Response Transforms.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
