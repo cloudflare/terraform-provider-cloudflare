@@ -37,4 +37,12 @@ func (m *ListItemsDataSourceModel) toListParams(_ context.Context) (params rules
 }
 
 type ListItemsResultDataSourceModel struct {
+	ID         types.String                                              `tfsdk:"id" path:"item_id,computed"`
+	ASN        types.Int64                                               `tfsdk:"asn" json:"asn,computed"`
+	Comment    types.String                                              `tfsdk:"comment" json:"comment,computed"`
+	CreatedOn  types.String                                              `tfsdk:"created_on" json:"created_on,computed"`
+	IP         types.String                                              `tfsdk:"ip" json:"ip,computed"`
+	ModifiedOn types.String                                              `tfsdk:"modified_on" json:"modified_on,computed"`
+	Hostname   customfield.NestedObject[ListItemHostnameDataSourceModel] `tfsdk:"hostname" json:"hostname,computed"`
+	Redirect   customfield.NestedObject[ListItemRedirectDataSourceModel] `tfsdk:"redirect" json:"redirect,computed"`
 }
