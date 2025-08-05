@@ -94,6 +94,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.Dynamic{
 							customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
 						},
+						CustomType:    customfield.NormalizedDynamicType{},
+						PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()},
 					},
 					"tag": schema.StringAttribute{
 						Description: "Name of the property controlled by this record (e.g.: issue, issuewild, iodef).",
