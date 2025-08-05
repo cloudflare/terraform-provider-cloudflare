@@ -18,11 +18,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "The unique ID of the list.",
-				Computed:    true,
-			},
-			"list_id": schema.StringAttribute{
-				Description: "The unique ID of the list.",
-				Optional:    true,
+				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID for this resource.",
