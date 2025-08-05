@@ -133,6 +133,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet_rules"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_audio_track"
@@ -566,6 +567,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		observatory_scheduled_test.NewResource,
 		hostname_tls_setting.NewResource,
 		snippet.NewResource,
+		snippets.NewResource, // deprecated.
 		snippet_rules.NewResource,
 		calls_sfu_app.NewResource,
 		calls_turn_app.NewResource,
