@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -16,6 +17,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/hashicorp/terraform-plugin-testing/config"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
@@ -316,4 +319,84 @@ var LogResourceDrift = []plancheck.PlanCheck{pc}
 // / PtrTo is a small helper to get a pointer to a particular value
 func PtrTo[T any](v T) *T {
 	return &v
+}
+
+// RunMigrationCommand runs the migration script to transform config and state
+func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
+	t.Helper()
+
+	// Get the current working directory to find the migration binary
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get current working directory: %v", err)
+	}
+
+	// Build the path to the migration binary
+	// The test runs from internal/services/zone, so we need to go up to the root
+	projectRoot := filepath.Join(cwd, "..", "..", "..")
+	migratePath := filepath.Join(projectRoot, "cmd", "migrate")
+	t.Logf("Migrate path: %s", migratePath)
+
+	// Write the v4 config to tmpDir/test_migration.tf
+	testConfigPath := filepath.Join(tmpDir, "test_migration.tf")
+	t.Logf("Writing v4 config to: %s", testConfigPath)
+
+	err = os.WriteFile(testConfigPath, []byte(v4Config), 0644)
+	if err != nil {
+		t.Fatalf("Failed to write test config file: %v", err)
+	}
+	t.Logf("Successfully wrote v4 config (%d bytes)", len(v4Config))
+
+	// Find state file in tmpDir
+	entries, err := os.ReadDir(tmpDir)
+	var stateDir string
+	if err != nil {
+		t.Logf("Failed to read test directory: %v", err)
+	} else {
+		for _, entry := range entries {
+			if entry.IsDir() {
+				inner_entries, _ := os.ReadDir(filepath.Join(tmpDir, entry.Name()))
+				for _, inner_entry := range inner_entries {
+					if inner_entry.Name() == "terraform.tfstate" {
+						stateDir = filepath.Join(tmpDir, entry.Name())
+					}
+				}
+			}
+
+		}
+	}
+
+	// Run the migration command on tmpDir (for config) and terraform.tfstate (for state)
+	t.Logf("StateDir: %s", stateDir)
+	state, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
+	if err != nil {
+		t.Fatalf("Failed to read state file: %v", err)
+	}
+	t.Logf("State is: %s", string(state))
+	cmd := exec.Command("go", "run", "-C", migratePath, ".", "-config", tmpDir, "-state", filepath.Join(stateDir, "terraform.tfstate"))
+	cmd.Dir = tmpDir
+	// Set environment variable so the migrate command can find local grit patterns
+	patternsDir := filepath.Join(migratePath, "patterns")
+	cmd.Env = append(os.Environ(), fmt.Sprintf("TF_MIGRATE_PATTERNS_DIR=%s", patternsDir))
+
+	// Capture output for debugging
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Logf("Migration command failed: %v", err)
+	}
+
+	t.Logf("Migration output:\n%s", string(output))
+}
+
+// MigrationTestStep creates a test step that runs the migration command and validates with v5 provider
+func MigrationTestStep(t *testing.T, v4Config string, tmpDir string) resource.TestStep {
+	return resource.TestStep{
+		PreConfig: func() {
+			// Run the migration command to transform config and state
+			RunMigrationCommand(t, v4Config, tmpDir)
+		},
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		PlanOnly:                 true, // Verify no changes needed after migration
+	}
 }
