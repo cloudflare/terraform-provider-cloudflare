@@ -1,11 +1,16 @@
 package url_normalization_settings_test
 
 import (
+	"context"
 	"fmt"
+	"github.com/cloudflare/cloudflare-go/v5/url_normalization"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"log"
 	"os"
 	"regexp"
 	"testing"
 
+	cloudflare "github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -13,7 +18,48 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+	"github.com/pkg/errors"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_url_normalization_settings", &resource.Sweeper{
+		Name: "cloudflare_url_normalization_settings",
+		F:    testSweepCloudflareURLNormalizationSettings,
+	})
+}
+
+func testSweepCloudflareURLNormalizationSettings(r string) error {
+	ctx := context.Background()
+	client := acctest.SharedClient()
+
+	// Clean up the account level rulesets
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		return errors.New("CLOUDFLARE_ZONE_ID must be set")
+	}
+
+	settings, err := client.URLNormalization.Get(context.Background(), url_normalization.URLNormalizationGetParams{
+		ZoneID: cloudflare.F(zoneID),
+	})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare url normalization settings: %s", err))
+	}
+
+	if settings == nil {
+		log.Print("[DEBUG] No Cloudflare url normalization settings to sweep")
+		return nil
+	}
+
+	err = client.URLNormalization.Delete(context.Background(), url_normalization.URLNormalizationDeleteParams{
+		ZoneID: cloudflare.F(zoneID),
+	})
+
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare url normalization settings: %s", err))
+	}
+
+	return nil
+}
 
 func TestAccCloudflareURLNormalizationSettings_CreateThenUpdate(t *testing.T) {
 
