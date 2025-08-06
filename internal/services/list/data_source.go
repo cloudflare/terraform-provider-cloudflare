@@ -67,7 +67,7 @@ func (d *ListDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	env := ListResultDataSourceEnvelope{*data}
 	_, err := d.client.Rules.Lists.Get(
 		ctx,
-		data.ID.ValueString(),
+		data.ListID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
