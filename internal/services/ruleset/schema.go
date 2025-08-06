@@ -52,10 +52,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"zone",
 					),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "The human-readable name of the ruleset.",
-				Required:    true,
+				Description:   "The human-readable name of the ruleset.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"phase": schema.StringAttribute{
 				Description: "The phase of the ruleset.\nAvailable values: \"ddos_l4\", \"ddos_l7\", \"http_config_settings\", \"http_custom_errors\", \"http_log_custom_fields\", \"http_ratelimit\", \"http_request_cache_settings\", \"http_request_dynamic_redirect\", \"http_request_firewall_custom\", \"http_request_firewall_managed\", \"http_request_late_transform\", \"http_request_origin\", \"http_request_redirect\", \"http_request_sanitize\", \"http_request_sbfm\", \"http_request_transform\", \"http_response_compression\", \"http_response_firewall_managed\", \"http_response_headers_transform\", \"magic_transit\", \"magic_transit_ids_managed\", \"magic_transit_managed\", \"magic_transit_ratelimit\".",
@@ -87,6 +89,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"magic_transit_ratelimit",
 					),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative description of the ruleset.",
@@ -1015,12 +1018,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"categories": schema.ListAttribute{
-							Description: "The categories of the rule.",
-							Optional:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
-							ElementType: types.StringType,
-						},
 						"description": schema.StringAttribute{
 							Description: "An informative description of the rule.",
 							Optional:    true,
@@ -1052,12 +1049,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"logging": schema.SingleNestedAttribute{
 							Description: "An object configuring the rule's logging behavior.",
+							Computed:    true,
 							Optional:    true,
 							CustomType:  customfield.NewNestedObjectType[RulesetRulesLoggingModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"enabled": schema.BoolAttribute{
 									Description: "Whether to generate a log when the rule matches.",
-									Required:    true,
+									Computed:    true,
+									Optional:    true,
 								},
 							},
 						},
@@ -1107,8 +1106,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"ref": schema.StringAttribute{
 							Description: "The reference of the rule (the rule ID by default).",
-							Optional:    true,
 							Computed:    true,
+							Optional:    true,
 						},
 					},
 				},
