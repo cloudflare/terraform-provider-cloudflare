@@ -304,6 +304,11 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 		return
 	}
 
+	// Do nothing if there is no rules attribute in the state or the plan.
+	if state.Rules.IsNullOrUnknown() || plan.Rules.IsNullOrUnknown() {
+		return
+	}
+
 	rulesByRef := make(map[string]*RulesetRulesModel)
 
 	stateRules, diags := state.Rules.AsStructSliceT(ctx)

@@ -34,13 +34,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-				Optional:      true,
+				Description: "The unique ID of the account.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.ConflictsWith(path.MatchRoot("zone_id")),
+				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description:   "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-				Optional:      true,
+				Description: "The unique ID of the zone.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.ConflictsWith(path.MatchRoot("account_id")),
+				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"kind": schema.StringAttribute{
