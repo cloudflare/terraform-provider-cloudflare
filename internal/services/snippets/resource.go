@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package snippet
+package snippets
 
 import (
 	"context"
@@ -17,23 +17,23 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*SnippetResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*SnippetResource)(nil)
+var _ resource.ResourceWithConfigure = (*SnippetsResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*SnippetsResource)(nil)
 
 func NewResource() resource.Resource {
-	return &SnippetResource{}
+	return &SnippetsResource{}
 }
 
-// SnippetResource defines the resource implementation.
-type SnippetResource struct {
+// SnippetsResource defines the resource implementation.
+type SnippetsResource struct {
 	client *cloudflare.Client
 }
 
-func (r *SnippetResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_snippet"
+func (r *SnippetsResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_snippets"
 }
 
-func (r *SnippetResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *SnippetsResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -52,8 +52,8 @@ func (r *SnippetResource) Configure(ctx context.Context, req resource.ConfigureR
 	r.client = client
 }
 
-func (r *SnippetResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *SnippetModel
+func (r *SnippetsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *SnippetsModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -67,7 +67,7 @@ func (r *SnippetResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 	res := new(http.Response)
-	env := SnippetResultEnvelope{*data}
+	env := SnippetsResultEnvelope{*data}
 	_, err = r.client.Snippets.Update(
 		ctx,
 		data.SnippetName.ValueString(),
@@ -93,8 +93,8 @@ func (r *SnippetResource) Create(ctx context.Context, req resource.CreateRequest
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *SnippetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *SnippetModel
+func (r *SnippetsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *SnippetsModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -102,7 +102,7 @@ func (r *SnippetResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	var state *SnippetModel
+	var state *SnippetsModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -116,7 +116,7 @@ func (r *SnippetResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	res := new(http.Response)
-	env := SnippetResultEnvelope{*data}
+	env := SnippetsResultEnvelope{*data}
 	_, err = r.client.Snippets.Update(
 		ctx,
 		data.SnippetName.ValueString(),
@@ -142,8 +142,8 @@ func (r *SnippetResource) Update(ctx context.Context, req resource.UpdateRequest
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *SnippetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *SnippetModel
+func (r *SnippetsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *SnippetsModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -152,7 +152,7 @@ func (r *SnippetResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 
 	res := new(http.Response)
-	env := SnippetResultEnvelope{*data}
+	env := SnippetsResultEnvelope{*data}
 	_, err := r.client.Snippets.Get(
 		ctx,
 		data.SnippetName.ValueString(),
@@ -182,8 +182,8 @@ func (r *SnippetResource) Read(ctx context.Context, req resource.ReadRequest, re
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *SnippetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *SnippetModel
+func (r *SnippetsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *SnippetsModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -207,6 +207,6 @@ func (r *SnippetResource) Delete(ctx context.Context, req resource.DeleteRequest
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *SnippetResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *SnippetsResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }
