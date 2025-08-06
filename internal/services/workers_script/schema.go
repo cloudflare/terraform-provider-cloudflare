@@ -40,7 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"metadata": schema.SingleNestedAttribute{
-				Description: "JSON encoded metadata about the uploaded parts and Worker configuration.",
+				Description: "JSON-encoded metadata about the uploaded parts and Worker configuration.",
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"assets": schema.SingleNestedAttribute{
