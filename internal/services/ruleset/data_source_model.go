@@ -5,8 +5,8 @@ package ruleset
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/rulesets"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -88,6 +88,7 @@ type RulesetRulesActionParametersDataSourceModel struct {
 	ServerSideExcludes       types.Bool                                                                                        `tfsdk:"server_side_excludes" json:"server_side_excludes,computed"`
 	SSL                      types.String                                                                                      `tfsdk:"ssl" json:"ssl,computed"`
 	SXG                      types.Bool                                                                                        `tfsdk:"sxg" json:"sxg,computed"`
+	Phase                    types.String                                                                                      `tfsdk:"phase" json:"phase,computed"`
 	Phases                   customfield.List[types.String]                                                                    `tfsdk:"phases" json:"phases,computed"`
 	Products                 customfield.List[types.String]                                                                    `tfsdk:"products" json:"products,computed"`
 	Rules                    customfield.Map[customfield.List[types.String]]                                                   `tfsdk:"rules" json:"rules,computed"`

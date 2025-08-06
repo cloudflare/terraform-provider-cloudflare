@@ -49,7 +49,7 @@ Read-Only:
 Available values: "smart".
 - `placement_status` (String, Deprecated) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
-- `tail_consumers` (Attributes List) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--result--tail_consumers))
+- `tail_consumers` (Attributes Set) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--result--tail_consumers))
 - `usage_model` (String) Usage model for the Worker invocations.
 Available values: "standard".
 

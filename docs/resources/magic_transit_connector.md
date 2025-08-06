@@ -45,9 +45,6 @@ resource "cloudflare_magic_transit_connector" "example_magic_transit_connector" 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `last_heartbeat` (String)
-- `last_seen_version` (String)
-- `last_updated` (String)
 
 <a id="nestedatt--device"></a>
 ### Nested Schema for `device`

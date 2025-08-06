@@ -5,8 +5,8 @@ package account_member
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/accounts"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -54,7 +54,7 @@ func (m *AccountMemberDataSourceModel) toListParams(_ context.Context) (params a
 }
 
 type AccountMemberPoliciesDataSourceModel struct {
-	ID               types.String                                                                       `tfsdk:"id" json:"id,computed"`
+	ID               types.String                                                                       `tfsdk:"id" json:"id,computed,force_encode,encode_state_for_unknown"`
 	Access           types.String                                                                       `tfsdk:"access" json:"access,computed"`
 	PermissionGroups customfield.NestedObjectList[AccountMemberPoliciesPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
 	ResourceGroups   customfield.NestedObjectList[AccountMemberPoliciesResourceGroupsDataSourceModel]   `tfsdk:"resource_groups" json:"resource_groups,computed"`

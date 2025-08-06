@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -18,7 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "The unique ID of the zone.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -34,17 +35,29 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[SnippetRulesListResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"description": schema.StringAttribute{
-							Computed: true,
-						},
-						"enabled": schema.BoolAttribute{
-							Computed: true,
+						"id": schema.StringAttribute{
+							Description: "The unique ID of the rule.",
+							Computed:    true,
 						},
 						"expression": schema.StringAttribute{
-							Computed: true,
+							Description: "The expression defining which traffic will match the rule.",
+							Computed:    true,
+						},
+						"last_updated": schema.StringAttribute{
+							Description: "The timestamp of when the rule was last modified.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"snippet_name": schema.StringAttribute{
-							Description: "Snippet identifying name",
+							Description: "The identifying name of the snippet.",
+							Computed:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "An informative description of the rule.",
+							Computed:    true,
+						},
+						"enabled": schema.BoolAttribute{
+							Description: "Whether the rule should be executed.",
 							Computed:    true,
 						},
 					},

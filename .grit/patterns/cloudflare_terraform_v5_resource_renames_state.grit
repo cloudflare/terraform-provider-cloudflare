@@ -40,6 +40,12 @@ pattern cloudflare_terraform_v5_resource_renames_state() {
     `"cloudflare_tunnel_config"` => `"cloudflare_zero_trust_tunnel_cloudflared_config"`,
     `"cloudflare_tunnel_route"` => `"cloudflare_zero_trust_tunnel_cloudflared_route"`,
     `"cloudflare_tunnel_virtual_network"` => `"cloudflare_zero_trust_tunnel_cloudflared_virtual_network"`,
+    `"cloudflare_worker_cron_trigger"` => `"cloudflare_workers_cron_trigger"`,
+    `"cloudflare_worker_domain"` => `"cloudflare_workers_custom_domain"`,
+    `"cloudflare_worker_script"` => `"cloudflare_workers_script"`,
+    `"cloudflare_worker_secret"` => `"cloudflare_workers_secret"`,
+    `"cloudflare_workers_for_platforms_namespace"` => `"cloudflare_workers_for_platforms_dispatch_namespace"`,
+    `"cloudflare_managed_headers"` => `"cloudflare_managed_transforms"`,
 
     // handle dependencies
     `"cloudflare_access_application.$dep"` => `"cloudflare_zero_trust_access_application.$dep"`,

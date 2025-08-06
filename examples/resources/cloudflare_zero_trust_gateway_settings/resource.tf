@@ -52,6 +52,9 @@ resource "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_se
     host_selector = {
       enabled = false
     }
+    inspection = {
+      mode = "static"
+    }
     protocol_detection = {
       enabled = true
     }

@@ -662,6 +662,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeLinkedAppTokenDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
+												Computed:    true,
+											},
+										},
+									},
 								},
 							},
 						},
@@ -932,6 +942,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
+												Computed:    true,
+											},
+										},
+									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeLinkedAppTokenDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
 												Computed:    true,
 											},
 										},
@@ -1226,6 +1246,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
+												Computed:    true,
+											},
+										},
+									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireLinkedAppTokenDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
 												Computed:    true,
 											},
 										},
@@ -1657,10 +1687,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"protocol": schema.StringAttribute{
-							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\".",
+							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\", \"RDP\".",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("SSH"),
+								stringvalidator.OneOfCaseInsensitive("SSH", "RDP"),
 							},
 						},
 						"target_attributes": schema.MapAttribute{

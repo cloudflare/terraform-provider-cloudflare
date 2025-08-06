@@ -19,7 +19,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Defines an identifier.",
+				Description: "The Account ID for this resource.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -41,10 +41,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"created_on": schema.StringAttribute{
 							Description: "The RFC 3339 timestamp of when the list was created.",
-							Computed:    true,
-						},
-						"description": schema.StringAttribute{
-							Description: "An informative summary of the list.",
 							Computed:    true,
 						},
 						"kind": schema.StringAttribute{
@@ -72,7 +68,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"num_referencing_filters": schema.Float64Attribute{
-							Description: "The number of [filters](/operations/filters-list-filters) referencing the list.",
+							Description: "The number of [filters](/api/resources/filters/) referencing the list.",
+							Computed:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "An informative summary of the list.",
 							Computed:    true,
 						},
 					},

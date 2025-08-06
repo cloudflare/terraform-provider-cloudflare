@@ -1,13 +1,5 @@
 resource "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_custom_profile" {
   account_id = "account_id"
-  entries = [{
-    enabled = true
-    name = "name"
-    pattern = {
-      regex = "regex"
-      validation = "luhn"
-    }
-  }]
   name = "name"
   ai_context_enabled = true
   allowed_match_count = 5
