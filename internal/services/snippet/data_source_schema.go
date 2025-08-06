@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package snippets
+package snippet
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*SnippetsDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*SnippetDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -37,10 +37,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *SnippetsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *SnippetDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = DataSourceSchema(ctx)
 }
 
-func (d *SnippetsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *SnippetDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
 }

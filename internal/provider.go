@@ -124,12 +124,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_operation_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_schemas"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet_rules"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_audio_track"
@@ -410,7 +409,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		api_shield_schema.NewResource,
 		managed_transforms.NewResource,
 		page_shield_policy.NewResource,
-		ruleset.NewResource,
 		url_normalization_settings.NewResource,
 		spectrum_application.NewResource,
 		regional_hostname.NewResource,
@@ -505,7 +503,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		bot_management.NewResource,
 		observatory_scheduled_test.NewResource,
 		hostname_tls_setting.NewResource,
-		snippets.NewResource,
+		snippet.NewResource,
 		snippet_rules.NewResource,
 		calls_sfu_app.NewResource,
 		calls_turn_app.NewResource,
@@ -666,8 +664,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		page_shield_scripts.NewPageShieldScriptsListDataSource,
 		page_shield_cookies.NewPageShieldCookiesDataSource,
 		page_shield_cookies.NewPageShieldCookiesListDataSource,
-		ruleset.NewRulesetDataSource,
-		ruleset.NewRulesetsDataSource,
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
 		spectrum_application.NewSpectrumApplicationDataSource,
 		spectrum_application.NewSpectrumApplicationsDataSource,
@@ -814,8 +810,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		observatory_scheduled_test.NewObservatoryScheduledTestDataSource,
 		dcv_delegation.NewDCVDelegationDataSource,
 		hostname_tls_setting.NewHostnameTLSSettingDataSource,
-		snippets.NewSnippetsDataSource,
-		snippets.NewSnippetsListDataSource,
+		snippet.NewSnippetDataSource,
+		snippet.NewSnippetsDataSource,
 		snippet_rules.NewSnippetRulesListDataSource,
 		calls_sfu_app.NewCallsSFUAppDataSource,
 		calls_sfu_app.NewCallsSFUAppsDataSource,
