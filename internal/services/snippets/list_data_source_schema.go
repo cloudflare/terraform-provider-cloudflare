@@ -17,6 +17,7 @@ var _ datasource.DataSourceWithConfigValidators = (*SnippetsListDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		DeprecationMessage: "The `snippets_list` data source has been deprecated. Use `snippet_list` instead.",
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "The unique ID of the zone.",
