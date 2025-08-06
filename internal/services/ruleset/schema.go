@@ -10,7 +10,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -109,7 +111,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"action": schema.StringAttribute{
 							Description: "The action to perform when the rule matches.\nAvailable values: \"block\", \"challenge\", \"compress_response\", \"execute\", \"js_challenge\", \"log\", \"managed_challenge\", \"redirect\", \"rewrite\", \"route\", \"score\", \"serve_error\", \"set_config\", \"skip\", \"set_cache_settings\", \"log_custom_field\", \"ddos_dynamic\", \"force_connection_close\".",
-							Optional:    true,
+							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"block",
@@ -1045,13 +1047,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"expression": schema.StringAttribute{
 							Description: "The expression defining which traffic will match the rule.",
-							Optional:    true,
+							Required:    true,
 						},
 						"logging": schema.SingleNestedAttribute{
 							Description: "An object configuring the rule's logging behavior.",
 							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[RulesetRulesLoggingModel](ctx),
+							Validators: []validator.Object{
+								objectvalidator.AlsoRequires(path.MatchRelative().AtName("enabled")),
+							},
+							CustomType: customfield.NewNestedObjectType[RulesetRulesLoggingModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"enabled": schema.BoolAttribute{
 									Description: "Whether to generate a log when the rule matches.",
