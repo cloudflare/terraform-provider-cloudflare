@@ -304,7 +304,7 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 		return
 	}
 
-	ruleIDsByRef := make(map[string]types.String)
+	rulesByRef := make(map[string]*RulesetRulesModel)
 
 	stateRules, diags := state.Rules.AsStructSliceT(ctx)
 	resp.Diagnostics.Append(diags...)
@@ -312,9 +312,9 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 		return
 	}
 
-	for _, rule := range stateRules {
-		if ref := rule.Ref.ValueString(); ref != "" {
-			ruleIDsByRef[ref] = rule.ID
+	for i := range stateRules {
+		if ref := stateRules[i].Ref.ValueString(); ref != "" {
+			rulesByRef[ref] = &stateRules[i]
 		}
 	}
 
@@ -324,17 +324,21 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 		return
 	}
 
-	for i, rule := range planRules {
-		// Do nothing if the rule's ID is a known planned value.
-		if !rule.ID.IsUnknown() {
-			continue
-		}
+	for i := range planRules {
+		if ref := planRules[i].Ref.ValueString(); ref != "" {
+			if stateRule, ok := rulesByRef[ref]; ok {
+				// If the rule's ref matches a rule from the state, populate its
+				// planned ID using the matching rule.
+				if planRules[i].ID.IsUnknown() {
+					planRules[i].ID = stateRule.ID
+				}
 
-		// If the rule's ref matches a rule in the state, populate the planned
-		// value of its ID with the corresponding ID from the state.
-		if ref := rule.Ref.ValueString(); ref != "" {
-			if id, ok := ruleIDsByRef[ref]; ok {
-				planRules[i].ID = id
+				// If the rule's action is unchanged, populate its planned
+				// logging attribute using the matching rule from the state.
+				if planRules[i].Logging.IsUnknown() &&
+					stateRule.Action.Equal(planRules[i].Action) {
+					planRules[i].Logging = stateRule.Logging
+				}
 			}
 		}
 	}
