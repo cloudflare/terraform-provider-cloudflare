@@ -40,10 +40,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
-			"description": schema.StringAttribute{
-				Description: "An informative description of the ruleset.",
-				Computed:    true,
-			},
 			"kind": schema.StringAttribute{
 				Description: "The kind of the ruleset.\nAvailable values: \"managed\", \"custom\", \"root\", \"zone\".",
 				Computed:    true,
@@ -90,6 +86,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"magic_transit_ratelimit",
 					),
 				},
+			},
+			"description": schema.StringAttribute{
+				Description: "An informative description of the ruleset.",
+				Computed:    true,
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "The list of rules in the ruleset.",
