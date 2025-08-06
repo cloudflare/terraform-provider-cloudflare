@@ -24,7 +24,7 @@ func NewSnippetsDataSource() datasource.DataSource {
 }
 
 func (d *SnippetsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_snippets"
+	resp.TypeName = req.ProviderTypeName + "_snippet_list"
 }
 
 func (d *SnippetsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
