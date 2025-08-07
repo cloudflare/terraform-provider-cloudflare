@@ -22,7 +22,7 @@ pattern cloudflare_terraform_v5_attribute_list_to_block_state() {
               contains `"logging": []` => `"logging": null`,
               contains `"ratelimit": [$r]` => `"ratelimit": $r`,
               contains `"ratelimit": []` => `"ratelimit": null`,
-              contains `"action_parameters": [$ap]` where {
+              contains bubble `"action_parameters": [$ap]` where {
                 $ap <: any {
                   contains `"autominify": [$a]` => `"autominify": $a`,
                   contains `"autominify": []` => `"autominify": null`,
@@ -54,11 +54,11 @@ pattern cloudflare_terraform_v5_attribute_list_to_block_state() {
                   contains `"sni": []` => `"sni": null`,
                   contains `"uri": [$uri]` => `"uri": $uri`,
                   contains `"uri": []` => `"uri": null`,
-                }
+                },
               },
-              contains `"action_parameters": [$ap]` => `"action_parameters": $ap`,
+              contains bubble `"action_parameters": [$ap]` => `"action_parameters": $ap`,
               contains `"action_parameters": []` => `"action_parameters": null`,
-            }
+            },
           }
         }
     },
