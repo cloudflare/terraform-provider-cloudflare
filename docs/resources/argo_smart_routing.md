@@ -25,11 +25,11 @@ resource "cloudflare_argo_smart_routing" "example_argo_smart_routing" {
 
 - `value` (String) Enables Argo Smart Routing.
 Available values: "on", "off".
-- `zone_id` (String) Identifier
+- `zone_id` (String) Specifies the zone associated with the API call.
 
 ### Read-Only
 
-- `id` (String) Identifier
+- `id` (String) Specifies the zone associated with the API call.
 
 ## Import
 

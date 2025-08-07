@@ -14,6 +14,7 @@ resource "cloudflare_magic_wan_gre_tunnel" "example_magic_wan_gre_tunnel" {
     }
     type = "request"
   }
+  interface_address6 = "2606:54c1:7:0:a9fe:12d2:1:200/127"
   mtu = 0
   ttl = 0
 }

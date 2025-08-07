@@ -5,6 +5,7 @@ package zero_trust_dns_location
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -30,24 +31,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the location.",
 				Required:    true,
 			},
-			"dns_destination_ips_id": schema.StringAttribute{
-				Description: "The identifier of the pair of IPv4 addresses assigned to this location. When creating a location, if this field is absent or set with null, the pair of shared IPv4 addresses (0e4a32c6-6fb8-4858-9296-98f51631e8e6) is auto-assigned. When updating a location, if the field is absent or set with null, the pre-assigned pair remains unchanged.",
-				Optional:    true,
-			},
 			"endpoints": schema.SingleNestedAttribute{
 				Description: "The destination endpoints configured for this location. When updating a location, if this field is absent or set with null, the endpoints configuration remains unchanged.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"doh": schema.SingleNestedAttribute{
-						Optional: true,
+						Required: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
 								Description: "A list of allowed source IP network ranges for this endpoint. When empty, all source IPs are allowed. A non-empty list is only effective if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
+								CustomType:  customfield.NewNestedObjectListType[ZeroTrustDNSLocationEndpointsDOHNetworksModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
@@ -59,20 +59,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"require_token": schema.BoolAttribute{
 								Description: "True if the endpoint requires [user identity](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/agentless/dns/dns-over-https/#filter-doh-requests-by-user) authentication.",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
 					},
 					"dot": schema.SingleNestedAttribute{
-						Optional: true,
+						Required: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
 								Description: "A list of allowed source IP network ranges for this endpoint. When empty, all source IPs are allowed. A non-empty list is only effective if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
+								CustomType:  customfield.NewNestedObjectListType[ZeroTrustDNSLocationEndpointsDOTNetworksModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
@@ -85,24 +89,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"ipv4": schema.SingleNestedAttribute{
-						Optional: true,
+						Required: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
 					},
 					"ipv6": schema.SingleNestedAttribute{
-						Optional: true,
+						Required: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
 								Description: "A list of allowed source IPv6 network ranges for this endpoint. When empty, all source IPs are allowed. A non-empty list is only effective if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
+								CustomType:  customfield.NewNestedObjectListType[ZeroTrustDNSLocationEndpointsIPV6NetworksModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
@@ -116,9 +124,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"client_default": schema.BoolAttribute{
+				Description: "True if the location is the default location.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"dns_destination_ips_id": schema.StringAttribute{
+				Description: "The identifier of the pair of IPv4 addresses assigned to this location. When creating a location, if this field is absent or set with null, the pair of shared IPv4 addresses (0e4a32c6-6fb8-4858-9296-98f51631e8e6) is auto-assigned. When updating a location, if the field is absent or set with null, the pre-assigned pair remains unchanged.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"ecs_support": schema.BoolAttribute{
+				Description: "True if the location needs to resolve EDNS queries.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"networks": schema.ListNestedAttribute{
 				Description: "A list of network ranges that requests from this location would originate from. A non-empty list is only effective if the ipv4 endpoint is enabled for this location.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDNSLocationNetworksModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"network": schema.StringAttribute{
@@ -128,24 +155,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"client_default": schema.BoolAttribute{
-				Description: "True if the location is the default location.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"ecs_support": schema.BoolAttribute{
-				Description: "True if the location needs to resolve EDNS queries.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"dns_destination_ipv6_block_id": schema.StringAttribute{
-				Description: "The uuid identifier of the IPv6 block brought to the gateway, so that this location's IPv6 address is allocated from the Bring Your Own Ipv6(BYOIPv6) block and not from the standard CloudFlare IPv6 block.",
+				Description: "The uuid identifier of the IPv6 block brought to the gateway, so that this location's IPv6 address is allocated from the Bring Your Own Ipv6(BYOIPv6) block and not from the standard Cloudflare IPv6 block.",
 				Computed:    true,
 			},
 			"doh_subdomain": schema.StringAttribute{

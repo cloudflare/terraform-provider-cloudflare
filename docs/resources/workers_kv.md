@@ -16,8 +16,10 @@ resource "cloudflare_workers_kv" "example_workers_kv" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   namespace_id = "0f2ac74b498b48028cb68387c421e279"
   key_name = "My-Key"
-  metadata = "{\"someMetadataKey\": \"someMetadataValue\"}"
   value = "Some Value"
+  metadata = {
+
+  }
 }
 ```
 
@@ -26,14 +28,14 @@ resource "cloudflare_workers_kv" "example_workers_kv" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 - `key_name` (String) A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.
 - `namespace_id` (String) Namespace identifier tag.
 - `value` (String) A byte sequence to be stored, up to 25 MiB in length.
 
 ### Optional
 
-- `metadata` (String) Arbitrary JSON to be associated with a key/value pair.
+- `metadata` (String)
 
 ### Read-Only
 

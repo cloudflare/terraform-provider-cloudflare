@@ -85,9 +85,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"context_awareness": schema.SingleNestedAttribute{
-				Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPPredefinedProfileContextAwarenessDataSourceModel](ctx),
+				Description:        "Scan the context of predefined entries to only return matches surrounded by keywords.",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				CustomType:         customfield.NewNestedObjectType[ZeroTrustDLPPredefinedProfileContextAwarenessDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "If true, scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -142,7 +143,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: `Available values: "custom", "predefined", "integration", "exact_data", "document_template", "word_list".`,
+							Description: `Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".`,
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -150,7 +151,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"predefined",
 									"integration",
 									"exact_data",
-									"document_template",
+									"document_fingerprint",
 									"word_list",
 								),
 							},

@@ -7,7 +7,7 @@ description: Terraform Cloudflare Provider Version 4 Upgrade Guide
 # Terraform Cloudflare Provider Version 4 Upgrade Guide
 
 Version 4 of the Cloudflare Terraform Provider is introducing several breaking
-changes to accomodate better user experience and broader resource support for
+changes to accommodate better user experience and broader resource support for
 more customer types.
 
 ## Provider Version Configuration
@@ -83,7 +83,7 @@ attribute.
 
 ## `account_id` required for some resources
 
-To accomodate the removal of `account_id` at the provider level, the following
+To accommodate the removal of `account_id` at the provider level, the following
 resources now require the `account_id` value to be defined.
 
 - `cloudflare_zone`

@@ -11,12 +11,14 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/workers"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v5/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/jinzhu/copier"
@@ -68,7 +70,19 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	dataBytes, contentType, err := data.MarshalMultipart()
+	contentSHA256 := data.ContentSHA256
+	contentType := data.ContentType
+
+	if !data.ContentFile.IsNull() {
+		content, err := readFile((data.ContentFile.ValueString()))
+		if err != nil {
+			resp.Diagnostics.AddError("failed to read file", err.Error())
+			return
+		}
+		data.Content = types.StringValue(content)
+	}
+
+	dataBytes, formDataContentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
@@ -81,7 +95,7 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		workers.ScriptUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody(contentType, dataBytes),
+		option.WithRequestBody(formDataContentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -97,6 +111,13 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 	}
 	data = &env.Result
 	data.ID = data.ScriptName
+	data.ContentSHA256 = contentSHA256
+	data.ContentType = contentType
+
+	// avoid storing `content` in state if `content_file` is configured
+	if !data.ContentFile.IsNull() {
+		data.Content = types.StringNull()
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -118,7 +139,19 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	dataBytes, contentType, err := data.MarshalMultipart()
+	contentSHA256 := data.ContentSHA256
+	contentType := data.ContentType
+
+	if !data.ContentFile.IsNull() {
+		content, err := readFile((data.ContentFile.ValueString()))
+		if err != nil {
+			resp.Diagnostics.AddError("failed to read file", err.Error())
+			return
+		}
+		data.Content = types.StringValue(content)
+	}
+
+	dataBytes, formDataContentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
@@ -131,7 +164,7 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 		workers.ScriptUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody(contentType, dataBytes),
+		option.WithRequestBody(formDataContentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -147,14 +180,23 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 	}
 	data = &env.Result
 	data.ID = data.ScriptName
+	data.ContentSHA256 = contentSHA256
+	data.ContentType = contentType
+
+	// avoid storing `content` in state if `content_file` is configured
+	if !data.ContentFile.IsNull() {
+		data.Content = types.StringNull()
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data *WorkersScriptModel
+	var state *WorkersScriptModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -221,6 +263,15 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 
 	copier.CopyWithOption(&data.WorkersScriptMetadataModel, &metadata.Result, copier.Option{IgnoreEmpty: true, DeepCopy: true})
 
+	// restore any secret_text `text` values from state since they aren't returned by the API
+	var diags diag.Diagnostics
+	data.Bindings, diags = UpdateSecretTextsFromState(
+		ctx,
+		data.Bindings,
+		state.Bindings,
+	)
+	resp.Diagnostics.Append(diags...)
+
 	// fetch the script content
 	scriptContentRes, err := r.client.Workers.Scripts.Content.Get(
 		ctx,
@@ -253,7 +304,21 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 		content = string(bytes)
 	}
 
-	data.Content = types.StringValue(content)
+	// only update `content` if `content_file` isn't being used instead
+	if data.ContentFile.IsNull() {
+		data.Content = types.StringValue(content)
+	}
+
+	// refresh the content hash in case the remote state has drifted
+	if !data.ContentSHA256.IsNull() {
+		hash, _ := calculateStringHash(content)
+		data.ContentSHA256 = types.StringValue(hash)
+	}
+
+	// If the API returned an empty object for `placement`, treat it as null
+	if data.Placement.Attributes()["mode"].IsNull() {
+		data.Placement = data.Placement.NullValue(ctx).(customfield.NestedObject[WorkersScriptMetadataPlacementModel])
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -5,8 +5,8 @@ package email_security_trusted_domains
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/email_security"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/email_security"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -55,6 +55,9 @@ func (m *EmailSecurityTrustedDomainsDataSourceModel) toListParams(_ context.Cont
 	if !m.Filter.Order.IsNull() {
 		params.Order = cloudflare.F(email_security.SettingTrustedDomainListParamsOrder(m.Filter.Order.ValueString()))
 	}
+	if !m.Filter.Pattern.IsNull() {
+		params.Pattern = cloudflare.F(m.Filter.Pattern.ValueString())
+	}
 	if !m.Filter.Search.IsNull() {
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
@@ -67,5 +70,6 @@ type EmailSecurityTrustedDomainsFindOneByDataSourceModel struct {
 	IsRecent     types.Bool   `tfsdk:"is_recent" query:"is_recent,optional"`
 	IsSimilarity types.Bool   `tfsdk:"is_similarity" query:"is_similarity,optional"`
 	Order        types.String `tfsdk:"order" query:"order,optional"`
+	Pattern      types.String `tfsdk:"pattern" query:"pattern,optional"`
 	Search       types.String `tfsdk:"search" query:"search,optional"`
 }

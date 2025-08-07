@@ -31,8 +31,7 @@ resource "cloudflare_account_token" "example_account_token" {
       }
     }]
     resources = {
-      "com.cloudflare.api.account.zone.22b1de5f1c0e4b3ea97bb1e963b06a43" = "*"
-      "com.cloudflare.api.account.zone.eb78d65290b24279ba6f44721b3ea3c4" = "*"
+      foo = "string"
     }
   }]
   condition = {
@@ -60,6 +59,8 @@ resource "cloudflare_account_token" "example_account_token" {
 - `condition` (Attributes) (see [below for nested schema](#nestedatt--condition))
 - `expires_on` (String) The expiration time on or after which the JWT MUST NOT be accepted for processing.
 - `not_before` (String) The time before which the token MUST NOT be accepted for processing.
+- `status` (String) Status of the token.
+Available values: "active", "disabled", "expired".
 
 ### Read-Only
 
@@ -67,8 +68,6 @@ resource "cloudflare_account_token" "example_account_token" {
 - `issued_on` (String) The time on which the token was created.
 - `last_used_on` (String) Last time the token was used.
 - `modified_on` (String) Last time the token was modified.
-- `status` (String) Status of the token.
-Available values: "active", "disabled", "expired".
 - `value` (String, Sensitive) The token value.
 
 <a id="nestedatt--policies"></a>

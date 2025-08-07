@@ -31,7 +31,7 @@ data "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_pred
 - `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String) Available values: "low", "medium", "high", "very_high".
-- `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
+- `context_awareness` (Attributes, Deprecated) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
 - `created_at` (String) When the profile was created.
 - `description` (String) The description of the profile.
 - `entries` (Attributes List) (see [below for nested schema](#nestedatt--entries))
@@ -75,7 +75,7 @@ Cannot be set to false if secret is true
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--entries--pattern))
 - `profile_id` (String)
 - `secret` (Boolean)
-- `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_template", "word_list".
+- `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
 - `word_list` (String)
 

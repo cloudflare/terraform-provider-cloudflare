@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/snippets"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v5/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -119,7 +119,7 @@ func (r *SnippetRulesResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.Snippets.Rules.Update(
 		ctx,
 		snippets.RuleUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -156,7 +156,7 @@ func (r *SnippetRulesResource) Delete(ctx context.Context, req resource.DeleteRe
 	_, err := r.client.Snippets.Rules.Delete(
 		ctx,
 		snippets.RuleDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

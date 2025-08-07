@@ -31,6 +31,7 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
     mtls_certificate_id = "00000000-0000-0000-0000-0000000000"
     sslmode = "verify-full"
   }
+  origin_connection_limit = 60
 }
 ```
 
@@ -47,6 +48,7 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--caching))
 - `mtls` (Attributes) (see [below for nested schema](#nestedatt--mtls))
+- `origin_connection_limit` (Number) The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.
 
 ### Read-Only
 

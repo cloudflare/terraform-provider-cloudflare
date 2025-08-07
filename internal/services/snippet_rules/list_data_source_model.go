@@ -5,9 +5,10 @@ package snippet_rules
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/snippets"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -31,8 +32,10 @@ func (m *SnippetRulesListDataSourceModel) toListParams(_ context.Context) (param
 }
 
 type SnippetRulesListResultDataSourceModel struct {
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
-	Expression  types.String `tfsdk:"expression" json:"expression,computed"`
-	SnippetName types.String `tfsdk:"snippet_name" json:"snippet_name,computed"`
+	ID          types.String      `tfsdk:"id" json:"id,computed"`
+	Expression  types.String      `tfsdk:"expression" json:"expression,computed"`
+	LastUpdated timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	SnippetName types.String      `tfsdk:"snippet_name" json:"snippet_name,computed"`
+	Description types.String      `tfsdk:"description" json:"description,computed"`
+	Enabled     types.Bool        `tfsdk:"enabled" json:"enabled,computed"`
 }

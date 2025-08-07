@@ -56,11 +56,6 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
 - `warp_auth_session_duration` (String) The amount of time that tokens issued for applications will be valid. Must be in the format `30m` or `2h45m`. Valid time units are: m, h.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
-### Read-Only
-
-- `created_at` (String)
-- `updated_at` (String)
-
 <a id="nestedatt--custom_pages"></a>
 ### Nested Schema for `custom_pages`
 

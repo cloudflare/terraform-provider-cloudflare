@@ -100,7 +100,13 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
 					resource.TestCheckResourceAttr(name, "saas_app.%", "0"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+					resource.TestCheckResourceAttr(name, "service_auth_401_redirect", "false"),
 				),
+			},
+			{
+				// Ensures no diff on second plan
+				Config:   testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.ZoneIdentifier(zoneID)),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -130,6 +136,11 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "sass_app.#", "0"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
 				),
+			},
+			{
+				// Ensures no diff on second plan
+				Config:   testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -170,6 +181,11 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "scim_config.mappings.0.operations.update", "true"),
 					resource.TestCheckResourceAttr(name, "scim_config.mappings.0.operations.delete", "true"),
 				),
+			},
+			{
+				// Ensures no diff on second plan
+				Config:   testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -212,6 +228,11 @@ func TestAccCloudflareAccessApplication_UpdateSCIMConfig(t *testing.T) {
 				),
 			},
 			{
+				// Ensures no diff on second plan
+				Config:   testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain),
+				PlanOnly: true,
+			},
+			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerTokenNoMappings(rnd, accountID, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
@@ -227,6 +248,11 @@ func TestAccCloudflareAccessApplication_UpdateSCIMConfig(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "scim_config.authentication.token"),
 					resource.TestCheckResourceAttr(name, "scim_config.mappings.#", "0"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerTokenNoMappings(rnd, accountID, domain),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -303,6 +329,11 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuthBearerToken(t *testin
 					resource.TestCheckResourceAttr(name, "scim_config.mappings.0.operations.delete", "true"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerToken(rnd, accountID, domain),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -346,6 +377,11 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "scim_config.mappings.0.operations.update", "true"),
 					resource.TestCheckResourceAttr(name, "scim_config.mappings.0.operations.delete", "true"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationSCIMConfigValidOAuth2(rnd, accountID, domain),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -394,6 +430,11 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -438,6 +479,11 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "saas_app.custom_attributes.1.required", "true"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -481,13 +527,18 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
 				Check:  checkFn,
 			},
-			// {
-			// 	ImportState:         true,
-			// 	ImportStateVerify:   true,
-			// 	ResourceName:        name,
-			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			// 	Check:               checkFn,
-			// },
+			{
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("accounts/%s/", accountID),
+				Check:               checkFn,
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -535,6 +586,11 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "saas_app.client_secret"),
 					resource.TestCheckResourceAttrSet(name, "saas_app.public_key"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -585,14 +641,19 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 				Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
 				Check:  checkFn,
 			},
-			// {
-			// 	ImportState:             true,
-			// 	ImportStateVerify:       true,
-			// 	ImportStateVerifyIgnore: []string{"saas_app.client_secret"},
-			// 	ResourceName:            name,
-			// 	ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-			// 	Check:                   checkFn,
-			// },
+			{
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"saas_app.client_secret", "saas_app.allow_pkce_without_client_secret"},
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+				Check:                   checkFn,
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -620,6 +681,11 @@ func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T)
 					resource.TestCheckResourceAttr(name, "allowed_idps.#", "1"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithAutoRedirectToIdentity(rnd, zoneID, domain),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -645,6 +711,11 @@ func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "enable_binding_cookie", "true"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithEnableBindingCookie(rnd, zoneID, domain),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -674,11 +745,16 @@ func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "custom_non_identity_deny_url", "https://www.blocked.com"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithCustomDenyFields(rnd, zoneID, domain),
+				PlanOnly: true,
+			},
 		},
 	})
 }
 
-func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithADefinedIdp(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
@@ -701,6 +777,11 @@ func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "allowed_idps.#", "1"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithADefinedIdp(rnd, zoneID, domain, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -722,6 +803,11 @@ func TestAccCloudflareAccessApplication_WithMultipleIdpsReordered(t *testing.T) 
 			},
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp2, idp1),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp2, idp1),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -749,6 +835,11 @@ func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T
 					resource.TestCheckResourceAttr(name, "http_only_cookie_attribute", "true"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttribute(rnd, zoneID, domain),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -774,6 +865,11 @@ func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t 
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "http_only_cookie_attribute", "false"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttributeSetToFalse(rnd, zoneID, domain),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -801,6 +897,11 @@ func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T
 					resource.TestCheckResourceAttr(name, "same_site_cookie_attribute", "strict"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigSameSiteCookieAttribute(rnd, zoneID, domain),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -826,6 +927,11 @@ func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "logo_url", "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigLogoURL(rnd, zoneID, domain),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -853,6 +959,11 @@ func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "skip_interstitial", "true"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigSkipInterstitial(rnd, zoneID, domain),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -878,6 +989,11 @@ func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "app_launcher_visible", "true"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithAppLauncherVisible(rnd, zoneID, domain),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -908,6 +1024,11 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -935,6 +1056,41 @@ func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "tags.#", "1"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain, accountID),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_WithLegacyPolicies(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithLegacyPolicies(rnd, domain, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
+					resource.TestCheckResourceAttr(name, "policies.#", "3"),
+				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithLegacyPolicies(rnd, domain, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -960,6 +1116,30 @@ func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "policies.#", "2"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationConfigWithReusablePolicies(rnd, domain, accountID),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_WithReusablePolicies_InvalidPrecedence(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCloudflareAccessApplicationConfigWithReusablePoliciesInvalidPrecedence(rnd, domain, accountID),
+				ExpectError: regexp.MustCompile(`Attribute policies\[0].precedence value must be at least 1, got: 0`),
+			},
 		},
 	})
 }
@@ -976,7 +1156,8 @@ func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
-			{Config: testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID),
+			{
+				Config: testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "type", "app_launcher"),
@@ -993,6 +1174,87 @@ func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.
 					resource.TestCheckResourceAttr(name, "footer_links.0.url", "https://www.cloudflare.com"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_Infrastructure(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationInfrastructure(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckNoResourceAttr(name, "session_duration"),
+					resource.TestCheckResourceAttr(name, "type", "infrastructure"),
+					resource.TestCheckResourceAttr(name, "target_criteria.#", "1"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.port", "22"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.protocol", "SSH"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.hostname.#", "1"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.hostname.0", rnd),
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+					resource.TestCheckResourceAttr(name, "policies.0.connection_rules.ssh.usernames.#", "1"),
+					resource.TestCheckResourceAttr(name, "policies.0.connection_rules.ssh.usernames.0", "root"),
+				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationInfrastructure(rnd, accountID),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_RDP(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	appDomain := fmt.Sprintf("%[1]s.%[2]s", rnd, domain)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationRDP(rnd, accountID, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "type", "rdp"),
+					resource.TestCheckResourceAttr(name, "domain", appDomain),
+					resource.TestCheckResourceAttr(name, "destinations.#", "1"),
+					resource.TestCheckResourceAttr(name, "destinations.0.uri", appDomain),
+					resource.TestCheckResourceAttr(name, "target_criteria.#", "1"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.port", "3389"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.protocol", "RDP"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.hostname.#", "1"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.hostname.0", rnd),
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCloudflareAccessApplicationRDP(rnd, accountID, domain),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -1003,6 +1265,14 @@ func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, id
 
 func testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain string) string {
 	return acctest.LoadTestCase("accessapplicationconfigwithcors.tf", rnd, zoneID, domain)
+}
+
+func testAccCloudflareAccessApplicationInfrastructure(rnd, accID string) string {
+	return acctest.LoadTestCase("accessapplicationconfiginfrastructure.tf", rnd, accID)
+}
+
+func testAccCloudflareAccessApplicationRDP(rnd, accID, domain string) string {
+	return acctest.LoadTestCase("accessapplicationconfigrdp.tf", rnd, accID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID string) string {
@@ -1068,7 +1338,8 @@ func testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd string, domain 
 func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client for destroy check: %s", clientErr))
+		return clientErr
 	}
 
 	for _, rs := range s.RootModule().Resources {
@@ -1124,111 +1395,186 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessApplicationWithZoneIDUpdated(rnd, zone, zoneID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
 
-// TODO: tighten up validation here and re-enable.
-//
-// func TestAccCloudflareAccessApplicationWithMissingCORSMethods(t *testing.T) {
-// 	rnd := utils.GenerateRandomResourceName()
-// 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-// 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+func TestAccCloudflareAccessApplicationWithMissingCORSMethods(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-// 	resource.Test(t, resource.TestCase{
-// 		PreCheck: func() {
-// 			acctest.TestAccPreCheck(t)
-// 			acctest.TestAccPreCheck_AccountID(t)
-// 		},
-// 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config:      testAccessApplicationWithMissingCORSMethods(rnd, zone, zoneID),
-// 				ExpectError: regexp.MustCompile("must set allowed_methods or allow_all_methods"),
-// 			},
-// 		},
-// 	})
-// }
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationWithMissingCORSMethods(rnd, zone, zoneID),
+				ExpectError: regexp.MustCompile(`No attribute specified when one \(and only one\) of\s+\[cors_headers\.allow_all_methods\.<\.allowed_methods\] is required`),
+			},
+		},
+	})
+}
 
-// func TestAccCloudflareAccessApplicationWithMissingCORSOrigins(t *testing.T) {
-// 	rnd := utils.GenerateRandomResourceName()
-// 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-// 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+func TestAccCloudflareAccessApplicationWithMissingCORSOrigins(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-// 	resource.Test(t, resource.TestCase{
-// 		PreCheck: func() {
-// 			acctest.TestAccPreCheck(t)
-// 			acctest.TestAccPreCheck_AccountID(t)
-// 		},
-// 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config:      testAccessApplicationWithMissingCORSOrigins(rnd, zone, zoneID),
-// 				ExpectError: regexp.MustCompile("must set allowed_origins or allow_all_origins"),
-// 			},
-// 		},
-// 	})
-// }
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationWithMissingCORSOrigins(rnd, zone, zoneID),
+				ExpectError: regexp.MustCompile(`No attribute specified when one \(and only one\) of\s+\[cors_headers\.allow_all_origins\.<\.allowed_origins\] is required`),
+			},
+		},
+	})
+}
 
-// func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) {
-// 	rnd := utils.GenerateRandomResourceName()
-// 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-// 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-// 	resource.Test(t, resource.TestCase{
-// 		PreCheck: func() {
-// 			acctest.TestAccPreCheck(t)
-// 			acctest.TestAccPreCheck_AccountID(t)
-// 		},
-// 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config:      testAccessApplicationWithInvalidSessionDuration(rnd, zone, zoneID),
-// 				ExpectError: regexp.MustCompile(regexp.QuoteMeta(`"session_duration" only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units`)),
-// 			},
-// 		},
-// 	})
-// }
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationWithInvalidSessionDuration(rnd, zone, zoneID),
+				ExpectError: regexp.MustCompile(`"session_duration" only supports .*`),
+			},
+		},
+	})
+}
 
-// func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingAllOrigins(t *testing.T) {
-// 	rnd := utils.GenerateRandomResourceName()
-// 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-// 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+func TestAccCloudflareAccessApplicationWithInvalidPrivateDestination(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
 
-// 	resource.Test(t, resource.TestCase{
-// 		PreCheck: func() {
-// 			acctest.TestAccPreCheck(t)
-// 			acctest.TestAccPreCheck_AccountID(t)
-// 		},
-// 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config:      testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(rnd, zone, zoneID),
-// 				ExpectError: regexp.MustCompile(regexp.QuoteMeta(`CORS credentials are not permitted when all origins are allowed`)),
-// 			},
-// 		},
-// 	})
-// }
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationWithInvalidPrivateDestination(rnd, accountID),
+				ExpectError: regexp.MustCompile(`"destinations\[0]\.(hostname|port_range)" can only be set if "<\.type" is one of: "private"`),
+			},
+		},
+	})
+}
 
-// func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingWildcardOrigins(t *testing.T) {
-// 	rnd := utils.GenerateRandomResourceName()
-// 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-// 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+func TestAccCloudflareAccessApplicationWithDestinations(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
 
-// 	resource.Test(t, resource.TestCase{
-// 		PreCheck: func() {
-// 			acctest.TestAccPreCheck(t)
-// 			acctest.TestAccPreCheck_AccountID(t)
-// 		},
-// 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config:      testAccessApplicationMisconfiguredCORSAllowWildcardOriginWithCredentials(rnd, zone, zoneID),
-// 				ExpectError: regexp.MustCompile(regexp.QuoteMeta(`CORS credentials are not permitted when all origins are allowed`)),
-// 			},
-// 		},
-// 	})
-// }
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	publicDomain := fmt.Sprintf("d1.%[1]s.%[2]s", rnd, domain)
+	privateDomain := fmt.Sprintf("%[1]s.private", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessApplicationWithDestinations(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "destinations.#", "2"),
+					resource.TestCheckResourceAttr(name, "destinations.0.type", "private"),
+					resource.TestCheckResourceAttr(name, "destinations.0.hostname", privateDomain),
+					resource.TestCheckResourceAttr(name, "destinations.1.type", "public"),
+					resource.TestCheckResourceAttr(name, "destinations.1.uri", publicDomain),
+				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessApplicationWithDestinations(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingAllOrigins(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(rnd, zone, zoneID),
+				ExpectError: regexp.MustCompile(`Attribute "cors_headers.allow_all_origins" cannot be specified when\s+"cors_headers.allow_credentials" is specified`),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplicationWithInvalidSaas(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accoundID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationWithInvalidSaas(rnd, accoundID),
+				ExpectError: regexp.MustCompile("\"saas_app\" has to be set if \"type\" is one of: \"saas\", \"dash_sso\""),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_WarpInvalid(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accoundID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCloudflareAccessApplicationWarpInvalid(rnd, accoundID),
+				ExpectError: regexp.MustCompile(`"allow_authenticate_via_warp" can only be set if "type" is one of:\s"self_hosted", "ssh", "vnc", "rdp", "saas", "dash_sso"`),
+			},
+		},
+	})
+}
 
 func testAccessApplicationWithZoneID(resourceID, zone, zoneID string) string {
 	return acctest.LoadTestCase("accessapplicationwithzoneid.tf", resourceID, zone, zoneID)
@@ -1250,12 +1596,16 @@ func testAccessApplicationWithInvalidSessionDuration(resourceID, zone, zoneID st
 	return acctest.LoadTestCase("accessapplicationwithinvalidsessionduration.tf", resourceID, zone, zoneID)
 }
 
-func testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(resourceID, zone, zoneID string) string {
-	return acctest.LoadTestCase("accessapplicationmisconfiguredcorsallowalloriginswithcredentials.tf", resourceID, zone, zoneID)
+func testAccessApplicationWithInvalidPrivateDestination(resourceID, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationconfiginvalidprivatedestination.tf", resourceID, accountID)
 }
 
-func testAccessApplicationMisconfiguredCORSAllowWildcardOriginWithCredentials(resourceID, zone, zoneID string) string {
-	return acctest.LoadTestCase("accessapplicationmisconfiguredcorsallowwildcardoriginwithcredentials.tf", resourceID, zone, zoneID)
+func testAccessApplicationWithDestinations(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
+	return acctest.LoadTestCase("accessapplicationconfigwithdestinations.tf", rnd, domain, identifier.Type, identifier.Identifier)
+}
+
+func testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(resourceID, zone, zoneID string) string {
+	return acctest.LoadTestCase("accessapplicationmisconfiguredcorsallowalloriginswithcredentials.tf", resourceID, zone, zoneID)
 }
 
 func testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain string, accountID string) string {
@@ -1282,10 +1632,6 @@ func testAccCloudflareAccessApplicationSCIMConfigOAuth2MissingRequired(rnd, acco
 	return acctest.LoadTestCase("accessapplicationscimconfigoauth2missingrequired.tf", rnd, accountID, domain)
 }
 
-func testAccCloudflareAccessApplicationSCIMConfigAuthenticationInvalid(rnd, accountID, domain string) string {
-	return acctest.LoadTestCase("accessapplicationscimconfigauthenticationinvalid.tf", rnd, accountID, domain)
-}
-
 func testAccCloudflareAccessApplicationSCIMConfigHttpBasicMissingRequired(rnd, accountID, domain string) string {
 	return acctest.LoadTestCase("accessapplicationscimconfighttpbasicmissingrequired.tf", rnd, accountID, domain)
 }
@@ -1294,6 +1640,22 @@ func testAccCloudflareAccessApplicationSCIMConfigInvalidMappingSchema(rnd, accou
 	return acctest.LoadTestCase("accessapplicationscimconfiginvalidmappingschema.tf", rnd, accountID, domain)
 }
 
+func testAccCloudflareAccessApplicationConfigWithLegacyPolicies(rnd, domain string, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationconfigwithlegacypolicies.tf", rnd, domain, accountID)
+}
+
 func testAccCloudflareAccessApplicationConfigWithReusablePolicies(rnd, domain string, accountID string) string {
 	return acctest.LoadTestCase("accessapplicationconfigwithreusablepolicies.tf", rnd, domain, accountID)
+}
+
+func testAccCloudflareAccessApplicationConfigWithReusablePoliciesInvalidPrecedence(rnd, domain string, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationconfigwithreusablepolicies_invalid_precedence.tf", rnd, domain, accountID)
+}
+
+func testAccessApplicationWithInvalidSaas(resourceID, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationconfigwithinvalidsaas.tf", resourceID, accountID)
+}
+
+func testAccCloudflareAccessApplicationWarpInvalid(rnd, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationconfigwarpinvalid.tf", rnd, accountID)
 }

@@ -44,6 +44,7 @@ Read-Only:
 - `mtls` (Attributes) (see [below for nested schema](#nestedatt--result--mtls))
 - `name` (String)
 - `origin` (Attributes) (see [below for nested schema](#nestedatt--result--origin))
+- `origin_connection_limit` (Number) The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.
 
 <a id="nestedatt--result--caching"></a>
 ### Nested Schema for `result.caching`

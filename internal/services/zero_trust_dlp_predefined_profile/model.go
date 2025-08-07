@@ -13,15 +13,15 @@ type ZeroTrustDLPPredefinedProfileResultEnvelope struct {
 }
 
 type ZeroTrustDLPPredefinedProfileModel struct {
-	ID                  types.String                                        `tfsdk:"id" json:"-,computed"`
-	ProfileID           types.String                                        `tfsdk:"profile_id" path:"profile_id,required"`
+	ID                  types.String                                        `tfsdk:"id" json:"id,computed"`
 	AccountID           types.String                                        `tfsdk:"account_id" path:"account_id,required"`
-	AIContextEnabled    types.Bool                                          `tfsdk:"ai_context_enabled" json:"ai_context_enabled,optional"`
-	AllowedMatchCount   types.Int64                                         `tfsdk:"allowed_match_count" json:"allowed_match_count,optional"`
-	ConfidenceThreshold types.String                                        `tfsdk:"confidence_threshold" json:"confidence_threshold,optional"`
-	OCREnabled          types.Bool                                          `tfsdk:"ocr_enabled" json:"ocr_enabled,optional"`
+	ProfileID           types.String                                        `tfsdk:"profile_id" json:"profile_id,required,no_refresh"`
 	ContextAwareness    *ZeroTrustDLPPredefinedProfileContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness,optional"`
 	Entries             *[]*ZeroTrustDLPPredefinedProfileEntriesModel       `tfsdk:"entries" json:"entries,optional"`
+	AIContextEnabled    types.Bool                                          `tfsdk:"ai_context_enabled" json:"ai_context_enabled,computed_optional"`
+	AllowedMatchCount   types.Int64                                         `tfsdk:"allowed_match_count" json:"allowed_match_count,computed_optional"`
+	ConfidenceThreshold types.String                                        `tfsdk:"confidence_threshold" json:"confidence_threshold,computed_optional"`
+	OCREnabled          types.Bool                                          `tfsdk:"ocr_enabled" json:"ocr_enabled,computed_optional"`
 	CreatedAt           timetypes.RFC3339                                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description         types.String                                        `tfsdk:"description" json:"description,computed"`
 	Name                types.String                                        `tfsdk:"name" json:"name,computed"`

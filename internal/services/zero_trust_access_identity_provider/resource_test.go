@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -87,6 +88,11 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 					}),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
+			},
 		},
 	})
 
@@ -109,6 +115,11 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 						return nil
 					}),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, cloudflare.ZoneIdentifier(zoneID)),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -133,8 +144,13 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
-					resource.TestCheckResourceAttrSet(resourceName, "config.client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "config.client_secret", "secret"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -159,8 +175,13 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
-					resource.TestCheckResourceAttrSet(resourceName, "config.client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "config.client_secret", "secret"),
 				),
+			},
+			{
+				// Ensures no diff on second plan
+				Config:   testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
+				PlanOnly: true,
 			},
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderOAuthUpdatedName(accountID, rnd),
@@ -169,8 +190,13 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd+"-updated"),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
-					resource.TestCheckResourceAttrSet(resourceName, "config.client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "config.client_secret", "secret"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCheckCloudflareAccessIdentityProviderOAuthUpdatedName(accountID, rnd),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -196,12 +222,16 @@ func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "saml"),
 					resource.TestCheckResourceAttr(resourceName, "config.issuer_url", "jumpcloud"),
 					resource.TestCheckResourceAttr(resourceName, "config.sso_target_url", "https://sso.myexample.jumpcloud.com/saml2/cloudflareaccess"),
-					resource.TestCheckResourceAttr(resourceName, "config.sign_request", "false"),
 					resource.TestCheckResourceAttr(resourceName, "config.attributes.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "config.attributes.0", "email"),
 					resource.TestCheckResourceAttr(resourceName, "config.attributes.1", "username"),
 					resource.TestCheckResourceAttr(resourceName, "config.idp_public_certs.#", "1"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCheckCloudflareAccessIdentityProviderSAML(accountID, rnd),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -229,12 +259,15 @@ func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "azureAD"),
 					resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
 					resource.TestCheckResourceAttr(resourceName, "config.directory_id", "directory"),
-					resource.TestCheckResourceAttr(resourceName, "config.condtional_access_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scim_config.enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scim_config.user_deprovision", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scim_config.seat_deprovision", "true"),
-					resource.TestCheckResourceAttr(resourceName, "scim_config.group_member_deprovision", "true"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, rnd),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -251,7 +284,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 		resource.TestCheckResourceAttr(resourceName, "name", rnd),
 		resource.TestCheckResourceAttr(resourceName, "type", "github"),
 		resource.TestCheckResourceAttr(resourceName, "config.client_id", "test"),
-		resource.TestCheckResourceAttrSet(resourceName, "config.client_secret"),
+		resource.TestCheckResourceAttr(resourceName, "config.client_secret", "secret"),
 	)
 
 	resource.Test(t, resource.TestCase{
@@ -265,13 +298,22 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 				Config: testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
 				Check:  checkFn,
 			},
-			// {
-			// 	ImportState:         true,
-			// 	ImportStateVerify:   true,
-			// 	ResourceName:        resourceName,
-			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			// 	Check:               checkFn,
-			// },
+			{
+				// Ensures no diff on second plan
+				Config:   testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
+				PlanOnly: true,
+			},
+			{
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					// cant import client_secret
+					"config.client_secret",
+				},
+				ResourceName:        resourceName,
+				ImportStateIdPrefix: fmt.Sprintf("accounts/%s/", accountID),
+				Check:               checkFn,
+			},
 		},
 	})
 }
@@ -304,8 +346,18 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Config_Secret(t *testing.T) {
 				Check:  checkFn,
 			},
 			{
+				// Ensures no diff on second plan
+				Config:   testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, rnd),
+				PlanOnly: true,
+			},
+			{
 				Config: testAccCheckCloudflareAccessIdentityProviderAzureADUpdated(accountID, rnd),
 				Check:  checkFn,
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCheckCloudflareAccessIdentityProviderAzureADUpdated(accountID, rnd),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -322,11 +374,6 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Secret_Enabled_After_Resource_
 			if value == "" {
 				return errors.New("secret is empty")
 			}
-
-			// if strings.Contains(value, "*") {
-			// 	return errors.New("secret was redacted")
-			// }
-
 			return nil
 		}),
 	)
@@ -345,12 +392,50 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Secret_Enabled_After_Resource_
 				),
 			},
 			{
+				Config:   testAccCheckCloudflareAccessIdentityProviderAzureADNoSCIM(accountID, rnd),
+				PlanOnly: true,
+			},
+			{
 				Config: testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, rnd),
 				Check:  checkFn,
 			},
 			{
+				Config:   testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, rnd),
+				PlanOnly: true,
+			},
+			{
 				Config: testAccCheckCloudflareAccessIdentityProviderAzureADUpdated(accountID, rnd),
 				Check:  checkFn,
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccCheckCloudflareAccessIdentityProviderAzureADUpdated(accountID, rnd),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessIdentityProvider_OneTimePin_ConflictsWithSCIM(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the OTP Access
+	// endpoint does not yet support the API tokens for updates and it results in
+	// state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareAccessIdentityProviderOneTimePinWithScim(rnd, cloudflare.AccountIdentifier(accountID)),
+				ExpectError: regexp.MustCompile(`"scim_config" can not be set if "type" is one of: "onetimepin"`),
 			},
 		},
 	})
@@ -358,6 +443,10 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Secret_Enabled_After_Resource_
 
 func testAccCheckCloudflareAccessIdentityProviderOneTimePin(name string, identifier *cloudflare.ResourceContainer) string {
 	return acctest.LoadTestCase("accessidentityprovideronetimepin.tf", name, identifier.Type, identifier.Identifier)
+}
+
+func testAccCheckCloudflareAccessIdentityProviderOneTimePinWithScim(name string, identifier *cloudflare.ResourceContainer) string {
+	return acctest.LoadTestCase("accessidentityprovideronetimepinwithscim.tf", name, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, name string) string {

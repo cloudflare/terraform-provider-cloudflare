@@ -5,8 +5,8 @@ package hyperdrive_config
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/hyperdrive"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/hyperdrive"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -32,13 +32,14 @@ func (m *HyperdriveConfigsDataSourceModel) toListParams(_ context.Context) (para
 }
 
 type HyperdriveConfigsResultDataSourceModel struct {
-	ID         types.String                                                      `tfsdk:"id" json:"id,computed"`
-	Name       types.String                                                      `tfsdk:"name" json:"name,computed"`
-	Origin     customfield.NestedObject[HyperdriveConfigsOriginDataSourceModel]  `tfsdk:"origin" json:"origin,computed"`
-	Caching    customfield.NestedObject[HyperdriveConfigsCachingDataSourceModel] `tfsdk:"caching" json:"caching,computed"`
-	CreatedOn  timetypes.RFC3339                                                 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedOn timetypes.RFC3339                                                 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	MTLS       customfield.NestedObject[HyperdriveConfigsMTLSDataSourceModel]    `tfsdk:"mtls" json:"mtls,computed"`
+	ID                    types.String                                                      `tfsdk:"id" json:"id,computed"`
+	Name                  types.String                                                      `tfsdk:"name" json:"name,computed"`
+	Origin                customfield.NestedObject[HyperdriveConfigsOriginDataSourceModel]  `tfsdk:"origin" json:"origin,computed"`
+	Caching               customfield.NestedObject[HyperdriveConfigsCachingDataSourceModel] `tfsdk:"caching" json:"caching,computed"`
+	CreatedOn             timetypes.RFC3339                                                 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn            timetypes.RFC3339                                                 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	MTLS                  customfield.NestedObject[HyperdriveConfigsMTLSDataSourceModel]    `tfsdk:"mtls" json:"mtls,computed"`
+	OriginConnectionLimit types.Int64                                                       `tfsdk:"origin_connection_limit" json:"origin_connection_limit,computed"`
 }
 
 type HyperdriveConfigsOriginDataSourceModel struct {

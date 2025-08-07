@@ -87,17 +87,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"app_control_settings": schema.SingleNestedAttribute{
-						Description: "Setting to enable App Control",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsAppControlSettingsDataSourceModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Description: "Enable App Control",
-								Computed:    true,
-							},
-						},
-					},
 					"block_page": schema.SingleNestedAttribute{
 						Description: "Block page layout settings.",
 						Computed:    true,
@@ -146,12 +135,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Description: "If mode is customized_block_page: block page title.",
 								Computed:    true,
 							},
+							"read_only": schema.BoolAttribute{
+								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
+								Computed:    true,
+							},
+							"source_account": schema.StringAttribute{
+								Description: "Account tag of account that shared this setting",
+								Computed:    true,
+							},
 							"suppress_footer": schema.BoolAttribute{
 								Description: "If mode is customized_block_page: suppress detailed info at the bottom of the block page.",
 								Computed:    true,
 							},
 							"target_uri": schema.StringAttribute{
 								Description: "If mode is redirect_uri: URI to which the user should be redirected.",
+								Computed:    true,
+							},
+							"version": schema.Int64Attribute{
+								Description: "Version number of the setting",
 								Computed:    true,
 							},
 						},
@@ -162,8 +163,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBodyScanningDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"inspection_mode": schema.StringAttribute{
-								Description: "Set the inspection mode to either `deep` or `shallow`.",
+								Description: "Set the inspection mode to either `deep` or `shallow`.\nAvailable values: \"deep\", \"shallow\".",
 								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("deep", "shallow"),
+								},
 							},
 						},
 					},
@@ -226,6 +230,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Description: "Enable matching all variants of user emails (with + or . modifiers) used as criteria in Firewall policies.",
 								Computed:    true,
 							},
+							"read_only": schema.BoolAttribute{
+								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
+								Computed:    true,
+							},
+							"source_account": schema.StringAttribute{
+								Description: "Account tag of account that shared this setting",
+								Computed:    true,
+							},
+							"version": schema.Int64Attribute{
+								Description: "Version number of the setting",
+								Computed:    true,
+							},
 						},
 					},
 					"fips": schema.SingleNestedAttribute{
@@ -247,6 +263,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"enabled": schema.BoolAttribute{
 								Description: "Enable filtering via hosts for egress policies.",
 								Computed:    true,
+							},
+						},
+					},
+					"inspection": schema.SingleNestedAttribute{
+						Description: "Setting to define inspection settings",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsInspectionDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"mode": schema.StringAttribute{
+								Description: "Defines the mode of inspection the proxy will use.\n- static: Gateway will use static inspection to inspect HTTP on TCP(80). If TLS decryption is on, Gateway will inspect HTTPS traffic on TCP(443) & UDP(443).\n- dynamic: Gateway will use protocol detection to dynamically inspect HTTP and HTTPS traffic on any port. TLS decryption must be on to inspect HTTPS traffic.\nAvailable values: \"static\", \"dynamic\".",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("static", "dynamic"),
+								},
 							},
 						},
 					},

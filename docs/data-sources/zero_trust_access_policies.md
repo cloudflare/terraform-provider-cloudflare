@@ -88,7 +88,9 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--service_token))
@@ -232,12 +234,30 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--result--exclude--linked_app_token"></a>
+### Nested Schema for `result.exclude.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--result--exclude--login_method"></a>
 ### Nested Schema for `result.exclude.login_method`
 
 Read-Only:
 
 - `id` (String) The ID of an identity provider.
+
+
+<a id="nestedatt--result--exclude--oidc"></a>
+### Nested Schema for `result.exclude.oidc`
+
+Read-Only:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
 
 
 <a id="nestedatt--result--exclude--okta"></a>
@@ -291,7 +311,9 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--include--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--include--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--include--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--result--include--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--include--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--include--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--include--service_token))
@@ -435,12 +457,30 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--result--include--linked_app_token"></a>
+### Nested Schema for `result.include.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--result--include--login_method"></a>
 ### Nested Schema for `result.include.login_method`
 
 Read-Only:
 
 - `id` (String) The ID of an identity provider.
+
+
+<a id="nestedatt--result--include--oidc"></a>
+### Nested Schema for `result.include.oidc`
+
+Read-Only:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
 
 
 <a id="nestedatt--result--include--okta"></a>
@@ -494,7 +534,9 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--require--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--require--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--require--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--result--require--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--require--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--require--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--require--service_token))
@@ -638,12 +680,30 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--result--require--linked_app_token"></a>
+### Nested Schema for `result.require.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--result--require--login_method"></a>
 ### Nested Schema for `result.require.login_method`
 
 Read-Only:
 
 - `id` (String) The ID of an identity provider.
+
+
+<a id="nestedatt--result--require--oidc"></a>
+### Nested Schema for `result.require.oidc`
+
+Read-Only:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
 
 
 <a id="nestedatt--result--require--okta"></a>

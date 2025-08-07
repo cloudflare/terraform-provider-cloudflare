@@ -5,7 +5,6 @@ package zero_trust_list
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -51,17 +50,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The description of the list.",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
-				Description: "The items in the list.",
-				Computed:    true,
+			"items": schema.SetNestedAttribute{
+				Description: "items to add to the list.",
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustListItemsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"created_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
-						},
 						"description": schema.StringAttribute{
 							Description: "The description of the list item, if present",
 							Optional:    true,

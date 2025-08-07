@@ -22,7 +22,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description:   "Defines an identifier.",
+				Description:   "The Account ID for this resource.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -64,10 +64,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"url_hostname": schema.StringAttribute{
 						Required: true,
 					},
+					"exclude_exact_hostname": schema.BoolAttribute{
+						Description: "Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.",
+						Optional:    true,
+					},
 				},
 			},
 			"ip": schema.StringAttribute{
-				Description: "An IPv4 address, an IPv4 CIDR, or an IPv6 CIDR. IPv6 CIDRs are limited to a maximum of /64.",
+				Description: "An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.",
 				Optional:    true,
 			},
 			"redirect": schema.SingleNestedAttribute{

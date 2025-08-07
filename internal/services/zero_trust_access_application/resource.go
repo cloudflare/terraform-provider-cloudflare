@@ -5,17 +5,16 @@ package zero_trust_access_application
 import (
 	"context"
 	"fmt"
-	"io"
-	"net/http"
-
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"io"
+	"net/http"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -64,14 +63,20 @@ func (r *ZeroTrustAccessApplicationResource) Create(ctx context.Context, req res
 		return
 	}
 
+	res := new(http.Response)
+	env := ZeroTrustAccessApplicationResultEnvelope{*data}
+	params := zero_trust.AccessApplicationNewParams{}
+
+	resp.Diagnostics.Append(normalizeWriteZeroTrustApplicationAPIData(ctx, data, &req.Config)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
-	res := new(http.Response)
-	env := ZeroTrustAccessApplicationResultEnvelope{*data}
-	params := zero_trust.AccessApplicationNewParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
@@ -118,14 +123,20 @@ func (r *ZeroTrustAccessApplicationResource) Update(ctx context.Context, req res
 		return
 	}
 
+	res := new(http.Response)
+	env := ZeroTrustAccessApplicationResultEnvelope{*data}
+	params := zero_trust.AccessApplicationUpdateParams{}
+
+	resp.Diagnostics.Append(normalizeWriteZeroTrustApplicationAPIData(ctx, data, &req.Config)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
-	res := new(http.Response)
-	env := ZeroTrustAccessApplicationResultEnvelope{*data}
-	params := zero_trust.AccessApplicationUpdateParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
@@ -152,6 +163,14 @@ func (r *ZeroTrustAccessApplicationResource) Update(ctx context.Context, req res
 		return
 	}
 	data = &env.Result
+
+	var planData *ZeroTrustAccessApplicationModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &planData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	normalizeReadZeroTrustApplicationAPIData(ctx, data, planData)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -198,6 +217,14 @@ func (r *ZeroTrustAccessApplicationResource) Read(ctx context.Context, req resou
 		return
 	}
 	data = &env.Result
+
+	var stateData *ZeroTrustAccessApplicationModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &stateData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(normalizeReadZeroTrustApplicationAPIData(ctx, data, stateData)...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -287,6 +314,6 @@ func (r *ZeroTrustAccessApplicationResource) ImportState(ctx context.Context, re
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustAccessApplicationResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
+func (r *ZeroTrustAccessApplicationResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resource.ModifyPlanResponse) {
+	modifyPlan(ctx, req, res)
 }

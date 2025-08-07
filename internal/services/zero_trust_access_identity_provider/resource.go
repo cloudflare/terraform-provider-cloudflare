@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,16 +59,11 @@ func (r *ZeroTrustAccessIdentityProviderResource) Configure(ctx context.Context,
 func (r *ZeroTrustAccessIdentityProviderResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data *ZeroTrustAccessIdentityProviderModel
 
-	secret := types.StringNull()
-	req.Config.GetAttribute(ctx, path.Root("config").AtName("client_secret"), &secret)
-
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	data.Config.ClientSecret = secret
 
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
@@ -103,15 +98,12 @@ func (r *ZeroTrustAccessIdentityProviderResource) Create(ctx context.Context, re
 		return
 	}
 	data = &env.Result
-	data.Config.ClientSecret = types.StringNull()
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustAccessIdentityProviderResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *ZeroTrustAccessIdentityProviderModel
-	secret := types.StringNull()
-	req.State.GetAttribute(ctx, path.Root("scim_config").AtName("secret"), &secret)
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -130,6 +122,9 @@ func (r *ZeroTrustAccessIdentityProviderResource) Update(ctx context.Context, re
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		return
+	}
+	if resp.Diagnostics.HasError() {
 		return
 	}
 	res := new(http.Response)
@@ -162,10 +157,15 @@ func (r *ZeroTrustAccessIdentityProviderResource) Update(ctx context.Context, re
 	}
 	data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-	if !secret.IsNull() {
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("scim_config").AtName("secret"), secret)...)
+	var planValue ZeroTrustAccessIdentityProviderModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &planValue)...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
+
+	normalizeReadZeroTrustIDPData(ctx, data, &planValue)
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustAccessIdentityProviderResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -212,6 +212,14 @@ func (r *ZeroTrustAccessIdentityProviderResource) Read(ctx context.Context, req 
 		return
 	}
 	data = &env.Result
+
+	var stateValue ZeroTrustAccessIdentityProviderModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &stateValue)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	normalizeReadZeroTrustIDPData(ctx, data, &stateValue)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("scim_config").AtName("secret"), secret)...)
@@ -302,6 +310,5 @@ func (r *ZeroTrustAccessIdentityProviderResource) ImportState(ctx context.Contex
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustAccessIdentityProviderResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
+func (r *ZeroTrustAccessIdentityProviderResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resource.ModifyPlanResponse) {
 }

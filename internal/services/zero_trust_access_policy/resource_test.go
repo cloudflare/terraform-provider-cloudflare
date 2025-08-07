@@ -44,6 +44,11 @@ func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.service_token.%", "1"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyServiceTokenConfig(rnd, zone, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -69,6 +74,11 @@ func TestAccCloudflareAccessPolicy_AnyServiceToken(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "include.0.any_valid_service_token.%"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyAnyServiceTokenConfig(rnd, zone, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -79,14 +89,6 @@ func testAccessPolicyServiceTokenConfig(resourceID, zone, accountID string) stri
 
 func testAccessPolicyAnyServiceTokenConfig(resourceID, zone, accountID string) string {
 	return acctest.LoadTestCase("accesspolicyanyservicetokenconfig.tf", resourceID, zone, accountID)
-}
-
-func testAccessPolicyWithZoneID(resourceID, zone, zoneID string) string {
-	return acctest.LoadTestCase("accesspolicywithzoneid.tf", resourceID, zone, zoneID)
-}
-
-func testAccessPolicyWithZoneIDUpdated(resourceID, zone, zoneID string) string {
-	return acctest.LoadTestCase("accesspolicywithzoneidupdated.tf", resourceID, zone, zoneID)
 }
 
 func TestAccCloudflareAccessPolicy_Group(t *testing.T) {
@@ -109,6 +111,11 @@ func TestAccCloudflareAccessPolicy_Group(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.group.%", "1"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyGroupConfig(rnd, zone, accountID),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -138,6 +145,11 @@ func TestAccCloudflareAccessPolicy_MTLS(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttrSet(name, "include.0.certificate.%"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyMTLSConfig(rnd, zone, accountID),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -173,6 +185,11 @@ func TestAccCloudflareAccessPolicy_EmailDomain(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "session_duration", "12h"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyEmailDomainConfig(rnd, zone, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -201,6 +218,11 @@ func TestAccCloudflareAccessPolicy_Emails(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.email.email", "a@example.com"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyEmailsConfig(rnd, zone, accountID),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -231,6 +253,11 @@ func TestAccCloudflareAccessPolicy_Everyone(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "include.0.everyone.%"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyEveryoneConfig(rnd, zone, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -259,6 +286,11 @@ func TestAccCloudflareAccessPolicy_IPs(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.ip.ip", "10.0.0.1/32"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyIPsConfig(rnd, zone, accountID),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -289,6 +321,11 @@ func TestAccCloudflareAccessPolicy_AuthMethod(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.auth_method.auth_method", "hwk"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyAuthMethodConfig(rnd, zone, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -317,6 +354,11 @@ func TestAccCloudflareAccessPolicy_Geo(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.geo.country_code", "US"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyGeoConfig(rnd, zone, accountID),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -348,6 +390,11 @@ func TestAccCloudflareAccessPolicy_Okta(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.okta.identity_provider_id", "225934dc-14e4-4f55-87be-f5d798d23f91"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyOktaConfig(rnd, zone, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -377,6 +424,11 @@ func TestAccCloudflareAccessPolicy_PurposeJustification(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "purpose_justification_required", "true"),
 					resource.TestCheckResourceAttr(name, "purpose_justification_prompt", "Why should we let you in?"),
 				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyPurposeJustificationConfig(rnd, zone, accountID),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -456,6 +508,11 @@ func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "approval_groups.1.approvals_needed", "1"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyApprovalGroupConfig(rnd, zone, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -527,6 +584,11 @@ func TestAccCloudflareAccessPolicy_ExternalEvaluation(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.external_evaluation.keys_url", "https://example.com/keys"),
 				),
 			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessPolicyExternalEvalautionConfig(rnd, zone, accountID),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -535,6 +597,8 @@ func testAccessPolicyExternalEvalautionConfig(resourceID, zone, accountID string
 	return acctest.LoadTestCase("accesspolicyexternalevalautionconfig.tf", resourceID, zone, accountID)
 }
 
+/*
+Commented out until cloudflare_zero_trust_gateway_settings gets fixed
 func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zero_trust_access_policy." + rnd
@@ -559,6 +623,7 @@ func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
 		},
 	})
 }
+*/
 
 func testAccessPolicyIsolationRequiredConfig(resourceID, zone, accountID string) string {
 	return acctest.LoadTestCase("accesspolicyisolationrequiredconfig.tf", resourceID, zone, accountID)

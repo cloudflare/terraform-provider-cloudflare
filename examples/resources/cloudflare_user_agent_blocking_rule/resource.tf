@@ -5,4 +5,6 @@ resource "cloudflare_user_agent_blocking_rule" "example_user_agent_blocking_rule
     value = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)"
   }
   mode = "challenge"
+  description = "Prevent multiple login failures to mitigate brute force attacks"
+  paused = false
 }

@@ -4,7 +4,6 @@ package zero_trust_access_group
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,8 +20,6 @@ type ZeroTrustAccessGroupModel struct {
 	IsDefault types.Bool                           `tfsdk:"is_default" json:"is_default,optional,no_refresh"`
 	Exclude   *[]*ZeroTrustAccessGroupExcludeModel `tfsdk:"exclude" json:"exclude,optional"`
 	Require   *[]*ZeroTrustAccessGroupRequireModel `tfsdk:"require" json:"require,optional"`
-	CreatedAt timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	UpdatedAt timetypes.RFC3339                    `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 func (m ZeroTrustAccessGroupModel) MarshalJSON() (data []byte, err error) {
@@ -55,7 +52,9 @@ type ZeroTrustAccessGroupIncludeModel struct {
 	IP                   *ZeroTrustAccessGroupIncludeIPModel                   `tfsdk:"ip" json:"ip,optional"`
 	Okta                 *ZeroTrustAccessGroupIncludeOktaModel                 `tfsdk:"okta" json:"okta,optional"`
 	SAML                 *ZeroTrustAccessGroupIncludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
+	OIDC                 *ZeroTrustAccessGroupIncludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessGroupIncludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
+	LinkedAppToken       *ZeroTrustAccessGroupIncludeLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 }
 
 type ZeroTrustAccessGroupIncludeGroupModel struct {
@@ -149,8 +148,18 @@ type ZeroTrustAccessGroupIncludeSAMLModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
 }
 
+type ZeroTrustAccessGroupIncludeOIDCModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,required"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,required"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
+}
+
 type ZeroTrustAccessGroupIncludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
+}
+
+type ZeroTrustAccessGroupIncludeLinkedAppTokenModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
 }
 
 type ZeroTrustAccessGroupExcludeModel struct {
@@ -175,7 +184,9 @@ type ZeroTrustAccessGroupExcludeModel struct {
 	IP                   *ZeroTrustAccessGroupExcludeIPModel                   `tfsdk:"ip" json:"ip,optional"`
 	Okta                 *ZeroTrustAccessGroupExcludeOktaModel                 `tfsdk:"okta" json:"okta,optional"`
 	SAML                 *ZeroTrustAccessGroupExcludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
+	OIDC                 *ZeroTrustAccessGroupExcludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessGroupExcludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
+	LinkedAppToken       *ZeroTrustAccessGroupExcludeLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 }
 
 type ZeroTrustAccessGroupExcludeGroupModel struct {
@@ -269,8 +280,18 @@ type ZeroTrustAccessGroupExcludeSAMLModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
 }
 
+type ZeroTrustAccessGroupExcludeOIDCModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,required"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,required"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
+}
+
 type ZeroTrustAccessGroupExcludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
+}
+
+type ZeroTrustAccessGroupExcludeLinkedAppTokenModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
 }
 
 type ZeroTrustAccessGroupRequireModel struct {
@@ -295,7 +316,9 @@ type ZeroTrustAccessGroupRequireModel struct {
 	IP                   *ZeroTrustAccessGroupRequireIPModel                   `tfsdk:"ip" json:"ip,optional"`
 	Okta                 *ZeroTrustAccessGroupRequireOktaModel                 `tfsdk:"okta" json:"okta,optional"`
 	SAML                 *ZeroTrustAccessGroupRequireSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
+	OIDC                 *ZeroTrustAccessGroupRequireOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessGroupRequireServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
+	LinkedAppToken       *ZeroTrustAccessGroupRequireLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 }
 
 type ZeroTrustAccessGroupRequireGroupModel struct {
@@ -389,6 +412,16 @@ type ZeroTrustAccessGroupRequireSAMLModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
 }
 
+type ZeroTrustAccessGroupRequireOIDCModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,required"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,required"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,required"`
+}
+
 type ZeroTrustAccessGroupRequireServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
+}
+
+type ZeroTrustAccessGroupRequireLinkedAppTokenModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
 }

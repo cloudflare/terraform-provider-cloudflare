@@ -5,8 +5,8 @@ package zero_trust_gateway_settings
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -35,7 +35,6 @@ func (m *ZeroTrustGatewaySettingsDataSourceModel) toReadParams(_ context.Context
 type ZeroTrustGatewaySettingsSettingsDataSourceModel struct {
 	ActivityLog           customfield.NestedObject[ZeroTrustGatewaySettingsSettingsActivityLogDataSourceModel]           `tfsdk:"activity_log" json:"activity_log,computed"`
 	Antivirus             customfield.NestedObject[ZeroTrustGatewaySettingsSettingsAntivirusDataSourceModel]             `tfsdk:"antivirus" json:"antivirus,computed"`
-	AppControlSettings    customfield.NestedObject[ZeroTrustGatewaySettingsSettingsAppControlSettingsDataSourceModel]    `tfsdk:"app_control_settings" json:"app-control-settings,computed"`
 	BlockPage             customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBlockPageDataSourceModel]             `tfsdk:"block_page" json:"block_page,computed"`
 	BodyScanning          customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBodyScanningDataSourceModel]          `tfsdk:"body_scanning" json:"body_scanning,computed"`
 	BrowserIsolation      customfield.NestedObject[ZeroTrustGatewaySettingsSettingsBrowserIsolationDataSourceModel]      `tfsdk:"browser_isolation" json:"browser_isolation,computed"`
@@ -44,6 +43,7 @@ type ZeroTrustGatewaySettingsSettingsDataSourceModel struct {
 	ExtendedEmailMatching customfield.NestedObject[ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingDataSourceModel] `tfsdk:"extended_email_matching" json:"extended_email_matching,computed"`
 	Fips                  customfield.NestedObject[ZeroTrustGatewaySettingsSettingsFipsDataSourceModel]                  `tfsdk:"fips" json:"fips,computed"`
 	HostSelector          customfield.NestedObject[ZeroTrustGatewaySettingsSettingsHostSelectorDataSourceModel]          `tfsdk:"host_selector" json:"host_selector,computed"`
+	Inspection            customfield.NestedObject[ZeroTrustGatewaySettingsSettingsInspectionDataSourceModel]            `tfsdk:"inspection" json:"inspection,computed"`
 	ProtocolDetection     customfield.NestedObject[ZeroTrustGatewaySettingsSettingsProtocolDetectionDataSourceModel]     `tfsdk:"protocol_detection" json:"protocol_detection,computed"`
 	Sandbox               customfield.NestedObject[ZeroTrustGatewaySettingsSettingsSandboxDataSourceModel]               `tfsdk:"sandbox" json:"sandbox,computed"`
 	TLSDecrypt            customfield.NestedObject[ZeroTrustGatewaySettingsSettingsTLSDecryptDataSourceModel]            `tfsdk:"tls_decrypt" json:"tls_decrypt,computed"`
@@ -67,10 +67,6 @@ type ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsDataSourceMode
 	SupportURL     types.String `tfsdk:"support_url" json:"support_url,computed"`
 }
 
-type ZeroTrustGatewaySettingsSettingsAppControlSettingsDataSourceModel struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
-}
-
 type ZeroTrustGatewaySettingsSettingsBlockPageDataSourceModel struct {
 	BackgroundColor types.String `tfsdk:"background_color" json:"background_color,computed"`
 	Enabled         types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
@@ -82,8 +78,11 @@ type ZeroTrustGatewaySettingsSettingsBlockPageDataSourceModel struct {
 	MailtoSubject   types.String `tfsdk:"mailto_subject" json:"mailto_subject,computed"`
 	Mode            types.String `tfsdk:"mode" json:"mode,computed"`
 	Name            types.String `tfsdk:"name" json:"name,computed"`
+	ReadOnly        types.Bool   `tfsdk:"read_only" json:"read_only,computed"`
+	SourceAccount   types.String `tfsdk:"source_account" json:"source_account,computed"`
 	SuppressFooter  types.Bool   `tfsdk:"suppress_footer" json:"suppress_footer,computed"`
 	TargetURI       types.String `tfsdk:"target_uri" json:"target_uri,computed"`
+	Version         types.Int64  `tfsdk:"version" json:"version,computed"`
 }
 
 type ZeroTrustGatewaySettingsSettingsBodyScanningDataSourceModel struct {
@@ -107,7 +106,10 @@ type ZeroTrustGatewaySettingsSettingsCustomCertificateDataSourceModel struct {
 }
 
 type ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingDataSourceModel struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+	Enabled       types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+	ReadOnly      types.Bool   `tfsdk:"read_only" json:"read_only,computed"`
+	SourceAccount types.String `tfsdk:"source_account" json:"source_account,computed"`
+	Version       types.Int64  `tfsdk:"version" json:"version,computed"`
 }
 
 type ZeroTrustGatewaySettingsSettingsFipsDataSourceModel struct {
@@ -116,6 +118,10 @@ type ZeroTrustGatewaySettingsSettingsFipsDataSourceModel struct {
 
 type ZeroTrustGatewaySettingsSettingsHostSelectorDataSourceModel struct {
 	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+}
+
+type ZeroTrustGatewaySettingsSettingsInspectionDataSourceModel struct {
+	Mode types.String `tfsdk:"mode" json:"mode,computed"`
 }
 
 type ZeroTrustGatewaySettingsSettingsProtocolDetectionDataSourceModel struct {

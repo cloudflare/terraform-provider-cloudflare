@@ -14,6 +14,7 @@ description: |-
 ```terraform
 data "cloudflare_images" "example_images" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  creator = "creator"
 }
 ```
 
@@ -26,6 +27,7 @@ data "cloudflare_images" "example_images" {
 
 ### Optional
 
+- `creator` (String) Internal user ID set within the creator field. Setting to empty string "" will return images where creator field is not set
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only
@@ -44,6 +46,7 @@ Read-Only:
 
 Read-Only:
 
+- `creator` (String) Can set the creator field with an internal user ID.
 - `filename` (String) Image file name.
 - `id` (String) Image unique identifier.
 - `meta` (String) User modifiable key-value store. Can be used for keeping references to another system of record for managing images. Metadata must not exceed 1024 bytes.

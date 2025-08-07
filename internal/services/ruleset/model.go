@@ -36,7 +36,7 @@ type RulesetRulesModel struct {
 	Action                 types.String                             `tfsdk:"action" json:"action,optional"`
 	ActionParameters       *RulesetRulesActionParametersModel       `tfsdk:"action_parameters" json:"action_parameters,optional"`
 	Categories             customfield.List[types.String]           `tfsdk:"categories" json:"categories,optional"`
-	Description            types.String                             `tfsdk:"description" json:"description,computed_optional"`
+	Description            types.String                             `tfsdk:"description" json:"description,optional"`
 	Enabled                types.Bool                               `tfsdk:"enabled" json:"enabled,computed_optional"`
 	ExposedCredentialCheck *RulesetRulesExposedCredentialCheckModel `tfsdk:"exposed_credential_check" json:"exposed_credential_check,optional"`
 	Expression             types.String                             `tfsdk:"expression" json:"expression,optional"`
@@ -79,6 +79,7 @@ type RulesetRulesActionParametersModel struct {
 	ServerSideExcludes       types.Bool                                           `tfsdk:"server_side_excludes" json:"server_side_excludes,optional"`
 	SSL                      types.String                                         `tfsdk:"ssl" json:"ssl,optional"`
 	SXG                      types.Bool                                           `tfsdk:"sxg" json:"sxg,optional"`
+	Phase                    types.String                                                  `tfsdk:"phase" json:"phase,optional"`
 	Phases                   *[]types.String                                      `tfsdk:"phases" json:"phases,optional"`
 	Products                 *[]types.String                                      `tfsdk:"products" json:"products,optional"`
 	Rules                    *map[string]*[]types.String                          `tfsdk:"rules" json:"rules,optional"`

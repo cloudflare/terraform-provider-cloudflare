@@ -52,6 +52,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "An optional description forthe IPsec tunnel.",
 				Optional:    true,
 			},
+			"interface_address6": schema.StringAttribute{
+				Description: "A 127 bit IPV6 prefix from within the virtual_subnet6 prefix space with the address being the first IP of the subnet and not same as the address of virtual_subnet6. Eg if virtual_subnet6 is 2606:54c1:7:0:a9fe:12d2::/127 , interface_address6 could be 2606:54c1:7:0:a9fe:12d2:1:200/127",
+				Optional:    true,
+			},
 			"psk": schema.StringAttribute{
 				Description: "A randomly generated or provided string for use in the IPsec tunnel.",
 				Optional:    true,
@@ -230,6 +234,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"interface_address6": schema.StringAttribute{
+						Description: "A 127 bit IPV6 prefix from within the virtual_subnet6 prefix space with the address being the first IP of the subnet and not same as the address of virtual_subnet6. Eg if virtual_subnet6 is 2606:54c1:7:0:a9fe:12d2::/127 , interface_address6 could be 2606:54c1:7:0:a9fe:12d2:1:200/127",
+						Computed:    true,
+					},
 					"modified_on": schema.StringAttribute{
 						Description: "The date and time the tunnel was last modified.",
 						Computed:    true,
@@ -345,6 +353,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"interface_address6": schema.StringAttribute{
+						Description: "A 127 bit IPV6 prefix from within the virtual_subnet6 prefix space with the address being the first IP of the subnet and not same as the address of virtual_subnet6. Eg if virtual_subnet6 is 2606:54c1:7:0:a9fe:12d2::/127 , interface_address6 could be 2606:54c1:7:0:a9fe:12d2:1:200/127",
+						Computed:    true,
+					},
 					"modified_on": schema.StringAttribute{
 						Description: "The date and time the tunnel was last modified.",
 						Computed:    true,
@@ -386,7 +398,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *MagicWANIPSECTunnelResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = ResourceSchema(ctx)
+	resp.Schema = customResourceSchema(ctx)
 }
 
 func (r *MagicWANIPSECTunnelResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

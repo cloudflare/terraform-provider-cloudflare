@@ -19,6 +19,8 @@ resource "cloudflare_user_agent_blocking_rule" "example_user_agent_blocking_rule
     value = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)"
   }
   mode = "challenge"
+  description = "Prevent multiple login failures to mitigate brute force attacks"
+  paused = false
 }
 ```
 
@@ -34,7 +36,12 @@ Available values: "block", "challenge", "whitelist", "js_challenge", "managed_ch
 
 ### Optional
 
-- `ua_rule_id` (String) The unique identifier of the User Agent Blocking rule.
+- `description` (String) An informative summary of the rule. This value is sanitized and any tags will be removed.
+- `paused` (Boolean) When true, indicates that the rule is currently paused.
+
+### Read-Only
+
+- `id` (String) The unique identifier of the User Agent Blocking rule.
 
 <a id="nestedatt--configuration"></a>
 ### Nested Schema for `configuration`
@@ -45,4 +52,10 @@ Optional:
 Available values: "ua".
 - `value` (String) the user agent to exactly match
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_user_agent_blocking_rule.example '<zone_id>/<ua_rule_id>'
+```

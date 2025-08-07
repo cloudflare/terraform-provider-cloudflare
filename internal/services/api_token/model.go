@@ -18,8 +18,8 @@ type APITokenModel struct {
 	Policies   *[]*APITokenPoliciesModel `tfsdk:"policies" json:"policies,required"`
 	ExpiresOn  timetypes.RFC3339         `tfsdk:"expires_on" json:"expires_on,optional" format:"date-time"`
 	NotBefore  timetypes.RFC3339         `tfsdk:"not_before" json:"not_before,optional" format:"date-time"`
-	Status     types.String              `tfsdk:"status" json:"status,optional"`
 	Condition  *APITokenConditionModel   `tfsdk:"condition" json:"condition,optional"`
+	Status     types.String              `tfsdk:"status" json:"status,computed_optional"`
 	IssuedOn   timetypes.RFC3339         `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
 	LastUsedOn timetypes.RFC3339         `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
 	ModifiedOn timetypes.RFC3339         `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
@@ -35,7 +35,7 @@ func (m APITokenModel) MarshalJSONForUpdate(state APITokenModel) (data []byte, e
 }
 
 type APITokenPoliciesModel struct {
-	ID               types.String                              `tfsdk:"id" json:"id,computed"`
+	ID               types.String                              `tfsdk:"id" json:"id,computed,force_encode,encode_state_for_unknown"`
 	Effect           types.String                              `tfsdk:"effect" json:"effect,required"`
 	PermissionGroups *[]*APITokenPoliciesPermissionGroupsModel `tfsdk:"permission_groups" json:"permission_groups,required"`
 	Resources        *map[string]types.String                  `tfsdk:"resources" json:"resources,required"`

@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -153,6 +153,13 @@ func (r *ZeroTrustAccessMTLSCertificateResource) Update(ctx context.Context, req
 	}
 	data = &env.Result
 
+	var planData *ZeroTrustAccessMTLSCertificateModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &planData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	resp.Diagnostics.Append(normalizeReadZeroTrustAccessMtlsCertificateAPIData(ctx, data, planData)...)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -198,6 +205,14 @@ func (r *ZeroTrustAccessMTLSCertificateResource) Read(ctx context.Context, req r
 		return
 	}
 	data = &env.Result
+
+	var stateData *ZeroTrustAccessMTLSCertificateModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &stateData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(normalizeReadZeroTrustAccessMtlsCertificateAPIData(ctx, data, stateData)...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
