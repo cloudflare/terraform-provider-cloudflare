@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -54,6 +55,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"allow_iframe": schema.BoolAttribute{
 				Description: "Enables loading application content in an iFrame.",
 				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 				Validators: []validator.Bool{
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
 				},
@@ -130,6 +133,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"service_auth_401_redirect": schema.BoolAttribute{
 				Description: "Returns a 401 status code when the request is blocked by a Service Auth policy.",
 				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 				Validators: []validator.Bool{
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
 				},
@@ -137,6 +142,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"skip_interstitial": schema.BoolAttribute{
 				Description: "Enables automatic authentication through cloudflared.",
 				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 				Validators: []validator.Bool{
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
 				},
@@ -445,6 +452,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"path_cookie_attribute": schema.BoolAttribute{
 				Description: "Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default",
 				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 				Validators: []validator.Bool{
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
 				},

@@ -2,13 +2,14 @@ package zero_trust_access_application
 
 import (
 	"context"
+	"slices"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"slices"
 )
 
 func normalizeEmptyAndNullString(data *basetypes.StringValue, stateData basetypes.StringValue) {
@@ -129,8 +130,11 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 	normalizeFalseAndNullBool(&data.EnableBindingCookie, stateData.EnableBindingCookie)
 	normalizeFalseAndNullBool(&data.OptionsPreflightBypass, stateData.OptionsPreflightBypass)
 	normalizeFalseAndNullBool(&data.AutoRedirectToIdentity, stateData.AutoRedirectToIdentity)
-	if slices.Contains(selfHostedAppTypes, data.Type.String()) {
+	if slices.Contains(selfHostedAppTypes, data.Type.ValueString()) {
 		normalizeTrueAndNullBool(&data.HTTPOnlyCookieAttribute, stateData.HTTPOnlyCookieAttribute)
+		normalizeFalseAndNullBool(&data.SkipInterstitial, stateData.SkipInterstitial)
+		normalizeFalseAndNullBool(&data.AllowIframe, stateData.AllowIframe)
+		normalizeFalseAndNullBool(&data.PathCookieAttribute, stateData.PathCookieAttribute)
 	}
 
 	if !data.SaaSApp.IsNull() && !stateData.SaaSApp.IsNull() {
@@ -197,6 +201,65 @@ func normalizeWriteZeroTrustApplicationAPIData(ctx context.Context, data *ZeroTr
 	// To avoid a diff, we need to ensure that the array is not nil
 	if data.Policies == nil {
 		data.Policies = &[]ZeroTrustAccessApplicationPoliciesModel{}
+	}
+
+	return diags
+}
+
+func normalizeImportZeroTrustAccessApplicationAPIData(ctx context.Context, data *ZeroTrustAccessApplicationModel) diag.Diagnostics {
+	diags := make(diag.Diagnostics, 0)
+	if data.AllowedIdPs != nil && len(*data.AllowedIdPs) == 0 {
+		data.AllowedIdPs = nil
+	}
+	if data.Policies != nil && len(*data.Policies) == 0 {
+		data.Policies = nil
+	}
+
+	if data.Policies != nil {
+		for i := range *data.Policies {
+			policy := &(*data.Policies)[i]
+			if !policy.ID.IsNull() && !policy.ID.IsUnknown() {
+				policy.Decision = types.StringNull()
+				policy.Name = types.StringNull()
+				policy.Include = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
+				policy.Require = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesRequireModel](ctx)
+				policy.Exclude = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx)
+			} else {
+				if !policy.Include.IsNull() && len(policy.Include.Elements()) == 0 {
+					policy.Include = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
+				}
+				if !policy.Require.IsNull() && len(policy.Require.Elements()) == 0 {
+					policy.Require = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesRequireModel](ctx)
+				}
+				if !policy.Exclude.IsNull() && len(policy.Exclude.Elements()) == 0 {
+					policy.Exclude = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx)
+				}
+			}
+		}
+	}
+
+	if slices.Contains(selfHostedAppTypes, data.Type.ValueString()) {
+		if data.AllowIframe.IsNull() {
+			data.AllowIframe = types.BoolValue(false)
+		}
+
+		if data.PathCookieAttribute.IsNull() {
+			data.PathCookieAttribute = types.BoolValue(false)
+		}
+
+		if data.SkipInterstitial.IsNull() {
+			data.SkipInterstitial = types.BoolValue(false)
+		}
+
+		if data.ServiceAuth401Redirect.IsNull() {
+			data.ServiceAuth401Redirect = types.BoolValue(false)
+		}
+	}
+
+	if !data.Tags.IsNull() && !data.Tags.IsUnknown() {
+		if len(data.Tags.Elements()) == 0 {
+			data.Tags = customfield.NullList[types.String](ctx)
+		}
 	}
 
 	return diags

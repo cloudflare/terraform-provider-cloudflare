@@ -39,3 +39,18 @@ func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, source
 
 	return diags
 }
+
+func normalizeImportZeroTrustAccessPolicyAPIData(ctx context.Context, data *ZeroTrustAccessPolicyModel) diag.Diagnostics {
+	diags := make(diag.Diagnostics, 0)
+	if data.Exclude != nil && len(*data.Exclude) == 0 {
+		data.Exclude = nil
+	}
+	if data.Require != nil && len(*data.Require) == 0 {
+		data.Require = nil
+	}
+	if data.Include != nil && len(*data.Include) == 0 {
+		data.Include = nil
+	}
+
+	return diags
+}

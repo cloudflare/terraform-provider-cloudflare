@@ -195,7 +195,6 @@ func (r *ZeroTrustAccessPolicyResource) Read(ctx context.Context, req resource.R
 	}
 
 	resp.Diagnostics.Append(normalizeReadZeroTrustAccessPolicyAPIData(ctx, data, stateData)...)
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -266,6 +265,7 @@ func (r *ZeroTrustAccessPolicyResource) ImportState(ctx context.Context, req res
 	}
 	data = &env.Result
 
+	resp.Diagnostics.Append(normalizeImportZeroTrustAccessPolicyAPIData(ctx, data)...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

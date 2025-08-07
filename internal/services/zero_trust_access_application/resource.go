@@ -311,6 +311,8 @@ func (r *ZeroTrustAccessApplicationResource) ImportState(ctx context.Context, re
 	}
 	data = &env.Result
 
+	resp.Diagnostics.Append(normalizeImportZeroTrustAccessApplicationAPIData(ctx, data)...)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
