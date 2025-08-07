@@ -121,6 +121,8 @@ func TestAccCloudflareSpectrumApplication_OriginDNS(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "origin_dns.name", fmt.Sprintf("%s.origin.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "origin_port", "22"),
 				),
+				// ExpectNonEmptyPlan due to DNS record drift
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -314,6 +316,234 @@ func TestAccCloudflareSpectrumApplication_BasicMinecraft(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareSpectrumApplication_TLS(t *testing.T) {
+	var spectrumApp cloudflare.SpectrumApplication
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_spectrum_application." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigTLS(zoneID, domain, rnd, "flexible"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "tls", "flexible"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigTLS(zoneID, domain, rnd, "full"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "tls", "full"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigTLS(zoneID, domain, rnd, "strict"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "tls", "strict"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareSpectrumApplication_ProxyProtocol(t *testing.T) {
+	var spectrumApp cloudflare.SpectrumApplication
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_spectrum_application." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigProxyProtocol(zoneID, domain, rnd, "v1"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "proxy_protocol", "v1"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigProxyProtocol(zoneID, domain, rnd, "v2"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "proxy_protocol", "v2"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareSpectrumApplication_IPFirewall(t *testing.T) {
+	var spectrumApp cloudflare.SpectrumApplication
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_spectrum_application." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigIPFirewall(zoneID, domain, rnd, "true"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "ip_firewall", "true"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigIPFirewall(zoneID, domain, rnd, "false"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "ip_firewall", "false"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareSpectrumApplication_ArgoSmartRouting(t *testing.T) {
+	var spectrumApp cloudflare.SpectrumApplication
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_spectrum_application." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigArgoSmartRouting(zoneID, domain, rnd, "true"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "argo_smart_routing", "true"),
+					resource.TestCheckResourceAttr(name, "traffic_type", "direct"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigArgoSmartRouting(zoneID, domain, rnd, "false"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "argo_smart_routing", "false"),
+					resource.TestCheckResourceAttr(name, "traffic_type", "direct"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareSpectrumApplication_TrafficType(t *testing.T) {
+	var spectrumApp cloudflare.SpectrumApplication
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_spectrum_application." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigTrafficType(zoneID, domain, rnd, "http"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "traffic_type", "http"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigTrafficType(zoneID, domain, rnd, "https"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "traffic_type", "https"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigTrafficType(zoneID, domain, rnd, "direct"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "traffic_type", "direct"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareSpectrumApplication_IPv6Connectivity(t *testing.T) {
+	var spectrumApp cloudflare.SpectrumApplication
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_spectrum_application." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigIPv6(zoneID, domain, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "edge_ips.connectivity", "ipv6"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareSpectrumApplication_UDP(t *testing.T) {
+	var spectrumApp cloudflare.SpectrumApplication
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_spectrum_application." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigUDP(zoneID, domain, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "protocol", "udp/53"),
+					resource.TestCheckResourceAttr(name, "traffic_type", "direct"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigSimpleProxyProtocol(zoneID, domain, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "proxy_protocol", "simple"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareSpectrumApplicationExists(n string, spectrumApp *cloudflare.SpectrumApplication) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
@@ -408,4 +638,36 @@ func testAccCheckCloudflareSpectrumApplicationConfigMultipleEdgeIPs(zoneID, zone
 
 func testAccCheckCloudflareSpectrumApplicationConfigBasicTypes(zoneID, zoneName, ID, protocol string, port int) string {
 	return acctest.LoadTestCase("spectrumapplicationconfigbasictypes.tf", zoneID, zoneName, ID, protocol, port)
+}
+
+func testAccCheckCloudflareSpectrumApplicationConfigTLS(zoneID, zoneName, ID, tls string) string {
+	return acctest.LoadTestCase("spectrumapplicationconfigtls.tf", zoneID, zoneName, ID, tls)
+}
+
+func testAccCheckCloudflareSpectrumApplicationConfigProxyProtocol(zoneID, zoneName, ID, proxyProtocol string) string {
+	return acctest.LoadTestCase("spectrumapplicationconfigproxyprotocol.tf", zoneID, zoneName, ID, proxyProtocol)
+}
+
+func testAccCheckCloudflareSpectrumApplicationConfigSimpleProxyProtocol(zoneID, zoneName, ID string) string {
+	return acctest.LoadTestCase("spectrumapplicationconfigsimpleproxyprotocol.tf", zoneID, zoneName, ID)
+}
+
+func testAccCheckCloudflareSpectrumApplicationConfigIPFirewall(zoneID, zoneName, ID, ipFirewall string) string {
+	return acctest.LoadTestCase("spectrumapplicationconfigipfirewall.tf", zoneID, zoneName, ID, ipFirewall)
+}
+
+func testAccCheckCloudflareSpectrumApplicationConfigArgoSmartRouting(zoneID, zoneName, ID, argoSmartRouting string) string {
+	return acctest.LoadTestCase("spectrumapplicationconfigargosmartrouting.tf", zoneID, zoneName, ID, argoSmartRouting)
+}
+
+func testAccCheckCloudflareSpectrumApplicationConfigTrafficType(zoneID, zoneName, ID, trafficType string) string {
+	return acctest.LoadTestCase("spectrumapplicationconfigtraffictype.tf", zoneID, zoneName, ID, trafficType)
+}
+
+func testAccCheckCloudflareSpectrumApplicationConfigIPv6(zoneID, zoneName, ID string) string {
+	return acctest.LoadTestCase("spectrumapplicationconfigipv6.tf", zoneID, zoneName, ID)
+}
+
+func testAccCheckCloudflareSpectrumApplicationConfigUDP(zoneID, zoneName, ID string) string {
+	return acctest.LoadTestCase("spectrumapplicationconfigudp.tf", zoneID, zoneName, ID)
 }
