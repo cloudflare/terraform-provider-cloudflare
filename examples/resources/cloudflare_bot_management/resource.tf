@@ -4,4 +4,5 @@ resource "cloudflare_bot_management" "example_bot_management" {
   crawler_protection = "enabled"
   enable_js = true
   fight_mode = true
+  is_robots_txt_managed = true
 }
