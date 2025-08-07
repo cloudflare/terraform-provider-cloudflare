@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package universal_ssl_setting
+package snippet
 
 import (
 	"context"
@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type UniversalSSLSettingDataSource struct {
+type SnippetDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*UniversalSSLSettingDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*SnippetDataSource)(nil)
 
-func NewUniversalSSLSettingDataSource() datasource.DataSource {
-	return &UniversalSSLSettingDataSource{}
+func NewSnippetDataSource() datasource.DataSource {
+	return &SnippetDataSource{}
 }
 
-func (d *UniversalSSLSettingDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_universal_ssl_setting"
+func (d *SnippetDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_snippet"
 }
 
-func (d *UniversalSSLSettingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *SnippetDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *UniversalSSLSettingDataSource) Configure(ctx context.Context, req datas
 	d.client = client
 }
 
-func (d *UniversalSSLSettingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *UniversalSSLSettingDataSourceModel
+func (d *SnippetDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *SnippetDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -64,9 +64,10 @@ func (d *UniversalSSLSettingDataSource) Read(ctx context.Context, req datasource
 	}
 
 	res := new(http.Response)
-	env := UniversalSSLSettingResultDataSourceEnvelope{*data}
-	_, err := d.client.SSL.Universal.Settings.Get(
+	env := SnippetResultDataSourceEnvelope{*data}
+	_, err := d.client.Snippets.Get(
 		ctx,
+		data.SnippetName.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

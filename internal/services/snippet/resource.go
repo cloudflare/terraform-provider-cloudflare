@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package universal_ssl_setting
+package snippet
 
 import (
 	"context"
@@ -10,30 +10,30 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/option"
-	"github.com/cloudflare/cloudflare-go/v5/ssl"
+	"github.com/cloudflare/cloudflare-go/v5/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*UniversalSSLSettingResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*UniversalSSLSettingResource)(nil)
+var _ resource.ResourceWithConfigure = (*SnippetResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*SnippetResource)(nil)
 
 func NewResource() resource.Resource {
-	return &UniversalSSLSettingResource{}
+	return &SnippetResource{}
 }
 
-// UniversalSSLSettingResource defines the resource implementation.
-type UniversalSSLSettingResource struct {
+// SnippetResource defines the resource implementation.
+type SnippetResource struct {
 	client *cloudflare.Client
 }
 
-func (r *UniversalSSLSettingResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_universal_ssl_setting"
+func (r *SnippetResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_snippet"
 }
 
-func (r *UniversalSSLSettingResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *SnippetResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -52,8 +52,8 @@ func (r *UniversalSSLSettingResource) Configure(ctx context.Context, req resourc
 	r.client = client
 }
 
-func (r *UniversalSSLSettingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *UniversalSSLSettingModel
+func (r *SnippetResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *SnippetModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -61,19 +61,20 @@ func (r *UniversalSSLSettingResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
+	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
 	}
 	res := new(http.Response)
-	env := UniversalSSLSettingResultEnvelope{*data}
-	_, err = r.client.SSL.Universal.Settings.Edit(
+	env := SnippetResultEnvelope{*data}
+	_, err = r.client.Snippets.Update(
 		ctx,
-		ssl.UniversalSettingEditParams{
+		data.SnippetName.ValueString(),
+		snippets.SnippetUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
+		option.WithRequestBody(contentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -92,8 +93,8 @@ func (r *UniversalSSLSettingResource) Create(ctx context.Context, req resource.C
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *UniversalSSLSettingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *UniversalSSLSettingModel
+func (r *SnippetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *SnippetModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -101,7 +102,7 @@ func (r *UniversalSSLSettingResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	var state *UniversalSSLSettingModel
+	var state *SnippetModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -109,19 +110,20 @@ func (r *UniversalSSLSettingResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
 	}
 	res := new(http.Response)
-	env := UniversalSSLSettingResultEnvelope{*data}
-	_, err = r.client.SSL.Universal.Settings.Edit(
+	env := SnippetResultEnvelope{*data}
+	_, err = r.client.Snippets.Update(
 		ctx,
-		ssl.UniversalSettingEditParams{
+		data.SnippetName.ValueString(),
+		snippets.SnippetUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
+		option.WithRequestBody(contentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -140,8 +142,8 @@ func (r *UniversalSSLSettingResource) Update(ctx context.Context, req resource.U
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *UniversalSSLSettingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *UniversalSSLSettingModel
+func (r *SnippetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *SnippetModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -150,10 +152,11 @@ func (r *UniversalSSLSettingResource) Read(ctx context.Context, req resource.Rea
 	}
 
 	res := new(http.Response)
-	env := UniversalSSLSettingResultEnvelope{*data}
-	_, err := r.client.SSL.Universal.Settings.Get(
+	env := SnippetResultEnvelope{*data}
+	_, err := r.client.Snippets.Get(
 		ctx,
-		ssl.UniversalSettingGetParams{
+		data.SnippetName.ValueString(),
+		snippets.SnippetGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -179,24 +182,31 @@ func (r *UniversalSSLSettingResource) Read(ctx context.Context, req resource.Rea
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *UniversalSSLSettingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *SnippetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *SnippetModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	_, err := r.client.Snippets.Delete(
+		ctx,
+		data.SnippetName.ValueString(),
+		snippets.SnippetDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *UniversalSSLSettingResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	if req.State.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
-				"present in the API until manually deleted.",
-		)
-	}
-	if req.Plan.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"Applying this resource destruction will remove the resource from the Terraform state "+
-				"but will not change it in the API. If you would like to destroy or reset this resource "+
-				"in the API, refer to the documentation for how to do it manually.",
-		)
-	}
+func (r *SnippetResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }
