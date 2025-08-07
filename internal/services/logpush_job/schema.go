@@ -79,7 +79,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:       stringdefault.StaticString("http_requests"),
 			},
 			"destination_conf": schema.StringAttribute{
-				Description: "Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included.",
+				Description: "Uniquely identifies a resource (such as an s3 bucket) where data. will be pushed. Additional configuration parameters supported by the destination may be included.",
 				Required:    true,
 			},
 			"filter": schema.StringAttribute{
@@ -104,7 +104,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "Optional human readable job name. Not unique. Cloudflare suggests that you set this to a meaningful string, like the domain name, to make it easier to identify your job.",
+				Description: "Optional human readable job name. Not unique. Cloudflare suggests. that you set this to a meaningful string, like the domain name, to make it easier to identify your job.",
 				Optional:    true,
 			},
 			"ownership_challenge": schema.StringAttribute{
@@ -187,7 +187,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"frequency": schema.StringAttribute{
-				Description:        "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.\nAvailable values: \"high\", \"low\".",
+				Description:        "This field is deprecated. Please use `max_upload_*` parameters instead. . The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.\nAvailable values: \"high\", \"low\".",
 				Computed:           true,
 				Optional:           true,
 				DeprecationMessage: "This attribute is deprecated.",
@@ -206,7 +206,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: stringdefault.StaticString(""),
 			},
 			"error_message": schema.StringAttribute{
-				Description: "If not null, the job is currently failing. Failures are usually repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.",
+				Description: "If not null, the job is currently failing. Failures are usually. repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.",
 				Computed:    true,
 			},
 			"last_complete": schema.StringAttribute{
@@ -215,7 +215,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"last_error": schema.StringAttribute{
-				Description: "Records the last time the job failed. If not null, the job is currently failing. If null, the job has either never failed or has run successfully at least once since last failure. See also the error_message field.",
+				Description: "Records the last time the job failed. If not null, the job is currently. failing. If null, the job has either never failed or has run successfully at least once since last failure. See also the error_message field.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
