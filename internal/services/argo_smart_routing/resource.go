@@ -155,6 +155,7 @@ func (r *ArgoSmartRoutingResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	res := new(http.Response)
+	env := ArgoSmartRoutingResultEnvelope{*data}
 	_, err := r.client.Argo.SmartRouting.Get(
 		ctx,
 		argo.SmartRoutingGetParams{
@@ -172,6 +173,13 @@ func (r *ArgoSmartRoutingResource) Read(ctx context.Context, req resource.ReadRe
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
