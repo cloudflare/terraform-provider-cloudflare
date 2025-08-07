@@ -22,7 +22,7 @@ type SpectrumApplicationModel struct {
 	TLS              types.String                                              `tfsdk:"tls" json:"tls,optional"`
 	OriginDirect     *[]types.String                                           `tfsdk:"origin_direct" json:"origin_direct,optional"`
 	OriginDNS        *SpectrumApplicationOriginDNSModel                        `tfsdk:"origin_dns" json:"origin_dns,optional"`
-	OriginPort       types.Dynamic                                             `tfsdk:"origin_port" json:"origin_port,optional"`
+	OriginPort       customfield.NormalizedDynamicValue                        `tfsdk:"origin_port" json:"origin_port,optional"`
 	ArgoSmartRouting types.Bool                                                `tfsdk:"argo_smart_routing" json:"argo_smart_routing,computed_optional"`
 	ProxyProtocol    types.String                                              `tfsdk:"proxy_protocol" json:"proxy_protocol,computed_optional"`
 	TrafficType      types.String                                              `tfsdk:"traffic_type" json:"traffic_type,computed_optional"`

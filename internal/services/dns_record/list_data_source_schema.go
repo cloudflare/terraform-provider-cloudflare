@@ -342,6 +342,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Validators: []validator.Dynamic{
 										customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
 									},
+									CustomType: customfield.NormalizedDynamicType{},
 								},
 								"tag": schema.StringAttribute{
 									Description: "Name of the property controlled by this record (e.g.: issue, issuewild, iodef).",

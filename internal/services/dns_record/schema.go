@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -19,6 +20,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 var _ resource.ResourceWithConfigValidators = (*DNSRecordResource)(nil)
@@ -96,9 +98,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				Attributes: map[string]schema.Attribute{
-					"flags": schema.Float64Attribute{
+					"flags": schema.DynamicAttribute{
 						Description: "Flags for the CAA record.",
 						Optional:    true,
+						Validators: []validator.Dynamic{
+							customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
+						},
+						CustomType:    customfield.NormalizedDynamicType{},
+						PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()},
 					},
 					"tag": schema.StringAttribute{
 						Description: "Name of the property controlled by this record (e.g.: issue, issuewild, iodef).",
