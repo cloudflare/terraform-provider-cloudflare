@@ -14,7 +14,7 @@ pattern cloudflare_terraform_v5_attribute_list_to_block_state() {
     `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
         $resource_type <: contains `cloudflare_ruleset`,
         $instances <: any {
-          contains `"rules": $rules` where { 
+          contains bubble `"rules": $rules` where { 
             $rules <: any {
               contains `"exposed_credential_check": [$ecc]` => `"exposed_credential_check": $ecc`,
               contains `"exposed_credential_check": []` => `"exposed_credential_check": null`,
@@ -62,5 +62,13 @@ pattern cloudflare_terraform_v5_attribute_list_to_block_state() {
           }
         }
     },
-  }
+    // cloudflare_notification_policy
+    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_notification_policy`,
+        $instances <: any {
+          contains `"filters": [$filters]` => `"filters": $filters`,
+          contains `"filters": []` => `"filters": null`,
+        }
+    },
+  },
 }
