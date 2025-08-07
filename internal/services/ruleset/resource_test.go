@@ -24,7 +24,7 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				ConfigFile:      config.TestNameFile("before.tf"),
+				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -45,7 +45,7 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 				},
 			},
 			{
-				ConfigFile:      config.TestNameFile("after.tf"),
+				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -75,7 +75,7 @@ func TestAccCloudflareRuleset_Description(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				ConfigFile:      config.TestNameFile("before.tf"),
+				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -96,7 +96,7 @@ func TestAccCloudflareRuleset_Description(t *testing.T) {
 				},
 			},
 			{
-				ConfigFile:      config.TestNameFile("after.tf"),
+				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -126,7 +126,7 @@ func TestAccCloudflareRuleset_Phase(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				ConfigFile:      config.TestNameFile("before.tf"),
+				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -147,7 +147,7 @@ func TestAccCloudflareRuleset_Phase(t *testing.T) {
 				},
 			},
 			{
-				ConfigFile:      config.TestNameFile("after.tf"),
+				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -177,7 +177,7 @@ func TestAccCloudflareRuleset_Kind(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				ConfigFile:      config.TestNameFile("before.tf"),
+				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -198,7 +198,7 @@ func TestAccCloudflareRuleset_Kind(t *testing.T) {
 				},
 			},
 			{
-				ConfigFile:      config.TestNameFile("after.tf"),
+				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -228,7 +228,7 @@ func TestAccCloudflareRuleset_RuleLogging(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				ConfigFile:      config.TestNameFile("omitted.tf"),
+				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -261,7 +261,7 @@ func TestAccCloudflareRuleset_RuleLogging(t *testing.T) {
 				},
 			},
 			{
-				ConfigFile:      config.TestNameFile("enabled.tf"),
+				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -283,7 +283,7 @@ func TestAccCloudflareRuleset_RuleLogging(t *testing.T) {
 				},
 			},
 			{
-				ConfigFile:      config.TestNameFile("disabled.tf"),
+				ConfigFile:      config.TestNameFile("3.tf"),
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
@@ -325,7 +325,7 @@ func TestAccCloudflareRuleset_RuleLogging(t *testing.T) {
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Steps: []resource.TestStep{
 					{
-						ConfigFile:      config.TestNameFile("before.tf"),
+						ConfigFile:      config.TestNameFile("1.tf"),
 						ConfigVariables: configVariables,
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
@@ -368,7 +368,7 @@ func TestAccCloudflareRuleset_RuleLogging(t *testing.T) {
 						},
 					},
 					{
-						ConfigFile:      config.TestNameFile("after.tf"),
+						ConfigFile:      config.TestNameFile("2.tf"),
 						ConfigVariables: configVariables,
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
@@ -415,7 +415,7 @@ func TestAccCloudflareRuleset_RuleLogging(t *testing.T) {
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Steps: []resource.TestStep{
 					{
-						ConfigFile:      config.TestNameFile("before.tf"),
+						ConfigFile:      config.TestNameFile("1.tf"),
 						ConfigVariables: configVariables,
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
@@ -458,7 +458,7 @@ func TestAccCloudflareRuleset_RuleLogging(t *testing.T) {
 						},
 					},
 					{
-						ConfigFile:      config.TestNameFile("after.tf"),
+						ConfigFile:      config.TestNameFile("2.tf"),
 						ConfigVariables: configVariables,
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
@@ -506,7 +506,7 @@ func TestAccCloudflareRuleset_RuleLogging(t *testing.T) {
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 				Steps: []resource.TestStep{
 					{
-						ConfigFile:      config.TestNameFile("before.tf"),
+						ConfigFile:      config.TestNameFile("1.tf"),
 						ConfigVariables: configVariables,
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
@@ -549,7 +549,7 @@ func TestAccCloudflareRuleset_RuleLogging(t *testing.T) {
 						},
 					},
 					{
-						ConfigFile:      config.TestNameFile("after.tf"),
+						ConfigFile:      config.TestNameFile("2.tf"),
 						ConfigVariables: configVariables,
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
@@ -604,7 +604,7 @@ func TestAccCloudflareRuleset_RuleRef(t *testing.T) {
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					ConfigFile:      config.TestNameFile("before.tf"),
+					ConfigFile:      config.TestNameFile("1.tf"),
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
@@ -651,7 +651,7 @@ func TestAccCloudflareRuleset_RuleRef(t *testing.T) {
 					},
 				},
 				{
-					ConfigFile:      config.TestNameFile("after.tf"),
+					ConfigFile:      config.TestNameFile("2.tf"),
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
@@ -693,7 +693,7 @@ func TestAccCloudflareRuleset_RuleRef(t *testing.T) {
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					ConfigFile:      config.TestNameFile("before.tf"),
+					ConfigFile:      config.TestNameFile("1.tf"),
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
@@ -740,7 +740,7 @@ func TestAccCloudflareRuleset_RuleRef(t *testing.T) {
 					},
 				},
 				{
-					ConfigFile:      config.TestNameFile("after.tf"),
+					ConfigFile:      config.TestNameFile("2.tf"),
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
@@ -782,7 +782,7 @@ func TestAccCloudflareRuleset_RuleRef(t *testing.T) {
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					ConfigFile:      config.TestNameFile("before.tf"),
+					ConfigFile:      config.TestNameFile("1.tf"),
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
@@ -829,7 +829,7 @@ func TestAccCloudflareRuleset_RuleRef(t *testing.T) {
 					},
 				},
 				{
-					ConfigFile:      config.TestNameFile("after.tf"),
+					ConfigFile:      config.TestNameFile("2.tf"),
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
@@ -863,7 +863,7 @@ func TestAccCloudflareRuleset_RuleRef(t *testing.T) {
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					ConfigFile:      config.TestNameFile("before.tf"),
+					ConfigFile:      config.TestNameFile("1.tf"),
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
@@ -910,7 +910,7 @@ func TestAccCloudflareRuleset_RuleRef(t *testing.T) {
 					},
 				},
 				{
-					ConfigFile:      config.TestNameFile("after.tf"),
+					ConfigFile:      config.TestNameFile("2.tf"),
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
@@ -939,7 +939,7 @@ func TestAccCloudflareRuleset_RuleRef(t *testing.T) {
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					ConfigFile:      config.TestNameFile("before.tf"),
+					ConfigFile:      config.TestNameFile("1.tf"),
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
@@ -986,7 +986,7 @@ func TestAccCloudflareRuleset_RuleRef(t *testing.T) {
 					},
 				},
 				{
-					ConfigFile:      config.TestNameFile("after.tf"),
+					ConfigFile:      config.TestNameFile("2.tf"),
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
@@ -1020,7 +1020,7 @@ func TestAccCloudflareRuleset_RuleRef(t *testing.T) {
 			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 			Steps: []resource.TestStep{
 				{
-					ConfigFile:      config.TestNameFile("before.tf"),
+					ConfigFile:      config.TestNameFile("1.tf"),
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
@@ -1067,7 +1067,7 @@ func TestAccCloudflareRuleset_RuleRef(t *testing.T) {
 					},
 				},
 				{
-					ConfigFile:      config.TestNameFile("after.tf"),
+					ConfigFile:      config.TestNameFile("2.tf"),
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
