@@ -150,7 +150,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"bindings.2.text", "main_module", "startup_time_ms"},
+				ImportStateVerifyIgnore: []string{"bindings.2", "bindings.#", "main_module", "startup_time_ms"},
 			},
 		},
 	})

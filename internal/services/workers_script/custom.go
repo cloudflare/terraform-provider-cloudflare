@@ -187,7 +187,7 @@ func UpdateSecretTextsFromState[T any](
 	refreshedElems := refreshed.Elements()
 	stateElems := state.Elements()
 
-	updatedElems := make([]attr.Value, len(refreshedElems))
+	updatedElems := make([]attr.Value, 0, len(refreshedElems))
 
 	elemType := refreshed.ElementType(ctx)
 
@@ -199,10 +199,10 @@ func UpdateSecretTextsFromState[T any](
 
 	attrTypes := objType.AttributeTypes()
 
-	for i, val := range refreshedElems {
+	for _, val := range refreshedElems {
 		refreshedObj, ok := val.(basetypes.ObjectValue)
 		if !ok {
-			updatedElems[i] = val
+			updatedElems = append(updatedElems, val)
 			continue
 		}
 
@@ -211,18 +211,19 @@ func UpdateSecretTextsFromState[T any](
 		nameAttr := refreshedAttrs["name"]
 
 		if typeAttr.IsNull() || nameAttr.IsNull() {
-			updatedElems[i] = val
+			updatedElems = append(updatedElems, val)
 			continue
 		}
 
 		if typeAttr.(types.String).ValueString() != "secret_text" {
-			updatedElems[i] = val
+			updatedElems = append(updatedElems, val)
 			continue
 		}
 
 		name := nameAttr.(types.String).ValueString()
 
 		var originalText attr.Value
+		var foundInState bool
 		for _, stateVal := range stateElems {
 			stateObj, ok := stateVal.(basetypes.ObjectValue)
 			if !ok {
@@ -232,8 +233,13 @@ func UpdateSecretTextsFromState[T any](
 			if stateAttrs["type"].(types.String).ValueString() == "secret_text" &&
 				stateAttrs["name"].(types.String).ValueString() == name {
 				originalText = stateAttrs["text"]
+				foundInState = true
 				break
 			}
+		}
+
+		if !foundInState {
+			continue
 		}
 
 		if originalText != nil && !originalText.IsNull() && !originalText.IsUnknown() {
@@ -244,7 +250,7 @@ func UpdateSecretTextsFromState[T any](
 			refreshedObj = newObj
 		}
 
-		updatedElems[i] = refreshedObj
+		updatedElems = append(updatedElems, refreshedObj)
 	}
 
 	value, d := types.ListValue(refreshed.ElementType(ctx), updatedElems)
