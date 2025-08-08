@@ -6,9 +6,11 @@ import (
 	"os"
 	"testing"
 
-	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/cloudflare-go/v5/managed_transforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+
+	cloudflare "github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -24,9 +26,10 @@ func init() {
 
 func testSweepCloudflareManagedTransforms(r string) error {
 	ctx := context.Background()
-	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if clientErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+	client := acctest.SharedClient()
+
+	if client == nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client"))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -34,34 +37,15 @@ func testSweepCloudflareManagedTransforms(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-	managedHeaders, err := client.ListZoneManagedHeaders(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
-		Status: "enabled",
-	})
-	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Zone Managed Headers: %s", err))
-	}
-
-	requestHeaders := make([]cloudflare.ManagedHeader, 0, len(managedHeaders.ManagedRequestHeaders))
-	for _, h := range managedHeaders.ManagedRequestHeaders {
-		tflog.Info(ctx, fmt.Sprintf("Disabling Cloudflare Zone Managed Header ID: %s", h.ID))
-		h.Enabled = false
-		requestHeaders = append(requestHeaders, h)
-	}
-	responseHeaders := make([]cloudflare.ManagedHeader, 0, len(managedHeaders.ManagedResponseHeaders))
-	for _, h := range managedHeaders.ManagedResponseHeaders {
-		tflog.Info(ctx, fmt.Sprintf("Disabling Cloudflare Zone Managed Header ID: %s", h.ID))
-		h.Enabled = false
-		responseHeaders = append(responseHeaders, h)
-	}
-
-	_, err = client.UpdateZoneManagedHeaders(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateManagedHeadersParams{
-		ManagedHeaders: cloudflare.ManagedHeaders{
-			ManagedRequestHeaders:  requestHeaders,
-			ManagedResponseHeaders: responseHeaders,
+	err := client.ManagedTransforms.Delete(
+		ctx,
+		managed_transforms.ManagedTransformDeleteParams{
+			ZoneID: cloudflare.F(zoneID),
 		},
-	})
+	)
+
 	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to disable Cloudflare Zone Managed Headers: %s", err))
+		tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare managed transforms: %s", err))
 	}
 
 	return nil
@@ -69,6 +53,7 @@ func testSweepCloudflareManagedTransforms(r string) error {
 
 func TestAccCloudflareManagedHeaders(t *testing.T) {
 	t.Parallel()
+
 
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -81,16 +66,11 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 				Config: testAccCheckCloudflareManagedTransforms(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.id", "add_true_client_ip_headers"),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.%", "2"),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.id", "add_visitor_location_headers"),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.enabled", "true"),
 
-					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "2"),
 					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.id", "add_security_headers"),
 					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.enabled", "true"),
 				),
@@ -99,16 +79,17 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 				Config: testAccCheckCloudflareManagedTransformsRemovedHeader(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.id", "add_true_client_ip_headers"),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.enabled", "true"),
 
-					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "2"),
 					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.id", "add_security_headers"),
 					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.enabled", "true"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

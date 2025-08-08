@@ -67,9 +67,9 @@ func (m *StreamsDataSourceModel) toListParams(_ context.Context) (params stream.
 	if !m.Type.IsNull() {
 		params.Type = cloudflare.F(m.Type.ValueString())
 	}
-	if !m.VideoName.IsNull() {
-		params.VideoName = cloudflare.F(m.VideoName.ValueString())
-	}
+	// WIP! if !m.VideoName.IsNull() {
+	// WIP! 	params.VideoName = cloudflare.F(m.VideoName.ValueString())
+	// WIP! }
 
 	return
 }
