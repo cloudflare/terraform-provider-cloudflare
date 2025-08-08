@@ -5,10 +5,11 @@ package zero_trust_organization
 import (
 	"context"
 	"fmt"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"io"
 	"net/http"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/option"
@@ -257,6 +258,7 @@ func (r *ZeroTrustOrganizationResource) ImportState(ctx context.Context, req res
 	}
 	data = &env.Result
 
+	resp.Diagnostics.Append(normalizeImportZeroTrustOrganizationAPIData(ctx, data)...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
