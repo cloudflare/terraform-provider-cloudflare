@@ -192,14 +192,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"priority": schema.Float64Attribute{
-						Description: "priority.",
+						Description: "Priority.",
 						Computed:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 65535),
 						},
 					},
 					"target": schema.StringAttribute{
-						Description: "target.",
+						Description: "Target.",
 						Computed:    true,
 					},
 					"altitude": schema.Float64Attribute{
@@ -348,7 +348,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"fingerprint": schema.StringAttribute{
-						Description: "fingerprint.",
+						Description: "Fingerprint.",
 						Computed:    true,
 					},
 				},

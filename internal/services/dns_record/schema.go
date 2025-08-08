@@ -153,14 +153,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"priority": schema.Float64Attribute{
-						Description: "priority.",
+						Description: "Priority.",
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 65535),
 						},
 					},
 					"target": schema.StringAttribute{
-						Description: "target.",
+						Description: "Target.",
 						Optional:    true,
 					},
 					"altitude": schema.Float64Attribute{
@@ -309,7 +309,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"fingerprint": schema.StringAttribute{
-						Description: "fingerprint.",
+						Description: "Fingerprint.",
 						Optional:    true,
 					},
 				},
