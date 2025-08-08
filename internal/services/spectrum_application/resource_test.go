@@ -121,8 +121,6 @@ func TestAccCloudflareSpectrumApplication_OriginDNS(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "origin_dns.name", fmt.Sprintf("%s.origin.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "origin_port", "22"),
 				),
-				// ExpectNonEmptyPlan due to DNS record drift
-				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
