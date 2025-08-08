@@ -16,6 +16,4 @@ resource "cloudflare_zero_trust_access_policy" "%[1]s" {
   }]
   purpose_justification_required = "true"
   purpose_justification_prompt = "Why should we let you in?"
-  approval_required              = "false"
-  isolation_required             = "false"
 }
