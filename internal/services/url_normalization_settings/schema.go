@@ -29,10 +29,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"scope": schema.StringAttribute{
-				Description: "The scope of the URL normalization.\nAvailable values: \"incoming\", \"both\".",
+				Description: "The scope of the URL normalization.\nAvailable values: \"none\", \"incoming\", \"both\".",
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("incoming", "both"),
+					stringvalidator.OneOfCaseInsensitive("none", "incoming", "both"),
 				},
 			},
 			"type": schema.StringAttribute{
