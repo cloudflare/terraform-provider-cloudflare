@@ -42,9 +42,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"metadata": schema.StringAttribute{
-				Description: "Associates arbitrary JSON data with a key/value pair.",
-				Optional:    true,
-				CustomType:  jsontypes.NormalizedType{},
+				Optional:   true,
+				CustomType: jsontypes.NormalizedType{},
 			},
 		},
 	}

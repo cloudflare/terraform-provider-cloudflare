@@ -1,4 +1,4 @@
-resource "cloudflare_snippets" "%[1]s" {
+resource "cloudflare_snippet" "%[1]s" {
   zone_id      = "%[2]s"
   snippet_name = "%[1]s"
   files        = <<-EOT
