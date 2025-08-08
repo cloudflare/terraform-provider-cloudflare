@@ -2,6 +2,9 @@ package argo_smart_routing_test
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"os"
 	"regexp"
 	"testing"
@@ -32,12 +35,32 @@ func TestAccCloudflareArgoSmartRouting_Basic(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflareArgoSmartRoutingEnable(zoneID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "id", zoneID),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "value", "on"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+			{
 				Config: testAccCheckCloudflareArgoSmartRoutingDisable(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "id", zoneID),
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "value", "off"),
 				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(
+							name,
+							tfjsonpath.New("value"),
+							knownvalue.StringExact("off"),
+						),
+					},
+				},
 			},
 			{
 				ResourceName:      name,
