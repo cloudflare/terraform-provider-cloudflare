@@ -97,7 +97,6 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
