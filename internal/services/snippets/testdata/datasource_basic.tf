@@ -1,1 +1,1 @@
-data "cloudflare_snippet" "%[1]s" {}
+data "cloudflare_snippets" "%[1]s" {}
