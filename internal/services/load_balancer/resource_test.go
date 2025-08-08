@@ -9,7 +9,6 @@ import (
 	"time"
 
 	cfold "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
@@ -487,6 +486,237 @@ func TestAccCloudflareLoadBalancer_LeastConnectionsBalanced(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareLoadBalancer_Account(t *testing.T) {
+	var loadBalancer cfold.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{ {
+			Config: testAccCheckCloudflareLoadBalancerConfigAccount(zoneID, zone, rnd),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+				testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+			),
+		} },
+	})
+}
+
+func TestAccCloudflareLoadBalancer_AdaptiveRoutingFailoverFalse(t *testing.T) {
+	var loadBalancer cfold.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{ {
+			Config: testAccCheckCloudflareLoadBalancerConfigAdaptiveRoutingFailoverFalse(zoneID, zone, rnd),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+				testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+			),
+		} },
+	})
+}
+
+func TestAccCloudflareLoadBalancer_AdaptiveRoutingFailoverTrue(t *testing.T) {
+	var loadBalancer cfold.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{ {
+			Config: testAccCheckCloudflareLoadBalancerConfigAdaptiveRoutingFailoverTrue(zoneID, zone, rnd),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+				testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+			),
+		} },
+	})
+}
+
+func TestAccCloudflareLoadBalancer_CountryPools(t *testing.T) {
+	var loadBalancer cfold.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{ {
+			Config: testAccCheckCloudflareLoadBalancerConfigCountryPools(zoneID, zone, rnd),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+				testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+			),
+		} },
+	})
+}
+
+func TestAccCloudflareLoadBalancer_CustomLocationStrategy(t *testing.T) {
+	var loadBalancer cfold.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{ {
+			Config: testAccCheckCloudflareLoadBalancerConfigCustomLocationStrategy(zoneID, zone, rnd),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+				testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+			),
+		} },
+	})
+}
+
+func TestAccCloudflareLoadBalancer_CustomPort(t *testing.T) {
+	var loadBalancer cfold.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{ {
+			Config: testAccCheckCloudflareLoadBalancerConfigCustomPort(zoneID, zone, rnd),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+				testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+			),
+		} },
+	})
+}
+
+func TestAccCloudflareLoadBalancer_CustomSessionAffinityAttributes(t *testing.T) {
+	var loadBalancer cfold.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{ {
+			Config: testAccCheckCloudflareLoadBalancerConfigCustomSessionAffinityAttributes(zoneID, zone, rnd),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+				testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+			),
+		} },
+	})
+}
+
+func TestAccCloudflareLoadBalancer_CustomTTL(t *testing.T) {
+	var loadBalancer cfold.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{ {
+			Config: testAccCheckCloudflareLoadBalancerConfigCustomTTL(zoneID, zone, rnd),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+				testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+			),
+		} },
+	})
+}
+
+func TestAccCloudflareLoadBalancer_LocationStrategyAlwaysResolverIP(t *testing.T) {
+	var loadBalancer cfold.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{ {
+			Config: testAccCheckCloudflareLoadBalancerConfigLocationStrategyAlwaysResolverIP(zoneID, zone, rnd),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+				testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+			),
+		} },
+	})
+}
+
+func TestAccCloudflareLoadBalancer_LocationStrategyNeverPop(t *testing.T) {
+	var loadBalancer cfold.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{ {
+			Config: testAccCheckCloudflareLoadBalancerConfigLocationStrategyNeverPop(zoneID, zone, rnd),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+				testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+			),
+		} },
+	})
+}
+
+func TestAccCloudflareLoadBalancer_StandardZone(t *testing.T) {
+	var loadBalancer cfold.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{ {
+			Config: testAccCheckCloudflareLoadBalancerConfigStandardZone(zoneID, zone, rnd),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+				testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+			),
+		} },
+	})
+}
+
 func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -671,7 +901,7 @@ func testAccManuallyDeleteLoadBalancer(name string, loadBalancerID string, initi
 			context.Background(),
 			loadBalancerID,
 			load_balancers.LoadBalancerDeleteParams{
-				ZoneID: cloudflare.F(rs.Primary.Attributes[consts.ZoneIDSchemaKey]),
+				ZoneID: rs.Primary.Attributes[consts.ZoneIDSchemaKey],
 			},
 		)
 		if err != nil {
@@ -739,6 +969,50 @@ func testAccCheckCloudflareLoadBalancerConfigLeastConnectionsBalanced(zoneID, zo
 
 func testAccCheckCloudflareLoadBalancerConfigDuplicatePool(zoneID, zone, id string) string {
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigduplicatepool.tf", zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigAccount(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigaccount.tf", zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigAdaptiveRoutingFailoverFalse(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigadaptiveroutingfailoverfalse.tf", zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigAdaptiveRoutingFailoverTrue(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigadaptiveroutingfailovertrue.tf", zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigCountryPools(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigcountrypools.tf", zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigCustomLocationStrategy(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigcustomlocationstrategy.tf", zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigCustomPort(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigcustomport.tf", zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigCustomSessionAffinityAttributes(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigcustomsessionaffinityattributes.tf", zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigCustomTTL(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigcustomttl.tf", zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigLocationStrategyAlwaysResolverIP(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfiglocationstrategyalwaysresolverip.tf", zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigLocationStrategyNeverPop(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfiglocationstrategyneverpop.tf", zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigStandardZone(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigstandardzone.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigRules(zoneID, zone, id string) string {

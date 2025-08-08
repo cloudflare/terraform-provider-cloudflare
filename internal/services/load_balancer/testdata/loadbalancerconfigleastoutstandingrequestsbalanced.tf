@@ -1,4 +1,3 @@
-
 resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
   name = "tf-testacc-lb-%[3]s.%[2]s"
