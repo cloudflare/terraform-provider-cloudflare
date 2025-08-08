@@ -184,9 +184,9 @@ func ValidateContentSHA256() validator.String {
 
 func UpdateSecretTextsFromState[T any](
 	ctx context.Context,
-	refreshed customfield.NestedObjectSet[T],
-	state customfield.NestedObjectSet[T],
-) (customfield.NestedObjectSet[T], diag.Diagnostics) {
+	refreshed customfield.NestedObjectList[T],
+	state customfield.NestedObjectList[T],
+) (customfield.NestedObjectList[T], diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	refreshedElems := refreshed.Elements()
@@ -252,11 +252,11 @@ func UpdateSecretTextsFromState[T any](
 		updatedElems[i] = refreshedObj
 	}
 
-	setValue, d := types.SetValue(refreshed.ElementType(ctx), updatedElems)
+	value, d := types.ListValue(refreshed.ElementType(ctx), updatedElems)
 	diags.Append(d...)
 
-	return customfield.NestedObjectSet[T]{
-		SetValue: setValue,
+	return customfield.NestedObjectList[T]{
+		ListValue: value,
 	}, diags
 }
 
