@@ -152,6 +152,7 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 
 	res := new(http.Response)
+	env := ListItemResultEnvelope{data.Body}
 	_, err := r.client.Rules.Lists.Items.Get(
 		ctx,
 		data.ListID.ValueString(),
@@ -171,6 +172,13 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
