@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -34,11 +35,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "The unique ID of the item in the List.",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"asn": schema.Int64Attribute{
 				Description: "A non-negative 32 bit integer",
 				Optional:    true,
+				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplaceIf(func(ctx context.Context, req planmodifier.Int64Request, res *int64planmodifier.RequiresReplaceIfFuncResponse) {
+					res.RequiresReplace = req.PlanValue != req.StateValue
+				}, "List item must be replaced if asn has changed", "List item must be replaced if asn has changed")},
 			},
 			"comment": schema.StringAttribute{
 				Description: "An informative summary of the list item.",
@@ -63,6 +67,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"url_hostname": schema.StringAttribute{
 						Required: true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIf(func(ctx context.Context, req planmodifier.StringRequest, res *stringplanmodifier.RequiresReplaceIfFuncResponse) {
+							res.RequiresReplace = req.PlanValue != req.StateValue
+						}, "List item must be replaced if url_hostname has changed", "List item must be replaced if url_hostname has changed")},
 					},
 					"exclude_exact_hostname": schema.BoolAttribute{
 						Description: "Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.",
@@ -73,6 +80,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"ip": schema.StringAttribute{
 				Description: "An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.",
 				Optional:    true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIf(func(ctx context.Context, req planmodifier.StringRequest, res *stringplanmodifier.RequiresReplaceIfFuncResponse) {
+					res.RequiresReplace = req.PlanValue != req.StateValue
+				}, "List item must be replaced if ip has changed", "List item must be replaced if ip has changed")},
 			},
 			"redirect": schema.SingleNestedAttribute{
 				Description: "The definition of the redirect.",
@@ -81,6 +91,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"source_url": schema.StringAttribute{
 						Required: true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIf(func(ctx context.Context, req planmodifier.StringRequest, res *stringplanmodifier.RequiresReplaceIfFuncResponse) {
+							res.RequiresReplace = req.PlanValue != req.StateValue
+						}, "List item must be replaced if source_url has changed", "List item must be replaced if source_url has changed")},
 					},
 					"target_url": schema.StringAttribute{
 						Required: true,

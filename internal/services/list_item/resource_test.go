@@ -13,7 +13,6 @@ import (
 )
 
 func TestAccCloudflareListItem_Basic(t *testing.T) {
-	t.Skip("FIXME: Step 1/1 error: Error running apply: exit status 1. Getting rate limited, causing flaky tests.")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -78,7 +77,6 @@ func TestAccCloudflareListItem_Import(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_MultipleItems(t *testing.T) {
-	t.Skip("FIXME: Getting rate limited. Probably causing the cascading failures with the rest.")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -103,7 +101,6 @@ func TestAccCloudflareListItem_MultipleItems(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_Update(t *testing.T) {
-	t.Skip("FIXME: Step 1/2 error: Error running apply: exit status 1. Getting rate limited, causing flaky tests.")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -130,8 +127,34 @@ func TestAccCloudflareListItem_Update(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareListItem_UpdateReplace(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareIPListItemNewIp(rnd, rnd, rnd, accountID, "192.0.2.0"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "ip", "192.0.2.0"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareIPListItemNewIp(rnd, rnd, rnd, accountID, "192.0.2.1"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "ip", "192.0.2.1"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareListItem_ASN(t *testing.T) {
-	t.Skip("FIXME: Step 1/1 error: Error running apply: exit status 1. Getting rate limited, causing flaky tests.")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -154,7 +177,6 @@ func TestAccCloudflareListItem_ASN(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_Hostname(t *testing.T) {
-	t.Skip("FIXME: Getting rate limited, causing flaky tests.")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -176,7 +198,6 @@ func TestAccCloudflareListItem_Hostname(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_Redirect(t *testing.T) {
-	t.Skip("FIXME: Step 1/1 error: Error running apply: exit status 1. Getting rate limited, causing flaky tests.")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -203,6 +224,10 @@ func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) strin
 	return acctest.LoadTestCase("iplistitem.tf", ID, name, comment, accountID)
 }
 
+func testAccCheckCloudflareIPListItemNewIp(ID, name, comment, accountID, ip string) string {
+	return acctest.LoadTestCase("iplistitem_newip.tf", ID, name, comment, accountID, ip)
+}
+
 func testAccCheckCloudflareIPListItemMultipleEntries(ID, name, comment, accountID string) string {
 	return acctest.LoadTestCase("iplistitemmultipleentries.tf", ID, name, comment, accountID)
 }
@@ -224,7 +249,6 @@ func testAccCheckCloudflareHostnameRedirectItem(ID, name, comment, accountID str
 }
 
 func TestAccCloudflareListItem_RedirectWithOverlappingSourceURL(t *testing.T) {
-	t.Skip("Step 1/1 error: After applying this test step, the refresh plan was not empty. Getting rate limited, causing flaky tests.")
 	rnd := utils.GenerateRandomResourceName()
 	firstResource := fmt.Sprintf("cloudflare_list_item.%s_1", rnd)
 	secondResource := fmt.Sprintf("cloudflare_list_item.%s_2", rnd)
