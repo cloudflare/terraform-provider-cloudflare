@@ -50,6 +50,45 @@ pattern cloudflare_terraform_v5_attribute_renames_configuration() {
         }
     },
 
+    //cloudflare_notification_policy
+    `resource "cloudflare_notification_policy" $_ { $body }` where {
+
+      $body <: contains any {
+        `webhooks_integration = $webhooks` => ``,
+        `pagerduty_integration = $pagerduty` => ``,
+        `email_integration = $email` => ``,
+      },
+      $integrations = "",
+      //Check if the variable is null before adding to the integrations
+      if (!$webhooks <: .) {
+        $integrations += `webhooks = $webhooks
+      `,
+      },
+      if (!$pagerduty <: .) {
+        $integrations += `pagerduty = $pagerduty
+      `,
+      },
+      if (!$email <: .) {
+        $integrations += `email = $email
+      `,
+      },
+
+      $body => `$body mechanisms = {
+        $integrations
+      }`,
+    },
+
+     // cloudflare_ruleset
+    `resource "cloudflare_ruleset" $_ { $body }` where {
+        $body <: any {
+          contains bubble `rules = $rules` where {
+            $rules <: contains bubble `action_parameters = $action_parameters` where {
+                $action_parameters <: contains bubble `rules = { $ruleset_id = $rule_id}` => `rules = { $ruleset_id = [$rule_id]}`,
+            }
+          },
+        }
+    },
+
     // cloudflare_teams_list & cloudflare_zero_trust_list
     `items = [$items]` as $all_items where {
         $values = [],
