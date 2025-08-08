@@ -128,11 +128,6 @@ func (v contentSHA256Validator) ValidateString(ctx context.Context, req validato
 		hasContentFile = true
 	}
 
-	if !hasContent && !hasContentFile {
-		resp.Diagnostics.AddError("Missing required attributes", "One of `content` or `content_file` is required")
-		return
-	}
-
 	var actualHash string
 	var err error
 
