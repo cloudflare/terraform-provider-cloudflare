@@ -16,11 +16,11 @@ pattern cloudflare_terraform_v5_attribute_list_to_block_state() {
         $instances <: any {
           contains bubble `"rules": $rules` where { 
             $rules <: any {
-              contains `"exposed_credential_check": [$ecc]` => `"exposed_credential_check": $ecc`,
+              contains bubble`"exposed_credential_check": [$ecc]` => `"exposed_credential_check": $ecc`,
               contains `"exposed_credential_check": []` => `"exposed_credential_check": null`,
-              contains `"logging": [$l]` => `"logging": $l`,
+              contains bubble`"logging": [$l]` => `"logging": $l`,
               contains `"logging": []` => `"logging": null`,
-              contains `"ratelimit": [$r]` => `"ratelimit": $r`,
+              contains bubble`"ratelimit": [$r]` => `"ratelimit": $r`,
               contains `"ratelimit": []` => `"ratelimit": null`,
               contains bubble `"action_parameters": [$ap]` where {
                 $ap <: any {
@@ -48,6 +48,7 @@ pattern cloudflare_terraform_v5_attribute_list_to_block_state() {
                   contains `"overrides": []` => `"overrides": null`,
                   contains `"response": [$r]` => `"response": $r`,
                   contains `"response": []` => `"response": null`,
+                  contains `"rules": {"$ruleset_id": "$rule_id"}` => `"rules": {"$ruleset_id": ["$rule_id"]}`,
                   contains `"serve_stale": [$ss]` => `"serve_stale": $ss`,
                   contains `"serve_stale": []` => `"serve_stale": null`,
                   contains `"sni": [$sni]` => `"sni": $sni`,
