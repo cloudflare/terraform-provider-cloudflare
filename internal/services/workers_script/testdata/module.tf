@@ -29,14 +29,14 @@ resource "cloudflare_workers_script" "%[1]s" {
       namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
     },
     {
-      name = "SECRET"
-      type = "secret_text"
-      text = "shhh!!"
-    },
-    {
       name = "MY_QUEUE"
       type = "queue"
       queue_name = cloudflare_queue.%[1]s.queue_name
+    },
+    {
+      name = "SECRET"
+      type = "secret_text"
+      text = "shhh!!"
     }
   ]
   observability = {
