@@ -1099,6 +1099,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"mitigation_timeout": schema.Int64Attribute{
 									Description: "Period of time in seconds after which the action will be disabled following its first execution.",
+									Computed:    true,
 									Optional:    true,
 								},
 								"requests_per_period": schema.Int64Attribute{
@@ -1110,7 +1111,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"requests_to_origin": schema.BoolAttribute{
 									Description: "Defines if ratelimit counting is only done when an origin is reached.",
+									Computed:    true,
 									Optional:    true,
+									Default:     booldefault.StaticBool(false),
 								},
 								"score_per_period": schema.Int64Attribute{
 									Description: "The score threshold per period for which the action will be executed the first time.",

@@ -309,9 +309,9 @@ type RulesetRulesRatelimitModel struct {
 	Characteristics         customfield.List[types.String] `tfsdk:"characteristics" json:"characteristics,required"`
 	Period                  types.Int64                    `tfsdk:"period" json:"period,required"`
 	CountingExpression      types.String                   `tfsdk:"counting_expression" json:"counting_expression,optional"`
-	MitigationTimeout       types.Int64                    `tfsdk:"mitigation_timeout" json:"mitigation_timeout,optional"`
+	MitigationTimeout       types.Int64                    `tfsdk:"mitigation_timeout" json:"mitigation_timeout,computed_optional"`
 	RequestsPerPeriod       types.Int64                    `tfsdk:"requests_per_period" json:"requests_per_period,optional"`
-	RequestsToOrigin        types.Bool                     `tfsdk:"requests_to_origin" json:"requests_to_origin,optional"`
+	RequestsToOrigin        types.Bool                     `tfsdk:"requests_to_origin" json:"requests_to_origin,computed_optional,decode_null_to_zero"`
 	ScorePerPeriod          types.Int64                    `tfsdk:"score_per_period" json:"score_per_period,optional"`
 	ScoreResponseHeaderName types.String                   `tfsdk:"score_response_header_name" json:"score_response_header_name,optional"`
 }
