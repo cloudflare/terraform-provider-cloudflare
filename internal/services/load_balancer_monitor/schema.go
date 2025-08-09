@@ -27,24 +27,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"description": schema.StringAttribute{
-				Description: "Object description.",
+			"consecutive_down": schema.Int64Attribute{
+				Description: "To be marked unhealthy the monitored origin must fail this healthcheck N consecutive times.",
 				Optional:    true,
 			},
-			"expected_body": schema.StringAttribute{
-				Description: "A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.",
+			"consecutive_up": schema.Int64Attribute{
+				Description: "To be marked healthy the monitored origin must pass this healthcheck N consecutive times.",
 				Optional:    true,
 			},
-			"expected_codes": schema.StringAttribute{
-				Description: "The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS monitors.",
-				Optional:    true,
-			},
-			"probe_zone": schema.StringAttribute{
-				Description: "Assign this monitor to emulate the specified zone while probing. This parameter is only valid for HTTP and HTTPS monitors.",
+			"port": schema.Int64Attribute{
+				Description: "The port number to connect to for the health check. Required for TCP, UDP, and SMTP checks. HTTP and HTTPS checks should only define the port when using a non-standard port (HTTP: default 80, HTTPS: default 443).",
 				Optional:    true,
 			},
 			"header": schema.MapAttribute{
@@ -60,17 +56,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
-			"consecutive_down": schema.Int64Attribute{
-				Description: "To be marked unhealthy the monitored origin must fail this healthcheck N consecutive times.",
+			"description": schema.StringAttribute{
+				Description: "Object description.",
 				Computed:    true,
 				Optional:    true,
-				Default:     int64default.StaticInt64(0),
+				Default:     stringdefault.StaticString(""),
 			},
-			"consecutive_up": schema.Int64Attribute{
-				Description: "To be marked healthy the monitored origin must pass this healthcheck N consecutive times.",
+			"expected_body": schema.StringAttribute{
+				Description: "A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.",
 				Computed:    true,
 				Optional:    true,
-				Default:     int64default.StaticInt64(0),
+				Default:     stringdefault.StaticString(""),
+			},
+			"expected_codes": schema.StringAttribute{
+				Description: "The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS monitors.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
 			},
 			"follow_redirects": schema.BoolAttribute{
 				Description: "Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.",
@@ -88,19 +90,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The method to use for the health check. This defaults to 'GET' for HTTP/HTTPS based checks and 'connection_established' for TCP based health checks.",
 				Computed:    true,
 				Optional:    true,
-				Default:     stringdefault.StaticString("GET"),
 			},
 			"path": schema.StringAttribute{
 				Description: "The endpoint path you want to conduct a health check against. This parameter is only valid for HTTP and HTTPS monitors.",
 				Computed:    true,
 				Optional:    true,
-				Default:     stringdefault.StaticString("/"),
 			},
-			"port": schema.Int64Attribute{
-				Description: "The port number to connect to for the health check. Required for TCP, UDP, and SMTP checks. HTTP and HTTPS checks should only define the port when using a non-standard port (HTTP: default 80, HTTPS: default 443).",
+			"probe_zone": schema.StringAttribute{
+				Description: "Assign this monitor to emulate the specified zone while probing. This parameter is only valid for HTTP and HTTPS monitors.",
 				Computed:    true,
 				Optional:    true,
-				Default:     int64default.StaticInt64(0),
+				Default:     stringdefault.StaticString(""),
 			},
 			"retries": schema.Int64Attribute{
 				Description: "The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.",

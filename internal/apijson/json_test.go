@@ -773,6 +773,51 @@ var updateTests = map[string]struct {
 	"dynamic int update":                    {types.DynamicValue(types.Int64Value(4)), types.DynamicValue(types.Int64Value(5)), "5", "5"},
 	"dynamic int unchanged":                 {types.DynamicValue(types.Int64Value(4)), types.DynamicValue(types.Int64Value(4)), "4", ""},
 
+	// Test case for dynamic type conversion: state has ListValue, plan has TupleValue
+	"dynamic list to tuple conversion": {
+		types.DynamicValue(types.ListValueMust(types.StringType, []attr.Value{types.StringValue("foo"), types.StringValue("bar")})),
+		types.DynamicValue(types.TupleValueMust([]attr.Type{types.StringType, types.StringType}, []attr.Value{types.StringValue("foo"), types.StringValue("bar")})),
+		`["foo","bar"]`,
+		``,
+	},
+
+	"normalized list to tuple conversion": {
+		customfield.RawNormalizedDynamicValueFrom(types.ListValueMust(types.StringType, []attr.Value{types.StringValue("foo"), types.StringValue("bar")})),
+		customfield.RawNormalizedDynamicValueFrom(types.TupleValueMust([]attr.Type{types.StringType, types.StringType}, []attr.Value{types.StringValue("foo"), types.StringValue("bar")})),
+		`["foo","bar"]`,
+		``,
+	},
+
+	// Test case for reverse scenario: state has TupleValue, plan has ListValue
+	"dynamic tuple to list conversion": {
+		types.DynamicValue(types.TupleValueMust([]attr.Type{types.StringType, types.StringType}, []attr.Value{types.StringValue("foo"), types.StringValue("bar")})),
+		types.DynamicValue(types.ListValueMust(types.StringType, []attr.Value{types.StringValue("foo"), types.StringValue("bar")})),
+		`["foo","bar"]`,
+		``,
+	},
+
+	"normalized dynamic tuple to list conversion": {
+		customfield.RawNormalizedDynamicValueFrom(types.TupleValueMust([]attr.Type{types.StringType, types.StringType}, []attr.Value{types.StringValue("foo"), types.StringValue("bar")})),
+		customfield.RawNormalizedDynamicValueFrom(types.ListValueMust(types.StringType, []attr.Value{types.StringValue("foo"), types.StringValue("bar")})),
+		`["foo","bar"]`,
+		``,
+	},
+
+	// Test case for heterogeneous tuple vs homogeneous list
+	"dynamic list to heterogeneous tuple": {
+		types.DynamicValue(types.ListValueMust(types.StringType, []attr.Value{types.StringValue("hello"), types.StringValue("world")})),
+		types.DynamicValue(types.TupleValueMust([]attr.Type{types.StringType, types.Int64Type}, []attr.Value{types.StringValue("hello"), types.Int64Value(42)})),
+		`["hello",42]`,
+		`["hello",42]`,
+	},
+
+	"normalized dynamic list to heterogeneous tuple": {
+		customfield.RawNormalizedDynamicValueFrom(types.ListValueMust(types.StringType, []attr.Value{types.StringValue("hello"), types.StringValue("world")})),
+		customfield.RawNormalizedDynamicValueFrom(types.TupleValueMust([]attr.Type{types.StringType, types.Int64Type}, []attr.Value{types.StringValue("hello"), types.Int64Value(42)})),
+		`["hello",42]`,
+		`["hello",42]`,
+	},
+
 	"set struct fields": {
 		TfsdkStructs{},
 		TfsdkStructs{
@@ -1373,6 +1418,44 @@ var decode_from_value_tests = map[string]struct {
 		),
 	},
 
+	// Test case for heterogeneous JSON array inference - should create TupleValue, not ListValue
+	"tfsdk_dynamic_heterogeneous_array_inference": {
+		`["hello",42]`,
+		types.DynamicNull(),
+		types.DynamicValue(types.TupleValueMust(
+			[]attr.Type{types.StringType, types.Int64Type},
+			[]attr.Value{types.StringValue("hello"), types.Int64Value(42)},
+		)),
+	},
+
+	"tfsdk_normalized_dynamic_heterogeneous_array_inference": {
+		`["hello",42]`,
+		customfield.RawNormalizedDynamicValue(basetypes.NewDynamicNull()),
+		customfield.RawNormalizedDynamicValueFrom(types.TupleValueMust(
+			[]attr.Type{types.StringType, types.Int64Type},
+			[]attr.Value{types.StringValue("hello"), types.Int64Value(42)},
+		)),
+	},
+
+	// Test case for homogeneous JSON array inference - should still create ListValue
+	"tfsdk_dynamic_homogeneous_array_inference": {
+		`["hello","world"]`,
+		types.DynamicNull(),
+		types.DynamicValue(types.ListValueMust(
+			types.StringType,
+			[]attr.Value{types.StringValue("hello"), types.StringValue("world")},
+		)),
+	},
+
+	"tfsdk_normalized_dynamic_homogeneous_array_inference": {
+		`["hello","world"]`,
+		customfield.RawNormalizedDynamicValue(basetypes.NewDynamicNull()),
+		customfield.RawNormalizedDynamicValueFrom(types.ListValueMust(
+			types.StringType,
+			[]attr.Value{types.StringValue("hello"), types.StringValue("world")},
+		)),
+	},
+
 	"tfsdk_struct_populates_unknown_to_null_if_missing": {
 		`{"embedded_string":"some_string","data_object":{}}`,
 		EmbeddedTfsdkStruct{
@@ -1846,6 +1929,90 @@ var decode_computed_only_tests = map[string]struct {
 	},
 }
 
+var test_semantic_equivalence = map[string][]attr.Value{
+	"nulls": {
+		basetypes.NewBoolNull(),
+		basetypes.NewBoolNull(),
+		basetypes.NewInt32Null(),
+		basetypes.NewMapNull(basetypes.BoolType{}),
+		basetypes.NewSetNull(basetypes.StringType{}),
+		basetypes.NewListNull(basetypes.NumberType{}),
+		basetypes.NewTupleNull([]attr.Type{}),
+		basetypes.NewObjectNull(map[string]attr.Type{"hi": basetypes.StringType{}}),
+	},
+	"unknowns": {
+		basetypes.NewBoolUnknown(),
+		basetypes.NewBoolUnknown(),
+		basetypes.NewInt32Unknown(),
+		basetypes.NewMapUnknown(basetypes.BoolType{}),
+		basetypes.NewSetUnknown(basetypes.StringType{}),
+		basetypes.NewListUnknown(basetypes.NumberType{}),
+		basetypes.NewTupleUnknown([]attr.Type{}),
+		basetypes.NewObjectUnknown(map[string]attr.Type{"hi": basetypes.StringType{}}),
+	},
+	"floats": {
+		basetypes.NewFloat32Value(12.0),
+		basetypes.NewFloat64Value(12.0),
+		basetypes.NewNumberValue(big.NewFloat(12.0)),
+	},
+	"ints": {
+		basetypes.NewInt32Value(12),
+		basetypes.NewInt64Value(12),
+		basetypes.NewNumberValue(big.NewFloat(12)),
+	},
+	"sequences": {
+		basetypes.NewSetValueMust(basetypes.DynamicType{}, []attr.Value{
+			basetypes.NewDynamicValue(basetypes.NewInt64Value(12)),
+		}),
+		basetypes.NewListValueMust(basetypes.DynamicType{}, []attr.Value{
+			basetypes.NewDynamicValue(basetypes.NewInt32Value(12)),
+		}),
+		basetypes.NewTupleValueMust([]attr.Type{customfield.NormalizedDynamicType{}}, []attr.Value{
+			customfield.RawNormalizedDynamicValueFrom(basetypes.NewInt64Value(12)),
+		}),
+	},
+	"maps": {
+		basetypes.NewMapValueMust(basetypes.DynamicType{}, map[string]attr.Value{
+			"12": basetypes.NewDynamicValue(basetypes.NewNumberValue(big.NewFloat(12.0))),
+			"14": basetypes.NewDynamicValue(basetypes.NewNumberValue(big.NewFloat(14.0))),
+		}),
+		basetypes.NewObjectValueMust(map[string]attr.Type{"12": basetypes.DynamicType{}, "14": basetypes.DynamicType{}}, map[string]attr.Value{
+			"12": basetypes.NewDynamicValue(basetypes.NewInt32Value(12)),
+			"14": basetypes.NewDynamicValue(basetypes.NewInt64Value(14)),
+		}),
+	},
+	"nested": {
+		basetypes.NewObjectValueMust(
+			map[string]attr.Type{
+				"inner": basetypes.DynamicType{},
+			},
+			map[string]attr.Value{
+				"inner": basetypes.NewDynamicValue(basetypes.NewListValueMust(basetypes.DynamicType{}, []attr.Value{
+					basetypes.NewDynamicValue(basetypes.NewStringValue("hi")),
+					basetypes.NewDynamicValue(basetypes.NewStringValue("mom")),
+				})),
+			},
+		),
+		basetypes.NewObjectValueMust(
+			map[string]attr.Type{
+				"inner": basetypes.DynamicType{},
+			},
+			map[string]attr.Value{
+				"inner": basetypes.NewDynamicValue(basetypes.NewListValueMust(customfield.NormalizedDynamicType{}, []attr.Value{
+					customfield.RawNormalizedDynamicValueFrom(basetypes.NewStringValue("hi")),
+					customfield.RawNormalizedDynamicValueFrom(basetypes.NewStringValue("mom")),
+				})),
+			},
+		),
+		basetypes.NewMapValueMust(basetypes.DynamicType{}, map[string]attr.Value{
+			"inner": basetypes.NewDynamicValue(basetypes.NewListValueMust(basetypes.DynamicType{}, []attr.Value{
+				basetypes.NewDynamicValue(basetypes.NewStringValue("hi")),
+				basetypes.NewDynamicValue(basetypes.NewStringValue("mom")),
+			})),
+		}),
+	},
+}
+
 func TestDecodeComputedOnly(t *testing.T) {
 	spew.Config.ContinueOnMethod = false
 	for name, test := range decode_computed_only_tests {
@@ -1870,6 +2037,40 @@ func TestNoStateBetweenDecoders(t *testing.T) {
 	// test here. This can happen if our cache key does not capture all the information needed to make these two decoders unique.
 	TestDecodeComputedOnly(t)
 	TestDecodeFromValue(t)
+}
+
+func TestSemanticEquivalence(t *testing.T) {
+	ctx := context.TODO()
+	for name, values := range test_semantic_equivalence {
+		t.Run(name, func(t *testing.T) {
+			for i, pair := range pairwise(values) {
+				lhs := customfield.RawNormalizedDynamicValueFrom(pair[0])
+				rhs := customfield.RawNormalizedDynamicValueFrom(pair[1])
+
+				eq, d := lhs.DynamicSemanticEquals(ctx, rhs)
+				if len(d) != 0 {
+					t.Fatalf("unexpected Diagnostics: %v", d)
+				}
+				if !eq {
+					t.Fatalf("unexpected inequality index: %d, %v <> %v", i, lhs, rhs)
+
+				}
+			}
+		})
+	}
+}
+
+func pairwise[T any](input []T) [][]T {
+	pairs := [][]T{}
+	if len(input) < 2 {
+		return [][]T{input}
+	}
+	a := input[0]
+	for _, b := range input[1:] {
+		pairs = append(pairs, []T{a, b})
+		a = b
+	}
+	return pairs
 }
 
 func merge[T interface{}](test_array ...map[string]T) map[string]T {

@@ -3,7 +3,12 @@
 package list_item
 
 import (
+	"context"
+
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,16 +30,17 @@ type ListItemDataSourceModel struct {
 	Redirect   customfield.NestedObject[ListItemRedirectDataSourceModel] `tfsdk:"redirect" json:"redirect,computed"`
 }
 
-// func (m *ListItemDataSourceModel) toReadParams(_ context.Context) (params rules.ListItemGetParams, diags diag.Diagnostics) {
-// 	params = rules.ListItemGetParams{
-// 		AccountID: cloudflare.F(m.AccountID.ValueString()),
-// 	}
+func (m *ListItemDataSourceModel) toReadParams(_ context.Context) (params rules.ListItemGetParams, diags diag.Diagnostics) {
+	params = rules.ListItemGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
 
-// 	return
-// }
+	return
+}
 
 type ListItemHostnameDataSourceModel struct {
 	URLHostname          types.String `tfsdk:"url_hostname" json:"url_hostname,computed"`
+	ExcludeExactHostname types.Bool   `tfsdk:"exclude_exact_hostname" json:"exclude_exact_hostname,computed"`
 }
 
 type ListItemRedirectDataSourceModel struct {

@@ -5,5 +5,8 @@
       include = [{
         email = ["a@example.com"]
       }]
+      approval_required              = "false"
+      isolation_required             = "false"
+      purpose_justification_required = "false"
     }
   

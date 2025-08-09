@@ -66,6 +66,7 @@ type custype struct {
 	F customfield.NestedObjectList[reallysimple]            `tfsdk:"F"`
 	G customfield.NestedObjectSet[reallysimple]             `tfsdk:"G"`
 	H customfield.NestedObjectMap[reallysimple]             `tfsdk:"H"`
+	I customfield.NormalizedDynamicValue                    `tfsdk:"I"`
 }
 
 var ctx = context.TODO()
@@ -261,6 +262,9 @@ var datasourceTests = map[string]struct {
 							"B": ds.Int64Attribute{},
 						},
 					},
+				},
+				"I": ds.DynamicAttribute{
+					CustomType: customfield.NormalizedDynamicType{},
 				},
 			},
 		},
@@ -459,6 +463,9 @@ var resourceTests = map[string]struct {
 							"B": ds.Int64Attribute{},
 						},
 					},
+				},
+				"I": rs.DynamicAttribute{
+					CustomType: customfield.NormalizedDynamicType{},
 				},
 			},
 		},

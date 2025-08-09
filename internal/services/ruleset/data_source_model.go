@@ -21,10 +21,10 @@ type RulesetDataSourceModel struct {
 	RulesetID   types.String                                              `tfsdk:"ruleset_id" path:"ruleset_id,optional"`
 	AccountID   types.String                                              `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID      types.String                                              `tfsdk:"zone_id" path:"zone_id,optional"`
-	Description types.String                                              `tfsdk:"description" json:"description,computed"`
 	Kind        types.String                                              `tfsdk:"kind" json:"kind,computed"`
 	Name        types.String                                              `tfsdk:"name" json:"name,computed"`
 	Phase       types.String                                              `tfsdk:"phase" json:"phase,computed"`
+	Description types.String                                              `tfsdk:"description" json:"description,computed"`
 	Rules       customfield.NestedObjectList[RulesetRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
 }
 

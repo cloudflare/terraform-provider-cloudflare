@@ -257,10 +257,8 @@ func checkTag(path []string, attr attrlike, field reflect.StructField) (errs cod
 	if !tagged {
 		return
 	}
-	for _, t := range tags {
-		if t == tag {
-			return
-		}
+	if slices.Contains(tags, tag) {
+		return
 	}
 	return codingerrors{&mismatch{path: path, expected: tag, tagging: true, tags: strings.Join(tags, ",")}}
 }
@@ -461,7 +459,7 @@ func walk(path []string, attribute attrlike, model reflect.Type) (errs codingerr
 
 	switch a := attribute.val().(type) {
 	case ds.DynamicAttribute, rs.DynamicAttribute:
-		if !model.ConvertibleTo(reflect.TypeOf(basetypes.DynamicValue{})) {
+		if !model.Implements(reflect.TypeOf((*basetypes.DynamicValuable)(nil)).Elem()) {
 			return append(errs, &mismatch{path: path, expected: "Dynamic", actual: model})
 		}
 	case ds.BoolAttribute, rs.BoolAttribute, basetypes.BoolType:

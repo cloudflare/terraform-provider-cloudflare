@@ -81,17 +81,17 @@ func (t MapType[T]) ValueFromTerraform(ctx context.Context, in tftypes.Value) (a
 		return nil, err
 	}
 
-	setValue, ok := attrValue.(basetypes.MapValue)
+	mapValue, ok := attrValue.(basetypes.MapValue)
 	if !ok {
 		return nil, fmt.Errorf("unexpected value type of %T", attrValue)
 	}
 
-	setValuable, diags := t.ValueFromMap(ctx, setValue)
+	mapValuable, diags := t.ValueFromMap(ctx, mapValue)
 	if diags.HasError() {
 		return nil, fmt.Errorf("unexpected error converting MapValue to MapValuable: %v", diags)
 	}
 
-	return setValuable, nil
+	return mapValuable, nil
 }
 
 func (t MapType[T]) ValueType(ctx context.Context) attr.Value {

@@ -17,6 +17,7 @@ resource "cloudflare_zero_trust_access_policy" "%[1]s" {
       email = "a@example.com"
     }
   }]
+  isolation_required             = "false"
   approval_groups = [
     {
       email_addresses = ["test1@example.com", "test2@example.com", "test3@example.com"]

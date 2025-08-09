@@ -27,6 +27,7 @@ type WorkersForPlatformsDispatchNamespaceDataSourceModel struct {
 	NamespaceID       types.String      `tfsdk:"namespace_id" json:"namespace_id,computed"`
 	NamespaceName     types.String      `tfsdk:"namespace_name" json:"namespace_name,computed"`
 	ScriptCount       types.Int64       `tfsdk:"script_count" json:"script_count,computed"`
+	TrustedWorkers    types.Bool        `tfsdk:"trusted_workers" json:"trusted_workers,computed"`
 }
 
 func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toReadParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceGetParams, diags diag.Diagnostics) {

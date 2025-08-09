@@ -1,7 +1,7 @@
 
 resource "cloudflare_dns_record" "%[3]s" {
 	zone_id = "%[1]s"
-	name    = "%[3]s.origin"
+	name    = "%[3]s.origin.%[2]s"
 	content = "example.com"
 	type    = "CNAME"
 	ttl     = 3600

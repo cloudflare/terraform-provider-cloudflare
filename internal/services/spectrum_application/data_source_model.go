@@ -33,7 +33,7 @@ type SpectrumApplicationDataSourceModel struct {
 	DNS              customfield.NestedObject[SpectrumApplicationDNSDataSourceModel]       `tfsdk:"dns" json:"dns,computed"`
 	EdgeIPs          customfield.NestedObject[SpectrumApplicationEdgeIPsDataSourceModel]   `tfsdk:"edge_ips" json:"edge_ips,computed"`
 	OriginDNS        customfield.NestedObject[SpectrumApplicationOriginDNSDataSourceModel] `tfsdk:"origin_dns" json:"origin_dns,computed"`
-	OriginPort       types.Dynamic                                                         `tfsdk:"origin_port" json:"origin_port,computed"`
+	OriginPort       customfield.NormalizedDynamicValue                                    `tfsdk:"origin_port" json:"origin_port,computed"`
 }
 
 func (m *SpectrumApplicationDataSourceModel) toReadParams(_ context.Context) (params spectrum.AppGetParams, diags diag.Diagnostics) {

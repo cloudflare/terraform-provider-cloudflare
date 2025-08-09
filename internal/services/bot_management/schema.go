@@ -65,6 +65,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 			},
+			"is_robots_txt_managed": schema.BoolAttribute{
+				Description: "Enable cloudflare managed robots.txt. If an existing robots.txt is detected, then managed robots.txt will be prepended to the existing robots.txt.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"optimize_wordpress": schema.BoolAttribute{
 				Description: "Whether to optimize Super Bot Fight Mode protections for Wordpress.",
 				Computed:    true,

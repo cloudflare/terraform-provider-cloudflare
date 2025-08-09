@@ -25,10 +25,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Cloudflare account ID",
 				Required:    true,
 			},
-			"comment": schema.StringAttribute{
-				Description: "Optional remark describing the route.",
-				Optional:    true,
-			},
 			"existed_at": schema.StringAttribute{
 				Description: "If provided, include only resources that were created (and not deleted) before this time. URL encoded.",
 				Optional:    true,
@@ -74,6 +70,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				ElementType: types.StringType,
+			},
+			"comment": schema.StringAttribute{
+				Description: "Optional remark describing the route.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
