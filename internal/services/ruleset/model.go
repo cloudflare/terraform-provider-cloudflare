@@ -34,7 +34,7 @@ func (m RulesetModel) MarshalJSONForUpdate(state RulesetModel) (data []byte, err
 type RulesetRulesModel struct {
 	ID                     types.String                                                      `tfsdk:"id" json:"id,computed"`
 	Action                 types.String                                                      `tfsdk:"action" json:"action,required"`
-	ActionParameters       customfield.NestedObject[RulesetRulesActionParametersModel]       `tfsdk:"action_parameters" json:"action_parameters,optional"`
+	ActionParameters       customfield.NestedObject[RulesetRulesActionParametersModel]       `tfsdk:"action_parameters" json:"action_parameters,computed_optional,decode_null_to_zero"`
 	Description            types.String                                                      `tfsdk:"description" json:"description,optional"`
 	Enabled                types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	ExposedCredentialCheck customfield.NestedObject[RulesetRulesExposedCredentialCheckModel] `tfsdk:"exposed_credential_check" json:"exposed_credential_check,optional"`
