@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -137,6 +138,17 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 	data = &env.Result
+
+	// restore any secret_text `text` values from state since they aren't returned by the API
+	var state *WorkerVersionModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	var diags diag.Diagnostics
+	data.Bindings, diags = UpdateSecretTextsFromState(
+		ctx,
+		data.Bindings,
+		state.Bindings,
+	)
+	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

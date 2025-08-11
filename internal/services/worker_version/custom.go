@@ -4,13 +4,103 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
+
+func UpdateSecretTextsFromState[T any](
+	ctx context.Context,
+	refreshed customfield.NestedObjectList[T],
+	state customfield.NestedObjectList[T],
+) (customfield.NestedObjectList[T], diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	if refreshed.IsNull() {
+		return refreshed, diags
+	}
+
+	refreshedElems := refreshed.Elements()
+	stateElems := state.Elements()
+
+	updatedElems := make([]attr.Value, 0, len(refreshedElems))
+
+	elemType := refreshed.ElementType(ctx)
+
+	objType, ok := elemType.(basetypes.ObjectType)
+	if !ok {
+		diags.AddError("Invalid element type", "Expected element type to be basetypes.ObjectType.")
+		return refreshed, diags
+	}
+
+	attrTypes := objType.AttributeTypes()
+
+	for _, val := range refreshedElems {
+		refreshedObj, ok := val.(basetypes.ObjectValue)
+		if !ok {
+			updatedElems = append(updatedElems, val)
+			continue
+		}
+
+		refreshedAttrs := refreshedObj.Attributes()
+		typeAttr := refreshedAttrs["type"]
+		nameAttr := refreshedAttrs["name"]
+
+		if typeAttr.IsNull() || nameAttr.IsNull() {
+			updatedElems = append(updatedElems, val)
+			continue
+		}
+
+		if typeAttr.(types.String).ValueString() != "secret_text" {
+			updatedElems = append(updatedElems, val)
+			continue
+		}
+
+		name := nameAttr.(types.String).ValueString()
+
+		var originalText attr.Value
+		var foundInState bool
+		for _, stateVal := range stateElems {
+			stateObj, ok := stateVal.(basetypes.ObjectValue)
+			if !ok {
+				continue
+			}
+			stateAttrs := stateObj.Attributes()
+			if stateAttrs["type"].(types.String).ValueString() == "secret_text" &&
+				stateAttrs["name"].(types.String).ValueString() == name {
+				originalText = stateAttrs["text"]
+				foundInState = true
+				break
+			}
+		}
+
+		if !foundInState {
+			continue
+		}
+
+		if originalText != nil && !originalText.IsNull() && !originalText.IsUnknown() {
+			refreshedAttrs["text"] = originalText
+
+			newObj, d := basetypes.NewObjectValue(attrTypes, refreshedAttrs)
+			diags.Append(d...)
+			refreshedObj = newObj
+		}
+
+		updatedElems = append(updatedElems, refreshedObj)
+	}
+
+	value, d := types.ListValue(refreshed.ElementType(ctx), updatedElems)
+	diags.Append(d...)
+
+	return customfield.NestedObjectList[T]{
+		ListValue: value,
+	}, diags
+}
 
 // UnknownOnlyIfModifier only allows a value to be marked as unknown if
 // some other attribute is equal to a given value.
