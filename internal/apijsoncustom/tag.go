@@ -1,4 +1,4 @@
-package apijson
+package apijsoncustom
 
 import (
 	"reflect"
@@ -31,6 +31,10 @@ type parsedStructTag struct {
 	// otherwise just use the UseStateForUnknown plan modifier
 	// NOTE #2: won't work if update behavior is 'patch'
 	encodeStateValueWhenPlanUnknown bool
+	// decodeZeroValueWhenNull indicates whether null and omitted values should
+	// be decoded as the zero value of the field type instead of leaving the
+	// field unset.
+	decodeZeroValueWhenNull bool
 }
 
 func parseJSONStructTag(field reflect.StructField) (tag parsedStructTag, ok bool) {
@@ -63,6 +67,8 @@ func parseJSONStructTag(field reflect.StructField) (tag parsedStructTag, ok bool
 			tag.noRefresh = true
 		case "encode_state_for_unknown":
 			tag.encodeStateValueWhenPlanUnknown = true
+		case "decode_null_to_zero":
+			tag.decodeZeroValueWhenNull = true
 		case "force_encode":
 			tag.forceEncode = true
 		}

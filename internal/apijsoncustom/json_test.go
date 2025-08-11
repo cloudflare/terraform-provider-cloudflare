@@ -1,4 +1,4 @@
-package apijson
+package apijsoncustom
 
 import (
 	"bytes"
@@ -50,6 +50,31 @@ type DoubleNestedStruct struct {
 	NestedInt types.Int64 `tfsdk:"tfsdk_nested_int" json:"nested_int"`
 }
 
+type DoubleNestedStructZero struct {
+	NestedInt types.Int64 `tfsdk:"tfsdk_nested_int" json:"nested_int,decode_null_to_zero"`
+}
+
+type TfsdkStructsZero struct {
+	BoolValue        types.Bool                                            `tfsdk:"tfsdk_bool_value" json:"bool_value,decode_null_to_zero"`
+	StringValue      types.String                                          `tfsdk:"tfsdk_string_value" json:"string_value,decode_null_to_zero"`
+	Data             *EmbeddedTfsdkStructZero                              `tfsdk:"tfsdk_data" json:"data,decode_null_to_zero"`
+	DataObject       customfield.NestedObject[EmbeddedTfsdkStructZero]     `tfsdk:"tfsdk_data_object" json:"data_object,decode_null_to_zero"`
+	ListObject       customfield.List[types.String]                        `tfsdk:"tfsdk_list_object" json:"list_object,decode_null_to_zero"`
+	NestedObjectList customfield.NestedObjectList[EmbeddedTfsdkStructZero] `tfsdk:"tfsdk_nested_object_list" json:"nested_object_list,decode_null_to_zero"`
+	SetObject        customfield.Set[types.String]                         `tfsdk:"tfsdk_set_object" json:"set_object,decode_null_to_zero"`
+	NestedObjectSet  customfield.NestedObjectSet[EmbeddedTfsdkStructZero]  `tfsdk:"tfsdk_nested_object_set" json:"nested_object_set,decode_null_to_zero"`
+	MapObject        customfield.Map[types.String]                         `tfsdk:"tfsdk_map_object" json:"map_object,decode_null_to_zero"`
+	NestedObjectMap  customfield.NestedObjectMap[EmbeddedTfsdkStructZero]  `tfsdk:"tfsdk_nested_object_map" json:"nested_object_map,decode_null_to_zero"`
+	FloatValue       types.Float64                                         `tfsdk:"tfsdk_float_value" json:"float_value,decode_null_to_zero"`
+	OptionalArray    *[]types.String                                       `tfsdk:"tfsdk_optional_array" json:"optional_array,decode_null_to_zero"`
+}
+
+type EmbeddedTfsdkStructZero struct {
+	EmbeddedString types.String                                 `tfsdk:"tfsdk_embedded_string" json:"embedded_string,required,decode_null_to_zero"`
+	EmbeddedInt    types.Int64                                  `tfsdk:"tfsdk_embedded_int" json:"embedded_int,optional,decode_null_to_zero"`
+	DataObject     customfield.NestedObject[DoubleNestedStruct] `tfsdk:"tfsdk_data_object" json:"data_object,optional,decode_null_to_zero"`
+}
+
 type Primitives struct {
 	A bool    `json:"a"`
 	B int     `json:"b"`
@@ -57,6 +82,15 @@ type Primitives struct {
 	D float64 `json:"d"`
 	E float32 `json:"e"`
 	F []int   `json:"f"`
+}
+
+type PrimitivesZero struct {
+	A bool    `json:"a,decode_null_to_zero"`
+	B int     `json:"b,decode_null_to_zero"`
+	C uint    `json:"c,decode_null_to_zero"`
+	D float64 `json:"d,decode_null_to_zero"`
+	E float32 `json:"e,decode_null_to_zero"`
+	F []int   `json:"f,decode_null_to_zero"`
 }
 
 type PrimitivePointers struct {
@@ -68,8 +102,21 @@ type PrimitivePointers struct {
 	F *[]int   `json:"f"`
 }
 
+type PrimitivePointersZero struct {
+	A *bool    `json:"a,decode_null_to_zero"`
+	B *int     `json:"b,decode_null_to_zero"`
+	C *uint    `json:"c,decode_null_to_zero"`
+	D *float64 `json:"d,decode_null_to_zero"`
+	E *float32 `json:"e,decode_null_to_zero"`
+	F *[]int   `json:"f,decode_null_to_zero"`
+}
+
 type Slices struct {
 	Slice []Primitives `json:"slices"`
+}
+
+type SlicesZero struct {
+	Slice []PrimitivesZero `json:"slices,decode_null_to_zero"`
 }
 
 type DateTime struct {
@@ -77,14 +124,29 @@ type DateTime struct {
 	DateTime time.Time `json:"date-time" format:"date-time"`
 }
 
+type DateTimeZero struct {
+	Date     time.Time `json:"date" format:"date,decode_null_to_zero"`
+	DateTime time.Time `json:"date-time" format:"date-time,decode_null_to_zero"`
+}
+
 type DateTimeCustom struct {
 	DateCustom     timetypes.RFC3339 `json:"date" format:"date"`
 	DateTimeCustom timetypes.RFC3339 `json:"date-time" format:"date-time"`
 }
 
+type DateTimeCustomZero struct {
+	DateCustom     timetypes.RFC3339 `json:"date,decode_null_to_zero" format:"date"`
+	DateTimeCustom timetypes.RFC3339 `json:"date-time,decode_null_to_zero" format:"date-time"`
+}
+
 type AdditionalProperties struct {
 	A      bool                   `json:"a"`
 	Extras map[string]interface{} `json:"-,extras"`
+}
+
+type AdditionalPropertiesZero struct {
+	A      bool                   `json:"a,decode_null_to_zero"`
+	Extras map[string]interface{} `json:"-,extras,decode_null_to_zero"`
 }
 
 type TypedAdditionalProperties struct {
@@ -103,12 +165,25 @@ type Recursive struct {
 	Child *Recursive `json:"child"`
 }
 
+type RecursiveZero struct {
+	Name  string     `json:"name,decode_null_to_zero"`
+	Child *Recursive `json:"child,decode_null_to_zero"`
+}
+
 type UnknownStruct struct {
 	Unknown interface{} `json:"unknown"`
 }
 
+type UnknownStructZero struct {
+	Unknown interface{} `json:"unknown,decode_null_to_zero"`
+}
+
 type UnionStruct struct {
 	Union Union `json:"union" format:"date"`
+}
+
+type UnionStructZero struct {
+	Union Union `json:"union,decode_null_to_zero" format:"date"`
 }
 
 type Union interface {
@@ -192,6 +267,16 @@ type RecordsModel struct {
 	C types.String `tfsdk:"tfsdk_c" json:"c,computed"`
 }
 
+type ResultEnvelopeZero struct {
+	Result RecordsModelZero `json:"result"`
+}
+
+type RecordsModelZero struct {
+	A types.String `tfsdk:"tfsdk_a" json:"a,decode_null_to_zero"`
+	B types.String `tfsdk:"tfsdk_b" json:"b,decode_null_to_zero"`
+	C types.String `tfsdk:"tfsdk_c" json:"c,computed,decode_null_to_zero"`
+}
+
 func DropDiagnostic[resType interface{}](res resType, diags diag.Diagnostics) resType {
 	for _, d := range diags {
 		panic(fmt.Sprintf("%s: %s", d.Summary(), d.Detail()))
@@ -208,6 +293,17 @@ type JsonModel struct {
 	Str  jsontypes.Normalized            `tfsdk:"tfsdk_str" json:"str"`
 	Arr2 []jsontypes.Normalized          `tfsdk:"tfsdk_arr2" json:"arr2"`
 	Map2 map[string]jsontypes.Normalized `tfsdk:"tfsdk_map2" json:"map2"`
+}
+
+type JsonModelZero struct {
+	Arr  jsontypes.Normalized            `tfsdk:"tfsdk_arr" json:"arr,decode_null_to_zero"`
+	Bol  jsontypes.Normalized            `tfsdk:"tfsdk_bol" json:"bol,decode_null_to_zero"`
+	Map  jsontypes.Normalized            `tfsdk:"tfsdk_map" json:"map,decode_null_to_zero"`
+	Nil  jsontypes.Normalized            `tfsdk:"tfsdk_nil" json:"nil,decode_null_to_zero"`
+	Num  jsontypes.Normalized            `tfsdk:"tfsdk_num" json:"num,decode_null_to_zero"`
+	Str  jsontypes.Normalized            `tfsdk:"tfsdk_str" json:"str,decode_null_to_zero"`
+	Arr2 []jsontypes.Normalized          `tfsdk:"tfsdk_arr2" json:"arr2,decode_null_to_zero"`
+	Map2 map[string]jsontypes.Normalized `tfsdk:"tfsdk_map2" json:"map2,decode_null_to_zero"`
 }
 
 func time2time(t time.Time) timetypes.RFC3339 {
@@ -277,6 +373,10 @@ var tests = map[string]struct {
 		`{"a":false,"b":237628372683,"c":654,"d":9999.43,"e":43.76,"f":[1,2,3,4]}`,
 		Primitives{A: false, B: 237628372683, C: uint(654), D: 9999.43, E: 43.76, F: []int{1, 2, 3, 4}},
 	},
+	"primitive_struct_zero": {
+		`{"a":false,"b":237628372683,"c":654,"d":9999.43,"e":43.76,"f":[1,2,3,4]}`,
+		PrimitivesZero{A: false, B: 237628372683, C: uint(654), D: 9999.43, E: 43.76, F: []int{1, 2, 3, 4}},
+	},
 
 	"slices": {
 		`{"slices":[{"a":false,"b":237628372683,"c":654,"d":9999.43,"e":43.76,"f":[1,2,3,4]}]}`,
@@ -284,10 +384,27 @@ var tests = map[string]struct {
 			Slice: []Primitives{{A: false, B: 237628372683, C: uint(654), D: 9999.43, E: 43.76, F: []int{1, 2, 3, 4}}},
 		},
 	},
+	"slices_zero": {
+		`{"slices":[{"a":false,"b":237628372683,"c":654,"d":9999.43,"e":43.76,"f":[1,2,3,4]}]}`,
+		SlicesZero{
+			Slice: []PrimitivesZero{{A: false, B: 237628372683, C: uint(654), D: 9999.43, E: 43.76, F: []int{1, 2, 3, 4}}},
+		},
+	},
 
 	"primitive_pointer_struct": {
 		`{"a":false,"b":237628372683,"c":654,"d":9999.43,"e":43.76,"f":[1,2,3,4,5]}`,
 		PrimitivePointers{
+			A: P(false),
+			B: P(237628372683),
+			C: P(uint(654)),
+			D: P(9999.43),
+			E: P(float32(43.76)),
+			F: &[]int{1, 2, 3, 4, 5},
+		},
+	},
+	"primitive_pointer_struct_zero": {
+		`{"a":false,"b":237628372683,"c":654,"d":9999.43,"e":43.76,"f":[1,2,3,4,5]}`,
+		PrimitivePointersZero{
 			A: P(false),
 			B: P(237628372683),
 			C: P(uint(654)),
@@ -304,10 +421,24 @@ var tests = map[string]struct {
 			DateTime: time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC),
 		},
 	},
+	"datetime_struct_zero": {
+		`{"date":"2006-01-02","date-time":"2006-01-02T15:04:05Z"}`,
+		DateTimeZero{
+			Date:     time.Date(2006, time.January, 2, 0, 0, 0, 0, time.UTC),
+			DateTime: time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC),
+		},
+	},
 
 	"datetime_custom_struct": {
 		`{"date":"2006-01-02","date-time":"2006-01-02T15:04:05Z"}`,
 		DateTimeCustom{
+			DateCustom:     time2time(time.Date(2006, time.January, 2, 0, 0, 0, 0, time.UTC)),
+			DateTimeCustom: time2time(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
+		},
+	},
+	"datetime_custom_struct_zero": {
+		`{"date":"2006-01-02","date-time":"2006-01-02T15:04:05Z"}`,
+		DateTimeCustomZero{
 			DateCustom:     time2time(time.Date(2006, time.January, 2, 0, 0, 0, 0, time.UTC)),
 			DateTimeCustom: time2time(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
 		},
@@ -323,15 +454,35 @@ var tests = map[string]struct {
 			},
 		},
 	},
+	"additional_properties_zero": {
+		`{"a":true,"bar":"value","foo":true}`,
+		AdditionalPropertiesZero{
+			A: true,
+			Extras: map[string]interface{}{
+				"bar": "value",
+				"foo": true,
+			},
+		},
+	},
 
 	"recursive_struct": {
 		`{"child":{"name":"Alex"},"name":"Robert"}`,
 		Recursive{Name: "Robert", Child: &Recursive{Name: "Alex"}},
 	},
+	"recursive_struct_zero": {
+		`{"child":{"name":"Alex"},"name":"Robert"}`,
+		RecursiveZero{Name: "Robert", Child: &Recursive{Name: "Alex"}},
+	},
 
 	"unknown_struct_number": {
 		`{"unknown":12}`,
 		UnknownStruct{
+			Unknown: 12.,
+		},
+	},
+	"unknown_struct_number_zero": {
+		`{"unknown":12}`,
+		UnknownStructZero{
 			Unknown: 12.,
 		},
 	},
@@ -344,6 +495,14 @@ var tests = map[string]struct {
 			},
 		},
 	},
+	"unknown_struct_map_zero": {
+		`{"unknown":{"foo":"bar"}}`,
+		UnknownStructZero{
+			Unknown: map[string]interface{}{
+				"foo": "bar",
+			},
+		},
+	},
 
 	"union_integer": {
 		`{"union":12}`,
@@ -351,10 +510,26 @@ var tests = map[string]struct {
 			Union: UnionInteger(12),
 		},
 	},
+	"union_integer_zero": {
+		`{"union":12}`,
+		UnionStructZero{
+			Union: UnionInteger(12),
+		},
+	},
 
 	"union_struct_discriminated_a": {
 		`{"union":{"a":"foo","b":"bar","type":"typeA"}}`,
 		UnionStruct{
+			Union: UnionStructA{
+				Type: "typeA",
+				A:    "foo",
+				B:    "bar",
+			},
+		},
+	},
+	"union_struct_discriminated_a_zero": {
+		`{"union":{"a":"foo","b":"bar","type":"typeA"}}`,
+		UnionStructZero{
 			Union: UnionStructA{
 				Type: "typeA",
 				A:    "foo",
@@ -372,10 +547,25 @@ var tests = map[string]struct {
 			},
 		},
 	},
+	"union_struct_discriminated_b_zero": {
+		`{"union":{"a":"foo","type":"typeB"}}`,
+		UnionStructZero{
+			Union: UnionStructB{
+				Type: "typeB",
+				A:    "foo",
+			},
+		},
+	},
 
 	"union_struct_time": {
 		`{"union":"2010-05-23"}`,
 		UnionStruct{
+			Union: UnionTime(time.Date(2010, 05, 23, 0, 0, 0, 0, time.UTC)),
+		},
+	},
+	"union_struct_time_zero": {
+		`{"union":"2010-05-23"}`,
+		UnionStructZero{
 			Union: UnionTime(time.Date(2010, 05, 23, 0, 0, 0, 0, time.UTC)),
 		},
 	},
@@ -475,14 +665,96 @@ var tests = map[string]struct {
 			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
 		},
 	},
+	"embedded_tfsdk_struct_zero": {
+		`{"bool_value":true,` +
+			`"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},` +
+			`"data_object":{"data_object":{"nested_int":19},"embedded_int":18,"embedded_string":"embedded_data_string_value"},` +
+			`"float_value":3.14,` +
+			`"list_object":["hi_list","there_list"],` +
+			`"map_object":{"hi_map":"there_map"},` +
+			`"nested_object_list":[{"embedded_int":20,"embedded_string":"nested_object_string"}],` +
+			`"nested_object_map":{"nested_object_map_key":{"embedded_int":21,"embedded_string":"nested_object_string_in_map"}},` +
+			`"nested_object_set":[{"embedded_int":21,"embedded_string":"nested_object_string_in_set"}],` +
+			`"optional_array":["hi","there"],` +
+			`"set_object":["hi_set","there_set"],` +
+			`"string_value":"string_value"}`,
+		TfsdkStructsZero{
+			BoolValue:   types.BoolValue(true),
+			StringValue: types.StringValue("string_value"),
+			Data: &EmbeddedTfsdkStructZero{
+				EmbeddedString: types.StringValue("embedded_string_value"),
+				EmbeddedInt:    types.Int64Value(17),
+				DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+					NestedInt: types.Int64Null(),
+				}),
+			},
+			DataObject: customfield.NewObjectMust(ctx, &EmbeddedTfsdkStructZero{
+				EmbeddedString: types.StringValue("embedded_data_string_value"),
+				EmbeddedInt:    types.Int64Value(18),
+				DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+					NestedInt: types.Int64Value(19),
+				}),
+			}),
+			ListObject: customfield.NewListMust[basetypes.StringValue](ctx, []attr.Value{types.StringValue("hi_list"), types.StringValue("there_list")}),
+			NestedObjectList: customfield.NewObjectListMust(ctx, []EmbeddedTfsdkStructZero{{
+				EmbeddedString: types.StringValue("nested_object_string"),
+				EmbeddedInt:    types.Int64Value(20),
+				DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+					NestedInt: types.Int64Null(),
+				}),
+			}}),
+			SetObject: customfield.NewSetMust[basetypes.StringValue](ctx, []attr.Value{types.StringValue("hi_set"), types.StringValue("there_set")}),
+			NestedObjectSet: customfield.NewObjectSetMust(ctx, []EmbeddedTfsdkStructZero{{
+				EmbeddedString: types.StringValue("nested_object_string_in_set"),
+				EmbeddedInt:    types.Int64Value(21),
+				DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+					NestedInt: types.Int64Null(),
+				}),
+			}}),
+			MapObject: customfield.NewMapMust[basetypes.StringValue](ctx, map[string]types.String{"hi_map": types.StringValue("there_map")}),
+			NestedObjectMap: customfield.NewObjectMapMust(ctx, map[string]EmbeddedTfsdkStructZero{"nested_object_map_key": {
+				EmbeddedString: types.StringValue("nested_object_string_in_map"),
+				EmbeddedInt:    types.Int64Value(21),
+				DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+					NestedInt: types.Int64Null(),
+				}),
+			}}),
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
+		},
+	},
 
 	"customfield_null_object": {
 		"",
 		customfield.NullObject[DoubleNestedStruct](ctx),
 	},
+	"customfield_null_object_zero": {
+		"",
+		customfield.NullObject[DoubleNestedStructZero](ctx),
+	},
 
 	"json_struct_nil1": {`{}`, JsonModel{}},
+	"json_struct_nil1_zero": {`{}`, JsonModelZero{
+		Arr:  jsontypes.NewNormalizedValue(""),
+		Bol:  jsontypes.NewNormalizedValue(""),
+		Map:  jsontypes.NewNormalizedValue(""),
+		Nil:  jsontypes.NewNormalizedValue(""),
+		Num:  jsontypes.NewNormalizedValue(""),
+		Str:  jsontypes.NewNormalizedValue(""),
+		Arr2: []jsontypes.Normalized{},
+		Map2: map[string]jsontypes.Normalized{},
+	}},
 	"json_struct_nil2": {`{}`, JsonModel{}},
+	"json_struct_nil2_zero": {`{}`, JsonModelZero{
+		Arr:  jsontypes.NewNormalizedValue(""),
+		Bol:  jsontypes.NewNormalizedValue(""),
+		Map:  jsontypes.NewNormalizedValue(""),
+		Nil:  jsontypes.NewNormalizedValue(""),
+		Num:  jsontypes.NewNormalizedValue(""),
+		Str:  jsontypes.NewNormalizedValue(""),
+		Arr2: []jsontypes.Normalized{},
+		Map2: map[string]jsontypes.Normalized{},
+	}},
 }
 
 type ListWithNestedObj struct {
@@ -501,6 +773,22 @@ type Inner struct {
 	D types.String `tfsdk:"tfsdk_d" json:"d"`
 }
 
+type ListWithNestedObjZero struct {
+	A customfield.NestedObjectList[Embedded2Zero] `tfsdk:"tfsdk_a" json:"a,decode_null_to_zero"`
+}
+
+type Embedded2Zero struct {
+	B types.String          `tfsdk:"tfsdk_b" json:"b,decode_null_to_zero"`
+	C *InnerZero            `tfsdk:"tfsdk_c" json:"c,decode_null_to_zero"`
+	D *[]*InnerZero         `tfsdk:"tfsdk_d" json:"d,decode_null_to_zero"`
+	E []string              `tfsdk:"tfsdk_e" json:"e,decode_null_to_zero"`
+	F *map[string]InnerZero `tfsdk:"tfsdk_f" json:"f,decode_null_to_zero"`
+}
+
+type InnerZero struct {
+	D types.String `tfsdk:"tfsdk_d" json:"d,decode_null_to_zero"`
+}
+
 var decode_only_tests = map[string]struct {
 	buf string
 	val interface{}
@@ -508,6 +796,14 @@ var decode_only_tests = map[string]struct {
 	"tfsdk_struct_decode": {
 		`{"result":{"c":"7887590e1967befa70f48ffe9f61ce80","a":"88281d6015751d6172e7313b0c665b5e","extra":"property","another":2,"b":"http://example.com/example.html\t20"}`,
 		ResultEnvelope{RecordsModel{
+			A: types.StringValue("88281d6015751d6172e7313b0c665b5e"),
+			B: types.StringValue("http://example.com/example.html\t20"),
+			C: types.StringValue("7887590e1967befa70f48ffe9f61ce80"),
+		}},
+	},
+	"tfsdk_struct_decode_zero": {
+		`{"result":{"c":"7887590e1967befa70f48ffe9f61ce80","a":"88281d6015751d6172e7313b0c665b5e","extra":"property","another":2,"b":"http://example.com/example.html\t20"}`,
+		ResultEnvelopeZero{RecordsModelZero{
 			A: types.StringValue("88281d6015751d6172e7313b0c665b5e"),
 			B: types.StringValue("http://example.com/example.html\t20"),
 			C: types.StringValue("7887590e1967befa70f48ffe9f61ce80"),
@@ -531,6 +827,35 @@ var decode_only_tests = map[string]struct {
 			OptionalArray:    nil,
 		},
 	},
+	"embedded_tfsdk_struct_nil_zero": {
+		`{}`,
+		TfsdkStructsZero{
+			BoolValue:   types.BoolValue(false),
+			StringValue: types.StringValue(""),
+			Data: &EmbeddedTfsdkStructZero{
+				EmbeddedString: types.StringValue(""),
+				EmbeddedInt:    types.Int64Value(0),
+				DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+					NestedInt: types.Int64Null(),
+				}),
+			},
+			DataObject: customfield.NewObjectMust(ctx, &EmbeddedTfsdkStructZero{
+				EmbeddedString: types.StringValue(""),
+				EmbeddedInt:    types.Int64Value(0),
+				DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+					NestedInt: types.Int64Null(),
+				}),
+			}),
+			ListObject:       customfield.NewListMust[basetypes.StringValue](ctx, []attr.Value{}),
+			NestedObjectList: customfield.NewObjectListMust(ctx, []EmbeddedTfsdkStructZero{}),
+			SetObject:        customfield.NewSetMust[basetypes.StringValue](ctx, []attr.Value{}),
+			NestedObjectSet:  customfield.NewObjectSetMust(ctx, []EmbeddedTfsdkStructZero{}),
+			MapObject:        customfield.NewMapMust(ctx, map[string]basetypes.StringValue{}),
+			NestedObjectMap:  customfield.NewObjectMapMust(ctx, map[string]EmbeddedTfsdkStructZero{}),
+			FloatValue:       types.Float64Value(0),
+			OptionalArray:    &[]types.String{},
+		},
+	},
 
 	"json_struct_decode": {
 		`{"arr":[true,1,"one"],"arr2":[true,1,"one"],"bol":false,"map":{"nil":null,"bol":false,"str":"two"},"map2":{"bol":false,"nil":null,"str":"two"},"nil":null,"num":2,"str":"two"}`,
@@ -545,8 +870,31 @@ var decode_only_tests = map[string]struct {
 			Map2: map[string]jsontypes.Normalized{"nil": jsontypes.NewNormalizedNull(), "bol": jsontypes.NewNormalizedValue("false"), "str": jsontypes.NewNormalizedValue(`"two"`)},
 		},
 	},
+	"json_struct_decode_zero": {
+		`{"arr":[true,1,"one"],"arr2":[true,1,"one"],"bol":false,"map":{"nil":null,"bol":false,"str":"two"},"map2":{"bol":false,"nil":null,"str":"two"},"nil":null,"num":2,"str":"two"}`,
+		JsonModelZero{
+			Arr:  jsontypes.NewNormalizedValue(`[true,1,"one"]`),
+			Bol:  jsontypes.NewNormalizedValue("false"),
+			Map:  jsontypes.NewNormalizedValue(`{"nil":null,"bol":false,"str":"two"}`),
+			Nil:  jsontypes.NewNormalizedValue(""),
+			Num:  jsontypes.NewNormalizedValue("2"),
+			Str:  jsontypes.NewNormalizedValue(`"two"`),
+			Arr2: []jsontypes.Normalized{jsontypes.NewNormalizedValue("true"), jsontypes.NewNormalizedValue("1"), jsontypes.NewNormalizedValue(`"one"`)},
+			Map2: map[string]jsontypes.Normalized{"nil": jsontypes.NewNormalizedValue(""), "bol": jsontypes.NewNormalizedValue("false"), "str": jsontypes.NewNormalizedValue(`"two"`)},
+		},
+	},
 
 	"json_struct_nil3": {`{"nil":null}`, JsonModel{}},
+	"json_struct_nil3_zero": {`{"nil":null}`, JsonModelZero{
+		Arr:  jsontypes.NewNormalizedValue(""),
+		Bol:  jsontypes.NewNormalizedValue(""),
+		Map:  jsontypes.NewNormalizedValue(""),
+		Nil:  jsontypes.NewNormalizedValue(""),
+		Num:  jsontypes.NewNormalizedValue(""),
+		Str:  jsontypes.NewNormalizedValue(""),
+		Arr2: []jsontypes.Normalized{},
+		Map2: map[string]jsontypes.Normalized{},
+	}},
 
 	"nested_object_list_missing_nested_field": {
 		`{"a":[{"b":"foo"}}]}`,
@@ -558,6 +906,22 @@ var decode_only_tests = map[string]struct {
 					D: nil,
 					E: nil,
 					F: nil,
+				},
+			}),
+		},
+	},
+	"nested_object_list_missing_nested_field_zero": {
+		`{"a":[{"b":"foo"}}]}`,
+		ListWithNestedObjZero{
+			A: customfield.NewObjectListMust(ctx, []Embedded2Zero{
+				{
+					B: types.StringValue("foo"),
+					C: &InnerZero{
+						D: types.StringValue(""),
+					},
+					D: &[]*InnerZero{},
+					E: []string{},
+					F: &map[string]InnerZero{},
 				},
 			}),
 		},
@@ -679,7 +1043,8 @@ func TestDecode(t *testing.T) {
 
 func TestEncode(t *testing.T) {
 	for name, test := range merge(tests, encodeOnlyTests) {
-		if strings.HasSuffix(name, "_coerce") {
+		if strings.HasSuffix(name, "_coerce") ||
+			strings.HasSuffix(name, "_zero") {
 			continue
 		}
 		t.Run(name, func(t *testing.T) {
@@ -1471,6 +1836,21 @@ var decode_from_value_tests = map[string]struct {
 			}),
 		},
 	},
+	"tfsdk_struct_populates_unknown_to_null_if_missing_zero": {
+		`{"embedded_string":"some_string","data_object":{}}`,
+		EmbeddedTfsdkStructZero{
+			EmbeddedString: types.StringUnknown(),
+			EmbeddedInt:    types.Int64Unknown(),
+			DataObject:     customfield.UnknownObject[DoubleNestedStruct](ctx),
+		},
+		EmbeddedTfsdkStructZero{
+			EmbeddedString: types.StringValue("some_string"),
+			EmbeddedInt:    types.Int64Value(0),
+			DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+				NestedInt: types.Int64Null(),
+			}),
+		},
+	},
 
 	"tfsdk_struct_overwrites_from_json": {
 		`{"embedded_string":"new_value"}`,
@@ -1485,6 +1865,21 @@ var decode_from_value_tests = map[string]struct {
 			DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
 		},
 	},
+	"tfsdk_struct_overwrites_from_json_zero": {
+		`{"embedded_string":"new_value"}`,
+		EmbeddedTfsdkStructZero{
+			EmbeddedString: types.StringValue("existing_value"),
+			EmbeddedInt:    types.Int64Value(5),
+			DataObject:     customfield.UnknownObject[DoubleNestedStruct](ctx),
+		},
+		EmbeddedTfsdkStructZero{
+			EmbeddedString: types.StringValue("new_value"),
+			EmbeddedInt:    types.Int64Value(0),
+			DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+				NestedInt: types.Int64Null(),
+			}),
+		},
+	},
 
 	"tfsdk_date_time_populates_unknown_to_null_if_missing": {
 		`{"date":"2006-01-02"}`,
@@ -1495,6 +1890,17 @@ var decode_from_value_tests = map[string]struct {
 		DateTimeCustom{
 			DateCustom:     time2time(time.Date(2006, time.January, 2, 0, 0, 0, 0, time.UTC)),
 			DateTimeCustom: timetypes.NewRFC3339Null(),
+		},
+	},
+	"tfsdk_date_time_populates_unknown_to_null_if_missing_zero": {
+		`{"date":"2006-01-02"}`,
+		DateTimeCustomZero{
+			DateCustom:     timetypes.NewRFC3339Unknown(),
+			DateTimeCustom: timetypes.NewRFC3339Unknown(),
+		},
+		DateTimeCustomZero{
+			DateCustom:     time2time(time.Date(2006, time.January, 2, 0, 0, 0, 0, time.UTC)),
+			DateTimeCustom: timetypes.NewRFC3339TimeValue(time.Time{}),
 		},
 	},
 }
@@ -1540,16 +1946,34 @@ var decode_unset_tests = map[string]struct {
 			A: customfield.NullObjectList[Embedded2](ctx),
 		},
 	},
+	"nested_object_list_is_omitted_null_zero": {
+		`{}`,
+		ListWithNestedObjZero{
+			A: customfield.NewObjectListMust(ctx, []Embedded2Zero{}),
+		},
+	},
 	"nested_object_list_is_explicit_null": {
 		`{"a": null}`,
 		ListWithNestedObj{
 			A: customfield.NullObjectList[Embedded2](ctx),
 		},
 	},
+	"nested_object_list_is_explicit_null_zero": {
+		`{"a": null}`,
+		ListWithNestedObjZero{
+			A: customfield.NewObjectListMust(ctx, []Embedded2Zero{}),
+		},
+	},
 	"nested_object_list_is_empty": {
 		`{"a": []}`,
 		ListWithNestedObj{
 			A: customfield.NewObjectListMust(ctx, []Embedded2{}),
+		},
+	},
+	"nested_object_list_is_empty_zero": {
+		`{"a": []}`,
+		ListWithNestedObjZero{
+			A: customfield.NewObjectListMust(ctx, []Embedded2Zero{}),
 		},
 	},
 }
@@ -1597,6 +2021,28 @@ type NestedStructWithComputedFields struct {
 	CompOptInt types.Int64  `tfsdk:"nested_comp_opt_int" json:"nested_comp_opt_int,computed_optional"`
 }
 
+type StructWithComputedFieldsZero struct {
+	RegStr            types.String                                                 `tfsdk:"str" json:"str,optional,decode_null_to_zero"`
+	CompStr           types.String                                                 `tfsdk:"comp_str" json:"comp_str,computed,decode_null_to_zero"`
+	CompOptStr        types.String                                                 `tfsdk:"opt_str" json:"opt_str,computed_optional,decode_null_to_zero"`
+	CompTime          timetypes.RFC3339                                            `tfsdk:"time" json:"time,computed,decode_null_to_zero"`
+	CompOptTime       timetypes.RFC3339                                            `tfsdk:"opt_time" json:"opt_time,computed_optional,decode_null_to_zero"`
+	Nested            NestedStructWithComputedFieldsZero                           `tfsdk:"nested" json:"nested,optional,decode_null_to_zero"`
+	NestedCust        customfield.NestedObject[NestedStructWithComputedFieldsZero] `tfsdk:"nested_obj" json:"nested_obj,optional,decode_null_to_zero"`
+	CompOptNestedCust customfield.NestedObject[NestedStructWithComputedFieldsZero] `tfsdk:"opt_nested_obj" json:"opt_nested_obj,computed_optional,decode_null_to_zero"`
+	NestedList        *[]*NestedStructWithComputedFieldsZero                       `tfsdk:"nested_list" json:"nested_list,optional,decode_null_to_zero"`
+	MapCust           customfield.Map[customfield.List[types.String]]              `tfsdk:"map_cust" json:"map_cust,optional,decode_null_to_zero"`
+	MapRegular        *map[string][]*NestedStructWithComputedFieldsZero            `tfsdk:"map_regular" json:"map_regular,optional,decode_null_to_zero"`
+	CompMap           *map[string]*NestedStructWithComputedFieldsZero              `tfsdk:"comp_map" json:"comp_map,computed,decode_null_to_zero"`
+	CompMapList       *map[string][]*NestedStructWithComputedFieldsZero            `tfsdk:"comp_map_list" json:"comp_map_list,computed,decode_null_to_zero"`
+}
+
+type NestedStructWithComputedFieldsZero struct {
+	RegStr     types.String `tfsdk:"nested_str" json:"nested_str,required,decode_null_to_zero"`
+	CompStr    types.String `tfsdk:"nested_comp_str" json:"nested_comp_str,computed,decode_null_to_zero"`
+	CompOptInt types.Int64  `tfsdk:"nested_comp_opt_int" json:"nested_comp_opt_int,computed_optional,decode_null_to_zero"`
+}
+
 var exampleNestedJson = `{
 	"str":"str",
 	"comp_str":"comp_str",
@@ -1621,8 +2067,20 @@ type nestedMapStruct struct {
 	NestedMap map[string]types.Float64 `tfsdk:"nested_map" json:"nested_map,optional"`
 }
 
+type nestedMapExampleZero struct {
+	SomeStruct customfield.NestedObject[nestedMapStructZero] `tfsdk:"some_struct" json:"some_struct,computed_optional,decode_null_to_zero"`
+}
+
+type nestedMapStructZero struct {
+	NestedMap map[string]types.Float64 `tfsdk:"nested_map" json:"nested_map,optional,decode_null_to_zero"`
+}
+
 type primitiveListExample struct {
 	StrList customfield.List[types.String] `tfsdk:"str_list" json:"str_list,computed_optional"`
+}
+
+type primitiveListExampleZero struct {
+	StrList customfield.List[types.String] `tfsdk:"str_list" json:"str_list,computed_optional,decode_null_to_zero"`
 }
 
 var decode_computed_only_tests = map[string]struct {
@@ -1639,6 +2097,15 @@ var decode_computed_only_tests = map[string]struct {
 			StrList: customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("a"), types.StringValue("b"), types.StringValue("c")}),
 		},
 	},
+	"primitive_list_unchanged_zero": {
+		`{}`,
+		primitiveListExampleZero{
+			StrList: customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("a"), types.StringValue("b"), types.StringValue("c")}),
+		},
+		primitiveListExampleZero{
+			StrList: customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("a"), types.StringValue("b"), types.StringValue("c")}),
+		},
+	},
 	"nested_map_unchanged": {
 		`{"some_struct": {"nested_map":{"example_key":3.14}}}`,
 		nestedMapExample{
@@ -1652,6 +2119,19 @@ var decode_computed_only_tests = map[string]struct {
 			}),
 		},
 	},
+	"nested_map_unchanged_zero": {
+		`{"some_struct": {"nested_map":{"example_key":3.14}}}`,
+		nestedMapExampleZero{
+			SomeStruct: customfield.NewObjectMust(ctx, &nestedMapStructZero{
+				NestedMap: map[string]types.Float64{"example_key": types.Float64Value(3.14)},
+			}),
+		},
+		nestedMapExampleZero{
+			SomeStruct: customfield.NewObjectMust(ctx, &nestedMapStructZero{
+				NestedMap: map[string]types.Float64{"example_key": types.Float64Value(3.14)},
+			}),
+		},
+	},
 	"nested_optional_map_avoids_updates": {
 		`{"some_struct": {"nested_map":{"example_key":0.123,"new_key":456.7}}}`,
 		nestedMapExample{
@@ -1661,6 +2141,19 @@ var decode_computed_only_tests = map[string]struct {
 		},
 		nestedMapExample{
 			SomeStruct: customfield.NewObjectMust(ctx, &nestedMapStruct{
+				NestedMap: map[string]types.Float64{"example_key": types.Float64Value(3.14)},
+			}),
+		},
+	},
+	"nested_optional_map_avoids_updates_zero": {
+		`{"some_struct": {"nested_map":{"example_key":0.123,"new_key":456.7}}}`,
+		nestedMapExampleZero{
+			SomeStruct: customfield.NewObjectMust(ctx, &nestedMapStructZero{
+				NestedMap: map[string]types.Float64{"example_key": types.Float64Value(3.14)},
+			}),
+		},
+		nestedMapExampleZero{
+			SomeStruct: customfield.NewObjectMust(ctx, &nestedMapStructZero{
 				NestedMap: map[string]types.Float64{"example_key": types.Float64Value(3.14)},
 			}),
 		},
@@ -1722,6 +2215,67 @@ var decode_computed_only_tests = map[string]struct {
 			}}),
 		},
 	},
+	"only_updates_computed_props_zero": {
+		exampleNestedJson,
+		StructWithComputedFieldsZero{
+			RegStr:      types.StringNull(),
+			CompStr:     types.StringNull(),
+			CompOptStr:  types.StringNull(),
+			CompTime:    timetypes.NewRFC3339Null(),
+			CompOptTime: timetypes.NewRFC3339Null(),
+			Nested: NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringNull(),
+				CompOptInt: types.Int64Null(),
+			},
+			NestedCust:        customfield.NullObject[NestedStructWithComputedFieldsZero](ctx),
+			CompOptNestedCust: customfield.NullObject[NestedStructWithComputedFieldsZero](ctx),
+			MapRegular: P(map[string][]*NestedStructWithComputedFieldsZero{"key": {
+				&NestedStructWithComputedFieldsZero{
+					RegStr:     types.StringNull(),
+					CompStr:    types.StringNull(),
+					CompOptInt: types.Int64Null(),
+				},
+			}}),
+		},
+		StructWithComputedFieldsZero{
+			RegStr:      types.StringNull(),
+			CompStr:     types.StringValue("comp_str"),
+			CompOptStr:  types.StringValue("opt_str"),
+			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			CompOptTime: timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			Nested: NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(42),
+			},
+			NestedCust: customfield.NullObject[NestedStructWithComputedFieldsZero](ctx),
+			CompOptNestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(42),
+			}),
+			MapRegular: P(map[string][]*NestedStructWithComputedFieldsZero{"key": {
+				&NestedStructWithComputedFieldsZero{
+					RegStr:     types.StringNull(),
+					CompStr:    types.StringValue("nested_comp_str"),
+					CompOptInt: types.Int64Value(42),
+				},
+			}}),
+			CompMap: P(map[string]*NestedStructWithComputedFieldsZero{"comp_key": {
+				RegStr:     types.StringValue(""),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(0),
+			}}),
+			CompMapList: P(map[string][]*NestedStructWithComputedFieldsZero{"comp_list_key": {
+				&NestedStructWithComputedFieldsZero{
+					RegStr:     types.StringValue(""),
+					CompStr:    types.StringValue("nested_comp_str"),
+					CompOptInt: types.Int64Value(0),
+				},
+			}}),
+		},
+	},
 	"only_updates_computed_props_from_unknown": {
 		exampleNestedJson,
 		StructWithComputedFields{
@@ -1763,6 +2317,55 @@ var decode_computed_only_tests = map[string]struct {
 			CompMapList: P(map[string][]*NestedStructWithComputedFields{"comp_list_key": {
 				&NestedStructWithComputedFields{
 					CompStr: types.StringValue("nested_comp_str"),
+				},
+			}}),
+		},
+	},
+	"only_updates_computed_props_from_unknown_zero": {
+		exampleNestedJson,
+		StructWithComputedFieldsZero{
+			RegStr:      types.StringUnknown(),
+			CompStr:     types.StringUnknown(),
+			CompOptStr:  types.StringUnknown(),
+			CompTime:    timetypes.NewRFC3339Unknown(),
+			CompOptTime: timetypes.NewRFC3339Unknown(),
+			Nested: NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringUnknown(),
+				CompStr:    types.StringUnknown(),
+				CompOptInt: types.Int64Unknown(),
+			},
+			// when the value is nested and optional/required, we don't currently convert from unknown to null
+			// this is because optional/required properties cannot be unknown
+			NestedCust:        customfield.NullObject[NestedStructWithComputedFieldsZero](ctx),
+			CompOptNestedCust: customfield.UnknownObject[NestedStructWithComputedFieldsZero](ctx),
+		},
+		StructWithComputedFieldsZero{
+			RegStr:      types.StringUnknown(),
+			CompStr:     types.StringValue("comp_str"),
+			CompOptStr:  types.StringValue("opt_str"),
+			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			CompOptTime: timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			Nested: NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringUnknown(),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(42),
+			},
+			NestedCust: customfield.NullObject[NestedStructWithComputedFieldsZero](ctx),
+			CompOptNestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(42),
+			}),
+			CompMap: P(map[string]*NestedStructWithComputedFieldsZero{"comp_key": {
+				RegStr:     types.StringValue(""),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(0),
+			}}),
+			CompMapList: P(map[string][]*NestedStructWithComputedFieldsZero{"comp_list_key": {
+				&NestedStructWithComputedFieldsZero{
+					RegStr:     types.StringValue(""),
+					CompStr:    types.StringValue("nested_comp_str"),
+					CompOptInt: types.Int64Value(0),
 				},
 			}}),
 		},
@@ -1841,6 +2444,83 @@ var decode_computed_only_tests = map[string]struct {
 			}}),
 		},
 	},
+	"doesnt_update_computed_optional_if_set_zero": {
+		exampleNestedJson,
+		StructWithComputedFieldsZero{
+			RegStr:      types.StringValue("existing_str"),
+			CompStr:     types.StringValue("existing_comp_str"),
+			CompOptStr:  types.StringValue("existing_opt_str"),
+			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			CompOptTime: timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			Nested: NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue("existing_nested_comp_str"),
+				CompOptInt: types.Int64Value(10),
+			},
+			NestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue("existing_nested_comp_str"),
+				CompOptInt: types.Int64Value(10),
+			}),
+			CompOptNestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue("existing_nested_comp_str"),
+				CompOptInt: types.Int64Value(10),
+			}),
+			NestedList: &[]*NestedStructWithComputedFieldsZero{{
+				RegStr:     types.StringValue("existing_list_nested_str_1"),
+				CompStr:    types.StringValue("existing_list_nested_comp_str_1"),
+				CompOptInt: types.Int64Value(11),
+			}, {
+				RegStr:     types.StringValue("existing_list_nested_str_2"),
+				CompStr:    types.StringValue("existing_list_nested_comp_str_2"),
+				CompOptInt: types.Int64Value(12),
+			}},
+		},
+		StructWithComputedFieldsZero{
+			RegStr:      types.StringValue("existing_str"),
+			CompStr:     types.StringValue("comp_str"),
+			CompOptStr:  types.StringValue("existing_opt_str"),
+			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			CompOptTime: timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			Nested: NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(10),
+			},
+			NestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(10),
+			}),
+			CompOptNestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(10),
+			}),
+			NestedList: &[]*NestedStructWithComputedFieldsZero{{
+				RegStr:     types.StringValue("existing_list_nested_str_1"),
+				CompStr:    types.StringValue("list_nested_comp_str_1"),
+				CompOptInt: types.Int64Value(11),
+			}, {
+				RegStr:     types.StringValue("existing_list_nested_str_2"),
+				CompStr:    types.StringValue("list_nested_comp_str_2"),
+				CompOptInt: types.Int64Value(12),
+			}},
+			CompMap: P(map[string]*NestedStructWithComputedFieldsZero{"comp_key": {
+				RegStr:     types.StringValue(""),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(0),
+			}}),
+			CompMapList: P(map[string][]*NestedStructWithComputedFieldsZero{"comp_list_key": {
+				&NestedStructWithComputedFieldsZero{
+					RegStr:     types.StringValue(""),
+					CompStr:    types.StringValue("nested_comp_str"),
+					CompOptInt: types.Int64Value(0),
+				},
+			}}),
+		},
+	},
 
 	"updates_computed_if_JSON_properties_are_missing": {
 		`{}`,
@@ -1913,6 +2593,79 @@ var decode_computed_only_tests = map[string]struct {
 			}),
 		},
 	},
+	"updates_computed_if_JSON_properties_are_missing_zero": {
+		`{}`,
+		StructWithComputedFieldsZero{
+			RegStr:      types.StringValue("existing_str"),
+			CompStr:     types.StringValue(""),
+			CompOptStr:  types.StringValue("existing_opt_str"),
+			CompTime:    timetypes.NewRFC3339TimeValue(time.Time{}),
+			CompOptTime: timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			Nested: NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue(""),
+				CompOptInt: types.Int64Value(10),
+			},
+			NestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue(""),
+				CompOptInt: types.Int64Value(10),
+			}),
+			CompOptNestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue(""),
+				CompOptInt: types.Int64Value(10),
+			}),
+			NestedList: &[]*NestedStructWithComputedFieldsZero{{
+				RegStr:     types.StringValue("existing_list_nested_str_1"),
+				CompStr:    types.StringValue(""),
+				CompOptInt: types.Int64Value(0),
+			}, {
+				RegStr:     types.StringValue("existing_list_nested_str_2"),
+				CompStr:    types.StringValue("existing_list_nested_comp_str_2"),
+				CompOptInt: types.Int64Value(12),
+			}},
+			MapCust: customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{
+				"key": customfield.NewListMust[types.String](ctx, []attr.Value{types.StringUnknown(), types.StringValue("val2")}),
+			}),
+		},
+		StructWithComputedFieldsZero{
+			RegStr:      types.StringValue("existing_str"),
+			CompStr:     types.StringValue(""),
+			CompOptStr:  types.StringValue("existing_opt_str"),
+			CompTime:    timetypes.NewRFC3339TimeValue(time.Time{}),
+			CompOptTime: timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			Nested: NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue(""),
+				CompOptInt: types.Int64Value(10),
+			},
+			NestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue(""),
+				CompOptInt: types.Int64Value(10),
+			}),
+			CompOptNestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFieldsZero{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue(""),
+				CompOptInt: types.Int64Value(10),
+			}),
+			NestedList: &[]*NestedStructWithComputedFieldsZero{{
+				RegStr:     types.StringValue("existing_list_nested_str_1"),
+				CompStr:    types.StringValue(""),
+				CompOptInt: types.Int64Value(0),
+			}, {
+				RegStr:     types.StringValue("existing_list_nested_str_2"),
+				CompStr:    types.StringValue(""),
+				CompOptInt: types.Int64Value(12),
+			}},
+			MapCust: customfield.NewMapMust(ctx, map[string]customfield.List[types.String]{
+				"key": customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue(""), types.StringValue("val2")}),
+			}),
+			CompMap:     P(map[string]*NestedStructWithComputedFieldsZero{}),
+			CompMapList: P(map[string][]*NestedStructWithComputedFieldsZero{}),
+		},
+	},
 
 	"tfsdk_struct_only_overwrites_computed_from_json": {
 		`{"embedded_string":"new_value"}`,
@@ -1925,6 +2678,21 @@ var decode_computed_only_tests = map[string]struct {
 			EmbeddedString: types.StringValue("existing_value"),
 			EmbeddedInt:    types.Int64Value(5),
 			DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
+		},
+	},
+	"tfsdk_struct_only_overwrites_computed_from_json_zero": {
+		`{"embedded_string":"new_value"}`,
+		EmbeddedTfsdkStructZero{
+			EmbeddedString: types.StringValue("existing_value"),
+			EmbeddedInt:    types.Int64Value(5),
+			DataObject:     customfield.UnknownObject[DoubleNestedStruct](ctx),
+		},
+		EmbeddedTfsdkStructZero{
+			EmbeddedString: types.StringValue("existing_value"),
+			EmbeddedInt:    types.Int64Value(5),
+			DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
+				NestedInt: types.Int64Null(),
+			}),
 		},
 	},
 }
@@ -2080,7 +2848,7 @@ func merge[T interface{}](test_array ...map[string]T) map[string]T {
 			// panic if there are duplicates because otherwise we'd silently
 			// skip some tests
 			if _, existing := out[name]; existing {
-				//panic(fmt.Sprintf("duplicate test name: %s", name))
+				// panic(fmt.Sprintf("duplicate test name: %s", name))
 				fmt.Printf("duplicate test name: %s", name)
 			}
 			out[name] = t
