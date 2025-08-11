@@ -13,13 +13,17 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/option"
-	"github.com/cloudflare/cloudflare-go/v5/packages/pagination"
 	"github.com/cloudflare/cloudflare-go/v5/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
+const (
+	requestTimeout = 10 * time.Second
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -87,7 +91,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		option.WithRequestBody("application/json", wrappedBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
-		option.WithRequestTimeout(time.Second*3),
+		option.WithRequestTimeout(requestTimeout),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -108,40 +112,28 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	searchTerm := getSearchTerm(data)
-	findItemRes := new(http.Response)
-	listItems, err := r.client.Rules.Lists.Items.List(
+	listItems := r.client.Rules.Lists.Items.ListAutoPaging(
 		ctx,
 		data.ListID.ValueString(),
 		rules.ListItemListParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			Search:    cloudflare.F(searchTerm),
-			// TODO: when pagination is fixed in the API schema (and go sdk) we should not need to set this (items we are looking for are expected to be sorted near the top of the result list)
-			PerPage: cloudflare.Int(500),
 		},
-		option.WithResponseBodyInto(&findItemRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
-		option.WithRequestTimeout(time.Second*3),
+		option.WithRequestTimeout(requestTimeout),
 	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
+	if listItems.Err() != nil {
+		resp.Diagnostics.AddError("failed to search list items", listItems.Err().Error())
 		return
 	}
 	if listItems == nil {
-		resp.Diagnostics.AddWarning("failed to fetch individual list item", "list item pagination was nil")
-	}
-
-	listItemsBytes, _ := io.ReadAll(findItemRes.Body)
-
-	// TODO: when pagination is fixed in the API schema (and go sdk) this should paginate properly
-	var apiResult pagination.SinglePage[ListItemModel]
-	err = apijson.Unmarshal(listItemsBytes, &apiResult)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
+		resp.Diagnostics.AddWarning("failed to search list items", "list item pagination was nil")
 	}
 
 	// find the actual list item, don't rely on the response to have the first entry be the correct one
 	var listItemID string
-	for _, item := range apiResult.Result {
+	for listItems.Next() {
+		item := listItems.Current()
 		if matchedItemID, ok := listItemMatchesOriginal(data, item); ok {
 			listItemID = matchedItemID
 			break
@@ -161,7 +153,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		},
 		option.WithResponseBodyInto(&listItemRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
-		option.WithRequestTimeout(time.Second*3),
+		option.WithRequestTimeout(requestTimeout),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
@@ -200,7 +192,7 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 		rules.ListItemGetParams{AccountID: cloudflare.F(data.AccountID.ValueString())},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
-		option.WithRequestTimeout(time.Second*3),
+		option.WithRequestTimeout(requestTimeout),
 	)
 	if res != nil && res.StatusCode == 404 {
 		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
@@ -246,7 +238,7 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 		option.WithRequestBody("application/json", deleteBody),
-		option.WithRequestTimeout(time.Second*3),
+		option.WithRequestTimeout(requestTimeout),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -374,22 +366,76 @@ func getSearchTerm(d *ListItemModel) string {
 	return ""
 }
 
-func listItemMatchesOriginal(original *ListItemModel, item ListItemModel) (string, bool) {
-	if original.IP != item.IP {
+func listItemMatchesOriginal(original *ListItemModel, item rules.ListItemListResponse) (string, bool) {
+	if original.IP.ValueString() != item.IP {
 		return "", false
 	}
 
-	if original.ASN != item.ASN {
+	if original.ASN.ValueInt64() != item.ASN {
 		return "", false
 	}
 
-	if !original.Hostname.IsNull() && !item.Hostname.IsNull() && !original.Hostname.Equal(item.Hostname) {
+	if !original.Hostname.IsNull() && !hostnameEqual(original.Hostname, item.Hostname) {
 		return "", false
 	}
 
-	if !original.Redirect.IsNull() && !item.Redirect.IsNull() && !original.Redirect.Equal(item.Redirect) {
+	if !original.Redirect.IsNull() && !redirectEqual(original.Redirect, item.Redirect) {
 		return "", false
 	}
 
-	return item.ID.ValueString(), true
+	return item.ID, true
+}
+
+func hostnameEqual(original customfield.NestedObject[ListItemHostnameModel], item rules.Hostname) bool {
+	originalVal, err := original.Value(context.TODO())
+	if err != nil {
+		return false
+	}
+
+	if originalVal.URLHostname.ValueString() != item.URLHostname {
+		return false
+	}
+
+	if originalVal.ExcludeExactHostname.ValueBool() != item.ExcludeExactHostname {
+		return false
+	}
+
+	return true
+}
+
+func redirectEqual(original customfield.NestedObject[ListItemRedirectModel], item rules.Redirect) bool {
+	originalVal, err := original.Value(context.TODO())
+	if err != nil {
+		return false
+	}
+
+	if originalVal.SourceURL.ValueString() != item.SourceURL {
+		return false
+	}
+
+	if originalVal.TargetURL.ValueString() != item.TargetURL {
+		return false
+	}
+
+	if originalVal.IncludeSubdomains.ValueBool() != item.IncludeSubdomains {
+		return false
+	}
+
+	if originalVal.PreservePathSuffix.ValueBool() != item.PreservePathSuffix {
+		return false
+	}
+
+	if originalVal.PreserveQueryString.ValueBool() != item.PreserveQueryString {
+		return false
+	}
+
+	if originalVal.StatusCode.ValueInt64() != int64(item.StatusCode) {
+		return false
+	}
+
+	if originalVal.SubpathMatching.ValueBool() != item.SubpathMatching {
+		return false
+	}
+
+	return true
 }
