@@ -43,7 +43,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "The unique ID of the list.",
+							Description: "Defines the unique ID of the item in the List.",
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{

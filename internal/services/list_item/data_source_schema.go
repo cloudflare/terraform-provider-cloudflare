@@ -42,7 +42,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "The unique ID of the list.",
+				Description: "Defines the unique ID of the item in the List.",
 				Computed:    true,
 			},
 			"ip": schema.StringAttribute{
