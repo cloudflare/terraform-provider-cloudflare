@@ -293,7 +293,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"bindings": schema.ListNestedAttribute{
 				Description: "List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.",
-				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectListType[WorkerVersionBindingsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
