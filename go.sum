@@ -67,8 +67,6 @@ github.com/cloudflare/circl v1.6.1 h1:zqIqSPIndyBh1bjLVVDHMPpVKqp8Su/V+6MeDzzQBQ
 github.com/cloudflare/circl v1.6.1/go.mod h1:uddAzsPgqdMAYatqJ0lsjX1oECcQLIlRpzZh3pJrofs=
 github.com/cloudflare/cloudflare-go v0.115.0 h1:84/dxeeXweCc0PN5Cto44iTA8AkG1fyT11yPO5ZB7sM=
 github.com/cloudflare/cloudflare-go v0.115.0/go.mod h1:Ds6urDwn/TF2uIU24mu7H91xkKP8gSAHxQ44DSZgVmU=
-github.com/cloudflare/cloudflare-go/v5 v5.0.1-0.20250811130229-fc80733ed1bb h1:nDhXAtTgRzRzHbUXJ1V1pBjZhOPnZN22q9qxg1UFj/k=
-github.com/cloudflare/cloudflare-go/v5 v5.0.1-0.20250811130229-fc80733ed1bb/go.mod h1:C6OjOlDHOk/g7lXehothXJRFZrSIJMLzOZB2SXQhcjk=
 github.com/cloudflare/cloudflare-go/v5 v5.0.1-0.20250811144937-fd8fec5656c3 h1:vmupCTCM/k59MeRYgCOVCVzKEqcBdF4g2j9Dh8n8MUU=
 github.com/cloudflare/cloudflare-go/v5 v5.0.1-0.20250811144937-fd8fec5656c3/go.mod h1:C6OjOlDHOk/g7lXehothXJRFZrSIJMLzOZB2SXQhcjk=
 github.com/cyphar/filepath-securejoin v0.4.1 h1:JyxxyPEaktOD+GAnqIqTf9A8tHyAG22rowi7HkoSU1s=
