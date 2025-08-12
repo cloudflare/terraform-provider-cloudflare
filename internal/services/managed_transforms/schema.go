@@ -5,12 +5,10 @@ package managed_transforms
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ManagedTransformsResource)(nil)
@@ -41,16 +39,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "Whether the Managed Transform is enabled.",
 							Required:    true,
 						},
-						"has_conflict": schema.BoolAttribute{
-							Description: "Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.",
-							Computed:    true,
-						},
-						"conflicts_with": schema.ListAttribute{
-							Description: "The Managed Transforms that this Managed Transform conflicts with.",
-							Computed:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
-							ElementType: types.StringType,
-						},
 					},
 				},
 			},
@@ -66,16 +54,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"enabled": schema.BoolAttribute{
 							Description: "Whether the Managed Transform is enabled.",
 							Required:    true,
-						},
-						"has_conflict": schema.BoolAttribute{
-							Description: "Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.",
-							Computed:    true,
-						},
-						"conflicts_with": schema.ListAttribute{
-							Description: "The Managed Transforms that this Managed Transform conflicts with.",
-							Computed:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
-							ElementType: types.StringType,
 						},
 					},
 				},
