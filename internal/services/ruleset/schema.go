@@ -127,21 +127,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"block",
 									"challenge",
 									"compress_response",
+									"ddos_dynamic",
 									"execute",
+									"force_connection_close",
 									"js_challenge",
 									"log",
+									"log_custom_field",
 									"managed_challenge",
 									"redirect",
 									"rewrite",
 									"route",
 									"score",
 									"serve_error",
+									"set_cache_settings",
 									"set_config",
 									"skip",
-									"set_cache_settings",
-									"log_custom_field",
-									"ddos_dynamic",
-									"force_connection_close",
 								),
 							},
 						},
@@ -223,7 +223,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"categories": schema.ListNestedAttribute{
 											Description: "A list of category-level overrides. This option has the second-highest precedence after rule-level overrides.",
+											Computed:    true,
 											Optional:    true,
+											Default:     listdefault.StaticValue(customfield.NewObjectListMust(ctx, []RulesetRulesActionParametersOverridesCategoriesModel{}).ListValue),
 											CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersOverridesCategoriesModel](ctx),
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
@@ -260,7 +262,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"rules": schema.ListNestedAttribute{
 											Description: "A list of rule-level overrides. This option has the highest precedence.",
+											Computed:    true,
 											Optional:    true,
+											Default:     listdefault.StaticValue(customfield.NewObjectListMust(ctx, []RulesetRulesActionParametersOverridesRulesModel{}).ListValue),
 											CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersOverridesRulesModel](ctx),
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
@@ -960,7 +964,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"cookie_fields": schema.ListNestedAttribute{
 									Description: "The cookie fields to log.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersCookieFieldsModel](ctx),
+									Validators: []validator.List{
+										listvalidator.SizeAtLeast(1),
+									},
+									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersCookieFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -973,7 +980,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"raw_response_fields": schema.ListNestedAttribute{
 									Description: "The raw response fields to log.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersRawResponseFieldsModel](ctx),
+									Validators: []validator.List{
+										listvalidator.SizeAtLeast(1),
+									},
+									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersRawResponseFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -982,7 +992,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 											"preserve_duplicates": schema.BoolAttribute{
 												Description: "Whether to log duplicate values of the same header.",
+												Computed:    true,
 												Optional:    true,
+												Default:     booldefault.StaticBool(false),
 											},
 										},
 									},
@@ -990,7 +1002,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"request_fields": schema.ListNestedAttribute{
 									Description: "The raw request fields to log.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersRequestFieldsModel](ctx),
+									Validators: []validator.List{
+										listvalidator.SizeAtLeast(1),
+									},
+									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersRequestFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -1003,7 +1018,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"response_fields": schema.ListNestedAttribute{
 									Description: "The transformed response fields to log.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersResponseFieldsModel](ctx),
+									Validators: []validator.List{
+										listvalidator.SizeAtLeast(1),
+									},
+									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersResponseFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -1012,7 +1030,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 											"preserve_duplicates": schema.BoolAttribute{
 												Description: "Whether to log duplicate values of the same header.",
+												Computed:    true,
 												Optional:    true,
+												Default:     booldefault.StaticBool(false),
 											},
 										},
 									},
@@ -1020,7 +1040,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"transformed_request_fields": schema.ListNestedAttribute{
 									Description: "The transformed request fields to log.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersTransformedRequestFieldsModel](ctx),
+									Validators: []validator.List{
+										listvalidator.SizeAtLeast(1),
+									},
+									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersTransformedRequestFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{

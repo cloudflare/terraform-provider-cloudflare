@@ -118,9 +118,9 @@ type RulesetRulesActionParametersMatchedDataModel struct {
 
 type RulesetRulesActionParametersOverridesModel struct {
 	Action           types.String                                                                       `tfsdk:"action" json:"action,optional"`
-	Categories       customfield.NestedObjectList[RulesetRulesActionParametersOverridesCategoriesModel] `tfsdk:"categories" json:"categories,optional"`
+	Categories       customfield.NestedObjectList[RulesetRulesActionParametersOverridesCategoriesModel] `tfsdk:"categories" json:"categories,computed_optional,decode_null_to_zero"`
 	Enabled          types.Bool                                                                         `tfsdk:"enabled" json:"enabled,optional"`
-	Rules            customfield.NestedObjectList[RulesetRulesActionParametersOverridesRulesModel]      `tfsdk:"rules" json:"rules,optional"`
+	Rules            customfield.NestedObjectList[RulesetRulesActionParametersOverridesRulesModel]      `tfsdk:"rules" json:"rules,computed_optional,decode_null_to_zero"`
 	SensitivityLevel types.String                                                                       `tfsdk:"sensitivity_level" json:"sensitivity_level,optional"`
 }
 
@@ -280,7 +280,7 @@ type RulesetRulesActionParametersCookieFieldsModel struct {
 
 type RulesetRulesActionParametersRawResponseFieldsModel struct {
 	Name               types.String `tfsdk:"name" json:"name,required"`
-	PreserveDuplicates types.Bool   `tfsdk:"preserve_duplicates" json:"preserve_duplicates,optional"`
+	PreserveDuplicates types.Bool   `tfsdk:"preserve_duplicates" json:"preserve_duplicates,computed_optional,decode_null_to_zero"`
 }
 
 type RulesetRulesActionParametersRequestFieldsModel struct {
@@ -289,7 +289,7 @@ type RulesetRulesActionParametersRequestFieldsModel struct {
 
 type RulesetRulesActionParametersResponseFieldsModel struct {
 	Name               types.String `tfsdk:"name" json:"name,required"`
-	PreserveDuplicates types.Bool   `tfsdk:"preserve_duplicates" json:"preserve_duplicates,optional"`
+	PreserveDuplicates types.Bool   `tfsdk:"preserve_duplicates" json:"preserve_duplicates,computed_optional,decode_null_to_zero"`
 }
 
 type RulesetRulesActionParametersTransformedRequestFieldsModel struct {
