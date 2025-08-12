@@ -87,7 +87,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"device_posture": schema.StringAttribute{
-				Description: "The wirefilter expression used for device posture check matching.",
+				Description: "The wirefilter expression used for device posture check matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.",
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),
@@ -99,13 +99,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"identity": schema.StringAttribute{
-				Description: "The wirefilter expression used for identity matching.",
+				Description: "The wirefilter expression used for identity matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.",
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),
 			},
 			"traffic": schema.StringAttribute{
-				Description: "The wirefilter expression used for traffic matching.",
+				Description: "The wirefilter expression used for traffic matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.",
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),
@@ -294,7 +294,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"duration": schema.StringAttribute{
-								Description: "Configure how fresh the session needs to be to be considered valid.",
+								Description: "Configure how fresh the session needs to be to be considered valid. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.",
 								Optional:    true,
 							},
 							"enforce": schema.BoolAttribute{
