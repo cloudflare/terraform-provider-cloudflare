@@ -140,14 +140,14 @@ type RulesetRulesActionParametersOverridesRulesModel struct {
 }
 
 type RulesetRulesActionParametersFromListModel struct {
-	Key  types.String `tfsdk:"key" json:"key,optional"`
-	Name types.String `tfsdk:"name" json:"name,optional"`
+	Key  types.String `tfsdk:"key" json:"key,required"`
+	Name types.String `tfsdk:"name" json:"name,required"`
 }
 
 type RulesetRulesActionParametersFromValueModel struct {
-	PreserveQueryString types.Bool                                                                    `tfsdk:"preserve_query_string" json:"preserve_query_string,optional"`
-	StatusCode          types.Float64                                                                 `tfsdk:"status_code" json:"status_code,optional"`
-	TargetURL           customfield.NestedObject[RulesetRulesActionParametersFromValueTargetURLModel] `tfsdk:"target_url" json:"target_url,optional"`
+	PreserveQueryString types.Bool                                                                    `tfsdk:"preserve_query_string" json:"preserve_query_string,computed_optional"`
+	StatusCode          types.Int64                                                                   `tfsdk:"status_code" json:"status_code,optional"`
+	TargetURL           customfield.NestedObject[RulesetRulesActionParametersFromValueTargetURLModel] `tfsdk:"target_url" json:"target_url,required"`
 }
 
 type RulesetRulesActionParametersFromValueTargetURLModel struct {
