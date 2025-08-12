@@ -8,13 +8,7 @@ resource "cloudflare_ruleset" "my_ruleset" {
   rules = [
     {
       expression = "ip.src eq 1.1.1.1"
-      action     = "block"
-      ref        = "one"
-    },
-    {
-      expression = "ip.src eq 2.2.2.2"
-      action     = "block"
-      ref        = "two"
+      action     = "log"
     }
   ]
 }
