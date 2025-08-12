@@ -20,7 +20,7 @@ type RulesetModel struct {
 	Name        types.String                                    `tfsdk:"name" json:"name,required"`
 	Phase       types.String                                    `tfsdk:"phase" json:"phase,required"`
 	Description types.String                                    `tfsdk:"description" json:"description,computed_optional"`
-	Rules       customfield.NestedObjectList[RulesetRulesModel] `tfsdk:"rules" json:"rules,optional"`
+	Rules       customfield.NestedObjectList[RulesetRulesModel] `tfsdk:"rules" json:"rules,computed_optional,decode_null_to_zero"`
 }
 
 func (m RulesetModel) MarshalJSON() (data []byte, err error) {
