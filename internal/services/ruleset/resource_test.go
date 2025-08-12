@@ -28,7 +28,10 @@ func TestAccCloudflareRuleset_Kind(t *testing.T) {
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
 						plancheck.ExpectKnownValue(
 							"cloudflare_ruleset.my_ruleset",
 							tfjsonpath.New("kind"),
@@ -49,7 +52,10 @@ func TestAccCloudflareRuleset_Kind(t *testing.T) {
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionReplace),
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionReplace,
+						),
 						plancheck.ExpectKnownValue(
 							"cloudflare_ruleset.my_ruleset",
 							tfjsonpath.New("kind"),
@@ -79,7 +85,10 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
 						plancheck.ExpectKnownValue(
 							"cloudflare_ruleset.my_ruleset",
 							tfjsonpath.New("name"),
@@ -100,7 +109,10 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionReplace),
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionReplace,
+						),
 						plancheck.ExpectKnownValue(
 							"cloudflare_ruleset.my_ruleset",
 							tfjsonpath.New("name"),
@@ -130,7 +142,10 @@ func TestAccCloudflareRuleset_Phase(t *testing.T) {
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
 						plancheck.ExpectKnownValue(
 							"cloudflare_ruleset.my_ruleset",
 							tfjsonpath.New("phase"),
@@ -151,7 +166,10 @@ func TestAccCloudflareRuleset_Phase(t *testing.T) {
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionReplace),
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionReplace,
+						),
 						plancheck.ExpectKnownValue(
 							"cloudflare_ruleset.my_ruleset",
 							tfjsonpath.New("phase"),
@@ -181,7 +199,10 @@ func TestAccCloudflareRuleset_Description(t *testing.T) {
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
 						plancheck.ExpectKnownValue(
 							"cloudflare_ruleset.my_ruleset",
 							tfjsonpath.New("description"),
@@ -202,10 +223,13 @@ func TestAccCloudflareRuleset_Description(t *testing.T) {
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionUpdate),
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
 						plancheck.ExpectKnownValue(
 							"cloudflare_ruleset.my_ruleset",
-							tfjsonpath.New("name"),
+							tfjsonpath.New("description"),
 							knownvalue.StringExact("My updated ruleset description"),
 						),
 					},
@@ -213,8 +237,369 @@ func TestAccCloudflareRuleset_Description(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(
 						"cloudflare_ruleset.my_ruleset",
-						tfjsonpath.New("name"),
-						knownvalue.StringExact("My updated ruleset"),
+						tfjsonpath.New("description"),
+						knownvalue.StringExact("My updated ruleset description"),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_Rules(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{}),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_RulesActionParameters(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action_parameters": knownvalue.NotNull(),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action_parameters": knownvalue.NotNull(),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action_parameters": knownvalue.NotNull(),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_RulesDescription(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"description": knownvalue.StringExact("My rule description"),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"description": knownvalue.StringExact("My rule description"),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"description": knownvalue.StringExact("My updated rule description"),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"description": knownvalue.StringExact("My updated rule description"),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_RulesEnabled(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"enabled": knownvalue.Bool(true),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"enabled": knownvalue.Bool(true),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"enabled": knownvalue.Bool(true),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("3.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"enabled": knownvalue.Bool(false),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"enabled": knownvalue.Bool(false),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_RulesExposedCredentialCheck(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"exposed_credential_check": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"username_expression": knownvalue.StringExact("url_decode(http.request.body.form[\"username\"][0])"),
+										"password_expression": knownvalue.StringExact("url_decode(http.request.body.form[\"password\"][0])"),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"exposed_credential_check": knownvalue.ObjectExact(map[string]knownvalue.Check{
+									"username_expression": knownvalue.StringExact("url_decode(http.request.body.form[\"username\"][0])"),
+									"password_expression": knownvalue.StringExact("url_decode(http.request.body.form[\"password\"][0])"),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"exposed_credential_check": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"username_expression": knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"username\")"),
+										"password_expression": knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"password\")"),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"exposed_credential_check": knownvalue.ObjectExact(map[string]knownvalue.Check{
+									"username_expression": knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"username\")"),
+									"password_expression": knownvalue.StringExact("lookup_json_string(http.request.body.raw, \"password\")"),
+								}),
+							}),
+						}),
 					),
 				},
 			},
@@ -232,7 +617,10 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
 						plancheck.ExpectKnownValue(
 							"cloudflare_ruleset.my_ruleset",
 							tfjsonpath.New("rules"),
@@ -287,7 +675,10 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 				ConfigVariables: configVariables,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionUpdate),
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
 						plancheck.ExpectKnownValue(
 							"cloudflare_ruleset.my_ruleset",
 							tfjsonpath.New("rules"),
@@ -329,7 +720,10 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 						ConfigVariables: configVariables,
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
-								plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+								plancheck.ExpectResourceAction(
+									"cloudflare_ruleset.my_ruleset",
+									plancheck.ResourceActionCreate,
+								),
 								plancheck.ExpectKnownValue(
 									"cloudflare_ruleset.my_ruleset",
 									tfjsonpath.New("rules"),
@@ -372,7 +766,10 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 						ConfigVariables: configVariables,
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
-								plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionUpdate),
+								plancheck.ExpectResourceAction(
+									"cloudflare_ruleset.my_ruleset",
+									plancheck.ResourceActionUpdate,
+								),
 								plancheck.ExpectKnownValue(
 									"cloudflare_ruleset.my_ruleset",
 									tfjsonpath.New("rules"),
@@ -419,7 +816,10 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 						ConfigVariables: configVariables,
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
-								plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+								plancheck.ExpectResourceAction(
+									"cloudflare_ruleset.my_ruleset",
+									plancheck.ResourceActionCreate,
+								),
 								plancheck.ExpectKnownValue(
 									"cloudflare_ruleset.my_ruleset",
 									tfjsonpath.New("rules"),
@@ -462,7 +862,10 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 						ConfigVariables: configVariables,
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
-								plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionUpdate),
+								plancheck.ExpectResourceAction(
+									"cloudflare_ruleset.my_ruleset",
+									plancheck.ResourceActionUpdate,
+								),
 								plancheck.ExpectKnownValue(
 									"cloudflare_ruleset.my_ruleset",
 									tfjsonpath.New("rules"),
@@ -510,7 +913,10 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 						ConfigVariables: configVariables,
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
-								plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+								plancheck.ExpectResourceAction(
+									"cloudflare_ruleset.my_ruleset",
+									plancheck.ResourceActionCreate,
+								),
 								plancheck.ExpectKnownValue(
 									"cloudflare_ruleset.my_ruleset",
 									tfjsonpath.New("rules"),
@@ -553,7 +959,10 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 						ConfigVariables: configVariables,
 						ConfigPlanChecks: resource.ConfigPlanChecks{
 							PreApply: []plancheck.PlanCheck{
-								plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionUpdate),
+								plancheck.ExpectResourceAction(
+									"cloudflare_ruleset.my_ruleset",
+									plancheck.ResourceActionUpdate,
+								),
 								plancheck.ExpectKnownValue(
 									"cloudflare_ruleset.my_ruleset",
 									tfjsonpath.New("rules"),
@@ -597,6 +1006,182 @@ func TestAccCloudflareRuleset_RulesLogging(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_RulesRatelimit(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"ratelimit": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"characteristics": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.StringExact("cf.colo.id"),
+											knownvalue.StringExact("ip.src"),
+										}),
+										"period":                     knownvalue.Int64Exact(60),
+										"counting_expression":        knownvalue.Null(),
+										"requests_per_period":        knownvalue.Int64Exact(10),
+										"requests_to_origin":         knownvalue.Bool(false),
+										"score_per_period":           knownvalue.Null(),
+										"score_response_header_name": knownvalue.Null(),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"ratelimit": knownvalue.ObjectExact(map[string]knownvalue.Check{
+									"characteristics": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.StringExact("cf.colo.id"),
+										knownvalue.StringExact("ip.src"),
+									}),
+									"period":                     knownvalue.Int64Exact(60),
+									"counting_expression":        knownvalue.Null(),
+									"mitigation_timeout":         knownvalue.Int64Exact(0),
+									"requests_per_period":        knownvalue.Int64Exact(10),
+									"requests_to_origin":         knownvalue.Bool(false),
+									"score_per_period":           knownvalue.Null(),
+									"score_response_header_name": knownvalue.Null(),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"ratelimit": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"characteristics": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.StringExact("cf.colo.id"),
+											knownvalue.StringExact("ip.src"),
+										}),
+										"period":                     knownvalue.Int64Exact(60),
+										"counting_expression":        knownvalue.StringExact("ip.src eq 1.1.1.1"),
+										"mitigation_timeout":         knownvalue.Int64Exact(300),
+										"requests_per_period":        knownvalue.Int64Exact(100),
+										"requests_to_origin":         knownvalue.Bool(false),
+										"score_per_period":           knownvalue.Null(),
+										"score_response_header_name": knownvalue.Null(),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"ratelimit": knownvalue.ObjectExact(map[string]knownvalue.Check{
+									"characteristics": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.StringExact("cf.colo.id"),
+										knownvalue.StringExact("ip.src"),
+									}),
+									"period":                     knownvalue.Int64Exact(60),
+									"counting_expression":        knownvalue.StringExact("ip.src eq 1.1.1.1"),
+									"mitigation_timeout":         knownvalue.Int64Exact(300),
+									"requests_per_period":        knownvalue.Int64Exact(100),
+									"requests_to_origin":         knownvalue.Bool(false),
+									"score_per_period":           knownvalue.Null(),
+									"score_response_header_name": knownvalue.Null(),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("3.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"ratelimit": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"characteristics": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.StringExact("cf.colo.id"),
+											knownvalue.StringExact("ip.src"),
+										}),
+										"period":                     knownvalue.Int64Exact(60),
+										"counting_expression":        knownvalue.StringExact("ip.src eq 2.2.2.2"),
+										"mitigation_timeout":         knownvalue.Int64Exact(600),
+										"requests_per_period":        knownvalue.Null(),
+										"requests_to_origin":         knownvalue.Bool(true),
+										"score_per_period":           knownvalue.Int64Exact(400),
+										"score_response_header_name": knownvalue.StringExact("my-score"),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"ratelimit": knownvalue.ObjectExact(map[string]knownvalue.Check{
+									"characteristics": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.StringExact("cf.colo.id"),
+										knownvalue.StringExact("ip.src"),
+									}),
+									"period":                     knownvalue.Int64Exact(60),
+									"counting_expression":        knownvalue.StringExact("ip.src eq 2.2.2.2"),
+									"mitigation_timeout":         knownvalue.Int64Exact(600),
+									"requests_per_period":        knownvalue.Null(),
+									"requests_to_origin":         knownvalue.Bool(true),
+									"score_per_period":           knownvalue.Int64Exact(400),
+									"score_response_header_name": knownvalue.StringExact("my-score"),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 	t.Run("add", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
@@ -608,7 +1193,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+							plancheck.ExpectResourceAction(
+								"cloudflare_ruleset.my_ruleset",
+								plancheck.ResourceActionCreate,
+							),
 							plancheck.ExpectKnownValue(
 								"cloudflare_ruleset.my_ruleset",
 								tfjsonpath.New("rules"),
@@ -655,7 +1243,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionUpdate),
+							plancheck.ExpectResourceAction(
+								"cloudflare_ruleset.my_ruleset",
+								plancheck.ResourceActionUpdate,
+							),
 							plancheck.ExpectKnownValue(
 								"cloudflare_ruleset.my_ruleset",
 								tfjsonpath.New("rules"),
@@ -697,7 +1288,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+							plancheck.ExpectResourceAction(
+								"cloudflare_ruleset.my_ruleset",
+								plancheck.ResourceActionCreate,
+							),
 							plancheck.ExpectKnownValue(
 								"cloudflare_ruleset.my_ruleset",
 								tfjsonpath.New("rules"),
@@ -744,7 +1338,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionUpdate),
+							plancheck.ExpectResourceAction(
+								"cloudflare_ruleset.my_ruleset",
+								plancheck.ResourceActionUpdate,
+							),
 							plancheck.ExpectKnownValue(
 								"cloudflare_ruleset.my_ruleset",
 								tfjsonpath.New("rules"),
@@ -786,7 +1383,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+							plancheck.ExpectResourceAction(
+								"cloudflare_ruleset.my_ruleset",
+								plancheck.ResourceActionCreate,
+							),
 							plancheck.ExpectKnownValue(
 								"cloudflare_ruleset.my_ruleset",
 								tfjsonpath.New("rules"),
@@ -833,7 +1433,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionUpdate),
+							plancheck.ExpectResourceAction(
+								"cloudflare_ruleset.my_ruleset",
+								plancheck.ResourceActionUpdate,
+							),
 							plancheck.ExpectKnownValue(
 								"cloudflare_ruleset.my_ruleset",
 								tfjsonpath.New("rules"),
@@ -867,7 +1470,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+							plancheck.ExpectResourceAction(
+								"cloudflare_ruleset.my_ruleset",
+								plancheck.ResourceActionCreate,
+							),
 							plancheck.ExpectKnownValue(
 								"cloudflare_ruleset.my_ruleset",
 								tfjsonpath.New("rules"),
@@ -914,7 +1520,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionUpdate),
+							plancheck.ExpectResourceAction(
+								"cloudflare_ruleset.my_ruleset",
+								plancheck.ResourceActionUpdate,
+							),
 							plancheck.ExpectKnownValue(
 								"cloudflare_ruleset.my_ruleset",
 								tfjsonpath.New("rules"),
@@ -943,7 +1552,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+							plancheck.ExpectResourceAction(
+								"cloudflare_ruleset.my_ruleset",
+								plancheck.ResourceActionCreate,
+							),
 							plancheck.ExpectKnownValue(
 								"cloudflare_ruleset.my_ruleset",
 								tfjsonpath.New("rules"),
@@ -990,7 +1602,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionUpdate),
+							plancheck.ExpectResourceAction(
+								"cloudflare_ruleset.my_ruleset",
+								plancheck.ResourceActionUpdate,
+							),
 							plancheck.ExpectKnownValue(
 								"cloudflare_ruleset.my_ruleset",
 								tfjsonpath.New("rules"),
@@ -1024,7 +1639,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionCreate),
+							plancheck.ExpectResourceAction(
+								"cloudflare_ruleset.my_ruleset",
+								plancheck.ResourceActionCreate,
+							),
 							plancheck.ExpectKnownValue(
 								"cloudflare_ruleset.my_ruleset",
 								tfjsonpath.New("rules"),
@@ -1071,7 +1689,10 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 					ConfigVariables: configVariables,
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", plancheck.ResourceActionUpdate),
+							plancheck.ExpectResourceAction(
+								"cloudflare_ruleset.my_ruleset",
+								plancheck.ResourceActionUpdate,
+							),
 							plancheck.ExpectKnownValue(
 								"cloudflare_ruleset.my_ruleset",
 								tfjsonpath.New("rules"),
@@ -1088,5 +1709,915 @@ func TestAccCloudflareRuleset_RulesRef(t *testing.T) {
 				},
 			},
 		})
+	})
+}
+
+func TestAccCloudflareRuleset_BlockRules(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("block"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"response": knownvalue.Null(),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("block"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"response": knownvalue.Null(),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("block"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"response": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"status_code":  knownvalue.Int64Exact(403),
+											"content":      knownvalue.StringExact("Access denied"),
+											"content_type": knownvalue.StringExact("text/plain"),
+										}),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("block"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"response": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"status_code":  knownvalue.Int64Exact(403),
+										"content":      knownvalue.StringExact("Access denied"),
+										"content_type": knownvalue.StringExact("text/plain"),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_ChallengeRules(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("challenge"),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("challenge"),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("js_challenge"),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("js_challenge"),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("3.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("managed_challenge"),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("managed_challenge"),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_CompressResponseRules(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("compress_response"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"algorithms": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"name": knownvalue.StringExact("auto"),
+											}),
+										}),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("compress_response"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"algorithms": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"name": knownvalue.StringExact("auto"),
+										}),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("compress_response"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"algorithms": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"name": knownvalue.StringExact("brotli"),
+											}),
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"name": knownvalue.StringExact("gzip"),
+											}),
+										}),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("compress_response"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"algorithms": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"name": knownvalue.StringExact("brotli"),
+										}),
+										knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"name": knownvalue.StringExact("gzip"),
+										}),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_ExecuteRules(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("execute"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"id":           knownvalue.StringExact("4814384a9e5d4991b9815dcfc25d2f1f"),
+										"matched_data": knownvalue.Null(),
+										"overrides":    knownvalue.Null(),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("execute"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":           knownvalue.StringExact("4814384a9e5d4991b9815dcfc25d2f1f"),
+									"matched_data": knownvalue.Null(),
+									"overrides":    knownvalue.Null(),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("execute"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"id": knownvalue.StringExact("4814384a9e5d4991b9815dcfc25d2f1f"),
+										"matched_data": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"public_key": knownvalue.StringExact("iGqBmyIUxuWt1rvxoAharN9FUXneUBxA/Y19PyyrEG0="),
+										}),
+										"overrides": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"action":            knownvalue.StringExact("log"),
+											"categories":        knownvalue.ListExact([]knownvalue.Check{}),
+											"enabled":           knownvalue.Null(),
+											"rules":             knownvalue.ListExact([]knownvalue.Check{}),
+											"sensitivity_level": knownvalue.Null(),
+										}),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("execute"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id": knownvalue.StringExact("4814384a9e5d4991b9815dcfc25d2f1f"),
+									"matched_data": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"public_key": knownvalue.StringExact("iGqBmyIUxuWt1rvxoAharN9FUXneUBxA/Y19PyyrEG0="),
+									}),
+									"overrides": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"action":            knownvalue.StringExact("log"),
+										"categories":        knownvalue.ListExact([]knownvalue.Check{}),
+										"enabled":           knownvalue.Null(),
+										"rules":             knownvalue.ListExact([]knownvalue.Check{}),
+										"sensitivity_level": knownvalue.Null(),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("3.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("execute"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"id": knownvalue.StringExact("4814384a9e5d4991b9815dcfc25d2f1f"),
+										"matched_data": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"public_key": knownvalue.StringExact("iGqBmyIUxuWt1rvxoAharN9FUXneUBxA/Y19PyyrEG0="),
+										}),
+										"overrides": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"action":            knownvalue.Null(),
+											"categories":        knownvalue.ListExact([]knownvalue.Check{}),
+											"enabled":           knownvalue.Bool(false),
+											"rules":             knownvalue.ListExact([]knownvalue.Check{}),
+											"sensitivity_level": knownvalue.Null(),
+										}),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("execute"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id": knownvalue.StringExact("4814384a9e5d4991b9815dcfc25d2f1f"),
+									"matched_data": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"public_key": knownvalue.StringExact("iGqBmyIUxuWt1rvxoAharN9FUXneUBxA/Y19PyyrEG0="),
+									}),
+									"overrides": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"action":            knownvalue.Null(),
+										"categories":        knownvalue.ListExact([]knownvalue.Check{}),
+										"enabled":           knownvalue.Bool(false),
+										"rules":             knownvalue.ListExact([]knownvalue.Check{}),
+										"sensitivity_level": knownvalue.Null(),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("4.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("execute"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"id":           knownvalue.StringExact("4814384a9e5d4991b9815dcfc25d2f1f"),
+										"matched_data": knownvalue.Null(),
+										"overrides": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"action": knownvalue.StringExact("log"),
+											"categories": knownvalue.ListExact([]knownvalue.Check{
+												knownvalue.ObjectExact(map[string]knownvalue.Check{
+													"category":          knownvalue.StringExact("language-java"),
+													"action":            knownvalue.StringExact("block"),
+													"enabled":           knownvalue.Null(),
+													"sensitivity_level": knownvalue.Null(),
+												}),
+												knownvalue.ObjectExact(map[string]knownvalue.Check{
+													"category":          knownvalue.StringExact("language-php"),
+													"action":            knownvalue.Null(),
+													"enabled":           knownvalue.Bool(false),
+													"sensitivity_level": knownvalue.Null(),
+												}),
+												knownvalue.ObjectExact(map[string]knownvalue.Check{
+													"category":          knownvalue.StringExact("language-shell"),
+													"action":            knownvalue.StringExact("block"),
+													"enabled":           knownvalue.Bool(true),
+													"sensitivity_level": knownvalue.Null(),
+												}),
+											}),
+											"enabled": knownvalue.Bool(true),
+											"rules": knownvalue.ListExact([]knownvalue.Check{
+												knownvalue.ObjectExact(map[string]knownvalue.Check{
+													"id":                knownvalue.StringExact("04116d14d7524986ba314d11c8a41e11"),
+													"action":            knownvalue.StringExact("block"),
+													"enabled":           knownvalue.Null(),
+													"score_threshold":   knownvalue.Null(),
+													"sensitivity_level": knownvalue.Null(),
+												}),
+												knownvalue.ObjectExact(map[string]knownvalue.Check{
+													"id":                knownvalue.StringExact("55b58c71f653446fa0942cf7700f8c8e"),
+													"action":            knownvalue.Null(),
+													"enabled":           knownvalue.Bool(false),
+													"score_threshold":   knownvalue.Null(),
+													"sensitivity_level": knownvalue.Null(),
+												}),
+												knownvalue.ObjectExact(map[string]knownvalue.Check{
+													"id":                knownvalue.StringExact("7683285d70b14023ac407b67eccbb280"),
+													"action":            knownvalue.StringExact("block"),
+													"enabled":           knownvalue.Bool(true),
+													"score_threshold":   knownvalue.Int64Exact(40),
+													"sensitivity_level": knownvalue.Null(),
+												}),
+											}),
+											"sensitivity_level": knownvalue.Null(),
+										}),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("execute"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":           knownvalue.StringExact("4814384a9e5d4991b9815dcfc25d2f1f"),
+									"matched_data": knownvalue.Null(),
+									"overrides": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"action": knownvalue.StringExact("log"),
+										"categories": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"category":          knownvalue.StringExact("language-java"),
+												"action":            knownvalue.StringExact("block"),
+												"enabled":           knownvalue.Null(),
+												"sensitivity_level": knownvalue.Null(),
+											}),
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"category":          knownvalue.StringExact("language-php"),
+												"action":            knownvalue.Null(),
+												"enabled":           knownvalue.Bool(false),
+												"sensitivity_level": knownvalue.Null(),
+											}),
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"category":          knownvalue.StringExact("language-shell"),
+												"action":            knownvalue.StringExact("block"),
+												"enabled":           knownvalue.Bool(true),
+												"sensitivity_level": knownvalue.Null(),
+											}),
+										}),
+										"enabled": knownvalue.Bool(true),
+										"rules": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"id":                knownvalue.StringExact("04116d14d7524986ba314d11c8a41e11"),
+												"action":            knownvalue.StringExact("block"),
+												"enabled":           knownvalue.Null(),
+												"score_threshold":   knownvalue.Null(),
+												"sensitivity_level": knownvalue.Null(),
+											}),
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"id":                knownvalue.StringExact("55b58c71f653446fa0942cf7700f8c8e"),
+												"action":            knownvalue.Null(),
+												"enabled":           knownvalue.Bool(false),
+												"score_threshold":   knownvalue.Null(),
+												"sensitivity_level": knownvalue.Null(),
+											}),
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"id":                knownvalue.StringExact("7683285d70b14023ac407b67eccbb280"),
+												"action":            knownvalue.StringExact("block"),
+												"enabled":           knownvalue.Bool(true),
+												"score_threshold":   knownvalue.Int64Exact(40),
+												"sensitivity_level": knownvalue.Null(),
+											}),
+										}),
+										"sensitivity_level": knownvalue.Null(),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("5.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionReplace,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("execute"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"id":           knownvalue.StringExact("4d21379b4f9f4bb088e0729962c8b3cf"),
+										"matched_data": knownvalue.Null(),
+										"overrides": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"action": knownvalue.Null(),
+											"categories": knownvalue.ListExact([]knownvalue.Check{
+												knownvalue.ObjectExact(map[string]knownvalue.Check{
+													"category":          knownvalue.StringExact("botnets"),
+													"action":            knownvalue.Null(),
+													"enabled":           knownvalue.Null(),
+													"sensitivity_level": knownvalue.StringExact("medium"),
+												}),
+											}),
+											"enabled": knownvalue.Null(),
+											"rules": knownvalue.ListExact([]knownvalue.Check{
+												knownvalue.ObjectExact(map[string]knownvalue.Check{
+													"id":                knownvalue.StringExact("8fc7efb08f984ced8d61b34b254da96a"),
+													"action":            knownvalue.Null(),
+													"enabled":           knownvalue.Null(),
+													"score_threshold":   knownvalue.Null(),
+													"sensitivity_level": knownvalue.StringExact("low"),
+												}),
+											}),
+											"sensitivity_level": knownvalue.StringExact("eoff"),
+										}),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("execute"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"id":           knownvalue.StringExact("4d21379b4f9f4bb088e0729962c8b3cf"),
+									"matched_data": knownvalue.Null(),
+									"overrides": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"action": knownvalue.Null(),
+										"categories": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"category":          knownvalue.StringExact("botnets"),
+												"action":            knownvalue.Null(),
+												"enabled":           knownvalue.Null(),
+												"sensitivity_level": knownvalue.StringExact("medium"),
+											}),
+										}),
+										"enabled": knownvalue.Null(),
+										"rules": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"id":                knownvalue.StringExact("8fc7efb08f984ced8d61b34b254da96a"),
+												"action":            knownvalue.Null(),
+												"enabled":           knownvalue.Null(),
+												"score_threshold":   knownvalue.Null(),
+												"sensitivity_level": knownvalue.StringExact("low"),
+											}),
+										}),
+										"sensitivity_level": knownvalue.StringExact("eoff"),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_LogRules(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("log"),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("log"),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_LogCustomFieldRules(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("log_custom_field"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"cookie_fields": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"name": knownvalue.StringExact("__cfruid"),
+											}),
+										}),
+										"raw_response_fields":        knownvalue.Null(),
+										"request_fields":             knownvalue.Null(),
+										"response_fields":            knownvalue.Null(),
+										"transformed_request_fields": knownvalue.Null(),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("log_custom_field"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"cookie_fields": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"name": knownvalue.StringExact("__cfruid"),
+										}),
+									}),
+									"raw_response_fields":        knownvalue.Null(),
+									"request_fields":             knownvalue.Null(),
+									"response_fields":            knownvalue.Null(),
+									"transformed_request_fields": knownvalue.Null(),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("log_custom_field"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"cookie_fields": knownvalue.Null(),
+										"raw_response_fields": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"name":                knownvalue.StringExact("allow"),
+												"preserve_duplicates": knownvalue.Bool(false),
+											}),
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"name":                knownvalue.StringExact("content-type"),
+												"preserve_duplicates": knownvalue.Bool(false),
+											}),
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"name":                knownvalue.StringExact("server"),
+												"preserve_duplicates": knownvalue.Bool(true),
+											}),
+										}),
+										"request_fields": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"name": knownvalue.StringExact("content-type"),
+											}),
+										}),
+										"response_fields": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"name":                knownvalue.StringExact("access-control-allow-origin"),
+												"preserve_duplicates": knownvalue.Bool(false),
+											}),
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"name":                knownvalue.StringExact("connection"),
+												"preserve_duplicates": knownvalue.Bool(false),
+											}),
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"name":                knownvalue.StringExact("set-cookie"),
+												"preserve_duplicates": knownvalue.Bool(true),
+											}),
+										}),
+										"transformed_request_fields": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"name": knownvalue.StringExact("host"),
+											}),
+										}),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("log_custom_field"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"cookie_fields": knownvalue.Null(),
+									"raw_response_fields": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"name":                knownvalue.StringExact("allow"),
+											"preserve_duplicates": knownvalue.Bool(false),
+										}),
+										knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"name":                knownvalue.StringExact("content-type"),
+											"preserve_duplicates": knownvalue.Bool(false),
+										}),
+										knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"name":                knownvalue.StringExact("server"),
+											"preserve_duplicates": knownvalue.Bool(true),
+										}),
+									}),
+									"request_fields": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"name": knownvalue.StringExact("content-type"),
+										}),
+									}),
+									"response_fields": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"name":                knownvalue.StringExact("access-control-allow-origin"),
+											"preserve_duplicates": knownvalue.Bool(false),
+										}),
+										knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"name":                knownvalue.StringExact("connection"),
+											"preserve_duplicates": knownvalue.Bool(false),
+										}),
+										knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"name":                knownvalue.StringExact("set-cookie"),
+											"preserve_duplicates": knownvalue.Bool(true),
+										}),
+									}),
+									"transformed_request_fields": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"name": knownvalue.StringExact("host"),
+										}),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+		},
 	})
 }

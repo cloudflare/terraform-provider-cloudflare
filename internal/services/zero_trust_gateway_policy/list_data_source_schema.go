@@ -91,7 +91,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"traffic": schema.StringAttribute{
-							Description: "The wirefilter expression used for traffic matching.",
+							Description: "The wirefilter expression used for traffic matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.",
 							Computed:    true,
 						},
 						"id": schema.StringAttribute{
@@ -112,7 +112,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"device_posture": schema.StringAttribute{
-							Description: "The wirefilter expression used for device posture check matching.",
+							Description: "The wirefilter expression used for device posture check matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.",
 							Computed:    true,
 						},
 						"expiration": schema.SingleNestedAttribute{
@@ -139,7 +139,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"identity": schema.StringAttribute{
-							Description: "The wirefilter expression used for identity matching.",
+							Description: "The wirefilter expression used for identity matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.",
 							Computed:    true,
 						},
 						"not_sharable": schema.BoolAttribute{
@@ -299,7 +299,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsCheckSessionDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"duration": schema.StringAttribute{
-											Description: "Configure how fresh the session needs to be to be considered valid.",
+											Description: "Configure how fresh the session needs to be to be considered valid. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.",
 											Computed:    true,
 										},
 										"enforce": schema.BoolAttribute{

@@ -15,6 +15,6 @@ resource "cloudflare_ruleset" "my_ruleset" {
       expression = "ip.src eq 2.2.2.2"
       action     = "block"
       ref        = "two"
-    },
+    }
   ]
 }
