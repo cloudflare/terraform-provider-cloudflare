@@ -18,7 +18,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
@@ -533,6 +536,100 @@ func TestAccCloudflareRecord_ClearTags(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_5858(t *testing.T) {
+	//t.Parallel()
+	var record cfold.DNSRecord
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", "test_5858")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfig5858(zoneID, "tf-acctest-basic", rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareRecordExists(resourceName, &record),
+					func(state *terraform.State) error {
+						if record.Content != fmt.Sprintf("dev.tf-acctest-basic.%s.%s", rnd, domain) {
+							return fmt.Errorf("bad content: %s", record.Content)
+						}
+
+						return nil
+					},
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tf-acctest-basic.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "content", fmt.Sprintf("dev.tf-acctest-basic.%s.%s", rnd, domain)),
+					resource.TestMatchResourceAttr(resourceName, consts.ZoneIDSchemaKey, regexp.MustCompile("^[a-z0-9]{32}$")),
+				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							resourceName,
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							resourceName,
+							tfjsonpath.New("settings").AtMapKey("ipv4_only"),
+							knownvalue.Bool(false),
+						),
+					},
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRecord_EmptySettings(t *testing.T) {
+	//t.Parallel()
+	var record cfold.DNSRecord
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigEmptySettings(zoneID, "tf-acctest-basic", rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareRecordExists(resourceName, &record),
+					func(state *terraform.State) error {
+						if record.Content != fmt.Sprintf("dev.tf-acctest-basic.%s.%s", rnd, domain) {
+							return fmt.Errorf("bad content: %s", record.Content)
+						}
+
+						return nil
+					},
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tf-acctest-basic.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "content", fmt.Sprintf("dev.tf-acctest-basic.%s.%s", rnd, domain)),
+					resource.TestMatchResourceAttr(resourceName, consts.ZoneIDSchemaKey, regexp.MustCompile("^[a-z0-9]{32}$")),
+				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							resourceName,
+							plancheck.ResourceActionCreate,
+						),
+					},
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
 func TestSuppressTrailingDots(t *testing.T) {
 	t.Parallel()
 
@@ -647,7 +744,6 @@ func testAccCheckCloudflareRecordExists(n string, record *cfold.DNSRecord) resou
 		}
 
 		*record = foundRecord
-
 		return nil
 	}
 }
@@ -722,6 +818,14 @@ func testAccCheckCloudflareRecordConfigNoTags(zoneID, name, rnd, domain string) 
 
 func testAccCheckCloudflareRecordDNSKEY(zoneID, name string) string {
 	return acctest.LoadTestCase("recorddnskey.tf", zoneID, name)
+}
+
+func testAccCheckCloudflareRecordConfig5858(zoneID, name, rnd, domain string) string {
+	return acctest.LoadTestCase("record_issue_5858.tf", zoneID, name, rnd, domain)
+}
+
+func testAccCheckCloudflareRecordConfigEmptySettings(zoneID, name, rnd, domain string) string {
+	return acctest.LoadTestCase("recordemptysettings.tf", zoneID, name, rnd, domain)
 }
 
 func suppressTrailingDots(k, old, new string, d *schema.ResourceData) bool {
