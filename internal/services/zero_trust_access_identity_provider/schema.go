@@ -4,6 +4,7 @@ package zero_trust_access_identity_provider
 
 import (
 	"context"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 
@@ -312,6 +313,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"scim_base_url": schema.StringAttribute{
 						Description: "The base URL of Cloudflare's SCIM V2.0 API endpoint.",
 						Computed:    true,
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
 					},
 					"seat_deprovision": schema.BoolAttribute{
 						Description: "A flag to remove a user's seat in Zero Trust when they have been deprovisioned in the Identity Provider.  This cannot be enabled unless user_deprovision is also enabled.",
