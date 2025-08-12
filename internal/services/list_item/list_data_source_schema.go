@@ -47,7 +47,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{
-							Description: "The RFC 3339 timestamp of when the list was created.",
+							Description: "The RFC 3339 timestamp of when the item was created.",
 							Computed:    true,
 						},
 						"ip": schema.StringAttribute{
@@ -55,11 +55,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"modified_on": schema.StringAttribute{
-							Description: "The RFC 3339 timestamp of when the list was last modified.",
+							Description: "The RFC 3339 timestamp of when the item was last modified.",
 							Computed:    true,
 						},
 						"comment": schema.StringAttribute{
-							Description: "Defines an informative summary of the list item.",
+							Description: "Defines	an informative summary of the list item.",
 							Computed:    true,
 						},
 						"hostname": schema.SingleNestedAttribute{
