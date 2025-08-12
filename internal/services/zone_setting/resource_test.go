@@ -256,6 +256,53 @@ func TestAccCloudflareZoneSetting_Ciphers(t *testing.T) {
 	})
 }
 
+// Regression test for https://github.com/cloudflare/terraform-provider-cloudflare/issues/5795
+// where certain zone settings have inconsistent "editable" values between plan and apply
+func TestAccCloudflareZoneSetting_EditableInconsistency(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	// Test the problematic settings that have editable inconsistency issues
+	problematicSettings := []struct {
+		settingID string
+		value     string
+	}{
+		{"advanced_ddos", "on"},
+		{"http2", "on"},
+		{"long_lived_grpc", "on"},
+		{"origin_error_page_pass_thru", "on"},
+		{"prefetch_preload", "on"},
+		{"proxy_read_timeout", "300"},
+		{"response_buffering", "on"},
+		{"sort_query_string_for_cache", "on"},
+		{"true_client_ip_header", "on"},
+	}
+
+	for _, setting := range problematicSettings {
+		t.Run(setting.settingID, func(t *testing.T) {
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := fmt.Sprintf("cloudflare_zone_setting.%s", rnd)
+
+			valueCheck := knownvalue.StringExact(setting.value)
+
+			resource.Test(t, resource.TestCase{
+				PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				CheckDestroy:             testAccCheckCloudflareZoneSettingDestroy,
+				Steps: []resource.TestStep{
+					{
+						Config: testCloudflareZoneSettingEditableInconsistency(rnd, zoneID, setting.settingID, setting.value),
+						ConfigStateChecks: []statecheck.StateCheck{
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("setting_id"), knownvalue.StringExact(setting.settingID)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), valueCheck),
+						},
+					},
+				},
+			})
+		})
+	}
+}
+
 func testCloudflareZoneSettingConfigOnOff(resourceID, zoneID string) string {
 	return acctest.LoadTestCase("on_off.tf", resourceID, zoneID)
 }
@@ -286,6 +333,10 @@ func testCloudflareZoneSettingConfigMinTLSVersion(resourceID, zoneID string) str
 
 func testCloudflareZoneSettingConfigCiphers(resourceID, zoneID string) string {
 	return acctest.LoadTestCase("ciphers.tf", resourceID, zoneID)
+}
+
+func testCloudflareZoneSettingEditableInconsistency(resourceID, zoneID, settingID, value string) string {
+	return acctest.LoadTestCase("editable_inconsistency.tf", resourceID, zoneID, settingID, value)
 }
 
 func testAccCheckCloudflareZoneSettingDestroy(s *terraform.State) error {

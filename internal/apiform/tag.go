@@ -18,6 +18,10 @@ type parsedStructTag struct {
 	// otherwise this flag will have no effect
 	// NOTE: won't work if update behavior is 'patch'
 	forceEncode bool
+	// Don't skip this value, even if it's computed (no-op for computed optional fields)
+	// If encodeStateForUnknown is set on a computed field, this flag should also be set;
+	// otherwise this flag will have no effect
+	// NOTE: won't work if update behavior is 'patch'
 }
 
 func parseFormStructTag(field reflect.StructField) (tag parsedStructTag, ok bool) {
