@@ -66,10 +66,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The description of the rule.",
 				Optional:    true,
 			},
-			"precedence": schema.Int64Attribute{
-				Description: "Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) docs on how to manage precedence via Terraform.",
-				Optional:    true,
-			},
 			"filters": schema.ListAttribute{
 				Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
 				Optional:    true,
@@ -103,6 +99,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),
+			},
+			"precedence": schema.Int64Attribute{
+				Description: "Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) docs on how to manage precedence via Terraform.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"traffic": schema.StringAttribute{
 				Description: "The wirefilter expression used for traffic matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.",
