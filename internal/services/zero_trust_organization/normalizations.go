@@ -2,7 +2,9 @@ package zero_trust_organization
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
@@ -31,6 +33,20 @@ func normalizeReadZeroTrustOrganizationAPIData(_ context.Context, data, sourceDa
 	normalizeFalseAndNullBool(&data.AllowAuthenticateViaWARP, sourceData.AllowAuthenticateViaWARP)
 	normalizeFalseAndNullBool(&data.IsUIReadOnly, sourceData.IsUIReadOnly)
 	normalizeEmptyAndNullObject(&data.LoginDesign, sourceData.LoginDesign)
+
+	return diags
+}
+
+func normalizeImportZeroTrustOrganizationAPIData(_ context.Context, data *ZeroTrustOrganizationModel) diag.Diagnostics {
+	diags := make(diag.Diagnostics, 0)
+
+	if data.AutoRedirectToIdentity.IsNull() {
+		data.AutoRedirectToIdentity = types.BoolValue(false)
+	}
+
+	if data.LoginDesign != nil && *data.LoginDesign == (ZeroTrustOrganizationLoginDesignModel{}) {
+		data.LoginDesign = nil
+	}
 
 	return diags
 }
