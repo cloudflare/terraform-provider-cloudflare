@@ -15,6 +15,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -65,6 +66,15 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	assets := data.Assets
+	if assets != nil {
+		resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("assets").AtName("jwt"), &data.Assets.JWT)...) // "assets.jwt" is write-only, get from config
+	}
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -93,6 +103,7 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	data = &env.Result
+	data.Assets = assets
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -109,6 +120,8 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	assets := data.Assets // "assets" is not returned by the API, so preserve its state value
 
 	res := new(http.Response)
 	env := WorkerVersionResultEnvelope{*data}
@@ -138,6 +151,7 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 	data = &env.Result
+	data.Assets = assets
 
 	// restore any secret_text `text` values from state since they aren't returned by the API
 	var state *WorkerVersionModel
