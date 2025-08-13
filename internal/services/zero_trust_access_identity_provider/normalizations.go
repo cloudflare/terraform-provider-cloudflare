@@ -2,6 +2,7 @@ package zero_trust_access_identity_provider
 
 import (
 	"context"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -30,6 +31,11 @@ func normalizeReadZeroTrustIDPScimConfigData(ctx context.Context, dataValue, sta
 		// Scim secret is only generated and returned in the create request, and null on reads.
 		// so we need to load it from the state
 		dataScimConfig.Secret = stateScimConfig.Secret
+	}
+
+	// SCIMBaseURL is computed on create but doesn't change - preserve from state
+	if !stateScimConfig.SCIMBaseURL.IsUnknown() && !stateScimConfig.SCIMBaseURL.IsNull() {
+		dataScimConfig.SCIMBaseURL = stateScimConfig.SCIMBaseURL
 	}
 
 	*dataValue, diags = customfield.NewObject[ZeroTrustAccessIdentityProviderSCIMConfigModel](ctx, &dataScimConfig)

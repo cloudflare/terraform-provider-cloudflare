@@ -2,8 +2,8 @@ package zero_trust_access_policy
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
@@ -45,15 +45,16 @@ func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, source
 func normalizeImportZeroTrustAccessPolicyAPIData(ctx context.Context, data *ZeroTrustAccessPolicyModel) diag.Diagnostics {
 	diags := make(diag.Diagnostics, 0)
 
-	// Set boolean fields to false if they are null (API omits false values during import)
-	if data.ApprovalRequired.IsNull() {
-		data.ApprovalRequired = types.BoolValue(false)
+	if data.Include != nil && len(*data.Include) == 0 {
+		data.Include = nil
 	}
-	if data.IsolationRequired.IsNull() {
-		data.IsolationRequired = types.BoolValue(false)
+
+	if data.Require != nil && len(*data.Require) == 0 {
+		data.Require = nil
 	}
-	if data.PurposeJustificationRequired.IsNull() {
-		data.PurposeJustificationRequired = types.BoolValue(false)
+
+	if data.Exclude != nil && len(*data.Exclude) == 0 {
+		data.Exclude = nil
 	}
 
 	return diags

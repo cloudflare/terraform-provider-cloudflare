@@ -7,15 +7,17 @@ import (
 	"math"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -107,7 +109,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "The list of rules in the ruleset.",
+				Computed:    true,
 				Optional:    true,
+				Default:     listdefault.StaticValue(customfield.NewObjectListMust(ctx, []RulesetRulesModel{}).ListValue),
 				CustomType:  customfield.NewNestedObjectListType[RulesetRulesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -116,34 +120,36 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"action": schema.StringAttribute{
-							Description: "The action to perform when the rule matches.\nAvailable values: \"block\", \"challenge\", \"compress_response\", \"execute\", \"js_challenge\", \"log\", \"managed_challenge\", \"redirect\", \"rewrite\", \"route\", \"score\", \"serve_error\", \"set_config\", \"skip\", \"set_cache_settings\", \"log_custom_field\", \"ddos_dynamic\", \"force_connection_close\".",
+							Description: "The action to perform when the rule matches.\nAvailable values: \"block\", \"challenge\", \"compress_response\", \"ddos_dynamic\", \"execute\", \"force_connection_close\", \"js_challenge\", \"log\", \"log_custom_field\", \"managed_challenge\", \"redirect\", \"rewrite\", \"route\", \"score\", \"serve_error\", \"set_cache_settings\", \"set_config\", \"skip\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"block",
 									"challenge",
 									"compress_response",
+									"ddos_dynamic",
 									"execute",
+									"force_connection_close",
 									"js_challenge",
 									"log",
+									"log_custom_field",
 									"managed_challenge",
 									"redirect",
 									"rewrite",
 									"route",
 									"score",
 									"serve_error",
+									"set_cache_settings",
 									"set_config",
 									"skip",
-									"set_cache_settings",
-									"log_custom_field",
-									"ddos_dynamic",
-									"force_connection_close",
 								),
 							},
 						},
 						"action_parameters": schema.SingleNestedAttribute{
 							Description: "The parameters configuring the rule's action.",
+							Computed:    true,
 							Optional:    true,
+							Default:     objectdefault.StaticValue(customfield.NewObjectMust(ctx, &RulesetRulesActionParametersModel{}).ObjectValue),
 							CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"response": schema.SingleNestedAttribute{
@@ -217,7 +223,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"categories": schema.ListNestedAttribute{
 											Description: "A list of category-level overrides. This option has the second-highest precedence after rule-level overrides.",
+											Computed:    true,
 											Optional:    true,
+											Default:     listdefault.StaticValue(customfield.NewObjectListMust(ctx, []RulesetRulesActionParametersOverridesCategoriesModel{}).ListValue),
 											CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersOverridesCategoriesModel](ctx),
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
@@ -254,7 +262,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"rules": schema.ListNestedAttribute{
 											Description: "A list of rule-level overrides. This option has the highest precedence.",
+											Computed:    true,
 											Optional:    true,
+											Default:     listdefault.StaticValue(customfield.NewObjectListMust(ctx, []RulesetRulesActionParametersOverridesRulesModel{}).ListValue),
 											CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersOverridesRulesModel](ctx),
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
@@ -310,11 +320,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"key": schema.StringAttribute{
 											Description: "Expression that evaluates to the list lookup key.",
-											Optional:    true,
+											Required:    true,
 										},
 										"name": schema.StringAttribute{
 											Description: "The name of the list to match against.",
-											Optional:    true,
+											Required:    true,
 										},
 									},
 								},
@@ -325,13 +335,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"preserve_query_string": schema.BoolAttribute{
 											Description: "Keep the query string of the original request.",
+											Computed:    true,
 											Optional:    true,
+											Default:     booldefault.StaticBool(false),
 										},
-										"status_code": schema.Float64Attribute{
+										"status_code": schema.Int64Attribute{
 											Description: "The status code to be used for the redirect.\nAvailable values: 301, 302, 303, 307, 308.",
 											Optional:    true,
-											Validators: []validator.Float64{
-												float64validator.OneOf(
+											Validators: []validator.Int64{
+												int64validator.OneOf(
 													301,
 													302,
 													303,
@@ -342,7 +354,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"target_url": schema.SingleNestedAttribute{
 											Description: "The URL to redirect the request to.",
-											Optional:    true,
+											Required:    true,
 											CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersFromValueTargetURLModel](ctx),
 											Attributes: map[string]schema.Attribute{
 												"value": schema.StringAttribute{
@@ -361,16 +373,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "Map of request headers to modify.",
 									Optional:    true,
 									CustomType:  customfield.NewNestedObjectMapType[RulesetRulesActionParametersHeadersModel](ctx),
+									Validators: []validator.Map{
+										mapvalidator.SizeAtLeast(1),
+									},
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"operation": schema.StringAttribute{
-												Description: `Available values: "remove", "add", "set".`,
+												Description: `Available values: "add", "set", "remove".`,
 												Required:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(
-														"remove",
 														"add",
 														"set",
+														"remove",
 													),
 												},
 											},
@@ -435,11 +450,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Description: "Override the resolved hostname.",
 											Optional:    true,
 										},
-										"port": schema.Float64Attribute{
+										"port": schema.Int64Attribute{
 											Description: "Override the destination port.",
 											Optional:    true,
-											Validators: []validator.Float64{
-												float64validator.Between(1, 65535),
+											Validators: []validator.Int64{
+												int64validator.Between(1, 65535),
 											},
 										},
 									},
@@ -459,27 +474,37 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "Increment contains the delta to change the score and can be either positive or negative.",
 									Optional:    true,
 								},
-								"content": schema.StringAttribute{
-									Description: "Error response content.",
+								"asset_name": schema.StringAttribute{
+									Description: "The name of a custom asset to serve as the response.",
 									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.LengthAtLeast(1),
+									},
+								},
+								"content": schema.StringAttribute{
+									Description: "The response content.",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.LengthAtLeast(1),
+									},
 								},
 								"content_type": schema.StringAttribute{
-									Description: "Content-type header to set with the response.\nAvailable values: \"application/json\", \"text/xml\", \"text/plain\", \"text/html\".",
+									Description: "The content type header to set with the response.\nAvailable values: \"application/json\", \"text/html\", \"text/plain\", \"text/xml\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
 											"application/json",
-											"text/xml",
-											"text/plain",
 											"text/html",
+											"text/plain",
+											"text/xml",
 										),
 									},
 								},
-								"status_code": schema.Float64Attribute{
+								"status_code": schema.Int64Attribute{
 									Description: "The status code to use for the error.",
 									Optional:    true,
-									Validators: []validator.Float64{
-										float64validator.Between(400, 999),
+									Validators: []validator.Int64{
+										int64validator.Between(400, 999),
 									},
 								},
 								"automatic_https_rewrites": schema.BoolAttribute{
@@ -954,7 +979,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"cookie_fields": schema.ListNestedAttribute{
 									Description: "The cookie fields to log.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersCookieFieldsModel](ctx),
+									Validators: []validator.List{
+										listvalidator.SizeAtLeast(1),
+									},
+									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersCookieFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -967,7 +995,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"raw_response_fields": schema.ListNestedAttribute{
 									Description: "The raw response fields to log.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersRawResponseFieldsModel](ctx),
+									Validators: []validator.List{
+										listvalidator.SizeAtLeast(1),
+									},
+									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersRawResponseFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -976,7 +1007,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 											"preserve_duplicates": schema.BoolAttribute{
 												Description: "Whether to log duplicate values of the same header.",
+												Computed:    true,
 												Optional:    true,
+												Default:     booldefault.StaticBool(false),
 											},
 										},
 									},
@@ -984,7 +1017,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"request_fields": schema.ListNestedAttribute{
 									Description: "The raw request fields to log.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersRequestFieldsModel](ctx),
+									Validators: []validator.List{
+										listvalidator.SizeAtLeast(1),
+									},
+									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersRequestFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -997,7 +1033,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"response_fields": schema.ListNestedAttribute{
 									Description: "The transformed response fields to log.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersResponseFieldsModel](ctx),
+									Validators: []validator.List{
+										listvalidator.SizeAtLeast(1),
+									},
+									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersResponseFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -1006,7 +1045,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											},
 											"preserve_duplicates": schema.BoolAttribute{
 												Description: "Whether to log duplicate values of the same header.",
+												Computed:    true,
 												Optional:    true,
+												Default:     booldefault.StaticBool(false),
 											},
 										},
 									},
@@ -1014,7 +1055,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"transformed_request_fields": schema.ListNestedAttribute{
 									Description: "The transformed request fields to log.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectListType[RulesetRulesActionParametersTransformedRequestFieldsModel](ctx),
+									Validators: []validator.List{
+										listvalidator.SizeAtLeast(1),
+									},
+									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersTransformedRequestFieldsModel](ctx),
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"name": schema.StringAttribute{
@@ -1092,6 +1136,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"mitigation_timeout": schema.Int64Attribute{
 									Description: "Period of time in seconds after which the action will be disabled following its first execution.",
+									Computed:    true,
 									Optional:    true,
 								},
 								"requests_per_period": schema.Int64Attribute{
@@ -1103,7 +1148,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"requests_to_origin": schema.BoolAttribute{
 									Description: "Defines if ratelimit counting is only done when an origin is reached.",
+									Computed:    true,
 									Optional:    true,
+									Default:     booldefault.StaticBool(false),
 								},
 								"score_per_period": schema.Int64Attribute{
 									Description: "The score threshold per period for which the action will be executed the first time.",

@@ -272,6 +272,94 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessServiceToken_PlanModifiers_ClientSecretPersistence(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// Service Tokens endpoint does not yet support the API tokens and it
+	// results in misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_service_token.%s", rnd)
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessServiceTokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+				),
+			},
+			{
+				// Update the name to test that client_secret is preserved and doesn't show changes in plan
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+				),
+			},
+			{
+				// Ensures no diff on plan - verifies plan modifier keeps client_secret from showing as change
+				Config:   testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
+			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessServiceTokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+				),
+			},
+			{
+				// Update the name to test that client_secret is preserved and doesn't show changes in plan
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", cloudflare.ZoneIdentifier(zoneID)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+				),
+			},
+			{
+				// Ensures no diff on plan - verifies plan modifier keeps client_secret from showing as change
+				Config:   testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", cloudflare.ZoneIdentifier(zoneID)),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 func testCloudflareAccessServiceTokenBasicConfig(resourceName string, tokenName string, identifier *cloudflare.ResourceContainer) string {
 	return acctest.LoadTestCase("cloudflareaccessservicetokenbasicconfig.tf", resourceName, tokenName, identifier.Type, identifier.Identifier)
 }

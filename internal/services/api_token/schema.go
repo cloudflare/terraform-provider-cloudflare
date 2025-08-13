@@ -37,6 +37,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "Policy identifier.",
 							Computed:    true,
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 						},
 						"effect": schema.StringAttribute{
 							Description: "Allow or deny operations against the resources.\nAvailable values: \"allow\", \"deny\".",

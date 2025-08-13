@@ -2,6 +2,7 @@ package zero_trust_access_group
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 )
 
@@ -25,6 +26,24 @@ func normalizeReadZeroTrustAccessGroupAPIData(ctx context.Context, data, sourceD
 	normalizeEmptyAndNullSlice(&data.Include, sourceData.Include)
 	normalizeEmptyAndNullSlice(&data.Require, sourceData.Require)
 	normalizeEmptyAndNullSlice(&data.Exclude, sourceData.Exclude)
+
+	return diags
+}
+
+func normalizeImportZeroTrustAccessGroupAPIData(ctx context.Context, data *ZeroTrustAccessGroupModel) diag.Diagnostics {
+	diags := make(diag.Diagnostics, 0)
+
+	if data.Include != nil && len(*data.Include) == 0 {
+		data.Include = nil
+	}
+
+	if data.Require != nil && len(*data.Require) == 0 {
+		data.Require = nil
+	}
+
+	if data.Exclude != nil && len(*data.Exclude) == 0 {
+		data.Exclude = nil
+	}
 
 	return diags
 }
