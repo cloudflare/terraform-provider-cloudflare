@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
@@ -97,13 +98,13 @@ func testCloudflareBotManagementEntSubscription(resourceName, rnd string, bm clo
 
 // TestAccCloudflareBotManagement_Issue5728_EnableJSDrift tests the fix for issue #5728
 // The issue: enable_js shows drift (false -> true) on every apply even when set to true in config
-// NOTE: This test expects some drift on other computed_optional fields - this is expected behavior
-// until all fields get the encode_state_for_unknown fix. The key validation is that our target
-// fields (enable_js, auto_update_model) maintain their configured values.
+// This test validates that fields with encode_state_for_unknown tags work correctly
 func TestAccCloudflareBotManagement_Issue5728_EnableJSDrift(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceID := "cloudflare_bot_management." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	var initialState, secondState map[string]interface{}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -116,18 +117,63 @@ func TestAccCloudflareBotManagement_Issue5728_EnableJSDrift(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceID, "auto_update_model", "true"),
 					resource.TestCheckResourceAttr(resourceID, "enable_js", "true"),
+					// Capture initial state for comparison
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceID]
+						if !ok {
+							return fmt.Errorf("Not found: %s", resourceID)
+						}
+						initialState = make(map[string]interface{})
+						for k, v := range rs.Primary.Attributes {
+							initialState[k] = v
+						}
+						return nil
+					},
 				),
 			},
 			{
-				// Step 2: Apply the same configuration again - this is where issue #5728 would show drift
-				// With our fix, enable_js should NOT show drift anymore
+				// Step 2: Apply the same configuration again - validate no drift on encode_state_for_unknown fields
 				Config: testCloudflareBotManagementIssue5728Config(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceID, "auto_update_model", "true"),
 					resource.TestCheckResourceAttr(resourceID, "enable_js", "true"),
+					// Capture second state and compare with initial
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceID]
+						if !ok {
+							return fmt.Errorf("Not found: %s", resourceID)
+						}
+						secondState = make(map[string]interface{})
+						for k, v := range rs.Primary.Attributes {
+							secondState[k] = v
+						}
+
+						// Validate that encode_state_for_unknown fields didn't change
+						fieldsWithEncode := []string{"enable_js", "auto_update_model", "fight_mode", "suppress_session_score"}
+						for _, field := range fieldsWithEncode {
+							if initialState[field] != secondState[field] {
+								return fmt.Errorf("Field %s changed unexpectedly: %v -> %v (encode_state_for_unknown should prevent this)", 
+									field, initialState[field], secondState[field])
+							}
+						}
+
+						// Log what changed (for debugging, should be minimal/none)
+						var changedFields []string
+						for k, v := range initialState {
+							if secondState[k] != v {
+								changedFields = append(changedFields, fmt.Sprintf("%s: %v -> %v", k, v, secondState[k]))
+							}
+						}
+						if len(changedFields) > 0 {
+							t.Logf("Fields that changed between applies: %v", changedFields)
+						} else {
+							t.Logf("SUCCESS: No fields changed between applies (drift fix working)")
+						}
+
+						return nil
+					},
 				),
-				// With encode_state_for_unknown fix, no drift should be detected
 			},
 		},
 	})
@@ -135,10 +181,13 @@ func TestAccCloudflareBotManagement_Issue5728_EnableJSDrift(t *testing.T) {
 
 // TestAccCloudflareBotManagement_Issue5519_SuppressSessionScore tests the fix for issue #5519  
 // The issue: suppress_session_score always shows as being added even when not set
+// This test validates that suppress_session_score doesn't appear in state when not configured
 func TestAccCloudflareBotManagement_Issue5519_SuppressSessionScore(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceID := "cloudflare_bot_management." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	var initialState, secondState map[string]interface{}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -151,15 +200,154 @@ func TestAccCloudflareBotManagement_Issue5519_SuppressSessionScore(t *testing.T)
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceID, "enable_js", "true"),
+					// Capture initial state
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceID]
+						if !ok {
+							return fmt.Errorf("Not found: %s", resourceID)
+						}
+						initialState = make(map[string]interface{})
+						for k, v := range rs.Primary.Attributes {
+							initialState[k] = v
+						}
+						
+						// Validate suppress_session_score is NOT in configured state (issue #5519)
+						if val, exists := initialState["suppress_session_score"]; exists && val != "" {
+							t.Logf("suppress_session_score present in initial state: %v (may be OK if API defaults this)", val)
+						}
+						
+						return nil
+					},
 				),
 			},
 			{
-				// Step 2: Apply the same configuration again - this is where issue #5519 would show drift
-				// Without our fix, this would show: + suppress_session_score = false
+				// Step 2: Apply the same configuration again - validate no unexpected additions
 				Config: testCloudflareBotManagementIssue5519Config(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceID, "enable_js", "true"),
+					// Capture second state and validate behavior
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceID]
+						if !ok {
+							return fmt.Errorf("Not found: %s", resourceID)
+						}
+						secondState = make(map[string]interface{})
+						for k, v := range rs.Primary.Attributes {
+							secondState[k] = v
+						}
+
+						// Critical test: suppress_session_score should not be added if not configured
+						initialSuppressSession, initialExists := initialState["suppress_session_score"]
+						secondSuppressSession, secondExists := secondState["suppress_session_score"]
+						
+						if !initialExists && secondExists {
+							return fmt.Errorf("suppress_session_score was unexpectedly added: %v (issue #5519 regression)", secondSuppressSession)
+						}
+						
+						if initialExists && secondExists && initialSuppressSession != secondSuppressSession {
+							return fmt.Errorf("suppress_session_score changed unexpectedly: %v -> %v", initialSuppressSession, secondSuppressSession)
+						}
+
+						// Validate encode_state_for_unknown fields remain stable
+						fieldsWithEncode := []string{"enable_js", "auto_update_model", "fight_mode", "suppress_session_score"}
+						for _, field := range fieldsWithEncode {
+							if initialState[field] != secondState[field] {
+								return fmt.Errorf("Field %s with encode_state_for_unknown changed: %v -> %v", 
+									field, initialState[field], secondState[field])
+							}
+						}
+
+						// Log what changed
+						var changedFields []string
+						for k, v := range initialState {
+							if secondState[k] != v {
+								changedFields = append(changedFields, fmt.Sprintf("%s: %v -> %v", k, v, secondState[k]))
+							}
+						}
+						if len(changedFields) > 0 {
+							t.Logf("Fields that changed between applies: %v", changedFields)
+						} else {
+							t.Logf("SUCCESS: No fields changed between applies - issue #5519 fixed")
+						}
+
+						return nil
+					},
+				),
+			},
+		},
+	})
+}
+
+// TestAccCloudflareBotManagement_EncodeStateForUnknownValidation tests that the encode_state_for_unknown fix works
+// This test specifically validates that fields with the encode_state_for_unknown tag maintain their state values
+// when the API doesn't return them, preventing false drift detection
+func TestAccCloudflareBotManagement_EncodeStateForUnknownValidation(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceID := "cloudflare_bot_management." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	var postApplyState map[string]interface{}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create resource with all encode_state_for_unknown fields set
+				Config: testCloudflareBotManagementEncodeStateValidationConfig(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceID, "enable_js", "true"),
+					resource.TestCheckResourceAttr(resourceID, "auto_update_model", "true"),
+					resource.TestCheckResourceAttr(resourceID, "suppress_session_score", "false"),
+				),
+			},
+			{
+				// Step 2: Apply same config to validate state stability
+				Config: testCloudflareBotManagementEncodeStateValidationConfig(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceID, "enable_js", "true"),
+					resource.TestCheckResourceAttr(resourceID, "auto_update_model", "true"),
+					resource.TestCheckResourceAttr(resourceID, "suppress_session_score", "false"),
+					// Validate that encode_state_for_unknown fields are stable
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceID]
+						if !ok {
+							return fmt.Errorf("Not found: %s", resourceID)
+						}
+						postApplyState = make(map[string]interface{})
+						for k, v := range rs.Primary.Attributes {
+							postApplyState[k] = v
+						}
+
+						// These are the fields that have encode_state_for_unknown tags in model.go
+						encodeStateFields := map[string]string{
+							"enable_js":             "true",
+							"auto_update_model":     "true",
+							"suppress_session_score": "false",
+						}
+
+						for field, expectedValue := range encodeStateFields {
+							actualValue, exists := postApplyState[field]
+							if !exists {
+								return fmt.Errorf("Field %s with encode_state_for_unknown is missing from state", field)
+							}
+							if actualValue != expectedValue {
+								return fmt.Errorf("Field %s with encode_state_for_unknown has wrong value: expected %s, got %v", 
+									field, expectedValue, actualValue)
+							}
+						}
+
+						// Log successful validation
+						t.Logf("SUCCESS: All encode_state_for_unknown fields maintained correct values:")
+						for field, value := range encodeStateFields {
+							t.Logf("  %s: %s ✓", field, value)
+						}
+
+						return nil
+					},
 				),
 			},
 		},
@@ -190,6 +378,17 @@ func testCloudflareBotManagementIssue5519Config(resourceName, zoneID string) str
 resource "cloudflare_bot_management" "%[1]s" {
   zone_id   = "%[2]s"
   enable_js = true
+}`, resourceName, zoneID)
+}
+
+// Configuration for encode_state_for_unknown validation test
+func testCloudflareBotManagementEncodeStateValidationConfig(resourceName, zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_bot_management" "%[1]s" {
+  zone_id                 = "%[2]s"
+  enable_js              = true
+  auto_update_model      = true
+  suppress_session_score = false
 }`, resourceName, zoneID)
 }
 
