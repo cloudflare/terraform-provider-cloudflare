@@ -7,9 +7,6 @@ resource "cloudflare_zero_trust_access_policy" "%[1]s_deny" {
       email = "blocked@example.com"
     }
   }]
-  approval_required              = "false"
-  isolation_required             = "false"
-  purpose_justification_required = "false"
 }
 
 resource "cloudflare_zero_trust_access_policy" "%[1]s_bypass" {
@@ -21,7 +18,4 @@ resource "cloudflare_zero_trust_access_policy" "%[1]s_bypass" {
       ip = "127.0.0.1/32"
     }
   }]
-  approval_required              = "false"
-  isolation_required             = "false"
-  purpose_justification_required = "false"
 }

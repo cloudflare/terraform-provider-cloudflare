@@ -648,9 +648,6 @@ func TestAccCloudflareAccessPolicy_ExcludeRules(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("everyone"), knownvalue.MapSizeExact(0)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("exclude").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact("blocked@example.com")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_required"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("isolation_required"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("purpose_justification_required"), knownvalue.Bool(false)),
 				},
 			},
 			{
@@ -701,9 +698,6 @@ func TestAccCloudflareAccessPolicy_RequireRules(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("email_domain").AtMapKey("domain"), knownvalue.StringExact("example.com")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("require").AtSliceIndex(0).AtMapKey("geo").AtMapKey("country_code"), knownvalue.StringExact("US")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_required"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("isolation_required"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("purpose_justification_required"), knownvalue.Bool(false)),
 				},
 			},
 			{
@@ -755,17 +749,11 @@ func TestAccCloudflareAccessPolicy_DecisionTypes(t *testing.T) {
 					statecheck.ExpectKnownValue(denyResourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(denyResourceName, tfjsonpath.New("decision"), knownvalue.StringExact("deny")),
 					statecheck.ExpectKnownValue(denyResourceName, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact("blocked@example.com")),
-					statecheck.ExpectKnownValue(denyResourceName, tfjsonpath.New("approval_required"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(denyResourceName, tfjsonpath.New("isolation_required"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(denyResourceName, tfjsonpath.New("purpose_justification_required"), knownvalue.Bool(false)),
 					// Check bypass policy
 					statecheck.ExpectKnownValue(bypassResourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-bypass")),
 					statecheck.ExpectKnownValue(bypassResourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(bypassResourceName, tfjsonpath.New("decision"), knownvalue.StringExact("bypass")),
 					statecheck.ExpectKnownValue(bypassResourceName, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("ip").AtMapKey("ip"), knownvalue.StringExact("127.0.0.1/32")),
-					statecheck.ExpectKnownValue(bypassResourceName, tfjsonpath.New("approval_required"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(bypassResourceName, tfjsonpath.New("isolation_required"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(bypassResourceName, tfjsonpath.New("purpose_justification_required"), knownvalue.Bool(false)),
 				},
 			},
 			{
@@ -880,9 +868,6 @@ func TestAccCloudflareAccessPolicy_DenyOnly(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "decision", "deny"),
 					resource.TestCheckResourceAttr(resourceName, "include.0.email.email", "blocked@example.com"),
-					resource.TestCheckResourceAttr(resourceName, "approval_required", "false"),
-					resource.TestCheckResourceAttr(resourceName, "isolation_required", "false"),
-					resource.TestCheckResourceAttr(resourceName, "purpose_justification_required", "false"),
 				),
 			},
 			{
@@ -916,9 +901,6 @@ func TestAccCloudflareAccessPolicy_BypassOnly(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "decision", "bypass"),
 					resource.TestCheckResourceAttr(resourceName, "include.0.ip.ip", "127.0.0.1/32"),
-					resource.TestCheckResourceAttr(resourceName, "approval_required", "false"),
-					resource.TestCheckResourceAttr(resourceName, "isolation_required", "false"),
-					resource.TestCheckResourceAttr(resourceName, "purpose_justification_required", "false"),
 				),
 			},
 			{

@@ -24,7 +24,4 @@ resource "cloudflare_zero_trust_access_policy" "%[1]s" {
       id = cloudflare_zero_trust_access_group.%[1]s.id
     }
   }]
-  approval_required              = "false"
-  isolation_required             = "false"
-  purpose_justification_required = "false"
 }

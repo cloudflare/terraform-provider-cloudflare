@@ -2,14 +2,15 @@ package zero_trust_access_application
 
 import (
 	"context"
+	"regexp"
+	"slices"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"regexp"
-	"slices"
 )
 
 var (
@@ -136,5 +137,35 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 		modifyNestedPoliciesPlan(ctx, planApp)
 	}
 
+	// Handle tags order normalization - API returns alphabetically sorted tags
+	// but we want to preserve the user's configuration order
+	if stateApp != nil && !planApp.Tags.IsNull() && !stateApp.Tags.IsNull() && !planApp.Tags.IsUnknown() {
+		normalizeTagsOrder(ctx, &planApp.Tags, stateApp.Tags)
+	}
+
 	res.Plan.Set(ctx, &planApp)
+}
+
+func normalizeTagsOrder(ctx context.Context, planTags *customfield.List[types.String], stateTags customfield.List[types.String]) {
+	var stateStrings, planStrings []string
+
+	for _, elem := range stateTags.Elements() {
+		if str, ok := elem.(types.String); ok && !str.IsNull() && !str.IsUnknown() {
+			stateStrings = append(stateStrings, str.ValueString())
+		}
+	}
+
+	for _, elem := range planTags.Elements() {
+		if str, ok := elem.(types.String); ok && !str.IsNull() && !str.IsUnknown() {
+			planStrings = append(planStrings, str.ValueString())
+		}
+	}
+
+	if len(stateStrings) == len(planStrings) {
+		slices.Sort(stateStrings)
+		slices.Sort(planStrings)
+		if slices.Equal(stateStrings, planStrings) {
+			*planTags = stateTags
+		}
+	}
 }

@@ -12,7 +12,4 @@ resource "cloudflare_zero_trust_access_policy" "%[1]s" {
   include = [{
     any_valid_service_token = {}
   }]
-  approval_required              = "false"
-  isolation_required             = "false"
-  purpose_justification_required = "false"
 }
