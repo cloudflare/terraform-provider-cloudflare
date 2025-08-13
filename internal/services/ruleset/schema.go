@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -120,7 +121,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"action": schema.StringAttribute{
-							Description: "The action to perform when the rule matches.\nAvailable values: \"block\", \"challenge\", \"compress_response\", \"execute\", \"js_challenge\", \"log\", \"managed_challenge\", \"redirect\", \"rewrite\", \"route\", \"score\", \"serve_error\", \"set_config\", \"skip\", \"set_cache_settings\", \"log_custom_field\", \"ddos_dynamic\", \"force_connection_close\".",
+							Description: "The action to perform when the rule matches.\nAvailable values: \"block\", \"challenge\", \"compress_response\", \"ddos_dynamic\", \"execute\", \"force_connection_close\", \"js_challenge\", \"log\", \"log_custom_field\", \"managed_challenge\", \"redirect\", \"rewrite\", \"route\", \"score\", \"serve_error\", \"set_cache_settings\", \"set_config\", \"skip\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -373,16 +374,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "Map of request headers to modify.",
 									Optional:    true,
 									CustomType:  customfield.NewNestedObjectMapType[RulesetRulesActionParametersHeadersModel](ctx),
+									Validators: []validator.Map{
+										mapvalidator.SizeAtLeast(1),
+									},
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"operation": schema.StringAttribute{
-												Description: `Available values: "remove", "add", "set".`,
+												Description: `Available values: "add", "set", "remove".`,
 												Required:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(
-														"remove",
 														"add",
 														"set",
+														"remove",
 													),
 												},
 											},
