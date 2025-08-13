@@ -7,7 +7,6 @@ import (
 	"math"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
@@ -475,27 +474,37 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "Increment contains the delta to change the score and can be either positive or negative.",
 									Optional:    true,
 								},
-								"content": schema.StringAttribute{
-									Description: "Error response content.",
+								"asset_name": schema.StringAttribute{
+									Description: "The name of a custom asset to serve as the response.",
 									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.LengthAtLeast(1),
+									},
+								},
+								"content": schema.StringAttribute{
+									Description: "The response content.",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.LengthAtLeast(1),
+									},
 								},
 								"content_type": schema.StringAttribute{
-									Description: "Content-type header to set with the response.\nAvailable values: \"application/json\", \"text/xml\", \"text/plain\", \"text/html\".",
+									Description: "The content type header to set with the response.\nAvailable values: \"application/json\", \"text/html\", \"text/plain\", \"text/xml\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
 											"application/json",
-											"text/xml",
-											"text/plain",
 											"text/html",
+											"text/plain",
+											"text/xml",
 										),
 									},
 								},
-								"status_code": schema.Float64Attribute{
+								"status_code": schema.Int64Attribute{
 									Description: "The status code to use for the error.",
 									Optional:    true,
-									Validators: []validator.Float64{
-										float64validator.Between(400, 999),
+									Validators: []validator.Int64{
+										int64validator.Between(400, 999),
 									},
 								},
 								"automatic_https_rewrites": schema.BoolAttribute{
