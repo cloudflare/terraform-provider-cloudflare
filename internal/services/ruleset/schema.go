@@ -451,11 +451,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Description: "Override the resolved hostname.",
 											Optional:    true,
 										},
-										"port": schema.Float64Attribute{
+										"port": schema.Int64Attribute{
 											Description: "Override the destination port.",
 											Optional:    true,
-											Validators: []validator.Float64{
-												float64validator.Between(1, 65535),
+											Validators: []validator.Int64{
+												int64validator.Between(1, 65535),
 											},
 										},
 									},
