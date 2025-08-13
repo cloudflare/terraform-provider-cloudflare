@@ -61,7 +61,7 @@ func testSweepCloudflareManagedTransforms(r string) error {
 
 func makeTransform(id string, enabled bool) map[string]string {
 	return map[string]string{
-		"id": id,
+		"id":      id,
 		"enabled": strconv.FormatBool(enabled),
 	}
 }
@@ -247,6 +247,12 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 				),
 			},
 			// See "Note about state import checks" comment in the end of the file for why we don't test that here.
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s", zoneID),
+			},
 		},
 	})
 }
@@ -311,9 +317,9 @@ func TestAccCloudflareManagedHeaders_Basic(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -364,9 +370,9 @@ func TestAccCloudflareManagedHeaders_RequestOnly(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -392,9 +398,9 @@ func TestAccCloudflareManagedHeaders_ResponseOnly(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -420,9 +426,9 @@ func TestAccCloudflareManagedHeaders_VisitorLocationHeaders(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -472,9 +478,9 @@ func TestAccCloudflareManagedHeaders_RemoveVisitorIP(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -525,9 +531,9 @@ func TestAccCloudflareManagedHeaders_MultipleRequestHeaders(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -622,7 +628,7 @@ func TestAccCloudflareManagedHeaders_ConflictDetection(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareManagedTransformsConflictTest(rnd, zoneID),
+				Config:      testAccCheckCloudflareManagedTransformsConflictTest(rnd, zoneID),
 				ExpectError: regexp.MustCompile("404"),
 			},
 		},
@@ -667,9 +673,9 @@ func TestAccCloudflareManagedHeaders_NonConflictingTransforms(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -701,9 +707,9 @@ func TestAccCloudflareManagedHeaders_Enterprise(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
