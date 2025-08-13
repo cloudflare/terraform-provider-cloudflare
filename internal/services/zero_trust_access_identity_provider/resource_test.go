@@ -785,6 +785,76 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_IdentityUpdateBehaviorValues(t
 	}
 }
 
+func TestAccCloudflareAccessIdentityProvider_PlanModifiers_SCIMSecretPersistence(t *testing.T) {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_identity_provider." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZeroTrustAccessIdentityProviderDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("scim_config").AtMapKey("secret"), knownvalue.NotNull()),
+				},
+			},
+			{
+				// Update a non-SCIM field to test that secret is preserved in state
+				Config: testAccCheckCloudflareAccessIdentityProviderAzureADUpdated(accountID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("scim_config").AtMapKey("secret"), knownvalue.NotNull()),
+				},
+			},
+			{
+				// Ensures no diff on plan - verifies plan modifier keeps secret from showing as change
+				Config:   testAccCheckCloudflareAccessIdentityProviderAzureADUpdated(accountID, rnd),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessIdentityProvider_Normalizers_SCIMBaseURLPersistence(t *testing.T) {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_identity_provider." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZeroTrustAccessIdentityProviderDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("scim_config").AtMapKey("scim_base_url"), knownvalue.NotNull()),
+				},
+			},
+			{
+				// Update a non-SCIM field to test that scim_base_url is preserved from state
+				Config: testAccCheckCloudflareAccessIdentityProviderAzureADUpdated(accountID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("scim_config").AtMapKey("scim_base_url"), knownvalue.NotNull()),
+				},
+			},
+			{
+				// Ensures no diff on plan - verifies normalizer keeps scim_base_url from showing as change
+				Config:   testAccCheckCloudflareAccessIdentityProviderAzureADUpdated(accountID, rnd),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareAccessIdentityProviderOneTimePin(name string, identifier *cloudflare.ResourceContainer) string {
 	return acctest.LoadTestCase("accessidentityprovideronetimepin.tf", name, identifier.Type, identifier.Identifier)
 }

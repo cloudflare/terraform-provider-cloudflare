@@ -79,6 +79,4 @@ resource "cloudflare_zero_trust_access_policy" "%[1]s" {
     }
   }]
   isolation_required             = "true"
-  approval_required              = "false"
-  purpose_justification_required = "false"
 }

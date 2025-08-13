@@ -1000,3 +1000,43 @@ func TestAccCloudflareAccessGroup_IPRangeRules(t *testing.T) {
 		},
 	})
 }
+
+func TestAccCloudflareAccessGroup_ImportEmptyArrayToNull(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigMinimal(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
+				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+			},
+			{
+				Config: testAccCloudflareAccessGroupConfigMinimal(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude"), knownvalue.Null()),
+				},
+			},
+			{
+				Config:   testAccCloudflareAccessGroupConfigMinimal(rnd, accountID),
+				PlanOnly: true,
+			},
+		},
+	})
+}

@@ -2621,3 +2621,197 @@ func TestAccCloudflareRuleset_LogCustomFieldRules(t *testing.T) {
 		},
 	})
 }
+
+func TestAccCloudflareRuleset_RedirectRules(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionCreate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("redirect"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"from_list": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"key":  knownvalue.StringExact("http.request.full_uri"),
+											"name": knownvalue.StringExact("my_list"),
+										}),
+										"from_value": knownvalue.Null(),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("redirect"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"from_list": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"key":  knownvalue.StringExact("http.request.full_uri"),
+										"name": knownvalue.StringExact("my_list"),
+									}),
+									"from_value": knownvalue.Null(),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionReplace,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("redirect"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"from_list": knownvalue.Null(),
+										"from_value": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"preserve_query_string": knownvalue.Bool(false),
+											"status_code":           knownvalue.Null(),
+											"target_url": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"value":      knownvalue.StringExact("https://example.com"),
+												"expression": knownvalue.Null(),
+											}),
+										}),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("redirect"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"from_list": knownvalue.Null(),
+									"from_value": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"preserve_query_string": knownvalue.Bool(false),
+										"status_code":           knownvalue.Null(),
+										"target_url": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"value":      knownvalue.StringExact("https://example.com"),
+											"expression": knownvalue.Null(),
+										}),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("3.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("redirect"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"from_list": knownvalue.Null(),
+									"from_value": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"preserve_query_string": knownvalue.Bool(false),
+										"status_code":           knownvalue.Null(),
+										"target_url": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"value":      knownvalue.StringExact("https://example.com"),
+											"expression": knownvalue.Null(),
+										}),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				ConfigFile:      config.TestNameFile("4.tf"),
+				ConfigVariables: configVariables,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(
+							"cloudflare_ruleset.my_ruleset",
+							plancheck.ResourceActionUpdate,
+						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules"),
+							knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"action": knownvalue.StringExact("redirect"),
+									"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"from_list": knownvalue.Null(),
+										"from_value": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"preserve_query_string": knownvalue.Bool(true),
+											"status_code":           knownvalue.Int64Exact(301),
+											"target_url": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"value":      knownvalue.Null(),
+												"expression": knownvalue.StringExact("concat(\"https://m.example.com\", http.request.uri.path)"),
+											}),
+										}),
+									}),
+								}),
+							}),
+						),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("redirect"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"from_list": knownvalue.Null(),
+									"from_value": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"preserve_query_string": knownvalue.Bool(true),
+										"status_code":           knownvalue.Int64Exact(301),
+										"target_url": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"value":      knownvalue.Null(),
+											"expression": knownvalue.StringExact("concat(\"https://m.example.com\", http.request.uri.path)"),
+										}),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}

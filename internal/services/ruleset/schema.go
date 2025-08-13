@@ -320,11 +320,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"key": schema.StringAttribute{
 											Description: "Expression that evaluates to the list lookup key.",
-											Optional:    true,
+											Required:    true,
 										},
 										"name": schema.StringAttribute{
 											Description: "The name of the list to match against.",
-											Optional:    true,
+											Required:    true,
 										},
 									},
 								},
@@ -335,13 +335,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"preserve_query_string": schema.BoolAttribute{
 											Description: "Keep the query string of the original request.",
+											Computed:    true,
 											Optional:    true,
+											Default:     booldefault.StaticBool(false),
 										},
-										"status_code": schema.Float64Attribute{
+										"status_code": schema.Int64Attribute{
 											Description: "The status code to be used for the redirect.\nAvailable values: 301, 302, 303, 307, 308.",
 											Optional:    true,
-											Validators: []validator.Float64{
-												float64validator.OneOf(
+											Validators: []validator.Int64{
+												int64validator.OneOf(
 													301,
 													302,
 													303,
@@ -352,7 +354,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"target_url": schema.SingleNestedAttribute{
 											Description: "The URL to redirect the request to.",
-											Optional:    true,
+											Required:    true,
 											CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersFromValueTargetURLModel](ctx),
 											Attributes: map[string]schema.Attribute{
 												"value": schema.StringAttribute{

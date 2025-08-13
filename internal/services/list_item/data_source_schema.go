@@ -38,10 +38,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.",
 				Computed:    true,
 			},
-			"modified_on": schema.StringAttribute{
-				Description: "The RFC 3339 timestamp of when the list was last modified.",
-				Computed:    true,
-			},
 			"hostname": schema.SingleNestedAttribute{
 				Description: "Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-).",
 				Computed:    true,
