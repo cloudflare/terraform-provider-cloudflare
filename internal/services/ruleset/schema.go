@@ -7,9 +7,9 @@ import (
 	"math"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -120,7 +120,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"action": schema.StringAttribute{
-							Description: "The action to perform when the rule matches.\nAvailable values: \"block\", \"challenge\", \"compress_response\", \"execute\", \"js_challenge\", \"log\", \"managed_challenge\", \"redirect\", \"rewrite\", \"route\", \"score\", \"serve_error\", \"set_config\", \"skip\", \"set_cache_settings\", \"log_custom_field\", \"ddos_dynamic\", \"force_connection_close\".",
+							Description: "The action to perform when the rule matches.\nAvailable values: \"block\", \"challenge\", \"compress_response\", \"ddos_dynamic\", \"execute\", \"force_connection_close\", \"js_challenge\", \"log\", \"log_custom_field\", \"managed_challenge\", \"redirect\", \"rewrite\", \"route\", \"score\", \"serve_error\", \"set_cache_settings\", \"set_config\", \"skip\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -373,16 +373,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "Map of request headers to modify.",
 									Optional:    true,
 									CustomType:  customfield.NewNestedObjectMapType[RulesetRulesActionParametersHeadersModel](ctx),
+									Validators: []validator.Map{
+										mapvalidator.SizeAtLeast(1),
+									},
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"operation": schema.StringAttribute{
-												Description: `Available values: "remove", "add", "set".`,
+												Description: `Available values: "add", "set", "remove".`,
 												Required:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(
-														"remove",
 														"add",
 														"set",
+														"remove",
 													),
 												},
 											},
@@ -447,11 +450,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Description: "Override the resolved hostname.",
 											Optional:    true,
 										},
-										"port": schema.Float64Attribute{
+										"port": schema.Int64Attribute{
 											Description: "Override the destination port.",
 											Optional:    true,
-											Validators: []validator.Float64{
-												float64validator.Between(1, 65535),
+											Validators: []validator.Int64{
+												int64validator.Between(1, 65535),
 											},
 										},
 									},
@@ -471,27 +474,37 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "Increment contains the delta to change the score and can be either positive or negative.",
 									Optional:    true,
 								},
-								"content": schema.StringAttribute{
-									Description: "Error response content.",
+								"asset_name": schema.StringAttribute{
+									Description: "The name of a custom asset to serve as the response.",
 									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.LengthAtLeast(1),
+									},
+								},
+								"content": schema.StringAttribute{
+									Description: "The response content.",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.LengthAtLeast(1),
+									},
 								},
 								"content_type": schema.StringAttribute{
-									Description: "Content-type header to set with the response.\nAvailable values: \"application/json\", \"text/xml\", \"text/plain\", \"text/html\".",
+									Description: "The content type header to set with the response.\nAvailable values: \"application/json\", \"text/html\", \"text/plain\", \"text/xml\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
 											"application/json",
-											"text/xml",
-											"text/plain",
 											"text/html",
+											"text/plain",
+											"text/xml",
 										),
 									},
 								},
-								"status_code": schema.Float64Attribute{
+								"status_code": schema.Int64Attribute{
 									Description: "The status code to use for the error.",
 									Optional:    true,
-									Validators: []validator.Float64{
-										float64validator.Between(400, 999),
+									Validators: []validator.Int64{
+										int64validator.Between(400, 999),
 									},
 								},
 								"automatic_https_rewrites": schema.BoolAttribute{
