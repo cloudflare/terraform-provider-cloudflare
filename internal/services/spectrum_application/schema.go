@@ -57,22 +57,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"ip_firewall": schema.BoolAttribute{
-				Description: "Enables IP Access Rules for this application.\nNotes: Only available for TCP applications.",
-				Optional:    true,
-			},
-			"tls": schema.StringAttribute{
-				Description: "The type of TLS termination associated with the application.\nAvailable values: \"off\", \"flexible\", \"full\", \"strict\".",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"off",
-						"flexible",
-						"full",
-						"strict",
-					),
-				},
-			},
 			"origin_direct": schema.ListAttribute{
 				Description: "List of origin IP addresses. Array may contain multiple IP addresses for load balancing.",
 				Optional:    true,
@@ -126,6 +110,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
+			"ip_firewall": schema.BoolAttribute{
+				Description: "Enables IP Access Rules for this application.\nNotes: Only available for TCP applications.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"proxy_protocol": schema.StringAttribute{
 				Description: "Enables Proxy Protocol to the origin. Refer to [Enable Proxy protocol](https://developers.cloudflare.com/spectrum/getting-started/proxy-protocol/) for implementation details on PROXY Protocol V1, PROXY Protocol V2, and Simple Proxy Protocol.\nAvailable values: \"off\", \"v1\", \"v2\", \"simple\".",
 				Computed:    true,
@@ -136,6 +126,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"v1",
 						"v2",
 						"simple",
+					),
+				},
+				Default: stringdefault.StaticString("off"),
+			},
+			"tls": schema.StringAttribute{
+				Description: "The type of TLS termination associated with the application.\nAvailable values: \"off\", \"flexible\", \"full\", \"strict\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"off",
+						"flexible",
+						"full",
+						"strict",
 					),
 				},
 				Default: stringdefault.StaticString("off"),
