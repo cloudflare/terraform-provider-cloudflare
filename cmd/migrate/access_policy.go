@@ -1,8 +1,10 @@
 package main
 
 import (
+	"log"
 	"strings"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
@@ -29,12 +31,50 @@ func transformAccessPolicyBlock(block *hclwrite.Block) {
 			continue // Attribute doesn't exist
 		}
 
-		tokens := attr.Expr().BuildTokens(nil)
-		transformedTokens := transformBooleanAttributesInList(tokens)
+		transformedTokens := transformBooleanAttributesInList2(*attr)
 		if transformedTokens != nil {
 			block.Body().SetAttributeRaw(attrName, transformedTokens)
 		}
 	}
+}
+
+func transformBooleanAttributesInList2(attr hclwrite.Attribute) hclwrite.Tokens {
+	expr, d := ast.WriteExpr2Expr(*attr.Expr())
+	log.Println(d)
+
+	tup, ok := expr.(*hclsyntax.TupleConsExpr)
+	if !ok {
+		return nil
+	}
+	for _, expr := range tup.Exprs {
+		obj, ok := expr.(*hclsyntax.ObjectConsExpr)
+		if !ok {
+			return nil
+		}
+		acc := []hclsyntax.ObjectConsItem{}
+		for _, item := range obj.Items {
+			key, _ := ast.Expr2S(item.KeyExpr)
+			if isBooleanPolicyAttribute(key) {
+				val, _ := ast.Expr2S(item.ValueExpr)
+				if val == "false" {
+					continue
+				}
+
+				acc = append(acc, hclsyntax.ObjectConsItem{
+					KeyExpr:   item.KeyExpr,
+					ValueExpr: &hclsyntax.ObjectConsExpr{},
+				})
+			} else {
+				acc = append(acc, item)
+			}
+		}
+
+		obj.Items = acc
+	}
+
+	write, d := ast.Expr2WriteExpr(tup)
+	log.Println(d)
+	return write.BuildTokens(nil)
 }
 
 // transformBooleanAttributesInList transforms boolean attributes within a condition list

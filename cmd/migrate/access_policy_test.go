@@ -12,30 +12,31 @@ func TestTransformAccessPolicy(t *testing.T) {
 		name     string
 		input    string
 		expected string
-	}{ /*
-					{
-						name: "simple_email_transform",
-						input: `resource "cloudflare_zero_trust_access_policy" "test" {
-			  account_id = "abc123"
-			  name       = "Test Policy"
-			  decision   = "allow"
+	}{
+		// {
+		// 	name: "simple_email_transform",
+		// 	input: `resource "cloudflare_zero_trust_access_policy" "test" {
+		// 	  account_id = "abc123"
+		// 	  name       = "Test Policy"
+		// 	  decision   = "allow"
 
-			  include = [{
-			    email = ["test@example.com", "admin@example.com"]
-			  }]
-			}`,
-						expected: `resource "cloudflare_zero_trust_access_policy" "test" {
-			  account_id = "abc123"
-			  name       = "Test Policy"
-			  decision   = "allow"
+		// 	  include = [{
+		// 	    email = ["test@example.com", "admin@example.com"]
+		// 	  }]
+		// 	}`,
+		// 	expected: `resource "cloudflare_zero_trust_access_policy" "test" {
+		// 	  account_id = "abc123"
+		// 	  name       = "Test Policy"
+		// 	  decision   = "allow"
 
-			  include = [{
-			    email = { email = "test@example.com" }
-			  }, {
-			  	email = { email =  "admin@example.com" }
-			  }]
-			}`,
-					},
+		// 	  include = [{
+		// 	    email = { email = "test@example.com" }
+		// 	  }, {
+		// 	  	email = { email =  "admin@example.com" }
+		// 	  }]
+		// 	}`,
+		// },
+		/*
 					{
 						name: "multiple_conditions",
 						input: `resource "cloudflare_zero_trust_access_policy" "test" {
@@ -77,7 +78,7 @@ func TestTransformAccessPolicy(t *testing.T) {
   account_id = "abc123"
   name       = "Test Policy"
   decision   = "allow"
-  
+
   include = [{
     everyone = true
   }]
@@ -86,7 +87,7 @@ func TestTransformAccessPolicy(t *testing.T) {
   account_id = "abc123"
   name       = "Test Policy"
   decision   = "allow"
-  
+
   include = [{
     everyone = {}
   }]
