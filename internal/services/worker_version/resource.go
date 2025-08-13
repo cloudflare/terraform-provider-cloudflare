@@ -4,6 +4,7 @@ package worker_version
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
@@ -75,6 +76,17 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	modules := data.Modules
+	if modules != nil {
+		for _, mod := range *data.Modules {
+			content, err := readFile(mod.ContentFile.ValueString())
+			if err != nil {
+				resp.Diagnostics.AddError("Error reading file", err.Error())
+			}
+			mod.ContentBase64 = types.StringValue(base64.StdEncoding.EncodeToString([]byte(content)))
+		}
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -103,6 +115,7 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	data = &env.Result
+	data.Modules = modules
 	data.Assets = assets
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -121,6 +134,7 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
+	stateModules := data.Modules
 	assets := data.Assets // "assets" is not returned by the API, so preserve its state value
 
 	res := new(http.Response)
@@ -153,6 +167,30 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 	}
 	data = &env.Result
 	data.Assets = assets
+
+	// Refresh content_sha256 on each module
+	moduleNameMap := make(map[string]*WorkerVersionModulesModel, len(*stateModules))
+	for _, mod := range *stateModules {
+		moduleNameMap[mod.Name.ValueString()] = mod
+	}
+	for _, mod := range *data.Modules {
+		contentBase64 := mod.ContentBase64.ValueString()
+		content, err := base64.StdEncoding.DecodeString(contentBase64)
+		if err != nil {
+			resp.Diagnostics.AddError("Refresh Error", err.Error())
+			return
+		}
+		contentSHA256, err := calculateStringHash(string(content))
+		if err != nil {
+			resp.Diagnostics.AddError("Refresh Error", err.Error())
+			return
+		}
+
+		mod.ContentSHA256 = types.StringValue(contentSHA256)
+		if stateMod, ok := moduleNameMap[mod.Name.ValueString()]; ok {
+			mod.ContentFile = stateMod.ContentFile
+		}
+	}
 
 	// restore any secret_text `text` values from state since they aren't returned by the API
 	var state *WorkerVersionModel

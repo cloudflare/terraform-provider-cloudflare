@@ -2,7 +2,13 @@ package worker_version
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -13,6 +19,93 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
+
+func readFile(path string) (string, error) {
+	if strings.HasPrefix(path, "~/") {
+		dirname, err := os.UserHomeDir()
+		if err != nil {
+			return "", fmt.Errorf("could not expand home directory in path %s: %w", path, err)
+		}
+		path = filepath.Join(dirname, path[2:])
+	}
+
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return "", fmt.Errorf("could not read file %s: %w", path, err)
+	}
+
+	return string(content), nil
+}
+
+func calculateFileHash(filePath string) (string, error) {
+	if strings.HasPrefix(filePath, "~/") {
+		dirname, err := os.UserHomeDir()
+		if err != nil {
+			return "", fmt.Errorf("could not expand home directory in path %s: %w", filePath, err)
+		}
+		filePath = filepath.Join(dirname, filePath[2:])
+	}
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	hasher := sha256.New()
+	if _, err := io.Copy(hasher, file); err != nil {
+		return "", err
+	}
+
+	return hex.EncodeToString(hasher.Sum(nil)), nil
+}
+
+func calculateStringHash(content string) (string, error) {
+	hash := sha256.Sum256([]byte(content))
+	return hex.EncodeToString(hash[:]), nil
+}
+
+func ComputeSHA256HashOfContentFile() planmodifier.String {
+	return computeSHA256HashOfContentFileModifier{}
+}
+
+var _ planmodifier.String = &computeSHA256HashOfContentFileModifier{}
+
+type computeSHA256HashOfContentFileModifier struct{}
+
+func (c computeSHA256HashOfContentFileModifier) Description(_ context.Context) string {
+	return "Calculates the SHA-256 hash of the provided module content."
+}
+
+func (c computeSHA256HashOfContentFileModifier) MarkdownDescription(ctx context.Context) string {
+	return c.Description(ctx)
+}
+
+func (c computeSHA256HashOfContentFileModifier) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
+	// Don't modify during destroy
+	if req.Config.Raw.IsNull() {
+		return
+	}
+
+	contentFilePath := req.Path.ParentPath().AtName("content_file")
+
+	var contentFile types.String
+	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, contentFilePath, &contentFile)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if contentFile.IsNull() || contentFile.IsUnknown() {
+		return
+	}
+
+	contentSHA256, err := calculateFileHash(contentFile.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddAttributeError(req.Path, "Error computing SHA-256 hash", err.Error())
+		return
+	}
+
+	resp.PlanValue = types.StringValue(contentSHA256)
+}
 
 func UpdateSecretTextsFromState[T any](
 	ctx context.Context,
