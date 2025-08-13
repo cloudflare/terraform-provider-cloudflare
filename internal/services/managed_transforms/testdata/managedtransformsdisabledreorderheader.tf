@@ -7,7 +7,7 @@ resource "cloudflare_managed_transforms" "%[1]s" {
         },
         {
             id = "add_visitor_location_headers"
-            enabled = true
+            enabled = false
         }
     ]
 

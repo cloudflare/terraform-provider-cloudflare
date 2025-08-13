@@ -3,29 +3,26 @@ package managed_transforms_test
 import (
 	"context"
 	"fmt"
+	"regexp"
 
 	"os"
-	"regexp"
+	"strconv"
 	"testing"
 
-	"github.com/pkg/errors"
-
-	cfv0 "github.com/cloudflare/cloudflare-go"
 	cloudflare "github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/managed_transforms"
 	"github.com/cloudflare/cloudflare-go/v5/option"
-
-	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
-	"github.com/hashicorp/terraform-plugin-testing/statecheck"
-	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+	"github.com/pkg/errors"
 )
 
 func init() {
@@ -37,9 +34,10 @@ func init() {
 
 func testSweepCloudflareManagedTransforms(r string) error {
 	ctx := context.Background()
-	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if clientErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+	client := acctest.SharedClient()
+
+	if client == nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client"))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -47,48 +45,36 @@ func testSweepCloudflareManagedTransforms(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-	managedHeaders, err := client.ListZoneManagedHeaders(context.Background(), cfv0.ZoneIdentifier(zoneID), cfv0.ListManagedHeadersParams{
-		Status: "enabled",
-	})
-	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Zone Managed Headers: %s", err))
-	}
-
-	requestHeaders := make([]cfv0.ManagedHeader, 0, len(managedHeaders.ManagedRequestHeaders))
-	for _, h := range managedHeaders.ManagedRequestHeaders {
-		tflog.Info(ctx, fmt.Sprintf("Disabling Cloudflare Zone Managed Header ID: %s", h.ID))
-		h.Enabled = false
-		requestHeaders = append(requestHeaders, h)
-	}
-	responseHeaders := make([]cfv0.ManagedHeader, 0, len(managedHeaders.ManagedResponseHeaders))
-	for _, h := range managedHeaders.ManagedResponseHeaders {
-		tflog.Info(ctx, fmt.Sprintf("Disabling Cloudflare Zone Managed Header ID: %s", h.ID))
-		h.Enabled = false
-		responseHeaders = append(responseHeaders, h)
-	}
-
-	_, err = client.UpdateZoneManagedHeaders(context.Background(), cfv0.ZoneIdentifier(zoneID), cfv0.UpdateManagedHeadersParams{
-		ManagedHeaders: cfv0.ManagedHeaders{
-			ManagedRequestHeaders:  requestHeaders,
-			ManagedResponseHeaders: responseHeaders,
+	err := client.ManagedTransforms.Delete(
+		ctx,
+		managed_transforms.ManagedTransformDeleteParams{
+			ZoneID: cloudflare.F(zoneID),
 		},
-	})
+	)
+
 	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to disable Cloudflare Zone Managed Headers: %s", err))
+		tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare managed transforms: %s", err))
 	}
 
 	return nil
 }
 
-func TestAccCloudflareManagedHeaders(t *testing.T) {
-	t.Parallel()
+func makeTransform(id string, enabled bool) map[string]string {
+	return map[string]string{
+		"id": id,
+		"enabled": strconv.FormatBool(enabled),
+	}
+}
 
+func TestAccCloudflareManagedHeaders(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_managed_transforms." + rnd
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareManagedTransforms(rnd, zoneID),
@@ -96,16 +82,45 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.id", "add_true_client_ip_headers"),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.id", "add_visitor_location_headers"),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.enabled", "true"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_true_client_ip_headers", true),
+					),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_visitor_location_headers", true),
+					),
 
 					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.id", "add_security_headers"),
-					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.enabled", "true"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_response_headers.*",
+						makeTransform("add_security_headers", true),
+					),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareManagedTransformsReorder(rnd, zoneID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.%", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_true_client_ip_headers", true),
+					),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_visitor_location_headers", true),
+					),
+
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_response_headers.*",
+						makeTransform("add_security_headers", true),
+					),
 				),
 			},
 			{
@@ -114,15 +129,124 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.id", "add_true_client_ip_headers"),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.enabled", "true"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_true_client_ip_headers", true),
+					),
 
 					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.id", "add_security_headers"),
-					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.enabled", "true"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_response_headers.*",
+						makeTransform("add_security_headers", true),
+					),
 				),
 			},
+			{
+				Config: testAccCheckCloudflareManagedTransforms(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.%", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_true_client_ip_headers", true),
+					),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_visitor_location_headers", true),
+					),
+
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_response_headers.*",
+						makeTransform("add_security_headers", true),
+					),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config: testAccCheckCloudflareManagedTransformsDisabledHeader(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.%", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_true_client_ip_headers", true),
+					),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_visitor_location_headers", false),
+					),
+
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_response_headers.*",
+						makeTransform("add_security_headers", true),
+					),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareManagedTransformsEnabledReorderHeader(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.%", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_true_client_ip_headers", true),
+					),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_visitor_location_headers", true),
+					),
+
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_response_headers.*",
+						makeTransform("add_security_headers", true),
+					),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareManagedTransformsDisabledReorderHeader(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.%", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_true_client_ip_headers", true),
+					),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_visitor_location_headers", false),
+					),
+
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_response_headers.*",
+						makeTransform("add_security_headers", true),
+					),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareManagedTransformsRemovedHeader(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
+						makeTransform("add_true_client_ip_headers", true),
+					),
+
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_response_headers.*",
+						makeTransform("add_security_headers", true),
+					),
+				),
+			},
+			// See "Note about state import checks" comment in the end of the file for why we don't test that here.
 		},
 	})
 }
@@ -190,7 +314,6 @@ func TestAccCloudflareManagedHeaders_Basic(t *testing.T) {
 				ResourceName:        resourceName,
 				ImportState:         true,
 				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			},
 		},
 	})
@@ -216,12 +339,7 @@ func TestAccCloudflareManagedHeaders_Disabled(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers").AtSliceIndex(0).AtMapKey("enabled"), knownvalue.Bool(false)),
 				},
 			},
-			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
-			},
+			// See "Note about state import checks" comment in the end of the file for why we don't test that here.
 		},
 	})
 }
@@ -249,7 +367,6 @@ func TestAccCloudflareManagedHeaders_RequestOnly(t *testing.T) {
 				ResourceName:        resourceName,
 				ImportState:         true,
 				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			},
 		},
 	})
@@ -278,7 +395,6 @@ func TestAccCloudflareManagedHeaders_ResponseOnly(t *testing.T) {
 				ResourceName:        resourceName,
 				ImportState:         true,
 				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			},
 		},
 	})
@@ -307,7 +423,6 @@ func TestAccCloudflareManagedHeaders_VisitorLocationHeaders(t *testing.T) {
 				ResourceName:        resourceName,
 				ImportState:         true,
 				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			},
 		},
 	})
@@ -332,12 +447,6 @@ func TestAccCloudflareManagedHeaders_LeakedCredentialsCheck(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact("add_security_headers")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers").AtSliceIndex(0).AtMapKey("enabled"), knownvalue.Bool(true)),
 				},
-			},
-			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			},
 		},
 	})
@@ -366,7 +475,6 @@ func TestAccCloudflareManagedHeaders_RemoveVisitorIP(t *testing.T) {
 				ResourceName:        resourceName,
 				ImportState:         true,
 				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			},
 		},
 	})
@@ -391,12 +499,7 @@ func TestAccCloudflareManagedHeaders_ResponseHeaderDisabled(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers").AtSliceIndex(0).AtMapKey("enabled"), knownvalue.Bool(false)),
 				},
 			},
-			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
-			},
+			// See "Note about state import checks" comment in the end of the file for why we don't test that here.
 		},
 	})
 }
@@ -425,7 +528,6 @@ func TestAccCloudflareManagedHeaders_MultipleRequestHeaders(t *testing.T) {
 				ResourceName:        resourceName,
 				ImportState:         true,
 				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			},
 		},
 	})
@@ -445,20 +547,15 @@ func TestAccCloudflareManagedHeaders_MixedEnabledDisabled(t *testing.T) {
 				Config: testAccCheckCloudflareManagedTransformsMixedState(rnd, zoneID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact("add_visitor_location_headers")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers").AtSliceIndex(0).AtMapKey("enabled"), knownvalue.Bool(true)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers").AtSliceIndex(1).AtMapKey("id"), knownvalue.StringExact("add_true_client_ip_headers")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers").AtSliceIndex(1).AtMapKey("enabled"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact("add_true_client_ip_headers")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers").AtSliceIndex(0).AtMapKey("enabled"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers").AtSliceIndex(1).AtMapKey("id"), knownvalue.StringExact("add_visitor_location_headers")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers").AtSliceIndex(1).AtMapKey("enabled"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers").AtSliceIndex(0).AtMapKey("id"), knownvalue.StringExact("add_security_headers")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers").AtSliceIndex(0).AtMapKey("enabled"), knownvalue.Bool(true)),
 				},
 			},
-			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
-			},
+			// See "Note about state import checks" comment in the end of the file for why we don't test that here.
 		},
 	})
 }
@@ -510,12 +607,7 @@ func TestAccCloudflareManagedHeaders_UpdateTransforms(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_response_headers").AtSliceIndex(0).AtMapKey("enabled"), knownvalue.Bool(false)),
 				},
 			},
-			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
-			},
+			// See "Note about state import checks" comment in the end of the file for why we don't test that here.
 		},
 	})
 }
@@ -523,7 +615,6 @@ func TestAccCloudflareManagedHeaders_UpdateTransforms(t *testing.T) {
 func TestAccCloudflareManagedHeaders_ConflictDetection(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -532,15 +623,7 @@ func TestAccCloudflareManagedHeaders_ConflictDetection(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareManagedTransformsConflictTest(rnd, zoneID),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-				},
-			},
-			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+				ExpectError: regexp.MustCompile("404"),
 			},
 		},
 	})
@@ -587,7 +670,6 @@ func TestAccCloudflareManagedHeaders_NonConflictingTransforms(t *testing.T) {
 				ResourceName:        resourceName,
 				ImportState:         true,
 				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			},
 		},
 	})
@@ -622,7 +704,6 @@ func TestAccCloudflareManagedHeaders_Enterprise(t *testing.T) {
 				ResourceName:        resourceName,
 				ImportState:         true,
 				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			},
 		},
 	})
@@ -632,8 +713,24 @@ func testAccCheckCloudflareManagedTransforms(rnd, zoneID string) string {
 	return acctest.LoadTestCase("managedtransforms.tf", rnd, zoneID)
 }
 
+func testAccCheckCloudflareManagedTransformsReorder(rnd, zoneID string) string {
+	return acctest.LoadTestCase("managedtransformsreorder.tf", rnd, zoneID)
+}
+
 func testAccCheckCloudflareManagedTransformsRemovedHeader(rnd, zoneID string) string {
 	return acctest.LoadTestCase("managedtransformsremovedheader.tf", rnd, zoneID)
+}
+
+func testAccCheckCloudflareManagedTransformsDisabledHeader(rnd, zoneID string) string {
+	return acctest.LoadTestCase("managedtransformsdisabledheader.tf", rnd, zoneID)
+}
+
+func testAccCheckCloudflareManagedTransformsEnabledReorderHeader(rnd, zoneID string) string {
+	return acctest.LoadTestCase("managedtransformsenabledreorderheader.tf", rnd, zoneID)
+}
+
+func testAccCheckCloudflareManagedTransformsDisabledReorderHeader(rnd, zoneID string) string {
+	return acctest.LoadTestCase("managedtransformsdisabledreorderheader.tf", rnd, zoneID)
 }
 
 func testAccCheckCloudflareManagedTransformsDisabled(rnd, zoneID string) string {
@@ -652,7 +749,6 @@ func testAccCheckCloudflareManagedTransformsBasic(rnd, zoneID string) string {
 	return acctest.LoadTestCase("managedtransforms.tf", rnd, zoneID)
 }
 
-// Additional test config helper functions
 func testAccCheckCloudflareManagedTransformsVisitorLocation(rnd, zoneID string) string {
 	return acctest.LoadTestCase("managedtransformsvisitorlocation.tf", rnd, zoneID)
 }
@@ -732,3 +828,9 @@ func testAccCheckCloudflareManagedTransformsDestroy(s *terraform.State) error {
 
 	return nil
 }
+
+// Note about state import checks:
+//
+// We can't test the state import when there are disabled transformations: those won't exist in
+// the new state (and there's no way to change that in `ImportState()` because it doesn't have access
+// to the previous state), so terraform would see a state diff from an import.
