@@ -177,8 +177,8 @@ type RulesetRulesActionParametersURIQueryModel struct {
 }
 
 type RulesetRulesActionParametersOriginModel struct {
-	Host types.String  `tfsdk:"host" json:"host,optional"`
-	Port types.Float64 `tfsdk:"port" json:"port,optional"`
+	Host types.String `tfsdk:"host" json:"host,optional"`
+	Port types.Int64  `tfsdk:"port" json:"port,optional"`
 }
 
 type RulesetRulesActionParametersSNIModel struct {
