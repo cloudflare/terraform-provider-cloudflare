@@ -297,6 +297,6 @@ func (r *ZeroTrustAccessServiceTokenResource) ImportState(ctx context.Context, r
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustAccessServiceTokenResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
+func (r *ZeroTrustAccessServiceTokenResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resource.ModifyPlanResponse) {
+	modifyPlan(ctx, req, res)
 }

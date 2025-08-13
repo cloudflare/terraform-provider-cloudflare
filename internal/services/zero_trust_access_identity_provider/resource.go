@@ -311,4 +311,5 @@ func (r *ZeroTrustAccessIdentityProviderResource) ImportState(ctx context.Contex
 }
 
 func (r *ZeroTrustAccessIdentityProviderResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resource.ModifyPlanResponse) {
+	modifyPlan(ctx, req, res)
 }
