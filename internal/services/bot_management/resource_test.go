@@ -506,3 +506,237 @@ resource "cloudflare_bot_management" "%[1]s" {
 }`, resourceName, zoneID)
 }
 
+// TestAccCloudflareBotManagement_SuppressSessionScoreToggle tests setting suppress_session_score to true/false
+// Based on Robot Framework test "Put Suppress Session Score"
+func TestAccCloudflareBotManagement_SuppressSessionScoreToggle(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceID := "cloudflare_bot_management." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Set suppress_session_score to false
+				Config: testCloudflareBotManagementSuppressSessionScoreConfig(rnd, zoneID, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceID, "suppress_session_score", "false"),
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceID]
+						if !ok {
+							return fmt.Errorf("Not found: %s", resourceID)
+						}
+						suppressSessionScore := rs.Primary.Attributes["suppress_session_score"]
+						if suppressSessionScore != "false" {
+							return fmt.Errorf("Expected suppress_session_score to be false, got %s", suppressSessionScore)
+						}
+						t.Logf("SUCCESS: suppress_session_score correctly set to false")
+						return nil
+					},
+				),
+			},
+			{
+				// Step 2: Set suppress_session_score to true
+				Config: testCloudflareBotManagementSuppressSessionScoreConfig(rnd, zoneID, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceID, "suppress_session_score", "true"),
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceID]
+						if !ok {
+							return fmt.Errorf("Not found: %s", resourceID)
+						}
+						suppressSessionScore := rs.Primary.Attributes["suppress_session_score"]
+						if suppressSessionScore != "true" {
+							return fmt.Errorf("Expected suppress_session_score to be true, got %s", suppressSessionScore)
+						}
+						t.Logf("SUCCESS: suppress_session_score correctly set to true")
+						return nil
+					},
+				),
+			},
+			{
+				// Step 3: Toggle back to false to ensure bidirectional functionality
+				Config: testCloudflareBotManagementSuppressSessionScoreConfig(rnd, zoneID, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceID, "suppress_session_score", "false"),
+				),
+			},
+		},
+	})
+}
+
+// TestAccCloudflareBotManagement_AutoUpdateModelEntitlementValidation tests auto_update_model entitlement behavior
+// Based on Robot Framework test "Put Unentitled Auto Update Model"
+func TestAccCloudflareBotManagement_AutoUpdateModelEntitlementValidation(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceID := "cloudflare_bot_management." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Set auto_update_model to true (should always work)
+				Config: testCloudflareBotManagementAutoUpdateModelConfig(rnd, zoneID, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceID, "auto_update_model", "true"),
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceID]
+						if !ok {
+							return fmt.Errorf("Not found: %s", resourceID)
+						}
+						autoUpdateModel := rs.Primary.Attributes["auto_update_model"]
+						if autoUpdateModel != "true" {
+							return fmt.Errorf("Expected auto_update_model to be true, got %s", autoUpdateModel)
+						}
+						t.Logf("SUCCESS: auto_update_model correctly set to true (always allowed)")
+						return nil
+					},
+				),
+			},
+			{
+				// Step 2: Try to set auto_update_model to false (may fail due to entitlement)
+				// This test validates the entitlement error handling
+				Config:      testCloudflareBotManagementAutoUpdateModelConfig(rnd, zoneID, false),
+				ExpectError: regexp.MustCompile("zone not entitled to disable.*auto_update_model"),
+				Check: resource.ComposeTestCheckFunc(
+					func(s *terraform.State) error {
+						t.Logf("SUCCESS: auto_update_model=false correctly rejected due to zone entitlement")
+						return nil
+					},
+				),
+			},
+		},
+	})
+}
+
+// TestAccCloudflareBotManagement_FieldPersistence tests that configured fields persist across refreshes
+// This validates that fields maintain their values when the API doesn't consistently return them
+func TestAccCloudflareBotManagement_FieldPersistence(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceID := "cloudflare_bot_management." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	var firstApplyState map[string]interface{}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Apply configuration with multiple encode_state_for_unknown fields
+				Config: testCloudflareBotManagementFieldPersistenceConfig(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceID, "enable_js", "true"),
+					resource.TestCheckResourceAttr(resourceID, "auto_update_model", "true"),
+					resource.TestCheckResourceAttr(resourceID, "suppress_session_score", "false"),
+					// Capture state after first apply
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceID]
+						if !ok {
+							return fmt.Errorf("Not found: %s", resourceID)
+						}
+						firstApplyState = make(map[string]interface{})
+						for k, v := range rs.Primary.Attributes {
+							firstApplyState[k] = v
+						}
+						t.Logf("Captured initial state with %d attributes", len(firstApplyState))
+						return nil
+					},
+				),
+			},
+			{
+				// Step 2: Refresh resource (simulates terraform refresh)
+				RefreshState: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceID, "enable_js", "true"),
+					resource.TestCheckResourceAttr(resourceID, "auto_update_model", "true"),
+					resource.TestCheckResourceAttr(resourceID, "suppress_session_score", "false"),
+					// Validate fields persist after refresh
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceID]
+						if !ok {
+							return fmt.Errorf("Not found: %s", resourceID)
+						}
+						
+						// Check critical fields maintained their values
+						criticalFields := []string{"enable_js", "auto_update_model", "suppress_session_score"}
+						for _, field := range criticalFields {
+							original, originalExists := firstApplyState[field]
+							current, currentExists := rs.Primary.Attributes[field]
+							
+							if originalExists != currentExists {
+								return fmt.Errorf("Field %s existence changed after refresh: was %t, now %t", 
+									field, originalExists, currentExists)
+							}
+							
+							if originalExists && original != current {
+								return fmt.Errorf("Field %s value changed after refresh: %v -> %v", 
+									field, original, current)
+							}
+						}
+						
+						t.Logf("SUCCESS: All critical fields persisted across refresh")
+						return nil
+					},
+				),
+			},
+			{
+				// Step 3: Re-apply same configuration to validate no drift
+				Config: testCloudflareBotManagementFieldPersistenceConfig(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceID, "enable_js", "true"),
+					resource.TestCheckResourceAttr(resourceID, "auto_update_model", "true"),
+					resource.TestCheckResourceAttr(resourceID, "suppress_session_score", "false"),
+					func(s *terraform.State) error {
+						t.Logf("SUCCESS: Configuration re-applied without drift")
+						return nil
+					},
+				),
+			},
+		},
+	})
+}
+
+// Configuration helpers for the new tests
+
+// Configuration for suppress_session_score toggle test
+func testCloudflareBotManagementSuppressSessionScoreConfig(resourceName, zoneID string, suppressSessionScore bool) string {
+	return fmt.Sprintf(`
+resource "cloudflare_bot_management" "%[1]s" {
+  zone_id                 = "%[2]s"
+  suppress_session_score = %[3]t
+  enable_js              = true
+}`, resourceName, zoneID, suppressSessionScore)
+}
+
+// Configuration for auto_update_model entitlement test
+func testCloudflareBotManagementAutoUpdateModelConfig(resourceName, zoneID string, autoUpdateModel bool) string {
+	return fmt.Sprintf(`
+resource "cloudflare_bot_management" "%[1]s" {
+  zone_id           = "%[2]s"
+  auto_update_model = %[3]t
+  enable_js         = true
+}`, resourceName, zoneID, autoUpdateModel)
+}
+
+// Configuration for field persistence test
+func testCloudflareBotManagementFieldPersistenceConfig(resourceName, zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_bot_management" "%[1]s" {
+  zone_id                 = "%[2]s"
+  enable_js              = true
+  auto_update_model      = true
+  suppress_session_score = false
+}`, resourceName, zoneID)
+}
+
