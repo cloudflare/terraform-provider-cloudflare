@@ -34,6 +34,7 @@ func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, source
 	normalizeEmptyAndNullSlice(&data.Include, sourceData.Include)
 	normalizeEmptyAndNullSlice(&data.Require, sourceData.Require)
 	normalizeEmptyAndNullSlice(&data.Exclude, sourceData.Exclude)
+	normalizeEmptyAndNullSlice(&data.ApprovalGroups, sourceData.ApprovalGroups)
 	normalizeFalseAndNullBool(&data.PurposeJustificationRequired, sourceData.PurposeJustificationRequired)
 	normalizeFalseAndNullBool(&data.ApprovalRequired, sourceData.ApprovalRequired)
 	normalizeFalseAndNullBool(&data.IsolationRequired, sourceData.IsolationRequired)

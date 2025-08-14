@@ -26,6 +26,8 @@ pattern cloudflare_terraform_v5_attribute_renames_configuration() {
     `application_id = $id` as $attribute => . where { $attribute <: within `resource "cloudflare_zero_trust_access_group" $_ { $_ }` },
     `precedence = $p` as $attribute => . where { $attribute <: within `resource "cloudflare_zero_trust_access_group" $_ { $_ }` },
 
+    // cloudflare_zero_trust_access_policy handled in cloudflare_zero_trust_access_policy_v5.grit
+
     // cloudflare_access_service_token
     `min_days_for_renewal = $days` as $attribute => . where { $attribute <: within `resource "cloudflare_access_service_token" $_ { $_ }` },
     `min_days_for_renewal = $days` as $attribute => . where { $attribute <: within `resource "cloudflare_zero_trust_access_service_token" $_ { $_ }` },

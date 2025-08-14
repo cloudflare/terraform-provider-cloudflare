@@ -4,6 +4,7 @@ package zero_trust_access_policy
 
 import (
 	"context"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -21,6 +22,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessPolicyResource)(n
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 1,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The UUID of the policy",
@@ -64,7 +66,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Require users to enter a justification when they log in to the application.",
 				Optional:    true,
 			},
-			"approval_groups": schema.ListNestedAttribute{
+			"approval_groups": schema.SetNestedAttribute{
 				Description: "Administrators who can approve a temporary authentication request.",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -94,7 +96,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     stringdefault.StaticString("24h"),
 			},
-			"exclude": schema.ListNestedAttribute{
+			"exclude": schema.SetNestedAttribute{
 				Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -356,7 +358,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"include": schema.ListNestedAttribute{
+			"include": schema.SetNestedAttribute{
 				Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -618,7 +620,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"require": schema.ListNestedAttribute{
+			"require": schema.SetNestedAttribute{
 				Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
