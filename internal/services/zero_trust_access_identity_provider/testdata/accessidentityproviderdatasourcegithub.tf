@@ -10,5 +10,6 @@ resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 
 data "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
   account_id = "%[2]s"
+  identity_provider_id = cloudflare_zero_trust_access_identity_provider.%[1]s.id
   depends_on = [cloudflare_zero_trust_access_identity_provider.%[1]s]
 }

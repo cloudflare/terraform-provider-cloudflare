@@ -5,7 +5,7 @@ resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
   config = {
     client_id = "test"
     client_secret = "secret"
-    okta_account = "example.okta.com"
+    okta_account = "https://terraform-test.okta.com"
     authorization_server_id = "default"
   }
 }
