@@ -21,7 +21,7 @@ resource "dog" "dog" {
 	attr := parsed.Body().Blocks()[0].Body().GetAttribute("dog")
 
 	cases := map[string]string{
-		string(ast.WarnManualMigration4Attr("resources/account_member", nil).BuildTokens(nil).Bytes()): `
+		string(ast.WarnManualMigration4AttrWrite("resources/account_member", nil).BuildTokens(nil).Bytes()): `
 regex(<<-WARNING
 
   > We were unable to automatically migrate this resource to the new provider.
@@ -29,7 +29,7 @@ regex(<<-WARNING
 
 WARNING
 , "")`,
-		string(ast.WarnManualMigration4Attr("resources/account_member", attr).BuildTokens(nil).Bytes()): `
+		string(ast.WarnManualMigration4AttrWrite("resources/account_member", attr).BuildTokens(nil).Bytes()): `
 regex(<<-WARNING
 
   > We were unable to automatically migrate this resource to the new provider.

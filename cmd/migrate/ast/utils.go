@@ -41,7 +41,7 @@ type HasAttributes interface {
 func (b Block) Attributes(diags Diagnostics) map[string]*hclsyntax.Expression {
 	attrs := map[string]*hclsyntax.Expression{}
 	for k, v := range b.Body().Attributes() {
-		expr := WriteExpr2Expr(*v.Expr(), diags)
+		expr := WriteExpr2Expr(v.Expr(), diags)
 		attrs[k] = &expr
 	}
 	return attrs
@@ -135,7 +135,7 @@ func ApplyTransformToAttributes(objOrBlock HasAttributes, transforms map[string]
 	}
 }
 
-func RawWarning(msg string) *hclwrite.Expression {
+func rawWarning(msg string) *hclwrite.Expression {
 	eot := "WARNING"
 	heredoc := hclwrite.Tokens{&hclwrite.Token{Type: hclsyntax.TokenOHeredoc, Bytes: []byte("<<-" + eot + "\n")}}
 	for _, m := range strings.Split(msg, "\n") {
@@ -181,22 +181,48 @@ func warnManualMessage(path string, previous string) string {
 	return msg
 }
 
-func WarnManualMigration4Attr(path string, previous *hclwrite.Attribute) *hclwrite.Expression {
-	str := ""
-	if previous != nil {
-		str = string(previous.BuildTokens(nil).Bytes())
-	}
-
-	msg := warnManualMessage(path, str)
-	return RawWarning(msg)
+func warning(msg string, diags Diagnostics) *hclsyntax.Expression {
+	raw := rawWarning(msg)
+	e := WriteExpr2Expr(raw, diags)
+	return &e
 }
 
-func WarnManualMigration4Expr(path string, previous *hclwrite.Expression) *hclwrite.Expression {
+func WarnManualMigration4AttrWrite(path string, previous *hclwrite.Attribute) *hclwrite.Expression {
 	str := ""
 	if previous != nil {
 		str = string(previous.BuildTokens(nil).Bytes())
 	}
 
 	msg := warnManualMessage(path, str)
-	return RawWarning(msg)
+	return rawWarning(msg)
+}
+
+func WarnManualMigration4ExprWrite(path string, previous *hclwrite.Expression) *hclwrite.Expression {
+	str := ""
+	if previous != nil {
+		str = string(previous.BuildTokens(nil).Bytes())
+	}
+
+	msg := warnManualMessage(path, str)
+	return rawWarning(msg)
+}
+
+func WarnManualMigration4Attr(path string, previous *hclsyntax.Attribute, diags Diagnostics) *hclsyntax.Expression {
+	str := ""
+	if previous != nil {
+		str = Attr2S(*previous, diags)
+	}
+
+	msg := warnManualMessage(path, str)
+	return warning(msg, diags)
+}
+
+func WarnManualMigration4Expr(path string, previous *hclsyntax.Expression, diags Diagnostics) *hclsyntax.Expression {
+	str := ""
+	if previous != nil {
+		str = Expr2S(*previous, diags)
+	}
+
+	msg := warnManualMessage(path, str)
+	return warning(msg, diags)
 }

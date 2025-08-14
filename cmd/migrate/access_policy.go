@@ -67,14 +67,14 @@ func transformAccessPolicyBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 //	}]
 func transformPolicyRuleListItem(expr *hclsyntax.Expression, diags ast.Diagnostics) {
 
+	if *expr == nil {
+		// Ignore missing attributes
+		return
+	}
+
 	tup, ok := (*expr).(*hclsyntax.TupleConsExpr)
 	if !ok {
-		diags.ComplicatedHCL.Append(*expr)
-		diags.HclDiagnostics.Append(&hcl.Diagnostic{
-			Severity: hcl.DiagError,
-			Summary:  "Failed to cast expression to TupleConsExpr",
-			Detail:   fmt.Sprintf("Expected TupleConsExpr for include/exclude/require but got %T", *expr),
-		})
+		*expr = *ast.WarnManualMigration4Expr("resource/zero_trust_access_policy", expr, diags)
 		return
 	}
 
