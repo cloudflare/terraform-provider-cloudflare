@@ -87,9 +87,7 @@ func TestAccessApplicationPoliciesTransformation(t *testing.T) {
   name       = "Test App"
   domain     = "test.example.com"
   
-  policies = [
-    { id = cloudflare_zero_trust_access_policy.old_style.id }
-  ]
+  policies = [ { id = cloudflare_zero_trust_access_policy.old_style.id } ]
 }`},
 		},
 		{

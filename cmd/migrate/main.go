@@ -245,7 +245,7 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		}
 
 		if isAccessApplicationResource(block) {
-			transformAccessApplicationBlock(block)
+			transformAccessApplicationBlock(block, diags)
 		}
 
 		if isTieredCacheResource(block) {
