@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
+	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
@@ -19,6 +22,13 @@ func isAccessPolicyResource(block *hclwrite.Block) bool {
 // 1. Boolean attributes (everyone, certificate, any_valid_service_token) -> empty objects
 // 2. Array attributes (email, group, ip, email_domain) -> split into multiple objects
 // 3. Github blocks -> rename to github_organization and expand teams
+//
+// Example transformations:
+// Before: include = [{ everyone = true }]
+// After:  include = [{ everyone = {} }]
+//
+// Before: include = [{ email = ["user1@example.com", "user2@example.com"] }]
+// After:  include = [{ email = { email = "user1@example.com" } }, { email = { email = "user2@example.com" } }]
 func transformAccessPolicyBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 	// Process include, exclude, and require attributes (grit has already converted them to lists)
 
@@ -34,11 +44,37 @@ func transformAccessPolicyBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 // 1. Boolean attributes (everyone, certificate, any_valid_service_token) -> empty objects
 // 2. Array attributes (email, group, ip) -> split into multiple objects
 // 3. Github blocks -> rename to github_organization and expand teams
+//
+// Example transformation:
+//
+//	Before: include = [{
+//	  everyone = true
+//	  email = ["alice@example.com", "bob@example.com"]
+//	  group = ["admins"]
+//	}]
+//
+//	After: include = [{
+//	  everyone = {}
+//	}, {
+//
+//	  email = { email = "alice@example.com" }
+//	}, {
+//
+//	  email = { email = "bob@example.com" }
+//	}, {
+//
+//	  group = { id = "admins" }
+//	}]
 func transformPolicyRuleListItem(expr *hclsyntax.Expression, diags ast.Diagnostics) {
 
 	tup, ok := (*expr).(*hclsyntax.TupleConsExpr)
 	if !ok {
 		diags.ComplicatedHCL.Append(*expr)
+		diags.HclDiagnostics.Append(&hcl.Diagnostic{
+			Severity: hcl.DiagError,
+			Summary:  "Failed to cast expression to TupleConsExpr",
+			Detail:   fmt.Sprintf("Expected TupleConsExpr for include/exclude/require but got %T", *expr),
+		})
 		return
 	}
 
@@ -50,6 +86,11 @@ func transformPolicyRuleListItem(expr *hclsyntax.Expression, diags ast.Diagnosti
 		if !ok {
 			// Keep non-object expressions as-is
 			newExprs = append(newExprs, tup.Exprs[i])
+			diags.HclDiagnostics.Append(&hcl.Diagnostic{
+				Severity: hcl.DiagWarning,
+				Summary:  "Unexpected non-object in condition list",
+				Detail:   fmt.Sprintf("Expected ObjectConsExpr in condition list but got %T", tup.Exprs[i]),
+			})
 			continue
 		}
 
@@ -66,41 +107,51 @@ func transformPolicyRuleListItem(expr *hclsyntax.Expression, diags ast.Diagnosti
 		expanded := expandAttributes(obj, diags)
 		if len(expanded) > 0 {
 			// Object was expanded into multiple objects
+			fmt.Printf("DEBUG: Expanded into %d objects\n", len(expanded))
 			newExprs = append(newExprs, expanded...)
 		} else {
 			// No expansion needed, keep original object
+			fmt.Printf("DEBUG: No expansion, keeping original object\n")
 			newExprs = append(newExprs, tup.Exprs[i])
 		}
 	}
 
 	// Replace the tuple's expressions with the new expanded list
+	fmt.Printf("DEBUG: Final newExprs has %d items\n", len(newExprs))
+	for idx, expr := range newExprs {
+		if objExpr, ok := expr.(*hclsyntax.ObjectConsExpr); ok {
+			fmt.Printf("  DEBUG: newExprs[%d] is ObjectConsExpr with %d items\n", idx, len(objExpr.Items))
+			for _, item := range objExpr.Items {
+				k := ast.Expr2S(item.KeyExpr, diags)
+				v := ast.Expr2S(item.ValueExpr, diags)
+				fmt.Printf("    DEBUG: item key=%s, value=%s\n", k, v)
+			}
+		}
+	}
 	tup.Exprs = newExprs
 }
 
 // expandAttributes checks if an object has attributes that need expansion
 // Returns nil if no expansion needed, or a slice of expanded objects
+//
+// Example transformation:
+// Before: { email = ["a@ex.com", "b@ex.com"], group = ["g1"], login_method = ["okta"] }
+// After: [
+//
+//	{ login_method = ["okta"] },  // Non-array attributes kept in first object
+//	{ email = { email = "a@ex.com" } },
+//	{ email = { email = "b@ex.com" } },
+//	{ group = { id = "g1" } }
+//
+// ]
 func expandAttributes(obj *hclsyntax.ObjectConsExpr, diags ast.Diagnostics) []hclsyntax.Expression {
 	var allExpanded []hclsyntax.Expression
 	var remainingItems []hclsyntax.ObjectConsItem
 
+	// Note: obj.Items has already been modified by the boolean transformations
+	// Items with false values have been removed, true values converted to empty objects
 	for _, item := range obj.Items {
 		key := ast.Expr2S(item.KeyExpr, diags)
-
-		// Skip boolean attributes that should have been removed (false values)
-		// These are handled by boolToEmptyObject transform already applied
-		booleanAttrs := map[string]bool{
-			"everyone":                true,
-			"certificate":             true,
-			"any_valid_service_token": true,
-		}
-		if _, isBool := booleanAttrs[key]; isBool {
-			// Check if it's false and should be removed
-			val := ast.Expr2S(item.ValueExpr, diags)
-			if val == "false" {
-				continue // Skip this item entirely
-			}
-			// If it's true, it's already been transformed to empty object by earlier transform
-		}
 
 		// Handle github specially
 		if key == "github" {
@@ -109,6 +160,7 @@ func expandAttributes(obj *hclsyntax.ObjectConsExpr, diags ast.Diagnostics) []hc
 				allExpanded = append(allExpanded, expanded...)
 				continue
 			}
+
 		}
 
 		// Handle simple array attributes
@@ -119,12 +171,19 @@ func expandAttributes(obj *hclsyntax.ObjectConsExpr, diags ast.Diagnostics) []hc
 
 		// Keep other attributes as-is
 		remainingItems = append(remainingItems, item)
+		fmt.Printf("DEBUG added to remainingItems: key=%s, value=%s\n", key, ast.Expr2S(item.ValueExpr, diags))
 	}
 
 	// If we expanded some attributes, we need to handle remaining items
 	if len(allExpanded) > 0 {
 		// If there are remaining items, add them as the first object
 		if len(remainingItems) > 0 {
+			fmt.Printf("DEBUG creating remainingObj with %d items\n", len(remainingItems))
+			for _, ri := range remainingItems {
+				k := ast.Expr2S(ri.KeyExpr, diags)
+				v := ast.Expr2S(ri.ValueExpr, diags)
+				fmt.Printf("  DEBUG remainingItem: key=%s, value=%s, type=%T\n", k, v, ri.ValueExpr)
+			}
 			remainingObj := &hclsyntax.ObjectConsExpr{
 				Items: remainingItems,
 			}
@@ -139,6 +198,23 @@ func expandAttributes(obj *hclsyntax.ObjectConsExpr, diags ast.Diagnostics) []hc
 }
 
 // expandSimpleArrayAttribute handles email, group, ip, email_domain arrays
+//
+// Example transformations:
+// Before: email = ["alice@example.com", "bob@example.com"]
+// After: [
+//
+//	{ email = { email = "alice@example.com" } },
+//	{ email = { email = "bob@example.com" } }
+//
+// ]
+//
+// Before: group = ["group-id-1", "group-id-2"]
+// After: [
+//
+//	{ group = { id = "group-id-1" } },
+//	{ group = { id = "group-id-2" } }
+//
+// ]
 func expandSimpleArrayAttribute(key string, item hclsyntax.ObjectConsItem, diags ast.Diagnostics) []hclsyntax.Expression {
 	// Map of attribute names to their inner field names
 	arrayAttrs := map[string]string{
@@ -186,10 +262,30 @@ func expandSimpleArrayAttribute(key string, item hclsyntax.ObjectConsItem, diags
 // expandGithub handles the special case of github blocks
 // V4: github = [{ name = "org", teams = ["team1", "team2"], identity_provider_id = "id" }]
 // V5: Multiple github_organization blocks, one per team
+//
+// Example transformation:
+//
+//	Before: github = [{
+//	  name = "my-org"
+//	  teams = ["engineering", "devops"]
+//	  identity_provider_id = "provider-123"
+//	}]
+//
+// After: [
+//
+//	{ github_organization = { name = "my-org", team = "engineering", identity_provider_id = "provider-123" } },
+//	{ github_organization = { name = "my-org", team = "devops", identity_provider_id = "provider-123" } }
+//
+// ]
 func expandGithub(item hclsyntax.ObjectConsItem, diags ast.Diagnostics) []hclsyntax.Expression {
 	// Check if the value is a tuple/array of github blocks
 	tup, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr)
 	if !ok {
+		diags.HclDiagnostics.Append(&hcl.Diagnostic{
+			Severity: hcl.DiagWarning,
+			Summary:  "Failed to cast github value to TupleConsExpr",
+			Detail:   fmt.Sprintf("Expected github value to be an array but got %T", item.ValueExpr),
+		})
 		return nil
 	}
 
@@ -198,6 +294,11 @@ func expandGithub(item hclsyntax.ObjectConsItem, diags ast.Diagnostics) []hclsyn
 	for _, githubExpr := range tup.Exprs {
 		githubObj, ok := githubExpr.(*hclsyntax.ObjectConsExpr)
 		if !ok {
+			diags.HclDiagnostics.Append(&hcl.Diagnostic{
+				Severity: hcl.DiagWarning,
+				Summary:  "Failed to cast github array element to ObjectConsExpr",
+				Detail:   fmt.Sprintf("Expected github array element to be an object but got %T", githubExpr),
+			})
 			continue
 		}
 
@@ -213,7 +314,14 @@ func expandGithub(item hclsyntax.ObjectConsItem, diags ast.Diagnostics) []hclsyn
 			case "name":
 				nameExpr = githubItem.ValueExpr
 			case "teams":
-				teamsExpr, _ = githubItem.ValueExpr.(*hclsyntax.TupleConsExpr)
+				teamsExpr, ok = githubItem.ValueExpr.(*hclsyntax.TupleConsExpr)
+				if !ok && githubItem.ValueExpr != nil {
+					diags.HclDiagnostics.Append(&hcl.Diagnostic{
+						Severity: hcl.DiagWarning,
+						Summary:  "Failed to cast teams value to TupleConsExpr",
+						Detail:   fmt.Sprintf("Expected teams to be an array but got %T", githubItem.ValueExpr),
+					})
+				}
 			case "identity_provider_id":
 				identityProviderExpr = githubItem.ValueExpr
 			default:
@@ -300,9 +408,17 @@ func expandGithub(item hclsyntax.ObjectConsItem, diags ast.Diagnostics) []hclsyn
 	return result
 }
 
+// boolToEmptyObject transforms boolean attributes to empty objects or removes them
+//
+// Example transformations:
+// Before: everyone = true
+// After:  everyone = {}
+//
+// Before: certificate = false
+// After:  (attribute removed entirely)
 func boolToEmptyObject(attrVal *hclsyntax.Expression, diags ast.Diagnostics) {
 	if *attrVal == nil {
-		// don't add this attribute if it doesn't already exit
+		// don't add this attribute if it doesn't already exist
 		return
 	}
 	val := ast.Expr2S(*attrVal, diags)
