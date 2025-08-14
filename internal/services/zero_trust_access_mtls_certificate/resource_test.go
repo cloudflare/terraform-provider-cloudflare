@@ -57,7 +57,6 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Access Mutual TLS certificates: %s", err))
 		return err
 	}
-
 	for _, cert := range accountCerts {
 
 		// to delete we need to update first with empty hostnames
