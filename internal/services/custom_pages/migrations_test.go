@@ -40,7 +40,7 @@ func TestAccCustomPagesMigrationFromV4(t *testing.T) {
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
-						VersionConstraint: " ~> 4.0",
+						VersionConstraint: "4.52.1",
 						Source:            "cloudflare/cloudflare",
 					},
 				},
@@ -199,7 +199,7 @@ func TestAccCustomPagesMigrationFromV4BasicChallengeCustomized(t *testing.T) {
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
-						VersionConstraint: " ~> 4.0",
+						VersionConstraint: "4.52.1",
 						Source:            "cloudflare/cloudflare",
 					},
 				},
@@ -359,7 +359,7 @@ func TestAccCustomPagesMigrationFromV4WafChallengeCustomized(t *testing.T) {
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
-						VersionConstraint: " ~> 4.0",
+						VersionConstraint: "4.52.1",
 						Source:            "cloudflare/cloudflare",
 					},
 				},
@@ -439,7 +439,7 @@ func TestAccCustomPagesMigrationFromV4WafBlockCustomized(t *testing.T) {
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
-						VersionConstraint: " ~> 4.0",
+						VersionConstraint: "4.52.1",
 						Source:            "cloudflare/cloudflare",
 					},
 				},
@@ -518,7 +518,7 @@ func TestAccCustomPagesMigrationFromV4IpBlockCustomized(t *testing.T) {
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
-						VersionConstraint: " ~> 4.0",
+						VersionConstraint: "4.52.1",
 						Source:            "cloudflare/cloudflare",
 					},
 				},
@@ -612,7 +612,7 @@ func TestAccCustomPagesMigrationFromV4CountryChallengeCustomized(t *testing.T) {
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
-						VersionConstraint: " ~> 4.0",
+						VersionConstraint: "4.52.1",
 						Source:            "cloudflare/cloudflare",
 					},
 				},
@@ -738,7 +738,7 @@ func TestAccCustomPagesMigrationFromV41000ErrorsCustomized(t *testing.T) {
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
-						VersionConstraint: " ~> 4.0",
+						VersionConstraint: "4.52.1",
 						Source:            "cloudflare/cloudflare",
 					},
 				},
@@ -853,7 +853,7 @@ func TestAccCustomPagesMigrationFromV4ManagedChallengeCustomized(t *testing.T) {
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "4.52.1",
 						Source:            "cloudflare/cloudflare",
 					},
 				},
@@ -975,7 +975,7 @@ func TestAccCustomPagesMigrationFromV4RatelimitBlockCustomized(t *testing.T) {
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "4.52.1",
 						Source:            "cloudflare/cloudflare",
 					},
 				},
@@ -1051,7 +1051,7 @@ func TestAccCustomPagesMigrationFromV4UnderAttackCustomized(t *testing.T) {
 			{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "4.52.1",
 						Source:            "cloudflare/cloudflare",
 					},
 				},

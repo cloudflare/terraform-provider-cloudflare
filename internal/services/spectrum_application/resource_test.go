@@ -25,6 +25,10 @@ func init() {
 	})
 }
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
 func testSweepCloudflareSpectrumApplications(r string) error {
 	ctx := context.Background()
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
