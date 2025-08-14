@@ -334,6 +334,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 				PlanOnly: true,
 			},
 			{
+				Config:            testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
@@ -942,14 +943,14 @@ func testAccCheckCloudflareZeroTrustAccessIdentityProviderDestroy(s *terraform.S
 
 		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 		zoneID := rs.Primary.Attributes[consts.ZoneIDSchemaKey]
-		
+
 		var err error
 		if accountID != "" {
 			_, err = client.GetAccessIdentityProvider(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.ID)
 		} else {
 			_, err = client.GetAccessIdentityProvider(context.Background(), cloudflare.ZoneIdentifier(zoneID), rs.Primary.ID)
 		}
-		
+
 		if err == nil {
 			return fmt.Errorf("zero trust access identity provider still exists")
 		}
