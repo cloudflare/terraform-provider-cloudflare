@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -45,7 +44,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"editable": schema.BoolAttribute{
 				Description: "Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).",
 				Computed:    true,
-				Default:     booldefault.StaticBool(true),
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "last time this setting was modified.",
