@@ -44,7 +44,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"editable": schema.BoolAttribute{
 				Description: "Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).",
 				Computed:    true,
-				//Default:     booldefault.StaticBool(true),
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "last time this setting was modified.",
