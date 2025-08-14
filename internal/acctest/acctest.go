@@ -14,8 +14,6 @@ import (
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-testing/config"
@@ -23,6 +21,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 )
 
 var (
@@ -366,11 +367,23 @@ func (e expectEmptyPlanExceptFalseyToNull) CheckPlan(ctx context.Context, req pl
 				continue
 			}
 
+			// Special handling for SetNestedAttribute fields (like include, exclude, require)
+			if isSetNestedAttributeField(rc.Address, key) {
+				if areSetNestedAttributesEquivalent(beforeValue, afterValue) {
+					continue // Sets are equivalent despite ordering differences
+				}
+			}
+
 			// Allow changes from falsey to null
 			if afterValue == nil {
 				if isFalseyValue(beforeValue) {
 					continue // This change is allowed
 				}
+			}
+
+			// Allow session_duration changes from nil to a default value (API sets defaults)
+			if key == "session_duration" && beforeValue == nil && afterValue != nil {
+				continue // This change is allowed - API sets default session duration
 			}
 
 			// If we get here, it's a disallowed change
@@ -381,8 +394,134 @@ func (e expectEmptyPlanExceptFalseyToNull) CheckPlan(ctx context.Context, req pl
 	}
 }
 
+// isSetNestedAttributeField checks if a field name corresponds to a SetNestedAttribute
+// for a specific resource type. These fields should be compared as sets (order-independent) rather than arrays
+func isSetNestedAttributeField(resourceAddress, fieldName string) bool {
+	// Extract resource type from address (e.g., "cloudflare_zero_trust_access_policy.example" -> "cloudflare_zero_trust_access_policy")
+	resourceType := extractResourceTypeFromAddress(resourceAddress)
+
+	// Map of resource types to their SetNestedAttribute field names
+	// SetNestedAttribute fields are compared as sets (order-independent) rather than arrays
+	// This prevents ambiguity when multiple resources have fields with the same name
+	setFieldsByResource := map[string][]string{
+		"cloudflare_zero_trust_access_policy": {"include", "exclude", "require", "approval_groups"},
+		"cloudflare_access_policy": {"include", "exclude", "require", "approval_group"}, // v4 resource name
+		"cloudflare_ruleset": {"rules"},
+		"cloudflare_load_balancer_pool": {"origins"},
+		// Add other resources with SetNestedAttribute fields as needed
+	}
+
+	fields, exists := setFieldsByResource[resourceType]
+	if !exists {
+		return false
+	}
+
+	for _, setField := range fields {
+		if fieldName == setField {
+			return true
+		}
+	}
+	return false
+}
+
+// extractResourceTypeFromAddress extracts the resource type from a resource address
+// e.g., "cloudflare_zero_trust_access_policy.example" -> "cloudflare_zero_trust_access_policy"
+func extractResourceTypeFromAddress(address string) string {
+	parts := strings.Split(address, ".")
+	if len(parts) < 2 {
+		return address // fallback to full address if parsing fails
+	}
+	return parts[0]
+}
+
+// areSetNestedAttributesEquivalent compares two sets of nested attributes
+// Returns true if they contain the same elements (ignoring order)
+func areSetNestedAttributesEquivalent(before, after interface{}) bool {
+	beforeSlice, beforeOk := before.([]interface{})
+	afterSlice, afterOk := after.([]interface{})
+
+	// If either is not a slice, fall back to regular comparison
+	if !beforeOk || !afterOk {
+		return reflect.DeepEqual(before, after)
+	}
+
+	// Different lengths means different sets
+	if len(beforeSlice) != len(afterSlice) {
+		return false
+	}
+
+	// For each element in before, find a matching element in after
+	for _, beforeElement := range beforeSlice {
+		found := false
+		for _, afterElement := range afterSlice {
+			if areNestedAttributeElementsEquivalent(beforeElement, afterElement) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+
+	return true
+}
+
+// areNestedAttributeElementsEquivalent compares two nested attribute elements
+// with special handling for falsey-to-null transitions
+func areNestedAttributeElementsEquivalent(before, after interface{}) bool {
+	beforeMap, beforeOk := before.(map[string]interface{})
+	afterMap, afterOk := after.(map[string]interface{})
+
+	// If either is not a map, use regular comparison
+	if !beforeOk || !afterOk {
+		return reflect.DeepEqual(before, after)
+	}
+
+	// Get all unique keys from both maps
+	allKeys := make(map[string]bool)
+	for key := range beforeMap {
+		allKeys[key] = true
+	}
+	for key := range afterMap {
+		allKeys[key] = true
+	}
+
+	// Compare each key's value
+	for key := range allKeys {
+		beforeValue, beforeHasKey := beforeMap[key]
+		afterValue, afterHasKey := afterMap[key]
+
+		// If key missing from one side, treat as nil
+		if !beforeHasKey {
+			beforeValue = nil
+		}
+		if !afterHasKey {
+			afterValue = nil
+		}
+
+		// Skip if values are identical
+		if reflect.DeepEqual(beforeValue, afterValue) {
+			continue
+		}
+
+		// Allow falsey-to-null transitions
+		if afterValue == nil && isFalseyValue(beforeValue) {
+			continue
+		}
+		if beforeValue == nil && isFalseyValue(afterValue) {
+			continue
+		}
+
+		// Values are different and not a valid transition
+		return false
+	}
+
+	return true
+}
+
 // isFalseyValue returns true if the value is considered "falsey"
-// (false, empty string, empty slice/array, zero value)
+// (false, empty string, empty slice/array, zero value, or map with all nil values)
 func isFalseyValue(v interface{}) bool {
 	if v == nil {
 		return true
@@ -396,7 +535,16 @@ func isFalseyValue(v interface{}) bool {
 	case []interface{}:
 		return len(val) == 0
 	case map[string]interface{}:
-		return len(val) == 0
+		if len(val) == 0 {
+			return true
+		}
+		// Check if all values in the map are nil or falsey
+		for _, mapValue := range val {
+			if !isFalseyValue(mapValue) {
+				return false
+			}
+		}
+		return true
 	case int, int64, float64:
 		// Handle numeric zero values
 		return reflect.ValueOf(val).IsZero()

@@ -15,6 +15,12 @@ var resourceRenames = map[string][]struct {
 			new: "identifier",
 		},
 	},
+	"cloudflare_zero_trust_access_policy": {
+		{
+			old: "approval_group",
+			new: "approval_groups",
+		},
+	},
 }
 
 func applyRenames(block *hclwrite.Block) {

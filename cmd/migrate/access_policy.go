@@ -162,13 +162,12 @@ func expandAttributes(obj *hclsyntax.ObjectConsExpr, diags ast.Diagnostics) []hc
 
 	// If we expanded some attributes, we need to handle remaining items
 	if len(allExpanded) > 0 {
-		// If there are remaining items, add them as the first object
-		if len(remainingItems) > 0 {
-			remainingObj := &hclsyntax.ObjectConsExpr{
-				Items: remainingItems,
+		// Each remaining item (like boolean attributes) should be its own object
+		for _, item := range remainingItems {
+			singleItemObj := &hclsyntax.ObjectConsExpr{
+				Items: []hclsyntax.ObjectConsItem{item},
 			}
-			// Prepend the remaining items
-			allExpanded = append([]hclsyntax.Expression{remainingObj}, allExpanded...)
+			allExpanded = append(allExpanded, singleItemObj)
 		}
 		return allExpanded
 	}
@@ -202,6 +201,7 @@ func expandSimpleArrayAttribute(key string, item hclsyntax.ObjectConsItem, diags
 		"group":        "id",
 		"ip":           "ip",
 		"email_domain": "domain",
+		"geo":          "country_code",
 	}
 
 	innerFieldName, isArrayAttr := arrayAttrs[key]
