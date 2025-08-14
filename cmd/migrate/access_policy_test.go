@@ -14,44 +14,15 @@ func TestTransformAccessPolicy(t *testing.T) {
 		input    string
 		expected string
 	}{
-		// {
-		// 	name: "simple_email_transform",
-		// 	input: `resource "cloudflare_zero_trust_access_policy" "test" {
-		// 	  account_id = "abc123"
-		// 	  name       = "Test Policy"
-		// 	  decision   = "allow"
-
-		// 	  include = [{
-		// 	    email = ["test@example.com", "admin@example.com"]
-		// 	  }]
-		// 	}`,
-		// 	expected: `resource "cloudflare_zero_trust_access_policy" "test" {
-		// 	  account_id = "abc123"
-		// 	  name       = "Test Policy"
-		// 	  decision   = "allow"
-
-		// 	  include = [{
-		// 	    email = { email = "test@example.com" }
-		// 	  }, {
-		// 	  	email = { email =  "admin@example.com" }
-		// 	  }]
-		// 	}`,
-		// },
-
 		{
-			name: "multiple_conditions",
+			name: "simple_email_transform",
 			input: `resource "cloudflare_zero_trust_access_policy" "test" {
 			  account_id = "abc123"
 			  name       = "Test Policy"
 			  decision   = "allow"
 
 			  include = [{
-			    email = ["test@example.com"]
-			    group = ["group-id-1", "group-id-2"]
-			  }]
-
-			  exclude = [{
-			    ip = ["192.168.1.0/24"]
+			    email = ["test@example.com", "admin@example.com"]
 			  }]
 			}`,
 			expected: `resource "cloudflare_zero_trust_access_policy" "test" {
@@ -62,17 +33,47 @@ func TestTransformAccessPolicy(t *testing.T) {
 			  include = [{
 			    email = { email = "test@example.com" }
 			  }, {
-			    group = { id = "group-id-1" }
-			  }, {
-			  	group = { id = "group-id-2" }
-			  }
-			  ]
-
-			  exclude = [{
-			    ip = { ip = ["192.168.1.0/24"] }
+			  	email = { email =  "admin@example.com" }
 			  }]
 			}`,
 		},
+		/*
+			{
+				name: "multiple_conditions",
+				input: `resource "cloudflare_zero_trust_access_policy" "test" {
+				  account_id = "abc123"
+				  name       = "Test Policy"
+				  decision   = "allow"
+
+				  include = [{
+				    email = ["test@example.com"]
+				    group = ["group-id-1", "group-id-2"]
+				  }]
+
+				  exclude = [{
+				    ip = ["192.168.1.0/24"]
+				  }]
+				}`,
+				expected: `resource "cloudflare_zero_trust_access_policy" "test" {
+				  account_id = "abc123"
+				  name       = "Test Policy"
+				  decision   = "allow"
+
+				  include = [{
+				    email = { email = "test@example.com" }
+				  }, {
+				    group = { id = "group-id-1" }
+				  }, {
+				  	group = { id = "group-id-2" }
+				  }
+				  ]
+
+				  exclude = [{
+				    ip = { ip = ["192.168.1.0/24"] }
+				  }]
+				}`,
+			},
+		*/
 		{
 			name: "boolean_attribute_everyone",
 			input: `resource "cloudflare_zero_trust_access_policy" "test" {

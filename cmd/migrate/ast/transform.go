@@ -16,7 +16,7 @@ func Str2Expr(str string, diags Diagnostics) hcl.Expression {
 	return expr
 }
 
-func WriteExpr2Expr(write hclwrite.Expression, diags Diagnostics) hcl.Expression {
+func WriteExpr2Expr(write hclwrite.Expression, diags Diagnostics) hclsyntax.Expression {
 	raw := write.BuildTokens(nil).Bytes()
 	expr, d := hclsyntax.ParseExpression(raw, "dog.hcl", hcl.InitialPos)
 	diags.HclDiagnostics.Extend(d)
