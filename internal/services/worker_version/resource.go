@@ -131,6 +131,7 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		workers.BetaWorkerVersionGetParamsVersionID(data.ID.ValueString()),
 		workers.BetaWorkerVersionGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			Include:   cloudflare.F(workers.BetaWorkerVersionGetParamsIncludeModules),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
