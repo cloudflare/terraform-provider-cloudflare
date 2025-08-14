@@ -11,17 +11,18 @@ import (
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/option"
 	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustAccessPolicyResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*ZeroTrustAccessPolicyResource)(nil)
 var _ resource.ResourceWithImportState = (*ZeroTrustAccessPolicyResource)(nil)
+var _ resource.ResourceWithUpgradeState = (*ZeroTrustAccessPolicyResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustAccessPolicyResource{}
@@ -286,8 +287,4 @@ func (r *ZeroTrustAccessPolicyResource) ImportState(ctx context.Context, req res
 	resp.Diagnostics.Append(normalizeImportZeroTrustAccessPolicyAPIData(ctx, data)...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *ZeroTrustAccessPolicyResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
 }

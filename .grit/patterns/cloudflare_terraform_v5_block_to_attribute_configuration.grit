@@ -86,10 +86,11 @@ pattern cloudflare_terraform_v5_block_to_attribute_configuration() {
     inline_cloudflare_block_to_map(`overrides`) as $block where { $block <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
     inline_cloudflare_block_to_map(`session_affinity_attributes`) as $block where { $block <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
     inline_cloudflare_block_to_list(`header`) as $block where { $block <: within `resource "cloudflare_load_balancer_monitor" $_ { $_ }` },
+    // cloudflare_load_balancer_pool - state transformation handled entirely in Go state.go
+    // Configuration transformations still use Grit patterns below
     inline_cloudflare_block_to_map(`load_shedding`) as $block where { $block <: within `resource "cloudflare_load_balancer_pool" $_ { $_ }` },
     inline_cloudflare_block_to_map(`origin_steering`) as $block where { $block <: within `resource "cloudflare_load_balancer_pool" $_ { $_ }` },
     inline_cloudflare_block_to_list(`origins`) as $block where { $block <: within `resource "cloudflare_load_balancer_pool" $_ { $_ }` },
-    inline_cloudflare_block_to_map(`header`) as $block where { $block <: within `resource "cloudflare_load_balancer_pool" $_ { $_ }` },
     inline_cloudflare_block_to_map(`output_options`) as $block where { $block <: within `resource "cloudflare_logpush_job" $_ { $_ }` },
     inline_cloudflare_block_to_list(`managed_request_headers`) as $block where { $block <: within `resource "cloudflare_managed_headers" $_ { $_ }` },
     inline_cloudflare_block_to_list(`managed_response_headers`) as $block where { $block <: within `resource "cloudflare_managed_headers" $_ { $_ }` },
@@ -214,17 +215,8 @@ pattern cloudflare_terraform_v5_block_to_attribute_configuration() {
     inline_cloudflare_block_to_list(`mobile_redirect`) as $block where { $block <: within `resource "cloudflare_zone_settings_override" $_ { $_ }` },
     inline_cloudflare_block_to_list(`nel`) as $block where { $block <: within `resource "cloudflare_zone_settings_override" $_ { $_ }` },
     inline_cloudflare_block_to_list(`security_header`) as $block where { $block <: within `resource "cloudflare_zone_settings_override" $_ { $_ }` },
-    inline_cloudflare_block_to_list(`approval_group`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_policy" $_ { $_ }` },
-    inline_cloudflare_block_to_list(`exclude`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_policy" $_ { $_ }` },
-    inline_cloudflare_block_to_list(`auth_context`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_policy" $_ { $_ }` },
-    inline_cloudflare_block_to_map(`azure`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_policy" $_ { $_ }` },
-    inline_cloudflare_block_to_map(`external_evaluation`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_policy" $_ { $_ }` },
-    inline_cloudflare_block_to_list(`github`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_policy" $_ { $_ }` },
-    inline_cloudflare_block_to_map(`gsuite`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_policy" $_ { $_ }` },
-    inline_cloudflare_block_to_map(`okta`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_policy" $_ { $_ }` },
-    inline_cloudflare_block_to_map(`saml`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_policy" $_ { $_ }` },
-    inline_cloudflare_block_to_list(`include`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_policy" $_ { $_ }` },
-    inline_cloudflare_block_to_list(`require`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_policy" $_ { $_ }` },
+    // cloudflare_zero_trust_access_policy transformations moved to cloudflare_zero_trust_access_policy_v5.grit
+    // for custom handling with SetNestedAttribute
     inline_cloudflare_block_to_map(`cors_headers`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_application" $_ { $_ }` },
     inline_cloudflare_block_to_list(`footer_links`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_application" $_ { $_ }` },
     inline_cloudflare_block_to_list(`landing_page_design`) as $block where { $block <: within `resource "cloudflare_zero_trust_access_application" $_ { $_ }` },
