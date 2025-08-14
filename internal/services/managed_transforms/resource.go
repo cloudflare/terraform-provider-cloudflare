@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -55,10 +56,53 @@ func (r *ManagedTransformsResource) Configure(ctx context.Context, req resource.
 	r.client = client
 }
 
+func (r *ManagedTransformsResource) checkAllDisabledBeforeCreation(ctx context.Context, zoneId string) diag.Diagnostics {
+	var diagnostics diag.Diagnostics
+
+	res, err := r.client.ManagedTransforms.List(
+		ctx,
+		managed_transforms.ManagedTransformListParams{
+			ZoneID: cloudflare.F(zoneId),
+		},
+	)
+
+	if err != nil {
+		diagnostics.AddError("failed to get managed transforms", err.Error())
+		return diagnostics
+	}
+
+	if res == nil {
+		return diagnostics
+	}
+
+	for _, t := range res.ManagedRequestHeaders {
+		if t.Enabled {
+			diagnostics.AddError("cannot create resource", fmt.Sprintf("managed request header transform %s cannot be enabled before creation", t.ID))
+		}
+	}
+
+	for _, t := range res.ManagedResponseHeaders {
+		if t.Enabled {
+			diagnostics.AddError("cannot create resource", fmt.Sprintf("managed response header transform %s cannot be enabled before creation", t.ID))
+		}
+	}
+
+	return diagnostics
+}
+
 func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data *ManagedTransformsModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// We need to check that all transformations are disabled, as we don't want them to be silently overwritten.
+	// This is also needed for the correctness of `Create()`, because if there were enabled transformations, we
+	// would need to disable them if they are not part of the plan (like we do in `Update()`).
+	resp.Diagnostics.Append(r.checkAllDisabledBeforeCreation(ctx, data.ZoneID.ValueString())...)
 
 	if resp.Diagnostics.HasError() {
 		return

@@ -59,6 +59,14 @@ func testSweepCloudflareManagedTransforms(r string) error {
 	return nil
 }
 
+func cleanup(t *testing.T) {
+	err := testSweepCloudflareManagedTransforms("")
+
+	if err != nil {
+		t.Fatal("failed to cleanup resource for testing")
+	}
+}
+
 func makeTransform(id string, enabled bool) map[string]string {
 	return map[string]string{
 		"id": id,
@@ -72,7 +80,10 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -257,7 +268,10 @@ func TestAccCloudflareManagedHeaders_Basic(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -325,7 +339,10 @@ func TestAccCloudflareManagedHeaders_Disabled(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -350,7 +367,10 @@ func TestAccCloudflareManagedHeaders_RequestOnly(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -378,7 +398,10 @@ func TestAccCloudflareManagedHeaders_ResponseOnly(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -406,7 +429,10 @@ func TestAccCloudflareManagedHeaders_VisitorLocationHeaders(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -434,7 +460,10 @@ func TestAccCloudflareManagedHeaders_LeakedCredentialsCheck(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -458,7 +487,10 @@ func TestAccCloudflareManagedHeaders_RemoveVisitorIP(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -486,7 +518,10 @@ func TestAccCloudflareManagedHeaders_ResponseHeaderDisabled(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -510,7 +545,10 @@ func TestAccCloudflareManagedHeaders_MultipleRequestHeaders(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -539,7 +577,10 @@ func TestAccCloudflareManagedHeaders_MixedEnabledDisabled(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -566,7 +607,10 @@ func TestAccCloudflareManagedHeaders_UpdateTransforms(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -617,7 +661,10 @@ func TestAccCloudflareManagedHeaders_ConflictDetection(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -634,7 +681,10 @@ func TestAccCloudflareManagedHeaders_ConflictingTransforms(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -652,7 +702,10 @@ func TestAccCloudflareManagedHeaders_NonConflictingTransforms(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
@@ -687,7 +740,10 @@ func TestAccCloudflareManagedHeaders_Enterprise(t *testing.T) {
 	resourceName := "cloudflare_managed_transforms." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanup(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareManagedTransformsDestroy,
 		Steps: []resource.TestStep{
