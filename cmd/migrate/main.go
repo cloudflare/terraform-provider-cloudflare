@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
@@ -201,6 +203,8 @@ func processFile(filename string, dryRun bool) error {
 }
 
 func transformFile(content []byte, filename string) ([]byte, error) {
+	// Create new diagnostics collector for this file
+	diags := ast.NewDiagnostics()
 	// First, transform header blocks in load_balancer_pool resources at the string level
 	// This is needed because grit leaves header blocks inside origins lists, which causes parsing issues
 	contentStr := string(content)
@@ -209,10 +213,11 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 	contentStr = transformTieredCacheValues(contentStr)
 	content = []byte(contentStr)
 
-	file, diags := hclwrite.ParseConfig(content, filename, hcl.InitialPos)
-	if diags.HasErrors() {
-		return nil, fmt.Errorf("failed to parse HCL in %s: %s", filename, diags.Error())
+	file, hcl_diags := hclwrite.ParseConfig(content, filename, hcl.InitialPos)
+	if hcl_diags.HasErrors() {
+		return nil, fmt.Errorf("failed to parse HCL in %s: %s", filename, hcl_diags.Error())
 	}
+	diags.HclDiagnostics.Extend(hcl_diags)
 
 	body := file.Body()
 	blocks := body.Blocks()
@@ -224,6 +229,7 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 	for _, block := range blocks {
 		applyRenames(block)
 
+		// TODO declare a map from resource types to transform functions instead of having all these if statement
 		if isZoneSettingsOverrideResource(block) {
 			blocksToRemove = append(blocksToRemove, block)
 			newBlocks = append(newBlocks, transformZoneSettingsBlock(block)...)
@@ -234,7 +240,8 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		}
 
 		if isAccessPolicyResource(block) {
-			transformAccessPolicyBlock(block)
+			// TOOD eventually pass diags through to all resource transformers, not just accessPolicyBlock
+			transformAccessPolicyBlock(block, diags)
 		}
 
 		if isAccessApplicationResource(block) {
@@ -262,5 +269,15 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 	}
 
 	formatted := hclwrite.Format(file.Bytes())
+
+	// Report diagnostics
+	// TODO make this controlled by a flag or something
+	for _, d := range diags.HclDiagnostics {
+		log.Println(strings.Join([]string{d.Summary, d.Detail}, "\n"))
+	}
+	for _, e := range diags.ComplicatedHCL {
+		spew.Dump("Gave up dealing with expression:", e)
+	}
+
 	return formatted, nil
 }

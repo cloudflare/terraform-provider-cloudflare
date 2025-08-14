@@ -3,6 +3,7 @@ package main
 import (
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
@@ -36,10 +37,10 @@ func TestTransformAccessPolicy(t *testing.T) {
 		// 	  }]
 		// 	}`,
 		// },
-		/*
-					{
-						name: "multiple_conditions",
-						input: `resource "cloudflare_zero_trust_access_policy" "test" {
+
+		{
+			name: "multiple_conditions",
+			input: `resource "cloudflare_zero_trust_access_policy" "test" {
 			  account_id = "abc123"
 			  name       = "Test Policy"
 			  decision   = "allow"
@@ -53,7 +54,7 @@ func TestTransformAccessPolicy(t *testing.T) {
 			    ip = ["192.168.1.0/24"]
 			  }]
 			}`,
-						expected: `resource "cloudflare_zero_trust_access_policy" "test" {
+			expected: `resource "cloudflare_zero_trust_access_policy" "test" {
 			  account_id = "abc123"
 			  name       = "Test Policy"
 			  decision   = "allow"
@@ -71,7 +72,7 @@ func TestTransformAccessPolicy(t *testing.T) {
 			    ip = { ip = ["192.168.1.0/24"] }
 			  }]
 			}`,
-					},*/
+		},
 		{
 			name: "boolean_attribute_everyone",
 			input: `resource "cloudflare_zero_trust_access_policy" "test" {
@@ -178,11 +179,11 @@ func TestTransformAccessPolicy(t *testing.T) {
 			if diags.HasErrors() {
 				t.Fatalf("Failed to parse input: %v", diags.Error())
 			}
-
+			ds := ast.NewDiagnostics()
 			// Apply the transformation
 			for _, block := range file.Body().Blocks() {
 				if isAccessPolicyResource(block) {
-					transformAccessPolicyBlock(block)
+					transformAccessPolicyBlock(block, ds)
 				}
 			}
 
