@@ -63,6 +63,7 @@ func testSweepCloudflareManagedTransforms(r string) error {
 	return nil
 }
 
+<<<<<<< Updated upstream
 func cleanup(t *testing.T) {
 	err := testSweepCloudflareManagedTransforms("")
 
@@ -78,6 +79,8 @@ func makeTransform(id string, enabled bool) map[string]string {
 	}
 }
 
+=======
+>>>>>>> Stashed changes
 func TestAccCloudflareManagedHeaders(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -96,6 +99,7 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "2"),
+<<<<<<< Updated upstream
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.%", "2"),
 					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
@@ -136,6 +140,25 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_response_headers.*",
 						makeTransform("add_security_headers", true),
 					),
+=======
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "4"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.id", "add_true_client_ip_headers"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.has_conflict", "false"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.conflicts_with.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.%", "4"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.id", "add_visitor_location_headers"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.has_conflict", "false"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.conflicts_with.#", "0"),
+
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "4"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.id", "add_security_headers"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.has_conflict", "false"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.conflicts_with.#", "0"),
+>>>>>>> Stashed changes
 				),
 			},
 			{
@@ -143,6 +166,7 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "1"),
+<<<<<<< Updated upstream
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
 					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_request_headers.*",
 						makeTransform("add_true_client_ip_headers", true),
@@ -153,6 +177,20 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "managed_response_headers.*",
 						makeTransform("add_security_headers", true),
 					),
+=======
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "4"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.id", "add_true_client_ip_headers"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.has_conflict", "false"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.conflicts_with.#", "0"),
+
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "4"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.id", "add_security_headers"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.has_conflict", "false"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.conflicts_with.#", "0"),
+>>>>>>> Stashed changes
 				),
 			},
 			{

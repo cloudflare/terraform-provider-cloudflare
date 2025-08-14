@@ -91,7 +91,7 @@ func TestAccCloudflareManagedTransforms_Migration_ResponseOnly(t *testing.T) {
 				},
 			},
 			// Step 2: Migrate to v5 provider
-			acctest.MigrationTestStep(t, v4Config, "= 4.52.1", tmpDir,
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1",
 				[]statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("managed_request_headers"), knownvalue.ListSizeExact(0)),
@@ -145,8 +145,12 @@ func TestAccCloudflareManagedTransforms_Migration_Both(t *testing.T) {
 }
 
 func TestAccCloudflareManagedTransforms_Migration_Empty(t *testing.T) {
-	t.Skip("Skipping test - migration script needs to add empty lists for required attributes")
+	t.Skip("Skipping test - API behavior incompatibility: when no transforms are specified, " +
+		"the API returns all available transforms with enabled:false rather than empty lists. " +
+		"This creates unavoidable plan differences after migration.")
 
+	// Test migration when v4 config has no managed_request_headers or managed_response_headers blocks
+	// The state upgrade should add empty lists for these required attributes
 	zoneID := acctest.TestAccCloudflareZoneID
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_managed_transforms." + rnd
