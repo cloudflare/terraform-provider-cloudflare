@@ -58,7 +58,7 @@ func TestAccCloudflareBotManagement_SBFM(t *testing.T) {
 
 func TestAccCloudflareBotManagement_Unentitled(t *testing.T) {
 	t.Skip("Test expects entitlement error but test zone entitlements allow the configuration")
-	
+
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -108,7 +108,7 @@ func TestAccCloudflareBotManagement_EnableJS(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
 					"ai_bots_protection",
-					"crawler_protection", 
+					"crawler_protection",
 					"stale_zone_configuration",
 				},
 			},
@@ -144,7 +144,7 @@ func TestAccCloudflareBotManagement_SuppressSessionScore(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
 					"ai_bots_protection",
-					"crawler_protection", 
+					"crawler_protection",
 					"stale_zone_configuration",
 				},
 			},
@@ -200,29 +200,6 @@ func TestAccCloudflareBotManagement_AIBotsProtection(t *testing.T) {
 	})
 }
 
-func testCloudflareBotManagementSBFM(resourceName, rnd string, bm cloudflare.BotManagement) string {
-	return acctest.LoadTestCase("cloudflarebotmanagementsbfm.tf", resourceName, rnd,
-		*bm.EnableJS, *bm.SBFMDefinitelyAutomated,
-		*bm.SBFMLikelyAutomated, *bm.SBFMVerifiedBots,
-		*bm.SBFMStaticResourceProtection, *bm.OptimizeWordpress)
-}
-
-func testCloudflareBotManagementEntSubscription(resourceName, zoneID string, bm cloudflare.BotManagement) string {
-	return acctest.LoadTestCase("cloudflarebotmanagemententsubscription.tf", resourceName, zoneID, *bm.EnableJS, *bm.SuppressSessionScore, false)
-}
-
-func testCloudflareBotManagementEnableJS(resourceName, zoneID string, enableJS bool) string {
-	return acctest.LoadTestCase("cloudflarebotmanagementenablejs.tf", resourceName, zoneID, enableJS)
-}
-
-func testCloudflareBotManagementSuppressSessionScore(resourceName, zoneID string, suppressSessionScore bool) string {
-	return acctest.LoadTestCase("cloudflarebotmanagementsuppresssessionscore.tf", resourceName, zoneID, suppressSessionScore)
-}
-
-func testCloudflareBotManagementAutoUpdateModel(resourceName, zoneID string, autoUpdateModel bool) string {
-	return acctest.LoadTestCase("cloudflarebotmanagementautoupdatemodel.tf", resourceName, zoneID, autoUpdateModel)
-}
-
 func TestAccCloudflareBotManagement_StateConsistency(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_bot_management." + rnd
@@ -260,7 +237,7 @@ func TestAccCloudflareBotManagement_StateConsistency(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
 					"ai_bots_protection",
-					"crawler_protection", 
+					"crawler_protection",
 					"stale_zone_configuration",
 				},
 			},
@@ -601,6 +578,59 @@ func TestAccCloudflareBotManagement_ComputedFields(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareBotManagement_EnableJSAutoUpdateSuppression(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_bot_management." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareBotManagementEnableJSAutoUpdateSupression(rnd, zoneID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enable_js"), knownvalue.Bool(false)),
+				},
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionCreate),
+						plancheck.ExpectKnownValue(
+							resourceName,
+							tfjsonpath.New("enable_js"),
+							knownvalue.Bool(false),
+						),
+						plancheck.ExpectKnownValue(
+							resourceName,
+							tfjsonpath.New("auto_update_model"),
+							knownvalue.Bool(true),
+						),
+						plancheck.ExpectKnownValue(
+							resourceName,
+							tfjsonpath.New("suppress_session_score"),
+							knownvalue.Bool(false),
+						),
+					},
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"ai_bots_protection",
+					"crawler_protection",
+					"stale_zone_configuration",
+				},
+			},
+		},
+	})
+}
+
 func testCloudflareBotManagementAIBotsProtection(resourceName, zoneID string, aiBotsProtection string) string {
 	return acctest.LoadTestCase("cloudflarebotmanagementaibotsprotection.tf", resourceName, zoneID, aiBotsProtection)
 }
@@ -663,4 +693,31 @@ func testCloudflareBotManagementIssue5519NullFields(resourceName, zoneID string)
 
 func testCloudflareBotManagementIssue5519Reproduce(resourceName, zoneID string) string {
 	return acctest.LoadTestCase("cloudflarebotmanagementissue5519reproduce.tf", resourceName, zoneID)
+}
+
+func testCloudflareBotManagementSBFM(resourceName, rnd string, bm cloudflare.BotManagement) string {
+	return acctest.LoadTestCase("cloudflarebotmanagementsbfm.tf", resourceName, rnd,
+		*bm.EnableJS, *bm.SBFMDefinitelyAutomated,
+		*bm.SBFMLikelyAutomated, *bm.SBFMVerifiedBots,
+		*bm.SBFMStaticResourceProtection, *bm.OptimizeWordpress)
+}
+
+func testCloudflareBotManagementEntSubscription(resourceName, zoneID string, bm cloudflare.BotManagement) string {
+	return acctest.LoadTestCase("cloudflarebotmanagemententsubscription.tf", resourceName, zoneID, *bm.EnableJS, *bm.SuppressSessionScore, false)
+}
+
+func testCloudflareBotManagementEnableJS(resourceName, zoneID string, enableJS bool) string {
+	return acctest.LoadTestCase("cloudflarebotmanagementenablejs.tf", resourceName, zoneID, enableJS)
+}
+
+func testCloudflareBotManagementSuppressSessionScore(resourceName, zoneID string, suppressSessionScore bool) string {
+	return acctest.LoadTestCase("cloudflarebotmanagementsuppresssessionscore.tf", resourceName, zoneID, suppressSessionScore)
+}
+
+func testCloudflareBotManagementAutoUpdateModel(resourceName, zoneID string, autoUpdateModel bool) string {
+	return acctest.LoadTestCase("cloudflarebotmanagementautoupdatemodel.tf", resourceName, zoneID, autoUpdateModel)
+}
+
+func testCloudflareBotManagementEnableJSAutoUpdateSupression(resourceName, zoneID string) string {
+	return acctest.LoadTestCase("cloudflarebotmanagementenablejsautoupdatesupression.tf", resourceName, zoneID)
 }

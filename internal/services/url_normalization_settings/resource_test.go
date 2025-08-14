@@ -3,12 +3,13 @@ package url_normalization_settings_test
 import (
 	"context"
 	"fmt"
-	"github.com/cloudflare/cloudflare-go/v5/url_normalization"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"log"
 	"os"
 	"regexp"
 	"testing"
+
+	"github.com/cloudflare/cloudflare-go/v5/url_normalization"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	cloudflare "github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -191,7 +192,7 @@ func TestAccCloudflareURLNormalizationSettings_InvalidValues(t *testing.T) {
 			},
 			{
 				Config:      testAccCheckCloudflareURLNormalizationSettingsConfig(zoneID, "cloudflare", "invalid_scope", rnd),
-				ExpectError: regexp.MustCompile(`value must be one of: \["none" "incoming" "both"\]`),
+				ExpectError: regexp.MustCompile(`value must be one of: \["incoming"|"none"|"both"\]`),
 			},
 		},
 	})
