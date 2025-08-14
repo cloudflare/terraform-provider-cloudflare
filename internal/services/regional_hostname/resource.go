@@ -155,6 +155,9 @@ func (r *RegionalHostnameResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
+	// Store the current state to preserve values not returned by API
+	currentState := *data
+
 	res := new(http.Response)
 	env := RegionalHostnameResultEnvelope{*data}
 	_, err := r.client.Addressing.RegionalHostnames.Get(
@@ -183,6 +186,11 @@ func (r *RegionalHostnameResource) Read(ctx context.Context, req resource.ReadRe
 	}
 	data = &env.Result
 	data.ID = data.Hostname
+
+	// If the API response doesn't include routing but we have it in state, preserve it
+	if data.Routing.IsNull() && !currentState.Routing.IsNull() {
+		data.Routing = currentState.Routing
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -255,6 +263,11 @@ func (r *RegionalHostnameResource) ImportState(ctx context.Context, req resource
 	}
 	data = &env.Result
 	data.ID = data.Hostname
+
+	// If the API response doesn't include routing, set the default value
+	if data.Routing.IsNull() {
+		data.Routing = types.StringValue("dns")
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
