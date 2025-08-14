@@ -318,7 +318,7 @@ func TestTransformAccessPolicy(t *testing.T) {
 
 			// Format the output
 			output := string(hclwrite.Format(file.Bytes()))
-			
+
 			// Print diagnostics for debugging
 			if ds.HclDiagnostics.HasErrors() || len(ds.HclDiagnostics) > 0 {
 				for _, d := range ds.HclDiagnostics {

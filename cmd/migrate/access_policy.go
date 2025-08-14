@@ -107,27 +107,14 @@ func transformPolicyRuleListItem(expr *hclsyntax.Expression, diags ast.Diagnosti
 		expanded := expandAttributes(obj, diags)
 		if len(expanded) > 0 {
 			// Object was expanded into multiple objects
-			fmt.Printf("DEBUG: Expanded into %d objects\n", len(expanded))
 			newExprs = append(newExprs, expanded...)
 		} else {
 			// No expansion needed, keep original object
-			fmt.Printf("DEBUG: No expansion, keeping original object\n")
 			newExprs = append(newExprs, tup.Exprs[i])
 		}
 	}
 
 	// Replace the tuple's expressions with the new expanded list
-	fmt.Printf("DEBUG: Final newExprs has %d items\n", len(newExprs))
-	for idx, expr := range newExprs {
-		if objExpr, ok := expr.(*hclsyntax.ObjectConsExpr); ok {
-			fmt.Printf("  DEBUG: newExprs[%d] is ObjectConsExpr with %d items\n", idx, len(objExpr.Items))
-			for _, item := range objExpr.Items {
-				k := ast.Expr2S(item.KeyExpr, diags)
-				v := ast.Expr2S(item.ValueExpr, diags)
-				fmt.Printf("    DEBUG: item key=%s, value=%s\n", k, v)
-			}
-		}
-	}
 	tup.Exprs = newExprs
 }
 
@@ -171,19 +158,12 @@ func expandAttributes(obj *hclsyntax.ObjectConsExpr, diags ast.Diagnostics) []hc
 
 		// Keep other attributes as-is
 		remainingItems = append(remainingItems, item)
-		fmt.Printf("DEBUG added to remainingItems: key=%s, value=%s\n", key, ast.Expr2S(item.ValueExpr, diags))
 	}
 
 	// If we expanded some attributes, we need to handle remaining items
 	if len(allExpanded) > 0 {
 		// If there are remaining items, add them as the first object
 		if len(remainingItems) > 0 {
-			fmt.Printf("DEBUG creating remainingObj with %d items\n", len(remainingItems))
-			for _, ri := range remainingItems {
-				k := ast.Expr2S(ri.KeyExpr, diags)
-				v := ast.Expr2S(ri.ValueExpr, diags)
-				fmt.Printf("  DEBUG remainingItem: key=%s, value=%s, type=%T\n", k, v, ri.ValueExpr)
-			}
 			remainingObj := &hclsyntax.ObjectConsExpr{
 				Items: remainingItems,
 			}

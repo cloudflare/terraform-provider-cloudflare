@@ -69,7 +69,7 @@ func (o Object) SetAttribute(key string, val hclsyntax.Expression, diags Diagnos
 			ValueExpr: val,
 		}
 		o.Items = append(o.Items, attr)
-		o.attrs[key] = &o.Items[len(o.Items)-1].ValueExpr
+		o.attrs[key] = &attr.ValueExpr
 	} else {
 		// already exists, just update it
 		*(o.attrs[key]) = val
@@ -79,14 +79,9 @@ func (o Object) SetAttribute(key string, val hclsyntax.Expression, diags Diagnos
 func (o Object) RemoveAttribute(key string, diags Diagnostics) {
 	// Remove attribute from attrs map & underlying list of items
 	delete(o.attrs, key)
-	acc := []hclsyntax.ObjectConsItem{}
-	for _, item := range o.Items {
-		k := Expr2S(item.KeyExpr, diags)
-		if k != key {
-			acc = append(acc, item)
-		}
-	}
-	o.Items = acc
+	o.Items = slices.DeleteFunc(o.Items, func(item hclsyntax.ObjectConsItem) bool {
+		return Expr2S(item.KeyExpr, diags) == key
+	})
 }
 
 // ExprTransformer mutates an attribute value in place
