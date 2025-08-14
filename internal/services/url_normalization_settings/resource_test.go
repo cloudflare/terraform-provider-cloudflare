@@ -192,7 +192,7 @@ func TestAccCloudflareURLNormalizationSettings_InvalidValues(t *testing.T) {
 			},
 			{
 				Config:      testAccCheckCloudflareURLNormalizationSettingsConfig(zoneID, "cloudflare", "invalid_scope", rnd),
-				ExpectError: regexp.MustCompile(`value must be one of: \["incoming" "both" "none"\]`),
+				ExpectError: regexp.MustCompile(`value must be one of: \["incoming"|"none"|"both"\]`),
 			},
 		},
 	})
