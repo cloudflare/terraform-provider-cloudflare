@@ -57,7 +57,6 @@ data "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 }
 
 func TestAccCloudflareAccessIdentityProviderDataSourceNotFound(t *testing.T) {
-	t.Skip(`FIXME: "message": "access.api.error.not_found"`)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 
@@ -70,7 +69,7 @@ func TestAccCloudflareAccessIdentityProviderDataSourceNotFound(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareAccessIdentityProviderDataSource_NotFound(accountID, rnd),
-				ExpectError: regexp.MustCompile(`no Access Identity Providers found|no Access Identity Provider matching name`),
+				ExpectError: regexp.MustCompile(`access.api.error.not_found|no Access Identity Providers found|no Access Identity Provider matching name`),
 			},
 		},
 	})
@@ -81,7 +80,6 @@ func testAccCheckCloudflareAccessIdentityProviderDataSource_NotFound(accountID, 
 }
 
 func TestAccCloudflareAccessIdentityProviderDataSource_GitHub(t *testing.T) {
-	t.Skip(`FIXME: Exactly one of these attributes must be configured: [identity_provider_id,filter]`)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 
