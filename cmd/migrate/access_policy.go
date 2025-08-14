@@ -1,10 +1,7 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
-	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
@@ -18,9 +15,10 @@ func isAccessPolicyResource(block *hclwrite.Block) bool {
 }
 
 // transformAccessPolicyBlock transforms include/exclude/require attributes
-// Currently only handles boolean attributes like everyone, certificate, any_valid_service_token
-// After grit: include = [{ everyone = true }]
-// After this: include = [{ everyone = {} }]
+// Handles:
+// 1. Boolean attributes (everyone, certificate, any_valid_service_token) -> empty objects
+// 2. Array attributes (email, group, ip, email_domain) -> split into multiple objects
+// 3. Github blocks -> rename to github_organization and expand teams
 func transformAccessPolicyBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 	// Process include, exclude, and require attributes (grit has already converted them to lists)
 
@@ -30,26 +28,12 @@ func transformAccessPolicyBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 		"require": transformPolicyRuleListItem,
 	}
 	ast.ApplyTransformToAttributes(ast.Block{Block: block}, transforms, diags)
-	/*
-		conditionAttributes := []string{"include", "exclude", "require"}
-
-		for _, attrName := range conditionAttributes {
-			attr := block.Body().GetAttribute(attrName)
-			if attr == nil {
-				continue // Attribute doesn't exist
-			}
-
-			transformedTokens := transformBooleanAttributesInList(*attr, diags)
-			if transformedTokens != nil {
-				block.Body().SetAttributeRaw(attrName, transformedTokens)
-			}
-		}
-	*/
 }
 
 // transformPolicyRuleListItem transforms condition lists:
 // 1. Boolean attributes (everyone, certificate, any_valid_service_token) -> empty objects
 // 2. Array attributes (email, group, ip) -> split into multiple objects
+// 3. Github blocks -> rename to github_organization and expand teams
 func transformPolicyRuleListItem(expr *hclsyntax.Expression, diags ast.Diagnostics) {
 
 	tup, ok := (*expr).(*hclsyntax.TupleConsExpr)
@@ -78,9 +62,9 @@ func transformPolicyRuleListItem(expr *hclsyntax.Expression, diags ast.Diagnosti
 		// These are updated in place
 		ast.ApplyTransformToAttributes(ast.NewObject(obj, diags), transforms, diags)
 
-		// Then check if we need to expand array attributes
-		expanded := expandArrayAttributes(obj, diags)
-		if expanded != nil {
+		// Then check if we need to expand array attributes or handle github
+		expanded := expandAttributes(obj, diags)
+		if len(expanded) > 0 {
 			// Object was expanded into multiple objects
 			newExprs = append(newExprs, expanded...)
 		} else {
@@ -93,55 +77,227 @@ func transformPolicyRuleListItem(expr *hclsyntax.Expression, diags ast.Diagnosti
 	tup.Exprs = newExprs
 }
 
-// expandArrayAttributes checks if an object has array attributes (email, group, ip)
-// and expands them into multiple objects
-func expandArrayAttributes(obj *hclsyntax.ObjectConsExpr, diags ast.Diagnostics) []hclsyntax.Expression {
-	// Map of attribute names to their inner field names
-	arrayAttrs := map[string]string{
-		"email": "email",
-		"group": "id",
-		"ip":    "ip",
-	}
+// expandAttributes checks if an object has attributes that need expansion
+// Returns nil if no expansion needed, or a slice of expanded objects
+func expandAttributes(obj *hclsyntax.ObjectConsExpr, diags ast.Diagnostics) []hclsyntax.Expression {
+	var allExpanded []hclsyntax.Expression
+	var remainingItems []hclsyntax.ObjectConsItem
 
 	for _, item := range obj.Items {
 		key := ast.Expr2S(item.KeyExpr, diags)
-		innerFieldName, isArrayAttr := arrayAttrs[key]
-		if !isArrayAttr {
+
+		// Skip boolean attributes that should have been removed (false values)
+		// These are handled by boolToEmptyObject transform already applied
+		booleanAttrs := map[string]bool{
+			"everyone":                true,
+			"certificate":             true,
+			"any_valid_service_token": true,
+		}
+		if _, isBool := booleanAttrs[key]; isBool {
+			// Check if it's false and should be removed
+			val := ast.Expr2S(item.ValueExpr, diags)
+			if val == "false" {
+				continue // Skip this item entirely
+			}
+			// If it's true, it's already been transformed to empty object by earlier transform
+		}
+
+		// Handle github specially
+		if key == "github" {
+			expanded := expandGithub(item, diags)
+			if expanded != nil {
+				allExpanded = append(allExpanded, expanded...)
+				continue
+			}
+		}
+
+		// Handle simple array attributes
+		if expanded := expandSimpleArrayAttribute(key, item, diags); expanded != nil {
+			allExpanded = append(allExpanded, expanded...)
 			continue
 		}
 
-		// Check if the value is a tuple/array
-		tup, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr)
+		// Keep other attributes as-is
+		remainingItems = append(remainingItems, item)
+	}
+
+	// If we expanded some attributes, we need to handle remaining items
+	if len(allExpanded) > 0 {
+		// If there are remaining items, add them as the first object
+		if len(remainingItems) > 0 {
+			remainingObj := &hclsyntax.ObjectConsExpr{
+				Items: remainingItems,
+			}
+			// Prepend the remaining items
+			allExpanded = append([]hclsyntax.Expression{remainingObj}, allExpanded...)
+		}
+		return allExpanded
+	}
+
+	// No expansion happened
+	return nil
+}
+
+// expandSimpleArrayAttribute handles email, group, ip, email_domain arrays
+func expandSimpleArrayAttribute(key string, item hclsyntax.ObjectConsItem, diags ast.Diagnostics) []hclsyntax.Expression {
+	// Map of attribute names to their inner field names
+	arrayAttrs := map[string]string{
+		"email":        "email",
+		"group":        "id",
+		"ip":           "ip",
+		"email_domain": "domain",
+	}
+
+	innerFieldName, isArrayAttr := arrayAttrs[key]
+	if !isArrayAttr {
+		return nil
+	}
+
+	// Check if the value is a tuple/array
+	tup, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr)
+	if !ok {
+		// Not an array, keep as-is
+		return nil
+	}
+
+	// Create a new object for each item in the array
+	var result []hclsyntax.Expression
+	for _, elem := range tup.Exprs {
+		newObj := &hclsyntax.ObjectConsExpr{
+			Items: []hclsyntax.ObjectConsItem{
+				{
+					KeyExpr: item.KeyExpr,
+					ValueExpr: &hclsyntax.ObjectConsExpr{
+						Items: []hclsyntax.ObjectConsItem{
+							{
+								KeyExpr:   ast.NewKeyExpr(innerFieldName),
+								ValueExpr: elem,
+							},
+						},
+					},
+				},
+			},
+		}
+		result = append(result, newObj)
+	}
+	return result
+}
+
+// expandGithub handles the special case of github blocks
+// V4: github = [{ name = "org", teams = ["team1", "team2"], identity_provider_id = "id" }]
+// V5: Multiple github_organization blocks, one per team
+func expandGithub(item hclsyntax.ObjectConsItem, diags ast.Diagnostics) []hclsyntax.Expression {
+	// Check if the value is a tuple/array of github blocks
+	tup, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr)
+	if !ok {
+		return nil
+	}
+
+	var result []hclsyntax.Expression
+
+	for _, githubExpr := range tup.Exprs {
+		githubObj, ok := githubExpr.(*hclsyntax.ObjectConsExpr)
 		if !ok {
-			diags.HclDiagnostics.Append(&hcl.Diagnostic{Severity: hcl.DiagWarning, Summary: fmt.Sprintf("Expected attribute %s to have array value but it doesn't", key)})
 			continue
 		}
 
-		// Create a new object for each item in the array
-		var result []hclsyntax.Expression
-		for _, elem := range tup.Exprs {
+		// Extract the github block fields
+		var nameExpr hclsyntax.Expression
+		var teamsExpr *hclsyntax.TupleConsExpr
+		var identityProviderExpr hclsyntax.Expression
+		var otherItems []hclsyntax.ObjectConsItem
+
+		for _, githubItem := range githubObj.Items {
+			itemKey := ast.Expr2S(githubItem.KeyExpr, diags)
+			switch itemKey {
+			case "name":
+				nameExpr = githubItem.ValueExpr
+			case "teams":
+				teamsExpr, _ = githubItem.ValueExpr.(*hclsyntax.TupleConsExpr)
+			case "identity_provider_id":
+				identityProviderExpr = githubItem.ValueExpr
+			default:
+				otherItems = append(otherItems, githubItem)
+			}
+		}
+
+		// If there's a teams array, expand it
+		if teamsExpr != nil && len(teamsExpr.Exprs) > 0 {
+			for _, teamExpr := range teamsExpr.Exprs {
+				// Build the new github_organization object
+				var items []hclsyntax.ObjectConsItem
+
+				if nameExpr != nil {
+					items = append(items, hclsyntax.ObjectConsItem{
+						KeyExpr:   ast.NewKeyExpr("name"),
+						ValueExpr: nameExpr,
+					})
+				}
+
+				// Convert teams array element to single team
+				items = append(items, hclsyntax.ObjectConsItem{
+					KeyExpr:   ast.NewKeyExpr("team"),
+					ValueExpr: teamExpr,
+				})
+
+				if identityProviderExpr != nil {
+					items = append(items, hclsyntax.ObjectConsItem{
+						KeyExpr:   ast.NewKeyExpr("identity_provider_id"),
+						ValueExpr: identityProviderExpr,
+					})
+				}
+
+				// Add any other fields
+				items = append(items, otherItems...)
+
+				newObj := &hclsyntax.ObjectConsExpr{
+					Items: []hclsyntax.ObjectConsItem{
+						{
+							KeyExpr: ast.NewKeyExpr("github_organization"),
+							ValueExpr: &hclsyntax.ObjectConsExpr{
+								Items: items,
+							},
+						},
+					},
+				}
+				result = append(result, newObj)
+			}
+		} else {
+			// No teams array or empty teams, create single github_organization
+			var items []hclsyntax.ObjectConsItem
+
+			if nameExpr != nil {
+				items = append(items, hclsyntax.ObjectConsItem{
+					KeyExpr:   ast.NewKeyExpr("name"),
+					ValueExpr: nameExpr,
+				})
+			}
+
+			if identityProviderExpr != nil {
+				items = append(items, hclsyntax.ObjectConsItem{
+					KeyExpr:   ast.NewKeyExpr("identity_provider_id"),
+					ValueExpr: identityProviderExpr,
+				})
+			}
+
+			// Add any other fields
+			items = append(items, otherItems...)
+
 			newObj := &hclsyntax.ObjectConsExpr{
 				Items: []hclsyntax.ObjectConsItem{
 					{
-						KeyExpr: item.KeyExpr,
+						KeyExpr: ast.NewKeyExpr("github_organization"),
 						ValueExpr: &hclsyntax.ObjectConsExpr{
-							Items: []hclsyntax.ObjectConsItem{
-								{
-									KeyExpr:   ast.NewKeyExpr(innerFieldName),
-									ValueExpr: elem,
-								},
-							},
+							Items: items,
 						},
 					},
 				},
 			}
 			result = append(result, newObj)
 		}
-		return result
 	}
 
-	// No array attributes found
-	return nil
+	return result
 }
 
 func boolToEmptyObject(attrVal *hclsyntax.Expression, diags ast.Diagnostics) {

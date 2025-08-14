@@ -37,10 +37,10 @@ func TestTransformAccessPolicy(t *testing.T) {
 			  }]
 			}`,
 		},
-		/*
-			{
-				name: "multiple_conditions",
-				input: `resource "cloudflare_zero_trust_access_policy" "test" {
+
+		{
+			name: "multiple_conditions",
+			input: `resource "cloudflare_zero_trust_access_policy" "test" {
 				  account_id = "abc123"
 				  name       = "Test Policy"
 				  decision   = "allow"
@@ -54,7 +54,7 @@ func TestTransformAccessPolicy(t *testing.T) {
 				    ip = ["192.168.1.0/24"]
 				  }]
 				}`,
-				expected: `resource "cloudflare_zero_trust_access_policy" "test" {
+			expected: `resource "cloudflare_zero_trust_access_policy" "test" {
 				  account_id = "abc123"
 				  name       = "Test Policy"
 				  decision   = "allow"
@@ -69,11 +69,11 @@ func TestTransformAccessPolicy(t *testing.T) {
 				  ]
 
 				  exclude = [{
-				    ip = { ip = ["192.168.1.0/24"] }
+				    ip = { ip = "192.168.1.0/24" }
 				  }]
 				}`,
-			},
-		*/
+		},
+
 		{
 			name: "boolean_attribute_everyone",
 			input: `resource "cloudflare_zero_trust_access_policy" "test" {
@@ -95,10 +95,10 @@ func TestTransformAccessPolicy(t *testing.T) {
   }]
 }`,
 		},
-		/*
-					{
-						name: "mixed_attributes",
-						input: `resource "cloudflare_zero_trust_access_policy" "test" {
+
+		{
+			name: "github_single_team",
+			input: `resource "cloudflare_zero_trust_access_policy" "test" {
 			  account_id = "abc123"
 			  name       = "Test Policy"
 			  decision   = "allow"
@@ -114,26 +114,156 @@ func TestTransformAccessPolicy(t *testing.T) {
 			    }]
 			  }]
 			}`,
-										expected: `resource "cloudflare_zero_trust_access_policy" "test" {
+			expected: `resource "cloudflare_zero_trust_access_policy" "test" {
 							  account_id = "abc123"
 							  name       = "Test Policy"
 							  decision   = "allow"
 
 							  include = [{
-							    email_domain = { domain = ["example.com"] }
+							    email_domain = { domain = "example.com" }
 							  }]
 
 							  require = [{
-							    github = { github = [{
+							    github_organization = {
 							      name = "my-org"
-							      teams = ["engineering"]
-							    }] }
+							      team = "engineering"
+							    }
 							  }]
 							}`,
-									},
-									{
-										name: "no_transformation_needed",
-										input: `resource "cloudflare_zero_trust_access_policy" "test" {
+		},
+		{
+			name: "github_multiple_teams",
+			input: `resource "cloudflare_zero_trust_access_policy" "test" {
+			  account_id = "abc123"
+			  name       = "Test Policy"
+			  decision   = "allow"
+
+			  include = [{
+			    github = [{
+			      name = "my-org"
+			      teams = ["engineering", "devops", "security"]
+			      identity_provider_id = "provider-123"
+			    }]
+			  }]
+			}`,
+			expected: `resource "cloudflare_zero_trust_access_policy" "test" {
+							  account_id = "abc123"
+							  name       = "Test Policy"
+							  decision   = "allow"
+
+							  include = [{
+							    github_organization = {
+							      name                 = "my-org"
+							      team                 = "engineering"
+							      identity_provider_id = "provider-123"
+							    }
+							  }, {
+							    github_organization = {
+							      name                 = "my-org"
+							      team                 = "devops"
+							      identity_provider_id = "provider-123"
+							    }
+							  }, {
+							    github_organization = {
+							      name                 = "my-org"
+							      team                 = "security"
+							      identity_provider_id = "provider-123"
+							    }
+							  }]
+							}`,
+		},
+		{
+			name: "mixed_array_attributes_ordering",
+			input: `resource "cloudflare_zero_trust_access_policy" "test" {
+			  account_id = "abc123"
+			  name       = "Test Policy"
+			  decision   = "allow"
+
+			  include = [{
+			    email = ["first@example.com", "second@example.com"]
+			    group = ["group-1", "group-2"]
+			    ip = ["10.0.0.0/8", "192.168.0.0/16"]
+			  }]
+			}`,
+			expected: `resource "cloudflare_zero_trust_access_policy" "test" {
+							  account_id = "abc123"
+							  name       = "Test Policy"
+							  decision   = "allow"
+
+							  include = [{
+							    email = { email = "first@example.com" }
+							  }, {
+							    email = { email = "second@example.com" }
+							  }, {
+							    group = { id = "group-1" }
+							  }, {
+							    group = { id = "group-2" }
+							  }, {
+							    ip = { ip = "10.0.0.0/8" }
+							  }, {
+							    ip = { ip = "192.168.0.0/16" }
+							  }]
+							}`,
+		},
+		{
+			name: "mixed_with_non_array_attributes",
+			input: `resource "cloudflare_zero_trust_access_policy" "test" {
+			  account_id = "abc123"
+			  name       = "Test Policy"
+			  decision   = "allow"
+
+			  include = [{
+			    everyone = true
+			    email = ["user@example.com"]
+			    login_method = ["okta"]
+			  }]
+			}`,
+			expected: `resource "cloudflare_zero_trust_access_policy" "test" {
+							  account_id = "abc123"
+							  name       = "Test Policy"
+							  decision   = "allow"
+
+							  include = [{
+							    everyone = {}
+							    login_method = ["okta"]
+							  }, {
+							    email = { email = "user@example.com" }
+							  }]
+							}`,
+		},
+		{
+			name: "array_attributes_interleaved",
+			input: `resource "cloudflare_zero_trust_access_policy" "test" {
+			  account_id = "abc123"
+			  name       = "Test Policy"
+			  decision   = "allow"
+
+			  include = [{
+			    certificate = true
+			    email = ["alice@example.com"]
+			    login_method = ["github"]
+			    group = ["admins"]
+			    any_valid_service_token = false
+			  }]
+			}`,
+			expected: `resource "cloudflare_zero_trust_access_policy" "test" {
+							  account_id = "abc123"
+							  name       = "Test Policy"
+							  decision   = "allow"
+
+							  include = [{
+							    certificate = {}
+							    login_method = ["github"]
+							  }, {
+							    email = { email = "alice@example.com" }
+							  }, {
+							    group = { id = "admins" }
+							  }]
+							}`,
+		},
+		{
+			name: "no_transformation_needed",
+			input: `resource "cloudflare_zero_trust_access_policy" "test" {
 							  account_id = "abc123"
 							  name       = "Test Policy"
 							  decision   = "allow"
@@ -143,7 +273,7 @@ func TestTransformAccessPolicy(t *testing.T) {
 							    login_method = ["saml"]
 							  }]
 							}`,
-										expected: `resource "cloudflare_zero_trust_access_policy" "test" {
+			expected: `resource "cloudflare_zero_trust_access_policy" "test" {
 							  account_id = "abc123"
 							  name       = "Test Policy"
 							  decision   = "allow"
@@ -153,24 +283,22 @@ func TestTransformAccessPolicy(t *testing.T) {
 							    login_method = ["saml"]
 							  }]
 							}`,
-									},
-									{
-										name: "skip_non_access_policy_resources",
-										input: `resource "cloudflare_zero_trust_access_application" "test" {
+		},
+		{
+			name: "skip_non_access_policy_resources",
+			input: `resource "cloudflare_zero_trust_access_application" "test" {
 							  account_id = "abc123"
 							  name       = "Test App"
 							  domain     = "test.example.com"
 							  type       = "self_hosted"
 							}`,
-										expected: `resource "cloudflare_zero_trust_access_application" "test" {
+			expected: `resource "cloudflare_zero_trust_access_application" "test" {
 							  account_id = "abc123"
 							  name       = "Test App"
 							  domain     = "test.example.com"
 							  type       = "self_hosted"
 							}`,
-
-					},
-		*/
+		},
 	}
 
 	for _, tt := range tests {
