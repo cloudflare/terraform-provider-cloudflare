@@ -1,7 +1,7 @@
 resource "cloudflare_zero_trust_access_mtls_certificate" "%[1]s" {
 	name                 = "%[1]s-updated"
 	%[2]s_id             = "%[3]s"
-	associated_hostnames = ["updated.%[5]s"]
+	associated_hostnames = []
 	certificate          = <<EOT
 -----BEGIN CERTIFICATE-----
 MIID3jCCAsagAwIBAgIUciOXgGvXP8FX1ALvZ0NDqjKu1SMwDQYJKoZIhvcNAQEL
@@ -17,7 +17,7 @@ AoIBAQDEz6bGjvmQjDRSfEk/9MIKTi2L6qtCCy9o5ySYDMmU217G3gNjjEdEzTFl
 7oWMXHm0pyua81W3tJ+8pX4bl6+chthML18eVSY3lDCJ8CfODXknjMevjxqqANTF
 IqQh6+xhXQxB0U8HyibfdcMSxIAwUxs4t69ytmyC5NrIAbyzB+Y5Ifh9sgyyUM5x
 VdOBtyTnmOiEVYqMIE51yRyvmQOirhJ5FTOhKpTVQw2dIWzSXqPwl4iRlgIfNPQn
-rp+wdo2YKfiyog7zPIMloMHofEb7AgMBAAGjQjBAMA0GA1UdDwEB/wQEAwIBBjAP
+rp+wdo2YKfiyog7zPIMloMHofEb7AgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAP
 BgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBQyNb1vM2Lip+HlmCE1HdSk0948zDAN
 BgkqhkiG9w0BAQsFAAOCAQEAngoeqEOLehP6xIbhxth/TIDJb+13TuLJWZFc8ggD
 /BT/lMMm5BT6Wp5rA2v4QTBrfqP1ly2gKF9IQvI6vH39Rt9fHpLrejx8DZtDSkX3
