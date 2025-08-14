@@ -5,7 +5,5 @@ resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
   config = {
     client_id = "test"
     client_secret = "secret"
-    scopes = ["user:email", "read:user"]
-    support_groups = true
   }
 }

@@ -7,7 +7,7 @@ resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
     client_secret  = "test"
     directory_id   = "directory"
     support_groups = true
-    conditional_access_enabled = true
+    conditional_access_enabled = false
     prompt = "select_account"
   }
   scim_config = {
