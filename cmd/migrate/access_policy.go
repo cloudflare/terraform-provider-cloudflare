@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
+	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
@@ -72,15 +75,14 @@ func transformPolicyRuleListItem(expr *hclsyntax.Expression, diags ast.Diagnosti
 			"certificate":             boolToEmptyObject,
 			"any_valid_service_token": boolToEmptyObject,
 		}
+		// These are updated in place
 		ast.ApplyTransformToAttributes(ast.NewObject(obj, diags), transforms, diags)
 
 		// Then check if we need to expand array attributes
 		expanded := expandArrayAttributes(obj, diags)
 		if expanded != nil {
 			// Object was expanded into multiple objects
-			for _, expObj := range expanded {
-				newExprs = append(newExprs, expObj)
-			}
+			newExprs = append(newExprs, expanded...)
 		} else {
 			// No expansion needed, keep original object
 			newExprs = append(newExprs, tup.Exprs[i])
@@ -111,6 +113,7 @@ func expandArrayAttributes(obj *hclsyntax.ObjectConsExpr, diags ast.Diagnostics)
 		// Check if the value is a tuple/array
 		tup, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr)
 		if !ok {
+			diags.HclDiagnostics.Append(&hcl.Diagnostic{Severity: hcl.DiagWarning, Summary: fmt.Sprintf("Expected attribute %s to have array value but it doesn't", key)})
 			continue
 		}
 
