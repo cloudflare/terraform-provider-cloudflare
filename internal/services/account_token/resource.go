@@ -64,9 +64,6 @@ func (r *AccountTokenResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	// Preserve planned policies to keep exact type/shape from config
-	planPolicies := data.Policies
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -94,8 +91,6 @@ func (r *AccountTokenResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	data = &env.Result
-	// Restore planned policies to ensure type consistency with plan
-	data.Policies = planPolicies
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -117,7 +112,6 @@ func (r *AccountTokenResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	tokenValue := state.Value
-	planPolicies := data.Policies
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
@@ -147,8 +141,6 @@ func (r *AccountTokenResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	data = &env.Result
-	// Preserve planned policies to avoid server normalization causing drift
-	data.Policies = planPolicies
 	data.Value = tokenValue
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -164,7 +156,6 @@ func (r *AccountTokenResource) Read(ctx context.Context, req resource.ReadReques
 	}
 
 	tokenValue := data.Value
-	prevPolicies := data.Policies
 	res := new(http.Response)
 	env := AccountTokenResultEnvelope{*data}
 	_, err := r.client.Accounts.Tokens.Get(
@@ -192,8 +183,6 @@ func (r *AccountTokenResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 	data = &env.Result
-	// Preserve user-set policies to avoid server normalization causing drift
-	data.Policies = prevPolicies
 	data.Value = tokenValue
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
