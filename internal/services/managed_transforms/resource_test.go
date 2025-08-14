@@ -32,6 +32,10 @@ func init() {
 	})
 }
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
 func testSweepCloudflareManagedTransforms(r string) error {
 	ctx := context.Background()
 	client := acctest.SharedClient()
