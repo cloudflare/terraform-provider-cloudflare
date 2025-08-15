@@ -1,5 +1,21 @@
 # Changelog
 
+## 5.8.4 (2025-08-15)
+
+Full Changelog: [v5.8.3...v5.8.4](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.8.3...v5.8.4)
+
+### Bug Fixes
+
+* **cloudflare_ruleset:** update for consistency with OpenAPI schema ([837da07](https://github.com/cloudflare/terraform-provider-cloudflare/commit/837da07e1faed0507eae00f602414eac1b1e9f05))
+
+
+### Chores
+
+* don't announce to discord ([1816fff](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1816ffff2ec85325ca622ef1aa72a51b6d2ca9c6))
+* generate docs for 5.8.4 release ([ae12b37](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ae12b37d0dff361d7aa463f593a94bca01668c2f))
+* only include ones that have tests ([ebc40cf](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ebc40cf77c63951364b2b186e93ff19f4374faec))
+* run one by one ([1185be7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1185be75c053efa6d04a4d57491ac0be861bf2f8))
+
 ## 5.8.3 (2025-08-15)
 
 Full Changelog: [v5.8.2...v5.8.3](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.8.2...v5.8.3)
