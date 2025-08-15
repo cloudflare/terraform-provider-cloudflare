@@ -130,7 +130,7 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 			},
 		},
 	})
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 10)
 }
 
 func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
@@ -197,7 +197,7 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 			},
 		},
 	})
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 10)
 }
 
 func TestAccCloudflareAccessMutualTLSMinimal(t *testing.T) {
@@ -242,7 +242,7 @@ func TestAccCloudflareAccessMutualTLSMinimal(t *testing.T) {
 			},
 		},
 	})
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 10)
 }
 
 func TestAccCloudflareAccessMutualTLSNameUpdate(t *testing.T) {
@@ -293,7 +293,7 @@ func TestAccCloudflareAccessMutualTLSNameUpdate(t *testing.T) {
 				},
 				Check: resource.ComposeTestCheckFunc(
 					func(state *terraform.State) error {
-						time.Sleep(time.Second * 2)
+						time.Sleep(time.Second * 10)
 						return nil
 					},
 				),
@@ -307,7 +307,7 @@ func TestAccCloudflareAccessMutualTLSNameUpdate(t *testing.T) {
 			},
 		},
 	})
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 10)
 }
 
 func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State) error {
@@ -336,7 +336,7 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 		}
 	}
 
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 10)
 	return nil
 }
 
