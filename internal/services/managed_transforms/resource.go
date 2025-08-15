@@ -99,18 +99,6 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-<<<<<<< Updated upstream
-	// We need to check that all transformations are disabled, as we don't want them to be silently overwritten.
-	// This is also needed for the correctness of `Create()`, because if there were enabled transformations, we
-	// would need to disable them if they are not part of the plan (like we do in `Update()`).
-	resp.Diagnostics.Append(r.checkAllDisabledBeforeCreation(ctx, data.ZoneID.ValueString())...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	dataBytes, err := data.MarshalJSON()
-=======
 	// Prepare the data with disabled headers for those not in config
 	preparedData, err := r.prepareDataWithDisabledHeaders(ctx, data)
 	if err != nil {
@@ -119,7 +107,6 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 	}
 
 	dataBytes, err := preparedData.MarshalJSON()
->>>>>>> Stashed changes
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
@@ -146,20 +133,11 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-<<<<<<< Updated upstream
-	var plan *ManagedTransformsModel
-	req.Plan.Get(ctx, &plan)
-
-	normalizeResponse(data, plan)
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-=======
 	// Filter the response to only include configured headers
 	filteredData := r.filterResponseToConfigured(data, &env.Result)
 	filteredData.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, filteredData)...)
->>>>>>> Stashed changes
 }
 
 func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -179,18 +157,6 @@ func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-<<<<<<< Updated upstream
-	// Because we are patching the resource we need to explicitly add `enable = false` in order to remove
-	// transformations. Otherwise, we will simply leave them with their int previous state.
-	err := r.disableMissingTransformations(ctx, data)
-
-	if err != nil {
-		resp.Diagnostics.AddError("failed to disable missing transformations", err.Error())
-		return
-	}
-
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-=======
 	// Prepare the data with disabled headers for those not in config
 	preparedData, err := r.prepareDataWithDisabledHeaders(ctx, data)
 	if err != nil {
@@ -199,7 +165,6 @@ func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.Upd
 	}
 
 	dataBytes, err := preparedData.MarshalJSONForUpdate(*state)
->>>>>>> Stashed changes
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
@@ -226,20 +191,11 @@ func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-<<<<<<< Updated upstream
-	var plan *ManagedTransformsModel
-	req.Plan.Get(ctx, &plan)
-
-	normalizeResponse(data, plan)
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-=======
 	// Filter the response to only include configured headers
 	filteredData := r.filterResponseToConfigured(data, &env.Result)
 	filteredData.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, filteredData)...)
->>>>>>> Stashed changes
 }
 
 func (r *ManagedTransformsResource) disableMissingTransformations(
@@ -355,14 +311,6 @@ func (r *ManagedTransformsResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
-<<<<<<< Updated upstream
-	var state *ManagedTransformsModel
-	req.State.Get(ctx, &state)
-
-	normalizeResponse(data, state)
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-=======
 	// Filter to only include enabled headers, preserving order from current state
 	filteredData := &ManagedTransformsModel{
 		ID:                     data.ZoneID,
@@ -421,7 +369,6 @@ func (r *ManagedTransformsResource) Read(ctx context.Context, req resource.ReadR
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, filteredData)...)
->>>>>>> Stashed changes
 }
 
 type transformation interface {
