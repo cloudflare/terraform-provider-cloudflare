@@ -4,6 +4,7 @@ package zero_trust_access_policy
 
 import (
 	"context"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -21,6 +22,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessPolicyResource)(n
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 1,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The UUID of the policy",
