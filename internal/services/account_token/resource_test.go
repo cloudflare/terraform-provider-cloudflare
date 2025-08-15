@@ -221,3 +221,59 @@ func TestAccAccountToken_PermissionGroupOrder(t *testing.T) {
 		},
 	})
 }
+
+func TestAccAccountToken_Resources_SimpleToNested_NoDrift(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_account_token." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// Simple: account -> "*"
+				Config: acctest.LoadTestCase("account_token-resources-simple.tf", rnd, accountID, rnd, permissionID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.0.id", permissionID),
+					// resources should be a single-entry map
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+					resource.TestCheckResourceAttr(name, "policies.0.resources.%", "1"),
+				),
+			},
+			{
+				// Re-apply should produce empty plan (no drift)
+				Config: acctest.LoadTestCase("account_token-resources-simple.tf", rnd, accountID, rnd, permissionID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				// Nested: account -> { zone.* = "*" }
+				Config: acctest.LoadTestCase("account_token-resources-nested.tf", rnd, accountID, rnd, permissionID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.0.id", permissionID),
+					// top-level resources should have one account key
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+					resource.TestCheckResourceAttr(name, "policies.0.resources.%", "1"),
+					// nested map under the account key should have one entry
+					resource.TestCheckResourceAttr(name, fmt.Sprintf("policies.0.resources.com.cloudflare.api.account.%s.%%", accountID), "1"),
+				),
+			},
+			{
+				// Re-apply nested should produce empty plan (no drift)
+				Config: acctest.LoadTestCase("account_token-resources-nested.tf", rnd, accountID, rnd, permissionID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
