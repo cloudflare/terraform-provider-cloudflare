@@ -1,9 +1,13 @@
 package ruleset_test
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -14,14 +18,74 @@ import (
 )
 
 var (
-	domain = os.Getenv("CLOUDFLARE_DOMAIN")
+	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	zoneID    = os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain    = os.Getenv("CLOUDFLARE_DOMAIN")
 
 	configVariables = config.Variables{
-		"account_id": config.StringVariable(os.Getenv("CLOUDFLARE_ACCOUNT_ID")),
-		"zone_id":    config.StringVariable(os.Getenv("CLOUDFLARE_ZONE_ID")),
+		"account_id": config.StringVariable(accountID),
+		"zone_id":    config.StringVariable(zoneID),
 		"domain":     config.StringVariable(domain),
 	}
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_ruleset", &resource.Sweeper{
+		Name: "cloudflare_ruleset",
+		F: func(region string) error {
+			ctx := context.Background()
+
+			client := acctest.SharedClient()
+
+			type ruleset struct {
+				rulesets.RulesetListParams
+				rulesets.RulesetListResponse
+			}
+
+			var entrypointRulesets, customRulesets []ruleset
+
+			for _, params := range []rulesets.RulesetListParams{
+				{AccountID: cloudflare.F(accountID)},
+				{ZoneID: cloudflare.F(zoneID)},
+			} {
+				iter := client.Rulesets.ListAutoPaging(ctx, params)
+
+				for iter.Next() {
+					switch iter.Current().Kind {
+					case rulesets.KindManaged:
+					case rulesets.KindCustom:
+						customRulesets = append(customRulesets, ruleset{params, iter.Current()})
+					case rulesets.KindRoot:
+						entrypointRulesets = append(entrypointRulesets, ruleset{params, iter.Current()})
+					case rulesets.KindZone:
+						entrypointRulesets = append(entrypointRulesets, ruleset{params, iter.Current()})
+					default:
+						return fmt.Errorf("unknown ruleset kind %q", iter.Current().Kind)
+					}
+				}
+
+				if err := iter.Err(); err != nil {
+					return fmt.Errorf("failed to list account rulesets: %w", err)
+				}
+			}
+
+			for _, ruleset := range append(entrypointRulesets, customRulesets...) {
+				if err := client.Rulesets.Delete(ctx, ruleset.ID, rulesets.RulesetDeleteParams{
+					AccountID: ruleset.AccountID,
+					ZoneID:    ruleset.ZoneID,
+				}); err != nil {
+					return fmt.Errorf("failed to delete ruleset %q: %w", ruleset.ID, err)
+				}
+			}
+
+			return nil
+		},
+	})
+}
 
 func TestAccCloudflareRuleset_Kind(t *testing.T) {
 	resource.Test(t, resource.TestCase{
