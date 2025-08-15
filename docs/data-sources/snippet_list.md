@@ -1,11 +1,11 @@
 ---
-page_title: "cloudflare_snippets_list Data Source - Cloudflare"
+page_title: "cloudflare_snippet_list Data Source - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_snippets_list (Data Source)
+# cloudflare_snippet_list (Data Source)
 
 
 

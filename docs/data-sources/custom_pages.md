@@ -25,7 +25,7 @@ data "cloudflare_custom_pages" "example_custom_pages" {
 ### Required
 
 - `identifier` (String) Error Page Types
-Available values: "waf_block", "ip_block", "country_challenge", "500_errors", "1000_errors", "managed_challenge", "ratelimit_block".
+Available values: "under_attack", "basic_challenge", "waf_challenge", "waf_block", "ip_block", "country_challenge", "500_errors", "1000_errors", "managed_challenge", "ratelimit_block".
 
 ### Optional
 

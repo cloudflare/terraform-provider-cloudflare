@@ -27,7 +27,7 @@ data "cloudflare_url_normalization_settings" "example_url_normalization_settings
 ### Read-Only
 
 - `scope` (String) The scope of the URL normalization.
-Available values: "incoming", "both".
+Available values: "incoming", "both", "none".
 - `type` (String) The type of URL normalization performed by Cloudflare.
 Available values: "cloudflare", "rfc3986".
 

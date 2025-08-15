@@ -38,7 +38,7 @@ resource "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_se
       logo_path = "https://logos.com/a.png"
       mailto_address = "admin@example.com"
       mailto_subject = "Blocked User Inquiry"
-      mode = "customized_block_page"
+      mode = ""
       name = "Cloudflare"
       suppress_footer = false
       target_uri = "https://example.com"
@@ -164,7 +164,7 @@ Optional:
 - `mailto_address` (String) If mode is customized_block_page: admin email for users to contact.
 - `mailto_subject` (String) If mode is customized_block_page: subject line for emails created from block page.
 - `mode` (String) Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.
-Available values: "customized_block_page", "redirect_uri".
+Available values: "", "customized_block_page", "redirect_uri".
 - `name` (String) If mode is customized_block_page: block page title.
 - `read_only` (Boolean) This setting was shared via the Orgs API and cannot be edited by the current account
 - `source_account` (String) Account tag of account that shared this setting

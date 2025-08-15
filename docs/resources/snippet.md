@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 resource "cloudflare_snippet" "example_snippet" {
-  zone_id = "9f1839b6152d298aca64c4e906b6d074"
+  zone_id      = "9f1839b6152d298aca64c4e906b6d074"
   snippet_name = "my_snippet"
   files = [
     {
@@ -38,7 +38,7 @@ resource "cloudflare_snippet" "example_snippet" {
 
 ### Required
 
-- `files` (List of String) The list of files belonging to the snippet.
+- `files` (List of Object) The list of files belonging to the snippet. (see [below for nested schema](#nestedatt--files))
 - `metadata` (Attributes) Metadata about the snippet. (see [below for nested schema](#nestedatt--metadata))
 - `snippet_name` (String) The identifying name of the snippet.
 - `zone_id` (String) The unique ID of the zone.
@@ -47,6 +47,15 @@ resource "cloudflare_snippet" "example_snippet" {
 
 - `created_on` (String) The timestamp of when the snippet was created.
 - `modified_on` (String) The timestamp of when the snippet was last modified.
+
+<a id="nestedatt--files"></a>
+### Nested Schema for `files`
+
+Required:
+
+- `content` (String)
+- `name` (String)
+
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`
