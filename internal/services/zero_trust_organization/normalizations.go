@@ -44,7 +44,8 @@ func normalizeImportZeroTrustOrganizationAPIData(_ context.Context, data *ZeroTr
 		data.AutoRedirectToIdentity = types.BoolValue(false)
 	}
 
-	if data.LoginDesign != nil && *data.LoginDesign == (ZeroTrustOrganizationLoginDesignModel{}) {
+	var empty ZeroTrustOrganizationLoginDesignModel
+	if data.LoginDesign != nil || *data.LoginDesign == empty {
 		data.LoginDesign = nil
 	}
 

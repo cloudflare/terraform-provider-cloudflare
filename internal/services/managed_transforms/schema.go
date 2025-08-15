@@ -9,6 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ManagedTransformsResource)(nil)
@@ -26,9 +28,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
-			"managed_request_headers": schema.ListNestedAttribute{
+			"managed_request_headers": schema.SetNestedAttribute{
 				Description: "The list of Managed Request Transforms.",
 				Required:    true,
+				CustomType:  customfield.NewNestedObjectSetType[ManagedTransformsManagedRequestHeadersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -42,9 +45,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"managed_response_headers": schema.ListNestedAttribute{
+			"managed_response_headers": schema.SetNestedAttribute{
 				Description: "The list of Managed Response Transforms.",
 				Required:    true,
+				CustomType:  customfield.NewNestedObjectSetType[ManagedTransformsManagedResponseHeadersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

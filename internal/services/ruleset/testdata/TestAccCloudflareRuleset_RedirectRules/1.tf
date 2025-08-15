@@ -18,10 +18,9 @@ resource "cloudflare_ruleset" "my_ruleset" {
       action_parameters = {
         from_list = {
           key  = "http.request.full_uri"
-          name = "my_list"
+          name = cloudflare_list.my_list.name
         }
       }
     }
   ]
-  depends_on = ["cloudflare_list.my_list"]
 }

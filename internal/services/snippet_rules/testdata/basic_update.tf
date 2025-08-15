@@ -1,3 +1,23 @@
+resource "cloudflare_snippet" "%[1]s" {
+  zone_id      = "%[2]s"
+  snippet_name = "rules_set_snippet"
+  files = [
+    {
+      name    = "main.js"
+      content = <<-EOT
+      export default {
+        async fetch(request) {
+          return fetch(request);
+        },
+      }
+      EOT
+    }
+  ]
+  metadata = {
+    main_module = "main.js"
+  }
+}
+
 resource "cloudflare_snippet_rules" "%[1]s" {
   zone_id = "%[2]s"
   rules = [
@@ -8,4 +28,5 @@ resource "cloudflare_snippet_rules" "%[1]s" {
       description  = "Updated test snippet rule"
     }
   ]
+  depends_on = [cloudflare_snippet.%[1]s]
 }

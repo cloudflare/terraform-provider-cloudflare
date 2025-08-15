@@ -1,7 +1,7 @@
 resource "cloudflare_zero_trust_access_mtls_certificate" "%[1]s" {
 	name                 = "%[1]s-updated"
 	%[2]s_id             = "%[3]s"
-	associated_hostnames = ["updated.%[5]s"]
+	associated_hostnames = []
 	certificate          = <<EOT
 -----BEGIN CERTIFICATE-----
 MIID3jCCAsagAwIBAgIUciOXgGvXP8FX1ALvZ0NDqjKu1SMwDQYJKoZIhvcNAQEL

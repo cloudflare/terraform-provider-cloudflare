@@ -58,9 +58,10 @@ type RulesetRulesActionParametersModel struct {
 	Origin                   customfield.NestedObject[RulesetRulesActionParametersOriginModel]                       `tfsdk:"origin" json:"origin,optional"`
 	SNI                      customfield.NestedObject[RulesetRulesActionParametersSNIModel]                          `tfsdk:"sni" json:"sni,optional"`
 	Increment                types.Int64                                                                             `tfsdk:"increment" json:"increment,optional"`
+	AssetName                types.String                                                                            `tfsdk:"asset_name" json:"asset_name,optional"`
 	Content                  types.String                                                                            `tfsdk:"content" json:"content,optional"`
 	ContentType              types.String                                                                            `tfsdk:"content_type" json:"content_type,optional"`
-	StatusCode               types.Float64                                                                           `tfsdk:"status_code" json:"status_code,optional"`
+	StatusCode               types.Int64                                                                             `tfsdk:"status_code" json:"status_code,optional"`
 	AutomaticHTTPSRewrites   types.Bool                                                                              `tfsdk:"automatic_https_rewrites" json:"automatic_https_rewrites,optional"`
 	Autominify               customfield.NestedObject[RulesetRulesActionParametersAutominifyModel]                   `tfsdk:"autominify" json:"autominify,optional"`
 	BIC                      types.Bool                                                                              `tfsdk:"bic" json:"bic,optional"`
@@ -177,8 +178,8 @@ type RulesetRulesActionParametersURIQueryModel struct {
 }
 
 type RulesetRulesActionParametersOriginModel struct {
-	Host types.String  `tfsdk:"host" json:"host,optional"`
-	Port types.Float64 `tfsdk:"port" json:"port,optional"`
+	Host types.String `tfsdk:"host" json:"host,optional"`
+	Port types.Int64  `tfsdk:"port" json:"port,optional"`
 }
 
 type RulesetRulesActionParametersSNIModel struct {
