@@ -8,15 +8,12 @@ resource "cloudflare_ruleset" "my_ruleset" {
   rules = [
     {
       expression = "ip.src eq 1.1.1.1"
-      action     = "execute"
+      action     = "skip"
       action_parameters = {
-        id = "4814384a9e5d4991b9815dcfc25d2f1f"
-        matched_data = {
-          public_key = "iGqBmyIUxuWt1rvxoAharN9FUXneUBxA/Y19PyyrEG0="
+        rules = {
+          "4814384a9e5d4991b9815dcfc25d2f1f" = ["04116d14d7524986ba314d11c8a41e11"]
         }
-        overrides = {
-          enabled = false
-        }
+        rulesets = ["4814384a9e5d4991b9815dcfc25d2f1f"]
       }
     }
   ]

@@ -5,4 +5,11 @@ resource "cloudflare_ruleset" "my_ruleset" {
   name    = "My ruleset"
   phase   = "http_request_firewall_custom"
   kind    = "zone"
+  rules = [
+    {
+      description = "My rule description"
+      expression  = "ip.src eq 1.1.1.1"
+      action      = "block"
+    }
+  ]
 }
