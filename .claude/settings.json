@@ -1,0 +1,19 @@
+{
+  "tools": {
+    "write": {
+      "blocked_paths": [
+        "cmd/migrate/ast/wrappers.go"
+      ]
+    },
+    "edit": {
+      "blocked_paths": [
+        "cmd/migrate/ast/wrappers.go"
+      ]
+    },
+    "multiedit": {
+      "blocked_paths": [
+        "cmd/migrate/ast/wrappers.go"
+      ]
+    }
+  }
+}
