@@ -227,14 +227,29 @@ func (r *ZeroTrustAccessMTLSCertificateResource) Delete(ctx context.Context, req
 	}
 
 	params := zero_trust.AccessCertificateDeleteParams{}
+	updateParams := zero_trust.AccessCertificateUpdateParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+		updateParams.AccountID = cloudflare.F(data.AccountID.ValueString())
 	} else {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+		updateParams.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	_, err := r.client.ZeroTrust.Access.Certificates.Delete(
+	// We need to make an update to remove associated hostnames before we can delete
+	_, err := r.client.ZeroTrust.Access.Certificates.Update(
+		ctx,
+		data.ID.ValueString(),
+		updateParams,
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+
+	_, err = r.client.ZeroTrust.Access.Certificates.Delete(
 		ctx,
 		data.ID.ValueString(),
 		params,
@@ -299,6 +314,7 @@ func (r *ZeroTrustAccessMTLSCertificateResource) ImportState(ctx context.Context
 	}
 	data = &env.Result
 
+	resp.Diagnostics.AddWarning("MTLS certificate not imported", "The \"certificate\" field cannot be imported by this module and must be manually added to state.")
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
