@@ -56,7 +56,7 @@ func TestAccCloudflareEmailRoutingRule_Basic(t *testing.T) {
 	name := "cloudflare_email_routing_rule." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -86,7 +86,7 @@ func TestAccCloudflareEmailRoutingRule_Drop(t *testing.T) {
 	name := "cloudflare_email_routing_rule." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
