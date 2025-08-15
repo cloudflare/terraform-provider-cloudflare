@@ -18,6 +18,7 @@ func main() {
 	configDir := flag.String("config", "", "Directory containing Terraform files to migrate (defaults to current directory)")
 	stateFile := flag.String("state", "", "Terraform state file to migrate (defaults to first .tfstate file in current directory)")
 	useGrit := flag.Bool("grit", true, "Use grit for initial migrations (default: true)")
+	patternsDir := flag.String("patterns-dir", "", "Local directory to get patterns from (otherwise they're pulled from github)")
 	flag.Parse()
 
 	// Default config directory to current working directory if not specified
@@ -71,7 +72,7 @@ func main() {
 			gritStateFile = ""
 		}
 
-		if err := runGritMigrations(gritConfigDir, gritStateFile, *dryRun); err != nil {
+		if err := runGritMigrations(gritConfigDir, gritStateFile, *patternsDir, *dryRun); err != nil {
 			log.Fatalf("Error running grit migrations: %v", err)
 		}
 		fmt.Println("Grit migrations completed")
@@ -130,7 +131,7 @@ func processConfigDirectory(directory string, dryRun bool) error {
 		// Process the file
 		if err := processFile(path, dryRun); err != nil {
 			log.Printf("Error processing file %s: %v", path, err)
-			return err
+			// return err
 		}
 
 		return nil
@@ -154,12 +155,15 @@ func processStateFile(stateFile string, dryRun bool) error {
 
 	fmt.Printf("Processing state file: %s\n", stateFile)
 
-	// For now, just log that we would process it
 	if dryRun {
 		fmt.Printf("  ✗ Would update state file %s\n", stateFile)
 		fmt.Printf("    State file size: %d bytes\n", info.Size())
 	} else {
-		fmt.Printf("  ✓ Would update state file %s (not implemented yet)\n", stateFile)
+		// Actually transform the state file
+		if err := transformStateFile(stateFile); err != nil {
+			return fmt.Errorf("failed to transform state file: %v", err)
+		}
+		fmt.Printf("  ✓ Updated state file %s\n", stateFile)
 	}
 
 	return nil
@@ -197,6 +201,14 @@ func processFile(filename string, dryRun bool) error {
 }
 
 func transformFile(content []byte, filename string) ([]byte, error) {
+	// First, transform header blocks in load_balancer_pool resources at the string level
+	// This is needed because grit leaves header blocks inside origins lists, which causes parsing issues
+	contentStr := string(content)
+	contentStr = transformLoadBalancerPoolHeaders(contentStr)
+	// Also transform tiered_cache values at the string level
+	contentStr = transformTieredCacheValues(contentStr)
+	content = []byte(contentStr)
+
 	file, diags := hclwrite.ParseConfig(content, filename, hcl.InitialPos)
 	if diags.HasErrors() {
 		return nil, fmt.Errorf("failed to parse HCL in %s: %s", filename, diags.Error())
@@ -215,6 +227,27 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		if isZoneSettingsOverrideResource(block) {
 			blocksToRemove = append(blocksToRemove, block)
 			newBlocks = append(newBlocks, transformZoneSettingsBlock(block)...)
+		}
+
+		if isLoadBalancerPoolResource(block) {
+			transformLoadBalancerPoolBlock(block)
+		}
+
+		if isAccessPolicyResource(block) {
+			transformAccessPolicyBlock(block)
+		}
+
+		if isAccessApplicationResource(block) {
+			transformAccessApplicationBlock(block)
+		}
+
+		if isTieredCacheResource(block) {
+			newTieredCacheBlocks := transformTieredCacheBlock(block)
+			if newTieredCacheBlocks != nil {
+				// This resource needs to be replaced with argo_tiered_caching
+				blocksToRemove = append(blocksToRemove, block)
+				newBlocks = append(newBlocks, newTieredCacheBlocks...)
+			}
 		}
 	}
 
