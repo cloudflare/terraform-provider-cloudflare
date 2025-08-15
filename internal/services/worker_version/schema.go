@@ -450,6 +450,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"usages": schema.SetAttribute{
 							Description: "Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).",
 							Optional:    true,
+							CustomType:  customfield.NewSetType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"key_base64": schema.StringAttribute{

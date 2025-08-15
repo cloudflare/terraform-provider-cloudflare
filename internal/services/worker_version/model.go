@@ -133,7 +133,7 @@ type WorkerVersionBindingsModel struct {
 	StoreID       types.String                        `tfsdk:"store_id" json:"store_id,optional"`
 	Algorithm     jsontypes.Normalized                `tfsdk:"algorithm" json:"algorithm,optional"`
 	Format        types.String                        `tfsdk:"format" json:"format,optional"`
-	Usages        *[]types.String                     `tfsdk:"usages" json:"usages,optional"`
+	Usages        customfield.Set[types.String]       `tfsdk:"usages" json:"usages,optional"`
 	KeyBase64     types.String                        `tfsdk:"key_base64" json:"key_base64,optional"`
 	KeyJwk        jsontypes.Normalized                `tfsdk:"key_jwk" json:"key_jwk,optional"`
 	WorkflowName  types.String                        `tfsdk:"workflow_name" json:"workflow_name,optional"`
