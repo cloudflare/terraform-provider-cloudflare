@@ -159,7 +159,7 @@ func accessOrgImportStateCheckEmpty(instanceStates []*terraform.InstanceState) e
 	}
 
 	loginDesignAttrs := []string{
-		//"login_design.background_color",
+		"login_design.background_color",
 		"login_design.text_color",
 		"login_design.logo_path",
 		"login_design.header_text",
