@@ -105,7 +105,7 @@ func TestAccZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfig(rnd, "żółw.cfapi.net", accountID),
+				Config: testZoneConfig(rnd, unicodeDomain, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", unicodeDomain),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
@@ -125,15 +125,15 @@ func TestAccZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
+	domain := fmt.Sprintf("xn--w-uga1v8h.%s.cfapi.net", rnd)
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfig(rnd, "xn--w-uga1v8h.cfapi.net", accountID),
+				Config: testZoneConfig(rnd, domain, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("żółw.%s.cfapi.net", rnd)),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
@@ -157,18 +157,18 @@ func TestAccZonePerformsUnicodeComparison(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfig(rnd, "żółw.cfapi.net", accountID),
+				Config: testZoneConfig(rnd, fmt.Sprintf("żółw.%s.cfapi.net", rnd), accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("żółw.%s.cfapi.net", rnd)),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
 			{
-				Config:   testZoneConfig(rnd, "xn--w-uga1v8h.cfapi.net", accountID),
+				Config:   testZoneConfig(rnd, fmt.Sprintf("xn--w-uga1v8h.%s.cfapi.net", rnd), accountID),
 				PlanOnly: true,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("żółw.%s.cfapi.net", rnd)),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
