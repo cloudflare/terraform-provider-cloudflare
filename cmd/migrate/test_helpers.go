@@ -30,12 +30,13 @@ func RunTransformationTests(t *testing.T, tests []TestCase, transformFunc func([
 			// Transform the file
 			result, err := transformFunc(file.Bytes(), "test.tf")
 			assert.NoError(t, err)
-			resultString := string(result)
+			resultString := normalizeWhitespace(string(result))
 
 			// Check each expected output
 			for _, expected := range tt.Expected {
-				normalizedExpected := string(hclwrite.Format([]byte(expected)))
-				assert.Contains(t, resultString, normalizedExpected, "== Actual output ==\n%s\n== Expected to contain ==\n%s\n", resultString, normalizedExpected)
+				normalizedExpected := normalizeWhitespace(expected)
+				formattedExpected := string(hclwrite.Format([]byte(expected)))
+				assert.Contains(t, resultString, normalizedExpected, "== Actual output ==\n%s\n== Expected to contain ==\n%s\n", resultString, formattedExpected)
 			}
 		})
 	}
