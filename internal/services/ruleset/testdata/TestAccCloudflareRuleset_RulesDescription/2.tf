@@ -7,7 +7,7 @@ resource "cloudflare_ruleset" "my_ruleset" {
   kind    = "zone"
   rules = [
     {
-      description = "My updated rule description"
+      description = ""
       expression  = "ip.src eq 1.1.1.1"
       action      = "block"
     }

@@ -8,7 +8,11 @@ resource "cloudflare_ruleset" "my_ruleset" {
   rules = [
     {
       expression = "ip.src eq 1.1.1.1"
-      action     = "block"
+      action     = "skip"
+      action_parameters = {
+        phases  = ["http_request_firewall_managed"]
+        ruleset = "current"
+      }
     }
   ]
 }
