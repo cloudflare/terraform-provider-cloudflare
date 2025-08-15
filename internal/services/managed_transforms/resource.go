@@ -99,22 +99,20 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	// We need to check that all transformations are disabled, as we don't want them to be silently overwritten.
-	// This is also needed for the correctness of `Create()`, because if there were enabled transformations, we
-	// would need to disable them if they are not part of the plan (like we do in `Update()`).
-	resp.Diagnostics.Append(r.checkAllDisabledBeforeCreation(ctx, data.ZoneID.ValueString())...)
-
-	if resp.Diagnostics.HasError() {
+	// Prepare the data with disabled headers for those not in config
+	preparedData, err := r.prepareDataWithDisabledHeaders(ctx, data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to prepare data", err.Error())
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
+	dataBytes, err := preparedData.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
-	env := ManagedTransformsResultEnvelope{*data}
+	env := ManagedTransformsResultEnvelope{*preparedData}
 	_, err = r.client.ManagedTransforms.Edit(
 		ctx,
 		managed_transforms.ManagedTransformEditParams{
@@ -134,15 +132,12 @@ func (r *ManagedTransformsResource) Create(ctx context.Context, req resource.Cre
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
-	data.ID = data.ZoneID
 
-	var plan *ManagedTransformsModel
-	req.Plan.Get(ctx, &plan)
+	// Filter the response to only include configured headers
+	filteredData := r.filterResponseToConfigured(data, &env.Result)
+	filteredData.ID = data.ZoneID
 
-	normalizeResponse(data, plan)
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, filteredData)...)
 }
 
 func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -162,22 +157,20 @@ func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-	// Because we are patching the resource we need to explicitly add `enable = false` in order to remove
-	// transformations. Otherwise, we will simply leave them with their int previous state.
-	err := r.disableMissingTransformations(ctx, data)
-
+	// Prepare the data with disabled headers for those not in config
+	preparedData, err := r.prepareDataWithDisabledHeaders(ctx, data)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to disable missing transformations", err.Error())
+		resp.Diagnostics.AddError("failed to prepare data", err.Error())
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+	dataBytes, err := preparedData.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
-	env := ManagedTransformsResultEnvelope{*data}
+	env := ManagedTransformsResultEnvelope{*preparedData}
 	_, err = r.client.ManagedTransforms.Edit(
 		ctx,
 		managed_transforms.ManagedTransformEditParams{
@@ -197,15 +190,12 @@ func (r *ManagedTransformsResource) Update(ctx context.Context, req resource.Upd
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
-	data.ID = data.ZoneID
 
-	var plan *ManagedTransformsModel
-	req.Plan.Get(ctx, &plan)
+	// Filter the response to only include configured headers
+	filteredData := r.filterResponseToConfigured(data, &env.Result)
+	filteredData.ID = data.ZoneID
 
-	normalizeResponse(data, plan)
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, filteredData)...)
 }
 
 func (r *ManagedTransformsResource) disableMissingTransformations(
@@ -320,15 +310,65 @@ func (r *ManagedTransformsResource) Read(ctx context.Context, req resource.ReadR
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
-	data.ID = data.ZoneID
 
-	var state *ManagedTransformsModel
-	req.State.Get(ctx, &state)
+	// Filter to only include enabled headers, preserving order from current state
+	filteredData := &ManagedTransformsModel{
+		ID:                     data.ZoneID,
+		ZoneID:                 data.ZoneID,
+		ManagedRequestHeaders:  &[]*ManagedTransformsManagedRequestHeadersModel{},
+		ManagedResponseHeaders: &[]*ManagedTransformsManagedResponseHeadersModel{},
+	}
 
-	normalizeResponse(data, state)
+	// Create maps of enabled headers from API
+	enabledRequestHeaders := make(map[string]*ManagedTransformsManagedRequestHeadersModel)
+	enabledResponseHeaders := make(map[string]*ManagedTransformsManagedResponseHeadersModel)
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	if env.Result.ManagedRequestHeaders != nil {
+		for _, h := range *env.Result.ManagedRequestHeaders {
+			if h.Enabled.ValueBool() {
+				enabledRequestHeaders[h.ID.ValueString()] = h
+			}
+		}
+	}
+
+	if env.Result.ManagedResponseHeaders != nil {
+		for _, h := range *env.Result.ManagedResponseHeaders {
+			if h.Enabled.ValueBool() {
+				enabledResponseHeaders[h.ID.ValueString()] = h
+			}
+		}
+	}
+
+	// Preserve order from current state if available
+	if data.ManagedRequestHeaders != nil && len(*data.ManagedRequestHeaders) > 0 {
+		// Use order from state
+		for _, stateHeader := range *data.ManagedRequestHeaders {
+			if apiHeader, exists := enabledRequestHeaders[stateHeader.ID.ValueString()]; exists {
+				*filteredData.ManagedRequestHeaders = append(*filteredData.ManagedRequestHeaders, apiHeader)
+			}
+		}
+	} else {
+		// No state, just add all enabled headers
+		for _, h := range enabledRequestHeaders {
+			*filteredData.ManagedRequestHeaders = append(*filteredData.ManagedRequestHeaders, h)
+		}
+	}
+
+	if data.ManagedResponseHeaders != nil && len(*data.ManagedResponseHeaders) > 0 {
+		// Use order from state
+		for _, stateHeader := range *data.ManagedResponseHeaders {
+			if apiHeader, exists := enabledResponseHeaders[stateHeader.ID.ValueString()]; exists {
+				*filteredData.ManagedResponseHeaders = append(*filteredData.ManagedResponseHeaders, apiHeader)
+			}
+		}
+	} else {
+		// No state, just add all enabled headers
+		for _, h := range enabledResponseHeaders {
+			*filteredData.ManagedResponseHeaders = append(*filteredData.ManagedResponseHeaders, h)
+		}
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, filteredData)...)
 }
 
 type transformation interface {
@@ -479,4 +519,134 @@ func (r *ManagedTransformsResource) ImportState(ctx context.Context, req resourc
 
 func (r *ManagedTransformsResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
+}
+
+// prepareDataWithDisabledHeaders fetches currently enabled headers and adds them as disabled if not in config
+func (r *ManagedTransformsResource) prepareDataWithDisabledHeaders(ctx context.Context, data *ManagedTransformsModel) (*ManagedTransformsModel, error) {
+	// First, get the list of all headers from the API to see what's currently enabled
+	res := new(http.Response)
+	env := ManagedTransformsResultEnvelope{}
+	_, err := r.client.ManagedTransforms.List(
+		ctx,
+		managed_transforms.ManagedTransformListParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list managed transforms: %w", err)
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		return nil, fmt.Errorf("failed to deserialize response: %w", err)
+	}
+
+	// Create a copy of the data to modify
+	result := &ManagedTransformsModel{
+		ID:                     data.ID,
+		ZoneID:                 data.ZoneID,
+		ManagedRequestHeaders:  &[]*ManagedTransformsManagedRequestHeadersModel{},
+		ManagedResponseHeaders: &[]*ManagedTransformsManagedResponseHeadersModel{},
+	}
+
+	// Copy configured headers
+	if data.ManagedRequestHeaders != nil {
+		headers := make([]*ManagedTransformsManagedRequestHeadersModel, len(*data.ManagedRequestHeaders))
+		copy(headers, *data.ManagedRequestHeaders)
+		result.ManagedRequestHeaders = &headers
+	}
+	if data.ManagedResponseHeaders != nil {
+		headers := make([]*ManagedTransformsManagedResponseHeadersModel, len(*data.ManagedResponseHeaders))
+		copy(headers, *data.ManagedResponseHeaders)
+		result.ManagedResponseHeaders = &headers
+	}
+
+	// Track which headers are in the config
+	configuredRequestHeaders := make(map[string]bool)
+	configuredResponseHeaders := make(map[string]bool)
+
+	if data.ManagedRequestHeaders != nil {
+		for _, h := range *data.ManagedRequestHeaders {
+			configuredRequestHeaders[h.ID.ValueString()] = true
+		}
+	}
+	if data.ManagedResponseHeaders != nil {
+		for _, h := range *data.ManagedResponseHeaders {
+			configuredResponseHeaders[h.ID.ValueString()] = true
+		}
+	}
+
+	// Add any enabled headers from API that aren't in config as disabled
+	if env.Result.ManagedRequestHeaders != nil {
+		for _, apiHeader := range *env.Result.ManagedRequestHeaders {
+			if apiHeader.Enabled.ValueBool() && !configuredRequestHeaders[apiHeader.ID.ValueString()] {
+				disabledHeader := &ManagedTransformsManagedRequestHeadersModel{
+					ID:      apiHeader.ID,
+					Enabled: types.BoolValue(false),
+				}
+				*result.ManagedRequestHeaders = append(*result.ManagedRequestHeaders, disabledHeader)
+			}
+		}
+	}
+
+	if env.Result.ManagedResponseHeaders != nil {
+		for _, apiHeader := range *env.Result.ManagedResponseHeaders {
+			if apiHeader.Enabled.ValueBool() && !configuredResponseHeaders[apiHeader.ID.ValueString()] {
+				disabledHeader := &ManagedTransformsManagedResponseHeadersModel{
+					ID:      apiHeader.ID,
+					Enabled: types.BoolValue(false),
+				}
+				*result.ManagedResponseHeaders = append(*result.ManagedResponseHeaders, disabledHeader)
+			}
+		}
+	}
+
+	return result, nil
+}
+
+// filterResponseToConfigured filters the API response to only include headers that are in the config
+// and preserves the order from the config
+func (r *ManagedTransformsResource) filterResponseToConfigured(config *ManagedTransformsModel, apiResponse *ManagedTransformsModel) *ManagedTransformsModel {
+	result := &ManagedTransformsModel{
+		ID:                     apiResponse.ID,
+		ZoneID:                 apiResponse.ZoneID,
+		ManagedRequestHeaders:  &[]*ManagedTransformsManagedRequestHeadersModel{},
+		ManagedResponseHeaders: &[]*ManagedTransformsManagedResponseHeadersModel{},
+	}
+
+	// Create maps of API response headers for quick lookup
+	apiRequestHeaders := make(map[string]*ManagedTransformsManagedRequestHeadersModel)
+	apiResponseHeaders := make(map[string]*ManagedTransformsManagedResponseHeadersModel)
+
+	if apiResponse.ManagedRequestHeaders != nil {
+		for _, h := range *apiResponse.ManagedRequestHeaders {
+			apiRequestHeaders[h.ID.ValueString()] = h
+		}
+	}
+	if apiResponse.ManagedResponseHeaders != nil {
+		for _, h := range *apiResponse.ManagedResponseHeaders {
+			apiResponseHeaders[h.ID.ValueString()] = h
+		}
+	}
+
+	// Preserve order from config and use values from API response
+	if config.ManagedRequestHeaders != nil {
+		for _, configHeader := range *config.ManagedRequestHeaders {
+			if apiHeader, exists := apiRequestHeaders[configHeader.ID.ValueString()]; exists {
+				*result.ManagedRequestHeaders = append(*result.ManagedRequestHeaders, apiHeader)
+			}
+		}
+	}
+
+	if config.ManagedResponseHeaders != nil {
+		for _, configHeader := range *config.ManagedResponseHeaders {
+			if apiHeader, exists := apiResponseHeaders[configHeader.ID.ValueString()]; exists {
+				*result.ManagedResponseHeaders = append(*result.ManagedResponseHeaders, apiHeader)
+			}
+		}
+	}
+
+	return result
 }
