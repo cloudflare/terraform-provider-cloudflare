@@ -69,7 +69,7 @@ func init() {
 				}
 
 				if err := iter.Err(); err != nil {
-					return fmt.Errorf("failed to list account rulesets: %w", err)
+					return fmt.Errorf("failed to list rulesets: %w", err)
 				}
 			}
 
