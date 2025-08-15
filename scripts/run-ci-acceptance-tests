@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# ./internal/services/api_token
-# 'api_token' requires token-based auth, and our current CI assumes key-based auth.
-# These tests otherwise pass.
-# TODO: support multiple auth schemes in CI for acceptance tests
-
 go test -run "^TestAcc" -count 1 \
     ./internal/services/account \
     ./internal/services/account_api_token_permission_groups \
