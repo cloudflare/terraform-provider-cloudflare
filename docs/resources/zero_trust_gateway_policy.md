@@ -142,18 +142,18 @@ Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch",
 ### Optional
 
 - `description` (String) The description of the rule.
-- `device_posture` (String) The wirefilter expression used for device posture check matching.
+- `device_posture` (String) The wirefilter expression used for device posture check matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.
 - `enabled` (Boolean) True if the rule is enabled.
 - `expiration` (Attributes) The expiration time stamp and default duration of a DNS policy. Takes
 precedence over the policy's `schedule` configuration, if any.
 
 This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--expiration))
 - `filters` (List of String) The protocol or layer to evaluate the traffic, identity, and device posture expressions.
-- `identity` (String) The wirefilter expression used for identity matching.
+- `identity` (String) The wirefilter expression used for identity matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.
 - `precedence` (Number) Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) docs on how to manage precedence via Terraform.
 - `rule_settings` (Attributes) Additional settings that modify the rule's action. (see [below for nested schema](#nestedatt--rule_settings))
 - `schedule` (Attributes) The schedule for activating DNS policies. This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--schedule))
-- `traffic` (String) The wirefilter expression used for traffic matching.
+- `traffic` (String) The wirefilter expression used for traffic matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.
 
 ### Read-Only
 
@@ -275,7 +275,7 @@ Optional:
 
 Optional:
 
-- `duration` (String) Configure how fresh the session needs to be to be considered valid.
+- `duration` (String) Configure how fresh the session needs to be to be considered valid. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.
 - `enforce` (Boolean) Set to true to enable session enforcement.
 
 

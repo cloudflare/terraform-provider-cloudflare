@@ -1,19 +1,20 @@
 ---
-page_title: "cloudflare_snippets Data Source - Cloudflare"
+page_title: "cloudflare_snippet Data Source - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_snippets (Data Source)
+# cloudflare_snippet (Data Source)
 
 
 
 ## Example Usage
 
 ```terraform
-data "cloudflare_snippets" "example_snippets" {
+data "cloudflare_snippet" "example_snippet" {
   zone_id = "9f1839b6152d298aca64c4e906b6d074"
+  snippet_name = "my_snippet"
 }
 ```
 

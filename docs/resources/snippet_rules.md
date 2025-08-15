@@ -31,15 +31,6 @@ resource "cloudflare_snippet_rules" "example_snippet_rules" {
 - `rules` (Attributes List) A list of snippet rules. (see [below for nested schema](#nestedatt--rules))
 - `zone_id` (String) The unique ID of the zone.
 
-### Read-Only
-
-- `description` (String) An informative description of the rule.
-- `enabled` (Boolean) Whether the rule should be executed.
-- `expression` (String) The expression defining which traffic will match the rule.
-- `id` (String) The unique ID of the rule.
-- `last_updated` (String) The timestamp of when the rule was last modified.
-- `snippet_name` (String) The identifying name of the snippet.
-
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`
 

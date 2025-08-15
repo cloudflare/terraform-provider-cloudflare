@@ -94,7 +94,7 @@ Read-Only:
 - `mailto_address` (String) If mode is customized_block_page: admin email for users to contact.
 - `mailto_subject` (String) If mode is customized_block_page: subject line for emails created from block page.
 - `mode` (String) Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.
-Available values: "customized_block_page", "redirect_uri".
+Available values: "", "customized_block_page", "redirect_uri".
 - `name` (String) If mode is customized_block_page: block page title.
 - `read_only` (Boolean) This setting was shared via the Orgs API and cannot be edited by the current account
 - `source_account` (String) Account tag of account that shared this setting
