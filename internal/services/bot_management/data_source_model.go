@@ -23,6 +23,7 @@ type BotManagementDataSourceModel struct {
 	CrawlerProtection            types.String                                                                 `tfsdk:"crawler_protection" json:"crawler_protection,computed"`
 	EnableJS                     types.Bool                                                                   `tfsdk:"enable_js" json:"enable_js,computed"`
 	FightMode                    types.Bool                                                                   `tfsdk:"fight_mode" json:"fight_mode,computed"`
+	IsRobotsTXTManaged           types.Bool                                                                   `tfsdk:"is_robots_txt_managed" json:"is_robots_txt_managed,computed"`
 	OptimizeWordpress            types.Bool                                                                   `tfsdk:"optimize_wordpress" json:"optimize_wordpress,computed"`
 	SBFMDefinitelyAutomated      types.String                                                                 `tfsdk:"sbfm_definitely_automated" json:"sbfm_definitely_automated,computed"`
 	SBFMLikelyAutomated          types.String                                                                 `tfsdk:"sbfm_likely_automated" json:"sbfm_likely_automated,computed"`

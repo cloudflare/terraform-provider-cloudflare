@@ -9,20 +9,27 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/option"
 	"github.com/cloudflare/cloudflare-go/v5/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/tidwall/gjson"
+)
+
+const (
+	requestTimeout = 10 * time.Second
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ListItemResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ListItemResource)(nil)
+var _ resource.ResourceWithImportState = (*ListItemResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ListItemResource{}
@@ -84,6 +91,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		option.WithRequestBody("application/json", wrappedBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(requestTimeout),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -97,25 +105,42 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
+	err = pollBulkOperation(ctx, data.AccountID.ValueString(), createEnv.Result.OperationID.ValueString(), r.client)
+	if err != nil {
+		resp.Diagnostics.AddError("list item bulk operation failed", err.Error())
+		return
+	}
+
 	searchTerm := getSearchTerm(data)
-	findItemRes := new(http.Response)
-	_, err = r.client.Rules.Lists.Items.List(
+	listItems := r.client.Rules.Lists.Items.ListAutoPaging(
 		ctx,
 		data.ListID.ValueString(),
 		rules.ListItemListParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			Search:    cloudflare.F(searchTerm),
 		},
-		option.WithResponseBodyInto(&findItemRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(requestTimeout),
 	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
+	if listItems.Err() != nil {
+		resp.Diagnostics.AddError("failed to search list items", listItems.Err().Error())
 		return
 	}
-	findListItem, _ := io.ReadAll(findItemRes.Body)
-	itemID := gjson.Get(string(findListItem), "result.0.id")
-	data.ID = types.StringValue(itemID.String())
+	if listItems == nil {
+		resp.Diagnostics.AddWarning("failed to search list items", "list item pagination was nil")
+	}
+
+	// find the actual list item, don't rely on the response to have the first entry be the correct one
+	var listItemID string
+	for listItems.Next() {
+		item := listItems.Current()
+		if matchedItemID, ok := listItemMatchesOriginal(data, item); ok {
+			listItemID = matchedItemID
+			break
+		}
+	}
+
+	data.ID = types.StringValue(listItemID)
 
 	env := ListItemResultEnvelope{*data}
 	listItemRes := new(http.Response)
@@ -128,6 +153,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		},
 		option.WithResponseBodyInto(&listItemRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(requestTimeout),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to fetch individual list item", err.Error())
@@ -146,52 +172,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 }
 
 func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *ListItemModel
-
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	var state *ListItemModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := ListItemResultEnvelope{*data}
-	_, err = r.client.Rules.Lists.Items.Update(
-		ctx,
-		data.ListID.ValueString(),
-		rules.ListItemUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.AddError("update is not supported for list items", "")
 }
 
 func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -211,6 +192,7 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 		rules.ListItemGetParams{AccountID: cloudflare.F(data.AccountID.ValueString())},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithRequestTimeout(requestTimeout),
 	)
 	if res != nil && res.StatusCode == 404 {
 		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
@@ -256,6 +238,7 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 		option.WithRequestBody("application/json", deleteBody),
+		option.WithRequestTimeout(requestTimeout),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -265,8 +248,88 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+func (r *ListItemResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ListItemModel = new(ListItemModel)
+
+	path_account_id := ""
+	path_list_id := ""
+	path_item_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<list_id>/<item_id>",
+		&path_account_id,
+		&path_list_id,
+		&path_item_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.ListID = types.StringValue(path_list_id)
+	data.ID = types.StringValue(path_item_id)
+
+	res := new(http.Response)
+	env := ListItemResultEnvelope{*data}
+	_, err := r.client.Rules.Lists.Items.Get(
+		ctx,
+		path_list_id,
+		path_item_id,
+		rules.ListItemGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
 func (r *ListItemResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
+}
+
+func pollBulkOperation(ctx context.Context, accountID, operationID string, client *cloudflare.Client) error {
+	backoff := 1 * time.Second
+	maxBackoff := 30 * time.Second
+
+	for {
+		bulkOperation, err := client.Rules.Lists.BulkOperations.Get(
+			ctx,
+			operationID,
+			rules.ListBulkOperationGetParams{
+				AccountID: cloudflare.F(accountID),
+			},
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			return err
+		}
+		switch bulkOperation.Status {
+		case rules.ListBulkOperationGetResponseStatusCompleted:
+			return nil
+		case rules.ListBulkOperationGetResponseStatusFailed:
+			return fmt.Errorf("failed to create list item: %s", bulkOperation.Error)
+		default:
+			time.Sleep(backoff)
+			backoff *= 2
+			if backoff > maxBackoff {
+				backoff = maxBackoff
+			}
+		}
+	}
 }
 
 type bodyDeletePayload struct {
@@ -301,4 +364,78 @@ func getSearchTerm(d *ListItemModel) string {
 	}
 
 	return ""
+}
+
+func listItemMatchesOriginal(original *ListItemModel, item rules.ListItemListResponse) (string, bool) {
+	if original.IP.ValueString() != item.IP {
+		return "", false
+	}
+
+	if original.ASN.ValueInt64() != item.ASN {
+		return "", false
+	}
+
+	if !original.Hostname.IsNull() && !hostnameEqual(original.Hostname, item.Hostname) {
+		return "", false
+	}
+
+	if !original.Redirect.IsNull() && !redirectEqual(original.Redirect, item.Redirect) {
+		return "", false
+	}
+
+	return item.ID, true
+}
+
+func hostnameEqual(original customfield.NestedObject[ListItemHostnameModel], item rules.Hostname) bool {
+	originalVal, err := original.Value(context.TODO())
+	if err != nil {
+		return false
+	}
+
+	if originalVal.URLHostname.ValueString() != item.URLHostname {
+		return false
+	}
+
+	if originalVal.ExcludeExactHostname.ValueBool() != item.ExcludeExactHostname {
+		return false
+	}
+
+	return true
+}
+
+func redirectEqual(original customfield.NestedObject[ListItemRedirectModel], item rules.Redirect) bool {
+	originalVal, err := original.Value(context.TODO())
+	if err != nil {
+		return false
+	}
+
+	if originalVal.SourceURL.ValueString() != item.SourceURL {
+		return false
+	}
+
+	if originalVal.TargetURL.ValueString() != item.TargetURL {
+		return false
+	}
+
+	if originalVal.IncludeSubdomains.ValueBool() != item.IncludeSubdomains {
+		return false
+	}
+
+	if originalVal.PreservePathSuffix.ValueBool() != item.PreservePathSuffix {
+		return false
+	}
+
+	if originalVal.PreserveQueryString.ValueBool() != item.PreserveQueryString {
+		return false
+	}
+
+	if originalVal.StatusCode.ValueInt64() != int64(item.StatusCode) {
+		return false
+	}
+
+	if originalVal.SubpathMatching.ValueBool() != item.SubpathMatching {
+		return false
+	}
+
+	return true
 }

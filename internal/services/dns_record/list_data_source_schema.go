@@ -342,6 +342,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Validators: []validator.Dynamic{
 										customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
 									},
+									CustomType: customfield.NormalizedDynamicType{},
 								},
 								"tag": schema.StringAttribute{
 									Description: "Name of the property controlled by this record (e.g.: issue, issuewild, iodef).",
@@ -399,14 +400,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"priority": schema.Float64Attribute{
-									Description: "priority.",
+									Description: "Priority.",
 									Computed:    true,
 									Validators: []validator.Float64{
 										float64validator.Between(0, 65535),
 									},
 								},
 								"target": schema.StringAttribute{
-									Description: "target.",
+									Description: "Target.",
 									Computed:    true,
 								},
 								"altitude": schema.Float64Attribute{
@@ -555,7 +556,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"fingerprint": schema.StringAttribute{
-									Description: "fingerprint.",
+									Description: "Fingerprint.",
 									Computed:    true,
 								},
 							},

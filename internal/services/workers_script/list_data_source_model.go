@@ -19,6 +19,7 @@ type WorkersScriptsResultListDataSourceEnvelope struct {
 
 type WorkersScriptsDataSourceModel struct {
 	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	Tags      types.String                                                      `tfsdk:"tags" query:"tags,optional"`
 	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[WorkersScriptsResultDataSourceModel] `tfsdk:"result"`
 }
@@ -26,6 +27,10 @@ type WorkersScriptsDataSourceModel struct {
 func (m *WorkersScriptsDataSourceModel) toListParams(_ context.Context) (params workers.ScriptListParams, diags diag.Diagnostics) {
 	params = workers.ScriptListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Tags.IsNull() {
+		params.Tags = cloudflare.F(m.Tags.ValueString())
 	}
 
 	return

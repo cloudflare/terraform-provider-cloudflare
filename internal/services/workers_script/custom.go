@@ -128,11 +128,6 @@ func (v contentSHA256Validator) ValidateString(ctx context.Context, req validato
 		hasContentFile = true
 	}
 
-	if !hasContent && !hasContentFile {
-		resp.Diagnostics.AddError("Missing required attributes", "One of `content` or `content_file` is required")
-		return
-	}
-
 	var actualHash string
 	var err error
 
@@ -184,15 +179,15 @@ func ValidateContentSHA256() validator.String {
 
 func UpdateSecretTextsFromState[T any](
 	ctx context.Context,
-	refreshed customfield.NestedObjectSet[T],
-	state customfield.NestedObjectSet[T],
-) (customfield.NestedObjectSet[T], diag.Diagnostics) {
+	refreshed customfield.NestedObjectList[T],
+	state customfield.NestedObjectList[T],
+) (customfield.NestedObjectList[T], diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	refreshedElems := refreshed.Elements()
 	stateElems := state.Elements()
 
-	updatedElems := make([]attr.Value, len(refreshedElems))
+	updatedElems := make([]attr.Value, 0, len(refreshedElems))
 
 	elemType := refreshed.ElementType(ctx)
 
@@ -204,10 +199,10 @@ func UpdateSecretTextsFromState[T any](
 
 	attrTypes := objType.AttributeTypes()
 
-	for i, val := range refreshedElems {
+	for _, val := range refreshedElems {
 		refreshedObj, ok := val.(basetypes.ObjectValue)
 		if !ok {
-			updatedElems[i] = val
+			updatedElems = append(updatedElems, val)
 			continue
 		}
 
@@ -216,18 +211,19 @@ func UpdateSecretTextsFromState[T any](
 		nameAttr := refreshedAttrs["name"]
 
 		if typeAttr.IsNull() || nameAttr.IsNull() {
-			updatedElems[i] = val
+			updatedElems = append(updatedElems, val)
 			continue
 		}
 
 		if typeAttr.(types.String).ValueString() != "secret_text" {
-			updatedElems[i] = val
+			updatedElems = append(updatedElems, val)
 			continue
 		}
 
 		name := nameAttr.(types.String).ValueString()
 
 		var originalText attr.Value
+		var foundInState bool
 		for _, stateVal := range stateElems {
 			stateObj, ok := stateVal.(basetypes.ObjectValue)
 			if !ok {
@@ -237,8 +233,13 @@ func UpdateSecretTextsFromState[T any](
 			if stateAttrs["type"].(types.String).ValueString() == "secret_text" &&
 				stateAttrs["name"].(types.String).ValueString() == name {
 				originalText = stateAttrs["text"]
+				foundInState = true
 				break
 			}
+		}
+
+		if !foundInState {
+			continue
 		}
 
 		if originalText != nil && !originalText.IsNull() && !originalText.IsUnknown() {
@@ -249,14 +250,14 @@ func UpdateSecretTextsFromState[T any](
 			refreshedObj = newObj
 		}
 
-		updatedElems[i] = refreshedObj
+		updatedElems = append(updatedElems, refreshedObj)
 	}
 
-	setValue, d := types.SetValue(refreshed.ElementType(ctx), updatedElems)
+	value, d := types.ListValue(refreshed.ElementType(ctx), updatedElems)
 	diags.Append(d...)
 
-	return customfield.NestedObjectSet[T]{
-		SetValue: setValue,
+	return customfield.NestedObjectList[T]{
+		ListValue: value,
 	}, diags
 }
 

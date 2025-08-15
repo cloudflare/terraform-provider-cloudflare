@@ -81,6 +81,7 @@ func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Cont
 type ZeroTrustTunnelCloudflaredsResultDataSourceModel struct {
 	ID              types.String                                                                        `tfsdk:"id" json:"id,computed"`
 	AccountTag      types.String                                                                        `tfsdk:"account_tag" json:"account_tag,computed"`
+	ConfigSrc       types.String                                                                        `tfsdk:"config_src" json:"config_src,computed"`
 	Connections     customfield.NestedObjectList[ZeroTrustTunnelCloudflaredsConnectionsDataSourceModel] `tfsdk:"connections" json:"connections,computed"`
 	ConnsActiveAt   timetypes.RFC3339                                                                   `tfsdk:"conns_active_at" json:"conns_active_at,computed" format:"date-time"`
 	ConnsInactiveAt timetypes.RFC3339                                                                   `tfsdk:"conns_inactive_at" json:"conns_inactive_at,computed" format:"date-time"`

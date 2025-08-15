@@ -9,7 +9,8 @@ import (
 	"time"
 
 	cfold "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/cloudflare-go/v4/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -901,7 +902,7 @@ func testAccManuallyDeleteLoadBalancer(name string, loadBalancerID string, initi
 			context.Background(),
 			loadBalancerID,
 			load_balancers.LoadBalancerDeleteParams{
-				ZoneID: rs.Primary.Attributes[consts.ZoneIDSchemaKey],
+				ZoneID: cloudflare.F(rs.Primary.Attributes[consts.ZoneIDSchemaKey]),
 			},
 		)
 		if err != nil {
