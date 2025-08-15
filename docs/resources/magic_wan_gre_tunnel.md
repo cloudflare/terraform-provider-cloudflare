@@ -49,6 +49,7 @@ resource "cloudflare_magic_wan_gre_tunnel" "example_magic_wan_gre_tunnel" {
 
 - `description` (String) An optional description of the GRE tunnel.
 - `health_check` (Attributes) (see [below for nested schema](#nestedatt--health_check))
+- `interface_address6` (String) A 127 bit IPV6 prefix from within the virtual_subnet6 prefix space with the address being the first IP of the subnet and not same as the address of virtual_subnet6. Eg if virtual_subnet6 is 2606:54c1:7:0:a9fe:12d2::/127 , interface_address6 could be 2606:54c1:7:0:a9fe:12d2:1:200/127
 - `mtu` (Number) Maximum Transmission Unit (MTU) in bytes for the GRE tunnel. The minimum value is 576.
 - `ttl` (Number) Time To Live (TTL) in number of hops of the GRE tunnel.
 

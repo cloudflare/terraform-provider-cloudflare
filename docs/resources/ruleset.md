@@ -70,31 +70,35 @@ Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_err
 
 ### Optional
 
-- `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
+- `account_id` (String) The unique ID of the account.
 - `description` (String) An informative description of the ruleset.
 - `rules` (Attributes List) The list of rules in the ruleset. (see [below for nested schema](#nestedatt--rules))
-- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
+- `zone_id` (String) The unique ID of the zone.
 
 ### Read-Only
 
 - `id` (String) The unique ID of the ruleset.
+- `last_updated` (String) The timestamp of when the ruleset was last modified.
+- `version` (String) The version of the ruleset.
 
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`
 
-Optional:
+Required:
 
 - `action` (String) The action to perform when the rule matches.
-Available values: "block", "challenge", "compress_response", "execute", "js_challenge", "log", "managed_challenge", "redirect", "rewrite", "route", "score", "serve_error", "set_config", "skip", "set_cache_settings", "log_custom_field", "ddos_dynamic", "force_connection_close".
+Available values: "block", "challenge", "compress_response", "ddos_dynamic", "execute", "force_connection_close", "js_challenge", "log", "log_custom_field", "managed_challenge", "redirect", "rewrite", "route", "score", "serve_error", "set_cache_settings", "set_config", "skip".
+- `expression` (String) The expression defining which traffic will match the rule.
+
+Optional:
+
 - `action_parameters` (Attributes) The parameters configuring the rule's action. (see [below for nested schema](#nestedatt--rules--action_parameters))
-- `categories` (List of String) The categories of the rule.
 - `description` (String) An informative description of the rule.
 - `enabled` (Boolean) Whether the rule should be executed.
-- `exposed_credential_check` (Attributes) Configure checks for exposed credentials. (see [below for nested schema](#nestedatt--rules--exposed_credential_check))
-- `expression` (String) The expression defining which traffic will match the rule.
+- `exposed_credential_check` (Attributes) Configuration for exposed credential checking. (see [below for nested schema](#nestedatt--rules--exposed_credential_check))
 - `logging` (Attributes) An object configuring the rule's logging behavior. (see [below for nested schema](#nestedatt--rules--logging))
-- `ratelimit` (Attributes) An object configuring the rule's ratelimit behavior. (see [below for nested schema](#nestedatt--rules--ratelimit))
-- `ref` (String) The reference of the rule (the rule ID by default).
+- `ratelimit` (Attributes) An object configuring the rule's rate limit behavior. (see [below for nested schema](#nestedatt--rules--ratelimit))
+- `ref` (String) The reference of the rule (the rule's ID by default).
 
 Read-Only:
 
@@ -105,74 +109,75 @@ Read-Only:
 
 Optional:
 
-- `additional_cacheable_ports` (List of Number) List of additional ports that caching can be enabled on.
+- `additional_cacheable_ports` (List of Number) A list of additional ports that caching should be enabled on.
 - `algorithms` (Attributes List) Custom order for compression algorithms. (see [below for nested schema](#nestedatt--rules--action_parameters--algorithms))
-- `automatic_https_rewrites` (Boolean) Turn on or off Automatic HTTPS Rewrites.
-- `autominify` (Attributes) Select which file extensions to minify automatically. (see [below for nested schema](#nestedatt--rules--action_parameters--autominify))
-- `bic` (Boolean) Turn on or off Browser Integrity Check.
-- `browser_ttl` (Attributes) Specify how long client browsers should cache the response. Cloudflare cache purge will not purge content cached on client browsers, so high browser TTLs may lead to stale content. (see [below for nested schema](#nestedatt--rules--action_parameters--browser_ttl))
-- `cache` (Boolean) Mark whether the request’s response from origin is eligible for caching. Caching itself will still depend on the cache-control header and your other caching configurations.
-- `cache_key` (Attributes) Define which components of the request are included or excluded from the cache key Cloudflare uses to store the response in cache. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key))
-- `cache_reserve` (Attributes) Mark whether the request's response from origin is eligible for Cache Reserve (requires a Cache Reserve add-on plan). (see [below for nested schema](#nestedatt--rules--action_parameters--cache_reserve))
-- `content` (String) Error response content.
-- `content_type` (String) Content-type header to set with the response.
-Available values: "application/json", "text/xml", "text/plain", "text/html".
+- `asset_name` (String) The name of a custom asset to serve as the response.
+- `automatic_https_rewrites` (Boolean) Whether to enable Automatic HTTPS Rewrites.
+- `autominify` (Attributes) Which file extensions to minify automatically. (see [below for nested schema](#nestedatt--rules--action_parameters--autominify))
+- `bic` (Boolean) Whether to enable Browser Integrity Check (BIC).
+- `browser_ttl` (Attributes) How long client browsers should cache the response. Cloudflare cache purge will not purge content cached on client browsers, so high browser TTLs may lead to stale content. (see [below for nested schema](#nestedatt--rules--action_parameters--browser_ttl))
+- `cache` (Boolean) Whether the request's response from the origin is eligible for caching. Caching itself will still depend on the cache control header and your other caching configurations.
+- `cache_key` (Attributes) Which components of the request are included in or excluded from the cache key Cloudflare uses to store the response in cache. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key))
+- `cache_reserve` (Attributes) Settings to determine whether the request's response from origin is eligible for Cache Reserve (requires a Cache Reserve add-on plan). (see [below for nested schema](#nestedatt--rules--action_parameters--cache_reserve))
+- `content` (String) The response content.
+- `content_type` (String) The content type header to set with the error response.
+Available values: "application/json", "text/html", "text/plain", "text/xml".
 - `cookie_fields` (Attributes List) The cookie fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--cookie_fields))
-- `disable_apps` (Boolean) Turn off all active Cloudflare Apps.
-- `disable_rum` (Boolean) Turn off Real User Monitoring (RUM).
-- `disable_zaraz` (Boolean) Turn off Zaraz.
-- `edge_ttl` (Attributes) TTL (Time to Live) specifies the maximum time to cache a resource in the Cloudflare edge network. (see [below for nested schema](#nestedatt--rules--action_parameters--edge_ttl))
-- `email_obfuscation` (Boolean) Turn on or off Email Obfuscation.
-- `fonts` (Boolean) Turn on or off Cloudflare Fonts.
-- `from_list` (Attributes) Serve a redirect based on a bulk list lookup. (see [below for nested schema](#nestedatt--rules--action_parameters--from_list))
-- `from_value` (Attributes) Serve a redirect based on the request properties. (see [below for nested schema](#nestedatt--rules--action_parameters--from_value))
-- `headers` (Attributes Map) Map of request headers to modify. (see [below for nested schema](#nestedatt--rules--action_parameters--headers))
-- `host_header` (String) Rewrite the HTTP Host header.
-- `hotlink_protection` (Boolean) Turn on or off the Hotlink Protection.
+- `disable_apps` (Boolean) Whether to disable Cloudflare Apps.
+- `disable_rum` (Boolean) Whether to disable Real User Monitoring (RUM).
+- `disable_zaraz` (Boolean) Whether to disable Zaraz.
+- `edge_ttl` (Attributes) How long the Cloudflare edge network should cache the response. (see [below for nested schema](#nestedatt--rules--action_parameters--edge_ttl))
+- `email_obfuscation` (Boolean) Whether to enable Email Obfuscation.
+- `fonts` (Boolean) Whether to enable Cloudflare Fonts.
+- `from_list` (Attributes) A redirect based on a bulk list lookup. (see [below for nested schema](#nestedatt--rules--action_parameters--from_list))
+- `from_value` (Attributes) A redirect based on the request properties. (see [below for nested schema](#nestedatt--rules--action_parameters--from_value))
+- `headers` (Attributes Map) A map of headers to rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--headers))
+- `host_header` (String) A value to rewrite the HTTP host header to.
+- `hotlink_protection` (Boolean) Whether to enable Hotlink Protection.
 - `id` (String) The ID of the ruleset to execute.
-- `increment` (Number) Increment contains the delta to change the score and can be either positive or negative.
+- `increment` (Number) A delta to change the score by, which can be either positive or negative.
 - `matched_data` (Attributes) The configuration to use for matched data logging. (see [below for nested schema](#nestedatt--rules--action_parameters--matched_data))
-- `mirage` (Boolean) Turn on or off Mirage.
-- `opportunistic_encryption` (Boolean) Turn on or off Opportunistic Encryption.
-- `origin` (Attributes) Override the IP/TCP destination. (see [below for nested schema](#nestedatt--rules--action_parameters--origin))
-- `origin_cache_control` (Boolean) When enabled, Cloudflare will aim to strictly adhere to RFC 7234.
-- `origin_error_page_passthru` (Boolean) Generate Cloudflare error pages from issues sent from the origin server. When on, error pages will trigger for issues from the origin.
+- `mirage` (Boolean) Whether to enable Mirage.
+- `opportunistic_encryption` (Boolean) Whether to enable Opportunistic Encryption.
+- `origin` (Attributes) An origin to route to. (see [below for nested schema](#nestedatt--rules--action_parameters--origin))
+- `origin_cache_control` (Boolean) Whether Cloudflare will aim to strictly adhere to RFC 7234.
+- `origin_error_page_passthru` (Boolean) Whether to generate Cloudflare error pages for issues from the origin server.
 - `overrides` (Attributes) A set of overrides to apply to the target ruleset. (see [below for nested schema](#nestedatt--rules--action_parameters--overrides))
-- `phase` (String) A phase to skip the execution of. This property is only compatible with products.
-Available values: "current".
 - `phases` (List of String) A list of phases to skip the execution of. This option is incompatible with the rulesets option.
-- `polish` (String) Configure the Polish level.
+Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_transform", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed", "magic_transit_ratelimit".
+- `polish` (String) The Polish level to configure.
 Available values: "off", "lossless", "lossy", "webp".
 - `products` (List of String) A list of legacy security products to skip the execution of.
+Available values: "bic", "hot", "rateLimit", "securityLevel", "uaBlock", "waf", "zoneLockdown".
 - `raw_response_fields` (Attributes List) The raw response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--raw_response_fields))
-- `read_timeout` (Number) Define a timeout value between two successive read operations to your origin server. Historically, the timeout value between two read options from Cloudflare to an origin server is 100 seconds. If you are attempting to reduce HTTP 524 errors because of timeouts from an origin server, try increasing this timeout value.
+- `read_timeout` (Number) A timeout value between two successive read operations to use for your origin server. Historically, the timeout value between two read options from Cloudflare to an origin server is 100 seconds. If you are attempting to reduce HTTP 524 errors because of timeouts from an origin server, try increasing this timeout value.
 - `request_fields` (Attributes List) The raw request fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--request_fields))
-- `respect_strong_etags` (Boolean) Specify whether or not Cloudflare should respect strong ETag (entity tag) headers. When off, Cloudflare converts strong ETag headers to weak ETag headers.
+- `respect_strong_etags` (Boolean) Whether Cloudflare should respect strong ETag (entity tag) headers. If false, Cloudflare converts strong ETag headers to weak ETag headers.
 - `response` (Attributes) The response to show when the block is applied. (see [below for nested schema](#nestedatt--rules--action_parameters--response))
 - `response_fields` (Attributes List) The transformed response fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--response_fields))
-- `rocket_loader` (Boolean) Turn on or off Rocket Loader.
+- `rocket_loader` (Boolean) Whether to enable Rocket Loader.
 - `rules` (Map of List of String) A mapping of ruleset IDs to a list of rule IDs in that ruleset to skip the execution of. This option is incompatible with the ruleset option.
 - `ruleset` (String) A ruleset to skip the execution of. This option is incompatible with the rulesets option.
 Available values: "current".
 - `rulesets` (List of String) A list of ruleset IDs to skip the execution of. This option is incompatible with the ruleset and phases options.
-- `security_level` (String) Configure the Security Level.
+- `security_level` (String) The Security Level to configure.
 Available values: "off", "essentially_off", "low", "medium", "high", "under_attack".
-- `serve_stale` (Attributes) Define if Cloudflare should serve stale content while getting the latest content from the origin. If on, Cloudflare will not serve stale content while getting the latest content from the origin. (see [below for nested schema](#nestedatt--rules--action_parameters--serve_stale))
-- `server_side_excludes` (Boolean) Turn on or off Server Side Excludes.
-- `sni` (Attributes) Override the Server Name Indication (SNI). (see [below for nested schema](#nestedatt--rules--action_parameters--sni))
-- `ssl` (String) Configure the SSL level.
+- `serve_stale` (Attributes) When to serve stale content from cache. (see [below for nested schema](#nestedatt--rules--action_parameters--serve_stale))
+- `server_side_excludes` (Boolean) Whether to enable Server-Side Excludes.
+- `sni` (Attributes) A Server Name Indication (SNI) override. (see [below for nested schema](#nestedatt--rules--action_parameters--sni))
+- `ssl` (String) The SSL level to configure.
 Available values: "off", "flexible", "full", "strict", "origin_pull".
 - `status_code` (Number) The status code to use for the error.
-- `sxg` (Boolean) Turn on or off Signed Exchanges (SXG).
+- `sxg` (Boolean) Whether to enable Signed Exchanges (SXG).
 - `transformed_request_fields` (Attributes List) The transformed request fields to log. (see [below for nested schema](#nestedatt--rules--action_parameters--transformed_request_fields))
-- `uri` (Attributes) URI to rewrite the request to. (see [below for nested schema](#nestedatt--rules--action_parameters--uri))
+- `uri` (Attributes) A URI rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--uri))
 
 <a id="nestedatt--rules--action_parameters--algorithms"></a>
 ### Nested Schema for `rules.action_parameters.algorithms`
 
 Optional:
 
-- `name` (String) Name of compression algorithm to enable.
+- `name` (String) Name of the compression algorithm to enable.
 Available values: "none", "auto", "default", "gzip", "brotli", "zstd".
 
 
@@ -181,9 +186,9 @@ Available values: "none", "auto", "default", "gzip", "brotli", "zstd".
 
 Optional:
 
-- `css` (Boolean) Minify CSS files.
-- `html` (Boolean) Minify HTML files.
-- `js` (Boolean) Minify JS files.
+- `css` (Boolean) Whether to minify CSS files.
+- `html` (Boolean) Whether to minify HTML files.
+- `js` (Boolean) Whether to minify JavaScript files.
 
 
 <a id="nestedatt--rules--action_parameters--browser_ttl"></a>
@@ -191,12 +196,12 @@ Optional:
 
 Required:
 
-- `mode` (String) Determines which browser ttl mode to use.
+- `mode` (String) The browser TTL mode.
 Available values: "respect_origin", "bypass_by_default", "override_origin", "bypass".
 
 Optional:
 
-- `default` (Number) The TTL (in seconds) if you choose override_origin mode.
+- `default` (Number) The browser TTL (in seconds) if you choose the "override_origin" mode.
 
 
 <a id="nestedatt--rules--action_parameters--cache_key"></a>
@@ -204,29 +209,29 @@ Optional:
 
 Optional:
 
-- `cache_by_device_type` (Boolean) Separate cached content based on the visitor’s device type.
-- `cache_deception_armor` (Boolean) Protect from web cache deception attacks while allowing static assets to be cached.
-- `custom_key` (Attributes) Customize which components of the request are included or excluded from the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key))
-- `ignore_query_strings_order` (Boolean) Treat requests with the same query parameters the same, regardless of the order those query parameters are in. A value of true ignores the query strings' order.
+- `cache_by_device_type` (Boolean) Whether to separate cached content based on the visitor's device type.
+- `cache_deception_armor` (Boolean) Whether to protect from web cache deception attacks, while allowing static assets to be cached.
+- `custom_key` (Attributes) Which components of the request are included or excluded from the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key))
+- `ignore_query_strings_order` (Boolean) Whether to treat requests with the same query parameters the same, regardless of the order those query parameters are in.
 
 <a id="nestedatt--rules--action_parameters--cache_key--custom_key"></a>
 ### Nested Schema for `rules.action_parameters.cache_key.custom_key`
 
 Optional:
 
-- `cookie` (Attributes) The cookies to include in building the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--cookie))
-- `header` (Attributes) The header names and values to include in building the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--header))
-- `host` (Attributes) Whether to use the original host or the resolved host in the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--host))
-- `query_string` (Attributes) Use the presence of parameters in the query string to build the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string))
-- `user` (Attributes) Characteristics of the request user agent used in building the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--user))
+- `cookie` (Attributes) Which cookies to include in the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--cookie))
+- `header` (Attributes) Which headers to include in the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--header))
+- `host` (Attributes) How to use the host in the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--host))
+- `query_string` (Attributes) Which query string parameters to include in or exclude from the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string))
+- `user` (Attributes) How to use characteristics of the request user agent in the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--user))
 
 <a id="nestedatt--rules--action_parameters--cache_key--custom_key--cookie"></a>
 ### Nested Schema for `rules.action_parameters.cache_key.custom_key.cookie`
 
 Optional:
 
-- `check_presence` (List of String) Checks for the presence of these cookie names. The presence of these cookies is used in building the cache key.
-- `include` (List of String) Include these cookies' names and their values.
+- `check_presence` (List of String) A list of cookies to check for the presence of. The presence of these cookies is included in the cache key.
+- `include` (List of String) A list of cookies to include in the cache key.
 
 
 <a id="nestedatt--rules--action_parameters--cache_key--custom_key--header"></a>
@@ -234,10 +239,10 @@ Optional:
 
 Optional:
 
-- `check_presence` (List of String) Checks for the presence of these header names. The presence of these headers is used in building the cache key.
-- `contains` (Map of List of String) For each header name and list of values combination, check if the request header contains any of the values provided. The presence of the request header and whether any of the values provided are contained in the request header value is used in building the cache key.
-- `exclude_origin` (Boolean) Whether or not to include the origin header. A value of true will exclude the origin header in the cache key.
-- `include` (List of String) Include these headers' names and their values.
+- `check_presence` (List of String) A list of headers to check for the presence of. The presence of these headers is included in the cache key.
+- `contains` (Map of List of String) A mapping of header names to a list of values. If a header is present in the request and contains any of the values provided, its value is included in the cache key.
+- `exclude_origin` (Boolean) Whether to exclude the origin header in the cache key.
+- `include` (List of String) A list of headers to include in the cache key.
 
 
 <a id="nestedatt--rules--action_parameters--cache_key--custom_key--host"></a>
@@ -245,7 +250,7 @@ Optional:
 
 Optional:
 
-- `resolved` (Boolean) Use the resolved host in the cache key. A value of true will use the resolved host, while a value or false will use the original host.
+- `resolved` (Boolean) Whether to use the resolved host in the cache key.
 
 
 <a id="nestedatt--rules--action_parameters--cache_key--custom_key--query_string"></a>
@@ -253,16 +258,16 @@ Optional:
 
 Optional:
 
-- `exclude` (Attributes) A list of query string parameters NOT used to build the cache key. All parameters present in the request but missing in this list will be used to build the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string--exclude))
-- `include` (Attributes) A list of query string parameters used to build the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string--include))
+- `exclude` (Attributes) Which query string parameters to exclude from the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string--exclude))
+- `include` (Attributes) Which query string parameters to include in the cache key. (see [below for nested schema](#nestedatt--rules--action_parameters--cache_key--custom_key--query_string--include))
 
 <a id="nestedatt--rules--action_parameters--cache_key--custom_key--query_string--exclude"></a>
 ### Nested Schema for `rules.action_parameters.cache_key.custom_key.query_string.exclude`
 
 Optional:
 
-- `all` (Boolean) Determines whether to exclude all query string parameters from the cache key.
-- `list` (List of String)
+- `all` (Boolean) Whether to exclude all query string parameters from the cache key.
+- `list` (List of String) A list of query string parameters to exclude from the cache key.
 
 
 <a id="nestedatt--rules--action_parameters--cache_key--custom_key--query_string--include"></a>
@@ -270,8 +275,8 @@ Optional:
 
 Optional:
 
-- `all` (Boolean) Determines whether to include all query string parameters in the cache key.
-- `list` (List of String)
+- `all` (Boolean) Whether to include all query string parameters in the cache key.
+- `list` (List of String) A list of query string parameters to include in the cache key.
 
 
 
@@ -280,9 +285,9 @@ Optional:
 
 Optional:
 
-- `device_type` (Boolean) Use the user agent's device type in the cache key.
-- `geo` (Boolean) Use the user agents's country in the cache key.
-- `lang` (Boolean) Use the user agent's language in the cache key.
+- `device_type` (Boolean) Whether to use the user agent's device type in the cache key.
+- `geo` (Boolean) Whether to use the user agents's country in the cache key.
+- `lang` (Boolean) Whether to use the user agent's language in the cache key.
 
 
 
@@ -292,8 +297,11 @@ Optional:
 
 Required:
 
-- `eligible` (Boolean) Determines whether cache reserve is enabled. If this is true and a request meets eligibility criteria, Cloudflare will write the resource to cache reserve.
-- `minimum_file_size` (Number) The minimum file size eligible for store in cache reserve.
+- `eligible` (Boolean) Whether Cache Reserve is enabled. If this is true and a request meets eligibility criteria, Cloudflare will write the resource to Cache Reserve.
+
+Optional:
+
+- `minimum_file_size` (Number) The minimum file size eligible for storage in Cache Reserve.
 
 
 <a id="nestedatt--rules--action_parameters--cookie_fields"></a>
@@ -301,7 +309,7 @@ Required:
 
 Required:
 
-- `name` (String) The name of the field.
+- `name` (String) The name of the cookie.
 
 
 <a id="nestedatt--rules--action_parameters--edge_ttl"></a>
@@ -309,33 +317,33 @@ Required:
 
 Required:
 
-- `mode` (String) Edge TTL options.
+- `mode` (String) The edge TTL mode.
 Available values: "respect_origin", "bypass_by_default", "override_origin".
 
 Optional:
 
-- `default` (Number) The TTL (in seconds) if you choose override_origin mode.
-- `status_code_ttl` (Attributes List) List of single status codes, or status code ranges to apply the selected mode. (see [below for nested schema](#nestedatt--rules--action_parameters--edge_ttl--status_code_ttl))
+- `default` (Number) The edge TTL (in seconds) if you choose the "override_origin" mode.
+- `status_code_ttl` (Attributes List) A list of TTLs to apply to specific status codes or status code ranges. (see [below for nested schema](#nestedatt--rules--action_parameters--edge_ttl--status_code_ttl))
 
 <a id="nestedatt--rules--action_parameters--edge_ttl--status_code_ttl"></a>
 ### Nested Schema for `rules.action_parameters.edge_ttl.status_code_ttl`
 
 Required:
 
-- `value` (Number) Time to cache a response (in seconds). A value of 0 is equivalent to setting the Cache-Control header with the value "no-cache". A value of -1 is equivalent to setting Cache-Control header with the value of "no-store".
+- `value` (Number) The time to cache the response for (in seconds). A value of 0 is equivalent to setting the cache control header with the value "no-cache". A value of -1 is equivalent to setting the cache control header with the value of "no-store".
 
 Optional:
 
-- `status_code` (Number) Set the TTL for responses with this specific status code.
-- `status_code_range` (Attributes) The range of status codes used to apply the selected mode. (see [below for nested schema](#nestedatt--rules--action_parameters--edge_ttl--status_code_ttl--status_code_range))
+- `status_code` (Number) A single status code to apply the TTL to.
+- `status_code_range` (Attributes) A range of status codes to apply the TTL to. (see [below for nested schema](#nestedatt--rules--action_parameters--edge_ttl--status_code_ttl--status_code_range))
 
 <a id="nestedatt--rules--action_parameters--edge_ttl--status_code_ttl--status_code_range"></a>
 ### Nested Schema for `rules.action_parameters.edge_ttl.status_code_ttl.status_code_range`
 
 Optional:
 
-- `from` (Number) Response status code lower bound.
-- `to` (Number) Response status code upper bound.
+- `from` (Number) The lower bound of the range.
+- `to` (Number) The upper bound of the range.
 
 
 
@@ -343,29 +351,31 @@ Optional:
 <a id="nestedatt--rules--action_parameters--from_list"></a>
 ### Nested Schema for `rules.action_parameters.from_list`
 
-Optional:
+Required:
 
-- `key` (String) Expression that evaluates to the list lookup key.
+- `key` (String) An expression that evaluates to the list lookup key.
 - `name` (String) The name of the list to match against.
 
 
 <a id="nestedatt--rules--action_parameters--from_value"></a>
 ### Nested Schema for `rules.action_parameters.from_value`
 
+Required:
+
+- `target_url` (Attributes) A URL to redirect the request to. (see [below for nested schema](#nestedatt--rules--action_parameters--from_value--target_url))
+
 Optional:
 
-- `preserve_query_string` (Boolean) Keep the query string of the original request.
-- `status_code` (Number) The status code to be used for the redirect.
-Available values: 301, 302, 303, 307, 308.
-- `target_url` (Attributes) The URL to redirect the request to. (see [below for nested schema](#nestedatt--rules--action_parameters--from_value--target_url))
+- `preserve_query_string` (Boolean) Whether to keep the query string of the original request.
+- `status_code` (Number) The status code to use for the redirect.
 
 <a id="nestedatt--rules--action_parameters--from_value--target_url"></a>
 ### Nested Schema for `rules.action_parameters.from_value.target_url`
 
 Optional:
 
-- `expression` (String) An expression to evaluate to get the URL to redirect the request to.
-- `value` (String) The URL to redirect the request to.
+- `expression` (String) An expression that evaluates to a URL to redirect the request to.
+- `value` (String) A URL to redirect the request to.
 
 
 
@@ -374,12 +384,13 @@ Optional:
 
 Required:
 
-- `operation` (String) Available values: "remove", "add", "set".
+- `operation` (String) The operation to perform on the header.
+Available values: "add", "set", "remove".
 
 Optional:
 
-- `expression` (String) Expression for the header value.
-- `value` (String) Static value for the header.
+- `expression` (String) An expression that evaluates to a value for the header.
+- `value` (String) A static value for the header.
 
 
 <a id="nestedatt--rules--action_parameters--matched_data"></a>
@@ -395,8 +406,8 @@ Required:
 
 Optional:
 
-- `host` (String) Override the resolved hostname.
-- `port` (Number) Override the destination port.
+- `host` (String) A resolved host to route to.
+- `port` (Number) A destination port to route to.
 
 
 <a id="nestedatt--rules--action_parameters--overrides"></a>
@@ -422,7 +433,7 @@ Optional:
 
 - `action` (String) The action to override rules in the category with.
 - `enabled` (Boolean) Whether to enable execution of rules in the category.
-- `sensitivity_level` (String) The sensitivity level to use for rules in the category.
+- `sensitivity_level` (String) The sensitivity level to use for rules in the category. This option is only applicable for DDoS phases.
 Available values: "default", "medium", "low", "eoff".
 
 
@@ -438,7 +449,7 @@ Optional:
 - `action` (String) The action to override the rule with.
 - `enabled` (Boolean) Whether to enable execution of the rule.
 - `score_threshold` (Number) The score threshold to use for the rule.
-- `sensitivity_level` (String) The sensitivity level to use for the rule.
+- `sensitivity_level` (String) The sensitivity level to use for the rule. This option is only applicable for DDoS phases.
 Available values: "default", "medium", "low", "eoff".
 
 
@@ -448,7 +459,7 @@ Available values: "default", "medium", "low", "eoff".
 
 Required:
 
-- `name` (String) The name of the field.
+- `name` (String) The name of the response header.
 
 Optional:
 
@@ -460,7 +471,7 @@ Optional:
 
 Required:
 
-- `name` (String) The name of the field.
+- `name` (String) The name of the header.
 
 
 <a id="nestedatt--rules--action_parameters--response"></a>
@@ -478,7 +489,7 @@ Required:
 
 Required:
 
-- `name` (String) The name of the field.
+- `name` (String) The name of the response header.
 
 Optional:
 
@@ -488,9 +499,9 @@ Optional:
 <a id="nestedatt--rules--action_parameters--serve_stale"></a>
 ### Nested Schema for `rules.action_parameters.serve_stale`
 
-Required:
+Optional:
 
-- `disable_stale_while_updating` (Boolean) Defines whether Cloudflare should serve stale content while updating. If true, Cloudflare will not serve stale content while getting the latest content from the origin.
+- `disable_stale_while_updating` (Boolean) Whether Cloudflare should disable serving stale content while getting the latest content from the origin.
 
 
 <a id="nestedatt--rules--action_parameters--sni"></a>
@@ -498,7 +509,7 @@ Required:
 
 Required:
 
-- `value` (String) The SNI override.
+- `value` (String) A value to override the SNI to.
 
 
 <a id="nestedatt--rules--action_parameters--transformed_request_fields"></a>
@@ -506,7 +517,7 @@ Required:
 
 Required:
 
-- `name` (String) The name of the field.
+- `name` (String) The name of the header.
 
 
 <a id="nestedatt--rules--action_parameters--uri"></a>
@@ -514,16 +525,16 @@ Required:
 
 Optional:
 
-- `path` (Attributes) Path portion rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--uri--path))
-- `query` (Attributes) Query portion rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--uri--query))
+- `path` (Attributes) A URI path rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--uri--path))
+- `query` (Attributes) A URI query rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--uri--query))
 
 <a id="nestedatt--rules--action_parameters--uri--path"></a>
 ### Nested Schema for `rules.action_parameters.uri.path`
 
 Optional:
 
-- `expression` (String) Expression to evaluate for the replacement value.
-- `value` (String) Predefined replacement value.
+- `expression` (String) An expression that evaluates to a value to rewrite the URI path to.
+- `value` (String) A value to rewrite the URI path to.
 
 
 <a id="nestedatt--rules--action_parameters--uri--query"></a>
@@ -531,8 +542,8 @@ Optional:
 
 Optional:
 
-- `expression` (String) Expression to evaluate for the replacement value.
-- `value` (String) Predefined replacement value.
+- `expression` (String) An expression that evaluates to a value to rewrite the URI query to.
+- `value` (String) A value to rewrite the URI query to.
 
 
 
@@ -542,14 +553,14 @@ Optional:
 
 Required:
 
-- `password_expression` (String) Expression that selects the password used in the credentials check.
-- `username_expression` (String) Expression that selects the user ID used in the credentials check.
+- `password_expression` (String) An expression that selects the password used in the credentials check.
+- `username_expression` (String) An expression that selects the user ID used in the credentials check.
 
 
 <a id="nestedatt--rules--logging"></a>
 ### Nested Schema for `rules.logging`
 
-Required:
+Optional:
 
 - `enabled` (Boolean) Whether to generate a log when the rule matches.
 
@@ -559,17 +570,17 @@ Required:
 
 Required:
 
-- `characteristics` (List of String) Characteristics of the request on which the ratelimiter counter will be incremented.
+- `characteristics` (List of String) Characteristics of the request on which the rate limit counter will be incremented.
 - `period` (Number) Period in seconds over which the counter is being incremented.
 
 Optional:
 
-- `counting_expression` (String) Defines when the ratelimit counter should be incremented. It is optional and defaults to the same as the rule's expression.
+- `counting_expression` (String) An expression that defines when the rate limit counter should be incremented. It defaults to the same as the rule's expression.
 - `mitigation_timeout` (Number) Period of time in seconds after which the action will be disabled following its first execution.
 - `requests_per_period` (Number) The threshold of requests per period after which the action will be executed for the first time.
-- `requests_to_origin` (Boolean) Defines if ratelimit counting is only done when an origin is reached.
+- `requests_to_origin` (Boolean) Whether counting is only performed when an origin is reached.
 - `score_per_period` (Number) The score threshold per period for which the action will be executed the first time.
-- `score_response_header_name` (String) The response header name provided by the origin which should contain the score to increment ratelimit counter on.
+- `score_response_header_name` (String) A response header name provided by the origin, which contains the score to increment rate limit counter with.
 
 ## Import
 
