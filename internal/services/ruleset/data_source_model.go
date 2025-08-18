@@ -54,6 +54,7 @@ type RulesetRulesDataSourceModel struct {
 	Logging                customfield.NestedObject[RulesetRulesLoggingDataSourceModel]                `tfsdk:"logging" json:"logging,computed"`
 	Ratelimit              customfield.NestedObject[RulesetRulesRatelimitDataSourceModel]              `tfsdk:"ratelimit" json:"ratelimit,computed"`
 	Ref                    types.String                                                                `tfsdk:"ref" json:"ref,computed"`
+	Categories             customfield.List[types.String]                                              `tfsdk:"categories" json:"categories,computed"`
 }
 
 type RulesetRulesActionParametersDataSourceModel struct {
@@ -175,8 +176,9 @@ type RulesetRulesActionParametersHeadersDataSourceModel struct {
 }
 
 type RulesetRulesActionParametersURIDataSourceModel struct {
-	Path  customfield.NestedObject[RulesetRulesActionParametersURIPathDataSourceModel]  `tfsdk:"path" json:"path,computed"`
-	Query customfield.NestedObject[RulesetRulesActionParametersURIQueryDataSourceModel] `tfsdk:"query" json:"query,computed"`
+	Path   customfield.NestedObject[RulesetRulesActionParametersURIPathDataSourceModel]  `tfsdk:"path" json:"path,computed"`
+	Query  customfield.NestedObject[RulesetRulesActionParametersURIQueryDataSourceModel] `tfsdk:"query" json:"query,computed"`
+	Origin types.Bool                                                                    `tfsdk:"origin" json:"origin,computed"`
 }
 
 type RulesetRulesActionParametersURIPathDataSourceModel struct {

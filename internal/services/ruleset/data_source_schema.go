@@ -564,6 +564,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 												},
 											},
 										},
+										"origin": schema.BoolAttribute{
+											Description: "Whether to propagate the rewritten URI to origin.",
+											Computed:    true,
+										},
 									},
 								},
 								"host_header": schema.StringAttribute{
@@ -1433,6 +1437,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Validators: []validator.String{
 								stringvalidator.LengthAtLeast(1),
 							},
+						},
+						"categories": schema.ListAttribute{
+							Description: "The categories of the rule.",
+							Computed:    true,
+							Validators: []validator.List{
+								listvalidator.SizeAtLeast(1),
+							},
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
 						},
 					},
 				},

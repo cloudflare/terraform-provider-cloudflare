@@ -214,6 +214,21 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:           true,
 							DeprecationMessage: "Use rulesets.description instead. This attribute will be removed in the next major version of the provider.",
 						},
+						"last_updated": schema.StringAttribute{
+							Description: "The timestamp of when the ruleset was last modified.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"version": schema.StringAttribute{
+							Description: "The version of the ruleset.",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(
+									regexp.MustCompile("^[0-9]+$"),
+									"value must be a non-empty string containing only numbers",
+								),
+							},
+						},
 					},
 				},
 			},
