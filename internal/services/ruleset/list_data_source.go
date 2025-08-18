@@ -92,7 +92,7 @@ func (d *RulesetsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[RulesetsRulesetDataSourceModel](ctx, acc)
+	result, diags := customfield.NewObjectSetFromAttributes[RulesetsRulesetDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Rulesets = result
 	data.Rulesets = result
