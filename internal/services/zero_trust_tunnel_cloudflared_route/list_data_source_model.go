@@ -34,8 +34,10 @@ type ZeroTrustTunnelCloudflaredRoutesDataSourceModel struct {
 
 func (m *ZeroTrustTunnelCloudflaredRoutesDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkRouteListParams, diags diag.Diagnostics) {
 	mTunTypes := []zero_trust.NetworkRouteListParamsTunType{}
-	for _, item := range *m.TunTypes {
-		mTunTypes = append(mTunTypes, zero_trust.NetworkRouteListParamsTunType(item.ValueString()))
+	if m.TunTypes != nil {
+		for _, item := range *m.TunTypes {
+			mTunTypes = append(mTunTypes, zero_trust.NetworkRouteListParamsTunType(item.ValueString()))
+		}
 	}
 
 	params = zero_trust.NetworkRouteListParams{

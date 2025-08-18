@@ -39,8 +39,10 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toReadParams(_ context.
 
 func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkRouteListParams, diags diag.Diagnostics) {
 	mFilterTunTypes := []zero_trust.NetworkRouteListParamsTunType{}
-	for _, item := range *m.Filter.TunTypes {
-		mFilterTunTypes = append(mFilterTunTypes, zero_trust.NetworkRouteListParamsTunType(item.ValueString()))
+	if m.Filter.TunTypes != nil {
+		for _, item := range *m.Filter.TunTypes {
+			mFilterTunTypes = append(mFilterTunTypes, zero_trust.NetworkRouteListParamsTunType(item.ValueString()))
+		}
 	}
 
 	params = zero_trust.NetworkRouteListParams{
