@@ -47,7 +47,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The unique ID of the account.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.ConflictsWith(path.MatchRoot("zone_id")),
+					stringvalidator.ExactlyOneOf(path.MatchRoot("zone_id")),
+					stringvalidator.RegexMatches(
+						regexp.MustCompile("^[0-9a-f]{32}$"),
+						"value must be a 32-character hexadecimal string",
+					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -55,7 +59,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The unique ID of the zone.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.ConflictsWith(path.MatchRoot("account_id")),
+					stringvalidator.RegexMatches(
+						regexp.MustCompile("^[0-9a-f]{32}$"),
+						"value must be a 32-character hexadecimal string",
+					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

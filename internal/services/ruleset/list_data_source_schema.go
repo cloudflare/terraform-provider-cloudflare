@@ -4,6 +4,7 @@ package ruleset
 
 import (
 	"context"
+	"regexp"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
@@ -21,29 +22,48 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Description: "The unique ID of the account.",
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.ExactlyOneOf(path.MatchRoot("zone_id")),
+					stringvalidator.RegexMatches(
+						regexp.MustCompile("^[0-9a-f]{32}$"),
+						"value must be a 32-character hexadecimal string",
+					),
+				},
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+				Description: "The unique ID of the zone.",
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(
+						regexp.MustCompile("^[0-9a-f]{32}$"),
+						"value must be a 32-character hexadecimal string",
+					),
+				},
 			},
 			"max_items": schema.Int64Attribute{
-				Description: "Max items to fetch, default: 1000",
+				Description: "Maximum number of rulesets to fetch (defaults to 1000).",
 				Optional:    true,
 				Validators: []validator.Int64{
 					int64validator.AtLeast(0),
 				},
 			},
-			"result": schema.ListNestedAttribute{
-				Description: "The items returned by the data source",
+			"rulesets": schema.ListNestedAttribute{
+				Description: "A list of rulesets. The returned information will not include the rules in each ruleset.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[RulesetsResultDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectListType[RulesetsRulesetDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
 							Description: "The unique ID of the ruleset.",
 							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(
+									regexp.MustCompile("^[0-9a-f]{32}$"),
+									"value must be a 32-character hexadecimal string",
+								),
+							},
 						},
 						"kind": schema.StringAttribute{
 							Description: "The kind of the ruleset.\nAvailable values: \"managed\", \"custom\", \"root\", \"zone\".",
@@ -60,6 +80,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "The human-readable name of the ruleset.",
 							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.LengthAtLeast(1),
+							},
 						},
 						"phase": schema.StringAttribute{
 							Description: "The phase of the ruleset.\nAvailable values: \"ddos_l4\", \"ddos_l7\", \"http_config_settings\", \"http_custom_errors\", \"http_log_custom_fields\", \"http_ratelimit\", \"http_request_cache_settings\", \"http_request_dynamic_redirect\", \"http_request_firewall_custom\", \"http_request_firewall_managed\", \"http_request_late_transform\", \"http_request_origin\", \"http_request_redirect\", \"http_request_sanitize\", \"http_request_sbfm\", \"http_request_transform\", \"http_response_compression\", \"http_response_firewall_managed\", \"http_response_headers_transform\", \"magic_transit\", \"magic_transit_ids_managed\", \"magic_transit_managed\", \"magic_transit_ratelimit\".",
@@ -95,6 +118,85 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"description": schema.StringAttribute{
 							Description: "An informative description of the ruleset.",
 							Computed:    true,
+						},
+					},
+				},
+			},
+			"result": schema.ListNestedAttribute{
+				Description:        "A list of rulesets. The returned information will not include the rules in each ruleset.",
+				Computed:           true,
+				DeprecationMessage: "Use rulesets instead. This attribute will be removed in the next major version of the provider.",
+				CustomType:         customfield.NewNestedObjectListType[RulesetsRulesetDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description:        "The unique ID of the ruleset.",
+							Computed:           true,
+							DeprecationMessage: "Use rulesets.id instead. This attribute will be removed in the next major version of the provider.",
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(
+									regexp.MustCompile("^[0-9a-f]{32}$"),
+									"value must be a 32-character hexadecimal string",
+								),
+							},
+						},
+						"kind": schema.StringAttribute{
+							Description:        "The kind of the ruleset.\nAvailable values: \"managed\", \"custom\", \"root\", \"zone\".",
+							Computed:           true,
+							DeprecationMessage: "Use rulesets.kind instead. This attribute will be removed in the next major version of the provider.",
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"managed",
+									"custom",
+									"root",
+									"zone",
+								),
+							},
+						},
+						"name": schema.StringAttribute{
+							Description:        "The human-readable name of the ruleset.",
+							Computed:           true,
+							DeprecationMessage: "Use rulesets.name instead. This attribute will be removed in the next major version of the provider.",
+							Validators: []validator.String{
+								stringvalidator.LengthAtLeast(1),
+							},
+						},
+						"phase": schema.StringAttribute{
+							Description:        "The phase of the ruleset.\nAvailable values: \"ddos_l4\", \"ddos_l7\", \"http_config_settings\", \"http_custom_errors\", \"http_log_custom_fields\", \"http_ratelimit\", \"http_request_cache_settings\", \"http_request_dynamic_redirect\", \"http_request_firewall_custom\", \"http_request_firewall_managed\", \"http_request_late_transform\", \"http_request_origin\", \"http_request_redirect\", \"http_request_sanitize\", \"http_request_sbfm\", \"http_request_transform\", \"http_response_compression\", \"http_response_firewall_managed\", \"http_response_headers_transform\", \"magic_transit\", \"magic_transit_ids_managed\", \"magic_transit_managed\", \"magic_transit_ratelimit\".",
+							Computed:           true,
+							DeprecationMessage: "Use rulesets.phase instead. This attribute will be removed in the next major version of the provider.",
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"ddos_l4",
+									"ddos_l7",
+									"http_config_settings",
+									"http_custom_errors",
+									"http_log_custom_fields",
+									"http_ratelimit",
+									"http_request_cache_settings",
+									"http_request_dynamic_redirect",
+									"http_request_firewall_custom",
+									"http_request_firewall_managed",
+									"http_request_late_transform",
+									"http_request_origin",
+									"http_request_redirect",
+									"http_request_sanitize",
+									"http_request_sbfm",
+									"http_request_transform",
+									"http_response_compression",
+									"http_response_firewall_managed",
+									"http_response_headers_transform",
+									"magic_transit",
+									"magic_transit_ids_managed",
+									"magic_transit_managed",
+									"magic_transit_ratelimit",
+								),
+							},
+						},
+						"description": schema.StringAttribute{
+							Description:        "An informative description of the ruleset.",
+							Computed:           true,
+							DeprecationMessage: "Use rulesets.description instead. This attribute will be removed in the next major version of the provider.",
 						},
 					},
 				},
