@@ -16,3 +16,8 @@ resource "cloudflare_ruleset" "my_ruleset" {
     }
   ]
 }
+
+data "cloudflare_ruleset" "my_ruleset" {
+  account_id = var.account_id
+  id         = cloudflare_ruleset.my_ruleset.id
+}

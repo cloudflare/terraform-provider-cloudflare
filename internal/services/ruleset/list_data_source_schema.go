@@ -7,6 +7,7 @@ import (
 	"regexp"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -49,10 +50,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 					int64validator.AtLeast(0),
 				},
 			},
-			"rulesets": schema.ListNestedAttribute{
+			"rulesets": schema.SetNestedAttribute{
 				Description: "A list of rulesets. The returned information will not include the rules in each ruleset.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[RulesetsRulesetDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[RulesetsRulesetDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -119,14 +120,29 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "An informative description of the ruleset.",
 							Computed:    true,
 						},
+						"last_updated": schema.StringAttribute{
+							Description: "The timestamp of when the ruleset was last modified.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"version": schema.StringAttribute{
+							Description: "The version of the ruleset.",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(
+									regexp.MustCompile("^[0-9]+$"),
+									"value must be a non-empty string containing only numbers",
+								),
+							},
+						},
 					},
 				},
 			},
-			"result": schema.ListNestedAttribute{
+			"result": schema.SetNestedAttribute{
 				Description:        "A list of rulesets. The returned information will not include the rules in each ruleset.",
 				Computed:           true,
 				DeprecationMessage: "Use rulesets instead. This attribute will be removed in the next major version of the provider.",
-				CustomType:         customfield.NewNestedObjectListType[RulesetsRulesetDataSourceModel](ctx),
+				CustomType:         customfield.NewNestedObjectSetType[RulesetsRulesetDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
