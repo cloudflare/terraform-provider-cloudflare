@@ -13,14 +13,15 @@ import (
 )
 
 type RulesetsResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[RulesetsResultDataSourceModel] `json:"result,computed"`
+	Result customfield.NestedObjectList[RulesetsRulesetDataSourceModel] `json:"result,computed"`
 }
 
 type RulesetsDataSourceModel struct {
-	AccountID types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID    types.String                                                `tfsdk:"zone_id" path:"zone_id,optional"`
-	MaxItems  types.Int64                                                 `tfsdk:"max_items"`
-	Result    customfield.NestedObjectList[RulesetsResultDataSourceModel] `tfsdk:"result"`
+	AccountID types.String                                                 `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String                                                 `tfsdk:"zone_id" path:"zone_id,optional"`
+	MaxItems  types.Int64                                                  `tfsdk:"max_items"`
+	Rulesets  customfield.NestedObjectList[RulesetsRulesetDataSourceModel] `tfsdk:"rulesets"`
+	Result    customfield.NestedObjectList[RulesetsRulesetDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *RulesetsDataSourceModel) toListParams(_ context.Context) (params rulesets.RulesetListParams, diags diag.Diagnostics) {
@@ -35,7 +36,7 @@ func (m *RulesetsDataSourceModel) toListParams(_ context.Context) (params rulese
 	return
 }
 
-type RulesetsResultDataSourceModel struct {
+type RulesetsRulesetDataSourceModel struct {
 	ID          types.String `tfsdk:"id" json:"id,computed"`
 	Kind        types.String `tfsdk:"kind" json:"kind,computed"`
 	Name        types.String `tfsdk:"name" json:"name,computed"`
