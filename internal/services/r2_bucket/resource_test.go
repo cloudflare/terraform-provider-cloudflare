@@ -200,6 +200,54 @@ func TestAccCloudflareR2Bucket_Jurisdiction(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareR2Bucket_LocationCaseInsensitive(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_r2_bucket." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "weur"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WEUR"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+			{
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WEUR"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WeUr"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareR2BucketMinimum(rnd, accountID string) string {
 	return acctest.LoadTestCase("r2bucketminimum.tf", rnd, accountID)
 }
@@ -214,4 +262,13 @@ func testAccCheckCloudflareR2BucketUpdate(rnd, accountID string) string {
 
 func testAccCheckCloudflareR2BucketJurisdiction(rnd, accountID string) string {
 	return acctest.LoadTestCase("jurisdiction.tf", rnd, accountID)
+}
+
+func testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, location string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_r2_bucket" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[1]s"
+  location   = "%[3]s"
+}`, rnd, accountID, location)
 }
