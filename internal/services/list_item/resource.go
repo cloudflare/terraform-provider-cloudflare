@@ -7,8 +7,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go/v5"
@@ -166,6 +169,12 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
+	newRedirect, _ := env.Result.Redirect.Value(context.Background())
+	originalRedirect, _ := data.Redirect.Value(context.Background())
+	if getURLPath(originalRedirect.SourceURL.ValueString()) == "" {
+		newRedirect.SourceURL = types.StringValue(strings.TrimSuffix(newRedirect.SourceURL.ValueString(), "/"))
+	}
+
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -209,7 +218,12 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+
+	newRedirect, _ := env.Result.Redirect.Value(context.Background())
+	originalRedirect, _ := data.Redirect.Value(context.Background())
+	if getURLPath(originalRedirect.SourceURL.ValueString()) == "" {
+		newRedirect.SourceURL = types.StringValue(strings.TrimSuffix(newRedirect.SourceURL.ValueString(), "/"))
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -409,8 +423,15 @@ func redirectEqual(original customfield.NestedObject[ListItemRedirectModel], ite
 		return false
 	}
 
-	if originalVal.SourceURL.ValueString() != item.SourceURL {
-		return false
+	originalPath := getURLPath(originalVal.SourceURL.ValueString())
+	if originalPath == "" {
+		if originalVal.SourceURL.ValueString() != strings.TrimSuffix(item.SourceURL, "/") {
+			return false
+		}
+	} else {
+		if originalVal.SourceURL.ValueString() != item.SourceURL {
+			return false
+		}
 	}
 
 	if originalVal.TargetURL.ValueString() != item.TargetURL {
@@ -438,4 +459,14 @@ func redirectEqual(original customfield.NestedObject[ListItemRedirectModel], ite
 	}
 
 	return true
+}
+
+func getURLPath(s string) string {
+	if !strings.HasPrefix(s, "http://") && !strings.HasPrefix(s, "https://") {
+		s = "https://" + s
+	}
+	if u, err := url.Parse(s); err == nil {
+		return u.Path
+	}
+	return ""
 }
