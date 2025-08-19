@@ -4,9 +4,11 @@ package list_item
 
 import (
 	"context"
+	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -144,5 +146,33 @@ func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaReques
 }
 
 func (r *ListItemResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
-	return []resource.ConfigValidator{}
+	return []resource.ConfigValidator{
+		ListItemValidator{},
+	}
+}
+
+type ListItemValidator struct {
+}
+
+func (v ListItemValidator) Description(context.Context) string {
+	return "validates a cloudflare_list_item"
+}
+
+func (v ListItemValidator) MarkdownDescription(context.Context) string {
+	return "validates a cloudflare_list_item"
+}
+func (v ListItemValidator) ValidateResource(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
+	var data *ListItemModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	if !data.Hostname.IsNull() {
+		hostname, diag := data.Hostname.Value(context.Background())
+		resp.Diagnostics.Append(diag...)
+		if strings.HasPrefix(hostname.URLHostname.ValueString(), "*") && hostname.ExcludeExactHostname.IsNull() {
+			resp.Diagnostics.AddAttributeError(path.Root("hostname").AtName("exclude_exact_hostname"), "exclude_exact_hostname is required for wildcard hostnames", "exclude_exact_hostname is required for wildcard hostnames, set it to true or false.")
+		}
+
+		if !strings.HasPrefix(hostname.URLHostname.ValueString(), "*") && !hostname.ExcludeExactHostname.IsNull() {
+			resp.Diagnostics.AddAttributeError(path.Root("hostname").AtName("exclude_exact_hostname"), "exclude_exact_hostname is only allowed for wildcard hostnames", "exclude_exact_hostname is only allowed for wildcard hostnames, remove it from the resource.")
+		}
+	}
 }
