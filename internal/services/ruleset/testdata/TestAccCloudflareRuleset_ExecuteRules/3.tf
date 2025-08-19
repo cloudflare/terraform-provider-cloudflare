@@ -15,11 +15,14 @@ resource "cloudflare_ruleset" "my_ruleset" {
           public_key = "iGqBmyIUxuWt1rvxoAharN9FUXneUBxA/Y19PyyrEG0="
         }
         overrides = {
-          categories = []
-          enabled    = false
-          rules      = []
+          enabled = false
         }
       }
     }
   ]
+}
+
+data "cloudflare_ruleset" "my_ruleset" {
+  zone_id = var.zone_id
+  id      = cloudflare_ruleset.my_ruleset.id
 }

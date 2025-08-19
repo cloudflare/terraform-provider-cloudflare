@@ -30,8 +30,8 @@ resource "cloudflare_managed_transforms" "example_managed_transforms" {
 
 ### Required
 
-- `managed_request_headers` (Attributes List) The list of Managed Request Transforms. (see [below for nested schema](#nestedatt--managed_request_headers))
-- `managed_response_headers` (Attributes List) The list of Managed Response Transforms. (see [below for nested schema](#nestedatt--managed_response_headers))
+- `managed_request_headers` (Attributes Set) The list of Managed Request Transforms. (see [below for nested schema](#nestedatt--managed_request_headers))
+- `managed_response_headers` (Attributes Set) The list of Managed Response Transforms. (see [below for nested schema](#nestedatt--managed_response_headers))
 - `zone_id` (String) The unique ID of the zone.
 
 ### Read-Only
@@ -46,11 +46,6 @@ Required:
 - `enabled` (Boolean) Whether the Managed Transform is enabled.
 - `id` (String) The human-readable identifier of the Managed Transform.
 
-Read-Only:
-
-- `conflicts_with` (List of String) The Managed Transforms that this Managed Transform conflicts with.
-- `has_conflict` (Boolean) Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.
-
 
 <a id="nestedatt--managed_response_headers"></a>
 ### Nested Schema for `managed_response_headers`
@@ -59,11 +54,6 @@ Required:
 
 - `enabled` (Boolean) Whether the Managed Transform is enabled.
 - `id` (String) The human-readable identifier of the Managed Transform.
-
-Read-Only:
-
-- `conflicts_with` (List of String) The Managed Transforms that this Managed Transform conflicts with.
-- `has_conflict` (Boolean) Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.
 
 ## Import
 

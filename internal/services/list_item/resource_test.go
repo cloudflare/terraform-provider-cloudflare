@@ -17,7 +17,7 @@ func TestAccCloudflareListItem_Basic(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck_AccountID(t)
 		},
@@ -40,7 +40,7 @@ func TestAccCloudflareListItem_Import(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	ip := "192.0.2.0"
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck_AccountID(t)
 			acctest.TestAccPreCheck_Credentials(t)

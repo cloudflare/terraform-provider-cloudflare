@@ -10,6 +10,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
@@ -43,7 +44,7 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "auth_domain", rnd+"-"+testAuthDomain()),
 					resource.TestCheckResourceAttr(name, "is_ui_read_only", "false"),
 					resource.TestCheckResourceAttr(name, "user_seat_expiration_inactive_time", "1460h"),
-					resource.TestCheckNoResourceAttr(name, "auto_redirect_to_identity"),
+					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
 					resource.TestCheckResourceAttr(name, "login_design.background_color", "#FFFFFF"),
 					resource.TestCheckResourceAttr(name, "login_design.text_color", "#000000"),
 					resource.TestCheckResourceAttr(name, "login_design.logo_path", "https://example.com/logo.png"),
@@ -53,29 +54,33 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "warp_auth_session_duration", "36h"),
 					resource.TestCheckResourceAttr(name, "allow_authenticate_via_warp", "false"),
 				),
-				ResourceName:     name,
-				ImportState:      true,
-				ImportStateId:    accountID,
-				ImportStateCheck: accessOrgImportStateCheck,
 			},
 			{
-				Config: testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID, headerText+" updated", testAuthDomain()),
+				Config: testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID, headerText, testAuthDomain()),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", testAuthDomain()),
 					resource.TestCheckResourceAttr(name, "auth_domain", rnd+"-"+testAuthDomain()),
 					resource.TestCheckResourceAttr(name, "is_ui_read_only", "false"),
 					resource.TestCheckResourceAttr(name, "user_seat_expiration_inactive_time", "1460h"),
-					resource.TestCheckNoResourceAttr(name, "auto_redirect_to_identity"),
+					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
 					resource.TestCheckResourceAttr(name, "login_design.background_color", "#FFFFFF"),
 					resource.TestCheckResourceAttr(name, "login_design.text_color", "#000000"),
 					resource.TestCheckResourceAttr(name, "login_design.logo_path", "https://example.com/logo.png"),
-					resource.TestCheckResourceAttr(name, "login_design.header_text", headerText+" updated"),
+					resource.TestCheckResourceAttr(name, "login_design.header_text", headerText),
 					resource.TestCheckResourceAttr(name, "login_design.footer_text", "My footer text"),
 					resource.TestCheckResourceAttr(name, "session_duration", "12h"),
 					resource.TestCheckResourceAttr(name, "warp_auth_session_duration", "36h"),
 					resource.TestCheckResourceAttr(name, "allow_authenticate_via_warp", "false"),
 				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionNoop),
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
 				ResourceName:     name,
 				ImportState:      true,
 				ImportStateId:    accountID,
@@ -90,6 +95,8 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "session_duration", "12h"),
 					resource.TestCheckNoResourceAttr(name, "login_design"),
 				),
+			},
+			{
 				ResourceName:     name,
 				ImportState:      true,
 				ImportStateId:    accountID,
@@ -164,6 +171,7 @@ func accessOrgImportStateCheckEmpty(instanceStates []*terraform.InstanceState) e
 		{field: "is_ui_read_only", stateValue: attrs["is_ui_read_only"], expectedValue: "false"},
 		{field: "auto_redirect_to_identity", stateValue: attrs["auto_redirect_to_identity"], expectedValue: "false"},
 		{field: "login_design", stateValue: attrs["login_design"], expectedValue: nil},
+		{field: "user_seat_expiration_inactive_time", stateValue: attrs["user_seat_expiration_inactive_time"], expectedValue: ""},
 	}
 
 	for _, check := range stateChecks {

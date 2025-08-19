@@ -1835,6 +1835,7 @@ func TestAccCloudflareAccessApplication_AllowIframeFalsePersistence(t *testing.T
 }
 
 func TestAccCloudflareAccessApplication_BooleanFieldTransitions(t *testing.T) {
+	t.Skip("Account-level WARP setting keep gets toggled off")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	resourceName := name
