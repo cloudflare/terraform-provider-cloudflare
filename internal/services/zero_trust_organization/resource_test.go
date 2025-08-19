@@ -93,12 +93,7 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", testAuthDomain()),
 					resource.TestCheckResourceAttr(name, "auth_domain", rnd+"-"+testAuthDomain()),
 					resource.TestCheckResourceAttr(name, "session_duration", "12h"),
-					// Verify that login_design is not present in the state
-					resource.TestCheckNoResourceAttr(name, "login_design.background_color"),
-					resource.TestCheckNoResourceAttr(name, "login_design.text_color"),
-					resource.TestCheckNoResourceAttr(name, "login_design.logo_path"),
-					resource.TestCheckNoResourceAttr(name, "login_design.header_text"),
-					resource.TestCheckNoResourceAttr(name, "login_design.footer_text"),
+					resource.TestCheckNoResourceAttr(name, "login_design"),
 				),
 			},
 			{
@@ -170,32 +165,18 @@ func accessOrgImportStateCheckEmpty(instanceStates []*terraform.InstanceState) e
 	stateChecks := []struct {
 		field         string
 		stateValue    string
-		expectedValue string
+		expectedValue interface{}
 	}{
 		{field: consts.AccountIDSchemaKey, stateValue: attrs[consts.AccountIDSchemaKey], expectedValue: accountID},
 		{field: "is_ui_read_only", stateValue: attrs["is_ui_read_only"], expectedValue: "false"},
 		{field: "auto_redirect_to_identity", stateValue: attrs["auto_redirect_to_identity"], expectedValue: "false"},
+		{field: "login_design", stateValue: attrs["login_design"], expectedValue: nil},
 		{field: "user_seat_expiration_inactive_time", stateValue: attrs["user_seat_expiration_inactive_time"], expectedValue: ""},
 	}
 
 	for _, check := range stateChecks {
 		if check.stateValue != check.expectedValue {
 			return fmt.Errorf("%s has value %q and does not match expected value %q", check.field, check.stateValue, check.expectedValue)
-		}
-	}
-
-	loginDesignAttrs := []string{
-		"login_design.background_color",
-		"login_design.text_color",
-		"login_design.logo_path",
-		"login_design.header_text",
-		"login_design.footer_text",
-	}
-
-	// Verify login_design attributes are not present
-	for _, attr := range loginDesignAttrs {
-		if _, exists := attrs[attr]; exists {
-			return fmt.Errorf("%s exists in state but should not be present", attr)
 		}
 	}
 
