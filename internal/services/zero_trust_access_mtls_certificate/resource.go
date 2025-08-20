@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/option"
@@ -237,16 +238,62 @@ func (r *ZeroTrustAccessMTLSCertificateResource) Delete(ctx context.Context, req
 		updateParams.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	// We need to make an update to remove associated hostnames before we can delete
-	_, err := r.client.ZeroTrust.Access.Certificates.Update(
+	// Read the certificate from API to check current hostname associations
+	readParams := zero_trust.AccessCertificateGetParams{}
+	if !data.AccountID.IsNull() {
+		readParams.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		readParams.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+	
+	readRes := new(http.Response)
+	readEnv := ZeroTrustAccessMTLSCertificateResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Access.Certificates.Get(
 		ctx,
 		data.ID.ValueString(),
-		updateParams,
+		readParams,
+		option.WithResponseBodyInto(&readRes),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		resp.Diagnostics.AddError("failed to read certificate before delete", err.Error())
 		return
+	}
+	readBytes, _ := io.ReadAll(readRes.Body)
+	err = apijson.Unmarshal(readBytes, &readEnv)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to parse certificate data", err.Error())
+		return
+	}
+	currentCert := &readEnv.Result
+	
+	// Only update to remove associated hostnames if the certificate currently has them
+	hasHostnames := currentCert.AssociatedHostnames != nil && len(*currentCert.AssociatedHostnames) > 0
+	if hasHostnames {
+		emptyHostnames := make([]types.String, 0)
+		updateData := *data
+		updateData.AssociatedHostnames = &emptyHostnames
+		
+		dataBytes, err := updateData.MarshalJSONForUpdate(*data)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+			return
+		}
+		
+		_, err = r.client.ZeroTrust.Access.Certificates.Update(
+			ctx,
+			data.ID.ValueString(),
+			updateParams,
+			option.WithRequestBody("application/json", dataBytes),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+
+		// Wait for hostname disassociation to propagate
+		time.Sleep(10 * time.Second)
 	}
 
 	_, err = r.client.ZeroTrust.Access.Certificates.Delete(
