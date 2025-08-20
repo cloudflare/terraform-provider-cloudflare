@@ -16,7 +16,7 @@ func TestAccAPIToken_Basic(t *testing.T) {
 	resourceID := "cloudflare_api_token." + rnd
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
-	var policyId string
+	var tokenValue string
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck_APIToken(t) },
@@ -26,26 +26,26 @@ func TestAccAPIToken_Basic(t *testing.T) {
 				Config: testAccCloudflareAPITokenWithoutCondition(rnd, rnd, permissionID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, "name", rnd),
-					resource.TestCheckResourceAttrSet(resourceID, "policies.0.id"),
-					resource.TestCheckResourceAttrWith(resourceID, "policies.0.id", func(value string) error {
-						policyId = value
+					resource.TestCheckResourceAttrSet(resourceID, "id"),
+					resource.TestCheckResourceAttrSet(resourceID, "value"),
+					resource.TestCheckResourceAttrSet(resourceID, "issued_on"),
+					resource.TestCheckResourceAttrWith(resourceID, "value", func(value string) error {
+						tokenValue = value
 						return nil
 					}),
-					resource.TestCheckResourceAttr(resourceID, "policies.0.permission_groups.0.id", permissionID),
 				),
 			},
 			{
 				Config: testAccCloudflareAPITokenWithoutCondition(rnd, rnd+"-updated", permissionID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, "name", rnd+"-updated"),
-					resource.TestCheckResourceAttrSet(resourceID, "policies.0.id"),
-					resource.TestCheckResourceAttrWith(resourceID, "policies.0.id", func(value string) error {
-						if value != policyId {
-							return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
+					resource.TestCheckResourceAttrSet(resourceID, "id"),
+					resource.TestCheckResourceAttrWith(resourceID, "value", func(value string) error {
+						if value != tokenValue {
+							return fmt.Errorf("token value changed from %s to %s", tokenValue, value)
 						}
 						return nil
 					}),
-					resource.TestCheckResourceAttr(resourceID, "policies.0.permission_groups.0.id", permissionID),
 				),
 			},
 		},
