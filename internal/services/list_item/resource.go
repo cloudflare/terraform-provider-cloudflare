@@ -18,6 +18,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -105,7 +106,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	err = pollBulkOperation(ctx, data.AccountID.ValueString(), createEnv.Result.OperationID.ValueString(), r.client)
+	err = list.PollListBulkOperation(ctx, data.AccountID.ValueString(), createEnv.Result.OperationID.ValueString(), r.client)
 	if err != nil {
 		resp.Diagnostics.AddError("list item bulk operation failed", err.Error())
 		return
@@ -299,37 +300,6 @@ func (r *ListItemResource) ImportState(ctx context.Context, req resource.ImportS
 
 func (r *ListItemResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
-}
-
-func pollBulkOperation(ctx context.Context, accountID, operationID string, client *cloudflare.Client) error {
-	backoff := 1 * time.Second
-	maxBackoff := 30 * time.Second
-
-	for {
-		bulkOperation, err := client.Rules.Lists.BulkOperations.Get(
-			ctx,
-			operationID,
-			rules.ListBulkOperationGetParams{
-				AccountID: cloudflare.F(accountID),
-			},
-			option.WithMiddleware(logging.Middleware(ctx)),
-		)
-		if err != nil {
-			return err
-		}
-		switch bulkOperation.Status {
-		case rules.ListBulkOperationGetResponseStatusCompleted:
-			return nil
-		case rules.ListBulkOperationGetResponseStatusFailed:
-			return fmt.Errorf("failed to create list item: %s", bulkOperation.Error)
-		default:
-			time.Sleep(backoff)
-			backoff *= 2
-			if backoff > maxBackoff {
-				backoff = maxBackoff
-			}
-		}
-	}
 }
 
 type bodyDeletePayload struct {

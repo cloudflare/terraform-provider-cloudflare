@@ -17,6 +17,18 @@ resource "cloudflare_list" "example_list" {
   kind = "ip"
   name = "list1"
   description = "This is a note"
+
+  items = [
+    {
+      ip = "1.1.1.1"
+    },
+    {
+      ip = "1.1.1.2"
+    }
+    {
+      ip = "1.1.1.3"
+    }
+  ]
 }
 ```
 
@@ -33,6 +45,7 @@ Available values: "ip", "redirect", "hostname", "asn".
 ### Optional
 
 - `description` (String) An informative summary of the list.
+- `items` (Attributes Set) The items in the list. If set, this overwrites all items in the list. Do not use with `cloudflare_list_item`. (see [below for nested schema](#nestedatt--items))
 
 ### Read-Only
 
@@ -41,6 +54,45 @@ Available values: "ip", "redirect", "hostname", "asn".
 - `modified_on` (String) The RFC 3339 timestamp of when the list was last modified.
 - `num_items` (Number) The number of items in the list.
 - `num_referencing_filters` (Number) The number of [filters](/api/resources/filters/) referencing the list.
+
+<a id="nestedatt--items"></a>
+### Nested Schema for `items`
+
+Optional:
+
+- `asn` (Number) A non-negative 32 bit integer
+- `comment` (String) An informative summary of the list item.
+- `hostname` (Attributes) Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-). (see [below for nested schema](#nestedatt--items--hostname))
+- `ip` (String) An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.
+- `redirect` (Attributes) The definition of the redirect. (see [below for nested schema](#nestedatt--items--redirect))
+
+<a id="nestedatt--items--hostname"></a>
+### Nested Schema for `items.hostname`
+
+Required:
+
+- `url_hostname` (String)
+
+Optional:
+
+- `exclude_exact_hostname` (Boolean) Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.
+
+
+<a id="nestedatt--items--redirect"></a>
+### Nested Schema for `items.redirect`
+
+Required:
+
+- `source_url` (String)
+- `target_url` (String)
+
+Optional:
+
+- `include_subdomains` (Boolean)
+- `preserve_path_suffix` (Boolean)
+- `preserve_query_string` (Boolean)
+- `status_code` (Number) Available values: 301, 302, 307, 308.
+- `subpath_matching` (Boolean)
 
 ## Import
 
