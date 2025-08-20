@@ -15,7 +15,7 @@ import (
 func TestAccAPIToken_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 
-	var policyId string
+	var tokenValue string
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -25,10 +25,9 @@ func TestAccAPIToken_Basic(t *testing.T) {
 				Config: acctest.LoadTestCase("api_token-without-condition.tf", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd),
-					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.#", "1"),
-					resource.TestCheckResourceAttrSet("cloudflare_api_token.test_account_token", "policies.0.id"),
-					resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.id", func(value string) error {
-						policyId = value
+					resource.TestCheckResourceAttrSet("cloudflare_api_token.test_account_token", "id"),
+					resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "value", func(value string) error {
+						tokenValue = value
 						return nil
 					}),
 					// conditions by default should not be set
@@ -54,11 +53,10 @@ func TestAccAPIToken_Basic(t *testing.T) {
 				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd+"-updated"),
-					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.#", "1"),
-					resource.TestCheckResourceAttrSet("cloudflare_api_token.test_account_token", "policies.0.id"),
-					resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.id", func(value string) error {
-						if value != policyId {
-							return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
+					resource.TestCheckResourceAttrSet("cloudflare_api_token.test_account_token", "id"),
+					resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "value", func(value string) error {
+						if value != tokenValue {
+							return fmt.Errorf("token value changed from %s to %s", tokenValue, value)
 						}
 						return nil
 					}),

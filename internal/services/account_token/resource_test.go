@@ -16,7 +16,7 @@ func TestAccAccountToken_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var policyId string
+	var tokenValue string
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -26,9 +26,9 @@ func TestAccAccountToken_Basic(t *testing.T) {
 				Config: acctest.LoadTestCase("account_token-without-condition.tf", rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "name", rnd),
-					resource.TestCheckResourceAttrSet("cloudflare_account_token.test_account_token", "policies.0.id"),
-					resource.TestCheckResourceAttrWith("cloudflare_account_token.test_account_token", "policies.0.id", func(value string) error {
-						policyId = value
+					resource.TestCheckResourceAttrSet("cloudflare_account_token.test_account_token", "id"),
+					resource.TestCheckResourceAttrWith("cloudflare_account_token.test_account_token", "value", func(value string) error {
+						tokenValue = value
 						return nil
 					}),
 					// conditions by default should not be set
@@ -54,10 +54,10 @@ func TestAccAccountToken_Basic(t *testing.T) {
 				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "name", rnd+"-updated"),
-					resource.TestCheckResourceAttrSet("cloudflare_account_token.test_account_token", "policies.0.id"),
-					resource.TestCheckResourceAttrWith("cloudflare_account_token.test_account_token", "policies.0.id", func(value string) error {
-						if value != policyId {
-							return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
+					resource.TestCheckResourceAttrSet("cloudflare_account_token.test_account_token", "id"),
+					resource.TestCheckResourceAttrWith("cloudflare_account_token.test_account_token", "value", func(value string) error {
+						if value != tokenValue {
+							return fmt.Errorf("token value changed from %s to %s", tokenValue, value)
 						}
 						return nil
 					}),
