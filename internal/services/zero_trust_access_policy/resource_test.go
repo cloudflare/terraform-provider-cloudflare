@@ -547,12 +547,25 @@ func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("purpose_justification_required"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("purpose_justification_prompt"), knownvalue.StringExact("Why should we let you in?")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_required"), knownvalue.Bool(true)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_groups").AtSliceIndex(0).AtMapKey("email_addresses").AtSliceIndex(0), knownvalue.StringExact("test1@example.com")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_groups").AtSliceIndex(0).AtMapKey("email_addresses").AtSliceIndex(1), knownvalue.StringExact("test2@example.com")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_groups").AtSliceIndex(0).AtMapKey("email_addresses").AtSliceIndex(2), knownvalue.StringExact("test3@example.com")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_groups").AtSliceIndex(1).AtMapKey("email_addresses").AtSliceIndex(0), knownvalue.StringExact("test4@example.com")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_groups").AtSliceIndex(0).AtMapKey("approvals_needed"), knownvalue.Int64Exact(2)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_groups").AtSliceIndex(1).AtMapKey("approvals_needed"), knownvalue.Int64Exact(1)),
+					// Check that we have exactly 2 approval groups
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_groups"), knownvalue.ListSizeExact(2)),
+					// Check approval groups match the API ordering (single email group first, then multi-email group)
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_groups"), knownvalue.ListPartial(map[int]knownvalue.Check{
+						0: knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"approvals_needed": knownvalue.Int64Exact(1),
+							"email_addresses": knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.StringExact("test4@example.com"),
+							}),
+						}),
+						1: knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"approvals_needed": knownvalue.Int64Exact(2),
+							"email_addresses": knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.StringExact("test1@example.com"),
+								knownvalue.StringExact("test2@example.com"),
+								knownvalue.StringExact("test3@example.com"),
+							}),
+						}),
+					})),
 				},
 			},
 			{
