@@ -6,6 +6,7 @@ import (
 	"os"
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -59,22 +60,41 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		}
 
 		// to delete we need to update first with empty hostnames
-		if len(cert.AssociatedHostnames) > 0 {
-			_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.UpdateAccessMutualTLSCertificateParams{
-				ID:                  cert.ID,
-				AssociatedHostnames: []string{},
-			})
-			if err != nil {
-				tflog.Error(ctx, fmt.Sprintf("Failed to update Cloudflare Access Mutual TLS certificate (%s) in account ID: %s", cert.ID, accountID))
-				return err
-			}
+		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.UpdateAccessMutualTLSCertificateParams{
+			ID:                  cert.ID,
+			AssociatedHostnames: []string{},
+		})
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to update Cloudflare Access Mutual TLS certificate (%s) in account ID: %s", cert.ID, accountID))
 		}
 
-		err := client.DeleteAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(accountID), cert.ID)
+		// Wait for update to propagate with retry logic
+		maxRetries := 5
+		backoff := time.Second * 2
+		for range maxRetries {
+			time.Sleep(backoff)
+			updatedCert, checkErr := client.GetAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(accountID), cert.ID)
+			if checkErr == nil && len(updatedCert.AssociatedHostnames) == 0 {
+				break
+			}
+			backoff *= 2
+		}
 
-		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare Access Mutual TLS certificate (%s) in account ID: %s", cert.ID, accountID))
-			return err
+		// Retry deletion with exponential backoff to handle race conditions
+		var lastErr error
+		for range maxRetries {
+			err = client.DeleteAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(accountID), cert.ID)
+			if err == nil {
+				lastErr = nil
+				break
+			}
+			lastErr = err
+			time.Sleep(backoff)
+			backoff *= 2
+		}
+
+		if lastErr != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare Access Mutual TLS certificate (%s) in account ID: %s after retries: %s", cert.ID, accountID, lastErr))
 		}
 	}
 
@@ -91,24 +111,43 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 			continue
 		}
 
-		if len(cert.AssociatedHostnames) > 0 {
-			// to delete we need to update first with empty hostnames
-			_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateAccessMutualTLSCertificateParams{
-				ID:                  cert.ID,
-				AssociatedHostnames: []string{},
-			})
-
-			if err != nil {
-				tflog.Error(ctx, fmt.Sprintf("Failed to update Cloudflare Access Mutual TLS certificate (%s) in zone ID: %s", cert.ID, zoneID))
-				return err
-			}
-		}
-
-		err := client.DeleteAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(zoneID), cert.ID)
+		// to delete we need to update first with empty hostnames
+		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateAccessMutualTLSCertificateParams{
+			ID:                  cert.ID,
+			AssociatedHostnames: []string{},
+		})
 
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare Access Mutual TLS certificate (%s) in zone ID: %s", cert.ID, zoneID))
-			return err
+			tflog.Error(ctx, fmt.Sprintf("Failed to update Cloudflare Access Mutual TLS certificate (%s) in zone ID: %s", cert.ID, zoneID))
+		}
+
+		// Wait for update to propagate with retry logic
+		maxRetries := 5
+		backoff := time.Second * 2
+		for range maxRetries {
+			time.Sleep(backoff)
+			updatedCert, checkErr := client.GetAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(zoneID), cert.ID)
+			if checkErr == nil && len(updatedCert.AssociatedHostnames) == 0 {
+				break
+			}
+			backoff *= 2
+		}
+
+		// Retry deletion with exponential backoff to handle race conditions
+		var lastErr error
+		for range maxRetries {
+			err = client.DeleteAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(zoneID), cert.ID)
+			if err == nil {
+				lastErr = nil
+				break
+			}
+			lastErr = err
+			time.Sleep(backoff)
+			backoff *= 2
+		}
+
+		if lastErr != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare Access Mutual TLS certificate (%s) in zone ID: %s after retries: %s", cert.ID, zoneID, lastErr))
 		}
 	}
 
