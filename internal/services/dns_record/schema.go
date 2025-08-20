@@ -325,11 +325,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 			},
-			"tags": schema.ListAttribute{
+			"tags": schema.SetAttribute{
 				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"settings": schema.SingleNestedAttribute{

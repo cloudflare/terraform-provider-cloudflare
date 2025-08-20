@@ -2,6 +2,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   script_name = "this-is_my_script-01"
   metadata = {
+    main_module = "worker.js"
     assets = {
       config = {
         headers = <<EOT
@@ -27,13 +28,11 @@ resource "cloudflare_workers_script" "example_workers_script" {
       text = "my_data"
       type = "plain_text"
     }]
-    body_part = "worker.js"
     compatibility_date = "2021-01-01"
     compatibility_flags = ["nodejs_compat"]
     keep_assets = false
     keep_bindings = ["string"]
     logpush = false
-    main_module = "worker.js"
     migrations = {
       deleted_classes = ["string"]
       new_classes = ["string"]

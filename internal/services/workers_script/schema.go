@@ -43,6 +43,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "JSON-encoded metadata about the uploaded parts and Worker configuration.",
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
+					"main_module": schema.StringAttribute{
+						Description: "Name of the uploaded file that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
+						Optional:    true,
+					},
 					"assets": schema.SingleNestedAttribute{
 						Description: "Configuration for assets within a Worker.",
 						Optional:    true,
@@ -278,10 +282,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"body_part": schema.StringAttribute{
-						Description: "Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
-						Optional:    true,
-					},
 					"compatibility_date": schema.StringAttribute{
 						Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
 						Optional:    true,
@@ -307,10 +307,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						Optional:    true,
 						Default:     booldefault.StaticBool(false),
-					},
-					"main_module": schema.StringAttribute{
-						Description: "Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
-						Optional:    true,
 					},
 					"migrations": schema.SingleNestedAttribute{
 						Description: "Migrations to apply for Durable Objects associated with this Worker.",
@@ -520,6 +516,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("standard"),
 						},
 						Default: stringdefault.StaticString("standard"),
+					},
+					"body_part": schema.StringAttribute{
+						Description: "Name of the uploaded file that contains the Worker script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
+						Optional:    true,
 					},
 				},
 			},

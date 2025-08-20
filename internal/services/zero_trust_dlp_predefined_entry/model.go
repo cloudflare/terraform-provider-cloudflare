@@ -20,6 +20,7 @@ type ZeroTrustDLPPredefinedEntryModel struct {
 	Enabled    types.Bool                                                           `tfsdk:"enabled" json:"enabled,required"`
 	Name       types.String                                                         `tfsdk:"name" json:"name,computed"`
 	Confidence customfield.NestedObject[ZeroTrustDLPPredefinedEntryConfidenceModel] `tfsdk:"confidence" json:"confidence,computed"`
+	Variant    customfield.NestedObject[ZeroTrustDLPPredefinedEntryVariantModel]    `tfsdk:"variant" json:"variant,computed"`
 }
 
 func (m ZeroTrustDLPPredefinedEntryModel) MarshalJSON() (data []byte, err error) {
@@ -33,4 +34,9 @@ func (m ZeroTrustDLPPredefinedEntryModel) MarshalJSONForUpdate(state ZeroTrustDL
 type ZeroTrustDLPPredefinedEntryConfidenceModel struct {
 	AIContextAvailable types.Bool `tfsdk:"ai_context_available" json:"ai_context_available,computed"`
 	Available          types.Bool `tfsdk:"available" json:"available,computed"`
+}
+
+type ZeroTrustDLPPredefinedEntryVariantModel struct {
+	TopicType types.String `tfsdk:"topic_type" json:"topic_type,computed"`
+	Type      types.String `tfsdk:"type" json:"type,computed"`
 }
