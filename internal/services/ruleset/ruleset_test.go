@@ -4211,7 +4211,6 @@ func TestAccCloudflareRuleset_RedirectRules(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_RewriteRules(t *testing.T) {
-	t.Skip("Test is failing")
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -4582,7 +4581,8 @@ func TestAccCloudflareRuleset_RewriteRules(t *testing.T) {
 											"value":      knownvalue.StringExact("/foo"),
 											"expression": knownvalue.Null(),
 										}),
-										"query": knownvalue.Null(),
+										"query":  knownvalue.Null(),
+										"origin": knownvalue.Null(),
 									}),
 								}),
 							}),
@@ -4654,6 +4654,7 @@ func TestAccCloudflareRuleset_RewriteRules(t *testing.T) {
 											"value":      knownvalue.StringExact("foo=bar"),
 											"expression": knownvalue.Null(),
 										}),
+										"origin": knownvalue.Null(),
 									}),
 								}),
 							}),
@@ -4734,6 +4735,7 @@ func TestAccCloudflareRuleset_RewriteRules(t *testing.T) {
 											"value":      knownvalue.Null(),
 											"expression": knownvalue.StringExact("regex_replace(http.request.uri.query, \"foo=bar\", \"\")"),
 										}),
+										"origin": knownvalue.Null(),
 									}),
 								}),
 							}),
