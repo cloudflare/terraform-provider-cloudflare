@@ -64,7 +64,7 @@ func (r *AccountMemberResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
+	dataBytes, err := data.marshalCustom()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
@@ -112,13 +112,12 @@ func (r *AccountMemberResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+	dataBytes, err := data.marshalCustomForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
-	env := AccountMemberResultEnvelope{*data}
 	_, err = r.client.Accounts.Members.Update(
 		ctx,
 		data.ID.ValueString(),
@@ -134,12 +133,11 @@ func (r *AccountMemberResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	data, err = unmarshalCustom(bytes, data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -154,7 +152,6 @@ func (r *AccountMemberResource) Read(ctx context.Context, req resource.ReadReque
 	}
 
 	res := new(http.Response)
-	env := AccountMemberResultEnvelope{*data}
 	_, err := r.client.Accounts.Members.Get(
 		ctx,
 		data.ID.ValueString(),
@@ -174,12 +171,11 @@ func (r *AccountMemberResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	data, err = unmarshalCustom(bytes, data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
