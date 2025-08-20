@@ -6,7 +6,6 @@ import (
 	"os"
 	"regexp"
 	"testing"
-	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -60,13 +59,15 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		}
 
 		// to delete we need to update first with empty hostnames
-		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.UpdateAccessMutualTLSCertificateParams{
-			ID:                  cert.ID,
-			AssociatedHostnames: []string{},
-		})
-		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to update Cloudflare Access Mutual TLS certificate (%s) in account ID: %s", cert.ID, accountID))
-			return err
+		if len(cert.AssociatedHostnames) > 0 {
+			_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.UpdateAccessMutualTLSCertificateParams{
+				ID:                  cert.ID,
+				AssociatedHostnames: []string{},
+			})
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to update Cloudflare Access Mutual TLS certificate (%s) in account ID: %s", cert.ID, accountID))
+				return err
+			}
 		}
 
 		err := client.DeleteAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(accountID), cert.ID)
@@ -90,15 +91,17 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 			continue
 		}
 
-		// to delete we need to update first with empty hostnames
-		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateAccessMutualTLSCertificateParams{
-			ID:                  cert.ID,
-			AssociatedHostnames: []string{},
-		})
+		if len(cert.AssociatedHostnames) > 0 {
+			// to delete we need to update first with empty hostnames
+			_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateAccessMutualTLSCertificateParams{
+				ID:                  cert.ID,
+				AssociatedHostnames: []string{},
+			})
 
-		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to update Cloudflare Access Mutual TLS certificate (%s) in zone ID: %s", cert.ID, zoneID))
-			return err
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to update Cloudflare Access Mutual TLS certificate (%s) in zone ID: %s", cert.ID, zoneID))
+				return err
+			}
 		}
 
 		err := client.DeleteAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(zoneID), cert.ID)
@@ -177,7 +180,6 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 			},
 		},
 	})
-	time.Sleep(time.Second * 10)
 }
 
 func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
@@ -244,7 +246,6 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 			},
 		},
 	})
-	time.Sleep(time.Second * 10)
 }
 
 func TestAccCloudflareAccessMutualTLSMinimal(t *testing.T) {
@@ -289,71 +290,6 @@ func TestAccCloudflareAccessMutualTLSMinimal(t *testing.T) {
 			},
 		},
 	})
-	time.Sleep(time.Second * 10)
-}
-
-func TestAccCloudflareAccessMutualTLSNameUpdate(t *testing.T) {
-	t.Skip("TODO: associated hostnames prevent deletion")
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
-	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareAccessMutualTLSCertificateDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccessMutualTLSCertificateMinimal(rnd, cloudflare.AccountIdentifier(accountID), cert),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("certificate"), knownvalue.NotNull()),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("associated_hostnames"), knownvalue.ListSizeExact(0)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("fingerprint"), knownvalue.NotNull()),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.NotNull()),
-				},
-			},
-			{
-				Config: testAccessMutualTLSCertificateNameUpdated(rnd, cloudflare.AccountIdentifier(accountID), cert),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("certificate"), knownvalue.NotNull()),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("associated_hostnames"), knownvalue.ListSizeExact(0)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("fingerprint"), knownvalue.NotNull()),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.NotNull()),
-				},
-				Check: resource.ComposeTestCheckFunc(
-					func(state *terraform.State) error {
-						time.Sleep(time.Second * 10)
-						return nil
-					},
-				),
-			},
-			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
-				ImportStateVerifyIgnore: []string{"certificate"},
-			},
-		},
-	})
-	time.Sleep(time.Second * 10)
 }
 
 func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State) error {
@@ -382,7 +318,6 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 		}
 	}
 
-	time.Sleep(time.Second * 10)
 	return nil
 }
 
@@ -396,8 +331,4 @@ func testAccessMutualTLSCertificateUpdated(rnd string, identifier *cloudflare.Re
 
 func testAccessMutualTLSCertificateMinimal(rnd string, identifier *cloudflare.ResourceContainer, cert string) string {
 	return acctest.LoadTestCase("accessmutualtlscertificateminimal.tf", rnd, identifier.Type, identifier.Identifier, cert)
-}
-
-func testAccessMutualTLSCertificateNameUpdated(rnd string, identifier *cloudflare.ResourceContainer, cert string) string {
-	return acctest.LoadTestCase("accessmutualtlscertificatenameupdated.tf", rnd, identifier.Type, identifier.Identifier, cert)
 }

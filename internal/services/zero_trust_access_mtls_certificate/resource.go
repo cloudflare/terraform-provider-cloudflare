@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/option"
@@ -237,11 +238,10 @@ func (r *ZeroTrustAccessMTLSCertificateResource) Delete(ctx context.Context, req
 		updateParams.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	// We need to make an update to remove associated hostnames before we can delete
-	_, err := r.client.ZeroTrust.Access.Certificates.Update(
+	cert, err := r.client.ZeroTrust.Access.Certificates.Get(
 		ctx,
 		data.ID.ValueString(),
-		updateParams,
+		zero_trust.AccessCertificateGetParams(params),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
@@ -249,15 +249,63 @@ func (r *ZeroTrustAccessMTLSCertificateResource) Delete(ctx context.Context, req
 		return
 	}
 
-	_, err = r.client.ZeroTrust.Access.Certificates.Delete(
-		ctx,
-		data.ID.ValueString(),
-		params,
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
+	if cert != nil && len(cert.AssociatedHostnames) > 0 {
+		// We need to make an update to remove associated hostnames before we can delete
+		_, err = r.client.ZeroTrust.Access.Certificates.Update(
+			ctx,
+			data.ID.ValueString(),
+			updateParams,
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+
+		// Wait for the update to propagate with exponential backoff
+		maxRetries := 5
+		backoff := time.Second * 2
+		for range maxRetries {
+			time.Sleep(backoff)
+			updatedCert, checkErr := r.client.ZeroTrust.Access.Certificates.Get(
+				ctx,
+				data.ID.ValueString(),
+				zero_trust.AccessCertificateGetParams(params),
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+			if checkErr == nil && updatedCert != nil && len(updatedCert.AssociatedHostnames) == 0 {
+				break
+			}
+			backoff *= 2
+		}
+	}
+
+	if cert != nil {
+		// Retry deletion with exponential backoff to handle race conditions
+		maxRetries := 5
+		backoff := time.Second * 2
+		var lastErr error
+
+		for range maxRetries {
+			_, err = r.client.ZeroTrust.Access.Certificates.Delete(
+				ctx,
+				data.ID.ValueString(),
+				params,
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+			if err == nil {
+				lastErr = nil
+				break
+			}
+			lastErr = err
+			time.Sleep(backoff)
+			backoff *= 2
+		}
+
+		if lastErr != nil {
+			resp.Diagnostics.AddError("failed to delete certificate after retries", lastErr.Error())
+			return
+		}
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
