@@ -69,6 +69,41 @@ func traversal2S(tr hcl.Traversal) string {
 	return str
 }
 
+func Body2S(body hclsyntax.Body, diag Diagnostics) string {
+	lines := []string{}
+	for _, block := range body.Blocks {
+		line := Block2S(*block, diag)
+		lines = append(lines, line)
+	}
+	for _, attr := range OrderedAttributes(body.Attributes) {
+		line := Attr2S(*attr, diag)
+		lines = append(lines, line)
+	}
+	return strings.Join(lines, "\n")
+}
+
+func Block2S(block hclsyntax.Block, diag Diagnostics) string {
+	l1 := fmt.Sprintf(`%s`, block.Type)
+	for _, label := range block.Labels {
+		l1 += fmt.Sprintf(` %q`, label)
+	}
+	lines := []string{l1 + " {"}
+	for _, line := range strings.Split(Body2S(*block.Body, diag), "\n") {
+		lines = append(lines, "  "+line)
+	}
+	lines = append(lines, "}")
+	return strings.Join(lines, "\n")
+}
+
+func Blocks2S(blocks hclsyntax.Blocks, diag Diagnostics) string {
+	acc := []string{}
+	for _, b := range blocks {
+		acc = append(acc, Block2S(*b, diag))
+	}
+	lines := strings.Join(acc, "\n")
+	return FormatString(lines)
+}
+
 func Attr2S(attr hclsyntax.Attribute, diag Diagnostics) (token string) {
 	return fmt.Sprintf("%s = %s", attr.Name, Expr2S(attr.Expr, diag))
 }
@@ -114,15 +149,15 @@ func Expr2S(expr hcl.Expression, diag Diagnostics) (token string) {
 			key := Expr2S(e.KeyExpr, diag)
 			val = key + " => " + val
 		}
-		forExp := "for " + valLine + " in " + coll + " : " + val
+		forExp := "for " + valLine + " in\n" + coll + "\n: " + val
 		if e.CondExpr != nil {
 			cond := Expr2S(e.CondExpr, diag)
-			forExp = token + " if " + cond
+			forExp = token + "\nif " + cond
 		}
 		if e.KeyVar != "" {
-			token = "{" + forExp + "}"
+			token = "{\n" + forExp + "\n}"
 		} else {
-			token = "[" + forExp + "]"
+			token = "[\n" + forExp + "\n]"
 		}
 
 	case *hclsyntax.FunctionCallExpr:
@@ -149,7 +184,12 @@ func Expr2S(expr hcl.Expression, diag Diagnostics) (token string) {
 			val := Expr2S(item.ValueExpr, diag)
 			lines = append(lines, "  "+key+" = "+val)
 		}
-		token = "{" + strings.Join(lines, "\n") + "}"
+		inner := strings.Join(lines, "\n")
+		padding := ""
+		if strings.Contains(inner, "\n") {
+			padding = "\n"
+		}
+		token = "{" + padding + inner + padding + "}"
 
 	// TODO might need to wrap inner key in extra syntax,
 	// e.g. ["my syntactically weird key!?"]
@@ -201,11 +241,17 @@ func Expr2S(expr hcl.Expression, diag Diagnostics) (token string) {
 
 	case *hclsyntax.TupleConsExpr:
 		items := []string{}
+		tall := false
 		for _, exp := range e.Exprs {
-			arg := Expr2S(exp, diag)
-			items = append(items, arg)
+			item := Expr2S(exp, diag)
+			items = append(items, item)
+			tall = tall || strings.Contains(item, "\n")
 		}
-		token = "[" + strings.Join(items, ",") + "]"
+		sep := ","
+		if tall {
+			sep = sep + "\n"
+		}
+		token = "[" + strings.Join(items, sep) + "]"
 
 	case *hclsyntax.UnaryOpExpr:
 		op := op2S(*e.Op)
