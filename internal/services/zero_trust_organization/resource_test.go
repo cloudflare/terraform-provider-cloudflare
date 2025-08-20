@@ -170,7 +170,6 @@ func accessOrgImportStateCheckEmpty(instanceStates []*terraform.InstanceState) e
 		{field: consts.AccountIDSchemaKey, stateValue: attrs[consts.AccountIDSchemaKey], expectedValue: accountID},
 		{field: "is_ui_read_only", stateValue: attrs["is_ui_read_only"], expectedValue: "false"},
 		{field: "auto_redirect_to_identity", stateValue: attrs["auto_redirect_to_identity"], expectedValue: "false"},
-		{field: "login_design", stateValue: attrs["login_design"], expectedValue: nil},
 		{field: "user_seat_expiration_inactive_time", stateValue: attrs["user_seat_expiration_inactive_time"], expectedValue: ""},
 	}
 
@@ -178,6 +177,11 @@ func accessOrgImportStateCheckEmpty(instanceStates []*terraform.InstanceState) e
 		if check.stateValue != check.expectedValue {
 			return fmt.Errorf("%s has value %q and does not match expected value %q", check.field, check.stateValue, check.expectedValue)
 		}
+	}
+
+	// Special check for login_design - it should not exist in the attributes map
+	if loginDesignValue, exists := attrs["login_design"]; exists && loginDesignValue != "" {
+		return fmt.Errorf("login_design should not exist or should be empty, but has value %q", loginDesignValue)
 	}
 
 	return nil
