@@ -27,6 +27,7 @@ type ZeroTrustDLPEntryModel struct {
 	Secret        types.Bool                                                 `tfsdk:"secret" json:"secret,computed"`
 	UpdatedAt     timetypes.RFC3339                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPEntryConfidenceModel] `tfsdk:"confidence" json:"confidence,computed"`
+	Variant       customfield.NestedObject[ZeroTrustDLPEntryVariantModel]    `tfsdk:"variant" json:"variant,computed"`
 	WordList      jsontypes.Normalized                                       `tfsdk:"word_list" json:"word_list,computed"`
 }
 
@@ -46,4 +47,9 @@ type ZeroTrustDLPEntryPatternModel struct {
 type ZeroTrustDLPEntryConfidenceModel struct {
 	AIContextAvailable types.Bool `tfsdk:"ai_context_available" json:"ai_context_available,computed"`
 	Available          types.Bool `tfsdk:"available" json:"available,computed"`
+}
+
+type ZeroTrustDLPEntryVariantModel struct {
+	TopicType types.String `tfsdk:"topic_type" json:"topic_type,computed"`
+	Type      types.String `tfsdk:"type" json:"type,computed"`
 }

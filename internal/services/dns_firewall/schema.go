@@ -37,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "DNS Firewall cluster name",
 				Required:    true,
 			},
-			"upstream_ips": schema.ListAttribute{
+			"upstream_ips": schema.SetAttribute{
 				Required:    true,
 				ElementType: types.StringType,
 			},
@@ -113,9 +113,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"dns_firewall_ips": schema.ListAttribute{
+			"dns_firewall_ips": schema.SetAttribute{
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 		},

@@ -69,6 +69,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Membership identifier tag.",
 							Computed:    true,
 						},
+						"email": schema.StringAttribute{
+							Description: "The contact email address of the user.",
+							Computed:    true,
+						},
 						"policies": schema.ListNestedAttribute{
 							Description: "Access policy for the membership",
 							Computed:    true,

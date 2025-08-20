@@ -63,6 +63,7 @@ type ZeroTrustDLPCustomProfileEntriesDataSourceModel struct {
 	UpdatedAt     timetypes.RFC3339                                                                   `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	ProfileID     types.String                                                                        `tfsdk:"profile_id" json:"profile_id,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPCustomProfileEntriesConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
+	Variant       customfield.NestedObject[ZeroTrustDLPCustomProfileEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`
 	CaseSensitive types.Bool                                                                          `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	Secret        types.Bool                                                                          `tfsdk:"secret" json:"secret,computed"`
 	WordList      jsontypes.Normalized                                                                `tfsdk:"word_list" json:"word_list,computed"`
@@ -76,4 +77,9 @@ type ZeroTrustDLPCustomProfileEntriesPatternDataSourceModel struct {
 type ZeroTrustDLPCustomProfileEntriesConfidenceDataSourceModel struct {
 	AIContextAvailable types.Bool `tfsdk:"ai_context_available" json:"ai_context_available,computed"`
 	Available          types.Bool `tfsdk:"available" json:"available,computed"`
+}
+
+type ZeroTrustDLPCustomProfileEntriesVariantDataSourceModel struct {
+	TopicType types.String `tfsdk:"topic_type" json:"topic_type,computed"`
+	Type      types.String `tfsdk:"type" json:"type,computed"`
 }

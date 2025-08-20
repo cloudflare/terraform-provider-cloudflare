@@ -6,10 +6,12 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPPredefinedEntryResource)(nil)
@@ -51,6 +53,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"available": schema.BoolAttribute{
 						Description: "Indicates whether this entry has any form of validation that is not an AI remote service.",
 						Computed:    true,
+					},
+				},
+			},
+			"variant": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[ZeroTrustDLPPredefinedEntryVariantModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"topic_type": schema.StringAttribute{
+						Description: `Available values: "Intent", "Content".`,
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("Intent", "Content"),
+						},
+					},
+					"type": schema.StringAttribute{
+						Description: `Available values: "PromptTopic".`,
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("PromptTopic"),
+						},
 					},
 				},
 			},
