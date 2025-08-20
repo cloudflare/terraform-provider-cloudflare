@@ -20,7 +20,7 @@ func TestMain(m *testing.M) {
 }
 
 // TestAccZeroTrustAccessPolicyMigrationFromV4Basic tests basic migration from v4 to v5
-func TestAccZeroTrustAccessPolicyMigrationFromV4Basic(t *testing.T) {
+func TestMigrateZeroTrustAccessPolicyMigrationFromV4Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -77,7 +77,7 @@ resource "cloudflare_access_policy" "%[1]s" {
 }
 
 // TestAccZeroTrustAccessPolicyMigrationFromV4Complex tests migration with complex conditions
-func TestAccZeroTrustAccessPolicyMigrationFromV4Complex(t *testing.T) {
+func TestMigrateZeroTrustAccessPolicyMigrationFromV4Complex(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
@@ -158,7 +158,7 @@ resource "cloudflare_access_policy" "%[1]s" {
 }
 
 // TestAccZeroTrustAccessPolicyMigrationFromV4OAuthProviders tests array explosion and attribute transformations
-func TestAccZeroTrustAccessPolicyMigrationFromV4OAuthProviders(t *testing.T) {
+func TestMigrateZeroTrustAccessPolicyMigrationFromV4OAuthProviders(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
@@ -205,7 +205,7 @@ resource "cloudflare_access_policy" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				// Verify array explosion: email array (2 rules) = 2 include rules
-				// Also verify exclude has 1 rule  
+				// Also verify exclude has 1 rule
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(2)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("exclude"), knownvalue.ListSizeExact(1)),
 			}),
@@ -214,7 +214,7 @@ resource "cloudflare_access_policy" "%[1]s" {
 }
 
 // TestAccZeroTrustAccessPolicyMigrationFromV4DecisionTypes tests all decision types
-func TestAccZeroTrustAccessPolicyMigrationFromV4DecisionTypes(t *testing.T) {
+func TestMigrateZeroTrustAccessPolicyMigrationFromV4DecisionTypes(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
@@ -277,7 +277,7 @@ resource "cloudflare_access_policy" "%[1]s" {
 }
 
 // TestAccZeroTrustAccessPolicyMigrationFromV4OptionalBooleans tests boolean to object transformations
-func TestAccZeroTrustAccessPolicyMigrationFromV4OptionalBooleans(t *testing.T) {
+func TestMigrateZeroTrustAccessPolicyMigrationFromV4OptionalBooleans(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
@@ -340,7 +340,7 @@ resource "cloudflare_access_policy" "%[1]s" {
 }
 
 // TestAccZeroTrustAccessPolicyMigrationFromV4BasicMigration tests basic v4 to v5 migration functionality
-func TestAccZeroTrustAccessPolicyMigrationFromV4UnsupportedFeatures(t *testing.T) {
+func TestMigrateZeroTrustAccessPolicyMigrationFromV4UnsupportedFeatures(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
@@ -397,8 +397,8 @@ resource "cloudflare_access_policy" "%[1]s" {
 	})
 }
 
-// TestAccZeroTrustAccessPolicyMigrationFromV4ServiceTokens tests service token transformations  
-func TestAccZeroTrustAccessPolicyMigrationFromV4ServiceTokens(t *testing.T) {
+// TestAccZeroTrustAccessPolicyMigrationFromV4ServiceTokens tests service token transformations
+func TestMigrateZeroTrustAccessPolicyMigrationFromV4ServiceTokens(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}

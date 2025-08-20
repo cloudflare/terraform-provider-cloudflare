@@ -83,6 +83,12 @@ jobs:
         run: ./scripts/run-ci-acceptance-tests
         env:
           TF_ACC: 1
+      - name: Run Migration Tests
+        id: migration_tests
+        # note: not all resources are covered here, only passing ones should be included here (for now).
+        run: ./scripts/run-ci-migration-tests
+        env:
+          TF_ACC: 1
       - name: Check Test Status
         if: ${{ steps.magic_acc_tests.outcome == 'failure' || steps.acc_tests.outcome == 'failure' || steps.list_item_acc_test.outcome == 'failure' || steps.managed_transforms_acc_test.outcome == 'failure' }}
         run: exit 1
