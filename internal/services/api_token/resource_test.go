@@ -75,7 +75,7 @@ func TestAccAPIToken_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_api_token.test_account_token"
 
-	var policyId string
+	var tokenValue string
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -90,9 +90,10 @@ func TestAccAPIToken_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("id"), knownvalue.NotNull()),
 				},
 				Check: resource.ComposeTestCheckFunc(
-					// Store policy ID for cross-step comparison
-					resource.TestCheckResourceAttrWith(resourceName, "policies.0.id", func(value string) error {
-						policyId = value
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd),
+					resource.TestCheckResourceAttrSet("cloudflare_api_token.test_account_token", "id"),
+					resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "value", func(value string) error {
+						tokenValue = value
 						return nil
 					}),
 					// Verify conditions are not set (ConfigStateChecks can't easily check for absence)
@@ -122,10 +123,11 @@ func TestAccAPIToken_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("id"), knownvalue.NotNull()),
 				},
 				Check: resource.ComposeTestCheckFunc(
-					// Verify policy ID hasn't changed during update
-					resource.TestCheckResourceAttrWith(resourceName, "policies.0.id", func(value string) error {
-						if value != policyId {
-							return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd+"-updated"),
+					resource.TestCheckResourceAttrSet("cloudflare_api_token.test_account_token", "id"),
+					resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "value", func(value string) error {
+						if value != tokenValue {
+							return fmt.Errorf("token value changed from %s to %s", tokenValue, value)
 						}
 						return nil
 					}),
