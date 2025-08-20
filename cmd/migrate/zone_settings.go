@@ -5,6 +5,19 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
+// mapSettingName translates v4 setting names to v5 setting names
+// This handles cases where the v4 provider used different names internally
+func mapSettingName(v4Name string) string {
+	settingNameMap := map[string]string{
+		"zero_rtt": "0rtt", // v4 used "zero_rtt" but API expects "0rtt"
+	}
+	
+	if v5Name, exists := settingNameMap[v4Name]; exists {
+		return v5Name
+	}
+	return v4Name
+}
+
 // isZoneSettingsOverrideResource checks if a block is a cloudflare_zone_settings_override resource
 func isZoneSettingsOverrideResource(block *hclwrite.Block) bool {
 	return block.Type() == "resource" &&
@@ -30,17 +43,19 @@ func transformZoneSettingsBlock(oldBlock *hclwrite.Block) []*hclwrite.Block {
 		if settingsBlock.Type() == "settings" {
 			// Process regular attributes - migrate ALL attributes dynamically
 			for name, attr := range settingsBlock.Body().Attributes() {
+				// Map the v4 setting name to the correct v5 setting name
+				mappedSettingName := mapSettingName(name)
 				resourceFullName := resourceName + "_" + name
 				newBlock := createZoneSettingResource(
 					resourceFullName,
-					name, // Use the attribute name as the setting_id
+					mappedSettingName, // Use the mapped setting name as the setting_id
 					zoneIDAttr,
 					attr,
 				)
 				newBlocks = append(newBlocks, newBlock)
 				
 				// Create import block for this resource
-				importBlock := createImportBlock(resourceFullName, name, zoneIDAttr)
+				importBlock := createImportBlock(resourceFullName, mappedSettingName, zoneIDAttr)
 				newBlocks = append(newBlocks, importBlock)
 			}
 
