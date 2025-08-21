@@ -39,4 +39,37 @@ data "cloudflare_list_items" "example_list_items" {
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
+Read-Only:
+
+- `asn` (Number) Defines a non-negative 32 bit integer.
+- `comment` (String) Defines	an informative summary of the list item.
+- `created_on` (String) The RFC 3339 timestamp of when the item was created.
+- `hostname` (Attributes) Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-). (see [below for nested schema](#nestedatt--result--hostname))
+- `id` (String) Defines the unique ID of the item in the List.
+- `ip` (String) An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.
+- `modified_on` (String) The RFC 3339 timestamp of when the item was last modified.
+- `redirect` (Attributes) The definition of the redirect. (see [below for nested schema](#nestedatt--result--redirect))
+
+<a id="nestedatt--result--hostname"></a>
+### Nested Schema for `result.hostname`
+
+Read-Only:
+
+- `exclude_exact_hostname` (Boolean) Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.
+- `url_hostname` (String)
+
+
+<a id="nestedatt--result--redirect"></a>
+### Nested Schema for `result.redirect`
+
+Read-Only:
+
+- `include_subdomains` (Boolean)
+- `preserve_path_suffix` (Boolean)
+- `preserve_query_string` (Boolean)
+- `source_url` (String)
+- `status_code` (Number) Available values: 301, 302, 307, 308.
+- `subpath_matching` (Boolean)
+- `target_url` (String)
+
 

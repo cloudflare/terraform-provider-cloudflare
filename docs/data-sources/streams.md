@@ -20,6 +20,7 @@ data "cloudflare_streams" "example_streams" {
   start = "2014-01-02T02:20:00Z"
   status = "inprogress"
   type = "live"
+  video_name = "puppy.mp4"
 }
 ```
 
@@ -37,11 +38,12 @@ data "cloudflare_streams" "example_streams" {
 - `end` (String) Lists videos created before the specified date.
 - `include_counts` (Boolean) Includes the total number of videos associated with the submitted query parameters.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `search` (String) Searches over the `name` key in the `meta` field. This field can be set with or after the upload request.
+- `search` (String) Provides a partial word match of the `name` key in the `meta` field. Slow for medium to large video libraries. May be unavailable for very large libraries.
 - `start` (String) Lists videos created after the specified date.
 - `status` (String) Specifies the processing status for all quality levels for a video.
 Available values: "pendingupload", "downloading", "queued", "inprogress", "ready", "error", "live-inprogress".
 - `type` (String) Specifies whether the video is `vod` or `live`.
+- `video_name` (String) Provides a fast, exact string match on the `name` key in the `meta` field.
 
 ### Read-Only
 

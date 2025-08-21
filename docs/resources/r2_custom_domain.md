@@ -18,6 +18,7 @@ resource "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
   domain = "domain"
   enabled = true
   zone_id = "zoneId"
+  ciphers = ["string"]
   min_tls = "1.0"
 }
 ```
@@ -35,6 +36,7 @@ resource "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 
 ### Optional
 
+- `ciphers` (List of String) An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
 - `jurisdiction` (String) Jurisdiction of the bucket
 - `min_tls` (String) Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.
 Available values: "1.0", "1.1", "1.2", "1.3".

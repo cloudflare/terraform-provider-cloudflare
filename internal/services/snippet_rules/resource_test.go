@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/snippets"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -108,9 +108,6 @@ func testAccCheckCloudflareSnippetRulesDestroy(s *terraform.State) error {
 	return nil
 }
 
-// TODO: For now we use the preexisting "rules_set_snippet" snippet for testing,
-// because we can't create snippets in Terraform due to a provider bug.
-// Once that issue is resolved, we should create a new snippet for testing to avoid concurrency issues.
 func testAccCloudflareSnippetRulesConfig(rnd, zoneID string) string {
 	return acctest.LoadTestCase("basic.tf", rnd, zoneID)
 }

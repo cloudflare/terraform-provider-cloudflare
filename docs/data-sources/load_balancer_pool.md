@@ -23,7 +23,7 @@ data "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 

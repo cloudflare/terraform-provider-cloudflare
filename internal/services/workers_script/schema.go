@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/resourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -145,11 +146,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"bindings": schema.SetNestedAttribute{
+			"bindings": schema.ListNestedAttribute{
 				Description: "List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectSetType[WorkersScriptMetadataBindingsModel](ctx),
+				CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataBindingsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
@@ -650,5 +651,10 @@ func (r *WorkersScriptResource) Schema(ctx context.Context, req resource.SchemaR
 }
 
 func (r *WorkersScriptResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
-	return []resource.ConfigValidator{}
+	return []resource.ConfigValidator{
+		resourcevalidator.ExactlyOneOf(
+			path.MatchRoot("content"),
+			path.MatchRoot("content_file"),
+		),
+	}
 }

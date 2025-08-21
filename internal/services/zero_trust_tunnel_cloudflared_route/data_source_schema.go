@@ -64,6 +64,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"comment": schema.StringAttribute{
 						Description: "Optional remark describing the route.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"existed_at": schema.StringAttribute{

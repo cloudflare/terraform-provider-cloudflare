@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ManagedTransformsDataSource)(nil)
@@ -34,16 +33,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Whether the Managed Transform is enabled.",
 							Computed:    true,
 						},
-						"has_conflict": schema.BoolAttribute{
-							Description: "Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.",
-							Computed:    true,
-						},
-						"conflicts_with": schema.ListAttribute{
-							Description: "The Managed Transforms that this Managed Transform conflicts with.",
-							Computed:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
-							ElementType: types.StringType,
-						},
 					},
 				},
 			},
@@ -60,16 +49,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"enabled": schema.BoolAttribute{
 							Description: "Whether the Managed Transform is enabled.",
 							Computed:    true,
-						},
-						"has_conflict": schema.BoolAttribute{
-							Description: "Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.",
-							Computed:    true,
-						},
-						"conflicts_with": schema.ListAttribute{
-							Description: "The Managed Transforms that this Managed Transform conflicts with.",
-							Computed:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
-							ElementType: types.StringType,
 						},
 					},
 				},

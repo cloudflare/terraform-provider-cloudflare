@@ -87,6 +87,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Cloudflare account ID",
 							Computed:    true,
 						},
+						"config_src": schema.StringAttribute{
+							Description: "Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel on the Zero Trust dashboard.\nAvailable values: \"local\", \"cloudflare\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("local", "cloudflare"),
+							},
+						},
 						"connections": schema.ListNestedAttribute{
 							Description:        "The Cloudflare Tunnel connections between your origin and Cloudflare's edge.",
 							Computed:           true,
@@ -160,8 +167,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"remote_config": schema.BoolAttribute{
-							Description: "If `true`, the tunnel can be configured remotely from the Zero Trust dashboard. If `false`, the tunnel must be configured locally on the origin machine.",
-							Computed:    true,
+							Description:        "If `true`, the tunnel can be configured remotely from the Zero Trust dashboard. If `false`, the tunnel must be configured locally on the origin machine.",
+							Computed:           true,
+							DeprecationMessage: "Use the config_src field instead.",
 						},
 						"status": schema.StringAttribute{
 							Description: "The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).\nAvailable values: \"inactive\", \"degraded\", \"healthy\", \"down\".",

@@ -49,6 +49,7 @@ resource "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
 - `customer_endpoint` (String) The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.
 - `description` (String) An optional description forthe IPsec tunnel.
 - `health_check` (Attributes) (see [below for nested schema](#nestedatt--health_check))
+- `interface_address6` (String) A 127 bit IPV6 prefix from within the virtual_subnet6 prefix space with the address being the first IP of the subnet and not same as the address of virtual_subnet6. Eg if virtual_subnet6 is 2606:54c1:7:0:a9fe:12d2::/127 , interface_address6 could be 2606:54c1:7:0:a9fe:12d2:1:200/127
 - `psk` (String, Sensitive) A randomly generated or provided string for use in the IPsec tunnel.
 - `replay_protection` (Boolean) If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.
 

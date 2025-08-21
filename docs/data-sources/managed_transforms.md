@@ -34,9 +34,7 @@ data "cloudflare_managed_transforms" "example_managed_transforms" {
 
 Read-Only:
 
-- `conflicts_with` (List of String) The Managed Transforms that this Managed Transform conflicts with.
 - `enabled` (Boolean) Whether the Managed Transform is enabled.
-- `has_conflict` (Boolean) Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.
 - `id` (String) The human-readable identifier of the Managed Transform.
 
 
@@ -45,9 +43,7 @@ Read-Only:
 
 Read-Only:
 
-- `conflicts_with` (List of String) The Managed Transforms that this Managed Transform conflicts with.
 - `enabled` (Boolean) Whether the Managed Transform is enabled.
-- `has_conflict` (Boolean) Whether the Managed Transform conflicts with the currently-enabled Managed Transforms.
 - `id` (String) The human-readable identifier of the Managed Transform.
 
 

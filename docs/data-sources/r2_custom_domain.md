@@ -30,6 +30,7 @@ data "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 
 ### Read-Only
 
+- `ciphers` (List of String) An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
 - `enabled` (Boolean) Whether this bucket is publicly accessible at the specified custom domain.
 - `min_tls` (String) Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.
 Available values: "1.0", "1.1", "1.2", "1.3".

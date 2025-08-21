@@ -9,8 +9,8 @@ import (
 	"time"
 
 	cfold "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v5/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -192,6 +192,64 @@ func TestAccCloudflareLoadBalancerPool_VirtualNetworkID(t *testing.T) {
 					//// resource.TestCheckResourceAttr(poolName, "header.#", "0"),
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerPoolDates(poolName, &loadBalancerPool, testStartTime),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareLoadBalancerPool_PatchBehavior(t *testing.T) {
+	t.Parallel()
+	testStartTime := time.Now().UTC()
+	var loadBalancerPool cfold.LoadBalancerPool
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_load_balancer_pool." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("my-tf-pool-basic-%s", rnd)),
+					resource.TestCheckResourceAttr(name, "enabled", "true"),
+					resource.TestCheckResourceAttr(name, "latitude", "12.3"),
+					resource.TestCheckResourceAttr(name, "longitude", "55"),
+					resource.TestCheckResourceAttr(name, "origins.#", "1"),
+					resource.TestCheckResourceAttr(name, "origins.0.name", "example-1"),
+					resource.TestCheckResourceAttr(name, "origins.0.address", "192.0.2.1"),
+					testAccCheckCloudflareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
+				),
+			},
+			{
+				// Patch the load balancer pool with updated properties
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigPatched(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
+					// Verify patched properties
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("my-tf-pool-patched-%s", rnd)),
+					resource.TestCheckResourceAttr(name, "description", "Patched load balancer pool"),
+					resource.TestCheckResourceAttr(name, "enabled", "false"),
+					resource.TestCheckResourceAttr(name, "latitude", "37.7749"),
+					resource.TestCheckResourceAttr(name, "longitude", "-122.4194"),
+					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
+					resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
+					resource.TestCheckResourceAttr(name, "check_regions.0", "WEU"),
+					resource.TestCheckResourceAttr(name, "origins.#", "2"),
+					resource.TestCheckResourceAttr(name, "origins.0.name", "patched-origin-1"),
+					resource.TestCheckResourceAttr(name, "origins.0.address", "192.0.2.2"),
+					resource.TestCheckResourceAttr(name, "origins.1.name", "patched-origin-2"),
+					resource.TestCheckResourceAttr(name, "origins.1.address", "192.0.2.3"),
+					resource.TestCheckResourceAttr(name, "load_shedding.%", "4"),
+					resource.TestCheckResourceAttr(name, "load_shedding.default_percent", "25"),
+					resource.TestCheckResourceAttr(name, "load_shedding.default_policy", "random"),
+					resource.TestCheckResourceAttr(name, "origin_steering.%", "1"),
+					resource.TestCheckResourceAttr(name, "origin_steering.policy", "random"),
+					testAccCheckCloudflareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
 				),
 			},
 		},
@@ -419,6 +477,10 @@ func testAccCheckCloudflareLoadBalancerPoolConfigVirtualNetworkID(accountID, vne
 func testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id, headerValue, accountID string) string {
 	return acctest.LoadTestCase("loadbalancerpoolconfigfullyspecified.tf", id, headerValue, accountID)
 	// TODO add field to config after creating monitor resource
+}
+
+func testAccCheckCloudflareLoadBalancerPoolConfigPatched(id, accountID string) string {
+	return acctest.LoadTestCase("loadbalancerpoolconfigpatched.tf", id, accountID)
 }
 
 func testAccCheckCloudflareTunnelVirtualNetworkExists(name string, virtualNetwork *cfold.TunnelVirtualNetwork) resource.TestCheckFunc {

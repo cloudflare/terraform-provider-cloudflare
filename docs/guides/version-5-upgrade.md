@@ -271,6 +271,8 @@ cloudflare_terraform_v5()
 
 ## cloudflare_worker_script
 
+!> While this resource is the direct migration path, it is no longer recommended. Please use the `cloudflare_worker`, `cloudflare_worker_version`, and `cloudflare_workers_deployment` resources instead. See how to use them in the [developer documentation](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/).
+
 - Renamed to `cloudflare_workers_script`
 
 ## cloudflare_worker_secret
@@ -1275,6 +1277,8 @@ resource "cloudflare_list_item" "example" {
 - `rules` is now a list of objects (`rules = [{ ... }]`) instead of multiple block attribute (`rules { ... }`).
 
 ## cloudflare_workers_script
+
+!> While this resource is the direct migration path, it is no longer recommended. Please use the `cloudflare_worker`, `cloudflare_worker_version`, and `cloudflare_workers_deployment` resources instead. See how to use them in the [developer documentation](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/).
 
 - `name` is now `script_name`.
 - `analytics_engine_binding` is now a list of objects (`analytics_engine_binding = [{ ... }]`) instead of multiple block attribute (`analytics_engine_binding { ... }`).

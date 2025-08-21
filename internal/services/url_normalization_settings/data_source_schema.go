@@ -21,10 +21,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"scope": schema.StringAttribute{
-				Description: "The scope of the URL normalization.\nAvailable values: \"incoming\", \"both\".",
+				Description: "The scope of the URL normalization.\nAvailable values: \"incoming\", \"both\", \"none\".",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("incoming", "both"),
+					stringvalidator.OneOfCaseInsensitive(
+						"incoming",
+						"both",
+						"none",
+					),
 				},
 			},
 			"type": schema.StringAttribute{

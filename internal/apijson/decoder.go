@@ -608,7 +608,7 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			eleType := value.Interface().(basetypes.SetValue).ElementType(ctx)
 			switch node.Type {
 			case gjson.Null:
-				value.Set(reflect.ValueOf(types.ListNull(eleType)))
+				value.Set(reflect.ValueOf(types.SetNull(eleType)))
 				return nil
 			case gjson.JSON:
 				elementType, attributes, err := d.parseArrayOfValues(node)
@@ -636,7 +636,7 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			switch node.Type {
 			case gjson.Null:
 				if b == Always {
-					value.Set(reflect.ValueOf(types.ListNull(eleType)))
+					value.Set(reflect.ValueOf(types.MapNull(eleType)))
 				}
 				return nil
 			case gjson.JSON:
@@ -868,19 +868,28 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 		}
 	}
 
-	if (t == reflect.TypeOf(basetypes.DynamicValue{})) {
+	if t.Implements(reflect.TypeOf((*basetypes.DynamicValuable)(nil)).Elem()) {
+		bsValue := t == reflect.TypeOf(basetypes.DynamicValue{})
+
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			if !shouldUpdatePrimitive(value, b) {
 				return nil
 			}
-			dynamic := value.Interface().(basetypes.DynamicValue)
+			dynValuable := value.Interface().(basetypes.DynamicValuable)
+			dynamic, _ := dynValuable.ToDynamicValue(ctx)
+
 			underlying := dynamic.UnderlyingValue()
 			if !shouldUpdatePrimitive(reflect.ValueOf(underlying), b) {
 				return nil
 			}
 			if node.Type == gjson.Null && underlying == nil {
 				// special case of null means we don't have an underlying type
-				value.Set(reflect.ValueOf(types.DynamicNull()))
+				val := types.DynamicNull()
+				if bsValue {
+					value.Set(reflect.ValueOf(val))
+				} else {
+					value.Set(reflect.ValueOf(customfield.RawNormalizedDynamicValue(val)))
+				}
 				return nil
 			}
 			if underlying != nil {
@@ -892,7 +901,13 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 				if err != nil {
 					return err
 				}
-				value.Set(reflect.ValueOf(types.DynamicValue(underlyingValue.Interface().(attr.Value))))
+
+				val := types.DynamicValue(underlyingValue.Interface().(attr.Value))
+				if bsValue {
+					value.Set(reflect.ValueOf(val))
+				} else {
+					value.Set(reflect.ValueOf(customfield.RawNormalizedDynamicValue(val)))
+				}
 			} else {
 				// just decode from the json itself
 				attr, err := d.inferTerraformAttrFromValue(node)
@@ -900,7 +915,12 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 					return err
 				}
 
-				value.Set(reflect.ValueOf(types.DynamicValue(attr)))
+				val := types.DynamicValue(attr)
+				if bsValue {
+					value.Set(reflect.ValueOf(val))
+				} else {
+					value.Set(reflect.ValueOf(customfield.RawNormalizedDynamicValue(val)))
+				}
 			}
 			return nil
 		}
@@ -1326,15 +1346,22 @@ func (d *decoderBuilder) inferTerraformAttrFromValue(node gjson.Result) (attr.Va
 		return types.StringValue(node.String()), nil
 	case gjson.JSON:
 		if node.IsArray() {
-			elementType, attributes, err := d.parseArrayOfValues(node)
-			if err != nil {
-				return nil, err
+			isHomogeneous, elementType, attributes, elementTypes := d.analyzeArrayTypes(node)
+			if isHomogeneous {
+				// Create ListValue for homogeneous arrays
+				newVal, diags := basetypes.NewListValue(elementType, attributes)
+				if diags.HasError() {
+					return nil, errorFromDiagnostics(diags)
+				}
+				return newVal, nil
+			} else {
+				// Create TupleValue for heterogeneous arrays
+				newVal, diags := basetypes.NewTupleValue(elementTypes, attributes)
+				if diags.HasError() {
+					return nil, errorFromDiagnostics(diags)
+				}
+				return newVal, nil
 			}
-			newVal, diags := basetypes.NewListValue(elementType, attributes)
-			if diags.HasError() {
-				return nil, errorFromDiagnostics(diags)
-			}
-			return newVal, nil
 		} else if node.IsObject() {
 			attributes := map[string]attr.Value{}
 			attributeTypes := map[string]attr.Type{}
@@ -1361,6 +1388,37 @@ func (d *decoderBuilder) inferTerraformAttrFromValue(node gjson.Result) (attr.Va
 
 	}
 	return nil, fmt.Errorf("apijson: cannot infer terraform attribute from value")
+}
+
+// analyzeArrayTypes analyzes a JSON array and determines if it's homogeneous or heterogeneous
+// Returns: (isHomogeneous, elementType, attributes, elementTypes)
+func (d *decoderBuilder) analyzeArrayTypes(node gjson.Result) (bool, attr.Type, []attr.Value, []attr.Type) {
+	ctx := context.TODO()
+	attributes := []attr.Value{}
+	elementTypes := []attr.Type{}
+	var firstElementType attr.Type
+	isHomogeneous := true
+
+	node.ForEach(func(_, value gjson.Result) bool {
+		val, err := d.inferTerraformAttrFromValue(value)
+		if err != nil {
+			return false
+		}
+
+		valType := val.Type(ctx)
+		attributes = append(attributes, val)
+		elementTypes = append(elementTypes, valType)
+
+		if firstElementType == nil {
+			firstElementType = valType
+		} else if !firstElementType.Equal(valType) {
+			isHomogeneous = false
+		}
+
+		return true
+	})
+
+	return isHomogeneous, firstElementType, attributes, elementTypes
 }
 
 func (d *decoderBuilder) parseArrayOfValues(node gjson.Result) (attr.Type, []attr.Value, error) {

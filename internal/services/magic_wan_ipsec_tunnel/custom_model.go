@@ -20,6 +20,7 @@ type CustomMagicWANIPSECTunnelModel struct {
 	Name               types.String                                                  `tfsdk:"name" json:"name,required"`
 	CustomerEndpoint   types.String                                                  `tfsdk:"customer_endpoint" json:"customer_endpoint,optional"`
 	Description        types.String                                                  `tfsdk:"description" json:"description,optional"`
+	InterfaceAddress6  types.String                                                  `tfsdk:"interface_address6" json:"interface_address6,optional"`
 	PSK                types.String                                                  `tfsdk:"psk" json:"psk,optional,no_refresh"`
 	ReplayProtection   types.Bool                                                    `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
 	HealthCheck        customfield.NestedObject[MagicWANIPSECTunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed_optional"`
