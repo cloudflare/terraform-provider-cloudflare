@@ -1,6 +1,7 @@
 resource "cloudflare_workers_script" "example_workers_script" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   script_name = "this-is_my_script-01"
+  main_module = "worker.js"
   assets = {
     config = {
       headers = <<EOT
@@ -17,7 +18,6 @@ resource "cloudflare_workers_script" "example_workers_script" {
       html_handling = "auto-trailing-slash"
       not_found_handling = "none"
       run_worker_first = false
-      serve_directly = true
     }
     jwt = "jwt"
   }
@@ -31,9 +31,8 @@ resource "cloudflare_workers_script" "example_workers_script" {
   content_file = "worker.js"
   content_sha256 = filesha256("worker.js")
   keep_assets = false
-  keep_bindings = ["string"]
+  keep_bindings = ["kv_namespace"]
   logpush = false
-  main_module = "worker.js"
   migrations = {
     deleted_classes = ["string"]
     new_classes = ["string"]
@@ -62,11 +61,9 @@ resource "cloudflare_workers_script" "example_workers_script" {
   placement = {
     mode = "smart"
   }
-  tags = ["string"]
   tail_consumers = [{
     service = "my-log-consumer"
     environment = "production"
     namespace = "my-namespace"
   }]
-  usage_model = "standard"
 }

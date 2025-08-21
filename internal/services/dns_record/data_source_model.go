@@ -35,7 +35,7 @@ type DNSRecordDataSourceModel struct {
 	TagsModifiedOn    timetypes.RFC3339                                          `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
 	TTL               types.Float64                                              `tfsdk:"ttl" json:"ttl,computed"`
 	Type              types.String                                               `tfsdk:"type" json:"type,computed"`
-	Tags              customfield.List[types.String]                             `tfsdk:"tags" json:"tags,computed"`
+	Tags              customfield.Set[types.String]                              `tfsdk:"tags" json:"tags,computed"`
 	Data              customfield.NestedObject[DNSRecordDataDataSourceModel]     `tfsdk:"data" json:"data,computed"`
 	Settings          customfield.NestedObject[DNSRecordSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
 	Meta              jsontypes.Normalized                                       `tfsdk:"meta" json:"meta,computed"`

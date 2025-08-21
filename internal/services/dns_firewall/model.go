@@ -27,7 +27,7 @@ type DNSFirewallModel struct {
 	Retries              types.Float64                                              `tfsdk:"retries" json:"retries,computed_optional"`
 	AttackMitigation     customfield.NestedObject[DNSFirewallAttackMitigationModel] `tfsdk:"attack_mitigation" json:"attack_mitigation,computed_optional"`
 	ModifiedOn           timetypes.RFC3339                                          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	DNSFirewallIPs       customfield.List[types.String]                             `tfsdk:"dns_firewall_ips" json:"dns_firewall_ips,computed"`
+	DNSFirewallIPs       customfield.Set[types.String]                              `tfsdk:"dns_firewall_ips" json:"dns_firewall_ips,computed"`
 }
 
 func (m DNSFirewallModel) MarshalJSON() (data []byte, err error) {

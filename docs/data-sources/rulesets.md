@@ -13,8 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_rulesets" "example_rulesets" {
-  account_id = "account_id"
-  zone_id = "zone_id"
+  zone_id = "9f1839b6152d298aca64c4e906b6d074"
 }
 ```
 
@@ -23,16 +22,31 @@ data "cloudflare_rulesets" "example_rulesets" {
 
 ### Optional
 
-- `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `max_items` (Number) Max items to fetch, default: 1000
-- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
+- `account_id` (String) The unique ID of the account.
+- `max_items` (Number) Maximum number of rulesets to fetch (defaults to 1000).
+- `zone_id` (String) The unique ID of the zone.
 
 ### Read-Only
 
-- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
+- `result` (Attributes List, Deprecated) A list of rulesets. The returned information will not include the rules in each ruleset. (see [below for nested schema](#nestedatt--result))
+- `rulesets` (Attributes List) A list of rulesets. The returned information will not include the rules in each ruleset. (see [below for nested schema](#nestedatt--rulesets))
 
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
+
+Read-Only:
+
+- `description` (String, Deprecated) An informative description of the ruleset.
+- `id` (String, Deprecated) The unique ID of the ruleset.
+- `kind` (String, Deprecated) The kind of the ruleset.
+Available values: "managed", "custom", "root", "zone".
+- `name` (String, Deprecated) The human-readable name of the ruleset.
+- `phase` (String, Deprecated) The phase of the ruleset.
+Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_transform", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed", "magic_transit_ratelimit".
+
+
+<a id="nestedatt--rulesets"></a>
+### Nested Schema for `rulesets`
 
 Read-Only:
 

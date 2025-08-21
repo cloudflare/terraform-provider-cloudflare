@@ -5,14 +5,15 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
 /* Migration tests don't include every possible permutation, but do cover:
@@ -24,7 +25,7 @@ import (
  * - Import verification in a few cases
  */
 
-func TestAccCustomPagesMigrationFromV4(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV4(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 
@@ -79,7 +80,7 @@ func TestAccCustomPagesMigrationFromV4(t *testing.T) {
 // the state upgrade will also run on custom_pages created with
 // earlier V5 providers;
 // this test ensures the upgrade is a no-op for these resources
-func TestAccCustomPagesMigrationFromV5(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 
@@ -130,7 +131,7 @@ func TestAccCustomPagesMigrationFromV5(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV5Default(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5Default(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 
@@ -185,7 +186,7 @@ func TestAccCustomPagesMigrationFromV5Default(t *testing.T) {
 
 // Account-level basic_challenge tests
 
-func TestAccCustomPagesMigrationFromV4BasicChallengeCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV4BasicChallengeCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -224,7 +225,7 @@ func TestAccCustomPagesMigrationFromV4BasicChallengeCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV5BasicChallengeCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5BasicChallengeCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -263,7 +264,7 @@ func TestAccCustomPagesMigrationFromV5BasicChallengeCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV5BasicChallengeDefault(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5BasicChallengeDefault(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -304,7 +305,7 @@ func TestAccCustomPagesMigrationFromV5BasicChallengeDefault(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV57BasicChallengeDefault(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV57BasicChallengeDefault(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -345,7 +346,7 @@ func TestAccCustomPagesMigrationFromV57BasicChallengeDefault(t *testing.T) {
 
 // Account-level waf_challenge tests
 
-func TestAccCustomPagesMigrationFromV4WafChallengeCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV4WafChallengeCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -384,7 +385,7 @@ func TestAccCustomPagesMigrationFromV4WafChallengeCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV5WafChallengeCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5WafChallengeCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -425,7 +426,7 @@ func TestAccCustomPagesMigrationFromV5WafChallengeCustomized(t *testing.T) {
 
 // Account-level waf_block tests
 
-func TestAccCustomPagesMigrationFromV4WafBlockCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV4WafBlockCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -464,7 +465,7 @@ func TestAccCustomPagesMigrationFromV4WafBlockCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV5WafBlockCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5WafBlockCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -505,7 +506,7 @@ func TestAccCustomPagesMigrationFromV5WafBlockCustomized(t *testing.T) {
 
 // Zone-level ip_block tests
 
-func TestAccCustomPagesMigrationFromV4IpBlockCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV4IpBlockCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -551,7 +552,7 @@ func TestAccCustomPagesMigrationFromV4IpBlockCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV5IpBlockCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5IpBlockCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -599,7 +600,7 @@ func TestAccCustomPagesMigrationFromV5IpBlockCustomized(t *testing.T) {
 
 // Zone-level country_challenge tests
 
-func TestAccCustomPagesMigrationFromV4CountryChallengeCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV4CountryChallengeCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -645,7 +646,7 @@ func TestAccCustomPagesMigrationFromV4CountryChallengeCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV5CountryChallengeCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5CountryChallengeCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -683,7 +684,7 @@ func TestAccCustomPagesMigrationFromV5CountryChallengeCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV5CountryChallengeDefault(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5CountryChallengeDefault(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -725,7 +726,7 @@ func TestAccCustomPagesMigrationFromV5CountryChallengeDefault(t *testing.T) {
 
 // Zone-level 1000_errors tests
 
-func TestAccCustomPagesMigrationFromV41000ErrorsCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV41000ErrorsCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -763,7 +764,7 @@ func TestAccCustomPagesMigrationFromV41000ErrorsCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV51000ErrorsCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV51000ErrorsCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -801,7 +802,7 @@ func TestAccCustomPagesMigrationFromV51000ErrorsCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV51000ErrorsDefault(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV51000ErrorsDefault(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -840,7 +841,7 @@ func TestAccCustomPagesMigrationFromV51000ErrorsDefault(t *testing.T) {
 		},
 	})
 }
-func TestAccCustomPagesMigrationFromV4ManagedChallengeCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV4ManagedChallengeCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -878,7 +879,7 @@ func TestAccCustomPagesMigrationFromV4ManagedChallengeCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV57ManagedChallengeCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV57ManagedChallengeCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -924,7 +925,7 @@ func TestAccCustomPagesMigrationFromV57ManagedChallengeCustomized(t *testing.T) 
 		},
 	})
 }
-func TestAccCustomPagesMigrationFromV5ManagedChallengeCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5ManagedChallengeCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -962,7 +963,7 @@ func TestAccCustomPagesMigrationFromV5ManagedChallengeCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV4RatelimitBlockCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV4RatelimitBlockCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -1000,7 +1001,7 @@ func TestAccCustomPagesMigrationFromV4RatelimitBlockCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV5RatelimitBlockCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5RatelimitBlockCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -1038,7 +1039,7 @@ func TestAccCustomPagesMigrationFromV5RatelimitBlockCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV4UnderAttackCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV4UnderAttackCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -1076,7 +1077,7 @@ func TestAccCustomPagesMigrationFromV4UnderAttackCustomized(t *testing.T) {
 	})
 }
 
-func TestAccCustomPagesMigrationFromV5UnderAttackCustomized(t *testing.T) {
+func TestMigrateCustomPagesMigrationFromV5UnderAttackCustomized(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_pages." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

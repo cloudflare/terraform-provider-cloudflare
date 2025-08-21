@@ -100,6 +100,27 @@ import {
 			},
 		},
 		{
+			Name: "zero_rtt setting name mapping",
+			Config: `
+resource "cloudflare_zone_settings_override" "test" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  settings {
+    zero_rtt = "on"
+  }
+}`,
+			Expected: []string{`
+resource "cloudflare_zone_setting" "test_zero_rtt" {
+  zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+  setting_id = "0rtt"
+  value      = "on"
+}`, `
+import {
+  to = cloudflare_zone_setting.test_zero_rtt
+  id = "${"0da42c8d2132a9ddaf714f9e7c920711"}/0rtt"
+}`,
+			},
+		},
+		{
 			Name: "empty settings block",
 			Config: `
 resource "cloudflare_zone_settings_override" "zone_settings" {

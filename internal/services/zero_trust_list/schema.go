@@ -52,7 +52,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"description": schema.StringAttribute{
-							Description: "The description of the list item, if present",
+							Description: "The description of the list item, if present.",
 							Optional:    true,
 						},
 						"value": schema.StringAttribute{
