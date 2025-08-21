@@ -243,6 +243,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			transformLoadBalancerPoolBlock(block)
 		}
 
+		if isSnippetRulesResource(block) {
+			transformSnippetRulesBlock(block)
+		}
+
 		if isAccessPolicyResource(block) {
 			// TOOD eventually pass diags through to all resource transformers, not just accessPolicyBlock
 			transformAccessPolicyBlock(block, diags)

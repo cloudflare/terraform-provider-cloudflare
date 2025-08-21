@@ -199,6 +199,7 @@ pattern cloudflare_terraform_v5_block_to_attribute_configuration() {
     inline_cloudflare_block_to_list(`configuration`) as $block where { $block <: within `resource "cloudflare_user_agent_blocking_rule" $_ { $_ }` },
     inline_cloudflare_block_to_list(`additional_routes`) as $block where { $block <: within `resource "cloudflare_waiting_room" $_ { $_ }` },
     inline_cloudflare_block_to_list(`rules`) as $block where { $block <: within `resource "cloudflare_waiting_room_rules" $_ { $_ }` },
+    inline_cloudflare_block_to_list(`rules`) as $block where { $block <: within `resource "cloudflare_snippet_rules" $_ { $_ }` },
     inline_cloudflare_block_to_list(`analytics_engine_binding`) as $block where { $block <: within `resource "cloudflare_worker_script" $_ { $_ }` },
     inline_cloudflare_block_to_list(`d1_database_binding`) as $block where { $block <: within `resource "cloudflare_worker_script" $_ { $_ }` },
     inline_cloudflare_block_to_list(`kv_namespace_binding`) as $block where { $block <: within `resource "cloudflare_worker_script" $_ { $_ }` },
