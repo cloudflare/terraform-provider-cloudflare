@@ -11,19 +11,43 @@ import (
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
 
-// ExprTransformer mutates an attribute value in place
-// or sets to nil if the attribute should be removed
-type ExprTransformer func(*hclsyntax.Expression, Diagnostics)
+func OrderedAttributes(attri hclsyntax.Attributes) []*hclsyntax.Attribute {
+	return slices.SortedFunc(maps.Values(attri), func(a *hclsyntax.Attribute, b *hclsyntax.Attribute) int {
+		return strings.Compare(a.Name, b.Name)
+	})
+}
+
+func FormatString(hcl string) string {
+	return string(hclwrite.Format([]byte(hcl)))
+}
+
+func ParseIntoSyntaxBody(tf []byte, filename string, diags Diagnostics) *hclsyntax.Body {
+	file, d := hclsyntax.ParseConfig(tf, filename, hcl.InitialPos)
+	diags.HclDiagnostics.Extend(d)
+	return file.Body.(*hclsyntax.Body)
+}
+
+func NewScopeTraversal(keys ...string) hclsyntax.Expression {
+	acc := hcl.Traversal{}
+	for i, key := range keys {
+		if i == 0 {
+			acc = append(acc, hcl.TraverseRoot{Name: key})
+		} else {
+			acc = append(acc, hcl.TraverseAttr{Name: key})
+		}
+	}
+	return &hclsyntax.ScopeTraversalExpr{Traversal: acc}
+}
 
 func NewKeyExpr(key string) hclsyntax.Expression {
 	return &hclsyntax.ObjectConsKeyExpr{
-		Wrapped: &hclsyntax.ScopeTraversalExpr{
-			Traversal: hcl.Traversal{
-				hcl.TraverseRoot{Name: key},
-			},
-		},
+		Wrapped: NewScopeTraversal(key),
 	}
 }
+
+// ExprTransformer mutates an attribute value in place
+// or sets to nil if the attribute should be removed
+type ExprTransformer func(*hclsyntax.Expression, Diagnostics)
 
 func ApplyTransformToAttributes(objOrBlock HasAttributes, transforms map[string]ExprTransformer, diags Diagnostics) {
 

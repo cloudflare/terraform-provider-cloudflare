@@ -6,6 +6,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
+	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/stretchr/testify/assert"
@@ -35,8 +37,9 @@ func RunTransformationTests(t *testing.T, tests []TestCase, transformFunc func([
 			// Check each expected output
 			for _, expected := range tt.Expected {
 				normalizedExpected := normalizeWhitespace(expected)
-				formattedExpected := string(hclwrite.Format([]byte(expected)))
-				assert.Contains(t, resultString, normalizedExpected, "== Actual output ==\n%s\n== Expected to contain ==\n%s\n", resultString, formattedExpected)
+				formattedResult := ast.FormatString(string(result))
+				formattedExpected := ast.FormatString(expected)
+				assert.Contains(t, resultString, normalizedExpected, cmp.Diff(formattedExpected, formattedResult))
 			}
 		})
 	}

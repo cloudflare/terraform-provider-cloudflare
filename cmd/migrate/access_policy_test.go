@@ -301,38 +301,30 @@ func TestTransformAccessPolicy(t *testing.T) {
 		},
 	}
 
+	cases := []TestCase{}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Parse the input
-			file, diags := hclwrite.ParseConfig([]byte(tt.input), "test.tf", hcl.InitialPos)
-			if diags.HasErrors() {
-				t.Fatalf("Failed to parse input: %v", diags.Error())
-			}
-			ds := ast.NewDiagnostics()
-			// Apply the transformation
-			for _, block := range file.Body().Blocks() {
-				if isAccessPolicyResource(block) {
-					transformAccessPolicyBlock(block, ds)
-				}
-			}
-
-			// Format the output
-			output := string(hclwrite.Format(file.Bytes()))
-
-			// Print diagnostics for debugging
-			if ds.HclDiagnostics.HasErrors() || len(ds.HclDiagnostics) > 0 {
-				for _, d := range ds.HclDiagnostics {
-					t.Logf("Diagnostic: %s", d.Summary)
-				}
-			}
-
-			// Normalize whitespace for comparison
-			expected := normalizeWhitespace(tt.expected)
-			actual := normalizeWhitespace(output)
-
-			if expected != actual {
-				t.Errorf("Transformation mismatch.\nExpected:\n%s\n\nGot:\n%s\n\nRaw output:\n%s", expected, actual, output)
-			}
+		cases = append(cases, TestCase{
+			Name:     tt.name,
+			Config:   tt.input,
+			Expected: []string{tt.expected},
 		})
 	}
+
+	RunTransformationTests(t, cases, func(input []byte, s string) ([]byte, error) {
+		// Parse the input
+		file, diags := hclwrite.ParseConfig([]byte(input), "test.tf", hcl.InitialPos)
+		if diags.HasErrors() {
+			t.Fatalf("Failed to parse input: %v", diags.Error())
+		}
+		ds := ast.NewDiagnostics()
+		// Apply the transformation
+		for _, block := range file.Body().Blocks() {
+			if isAccessPolicyResource(block) {
+				transformAccessPolicyBlock(block, ds)
+			}
+		}
+
+		// Format the output
+		return hclwrite.Format(file.Bytes()), nil
+	})
 }

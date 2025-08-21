@@ -5,20 +5,18 @@ package workers_script
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/resourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -85,8 +83,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"main_module": schema.StringAttribute{
+				Description: "Name of the uploaded file that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
+				Optional:    true,
+			},
 			"assets": schema.SingleNestedAttribute{
-				Description: "Configuration for assets within a Worker",
+				Description: "Configuration for assets within a Worker.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"config": schema.SingleNestedAttribute{
@@ -94,11 +96,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"headers": schema.StringAttribute{
-								Description: "The contents of a _headers file (used to attach custom headers on asset responses)",
+								Description: "The contents of a _headers file (used to attach custom headers on asset responses).",
 								Optional:    true,
 							},
 							"redirects": schema.StringAttribute{
-								Description: "The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving)",
+								Description: "The contents of a _redirects file (used to apply redirects or proxy paths ahead of asset serving).",
 								Optional:    true,
 							},
 							"html_handling": schema.StringAttribute{
@@ -132,10 +134,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"serve_directly": schema.BoolAttribute{
 								Description:        "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
-								Computed:           true,
 								Optional:           true,
 								DeprecationMessage: "This attribute is deprecated.",
-								Default:            booldefault.StaticBool(true),
 							},
 						},
 					},
@@ -307,11 +307,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"usages": schema.ListAttribute{
+						"usages": schema.SetAttribute{
 							Description: "Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).",
 							Optional:    true,
-							Validators: []validator.List{
-								listvalidator.ValueStringsAre(
+							CustomType:  customfield.NewSetType[types.String](ctx),
+							Validators: []validator.Set{
+								setvalidator.ValueStringsAre(
 									stringvalidator.OneOfCaseInsensitive(
 										"encrypt",
 										"decrypt",
@@ -344,30 +345,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"body_part": schema.StringAttribute{
-				Description: "Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
-				Optional:    true,
-			},
 			"compatibility_date": schema.StringAttribute{
-				Description:   "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
-				Computed:      true,
-				Optional:      true,
-				Default:       stringdefault.StaticString(""),
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
 			},
 			"compatibility_flags": schema.SetAttribute{
-				Description:   "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
-				Computed:      true,
-				Optional:      true,
-				ElementType:   types.StringType,
-				CustomType:    customfield.NewSetType[types.String](ctx),
-				PlanModifiers: []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
+				Description: "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewSetType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"keep_assets": schema.BoolAttribute{
 				Description: "Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.",
 				Optional:    true,
 			},
-			"keep_bindings": schema.ListAttribute{
+			"keep_bindings": schema.SetAttribute{
 				Description: "List of binding types to keep from previous_upload.",
 				Optional:    true,
 				ElementType: types.StringType,
@@ -377,10 +372,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
-			},
-			"main_module": schema.StringAttribute{
-				Description: "Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
-				Optional:    true,
 			},
 			"migrations": schema.SingleNestedAttribute{
 				Description: "Migrations to apply for Durable Objects associated with this Worker.",
@@ -536,23 +527,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"logs": schema.SingleNestedAttribute{
 						Description: "Log settings for the Worker.",
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataObservabilityLogsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Whether logs are enabled for the Worker.",
+								Required:    true,
+							},
+							"invocation_logs": schema.BoolAttribute{
+								Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
 								Required:    true,
 							},
 							"head_sampling_rate": schema.Float64Attribute{
 								Description: "The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
 								Optional:    true,
 							},
-							"invocation_logs": schema.BoolAttribute{
-								Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
-								Required:    true,
-							},
 						},
 					},
 				},
+			},
+			"created_on": schema.StringAttribute{
+				Description:   "When the script was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"etag": schema.StringAttribute{
 				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
@@ -634,13 +630,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("standard"),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Default: stringdefault.StaticString("standard"),
 			},
-			"created_on": schema.StringAttribute{
-				Description:   "When the script was created.",
-				Computed:      true,
-				CustomType:    timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			"body_part": schema.StringAttribute{
+				Description: "Name of the uploaded file that contains the Worker script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
+				Optional:    true,
 			},
 		},
 	}
