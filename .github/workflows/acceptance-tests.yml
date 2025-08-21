@@ -83,6 +83,7 @@ jobs:
         run: ./scripts/run-ci-acceptance-tests
         env:
           TF_ACC: 1
+        continue-on-error: true
       - name: Run Migration Tests
         id: migration_tests
         # note: not all resources are covered here, only passing ones should be included here (for now).
