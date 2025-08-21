@@ -5,7 +5,7 @@
 # These tests otherwise pass.
 # TODO: support multiple auth schemes in CI for acceptance tests
 
-go test -run "^TestAcc" -count 1 \
+go test -run "^TestAcc" -count 1 -timeout 60m \
     ./internal/services/account \
     ./internal/services/account_api_token_permission_groups \
     ./internal/services/account_dns_settings \
