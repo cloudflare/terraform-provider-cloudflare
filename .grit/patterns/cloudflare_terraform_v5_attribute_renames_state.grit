@@ -127,6 +127,14 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
         }
     },
 
+    // cloudflare_workers_route
+    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_workers_route`,
+        $instances <: any {
+          contains `"script_name": $sn` => `"script": $sn`
+        }
+    },
+
     // cloudflare_workers_kv
     `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
         $resource_type <: contains `cloudflare_workers_kv`,
