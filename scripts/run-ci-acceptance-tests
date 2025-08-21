@@ -5,85 +5,103 @@
 # These tests otherwise pass.
 # TODO: support multiple auth schemes in CI for acceptance tests
 
-go test -run "^TestAcc" -count 1 -timeout 60m \
-    ./internal/services/account \
-    ./internal/services/account_api_token_permission_groups \
-    ./internal/services/account_dns_settings \
-    ./internal/services/account_dns_settings_internal_view \
-    ./internal/services/account_permission_group \
-    ./internal/services/account_role \
-    ./internal/services/account_subscription \
-    ./internal/services/account_token \
-    ./internal/services/address_map \
-    ./internal/services/api_shield \
-    ./internal/services/argo_smart_routing \
-    ./internal/services/argo_tiered_caching \
-    ./internal/services/authenticated_origin_pulls \
-    ./internal/services/authenticated_origin_pulls_certificate \
-    ./internal/services/byo_ip_prefix \
-    ./internal/services/certificate_pack \
-    ./internal/services/cloud_connector_rules \
-    ./internal/services/custom_pages \
-    ./internal/services/custom_ssl \
-    ./internal/services/dns_record \
-    ./internal/services/dns_settings_internal_view \
-    ./internal/services/dns_zone_transfers_acl \
-    ./internal/services/dns_zone_transfers_tsig \
-    ./internal/services/email_routing_catch_all \
-    ./internal/services/email_routing_dns \
-    ./internal/services/email_routing_rule \
-    ./internal/services/email_security_impersonation_registry \
-    ./internal/services/email_security_trusted_domains \
-    ./internal/services/ip_ranges \
-    ./internal/services/list \
-    ./internal/services/logpull_retention \
-    ./internal/services/logpush_job \
-    ./internal/services/logpush_ownership_challenge \
-    ./internal/services/magic_transit_connector \
-    ./internal/services/observatory_scheduled_test \
-    ./internal/services/origin_ca_certificate \
-    ./internal/services/page_rule \
-    ./internal/services/pages_domain \
-    ./internal/services/pages_project \
-    ./internal/services/queue \
-    ./internal/services/r2_bucket \
-    ./internal/services/regional_tiered_cache \
-    ./internal/services/ruleset \
-    ./internal/services/spectrum_application \
-    ./internal/services/tiered_cache \
-    ./internal/services/turnstile_widget \
-    ./internal/services/url_normalization_settings \
-    ./internal/services/waiting_room_settings \
-    ./internal/services/workers_cron_trigger \
-    ./internal/services/workers_custom_domain \
-    ./internal/services/workers_for_platforms_dispatch_namespace \
-    ./internal/services/workers_kv_namespace \
-    ./internal/services/workers_route \
-    ./internal/services/workers_script \
-    ./internal/services/zero_trust_access_application \
-    ./internal/services/zero_trust_access_custom_page \
-    ./internal/services/zero_trust_access_group \
-    ./internal/services/zero_trust_access_identity_provider \
-    ./internal/services/zero_trust_access_key_configuration \
-    ./internal/services/zero_trust_access_mtls_certificate \
-    ./internal/services/zero_trust_access_mtls_hostname_settings \
-    ./internal/services/zero_trust_access_policy \
-    ./internal/services/zero_trust_access_service_token \
-    ./internal/services/zero_trust_access_short_lived_certificate \
-    ./internal/services/zero_trust_access_tag \
-    ./internal/services/zero_trust_device_default_profile_certificates \
-    ./internal/services/zero_trust_device_managed_networks \
-    ./internal/services/zero_trust_gateway_proxy_endpoint \
-    ./internal/services/zero_trust_gateway_settings \
-    ./internal/services/zero_trust_list \
-    ./internal/services/zero_trust_organization \
-    ./internal/services/zero_trust_tunnel_cloudflared \
-    ./internal/services/zero_trust_tunnel_cloudflared_route \
-    ./internal/services/zero_trust_tunnel_cloudflared_token \
-    ./internal/services/zone \
-    ./internal/services/zone_cache_reserve \
-    ./internal/services/zone_cache_variants \
-    ./internal/services/zone_hold \
-    ./internal/services/zone_lockdown \
-    ./internal/services/zone_setting \
-    ./internal/services/zone_subscription \
+set -e
+
+# List of service paths to test
+SERVICES=(
+    "./internal/services/account"
+    "./internal/services/account_api_token_permission_groups"
+    "./internal/services/account_dns_settings"
+    "./internal/services/account_dns_settings_internal_view"
+    "./internal/services/account_permission_group"
+    "./internal/services/account_role"
+    "./internal/services/account_subscription"
+    "./internal/services/account_token"
+    "./internal/services/address_map"
+    "./internal/services/api_shield"
+    "./internal/services/argo_smart_routing"
+    "./internal/services/argo_tiered_caching"
+    "./internal/services/authenticated_origin_pulls"
+    "./internal/services/authenticated_origin_pulls_certificate"
+    "./internal/services/byo_ip_prefix"
+    "./internal/services/certificate_pack"
+    "./internal/services/cloud_connector_rules"
+    "./internal/services/custom_pages"
+    "./internal/services/custom_ssl"
+    "./internal/services/dns_record"
+    "./internal/services/dns_settings_internal_view"
+    "./internal/services/dns_zone_transfers_acl"
+    "./internal/services/dns_zone_transfers_tsig"
+    "./internal/services/email_routing_catch_all"
+    "./internal/services/email_routing_dns"
+    "./internal/services/email_routing_rule"
+    "./internal/services/email_security_impersonation_registry"
+    "./internal/services/email_security_trusted_domains"
+    "./internal/services/ip_ranges"
+    "./internal/services/list"
+    "./internal/services/logpull_retention"
+    "./internal/services/logpush_job"
+    "./internal/services/logpush_ownership_challenge"
+    "./internal/services/magic_transit_connector"
+    "./internal/services/observatory_scheduled_test"
+    "./internal/services/origin_ca_certificate"
+    "./internal/services/page_rule"
+    "./internal/services/pages_domain"
+    "./internal/services/pages_project"
+    "./internal/services/queue"
+    "./internal/services/r2_bucket"
+    "./internal/services/regional_tiered_cache"
+    "./internal/services/ruleset"
+    "./internal/services/spectrum_application"
+    "./internal/services/tiered_cache"
+    "./internal/services/turnstile_widget"
+    "./internal/services/url_normalization_settings"
+    "./internal/services/waiting_room_settings"
+    "./internal/services/workers_cron_trigger"
+    "./internal/services/workers_custom_domain"
+    "./internal/services/workers_for_platforms_dispatch_namespace"
+    "./internal/services/workers_kv_namespace"
+    "./internal/services/workers_route"
+    "./internal/services/workers_script"
+    "./internal/services/zero_trust_access_application"
+    "./internal/services/zero_trust_access_custom_page"
+    "./internal/services/zero_trust_access_group"
+    "./internal/services/zero_trust_access_identity_provider"
+    "./internal/services/zero_trust_access_key_configuration"
+    "./internal/services/zero_trust_access_mtls_certificate"
+    "./internal/services/zero_trust_access_mtls_hostname_settings"
+    "./internal/services/zero_trust_access_policy"
+    "./internal/services/zero_trust_access_service_token"
+    "./internal/services/zero_trust_access_short_lived_certificate"
+    "./internal/services/zero_trust_access_tag"
+    "./internal/services/zero_trust_device_default_profile_certificates"
+    "./internal/services/zero_trust_device_managed_networks"
+    "./internal/services/zero_trust_gateway_proxy_endpoint"
+    "./internal/services/zero_trust_gateway_settings"
+    "./internal/services/zero_trust_list"
+    "./internal/services/zero_trust_organization"
+    "./internal/services/zero_trust_tunnel_cloudflared"
+    "./internal/services/zero_trust_tunnel_cloudflared_route"
+    "./internal/services/zero_trust_tunnel_cloudflared_token"
+    "./internal/services/zone"
+    "./internal/services/zone_cache_reserve"
+    "./internal/services/zone_cache_variants"
+    "./internal/services/zone_hold"
+    "./internal/services/zone_lockdown"
+    "./internal/services/zone_setting"
+    "./internal/services/zone_subscription"
+)
+
+echo "Running sweepers and acceptance tests for each service..."
+for service in "${SERVICES[@]}"; do
+    echo "Processing service: $service"
+    
+    echo "  Sweeping: $service"
+    TF_ACC=1 go test -v "$service" -sweep=all -timeout 5m >/dev/null 2>&1 || echo "  No sweeper for $service (this is okay)"
+    
+    echo "  Running acceptance tests: $service"
+    TF_ACC=1 go test -run "^TestAcc" -count 1 -timeout 10m "$service"
+    
+    echo "  Completed: $service"
+    echo ""
+done
