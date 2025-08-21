@@ -138,16 +138,7 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
         }
     },
 
-    // cloudflare_worker_script / cloudflare_workers_script (both supported)
-    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
-        or {
-          { $resource_type <: contains `cloudflare_worker_script` },
-          { $resource_type <: contains `cloudflare_workers_script` },
-        },
-        $instances <: any {
-          contains `"name": $n` => `"script_name": $n`
-        }
-    },
+    // cloudflare_worker_script / cloudflare_workers_script state attribute renaming handled in Go (cmd/migrate)
 
     // cloudflare_workers_kv
     `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {

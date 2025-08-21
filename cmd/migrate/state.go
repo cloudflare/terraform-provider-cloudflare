@@ -64,8 +64,8 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			case "cloudflare_tiered_cache":
 				result = transformTieredCacheStateJSON(result, path, resourcePath)
 
-			case "cloudflare_workers_script":
-				result = transformWorkersScriptStateJSON(result, path)
+			case "cloudflare_worker_script", "cloudflare_workers_script":
+				result = transformWorkersScriptStateJSON(result, path, resourcePath)
 			}
 
 			return true
@@ -220,10 +220,23 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 }
 
 // transformWorkersScriptStateJSON handles v4 to v5 state migration for cloudflare_workers_script
-func transformWorkersScriptStateJSON(json string, instancePath string) string {
+func transformWorkersScriptStateJSON(json string, instancePath string, resourcePath string) string {
 	attrPath := instancePath + ".attributes"
 
-	// List of v4-specific attributes that need to be removed from v5 state
+	// 1. Rename resource type from cloudflare_worker_script to cloudflare_workers_script
+	resourceType := gjson.Get(json, resourcePath+".type").String()
+	if resourceType == "cloudflare_worker_script" {
+		json, _ = sjson.Set(json, resourcePath+".type", "cloudflare_workers_script")
+	}
+
+	// 2. Rename attribute: name → script_name
+	nameAttr := gjson.Get(json, attrPath+".name")
+	if nameAttr.Exists() {
+		json, _ = sjson.Set(json, attrPath+".script_name", nameAttr.Value())
+		json, _ = sjson.Delete(json, attrPath+".name")
+	}
+
+	// 3. List of v4-specific attributes that need to be removed from v5 state
 	// These attributes were in v4 but are not in v5 schema
 	v4OnlyAttrs := []string{
 		"analytics_engine_binding",
@@ -244,6 +257,17 @@ func transformWorkersScriptStateJSON(json string, instancePath string) string {
 	// Remove v4-only attributes that don't exist in v5
 	for _, attr := range v4OnlyAttrs {
 		json, _ = sjson.Delete(json, attrPath+"."+attr)
+	}
+
+	// Transform placement from array to object
+	placement := gjson.Get(json, attrPath+".placement")
+	if placement.IsArray() && len(placement.Array()) > 0 {
+		// Convert first array element to object
+		firstPlacement := placement.Array()[0]
+		json, _ = sjson.Set(json, attrPath+".placement", firstPlacement.Value())
+	} else if placement.IsArray() && len(placement.Array()) == 0 {
+		// Remove empty placement array
+		json, _ = sjson.Delete(json, attrPath+".placement")
 	}
 
 	return json

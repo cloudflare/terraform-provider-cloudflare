@@ -256,6 +256,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 				newBlocks = append(newBlocks, newTieredCacheBlocks...)
 			}
 		}
+
+		if isWorkersScriptResource(block) {
+			transformWorkersScriptBlock(block, diags)
+		}
 	}
 
 	// Remove old blocks
