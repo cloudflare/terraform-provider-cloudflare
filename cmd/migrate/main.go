@@ -256,6 +256,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 				newBlocks = append(newBlocks, newTieredCacheBlocks...)
 			}
 		}
+
+		if isZeroTrustAccessMTLSHostnameSettingsResource(block) {
+			transformZeroTrustAccessMTLSHostnameSettingsBlock(block, diags)
+		}
 	}
 
 	// Remove old blocks

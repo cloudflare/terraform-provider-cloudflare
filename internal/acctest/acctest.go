@@ -308,12 +308,14 @@ func DumpState(s *terraform.State) error {
 type debugNonEmptyRefreshPlan struct{}
 
 func (pc debugNonEmptyRefreshPlan) CheckPlan(ctx context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
-	fmt.Println("\n---------\n\nRESOURCE DRIFT:")
-	for _, d := range req.Plan.ResourceDrift {
-		bytes, _ := json.MarshalIndent(d, "  ", "  ")
-		fmt.Printf("%s\n\n", string(bytes))
+	if os.Getenv("TF_LOG") == "DEBUG" {
+		fmt.Println("\n---------\n\nRESOURCE DRIFT:")
+		for _, d := range req.Plan.ResourceDrift {
+			bytes, _ := json.MarshalIndent(d, "  ", "  ")
+			fmt.Printf("%s\n\n", string(bytes))
+		}
+		fmt.Println("---------")
 	}
-	fmt.Println("---------")
 }
 
 var pc plancheck.PlanCheck = debugNonEmptyRefreshPlan{}
@@ -322,12 +324,14 @@ var LogResourceDrift = []plancheck.PlanCheck{pc}
 type debugNonEmptyPlan struct{}
 
 func (pc debugNonEmptyPlan) CheckPlan(ctx context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
-	fmt.Println("\n---------\n\nRESOURCE Changes:")
-	for _, d := range req.Plan.ResourceChanges {
-		bytes, _ := json.MarshalIndent(d, "  ", "  ")
-		fmt.Printf("%s\n\n", string(bytes))
+	if os.Getenv("TF_LOG") == "DEBUG" {
+		fmt.Println("\n---------\n\nRESOURCE Changes:")
+		for _, d := range req.Plan.ResourceChanges {
+			bytes, _ := json.MarshalIndent(d, "  ", "  ")
+			fmt.Printf("%s\n\n", string(bytes))
+		}
+		fmt.Println("---------")
 	}
-	fmt.Println("---------")
 }
 
 var DebugNonEmptyPlan = debugNonEmptyPlan{}
@@ -560,6 +564,14 @@ func isFalseyValue(v interface{}) bool {
 
 var ExpectEmptyPlanExceptFalseyToNull = expectEmptyPlanExceptFalseyToNull{}
 
+// debugLogf logs a message only when TF_LOG=DEBUG is set
+func debugLogf(t *testing.T, format string, args ...interface{}) {
+	t.Helper()
+	if os.Getenv("TF_LOG") == "DEBUG" {
+		t.Logf(format, args...)
+	}
+}
+
 // / PtrTo is a small helper to get a pointer to a particular value
 func PtrTo[T any](v T) *T {
 	return &v
@@ -571,13 +583,13 @@ func WriteOutConfig(t *testing.T, v4Config string, tmpDir string) {
 
 	// Write the v4 config to tmpDir/test_migration.tf
 	testConfigPath := filepath.Join(tmpDir, "test_migration.tf")
-	t.Logf("Writing v4 config to: %s", testConfigPath)
+	debugLogf(t, "Writing v4 config to: %s", testConfigPath)
 
 	err := os.WriteFile(testConfigPath, []byte(v4Config), 0644)
 	if err != nil {
 		t.Fatalf("Failed to write test config file: %v", err)
 	}
-	t.Logf("Successfully wrote v4 config (%d bytes)", len(v4Config))
+	debugLogf(t, "Successfully wrote v4 config (%d bytes)", len(v4Config))
 
 }
 
@@ -596,7 +608,7 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	// The test runs from internal/services/zone, so we need to go up to the root
 	projectRoot := filepath.Join(cwd, "..", "..", "..")
 	migratePath := filepath.Join(projectRoot, "cmd", "migrate")
-	t.Logf("Migrate path: %s", migratePath)
+	debugLogf(t, "Migrate path: %s", migratePath)
 
 	// specify patternsDir so we use local patterns instead of the ones from Github
 	patternsDir := filepath.Join(projectRoot, ".grit")
@@ -621,18 +633,18 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	}
 
 	// Run the migration command on tmpDir (for config) and terraform.tfstate (for state)
-	t.Logf("StateDir: %s", stateDir)
+	debugLogf(t, "StateDir: %s", stateDir)
 	state, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
 	if err != nil {
 		t.Fatalf("Failed to read state file: %v", err)
 	}
-	t.Logf("State is: %s", string(state))
+	debugLogf(t, "State is: %s", string(state))
 	cmd := exec.Command("go", "run", "-C", migratePath, ".", "-config", tmpDir, "-patterns-dir", patternsDir, "-state", filepath.Join(stateDir, "terraform.tfstate"))
 	cmd.Dir = tmpDir
 	// Capture output for debugging
 	output, err := cmd.CombinedOutput()
 
-	t.Logf("Migration output:\n%s", string(output))
+	debugLogf(t, "Migration output:\n%s", string(output))
 
 	if err != nil {
 		t.Fatalf("Migration command failed: %v", err)
@@ -641,7 +653,7 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	if err != nil {
 		t.Fatalf("Failed to read state file: %v", err)
 	}
-	t.Logf("New State is: %s", string(newState))
+	debugLogf(t, "New State is: %s", string(newState))
 }
 
 // MigrationTestStep creates a test step that runs the migration command and validates with v5 provider
@@ -667,10 +679,10 @@ func MigrationTestStep(t *testing.T, v4Config string, tmpDir string, exactVersio
 			WriteOutConfig(t, v4Config, tmpDir)
 			// we only run the migration command if the version is 4.x.x, because users will not expect to run it within v5 versions.
 			if strings.HasPrefix(exactVersion, "4.") {
-				t.Logf("Running migration command for version: %s", exactVersion)
+				debugLogf(t, "Running migration command for version: %s", exactVersion)
 				RunMigrationCommand(t, v4Config, tmpDir)
 			} else {
-				t.Logf("Skipping migration command for version: %s", exactVersion)
+				debugLogf(t, "Skipping migration command for version: %s", exactVersion)
 			}
 		},
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
