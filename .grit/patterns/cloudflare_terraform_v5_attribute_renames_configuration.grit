@@ -114,8 +114,21 @@ pattern cloudflare_terraform_v5_attribute_renames_configuration() {
     // cloudflare_worker_kv
     `key = $v` as $attribute => `key_name = $v` where { $attribute <: within `resource "cloudflare_workers_kv" $_ { $_ }` },
 
-    // cloudflare_workers_route
-    `script_name = $v` as $attribute => `script = $v` where { $attribute <: within `resource "cloudflare_workers_route" $_ { $_ }` },
+    // cloudflare_worker_route / cloudflare_workers_route (both supported)
+    `script_name = $v` as $attribute => `script = $v` where { 
+      or {
+        { $attribute <: within `resource "cloudflare_worker_route" $_ { $_ }` },
+        { $attribute <: within `resource "cloudflare_workers_route" $_ { $_ }` },
+      }
+    },
+
+    // cloudflare_worker_script / cloudflare_workers_script (both supported)
+    `name = $v` as $attribute => `script_name = $v` where { 
+      or {
+        { $attribute <: within `resource "cloudflare_worker_script" $_ { $_ }` },
+        { $attribute <: within `resource "cloudflare_workers_script" $_ { $_ }` },
+      }
+    },
 
     // cloudflare_zone_cache_reserve
     `enabled = $v` as $capture => `value = $v` where {

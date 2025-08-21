@@ -127,11 +127,25 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
         }
     },
 
-    // cloudflare_workers_route
+    // cloudflare_worker_route / cloudflare_workers_route (both supported)
     `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
-        $resource_type <: contains `cloudflare_workers_route`,
+        or {
+          { $resource_type <: contains `cloudflare_worker_route` },
+          { $resource_type <: contains `cloudflare_workers_route` },
+        },
         $instances <: any {
           contains `"script_name": $sn` => `"script": $sn`
+        }
+    },
+
+    // cloudflare_worker_script / cloudflare_workers_script (both supported)
+    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        or {
+          { $resource_type <: contains `cloudflare_worker_script` },
+          { $resource_type <: contains `cloudflare_workers_script` },
+        },
+        $instances <: any {
+          contains `"name": $n` => `"script_name": $n`
         }
     },
 

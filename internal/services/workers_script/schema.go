@@ -26,6 +26,7 @@ var _ resource.ResourceWithConfigValidators = (*WorkersScriptResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 1,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",
