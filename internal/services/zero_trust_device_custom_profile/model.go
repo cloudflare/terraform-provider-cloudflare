@@ -49,7 +49,99 @@ func (m ZeroTrustDeviceCustomProfileModel) MarshalJSON() (data []byte, err error
 }
 
 func (m ZeroTrustDeviceCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustDeviceCustomProfileModel) (data []byte, err error) {
-	return apijson.MarshalForPatch(m, state)
+	// For computed_optional fields that have default values from the server,
+	// we need to avoid sending null values when the user hasn't explicitly set them.
+	// This prevents API errors like "bad device request" (code 2004).
+
+	// For pure optional fields (like description), when user sets them to null
+	// we should NOT send them to the API at all, rather than sending null,
+	// because some API endpoints don't accept null for these fields.
+
+	// Create a copy of the plan model to modify
+	planCopy := m
+
+	// Special handling for description field:
+	// If user wants to remove description (plan is null but state has value),
+	// we send empty string instead of null because API doesn't accept null.
+	if m.Description.IsNull() && !state.Description.IsNull() {
+		planCopy.Description = types.StringValue("") // Send empty string to remove description
+	}
+
+	// Handle other pure optional fields similarly
+	if m.Enabled.IsNull() && !state.Enabled.IsNull() {
+		planCopy.Enabled = state.Enabled
+	}
+	if m.LANAllowMinutes.IsNull() && !state.LANAllowMinutes.IsNull() {
+		planCopy.LANAllowMinutes = state.LANAllowMinutes
+	}
+	if m.LANAllowSubnetSize.IsNull() && !state.LANAllowSubnetSize.IsNull() {
+		planCopy.LANAllowSubnetSize = state.LANAllowSubnetSize
+	}
+
+	// For each computed_optional field that is null in plan but has a value in state,
+	// preserve the state value to avoid nullifying server defaults
+	if m.AllowModeSwitch.IsNull() && !state.AllowModeSwitch.IsNull() {
+		planCopy.AllowModeSwitch = state.AllowModeSwitch
+	}
+	if m.AllowUpdates.IsNull() && !state.AllowUpdates.IsNull() {
+		planCopy.AllowUpdates = state.AllowUpdates
+	}
+	if m.AllowedToLeave.IsNull() && !state.AllowedToLeave.IsNull() {
+		planCopy.AllowedToLeave = state.AllowedToLeave
+	}
+	if m.AutoConnect.IsNull() && !state.AutoConnect.IsNull() {
+		planCopy.AutoConnect = state.AutoConnect
+	}
+	if m.CaptivePortal.IsNull() && !state.CaptivePortal.IsNull() {
+		planCopy.CaptivePortal = state.CaptivePortal
+	}
+	if m.DisableAutoFallback.IsNull() && !state.DisableAutoFallback.IsNull() {
+		planCopy.DisableAutoFallback = state.DisableAutoFallback
+	}
+	if m.ExcludeOfficeIPs.IsNull() && !state.ExcludeOfficeIPs.IsNull() {
+		planCopy.ExcludeOfficeIPs = state.ExcludeOfficeIPs
+	}
+	if m.RegisterInterfaceIPWithDNS.IsNull() && !state.RegisterInterfaceIPWithDNS.IsNull() {
+		planCopy.RegisterInterfaceIPWithDNS = state.RegisterInterfaceIPWithDNS
+	}
+	if m.SccmVpnBoundarySupport.IsNull() && !state.SccmVpnBoundarySupport.IsNull() {
+		planCopy.SccmVpnBoundarySupport = state.SccmVpnBoundarySupport
+	}
+	if m.SupportURL.IsNull() && !state.SupportURL.IsNull() {
+		planCopy.SupportURL = state.SupportURL
+	}
+	if m.SwitchLocked.IsNull() && !state.SwitchLocked.IsNull() {
+		planCopy.SwitchLocked = state.SwitchLocked
+	}
+	if m.TunnelProtocol.IsNull() && !state.TunnelProtocol.IsNull() {
+		planCopy.TunnelProtocol = state.TunnelProtocol
+	} // For optional fields that are lists/objects, handle them carefully
+	if m.Exclude == nil && state.Exclude != nil {
+		planCopy.Exclude = state.Exclude
+	}
+	if m.Include == nil && state.Include != nil {
+		planCopy.Include = state.Include
+	}
+	if m.ServiceModeV2 == nil && state.ServiceModeV2 != nil {
+		planCopy.ServiceModeV2 = state.ServiceModeV2
+	}
+
+	// Computed-only fields should always preserve state values
+	if !state.FallbackDomains.IsNull() {
+		planCopy.FallbackDomains = state.FallbackDomains
+	}
+	if !state.Default.IsNull() {
+		planCopy.Default = state.Default
+	}
+	if !state.GatewayUniqueID.IsNull() {
+		planCopy.GatewayUniqueID = state.GatewayUniqueID
+	}
+	if !state.TargetTests.IsNull() {
+		planCopy.TargetTests = state.TargetTests
+	}
+
+	result, err := apijson.MarshalForPatch(planCopy, state)
+	return result, err
 }
 
 type ZeroTrustDeviceCustomProfileExcludeModel struct {
