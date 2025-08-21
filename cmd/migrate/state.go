@@ -63,6 +63,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_tiered_cache":
 				result = transformTieredCacheStateJSON(result, path, resourcePath)
+
+			case "cloudflare_workers_script":
+				result = transformWorkersScriptStateJSON(result, path)
 			}
 
 			return true
@@ -146,10 +149,10 @@ func transformLoadBalancerPoolStateJSON(json string, instancePath string) string
 // transformTieredCacheStateJSON handles v4 to v5 state migration for cloudflare_tiered_cache
 func transformTieredCacheStateJSON(json string, instancePath string, resourcePath string) string {
 	attrPath := instancePath + ".attributes"
-	
+
 	// Get the cache_type value
 	cacheType := gjson.Get(json, attrPath+".cache_type")
-	
+
 	if cacheType.Exists() {
 		switch cacheType.String() {
 		case "generic":
@@ -158,19 +161,19 @@ func transformTieredCacheStateJSON(json string, instancePath string, resourcePat
 			// Remove cache_type and add value="on"
 			json, _ = sjson.Delete(json, attrPath+".cache_type")
 			json, _ = sjson.Set(json, attrPath+".value", "on")
-			
+
 		case "smart":
 			// Keep as cloudflare_tiered_cache but transform attribute
 			json, _ = sjson.Delete(json, attrPath+".cache_type")
 			json, _ = sjson.Set(json, attrPath+".value", "on")
-			
+
 		case "off":
 			// Keep as cloudflare_tiered_cache but transform attribute
 			json, _ = sjson.Delete(json, attrPath+".cache_type")
 			json, _ = sjson.Set(json, attrPath+".value", "off")
 		}
 	}
-	
+
 	return json
 }
 
@@ -216,6 +219,36 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 	return json
 }
 
+// transformWorkersScriptStateJSON handles v4 to v5 state migration for cloudflare_workers_script
+func transformWorkersScriptStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// List of v4-specific attributes that need to be removed from v5 state
+	// These attributes were in v4 but are not in v5 schema
+	v4OnlyAttrs := []string{
+		"analytics_engine_binding",
+		"d1_database_binding",
+		"hyperdrive_config_binding",
+		"kv_namespace_binding",
+		"plain_text_binding",
+		"queue_binding",
+		"r2_bucket_binding",
+		"secret_text_binding",
+		"service_binding",
+		"webassembly_binding",
+		"tags",
+		"dispatch_namespace",
+		"module",
+	}
+
+	// Remove v4-only attributes that don't exist in v5
+	for _, attr := range v4OnlyAttrs {
+		json, _ = sjson.Delete(json, attrPath+"."+attr)
+	}
+
+	return json
+}
+
 // Legacy functions to maintain compatibility with existing code that calls these directly
 // These just delegate to the JSON-based implementations above
 
@@ -224,10 +257,10 @@ func transformLoadBalancerPoolState(attributes map[string]interface{}) {
 	// This function is called from tests, so we need to keep it
 	// We'll convert the map to JSON, transform it, and convert back
 	// This is not efficient but maintains the existing interface
-	
+
 	// For now, keeping the old implementation to not break tests
 	// The actual state transformation uses the JSON version above
-	
+
 	// 1. Transform load_shedding from array to object
 	if loadShedding, ok := attributes["load_shedding"]; ok {
 		if arr, ok := loadShedding.([]interface{}); ok {
@@ -296,7 +329,7 @@ func transformLoadBalancerPoolState(attributes map[string]interface{}) {
 func transformLoadBalancerState(attributes map[string]interface{}) {
 	// This function is called from tests, so we need to keep it
 	// For now, keeping the old implementation to not break tests
-	
+
 	// Rename fallback_pool_id to fallback_pool
 	if fallbackPoolID, ok := attributes["fallback_pool_id"]; ok {
 		attributes["fallback_pool"] = fallbackPoolID

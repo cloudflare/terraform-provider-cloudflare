@@ -314,6 +314,51 @@ func TestTransformStateJSON(t *testing.T) {
 				]
 			}`,
 		},
+		{
+			Name: "removes_v4_only_attributes_from_workers_script",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_workers_script",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"id": "test-script",
+							"account_id": "abc123",
+							"name": "test-script",
+							"content": "addEventListener('fetch', event => { event.respondWith(new Response('Hello')) })",
+							"analytics_engine_binding": [],
+							"d1_database_binding": [],
+							"kv_namespace_binding": [],
+							"plain_text_binding": [],
+							"queue_binding": [],
+							"r2_bucket_binding": [],
+							"secret_text_binding": [],
+							"service_binding": [],
+							"webassembly_binding": [],
+							"tags": [],
+							"dispatch_namespace": null,
+							"module": null
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_workers_script",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"id": "test-script",
+							"account_id": "abc123",
+							"name": "test-script",
+							"content": "addEventListener('fetch', event => { event.respondWith(new Response('Hello')) })"
+						}
+					}]
+				}]
+			}`,
+		},
 	}
 
 	RunFullStateTransformationTests(t, tests)

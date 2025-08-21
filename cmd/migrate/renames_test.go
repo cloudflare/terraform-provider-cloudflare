@@ -133,6 +133,19 @@ func TestResourceReferenceRename(t *testing.T) {
   settings_override_id = cloudflare_zone_settings_override.settings.id
 }`,
 		},
+		{
+			name: "rename_workers_script_attribute_reference",
+			input: `resource "cloudflare_workers_route" "test" {
+  zone_id = "abc123"
+  pattern = "test.example.com/*"
+  script  = cloudflare_workers_script.example.name
+}`,
+			expected: `resource "cloudflare_workers_route" "test" {
+  zone_id = "abc123"
+  pattern = "test.example.com/*"
+  script  = cloudflare_workers_script.example.script_name
+}`,
+		},
 	}
 
 	for _, tt := range tests {
