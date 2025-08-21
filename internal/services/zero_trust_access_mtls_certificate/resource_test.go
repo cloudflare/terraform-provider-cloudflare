@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 	"testing"
 	"time"
 
@@ -45,7 +46,7 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		return clientErr
 	}
 
-	regex := regexp.MustCompile(`^[a-zA-Z]{10}$`)
+	regex := regexp.MustCompile(`^[a-z]{10}$`)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	accountCerts, _, err := client.ListAccessMutualTLSCertificates(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessMutualTLSCertificatesParams{})
@@ -54,6 +55,7 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		return err
 	}
 	for _, cert := range accountCerts {
+		tflog.Debug(ctx, fmt.Sprintf("Found certificate: Name=%s, ID=%s, Matches=%v", cert.Name, cert.ID, regex.MatchString(cert.Name)))
 		// only delete certificates that appear to be created by this provider
 		if !regex.MatchString(cert.Name) {
 			continue
@@ -106,6 +108,7 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 	}
 
 	for _, cert := range zoneCerts {
+		tflog.Debug(ctx, fmt.Sprintf("Found zone certificate: Name=%s, ID=%s, Matches=%v", cert.Name, cert.ID, regex.MatchString(cert.Name)))
 		// only delete certificates that appear to be created by this provider
 		if !regex.MatchString(cert.Name) {
 			continue
@@ -164,7 +167,29 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
-	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
+	// Use a different certificate for v5 tests to avoid conflicts with migration tests
+	cert := `-----BEGIN CERTIFICATE-----
+MIIDpTCCAo2gAwIBAgIUGcPhc0KDNFqTyQ9IK1ehWatdfTEwDQYJKoZIhvcNAQEL
+BQAwYjELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJh
+bmNpc2NvMRAwDgYDVQQKDAdWNSBUZXN0MRwwGgYDVQQDDBN2NS10ZXN0LmV4YW1w
+bGUuY29tMB4XDTI1MDgyMTEzMjQxMFoXDTI2MDgyMTEzMjQxMFowYjELMAkGA1UE
+BhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMRAwDgYD
+VQQKDAdWNSBUZXN0MRwwGgYDVQQDDBN2NS10ZXN0LmV4YW1wbGUuY29tMIIBIjAN
+BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt45TCJJPHs2CjVoy4Cd9M0d8GGHz
+bUlN/Y0grUy47+m2QT0nEbrim7NfuVQeTOd1aofBAw0QBhR3ApD40g8PbEys1rEx
+3dlH2JThG7HKjH2Uhhdj46SK+0MEf5PL26hIIJyLPlE8WwvJ8uoj6JINVMCXLim7
+otevGrAYnObaAk/BEVwiNpo7GdmI0rsH0vDxULU8+4CAuaALA5vszINWC3jtT4wn
+igHY6H4doSpqn6qP2RkaN8vqSjrQwpBumZQWqazrCR/vqUehNBUEhaWWn3kK4XY/
+gcXVJmlpksD+UWEIZMMGMV+hK6A6i2JWPSp+U3tuoi/W5xdkYQGm96Om7QIDAQAB
+o1MwUTAdBgNVHQ4EFgQUjqpyEKQfRT2eFZU8Mbsgu0m116AwHwYDVR0jBBgwFoAU
+jqpyEKQfRT2eFZU8Mbsgu0m116AwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
+AQsFAAOCAQEAgdeIKNVDH+IvjtARXCyw5smqkRZ0TfQAohuyAhww8ps3QRf5Gdsx
+AdY9NOkNvSvFb5QY3ksGkJG/5VFDMExz3N4ywz9lSKcGMnDvK3tbzJvYxI/aO8dV
+LwEMWHghph18k2tPfFyBQlEztuLWEPnKWfF+bbE7DnrlFRRnHIrRFd9LKu9Ai1F0
+VAo7LlRIXTnzoHrDtQ6pEhVKfIEUYfavGyHAC+REXIXN8hNV9sLcJrW4olvHg4Cc
+4tXBQwTUd0MrApxyshtiLC5xPv7Mm9B5hFCpndRcRl+b21v10oWRPhzSuSxvyDs9
+Jx+GyRD+HSQ8BcvCgDuVNzKMoCFjj9J9Jw==
+-----END CERTIFICATE-----`
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -231,7 +256,29 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
-	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
+	// Use a different certificate for v5 tests to avoid conflicts with migration tests
+	cert := `-----BEGIN CERTIFICATE-----
+MIIDpTCCAo2gAwIBAgIUGcPhc0KDNFqTyQ9IK1ehWatdfTEwDQYJKoZIhvcNAQEL
+BQAwYjELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJh
+bmNpc2NvMRAwDgYDVQQKDAdWNSBUZXN0MRwwGgYDVQQDDBN2NS10ZXN0LmV4YW1w
+bGUuY29tMB4XDTI1MDgyMTEzMjQxMFoXDTI2MDgyMTEzMjQxMFowYjELMAkGA1UE
+BhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMRAwDgYD
+VQQKDAdWNSBUZXN0MRwwGgYDVQQDDBN2NS10ZXN0LmV4YW1wbGUuY29tMIIBIjAN
+BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt45TCJJPHs2CjVoy4Cd9M0d8GGHz
+bUlN/Y0grUy47+m2QT0nEbrim7NfuVQeTOd1aofBAw0QBhR3ApD40g8PbEys1rEx
+3dlH2JThG7HKjH2Uhhdj46SK+0MEf5PL26hIIJyLPlE8WwvJ8uoj6JINVMCXLim7
+otevGrAYnObaAk/BEVwiNpo7GdmI0rsH0vDxULU8+4CAuaALA5vszINWC3jtT4wn
+igHY6H4doSpqn6qP2RkaN8vqSjrQwpBumZQWqazrCR/vqUehNBUEhaWWn3kK4XY/
+gcXVJmlpksD+UWEIZMMGMV+hK6A6i2JWPSp+U3tuoi/W5xdkYQGm96Om7QIDAQAB
+o1MwUTAdBgNVHQ4EFgQUjqpyEKQfRT2eFZU8Mbsgu0m116AwHwYDVR0jBBgwFoAU
+jqpyEKQfRT2eFZU8Mbsgu0m116AwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
+AQsFAAOCAQEAgdeIKNVDH+IvjtARXCyw5smqkRZ0TfQAohuyAhww8ps3QRf5Gdsx
+AdY9NOkNvSvFb5QY3ksGkJG/5VFDMExz3N4ywz9lSKcGMnDvK3tbzJvYxI/aO8dV
+LwEMWHghph18k2tPfFyBQlEztuLWEPnKWfF+bbE7DnrlFRRnHIrRFd9LKu9Ai1F0
+VAo7LlRIXTnzoHrDtQ6pEhVKfIEUYfavGyHAC+REXIXN8hNV9sLcJrW4olvHg4Cc
+4tXBQwTUd0MrApxyshtiLC5xPv7Mm9B5hFCpndRcRl+b21v10oWRPhzSuSxvyDs9
+Jx+GyRD+HSQ8BcvCgDuVNzKMoCFjj9J9Jw==
+-----END CERTIFICATE-----`
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -297,7 +344,29 @@ func TestAccCloudflareAccessMutualTLSMinimal(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
-	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
+	// Use a different certificate for v5 tests to avoid conflicts with migration tests
+	cert := `-----BEGIN CERTIFICATE-----
+MIIDpTCCAo2gAwIBAgIUGcPhc0KDNFqTyQ9IK1ehWatdfTEwDQYJKoZIhvcNAQEL
+BQAwYjELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJh
+bmNpc2NvMRAwDgYDVQQKDAdWNSBUZXN0MRwwGgYDVQQDDBN2NS10ZXN0LmV4YW1w
+bGUuY29tMB4XDTI1MDgyMTEzMjQxMFoXDTI2MDgyMTEzMjQxMFowYjELMAkGA1UE
+BhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMRAwDgYD
+VQQKDAdWNSBUZXN0MRwwGgYDVQQDDBN2NS10ZXN0LmV4YW1wbGUuY29tMIIBIjAN
+BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt45TCJJPHs2CjVoy4Cd9M0d8GGHz
+bUlN/Y0grUy47+m2QT0nEbrim7NfuVQeTOd1aofBAw0QBhR3ApD40g8PbEys1rEx
+3dlH2JThG7HKjH2Uhhdj46SK+0MEf5PL26hIIJyLPlE8WwvJ8uoj6JINVMCXLim7
+otevGrAYnObaAk/BEVwiNpo7GdmI0rsH0vDxULU8+4CAuaALA5vszINWC3jtT4wn
+igHY6H4doSpqn6qP2RkaN8vqSjrQwpBumZQWqazrCR/vqUehNBUEhaWWn3kK4XY/
+gcXVJmlpksD+UWEIZMMGMV+hK6A6i2JWPSp+U3tuoi/W5xdkYQGm96Om7QIDAQAB
+o1MwUTAdBgNVHQ4EFgQUjqpyEKQfRT2eFZU8Mbsgu0m116AwHwYDVR0jBBgwFoAU
+jqpyEKQfRT2eFZU8Mbsgu0m116AwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
+AQsFAAOCAQEAgdeIKNVDH+IvjtARXCyw5smqkRZ0TfQAohuyAhww8ps3QRf5Gdsx
+AdY9NOkNvSvFb5QY3ksGkJG/5VFDMExz3N4ywz9lSKcGMnDvK3tbzJvYxI/aO8dV
+LwEMWHghph18k2tPfFyBQlEztuLWEPnKWfF+bbE7DnrlFRRnHIrRFd9LKu9Ai1F0
+VAo7LlRIXTnzoHrDtQ6pEhVKfIEUYfavGyHAC+REXIXN8hNV9sLcJrW4olvHg4Cc
+4tXBQwTUd0MrApxyshtiLC5xPv7Mm9B5hFCpndRcRl+b21v10oWRPhzSuSxvyDs9
+Jx+GyRD+HSQ8BcvCgDuVNzKMoCFjj9J9Jw==
+-----END CERTIFICATE-----`
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -361,13 +430,19 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 }
 
 func testAccessMutualTLSCertificateConfigBasic(rnd string, identifier *cloudflare.ResourceContainer, cert, domain string) string {
-	return acctest.LoadTestCase("accessmutualtlscertificateconfigbasic.tf", rnd, identifier.Type, identifier.Identifier, cert, domain)
+	// Convert literal \n to actual newlines for proper certificate format
+	processedCert := strings.ReplaceAll(cert, "\\n", "\n")
+	return acctest.LoadTestCase("accessmutualtlscertificateconfigbasic.tf", rnd, identifier.Type, identifier.Identifier, processedCert, domain)
 }
 
 func testAccessMutualTLSCertificateUpdated(rnd string, identifier *cloudflare.ResourceContainer, cert string) string {
-	return acctest.LoadTestCase("accessmutualtlscertificateupdated.tf", rnd, identifier.Type, identifier.Identifier, cert)
+	// Convert literal \n to actual newlines for proper certificate format
+	processedCert := strings.ReplaceAll(cert, "\\n", "\n")
+	return acctest.LoadTestCase("accessmutualtlscertificateupdated.tf", rnd, identifier.Type, identifier.Identifier, processedCert)
 }
 
 func testAccessMutualTLSCertificateMinimal(rnd string, identifier *cloudflare.ResourceContainer, cert string) string {
-	return acctest.LoadTestCase("accessmutualtlscertificateminimal.tf", rnd, identifier.Type, identifier.Identifier, cert)
+	// Convert literal \n to actual newlines for proper certificate format
+	processedCert := strings.ReplaceAll(cert, "\\n", "\n")
+	return acctest.LoadTestCase("accessmutualtlscertificateminimal.tf", rnd, identifier.Type, identifier.Identifier, processedCert)
 }
