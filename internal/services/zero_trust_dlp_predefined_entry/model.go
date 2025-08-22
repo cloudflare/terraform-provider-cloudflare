@@ -37,6 +37,7 @@ type ZeroTrustDLPPredefinedEntryConfidenceModel struct {
 }
 
 type ZeroTrustDLPPredefinedEntryVariantModel struct {
-	TopicType types.String `tfsdk:"topic_type" json:"topic_type,computed"`
-	Type      types.String `tfsdk:"type" json:"type,computed"`
+	TopicType   types.String `tfsdk:"topic_type" json:"topic_type,computed"`
+	Type        types.String `tfsdk:"type" json:"type,computed"`
+	Description types.String `tfsdk:"description" json:"description,computed"`
 }

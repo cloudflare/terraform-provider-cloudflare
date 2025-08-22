@@ -195,6 +195,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										stringvalidator.OneOfCaseInsensitive("PromptTopic"),
 									},
 								},
+								"description": schema.StringAttribute{
+									Computed: true,
+								},
 							},
 						},
 						"case_sensitive": schema.BoolAttribute{
