@@ -149,6 +149,15 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_workers_script", "cloudflare_worker_script":
 				result = transformWorkersScriptStateJSON(result, path)
+
+			case "cloudflare_workers_cron_trigger", "cloudflare_worker_cron_trigger":
+				result = transformWorkersCronTriggerStateJSON(result, path)
+
+			case "cloudflare_workers_custom_domain", "cloudflare_worker_domain":
+				result = transformWorkersDomainStateJSON(result, path)
+
+			case "cloudflare_workers_secret", "cloudflare_worker_secret":
+				result = transformWorkersSecretStateJSON(result, path)
 			}
 
 			return true
