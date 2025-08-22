@@ -1,0 +1,162 @@
+package workers_script_test
+
+import (
+	"fmt"
+	"os"
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+)
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+// TestMigrateWorkersScriptMigrationFromV4Basic tests basic migration from v4 to v5
+func TestMigrateWorkersScriptMigrationFromV4Basic(t *testing.T) {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_workers_script." + rnd
+	tmpDir := t.TempDir()
+	scriptName := fmt.Sprintf("test-script-%s", rnd)
+
+	// V4 config using name attribute
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_workers_script" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[3]s"
+  content    = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+}`, rnd, accountID, scriptName)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			// Step 2: Run migration and verify state
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				// Verify name -> script_name transformation
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(scriptName)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("content"), knownvalue.StringExact("addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });")),
+			}),
+		},
+	})
+}
+
+// TestMigrateWorkersScriptMigrationFromV4WithBindings tests migration with bindings
+func TestMigrateWorkersScriptMigrationFromV4WithBindings(t *testing.T) {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_workers_script." + rnd
+	tmpDir := t.TempDir()
+	scriptName := fmt.Sprintf("test-script-%s", rnd)
+
+	// V4 config with bindings (bindings should migrate to v5 bindings list format)
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_workers_script" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[3]s"
+  content    = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World: ' + MY_VAR)); });"
+  
+  plain_text_binding {
+    name = "MY_VAR"
+    text = "my-value"
+  }
+}`, rnd, accountID, scriptName)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			// Step 2: Run migration and verify state
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				// Verify name -> script_name transformation
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(scriptName)),
+				// Verify bindings transformation: v4 separate binding types -> v5 unified bindings list
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_VAR")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("plain_text")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact("my-value")),
+			}),
+		},
+	})
+}
+
+// TestMigrateWorkersScriptMigrationFromV4SingleResource tests migration using singular resource name
+func TestMigrateWorkersScriptMigrationFromV4SingleResource(t *testing.T) {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_worker_script." + rnd
+	tmpDir := t.TempDir()
+	scriptName := fmt.Sprintf("test-script-%s", rnd)
+
+	// V4 config using old singular resource name
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_worker_script" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[3]s"
+  content    = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  module     = true
+}`, rnd, accountID, scriptName)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			// Step 2: Run migration and verify state (note: resource name should be updated by Grit)
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				// Verify name -> script_name transformation
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(scriptName)),
+				// Verify other attributes preserved during migration
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("content"), knownvalue.StringExact("addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });")),
+			}),
+		},
+	})
+}
