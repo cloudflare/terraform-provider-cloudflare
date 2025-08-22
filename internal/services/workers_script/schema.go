@@ -509,11 +509,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"usage_model": schema.StringAttribute{
-						Description: "Usage model for the Worker invocations.\nAvailable values: \"standard\".",
+						Description: "Usage model for the Worker invocations.\nAvailable values: \"standard\", \"bundled\", \"unbound\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("standard"),
+							stringvalidator.OneOfCaseInsensitive(
+								"standard",
+								"bundled",
+								"unbound",
+							),
 						},
 						Default: stringdefault.StaticString("standard"),
 					},
@@ -579,10 +583,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"usage_model": schema.StringAttribute{
-				Description: "Usage model for the Worker invocations.\nAvailable values: \"standard\".",
+				Description: "Usage model for the Worker invocations.\nAvailable values: \"standard\", \"bundled\", \"unbound\".",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("standard"),
+					stringvalidator.OneOfCaseInsensitive(
+						"standard",
+						"bundled",
+						"unbound",
+					),
 				},
 				Default: stringdefault.StaticString("standard"),
 			},

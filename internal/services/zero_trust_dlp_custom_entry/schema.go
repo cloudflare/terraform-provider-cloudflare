@@ -113,6 +113,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("PromptTopic"),
 						},
 					},
+					"description": schema.StringAttribute{
+						Computed: true,
+					},
 				},
 			},
 			"word_list": schema.StringAttribute{
