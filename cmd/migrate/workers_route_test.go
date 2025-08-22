@@ -37,7 +37,7 @@ func TestWorkersRouteTransformation(t *testing.T) {
   pattern = "example.com/*"
   script_name = "my-worker"
 }`,
-			Expected: []string{`resource "cloudflare_worker_route" "example" {
+			Expected: []string{`resource "cloudflare_workers_route" "example" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   pattern = "example.com/*"
   script  = "my-worker"
