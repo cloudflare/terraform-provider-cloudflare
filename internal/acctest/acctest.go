@@ -386,6 +386,14 @@ func (e expectEmptyPlanExceptFalseyToNull) CheckPlan(ctx context.Context, req pl
 				continue // This change is allowed - API sets default session duration
 			}
 
+			// Allow bindings transformation for workers_script resources during v4->v5 migration
+			if key == "bindings" && extractResourceTypeFromAddress(rc.Address) == "cloudflare_workers_script" {
+				// Allow change from empty array to populated array (v4 bindings -> v5 bindings)
+				if isEmptyArray(beforeValue) && isNonEmptyArray(afterValue) {
+					continue // This change is allowed - binding transformation
+				}
+			}
+
 			// If we get here, it's a disallowed change
 			resp.Error = fmt.Errorf("expected empty plan except for falsey-to-null changes, but %s.%s has change from %v to %v",
 				rc.Address, key, beforeValue, afterValue)
@@ -558,6 +566,34 @@ func isFalseyValue(v interface{}) bool {
 	}
 }
 
+// isEmptyArray returns true if the value is an empty array/slice
+func isEmptyArray(v interface{}) bool {
+	if v == nil {
+		return false
+	}
+	
+	switch val := v.(type) {
+	case []interface{}:
+		return len(val) == 0
+	default:
+		return false
+	}
+}
+
+// isNonEmptyArray returns true if the value is a non-empty array/slice
+func isNonEmptyArray(v interface{}) bool {
+	if v == nil {
+		return false
+	}
+	
+	switch val := v.(type) {
+	case []interface{}:
+		return len(val) > 0
+	default:
+		return false
+	}
+}
+
 var ExpectEmptyPlanExceptFalseyToNull = expectEmptyPlanExceptFalseyToNull{}
 
 // / PtrTo is a small helper to get a pointer to a particular value
@@ -665,6 +701,7 @@ func MigrationTestStep(t *testing.T, v4Config string, tmpDir string, exactVersio
 	return resource.TestStep{
 		PreConfig: func() {
 			WriteOutConfig(t, v4Config, tmpDir)
+			t.Logf("Config is: %s", v4Config)
 			// we only run the migration command if the version is 4.x.x, because users will not expect to run it within v5 versions.
 			if strings.HasPrefix(exactVersion, "4.") {
 				t.Logf("Running migration command for version: %s", exactVersion)

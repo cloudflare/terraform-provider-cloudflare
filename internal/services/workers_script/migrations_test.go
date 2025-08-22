@@ -103,7 +103,7 @@ resource "cloudflare_worker_script" "%[1]s" {
 	})
 }
 
-// TestMigrateWorkersScriptFromV4KVBinding tests KV namespace binding removal
+// TestMigrateWorkersScriptFromV4KVBinding tests KV namespace binding transformation
 func TestMigrateWorkersScriptFromV4KVBinding(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -143,7 +143,10 @@ resource "cloudflare_worker_script" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("content"), knownvalue.NotNull()),
-				// KV binding should be removed during migration
+				// Expect KV binding to be transformed to new bindings array format
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_KV")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("kv_namespace")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("namespace_id"), knownvalue.StringExact("test-namespace-id")),
 			}),
 		},
 	})
@@ -240,7 +243,7 @@ resource "cloudflare_worker_script" "%[1]s" {
 	})
 }
 
-// TestMigrateWorkersScriptFromV4PlainTextBinding tests plain text binding removal
+// TestMigrateWorkersScriptFromV4PlainTextBinding tests plain text binding transformation
 func TestMigrateWorkersScriptFromV4PlainTextBinding(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -280,12 +283,16 @@ resource "cloudflare_worker_script" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("content"), knownvalue.NotNull()),
+				// Expect plain text binding to be transformed to new bindings array format
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_VAR")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("plain_text")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact("Hello World")),
 			}),
 		},
 	})
 }
 
-// TestMigrateWorkersScriptFromV4SecretTextBinding tests secret text binding removal
+// TestMigrateWorkersScriptFromV4SecretTextBinding tests secret text binding transformation
 func TestMigrateWorkersScriptFromV4SecretTextBinding(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -325,6 +332,10 @@ resource "cloudflare_worker_script" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("content"), knownvalue.NotNull()),
+				// Expect binding to be transformed to new bindings array format
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_SECRET")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact("secret-value")),
 			}),
 		},
 	})
@@ -475,7 +486,9 @@ resource "cloudflare_worker_script" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("content"), knownvalue.NotNull()),
-				// All bindings should be removed during migration
+				// Expect 4 bindings to be transformed to new bindings array format
+				// Note: bindings array order may vary, so we check for existence of each type
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(4)),
 			}),
 		},
 	})
