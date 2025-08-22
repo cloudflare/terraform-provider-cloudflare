@@ -49,7 +49,7 @@ func TestWorkersScriptTransformation(t *testing.T) {
   name = "my-worker"
   content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
 }`,
-			Expected: []string{`resource "cloudflare_worker_script" "example" {
+			Expected: []string{`resource "cloudflare_workers_script" "example" {
   account_id  = "f037e56e89293a057740de681ac9abbe"
   script_name = "my-worker"
   content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"

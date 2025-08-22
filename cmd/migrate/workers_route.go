@@ -16,7 +16,13 @@ func isWorkersRouteResource(block *hclwrite.Block) bool {
 
 // transformWorkersRouteBlock transforms cloudflare_workers_route resources
 // V4: script_name -> V5: script
+// Also handles resource rename: cloudflare_worker_route -> cloudflare_workers_route
 func transformWorkersRouteBlock(block *hclwrite.Block, diags ast.Diagnostics) {
+	// Handle resource rename: cloudflare_worker_route -> cloudflare_workers_route
+	if len(block.Labels()) >= 1 && block.Labels()[0] == "cloudflare_worker_route" {
+		block.SetLabels([]string{"cloudflare_workers_route", block.Labels()[1]})
+	}
+
 	// Rename script_name attribute to script
 	block.Body().RenameAttribute("script_name", "script")
 }
