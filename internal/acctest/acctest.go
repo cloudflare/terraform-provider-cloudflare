@@ -409,9 +409,9 @@ func isSetNestedAttributeField(resourceAddress, fieldName string) bool {
 	// This prevents ambiguity when multiple resources have fields with the same name
 	setFieldsByResource := map[string][]string{
 		"cloudflare_zero_trust_access_policy": {"include", "exclude", "require", "approval_groups"},
-		"cloudflare_access_policy": {"include", "exclude", "require", "approval_group"}, // v4 resource name
-		"cloudflare_ruleset": {"rules"},
-		"cloudflare_load_balancer_pool": {"origins"},
+		"cloudflare_access_policy":            {"include", "exclude", "require", "approval_group"}, // v4 resource name
+		"cloudflare_ruleset":                  {"rules"},
+		"cloudflare_load_balancer_pool":       {"origins"},
 		// Add other resources with SetNestedAttribute fields as needed
 	}
 
@@ -638,6 +638,7 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	if err != nil {
 		t.Fatalf("Failed to read state file: %v", err)
 	}
+	debugLogf(t, "Config is: %s", string(state))
 	debugLogf(t, "State is: %s", string(state))
 	cmd := exec.Command("go", "run", "-C", migratePath, ".", "-config", tmpDir, "-patterns-dir", patternsDir, "-state", filepath.Join(stateDir, "terraform.tfstate"))
 	cmd.Dir = tmpDir

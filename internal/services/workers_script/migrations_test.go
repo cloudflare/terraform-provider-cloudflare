@@ -160,3 +160,67 @@ resource "cloudflare_worker_script" "%[1]s" {
 		},
 	})
 }
+
+// TestMigrateWorkersScriptMigrationFromV4MultipleBindingTypes tests migration with multiple binding types
+func TestMigrateWorkersScriptMigrationFromV4MultipleBindingTypes(t *testing.T) {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_workers_script." + rnd
+	tmpDir := t.TempDir()
+	scriptName := fmt.Sprintf("test-script-%s", rnd)
+
+	// V4 config with multiple binding types
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_workers_script" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[3]s"
+  content    = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World: ' + MY_VAR)); });"
+  
+  plain_text_binding {
+    name = "MY_VAR"
+    text = "my-value"
+  }
+  
+  secret_text_binding {
+    name = "MY_SECRET"
+    text = "secret-value"
+  }
+}`, rnd, accountID, scriptName)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			// Step 2: Run migration and verify state
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				// Verify name -> script_name transformation
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("script_name"), knownvalue.StringExact(scriptName)),
+				// Verify bindings transformation: v4 multiple binding types -> v5 unified bindings list
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(2)),
+				// Bindings are processed in the order they appear in config (plain_text_binding first, then secret_text_binding)
+				// First binding (MY_VAR from plain_text_binding)
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("MY_VAR")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("plain_text")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("text"), knownvalue.StringExact("my-value")),
+				// Second binding (MY_SECRET from secret_text_binding)
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(1).AtMapKey("name"), knownvalue.StringExact("MY_SECRET")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(1).AtMapKey("type"), knownvalue.StringExact("secret_text")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bindings").AtSliceIndex(1).AtMapKey("text"), knownvalue.StringExact("secret-value")),
+			}),
+		},
+	})
+}
