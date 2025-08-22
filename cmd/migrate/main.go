@@ -248,6 +248,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			transformAccessApplicationBlock(block, diags)
 		}
 
+		if isZeroTrustAccessIdentityProviderResource(block) {
+			transformZeroTrustAccessIdentityProviderBlock(block, diags)
+		}
+
 		if isTieredCacheResource(block) {
 			newTieredCacheBlocks := transformTieredCacheBlock(block)
 			if newTieredCacheBlocks != nil {
