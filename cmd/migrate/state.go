@@ -143,6 +143,12 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_spectrum_application":
 				result = transformSpectrumApplicationStateJSON(result, path)
+
+			case "cloudflare_workers_route", "cloudflare_worker_route":
+				result = transformWorkersRouteStateJSON(result, path)
+
+			case "cloudflare_workers_script", "cloudflare_worker_script":
+				result = transformWorkersScriptStateJSON(result, path)
 			}
 
 			return true

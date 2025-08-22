@@ -1,0 +1,61 @@
+package main
+
+import (
+	"testing"
+)
+
+func TestWorkersScriptTransformation(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "workers_script name to script_name",
+			Config: `resource "cloudflare_workers_script" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name = "my-worker"
+  content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+}`,
+			Expected: []string{`resource "cloudflare_workers_script" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+}`},
+		},
+		{
+			Name: "workers_script with bindings",
+			Config: `resource "cloudflare_workers_script" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name = "my-worker"
+  content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  
+  plain_text_binding {
+    name = "MY_VAR"
+    text = "my-value"
+  }
+}`,
+			Expected: []string{`resource "cloudflare_workers_script" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+
+  plain_text_binding {
+    name = "MY_VAR"
+    text = "my-value"
+  }
+}`},
+		},
+		{
+			Name: "worker_script (singular) with name",
+			Config: `resource "cloudflare_worker_script" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name = "my-worker"
+  content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+}`,
+			Expected: []string{`resource "cloudflare_worker_script" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+}`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFile)
+}

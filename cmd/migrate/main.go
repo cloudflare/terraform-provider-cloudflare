@@ -229,7 +229,9 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 	for _, block := range blocks {
 		applyRenames(block)
 
-		// TODO declare a map from resource types to transform functions instead of having all these if statement
+		// TODO declare a map from resource types to transform functions
+		// instead of having all these if statement
+
 		if isZoneSettingsOverrideResource(block) {
 			blocksToRemove = append(blocksToRemove, block)
 			newBlocks = append(newBlocks, transformZoneSettingsBlock(block)...)
@@ -244,7 +246,8 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		}
 
 		if isAccessPolicyResource(block) {
-			// TOOD eventually pass diags through to all resource transformers, not just accessPolicyBlock
+			// TOOD eventually pass diags through to all resource transformers,
+			// not just accessPolicyBlock
 			transformAccessPolicyBlock(block, diags)
 		}
 
@@ -291,8 +294,17 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			// Process DNS record to fix CAA flags
 			ProcessDNSRecordConfig(file)
 		}
+
 		if isSpectrumApplicationResource(block) {
 			transformSpectrumApplicationBlock(block, diags)
+		}
+
+		if isWorkersRouteResource(block) {
+			transformWorkersRouteBlock(block, diags)
+		}
+
+		if isWorkersScriptResource(block) {
+			transformWorkersScriptBlock(block, diags)
 		}
 	}
 
