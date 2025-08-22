@@ -80,14 +80,14 @@ jobs:
       - name: Run Acceptance Tests
         id: acc_tests
         # note: not all resources are covered here, only passing ones should be included here (for now).
-        run: ./scripts/run-ci-acceptance-tests
+        run: ./scripts/run-ci-tests acceptance
         env:
           TF_ACC: 1
         continue-on-error: true
       - name: Run Migration Tests
         id: migration_tests
         # note: not all resources are covered here, only passing ones should be included here (for now).
-        run: ./scripts/run-ci-migration-tests
+        run: ./scripts/run-ci-tests migration
         env:
           TF_ACC: 1
       - name: Check Test Status
