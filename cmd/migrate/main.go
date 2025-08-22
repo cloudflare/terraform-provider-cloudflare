@@ -272,6 +272,18 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		if isWorkersScriptResource(block) {
 			transformWorkersScriptBlock(block, diags)
 		}
+
+		if isWorkersCronTriggerResource(block) {
+			transformWorkersCronTriggerBlock(block, diags)
+		}
+
+		if isWorkersDomainResource(block) {
+			transformWorkersDomainBlock(block, diags)
+		}
+
+		if isWorkersSecretResource(block) {
+			transformWorkersSecretBlock(block, diags)
+		}
 	}
 
 	// Remove old blocks
