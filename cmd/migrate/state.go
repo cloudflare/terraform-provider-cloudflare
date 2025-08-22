@@ -63,6 +63,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_tiered_cache":
 				result = transformTieredCacheStateJSON(result, path, resourcePath)
+
+			case "cloudflare_zero_trust_access_identity_provider", "cloudflare_access_identity_provider":
+				result = transformZeroTrustAccessIdentityProviderStateJSON(result, path)
 			}
 
 			return true
@@ -339,4 +342,97 @@ func transformLoadBalancerState(attributes map[string]interface{}) {
 			}
 		}
 	}
+}
+
+// transformZeroTrustAccessIdentityProviderStateJSON handles v4 to v5 state migration for cloudflare_zero_trust_access_identity_provider
+func transformZeroTrustAccessIdentityProviderStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// 1. Transform config from array to object (v4: config=[{...}], v5: config={...})
+	config := gjson.Get(json, attrPath+".config")
+	if config.IsArray() {
+		if len(config.Array()) == 0 {
+			// Empty array -> empty object
+			json, _ = sjson.Set(json, attrPath+".config", map[string]interface{}{})
+		} else {
+			// Take first item from array and make it the object
+			json, _ = sjson.Set(json, attrPath+".config", config.Array()[0].Value())
+		}
+	}
+
+	// 2. Transform scim_config from array to object (v4: scim_config=[{...}], v5: scim_config={...})
+	scimConfig := gjson.Get(json, attrPath+".scim_config")
+	if scimConfig.IsArray() {
+		if len(scimConfig.Array()) == 0 {
+			// Empty array -> delete attribute (it's optional in v5)
+			json, _ = sjson.Delete(json, attrPath+".scim_config")
+		} else {
+			// Take first item from array and make it the object
+			json, _ = sjson.Set(json, attrPath+".scim_config", scimConfig.Array()[0].Value())
+		}
+	}
+
+	// 3. Transform idp_public_cert -> idp_public_certs (string -> list[string])
+	// This works on the config object after transformation above
+	configObj := gjson.Get(json, attrPath+".config")
+	if configObj.Exists() && configObj.IsObject() {
+		idpPublicCert := configObj.Get("idp_public_cert")
+		if idpPublicCert.Exists() && idpPublicCert.Type == gjson.String {
+			// Convert single cert string to list with one item
+			certList := []string{idpPublicCert.String()}
+			json, _ = sjson.Set(json, attrPath+".config.idp_public_certs", certList)
+			// Remove old field
+			json, _ = sjson.Delete(json, attrPath+".config.idp_public_cert")
+		}
+	}
+
+	// 4. Handle field normalization - remove empty/null/false fields from config
+	// The v5 provider only includes relevant fields, not all possible fields
+	configPath := attrPath + ".config"
+	
+	// Remove false boolean values
+	boolFields := []string{"sign_request", "conditional_access_enabled", "support_groups", "pkce_enabled"}
+	for _, field := range boolFields {
+		fieldPath := configPath + "." + field
+		value := gjson.Get(json, fieldPath)
+		if value.Exists() && value.Type == gjson.False {
+			json, _ = sjson.Delete(json, fieldPath)
+		}
+	}
+	
+	// Remove empty strings
+	stringFields := []string{"client_secret", "client_id", "apps_domain", "auth_url", "certs_url", "directory_id", "email_claim_name", "okta_account", "onelogin_account", "ping_env_id", "issuer_url", "sso_target_url", "token_url", "email_attribute_name", "centrify_account", "centrify_app_id", "authorization_server_id"}
+	for _, field := range stringFields {
+		fieldPath := configPath + "." + field
+		value := gjson.Get(json, fieldPath)
+		if value.Exists() && value.Type == gjson.String && value.String() == "" {
+			json, _ = sjson.Delete(json, fieldPath)
+		}
+	}
+	
+	// Remove empty arrays
+	arrayFields := []string{"claims", "scopes", "attributes", "header_attributes", "idp_public_certs"}
+	for _, field := range arrayFields {
+		fieldPath := configPath + "." + field
+		value := gjson.Get(json, fieldPath)
+		if value.Exists() && value.IsArray() && len(value.Array()) == 0 {
+			json, _ = sjson.Delete(json, fieldPath)
+		}
+	}
+	
+	// Remove null values
+	nullableFields := []string{"prompt"}
+	for _, field := range nullableFields {
+		fieldPath := configPath + "." + field
+		value := gjson.Get(json, fieldPath)
+		if value.Exists() && value.Type == gjson.Null {
+			json, _ = sjson.Delete(json, fieldPath)
+		}
+	}
+
+	// 5. Remove deprecated fields
+	json, _ = sjson.Delete(json, attrPath+".config.api_token")
+	json, _ = sjson.Delete(json, attrPath+".scim_config.group_member_deprovision")
+
+	return json
 }
