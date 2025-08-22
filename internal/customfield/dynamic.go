@@ -18,7 +18,7 @@ import (
 var (
 	_ basetypes.DynamicTypable                    = (*NormalizedDynamicType)(nil)
 	_ basetypes.DynamicValuableWithSemanticEquals = (*NormalizedDynamicValue)(nil)
-	_ planmodifier.Dynamic                        = (*normalizeDynamicPlanModifier)(nil)
+	_ planmodifier.Dynamic                        = (*NormalizingDynamicPlanModifier)(nil)
 )
 
 type NormalizedDynamicType struct {
@@ -233,13 +233,13 @@ func (v NormalizedDynamicValue) DynamicSemanticEquals(ctx context.Context, other
 	return semanticEquals(ctx, v, other)
 }
 
-type normalizeDynamicPlanModifier struct{}
+type NormalizingDynamicPlanModifier struct{}
 
-func (m normalizeDynamicPlanModifier) Description(ctx context.Context) string {
+func (m NormalizingDynamicPlanModifier) Description(ctx context.Context) string {
 	return ""
 }
 
-func (m normalizeDynamicPlanModifier) MarkdownDescription(ctx context.Context) string {
+func (m NormalizingDynamicPlanModifier) MarkdownDescription(ctx context.Context) string {
 	return ""
 }
 
@@ -275,7 +275,7 @@ func validate(ctx context.Context, value attr.Value) (diags diag.Diagnostics) {
 	return
 }
 
-func (m normalizeDynamicPlanModifier) PlanModifyDynamic(ctx context.Context, req planmodifier.DynamicRequest, resp *planmodifier.DynamicResponse) {
+func (m NormalizingDynamicPlanModifier) PlanModifyDynamic(ctx context.Context, req planmodifier.DynamicRequest, resp *planmodifier.DynamicResponse) {
 	resp.Diagnostics.Append(validate(ctx, req.PlanValue)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -292,5 +292,5 @@ func (m normalizeDynamicPlanModifier) PlanModifyDynamic(ctx context.Context, req
 }
 
 func NormalizeDynamicPlanModifier() planmodifier.Dynamic {
-	return normalizeDynamicPlanModifier{}
+	return NormalizingDynamicPlanModifier{}
 }
