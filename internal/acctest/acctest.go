@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
+	"sort"
 	"strings"
 	"testing"
 
@@ -296,7 +297,14 @@ func LoadTestCase(filename string, parameters ...interface{}) string {
 func DumpState(s *terraform.State) error {
 	fmt.Println()
 	for name, rs := range s.RootModule().Resources {
-		for attr, key := range rs.Primary.Attributes {
+		// sort the keys
+		keys := make([]string, 0, len(rs.Primary.Attributes))
+		for attr := range rs.Primary.Attributes {
+			keys = append(keys, attr)
+		}
+		sort.Strings(keys)
+		for _, attr := range keys {
+			key := rs.Primary.Attributes[attr]
 			fmt.Println(strings.Join([]string{name, attr}, "."), "=", key)
 		}
 	}
@@ -409,9 +417,9 @@ func isSetNestedAttributeField(resourceAddress, fieldName string) bool {
 	// This prevents ambiguity when multiple resources have fields with the same name
 	setFieldsByResource := map[string][]string{
 		"cloudflare_zero_trust_access_policy": {"include", "exclude", "require", "approval_groups"},
-		"cloudflare_access_policy": {"include", "exclude", "require", "approval_group"}, // v4 resource name
-		"cloudflare_ruleset": {"rules"},
-		"cloudflare_load_balancer_pool": {"origins"},
+		"cloudflare_access_policy":            {"include", "exclude", "require", "approval_group"}, // v4 resource name
+		"cloudflare_ruleset":                  {"rules"},
+		"cloudflare_load_balancer_pool":       {"origins"},
 		// Add other resources with SetNestedAttribute fields as needed
 	}
 
