@@ -157,6 +157,10 @@ func childAttributes(value attr.Value) (bool, map[string]attr.Value) {
 }
 
 func semanticEquals(ctx context.Context, lhs attr.Value, rhs attr.Value) (eq bool, diag diag.Diagnostics) {
+	if lhs == nil || rhs == nil {
+		return lhs == rhs, nil
+	}
+
 	if (lhs.Equal(rhs)) || (lhs.IsNull() && rhs.IsNull()) || (lhs.IsUnknown() && rhs.IsUnknown()) {
 		return true, nil
 	}
