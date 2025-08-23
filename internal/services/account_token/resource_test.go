@@ -17,7 +17,7 @@ func TestAccAccountToken_Basic(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
-	var policyId string
+	var tokenValue string
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -27,26 +27,26 @@ func TestAccAccountToken_Basic(t *testing.T) {
 				Config: testAccCloudflareAccountTokenWithoutCondition(rnd, accountID, rnd, permissionID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, "name", rnd),
-					resource.TestCheckResourceAttrSet(resourceID, "policies.0.id"),
-					resource.TestCheckResourceAttrWith(resourceID, "policies.0.id", func(value string) error {
-						policyId = value
+					resource.TestCheckResourceAttrSet(resourceID, "id"),
+					resource.TestCheckResourceAttrSet(resourceID, "value"),
+					resource.TestCheckResourceAttrSet(resourceID, "issued_on"),
+					resource.TestCheckResourceAttrWith(resourceID, "value", func(value string) error {
+						tokenValue = value
 						return nil
 					}),
-					resource.TestCheckResourceAttr(resourceID, "policies.0.permission_groups.0.id", permissionID),
 				),
 			},
 			{
 				Config: testAccCloudflareAccountTokenWithoutCondition(rnd, accountID, rnd+"-updated", permissionID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, "name", rnd+"-updated"),
-					resource.TestCheckResourceAttrSet(resourceID, "policies.0.id"),
-					resource.TestCheckResourceAttrWith(resourceID, "policies.0.id", func(value string) error {
-						if value != policyId {
-							return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
+					resource.TestCheckResourceAttrSet(resourceID, "id"),
+					resource.TestCheckResourceAttrWith(resourceID, "value", func(value string) error {
+						if value != tokenValue {
+							return fmt.Errorf("token value changed from %s to %s", tokenValue, value)
 						}
 						return nil
 					}),
-					resource.TestCheckResourceAttr(resourceID, "policies.0.permission_groups.0.id", permissionID),
 				),
 			},
 		},
@@ -212,6 +212,62 @@ func TestAccAccountToken_PermissionGroupOrder(t *testing.T) {
 			{
 				Config: acctest.LoadTestCase("account_token-permissiongroup-order.tf", rnd, accountID, permissionID1, permissionID2),
 				// changing the order of permission groups should not affect plan
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccAccountToken_Resources_SimpleToNested_NoDrift(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_account_token." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// Simple: account -> "*"
+				Config: acctest.LoadTestCase("account_token-resources-simple.tf", rnd, accountID, rnd, permissionID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.0.id", permissionID),
+					// resources should be a single-entry map
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+					resource.TestCheckResourceAttr(name, "policies.0.resources.%", "1"),
+				),
+			},
+			{
+				// Re-apply should produce empty plan (no drift)
+				Config: acctest.LoadTestCase("account_token-resources-simple.tf", rnd, accountID, rnd, permissionID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				// Nested: account -> { zone.* = "*" }
+				Config: acctest.LoadTestCase("account_token-resources-nested.tf", rnd, accountID, rnd, permissionID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.0.id", permissionID),
+					// top-level resources should have one account key
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+					resource.TestCheckResourceAttr(name, "policies.0.resources.%", "1"),
+					// nested map under the account key should have one entry
+					resource.TestCheckResourceAttr(name, fmt.Sprintf("policies.0.resources.com.cloudflare.api.account.%s.%%", accountID), "1"),
+				),
+			},
+			{
+				// Re-apply nested should produce empty plan (no drift)
+				Config: acctest.LoadTestCase("account_token-resources-nested.tf", rnd, accountID, rnd, permissionID),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectEmptyPlan(),
