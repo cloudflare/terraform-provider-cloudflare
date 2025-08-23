@@ -97,6 +97,11 @@ func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "destination_conf", toString(logpushJobConfigUpdate.destinationConf)),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -165,6 +170,11 @@ func TestAccCloudflareLogpushJob_BasicOutputOptions(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "output_options.sample_rate", toString(logpushJobConfigUpdate.outputOptions.sampleRate)),
 					resource.TestCheckResourceAttr(resourceName, "output_options.timestamp_format", toString(logpushJobConfigUpdate.outputOptions.timestampFormat)),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -247,6 +257,11 @@ func TestAccCloudflareLogpushJob_Full(t *testing.T) {
 			{
 				Config: testCloudflareLogpushJobFull(rnd, logpushJobConfigUpdate),
 				Check:  resource.ComposeTestCheckFunc(getTestCheckResourceAttrs(resourceName, logpushJobConfigUpdate)...),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -356,6 +371,11 @@ func TestAccCloudflareLogpushJob_ImmutableFields(t *testing.T) {
 			{
 				Config:      testCloudflareLogpushJobImmutableFields(rnd, logpushJobConfigUpdate),
 				ExpectError: regexp.MustCompile(regexp.QuoteMeta("400 Bad Request")),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
