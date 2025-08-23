@@ -24,6 +24,10 @@ var (
 	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
 func init() {
 	resource.AddTestSweepers("cloudflare_load_balancer", &resource.Sweeper{
 		Name: "cloudflare_load_balancer",

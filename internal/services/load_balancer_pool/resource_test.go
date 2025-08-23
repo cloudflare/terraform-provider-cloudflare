@@ -20,6 +20,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
 func init() {
 	resource.AddTestSweepers("cloudflare_load_balancer_pool", &resource.Sweeper{
 		Name: "cloudflare_load_balancer_pool",
