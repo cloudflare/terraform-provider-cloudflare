@@ -1,8 +1,8 @@
 resource "cloudflare_zero_trust_device_custom_profile" "%[1]s" {
   account_id               = "%[2]s"
   name                     = "%[1]s-updated"
-  match                    = "identity.groups.name == \"Engineering\""
-  precedence               = 75
+  match                    = "os.version == \"10.15\""
+  precedence               = %[3]d
   enabled                  = false
   description              = "Updated custom device profile"
   allow_mode_switch        = false

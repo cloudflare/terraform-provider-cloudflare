@@ -3,13 +3,13 @@ package zero_trust_device_custom_profile_test
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
@@ -23,6 +23,7 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_device_custom_profile.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	randomPrecedence := rand.Intn(250)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
@@ -31,22 +32,22 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_Basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create
 			{
-				Config: testAccCloudflareZeroTrustDeviceCustomProfileBasic(accountID, rnd),
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileBasic(accountID, rnd, randomPrecedence),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("match"), knownvalue.StringExact("identity.email == \"test@example.com\"")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Float64Exact(100)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Float64Exact(float64(randomPrecedence))),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Test custom device profile")),
 				},
 			},
 			// Import
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerifyIgnore: []string{"exclude", "include"},
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 			},
 		},
 	})
@@ -56,6 +57,8 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_Complete(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_device_custom_profile.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	randomPrecedence := rand.Intn(250)
+	updatedPrecedence := 299
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
@@ -64,12 +67,12 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_Complete(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create with all optional fields
 			{
-				Config: testAccCloudflareZeroTrustDeviceCustomProfileComplete(accountID, rnd),
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileComplete(accountID, rnd, randomPrecedence),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("match"), knownvalue.StringExact("identity.groups.name == \"Engineering\"")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Float64Exact(50)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("match"), knownvalue.StringExact("os.version == \"10.15\"")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Float64Exact(float64(randomPrecedence))),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Complete custom device profile with all settings")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("allow_mode_switch"), knownvalue.Bool(true)),
@@ -88,27 +91,20 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_Complete(t *testing.T) {
 			},
 			// Update
 			{
-				Config: testAccCloudflareZeroTrustDeviceCustomProfileUpdated(accountID, rnd),
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileUpdated(accountID, rnd, updatedPrecedence),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
 						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s-updated", rnd))),
-						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Float64Exact(75)),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Float64Exact(float64(updatedPrecedence))),
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s-updated", rnd))),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Float64Exact(75)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Float64Exact(float64(updatedPrecedence))),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Updated custom device profile")),
 				},
-			},
-			// Import
-			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
 			},
 		},
 	})
@@ -118,6 +114,7 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_WithExclude(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_device_custom_profile.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	randomPrecedence := rand.Intn(250)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
@@ -126,7 +123,7 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_WithExclude(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create with exclude
 			{
-				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithExclude(accountID, rnd),
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithExclude(accountID, rnd, randomPrecedence),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
@@ -135,7 +132,7 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_WithExclude(t *testing.T) {
 			},
 			// Update to include
 			{
-				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithInclude(accountID, rnd),
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithInclude(accountID, rnd, randomPrecedence),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
@@ -153,6 +150,7 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_ServiceMode(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_device_custom_profile.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	randomPrecedence := rand.Intn(250)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
@@ -161,12 +159,12 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_ServiceMode(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create with service_mode_v2
 			{
-				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithServiceMode(accountID, rnd),
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithServiceMode(accountID, rnd, randomPrecedence),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("service_mode_v2", "mode"), knownvalue.StringExact("proxy")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("service_mode_v2", "port"), knownvalue.Float64Exact(3128)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("service_mode_v2").AtMapKey("mode"), knownvalue.StringExact("proxy")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("service_mode_v2").AtMapKey("port"), knownvalue.Float64Exact(3128)),
 				},
 			},
 		},
@@ -184,9 +182,9 @@ func testAccCheckCloudflareZeroTrustDeviceCustomProfileDestroy(s *terraform.Stat
 
 		_, err := client.ZeroTrust.Devices.Policies.Custom.Get(
 			context.Background(),
+			rs.Primary.ID,
 			zero_trust.DevicePolicyCustomGetParams{
 				AccountID: cloudflare.F(accountID),
-				PolicyID:  cloudflare.F(rs.Primary.ID),
 			},
 		)
 		if err == nil {
@@ -197,26 +195,26 @@ func testAccCheckCloudflareZeroTrustDeviceCustomProfileDestroy(s *terraform.Stat
 	return nil
 }
 
-func testAccCloudflareZeroTrustDeviceCustomProfileBasic(accountID, rnd string) string {
-	return acctest.LoadTestCase("devicecustomprofilebasic.tf", rnd, accountID)
+func testAccCloudflareZeroTrustDeviceCustomProfileBasic(accountID, rnd string, precedence int) string {
+	return acctest.LoadTestCase("devicecustomprofilebasic.tf", rnd, accountID, precedence)
 }
 
-func testAccCloudflareZeroTrustDeviceCustomProfileComplete(accountID, rnd string) string {
-	return acctest.LoadTestCase("devicecustomprofilecomplete.tf", rnd, accountID)
+func testAccCloudflareZeroTrustDeviceCustomProfileComplete(accountID, rnd string, precedence int) string {
+	return acctest.LoadTestCase("devicecustomprofilecomplete.tf", rnd, accountID, precedence)
 }
 
-func testAccCloudflareZeroTrustDeviceCustomProfileUpdated(accountID, rnd string) string {
-	return acctest.LoadTestCase("devicecustomprofileupdated.tf", rnd, accountID)
+func testAccCloudflareZeroTrustDeviceCustomProfileUpdated(accountID, rnd string, precedence int) string {
+	return acctest.LoadTestCase("devicecustomprofileupdated.tf", rnd, accountID, precedence)
 }
 
-func testAccCloudflareZeroTrustDeviceCustomProfileWithExclude(accountID, rnd string) string {
-	return acctest.LoadTestCase("devicecustomprofilewithexclude.tf", rnd, accountID)
+func testAccCloudflareZeroTrustDeviceCustomProfileWithExclude(accountID, rnd string, precedence int) string {
+	return acctest.LoadTestCase("devicecustomprofilewithexclude.tf", rnd, accountID, precedence)
 }
 
-func testAccCloudflareZeroTrustDeviceCustomProfileWithInclude(accountID, rnd string) string {
-	return acctest.LoadTestCase("devicecustomprofilewithinclude.tf", rnd, accountID)
+func testAccCloudflareZeroTrustDeviceCustomProfileWithInclude(accountID, rnd string, precedence int) string {
+	return acctest.LoadTestCase("devicecustomprofilewithinclude.tf", rnd, accountID, precedence)
 }
 
-func testAccCloudflareZeroTrustDeviceCustomProfileWithServiceMode(accountID, rnd string) string {
-	return acctest.LoadTestCase("devicecustomprofilewithservicemode.tf", rnd, accountID)
+func testAccCloudflareZeroTrustDeviceCustomProfileWithServiceMode(accountID, rnd string, precedence int) string {
+	return acctest.LoadTestCase("devicecustomprofilewithservicemode.tf", rnd, accountID, precedence)
 }

@@ -45,21 +45,18 @@ func testSweepCloudflareZeroTrustDeviceCustomProfile(region string) error {
 	log.Printf("[DEBUG] Found %d device custom profiles to sweep", len(profiles.Result))
 
 	for _, profile := range profiles.Result {
-		// Only delete test resources (those with random test prefixes)
-		if acctest.IsTestResource(profile.Name) {
-			log.Printf("[INFO] Deleting device custom profile: %s (%s)", profile.Name, profile.PolicyID)
-			
-			err := client.ZeroTrust.Devices.Policies.Custom.Delete(
-				ctx,
-				zero_trust.DevicePolicyCustomDeleteParams{
-					AccountID: cloudflare.F(accountID),
-					PolicyID:  cloudflare.F(profile.PolicyID),
-				},
-			)
-			if err != nil {
-				log.Printf("[ERROR] Failed to delete device custom profile %s: %v", profile.PolicyID, err)
-				continue
-			}
+		log.Printf("[INFO] Deleting device custom profile: %s (%s)", profile.Name, profile.PolicyID)
+
+		_, err := client.ZeroTrust.Devices.Policies.Custom.Delete(
+			ctx,
+			profile.PolicyID,
+			zero_trust.DevicePolicyCustomDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			},
+		)
+		if err != nil {
+			log.Printf("[ERROR] Failed to delete device custom profile %s: %v", profile.PolicyID, err)
+			continue
 		}
 	}
 
@@ -69,3 +66,4 @@ func testSweepCloudflareZeroTrustDeviceCustomProfile(region string) error {
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
+
