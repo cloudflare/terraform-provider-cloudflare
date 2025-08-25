@@ -1,4 +1,4 @@
-SetNestedAttributepackage zero_trust_access_mtls_hostname_settings_test
+package zero_trust_access_mtls_hostname_settings_test
 
 import (
 	"context"
@@ -52,14 +52,14 @@ func init() {
 
 			// Also clean up ALL certificates to prevent conflicts with certificate tests
 			// This ensures certificate tests can create certificates without "already exists" errors
-			
+
 			// Clean account certificates - be aggressive to prevent test conflicts
 			accountCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListAccessMutualTLSCertificatesParams{})
 			if err == nil {
 				for _, cert := range accountCerts {
 					// Clear hostnames first, then delete
 					client.UpdateAccessMutualTLSCertificate(ctx, cfv1.AccountIdentifier(accountID), cfv1.UpdateAccessMutualTLSCertificateParams{
-						ID: cert.ID,
+						ID:                  cert.ID,
 						AssociatedHostnames: []string{},
 					})
 					client.DeleteAccessMutualTLSCertificate(ctx, cfv1.AccountIdentifier(accountID), cert.ID)
@@ -72,7 +72,7 @@ func init() {
 				for _, cert := range zoneCerts {
 					// Clear hostnames first, then delete
 					client.UpdateAccessMutualTLSCertificate(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.UpdateAccessMutualTLSCertificateParams{
-						ID: cert.ID,
+						ID:                  cert.ID,
 						AssociatedHostnames: []string{},
 					})
 					client.DeleteAccessMutualTLSCertificate(ctx, cfv1.ZoneIdentifier(zoneID), cert.ID)
