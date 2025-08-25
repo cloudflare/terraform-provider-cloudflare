@@ -27,7 +27,7 @@ type WorkerVersionModel struct {
 	UsageModel         types.String                                             `tfsdk:"usage_model" json:"usage_model,computed_optional"`
 	CompatibilityFlags customfield.Set[types.String]                            `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
 	Annotations        customfield.NestedObject[WorkerVersionAnnotationsModel]  `tfsdk:"annotations" json:"annotations,computed_optional"`
-	Bindings           customfield.NestedObjectList[WorkerVersionBindingsModel] `tfsdk:"bindings" json:"bindings,computed_optional"`
+	Bindings           customfield.NestedObjectList[WorkerVersionBindingsModel] `tfsdk:"bindings" json:"bindings,optional"`
 	Limits             customfield.NestedObject[WorkerVersionLimitsModel]       `tfsdk:"limits" json:"limits,computed_optional"`
 	CreatedOn          timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Number             types.Int64                                              `tfsdk:"number" json:"number,computed"`
@@ -95,9 +95,11 @@ type WorkerVersionMigrationsStepsTransferredClassesModel struct {
 }
 
 type WorkerVersionModulesModel struct {
-	ContentBase64 types.String `tfsdk:"content_base64" json:"content_base64,required"`
+	ContentBase64 types.String `tfsdk:"-" json:"content_base64"`
 	ContentType   types.String `tfsdk:"content_type" json:"content_type,required"`
 	Name          types.String `tfsdk:"name" json:"name,required"`
+	ContentFile   types.String `tfsdk:"content_file" json:"-,required"`
+	ContentSHA256 types.String `tfsdk:"content_sha256" json:"-,computed"`
 }
 
 type WorkerVersionPlacementModel struct {
@@ -133,7 +135,7 @@ type WorkerVersionBindingsModel struct {
 	StoreID       types.String                        `tfsdk:"store_id" json:"store_id,optional"`
 	Algorithm     jsontypes.Normalized                `tfsdk:"algorithm" json:"algorithm,optional"`
 	Format        types.String                        `tfsdk:"format" json:"format,optional"`
-	Usages        *[]types.String                     `tfsdk:"usages" json:"usages,optional"`
+	Usages        customfield.Set[types.String]       `tfsdk:"usages" json:"usages,optional"`
 	KeyBase64     types.String                        `tfsdk:"key_base64" json:"key_base64,optional"`
 	KeyJwk        jsontypes.Normalized                `tfsdk:"key_jwk" json:"key_jwk,optional"`
 	WorkflowName  types.String                        `tfsdk:"workflow_name" json:"workflow_name,optional"`
