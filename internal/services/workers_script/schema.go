@@ -43,10 +43,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "JSON-encoded metadata about the uploaded parts and Worker configuration.",
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
-					"main_module": schema.StringAttribute{
-						Description: "Name of the uploaded file that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
-						Optional:    true,
-					},
 					"assets": schema.SingleNestedAttribute{
 						Description: "Configuration for assets within a Worker.",
 						Optional:    true,
@@ -282,6 +278,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"body_part": schema.StringAttribute{
+						Description: "Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
+						Optional:    true,
+					},
 					"compatibility_date": schema.StringAttribute{
 						Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
 						Optional:    true,
@@ -302,11 +302,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						ElementType: types.StringType,
 					},
+					"limits": schema.SingleNestedAttribute{
+						Description: "Limits to apply for this Worker.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"cpu_ms": schema.Int64Attribute{
+								Description: "The amount of CPU time this Worker can use in milliseconds.",
+								Optional:    true,
+							},
+						},
+					},
 					"logpush": schema.BoolAttribute{
 						Description: "Whether Logpush is turned on for the Worker.",
 						Computed:    true,
 						Optional:    true,
 						Default:     booldefault.StaticBool(false),
+					},
+					"main_module": schema.StringAttribute{
+						Description: "Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
+						Optional:    true,
 					},
 					"migrations": schema.SingleNestedAttribute{
 						Description: "Migrations to apply for Durable Objects associated with this Worker.",
@@ -521,16 +535,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						Default: stringdefault.StaticString("standard"),
 					},
-					"body_part": schema.StringAttribute{
-						Description: "Name of the uploaded file that contains the Worker script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
-						Optional:    true,
-					},
 				},
 			},
 			"files": schema.SetAttribute{
 				Description: "An array of modules (often JavaScript files) comprising a Worker script. At least one module must be present and referenced in the metadata as `main_module` or `body_part` by filename.<br/>Possible Content-Type(s) are: `application/javascript+module`, `text/javascript+module`, `application/javascript`, `text/javascript`, `text/x-python`, `text/x-python-requirement`, `application/wasm`, `text/plain`, `application/octet-stream`, `application/source-map`.",
 				Optional:    true,
 				ElementType: types.StringType,
+			},
+			"compatibility_date": schema.StringAttribute{
+				Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
+				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the script was created.",
@@ -549,10 +563,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether a Worker contains modules.",
 				Computed:    true,
 			},
+			"last_deployed_from": schema.StringAttribute{
+				Description: "The client most recently used to deploy this Worker.",
+				Computed:    true,
+			},
 			"logpush": schema.BoolAttribute{
 				Description: "Whether Logpush is turned on for the Worker.",
 				Computed:    true,
 				Default:     booldefault.StaticBool(false),
+			},
+			"migration_tag": schema.StringAttribute{
+				Description: "The tag of the Durable Object migration that was most recently applied for this Worker.",
+				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the script was last modified.",
@@ -593,6 +615,37 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				Default: stringdefault.StaticString("standard"),
+			},
+			"compatibility_flags": schema.SetAttribute{
+				Description: "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
+				Computed:    true,
+				CustomType:  customfield.NewSetType[types.String](ctx),
+				ElementType: types.StringType,
+			},
+			"handlers": schema.ListAttribute{
+				Description: "The names of handlers exported as part of the default export.",
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
+			},
+			"named_handlers": schema.ListNestedAttribute{
+				Description: "Named exports, such as Durable Object class implementations and named entrypoints.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[WorkersScriptNamedHandlersModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"handlers": schema.ListAttribute{
+							Description: "The names of handlers exported as part of the named export.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"name": schema.StringAttribute{
+							Description: "The name of the export.",
+							Computed:    true,
+						},
+					},
+				},
 			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
