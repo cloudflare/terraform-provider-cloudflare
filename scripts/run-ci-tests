@@ -352,17 +352,32 @@ main() {
     local failed=0
     local failed_list=""
     
+    # Temporarily disable exit on error during counting
+    set +e
+    
     for service in "${SERVICES[@]}"; do
         local service_name=$(basename "$service")
         local combined_log="$LOG_DIR/${service_name}-combined.log"
         
-        if [ -f "$combined_log" ] && grep -q "✓ Completed:" "$combined_log"; then
+        if [ -f "$combined_log" ] && grep -q "✓ Completed:" "$combined_log" 2>/dev/null; then
             ((passed++))
         else
             ((failed++))
             failed_list="$failed_list$service "
         fi
     done
+    
+    # Re-enable exit on error
+    set -e
+    
+    # Stop background processes first to prevent "Terminated" messages
+    log "${WHITE}Stopping background monitoring...${NC}"
+    kill $progress_pid 2>/dev/null || true
+    kill $tail_monitor_pid 2>/dev/null || true
+    # Give processes time to exit cleanly
+    sleep 2
+    # Kill any remaining child processes silently
+    pkill -P $tail_monitor_pid >/dev/null 2>&1 || true
     
     # Create summary output atomically to minimize interruption window
     {
@@ -385,14 +400,8 @@ main() {
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Summary complete"
     } | cat  # Using cat to force immediate output as a single block
     
-    # NOW start cleanup after summary is shown
-    log "${WHITE}Cleaning up background processes...${NC}"
-    kill $progress_pid 2>/dev/null || true
-    kill $tail_monitor_pid 2>/dev/null || true
-    pkill -P $tail_monitor_pid 2>/dev/null || true
-    
-    # Final status message
-    if [ $failed -gt 0 ] || [ $parallel_result -ne 0 ]; then
+    # Final status message - only fail if actual tests failed, not xargs issues
+    if [ $failed -gt 0 ]; then
         log "${RED}Some tests failed - see details above${NC}"
         exit 1
     fi
@@ -402,8 +411,11 @@ main() {
 
 # Simple cleanup function for any remaining background processes
 cleanup() {
-    jobs -p | xargs -r kill -TERM 2>/dev/null || true
-    pkill -f "tail -f.*$LOG_DIR" 2>/dev/null || true
+    # Quietly clean up any remaining background processes
+    jobs -p | xargs -r kill -TERM >/dev/null 2>&1 || true
+    pkill -f "tail -f.*$LOG_DIR" >/dev/null 2>&1 || true
+    # Give processes a moment to exit
+    sleep 1
 }
 
 trap cleanup EXIT
