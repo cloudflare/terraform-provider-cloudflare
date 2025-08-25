@@ -327,9 +327,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "A read-only token generated when the SCIM integration is enabled for the first time.  It is redacted on subsequent requests.  If you lose this you will need to refresh it at /access/identity_providers/:idpID/refresh_scim_secret.",
 						Computed:    true,
 						Sensitive:   true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.UseStateForUnknown(),
-						},
 					},
 					"user_deprovision": schema.BoolAttribute{
 						Description: "A flag to enable revoking a user's session in Access and Gateway when they have been deprovisioned in the Identity Provider.",
