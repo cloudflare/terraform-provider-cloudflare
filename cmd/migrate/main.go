@@ -96,6 +96,14 @@ func main() {
 		}
 	}
 
+	// Generate moved blocks for list resources after both config and state are migrated
+	if *configDir != "" && *configDir != "false" && *stateFile != "" && *stateFile != "false" && !*dryRun {
+		if err := generateMovedBlocksForListDirectory(*configDir, *stateFile); err != nil {
+			// Don't fail the migration if moved blocks generation fails, just warn
+			log.Printf("Warning: Failed to generate moved blocks: %v\n", err)
+		}
+	}
+
 	if !*dryRun {
 		fmt.Println("Migration completed successfully!")
 	}
@@ -268,6 +276,34 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		if isManagedTransformsResource(block) {
 			transformManagedTransformsBlock(block)
 		}
+
+		if IsCloudflareListResource(block) {
+			// Check if the block has item blocks (static or dynamic) that need to be split out
+			hasItems := false
+			hasDynamicItems := false
+			for _, itemBlock := range block.Body().Blocks() {
+				if itemBlock.Type() == "item" {
+					hasItems = true
+				}
+				// Also check for dynamic "item" blocks
+				if itemBlock.Type() == "dynamic" && len(itemBlock.Labels()) > 0 && itemBlock.Labels()[0] == "item" {
+					hasItems = true
+					hasDynamicItems = true
+				}
+			}
+
+			if hasItems {
+				// Transform the list resource: split items into separate resources
+				blocksToRemove = append(blocksToRemove, block)
+				transformedBlocks := TransformCloudflareListBlock(block)
+				newBlocks = append(newBlocks, transformedBlocks...)
+
+				// TODO: If there are dynamic items, generate moved blocks
+				// This requires coordination with state migration
+				// For now, the moved blocks can be generated separately using GenerateListMovedBlocks
+				_ = hasDynamicItems
+			}
+		}
 	}
 
 	// Remove old blocks
@@ -292,4 +328,58 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 	}
 
 	return formatted, nil
+}
+
+// generateMovedBlocksForListDirectory generates moved blocks for cloudflare_list resources after migration
+func generateMovedBlocksForListDirectory(configDir string, stateFile string) error {
+	// Read the state file
+	stateData, err := os.ReadFile(stateFile)
+	if err != nil {
+		return fmt.Errorf("failed to read state file: %v", err)
+	}
+
+	// Walk through the directory to find config files with list_item resources
+	err = filepath.Walk(configDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Skip directories and non-.tf files
+		if info.IsDir() || !strings.HasSuffix(strings.ToLower(path), ".tf") {
+			return nil
+		}
+
+		// Read the config file
+		configData, err := os.ReadFile(path)
+		if err != nil {
+			log.Printf("Failed to read config file %s: %v", path, err)
+			return nil // Continue with other files
+		}
+
+		// Check if this file has any cloudflare_list_item resources
+		// which indicates it was migrated from a cloudflare_list with items
+		if !strings.Contains(string(configData), "cloudflare_list_item") {
+			return nil
+		}
+
+		fmt.Printf("  Generating moved blocks for %s\n", path)
+
+		// Generate moved blocks for this config
+		updatedConfig, err := GenerateListMovedBlocks(configData, stateData)
+		if err != nil {
+			log.Printf("Failed to generate moved blocks for %s: %v", path, err)
+			return nil // Continue with other files
+		}
+
+		// Write the updated config back
+		if err := os.WriteFile(path, updatedConfig, 0644); err != nil {
+			log.Printf("Failed to write updated config to %s: %v", path, err)
+			return nil // Continue with other files
+		}
+
+		fmt.Printf("    ✓ Added moved blocks to %s\n", path)
+		return nil
+	})
+
+	return err
 }

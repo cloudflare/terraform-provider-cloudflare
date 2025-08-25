@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/tidwall/gjson"
@@ -36,6 +37,7 @@ func transformStateFile(filename string) error {
 func transformStateJSON(data []byte) ([]byte, error) {
 	jsonStr := string(data)
 	result := jsonStr
+	isEntireStateProcessed := false
 
 	// Process each resource
 	resources := gjson.Get(jsonStr, "resources")
@@ -75,6 +77,18 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_managed_transforms":
 				result = transformManagedTransformsStateJSON(result, path)
+
+			case "cloudflare_list":
+				if !isEntireStateProcessed {
+					listResult, err := transformListStateJSON(jsonStr, path)
+					if err != nil {
+						log.Printf("Failed to transform list resource at %s: %v", path, err)
+						return false
+					}
+					result = listResult
+					isEntireStateProcessed = true
+					return true
+				}
 			}
 
 			return true
@@ -185,6 +199,20 @@ func transformTieredCacheStateJSON(json string, instancePath string, resourcePat
 	}
 
 	return json
+}
+
+// transformListStateJSON handles v4 to v5 state migration for cloudflare_list
+// It removes the item and items fields from the state as they are now separate resources
+func transformListStateJSON(json string, instancePath string) (string, error) {
+	migratedState, err := MigrateCloudflareListToV5([]byte(json))
+	if err != nil {
+		return json, err
+	}
+	v5State, err := migratedState.ToJSONIndented()
+	if err != nil {
+		return json, err
+	}
+	return string(v5State), nil
 }
 
 // transformLoadBalancerStateJSON handles v4 to v5 state migration for cloudflare_load_balancer
