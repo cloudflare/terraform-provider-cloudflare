@@ -272,6 +272,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		if isManagedTransformsResource(block) {
 			transformManagedTransformsBlock(block)
 		}
+
+		if isAccessGroupResource(block) {
+			transformAccessGroupBlock(block, diags)
+		}
 	}
 
 	// Remove old blocks
