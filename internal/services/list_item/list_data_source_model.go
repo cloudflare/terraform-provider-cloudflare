@@ -19,6 +19,7 @@ type ListItemsResultListDataSourceEnvelope struct {
 type ListItemsDataSourceModel struct {
 	AccountID types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
 	ListID    types.String                                                 `tfsdk:"list_id" path:"list_id,required"`
+	PerPage   types.Int64                                                  `tfsdk:"per_page" query:"per_page,optional"`
 	Search    types.String                                                 `tfsdk:"search" query:"search,optional"`
 	MaxItems  types.Int64                                                  `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ListItemsResultDataSourceModel] `tfsdk:"result"`
@@ -29,6 +30,9 @@ func (m *ListItemsDataSourceModel) toListParams(_ context.Context) (params rules
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
+	if !m.PerPage.IsNull() {
+		params.PerPage = cloudflare.F(m.PerPage.ValueInt64())
+	}
 	if !m.Search.IsNull() {
 		params.Search = cloudflare.F(m.Search.ValueString())
 	}
