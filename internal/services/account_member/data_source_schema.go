@@ -31,6 +31,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Account identifier tag.",
 				Required:    true,
 			},
+			"email": schema.StringAttribute{
+				Description: "The contact email address of the user.",
+				Computed:    true,
+			},
 			"status": schema.StringAttribute{
 				Description: "A member's status in the account.\nAvailable values: \"accepted\", \"pending\".",
 				Computed:    true,

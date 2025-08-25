@@ -22,6 +22,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
 func init() {
 	resource.AddTestSweepers("cloudflare_zero_trust_access_application", &resource.Sweeper{
 		Name: "cloudflare_zero_trust_access_application",
@@ -105,6 +109,12 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cors_headers"), knownvalue.Null()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("auto_redirect_to_identity"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("service_auth_401_redirect"), knownvalue.Bool(false)),
+
+					// destinations and self_hosted_domains should be populated from the API
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destinations"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destinations").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("public")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destinations").AtSliceIndex(0).AtMapKey("uri"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("self_hosted_domains"), knownvalue.ListSizeExact(1)),
 				},
 			},
 			{

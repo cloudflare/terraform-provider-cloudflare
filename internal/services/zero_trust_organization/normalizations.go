@@ -44,9 +44,28 @@ func normalizeImportZeroTrustOrganizationAPIData(_ context.Context, data *ZeroTr
 		data.AutoRedirectToIdentity = types.BoolValue(false)
 	}
 
-	var empty ZeroTrustOrganizationLoginDesignModel
-	if data.LoginDesign != nil || *data.LoginDesign == empty {
-		data.LoginDesign = nil
+	// Set LoginDesign to nil if all fields are empty/null
+	if data.LoginDesign != nil {
+		allEmpty := true
+		if !data.LoginDesign.BackgroundColor.IsNull() && data.LoginDesign.BackgroundColor.ValueString() != "" {
+			allEmpty = false
+		}
+		if !data.LoginDesign.FooterText.IsNull() && data.LoginDesign.FooterText.ValueString() != "" {
+			allEmpty = false
+		}
+		if !data.LoginDesign.HeaderText.IsNull() && data.LoginDesign.HeaderText.ValueString() != "" {
+			allEmpty = false
+		}
+		if !data.LoginDesign.LogoPath.IsNull() && data.LoginDesign.LogoPath.ValueString() != "" {
+			allEmpty = false
+		}
+		if !data.LoginDesign.TextColor.IsNull() && data.LoginDesign.TextColor.ValueString() != "" {
+			allEmpty = false
+		}
+		
+		if allEmpty {
+			data.LoginDesign = nil
+		}
 	}
 
 	return diags

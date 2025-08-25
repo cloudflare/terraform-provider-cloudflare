@@ -38,12 +38,16 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toReadParams(_ cont
 
 func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessInfrastructureTargetListParams, diags diag.Diagnostics) {
 	mFilterIPs := []string{}
-	for _, item := range *m.Filter.IPs {
-		mFilterIPs = append(mFilterIPs, item.ValueString())
+	if m.Filter.IPs != nil {
+		for _, item := range *m.Filter.IPs {
+			mFilterIPs = append(mFilterIPs, item.ValueString())
+		}
 	}
 	mFilterTargetIDs := []string{}
-	for _, item := range *m.Filter.TargetIDs {
-		mFilterTargetIDs = append(mFilterTargetIDs, item.ValueString())
+	if m.Filter.TargetIDs != nil {
+		for _, item := range *m.Filter.TargetIDs {
+			mFilterTargetIDs = append(mFilterTargetIDs, item.ValueString())
+		}
 	}
 	mFilterCreatedAfter, errs := m.Filter.CreatedAfter.ValueRFC3339Time()
 	diags.Append(errs...)

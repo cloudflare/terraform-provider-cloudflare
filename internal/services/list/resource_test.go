@@ -19,6 +19,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 const listTestPrefix = "tf_test_list_"
 
 func init() {

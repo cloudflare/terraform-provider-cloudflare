@@ -13,6 +13,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 func init() {
 	resource.AddTestSweepers("cloudflare_dns_firewall", &resource.Sweeper{
 		Name: "cloudflare_dns_firewall",

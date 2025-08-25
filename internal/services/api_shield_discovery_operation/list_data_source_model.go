@@ -33,12 +33,16 @@ type APIShieldDiscoveryOperationsDataSourceModel struct {
 
 func (m *APIShieldDiscoveryOperationsDataSourceModel) toListParams(_ context.Context) (params api_gateway.DiscoveryOperationListParams, diags diag.Diagnostics) {
 	mHost := []string{}
-	for _, item := range *m.Host {
-		mHost = append(mHost, item.ValueString())
+	if m.Host != nil {
+		for _, item := range *m.Host {
+			mHost = append(mHost, item.ValueString())
+		}
 	}
 	mMethod := []string{}
-	for _, item := range *m.Method {
-		mMethod = append(mMethod, item.ValueString())
+	if m.Method != nil {
+		for _, item := range *m.Method {
+			mMethod = append(mMethod, item.ValueString())
+		}
 	}
 
 	params = api_gateway.DiscoveryOperationListParams{

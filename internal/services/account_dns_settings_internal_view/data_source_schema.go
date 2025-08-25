@@ -47,10 +47,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the view.",
 				Computed:    true,
 			},
-			"zones": schema.ListAttribute{
+			"zones": schema.SetAttribute{
 				Description: "The list of zones linked to this view.",
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"filter": schema.SingleNestedAttribute{

@@ -25,7 +25,7 @@ type DNSRecordModel struct {
 	Data              *DNSRecordDataModel                              `tfsdk:"data" json:"data,optional"`
 	Proxied           types.Bool                                       `tfsdk:"proxied" json:"proxied,computed_optional"`
 	TTL               types.Float64                                    `tfsdk:"ttl" json:"ttl,required"`
-	Tags              customfield.List[types.String]                   `tfsdk:"tags" json:"tags,computed_optional"`
+	Tags              customfield.Set[types.String]                    `tfsdk:"tags" json:"tags,computed_optional"`
 	Settings          customfield.NestedObject[DNSRecordSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
 	CommentModifiedOn timetypes.RFC3339                                `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
 	CreatedOn         timetypes.RFC3339                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`

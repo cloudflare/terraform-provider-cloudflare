@@ -77,9 +77,9 @@ type AccountDNSSettingsInternalViewsNameDataSourceModel struct {
 }
 
 type AccountDNSSettingsInternalViewsResultDataSourceModel struct {
-	ID           types.String                   `tfsdk:"id" json:"id,computed"`
-	CreatedTime  timetypes.RFC3339              `tfsdk:"created_time" json:"created_time,computed" format:"date-time"`
-	ModifiedTime timetypes.RFC3339              `tfsdk:"modified_time" json:"modified_time,computed" format:"date-time"`
-	Name         types.String                   `tfsdk:"name" json:"name,computed"`
-	Zones        customfield.List[types.String] `tfsdk:"zones" json:"zones,computed"`
+	ID           types.String                  `tfsdk:"id" json:"id,computed"`
+	CreatedTime  timetypes.RFC3339             `tfsdk:"created_time" json:"created_time,computed" format:"date-time"`
+	ModifiedTime timetypes.RFC3339             `tfsdk:"modified_time" json:"modified_time,computed" format:"date-time"`
+	Name         types.String                  `tfsdk:"name" json:"name,computed"`
+	Zones        customfield.Set[types.String] `tfsdk:"zones" json:"zones,computed"`
 }

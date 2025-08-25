@@ -45,9 +45,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Whether to refuse to answer queries for the ANY type",
 							Computed:    true,
 						},
-						"dns_firewall_ips": schema.ListAttribute{
+						"dns_firewall_ips": schema.SetAttribute{
 							Computed:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
+							CustomType:  customfield.NewSetType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"ecs_fallback": schema.BoolAttribute{
@@ -98,9 +98,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								float64validator.Between(0, 2),
 							},
 						},
-						"upstream_ips": schema.ListAttribute{
+						"upstream_ips": schema.SetAttribute{
 							Computed:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
+							CustomType:  customfield.NewSetType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"attack_mitigation": schema.SingleNestedAttribute{

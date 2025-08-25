@@ -66,7 +66,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"filters": schema.ListAttribute{
-							Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
+							Description: "The protocol or layer to evaluate the traffic, identity, and device. posture expressions.",
 							Computed:    true,
 							Validators: []validator.List{
 								listvalidator.ValueStringsAre(
@@ -143,11 +143,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"not_sharable": schema.BoolAttribute{
-							Description: "The rule cannot be shared via the Orgs API",
+							Description: "The rule cannot be shared via the Orgs API.",
 							Computed:    true,
 						},
 						"read_only": schema.BoolAttribute{
-							Description: "The rule was shared via the Orgs API and cannot be edited by the current account",
+							Description: "The rule was shared via the Orgs API and cannot be edited by the current account.",
 							Computed:    true,
 						},
 						"rule_settings": schema.SingleNestedAttribute{
@@ -272,11 +272,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsBlockPageDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"target_uri": schema.StringAttribute{
-											Description: "URI to which the user will be redirected",
+											Description: "URI to which the user will be redirected.",
 											Computed:    true,
 										},
 										"include_context": schema.BoolAttribute{
-											Description: "If true, context information will be passed as query parameters",
+											Description: "If true, context information will be passed as query parameters.",
 											Computed:    true,
 										},
 									},
@@ -399,7 +399,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"l4override": schema.SingleNestedAttribute{
-									Description: "Send matching traffic to the supplied destination IP address and port.",
+									Description: "Send matching traffic to the supplied destination IP address. and port.",
 									Computed:    true,
 									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsL4overrideDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
@@ -419,11 +419,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsNotificationSettingsDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"enabled": schema.BoolAttribute{
-											Description: "Set notification on",
+											Description: "Set notification on.",
 											Computed:    true,
 										},
 										"include_context": schema.BoolAttribute{
-											Description: "If true, context information will be passed as query parameters",
+											Description: "If true, context information will be passed as query parameters.",
 											Computed:    true,
 										},
 										"msg": schema.StringAttribute{
@@ -458,7 +458,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"quarantine": schema.SingleNestedAttribute{
-									Description: "Settings that apply to quarantine rules",
+									Description: "Settings that apply to quarantine rules.",
 									Computed:    true,
 									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsQuarantineDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
@@ -490,20 +490,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"redirect": schema.SingleNestedAttribute{
-									Description: "Settings that apply to redirect rules",
+									Description: "Settings that apply to redirect rules.",
 									Computed:    true,
 									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsRedirectDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"target_uri": schema.StringAttribute{
-											Description: "URI to which the user will be redirected",
+											Description: "URI to which the user will be redirected.",
 											Computed:    true,
 										},
 										"include_context": schema.BoolAttribute{
-											Description: "If true, context information will be passed as query parameters",
+											Description: "If true, context information will be passed as query parameters.",
 											Computed:    true,
 										},
 										"preserve_path_and_query": schema.BoolAttribute{
-											Description: "If true, the path and query parameters from the original request will be appended to target_uri",
+											Description: "If true, the path and query parameters from the original request will be appended to target_uri.",
 											Computed:    true,
 										},
 									},
@@ -590,7 +590,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"source_account": schema.StringAttribute{
-							Description: "account tag of account that created the rule",
+							Description: "account tag of account that created the rule.",
 							Computed:    true,
 						},
 						"updated_at": schema.StringAttribute{
@@ -598,7 +598,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"version": schema.Int64Attribute{
-							Description: "version number of the rule",
+							Description: "version number of the rule.",
 							Computed:    true,
 						},
 						"warning_status": schema.StringAttribute{

@@ -21,6 +21,7 @@ import (
 var _ resource.ResourceWithConfigure = (*ZeroTrustAccessApplicationResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ZeroTrustAccessApplicationResource)(nil)
 var _ resource.ResourceWithImportState = (*ZeroTrustAccessApplicationResource)(nil)
+var _ resource.ResourceWithUpgradeState = (*ZeroTrustAccessApplicationResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustAccessApplicationResource{}

@@ -18,6 +18,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 func init() {
 	resource.AddTestSweepers("cloudflare_spectrum_applications", &resource.Sweeper{
 		Name: "cloudflare_spectrum_applications",

@@ -36,10 +36,10 @@ type ZeroTrustAccessInfrastructureTargetIPModel struct {
 
 type ZeroTrustAccessInfrastructureTargetIPIPV4Model struct {
 	IPAddr           types.String `tfsdk:"ip_addr" json:"ip_addr,optional"`
-	VirtualNetworkID types.String `tfsdk:"virtual_network_id" json:"virtual_network_id,optional"`
+	VirtualNetworkID types.String `tfsdk:"virtual_network_id" json:"virtual_network_id,computed_optional"`
 }
 
 type ZeroTrustAccessInfrastructureTargetIPIPV6Model struct {
 	IPAddr           types.String `tfsdk:"ip_addr" json:"ip_addr,optional"`
-	VirtualNetworkID types.String `tfsdk:"virtual_network_id" json:"virtual_network_id,optional"`
+	VirtualNetworkID types.String `tfsdk:"virtual_network_id" json:"virtual_network_id,computed_optional"`
 }

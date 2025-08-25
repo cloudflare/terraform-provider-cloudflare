@@ -23,9 +23,9 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	Enabled                    types.Bool                                                                     `tfsdk:"enabled" json:"enabled,optional"`
 	LANAllowMinutes            types.Float64                                                                  `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional"`
 	LANAllowSubnetSize         types.Float64                                                                  `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional"`
-	Exclude                    *[]*ZeroTrustDeviceCustomProfileExcludeModel                                   `tfsdk:"exclude" json:"exclude,optional"`
-	Include                    *[]*ZeroTrustDeviceCustomProfileIncludeModel                                   `tfsdk:"include" json:"include,optional"`
-	ServiceModeV2              *ZeroTrustDeviceCustomProfileServiceModeV2Model                                `tfsdk:"service_mode_v2" json:"service_mode_v2,optional"`
+	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileExcludeModel]         `tfsdk:"exclude" json:"exclude,computed_optional"`
+	Include                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileIncludeModel]         `tfsdk:"include" json:"include,computed_optional"`
+	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceCustomProfileServiceModeV2Model]       `tfsdk:"service_mode_v2" json:"service_mode_v2,computed_optional"`
 	AllowModeSwitch            types.Bool                                                                     `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed_optional"`
 	AllowUpdates               types.Bool                                                                     `tfsdk:"allow_updates" json:"allow_updates,computed_optional"`
 	AllowedToLeave             types.Bool                                                                     `tfsdk:"allowed_to_leave" json:"allowed_to_leave,computed_optional"`
@@ -53,20 +53,20 @@ func (m ZeroTrustDeviceCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustD
 }
 
 type ZeroTrustDeviceCustomProfileExcludeModel struct {
-	Address     types.String `tfsdk:"address" json:"address,optional"`
-	Description types.String `tfsdk:"description" json:"description,optional"`
-	Host        types.String `tfsdk:"host" json:"host,optional"`
+	Address     types.String `tfsdk:"address" json:"address,computed_optional"`
+	Description types.String `tfsdk:"description" json:"description,computed_optional"`
+	Host        types.String `tfsdk:"host" json:"host,computed_optional"`
 }
 
 type ZeroTrustDeviceCustomProfileIncludeModel struct {
-	Address     types.String `tfsdk:"address" json:"address,optional"`
-	Description types.String `tfsdk:"description" json:"description,optional"`
-	Host        types.String `tfsdk:"host" json:"host,optional"`
+	Address     types.String `tfsdk:"address" json:"address,computed_optional"`
+	Description types.String `tfsdk:"description" json:"description,computed_optional"`
+	Host        types.String `tfsdk:"host" json:"host,computed_optional"`
 }
 
 type ZeroTrustDeviceCustomProfileServiceModeV2Model struct {
-	Mode types.String  `tfsdk:"mode" json:"mode,optional"`
-	Port types.Float64 `tfsdk:"port" json:"port,optional"`
+	Mode types.String  `tfsdk:"mode" json:"mode,computed_optional"`
+	Port types.Float64 `tfsdk:"port" json:"port,computed_optional"`
 }
 
 type ZeroTrustDeviceCustomProfileFallbackDomainsModel struct {

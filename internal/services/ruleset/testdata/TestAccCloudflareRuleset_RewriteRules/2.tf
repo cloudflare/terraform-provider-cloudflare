@@ -35,3 +35,8 @@ resource "cloudflare_ruleset" "my_ruleset" {
     }
   ]
 }
+
+data "cloudflare_ruleset" "my_ruleset" {
+  zone_id = var.zone_id
+  id      = cloudflare_ruleset.my_ruleset.id
+}

@@ -17,6 +17,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 func init() {
 	resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared_virtual_network", &resource.Sweeper{
 		Name: "cloudflare_zero_trust_tunnel_cloudflared_virtual_network",

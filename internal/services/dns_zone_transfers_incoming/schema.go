@@ -33,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Zone name.",
 				Required:    true,
 			},
-			"peers": schema.ListAttribute{
+			"peers": schema.SetAttribute{
 				Description: "A list of peer tags.",
 				Required:    true,
 				ElementType: types.StringType,

@@ -57,6 +57,10 @@ func (d *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 
+	if data.ID.IsNull() {
+		data.ID = data.RulesetID
+	}
+
 	params, diags := data.toReadParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -67,7 +71,7 @@ func (d *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	env := RulesetResultDataSourceEnvelope{*data}
 	_, err := d.client.Rulesets.Get(
 		ctx,
-		data.RulesetID.ValueString(),
+		data.ID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

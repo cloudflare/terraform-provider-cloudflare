@@ -25,6 +25,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 func init() {
 	resource.AddTestSweepers("cloudflare_managed_headers", &resource.Sweeper{
 		Name: "cloudflare_managed_headers",

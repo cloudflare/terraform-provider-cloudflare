@@ -58,13 +58,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"type": schema.StringAttribute{
-				Description: "Type of webhook endpoint.\nAvailable values: \"slack\", \"generic\", \"gchat\".",
+				Description: "Type of webhook endpoint.\nAvailable values: \"datadog\", \"discord\", \"feishu\", \"gchat\", \"generic\", \"opsgenie\", \"slack\", \"splunk\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
-						"slack",
-						"generic",
+						"datadog",
+						"discord",
+						"feishu",
 						"gchat",
+						"generic",
+						"opsgenie",
+						"slack",
+						"splunk",
 					),
 				},
 			},

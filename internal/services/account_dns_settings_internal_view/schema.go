@@ -32,7 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the view.",
 				Required:    true,
 			},
-			"zones": schema.ListAttribute{
+			"zones": schema.SetAttribute{
 				Description: "The list of zones linked to this view.",
 				Required:    true,
 				ElementType: types.StringType,

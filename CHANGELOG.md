@@ -1,5 +1,80 @@
 # Changelog
 
+## 5.9.0 (2025-08-25)
+
+Full Changelog: [v5.8.4...v5.9.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.8.4...v5.9.0)
+
+### Features
+
+* **api:** api update ([d614e59](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d614e5914d47b088fc4d05e9a559eb1745664821))
+* **api:** api update ([b1cb9f3](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b1cb9f3104a55c66ee201b8003d9be9565f492b2))
+* **api:** api update ([098a710](https://github.com/cloudflare/terraform-provider-cloudflare/commit/098a710a0fcd535843d8a6ba869efed9bf1b4eed))
+* **api:** api update ([da44c34](https://github.com/cloudflare/terraform-provider-cloudflare/commit/da44c34ed0c83d316557f40e34cb22ff189a16e5))
+* **api:** api update ([276d413](https://github.com/cloudflare/terraform-provider-cloudflare/commit/276d4135214a67b1e263c76a43d3b33b761972c6))
+* **api:** api update ([403f6a6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/403f6a60f718bcc73edea84bbfcf02d280eb0562))
+* **api:** api update ([51788e7](https://github.com/cloudflare/terraform-provider-cloudflare/commit/51788e7957c0c4dbb5d2ba5d88dd09a2a6b29973))
+* **api:** api update ([841fa60](https://github.com/cloudflare/terraform-provider-cloudflare/commit/841fa60466aac847af13272c68a4af7c28a852c5))
+* **api:** api update ([cfcd80d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cfcd80d3a0d35c4888023b5ca1ade754a3614490))
+* **api:** api update ([8832c77](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8832c7792bdbc325df787d4c0ab1c3e47f665a53))
+* **api:** api update ([f02e8ce](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f02e8ced752689e0deee321d82df5958707c5f02))
+* **api:** api update ([bfd878b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bfd878b5e8f06a5ef0af387294b387750fb80957))
+* migrations for zero_trust_access_application ([bb35c7c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bb35c7cfa814d9e705bd0709eddec2b6c1a17c3d))
+* migrations for zero_trust_access_identity_provider ([75e412f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/75e412f7b4b5898832c62cc148cd79f9f43e751d))
+* migrations for zero_trust_access_mtls_certificate ([4d547c5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4d547c5b9d4f1d691bbdb698ee31d03d87c47b6d))
+* migrations for zero_trust_access_mtls_hostname_settings ([82ff1cb](https://github.com/cloudflare/terraform-provider-cloudflare/commit/82ff1cb551385c8d27b5f4892e3abb5ef3fa5876))
+* modernize certificate_pack ([abbd11a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/abbd11aa14ab74b6db53b61b4d940e3d5f6488ff))
+* modernize tiered cache tests ([d0bc656](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d0bc656741c3823a020e2584e12d0af18597fc35))
+* **ruleset:** add read-only attributes to data source ([d402210](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d402210a6fa7191aded235b08eb242506b647860))
+* zero trust access policy migrations ([134df93](https://github.com/cloudflare/terraform-provider-cloudflare/commit/134df93b0fb081435dd3b57c6934379159fdd209))
+
+
+### Bug Fixes
+
+* check before de-referencing potentially null ptrs ([d756bed](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d756bedf7e379203574db49ee1f76d4d8f4196b5))
+* dynamic type validators should handle int and floats correctly ([5ae1226](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5ae12261d7b25e7d0d3f18c38682ee00e0a45a2a))
+* encoder crash for nested nils in dynamic types ([91e9782](https://github.com/cloudflare/terraform-provider-cloudflare/commit/91e97825e1abc5ef9fb5bc95127a69a0435ce5b0))
+* **migrate:** fix incorrect setting name for `0rtt` ([4943ca2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4943ca2fd8950d2eef892ce298cc9df7c7477f42))
+* populate computed_optional collections from API responses ([d6c64dc](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d6c64dc8775540dc5179cf1d655b374fba0c22bc))
+* **ruleset:** update data sources and documentation ([6a312e4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/6a312e4362c82e4c56db912c6787f2e0b0cc2c29))
+* **zero_trust_device_custom_profile_local_domain_fallback:** fix recurring diffs and add acceptance tests for multiple domains ([c8e790a](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c8e790a4cd9915186ae2a7ec325ba4b78330b63d))
+* **zero_trust_device_custom_profile:** fix recurring diffs and add acceptance tests ([2b358e6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2b358e677e10cdfae0cb1b1a8d555d6fc2ade0ac))
+* **zone_setting:** remove grit patterns for `cloudflare_zone_settings_override` ([3b6edda](https://github.com/cloudflare/terraform-provider-cloudflare/commit/3b6edda0c8bc158e869813445d45d814c7e07387))
+
+
+### Chores
+
+* add tests for zero_trust_device_custom_profile ([cc567a8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cc567a80c61bbbd8c09ce722b243c4cbff4d9f65))
+* add zero trust device tests to CI ([bcff1a8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bcff1a8460a2776db0943e28ae0bc55a0c621227))
+* **api:** upload stainless config from cloudflare-config ([ca57125](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ca57125e28e043799f0f75de5869fb32fa37faeb))
+* **api:** upload stainless config from cloudflare-config ([416b5c1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/416b5c10501e443a430709c52dc289bf0c1e47df))
+* disable failing queue and r2bucket sweepers ([e1394a8](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e1394a8d5bd8231c6f80208fb02db03abba88736))
+* fix ci script ([5991be1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5991be1343d421535d4ed65515ec0c311e0dea0c))
+* fix sweepers for many resources ([c2f66f6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/c2f66f627656a4a0b6a59c3387d37cbacc928dce))
+* fix TestAccCloudflareAccessOrganization ([8b0e176](https://github.com/cloudflare/terraform-provider-cloudflare/commit/8b0e176dea5760322c2de3cb3c812d09f79c055c))
+* fix TestAccCloudflareAccessPolicy_ApprovalGroup ([52ef60b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/52ef60bdca1bce374318734a016659da5557a566))
+* fix workers_script tests ([1116eac](https://github.com/cloudflare/terraform-provider-cloudflare/commit/1116eac5d6df11f527f1a5bc8ece1cfe6730d2dd))
+* fix zero_trust_access_identity_provider tests ([2575473](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2575473c8c14078ad437dfbf71fadb0a54de7d43))
+* fix zero_trust_access_mtls_certificate acct tests ([a00f421](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a00f4214fe89327ed7b8f483162e226338b675b9))
+* fix zero_trust_access_mtls_hostname_settings tests ([166517f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/166517fe66cd791f8d4e3bbaa49d6946addb8e4e))
+* improve integrity test error messages ([2d410d2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2d410d2a1d985a9524785c7ace0277aa7b857fd0))
+* increase ci test timeout ([5da9eab](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5da9eabfbf2565a6e8aa7925c1d575f651da490b))
+* **internal:** add test rule to lint for dynamic attributes that do not have planmodifier ([a725465](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a7254653b34797b0f754198606bd81a3a9160ce2))
+* **internal:** codegen related update ([cde67a4](https://github.com/cloudflare/terraform-provider-cloudflare/commit/cde67a40224cc2633d715f3897f0006748fc3ff5))
+* **internal:** codegen related update ([5d2fe3d](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5d2fe3d3d1b788b25912d8696947439814b2c384))
+* **internal:** codegen related update ([a9610ce](https://github.com/cloudflare/terraform-provider-cloudflare/commit/a9610ce8a3ef636a6bb069f7fbd70c037671076b))
+* **internal:** codegen related update ([90aa9c5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/90aa9c5558e8a1e15cb9e3153973e4b55b8af78d))
+* **internal:** codegen related update ([2b37de1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2b37de16009c5664d9bb4a895f691ef5b9c167de))
+* **internal:** codegen related update ([b27f531](https://github.com/cloudflare/terraform-provider-cloudflare/commit/b27f53154750aae21dd4c44eb4dd70e23dd6f157))
+* **internal:** codegen related update ([2275aa2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2275aa2d73e17e0f8ae0dd28f98f3e61ae4554d2))
+* **internal:** codegen related update ([4cbcff5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/4cbcff5fba7acf268ab5c46e79f93914d2dd8f6d))
+* **internal:** codegen related update ([2136d08](https://github.com/cloudflare/terraform-provider-cloudflare/commit/2136d086ba77d5107e86f1acb09b5ccead821cb1))
+* merge acct GH steps into a single step ([d27710c](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d27710c5a7d8842d86024f3a084df981388cf3aa))
+* parallel ci test runs ([260a5b9](https://github.com/cloudflare/terraform-provider-cloudflare/commit/260a5b924262eb8148137034d8baf8a10ac555e5))
+* run sweeper before any test run ([5bac861](https://github.com/cloudflare/terraform-provider-cloudflare/commit/5bac86115fcb271aa2678814c228fd25ce914938))
+* separate acceptance and migration tests ([e466442](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e46644276c1dbeeff03c007d1351ad584973a89f))
+* skip failing ruleset test ([7746f2b](https://github.com/cloudflare/terraform-provider-cloudflare/commit/7746f2b951e2d32fdaf07dd61e224d7fa39d6122))
+* zero_trust_access_mtls_certificate tests ([07e374e](https://github.com/cloudflare/terraform-provider-cloudflare/commit/07e374e6a32c00a2a0acfba3c805b8528af62347))
+
 ## 5.8.4 (2025-08-15)
 
 Full Changelog: [v5.8.3...v5.8.4](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.8.3...v5.8.4)

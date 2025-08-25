@@ -29,7 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"settings": schema.SingleNestedAttribute{
-				Description: "Account settings",
+				Description: "Account settings.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"activity_log": schema.SingleNestedAttribute{
@@ -68,11 +68,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{
-										Description: "Set notification on",
+										Description: "Set notification on.",
 										Optional:    true,
 									},
 									"include_context": schema.BoolAttribute{
-										Description: "If true, context information will be passed as query parameters",
+										Description: "If true, context information will be passed as query parameters.",
 										Optional:    true,
 									},
 									"msg": schema.StringAttribute{
@@ -96,7 +96,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 							"enabled": schema.BoolAttribute{
-								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
+								Description: "Enable only cipher suites and TLS versions compliant with FIPS. 140-2.",
 								Optional:    true,
 							},
 							"footer_text": schema.StringAttribute{
@@ -139,12 +139,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 							"read_only": schema.BoolAttribute{
-								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
+								Description: "This setting was shared via the Orgs API and cannot be edited by the current account.",
 								Computed:    true,
 								Optional:    true,
 							},
 							"source_account": schema.StringAttribute{
-								Description: "Account tag of account that shared this setting",
+								Description: "Account tag of account that shared this setting.",
 								Computed:    true,
 								Optional:    true,
 							},
@@ -157,7 +157,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 							"version": schema.Int64Attribute{
-								Description: "Version number of the setting",
+								Description: "Version number of the setting.",
 								Computed:    true,
 								Optional:    true,
 							},
@@ -201,12 +201,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"custom_certificate": schema.SingleNestedAttribute{
-						Description:        "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`)",
+						Description:        "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`).",
 						Optional:           true,
 						DeprecationMessage: "This attribute is deprecated.",
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Enable use of custom certificate authority for signing Gateway traffic.",
+								Description: "Enable use of custom certificate authority for signing Gateway. traffic.",
 								Required:    true,
 							},
 							"id": schema.StringAttribute{
@@ -234,17 +234,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 							"read_only": schema.BoolAttribute{
-								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
+								Description: "This setting was shared via the Orgs API and cannot be edited by the current account.",
 								Optional:    true,
 								Computed:    true,
 							},
 							"source_account": schema.StringAttribute{
-								Description: "Account tag of account that shared this setting",
+								Description: "Account tag of account that shared this setting.",
 								Optional:    true,
 								Computed:    true,
 							},
 							"version": schema.Int64Attribute{
-								Description: "Version number of the setting",
+								Description: "Version number of the setting.",
 								Optional:    true,
 								Computed:    true,
 							},
@@ -255,7 +255,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"tls": schema.BoolAttribute{
-								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
+								Description: "Enable only cipher suites and TLS versions compliant with FIPS. 140-2.",
 								Optional:    true,
 							},
 						},
@@ -271,7 +271,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"inspection": schema.SingleNestedAttribute{
-						Description: "Setting to define inspection settings",
+						Description: "Setting to define inspection settings.",
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"mode": schema.StringAttribute{

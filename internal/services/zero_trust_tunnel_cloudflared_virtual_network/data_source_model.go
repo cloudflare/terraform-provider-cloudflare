@@ -47,6 +47,9 @@ func (m *ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel) toListParams(_
 	if !m.Filter.IsDefault.IsNull() {
 		params.IsDefault = cloudflare.F(m.Filter.IsDefault.ValueBool())
 	}
+	if !m.Filter.IsDefaultNetwork.IsNull() {
+		params.IsDefaultNetwork = cloudflare.F(m.Filter.IsDefaultNetwork.ValueBool())
+	}
 	if !m.Filter.IsDeleted.IsNull() {
 		params.IsDeleted = cloudflare.F(m.Filter.IsDeleted.ValueBool())
 	}
@@ -58,8 +61,9 @@ func (m *ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel) toListParams(_
 }
 
 type ZeroTrustTunnelCloudflaredVirtualNetworkFindOneByDataSourceModel struct {
-	ID        types.String `tfsdk:"id" query:"id,optional"`
-	IsDefault types.Bool   `tfsdk:"is_default" query:"is_default,optional"`
-	IsDeleted types.Bool   `tfsdk:"is_deleted" query:"is_deleted,optional"`
-	Name      types.String `tfsdk:"name" query:"name,optional"`
+	ID               types.String `tfsdk:"id" query:"id,optional"`
+	IsDefault        types.Bool   `tfsdk:"is_default" query:"is_default,optional"`
+	IsDefaultNetwork types.Bool   `tfsdk:"is_default_network" query:"is_default_network,optional"`
+	IsDeleted        types.Bool   `tfsdk:"is_deleted" query:"is_deleted,optional"`
+	Name             types.String `tfsdk:"name" query:"name,optional"`
 }

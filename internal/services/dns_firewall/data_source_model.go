@@ -30,8 +30,8 @@ type DNSFirewallDataSourceModel struct {
 	NegativeCacheTTL     types.Float64                                                        `tfsdk:"negative_cache_ttl" json:"negative_cache_ttl,computed"`
 	Ratelimit            types.Float64                                                        `tfsdk:"ratelimit" json:"ratelimit,computed"`
 	Retries              types.Float64                                                        `tfsdk:"retries" json:"retries,computed"`
-	DNSFirewallIPs       customfield.List[types.String]                                       `tfsdk:"dns_firewall_ips" json:"dns_firewall_ips,computed"`
-	UpstreamIPs          customfield.List[types.String]                                       `tfsdk:"upstream_ips" json:"upstream_ips,computed"`
+	DNSFirewallIPs       customfield.Set[types.String]                                        `tfsdk:"dns_firewall_ips" json:"dns_firewall_ips,computed"`
+	UpstreamIPs          customfield.Set[types.String]                                        `tfsdk:"upstream_ips" json:"upstream_ips,computed"`
 	AttackMitigation     customfield.NestedObject[DNSFirewallAttackMitigationDataSourceModel] `tfsdk:"attack_mitigation" json:"attack_mitigation,computed"`
 }
 

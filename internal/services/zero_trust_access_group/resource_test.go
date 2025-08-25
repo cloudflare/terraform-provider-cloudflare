@@ -19,6 +19,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 func init() {
 	resource.AddTestSweepers("cloudflare_zero_trust_access_group", &resource.Sweeper{
 		Name: "cloudflare_zero_trust_access_group",

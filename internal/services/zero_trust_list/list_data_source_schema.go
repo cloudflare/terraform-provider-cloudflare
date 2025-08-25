@@ -75,7 +75,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										CustomType: timetypes.RFC3339Type{},
 									},
 									"description": schema.StringAttribute{
-										Description: "The description of the list item, if present",
+										Description: "The description of the list item, if present.",
 										Computed:    true,
 									},
 									"value": schema.StringAttribute{

@@ -3,7 +3,6 @@ package apijson
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"math/big"
 	"reflect"
@@ -185,10 +184,6 @@ func (d *decoderBuilder) newTypeDecoder(t reflect.Type) decoderFunc {
 	}
 	d.root = false
 
-	if _, ok := unionRegistry[t]; ok {
-		return d.newUnionDecoder(t)
-	}
-
 	switch t.Kind() {
 	case reflect.Pointer:
 		inner := t.Elem()
@@ -238,66 +233,6 @@ func (d *decoderBuilder) newTypeDecoder(t reflect.Type) decoderFunc {
 	}
 }
 
-// newUnionDecoder returns a decoderFunc that deserializes into a union using an
-// algorithm roughly similar to Pydantic's [smart algorithm].
-//
-// Conceptually this is equivalent to choosing the best schema based on how 'exact'
-// the deserialization is for each of the schemas.
-//
-// If there is a tie in the level of exactness, then the tie is broken
-// left-to-right.
-//
-// [smart algorithm]: https://docs.pydantic.dev/latest/concepts/unions/#smart-mode
-func (d *decoderBuilder) newUnionDecoder(t reflect.Type) decoderFunc {
-	unionEntry, ok := unionRegistry[t]
-	if !ok {
-		panic("apijson: couldn't find union of type " + t.String() + " in union registry")
-	}
-	decoders := []decoderFunc{}
-	for _, variant := range unionEntry.variants {
-		decoder := d.typeDecoder(variant.Type)
-		decoders = append(decoders, decoder)
-	}
-	return func(n gjson.Result, v reflect.Value, state *decoderState) error {
-		// Set bestExactness to worse than loose
-		bestExactness := loose - 1
-
-		for idx, variant := range unionEntry.variants {
-			decoder := decoders[idx]
-			if variant.TypeFilter != n.Type {
-				continue
-			}
-			if len(unionEntry.discriminatorKey) != 0 && n.Get(unionEntry.discriminatorKey).Value() != variant.DiscriminatorValue {
-				continue
-			}
-			sub := decoderState{strict: state.strict, exactness: exact}
-			inner := reflect.New(variant.Type).Elem()
-			err := decoder(n, inner, &sub)
-			if err != nil {
-				continue
-			}
-			if sub.exactness == exact {
-				v.Set(inner)
-				return nil
-			}
-			if sub.exactness > bestExactness {
-				v.Set(inner)
-				bestExactness = sub.exactness
-			}
-		}
-
-		if bestExactness < loose {
-			return errors.New("apijson: was not able to coerce type as union")
-		}
-
-		if guardStrict(state, bestExactness != exact) {
-			return errors.New("apijson: was not able to coerce type as union strictly")
-		}
-
-		return nil
-	}
-}
-
 func (d *decoderBuilder) newBigFloatDecoder(_ reflect.Type) decoderFunc {
 	return func(node gjson.Result, value reflect.Value, state *decoderState) error {
 		f, _, err := big.ParseFloat(node.Raw, 10, 0, big.ToNearestEven)
@@ -315,8 +250,18 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 	keyType := t.Key()
 	itemType := t.Elem()
 	itemDecoder := d.typeDecoder(itemType)
+	alwaysUpdateDecoder := d.alwaysUpdateDecoder(itemType)
 
 	return func(node gjson.Result, value reflect.Value, state *decoderState) (err error) {
+		// For IfUnset behavior, if the map already has values, don't update it
+		decoder := itemDecoder
+		if updateBehavior == IfUnset && !value.IsNil() {
+			return nil
+		} else if updateBehavior == IfUnset && value.IsNil() {
+			// When populating from null, use normal decoder for items
+			decoder = alwaysUpdateDecoder
+		}
+
 		mapValue := reflect.MakeMapWithSize(t, len(node.Map()))
 
 		extraKeys := map[any]bool{}
@@ -359,7 +304,7 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 			if existingValue.IsValid() {
 				itemValue.Set(existingValue)
 			}
-			itemerr := itemDecoder(jsonValue, itemValue, state)
+			itemerr := decoder(jsonValue, itemValue, state)
 			if itemerr != nil {
 				if err == nil {
 					err = itemerr
@@ -385,7 +330,7 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 			existingValue := value.MapIndex(reflect.ValueOf(key))
 			itemValue := reflect.New(itemType).Elem()
 			itemValue.Set(existingValue)
-			itemerr := itemDecoder(gjson.Result{}, itemValue, state)
+			itemerr := decoder(gjson.Result{}, itemValue, state)
 			if itemerr != nil {
 				return itemerr
 			}
@@ -402,6 +347,7 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 
 func (d *decoderBuilder) newArrayTypeDecoder(t reflect.Type) decoderFunc {
 	updateBehavior := d.updateBehavior
+
 	itemDecoder := d.typeDecoder(t.Elem())
 
 	return func(node gjson.Result, value reflect.Value, state *decoderState) (err error) {
@@ -423,9 +369,19 @@ func (d *decoderBuilder) newArrayTypeDecoder(t reflect.Type) decoderFunc {
 		var numItems int
 
 		// if we are only updating nested values, we won't change the length of the array
-		if updateBehavior == OnlyNested || updateBehavior == IfUnset {
+		switch updateBehavior {
+		case OnlyNested:
 			numItems = existingLen
-		} else {
+		case IfUnset:
+			// For IfUnset, we only want to populate the array if the existing value is null
+			if value.IsNil() {
+				numItems = len(arrayNode)
+			} else {
+				numItems = existingLen
+			}
+		case Always:
+			numItems = len(arrayNode)
+		default:
 			numItems = len(arrayNode)
 		}
 
@@ -574,8 +530,19 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 			}
 			tuple := value.Interface().(basetypes.TupleValue)
 			elementTypes := tuple.ElementTypes(ctx)
+
+			// For IfUnset behavior, don't update if the tuple already has a value
+			// and the node is either empty (missing from JSON) or has actual data
+			if b == IfUnset && !tuple.IsNull() && !tuple.IsUnknown() {
+				return nil
+			}
+
 			if node.Type == gjson.Null {
-				value.Set(reflect.ValueOf(types.TupleNull(elementTypes)))
+				// Only set to null if behavior is Always or tuple is already null/unknown
+				// For IfUnset with empty result (missing field), don't change existing value
+				if b == Always || (b == IfUnset && (tuple.IsNull() || tuple.IsUnknown())) {
+					value.Set(reflect.ValueOf(types.TupleNull(elementTypes)))
+				}
 				return nil
 			} else if node.Type == gjson.JSON && node.IsArray() {
 				nodes := node.Array()
@@ -751,7 +718,8 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 	if t.Implements(reflect.TypeOf((*customfield.NestedObjectListLike)(nil)).Elem()) {
 		structType := t.Field(0).Type
 		structSliceType := reflect.SliceOf(structType)
-		dec := d.typeDecoder(structSliceType)
+		var dec decoderFunc
+		originalDec := d.typeDecoder(structSliceType)
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			if !shouldUpdateNested(value, b) {
 				return nil
@@ -764,10 +732,18 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 					return nil
 				}
 			}
+			if b == IfUnset && (existingObjectListValue.IsNull() || existingObjectListValue.IsUnknown()) {
+				// if the value is unset, we want to recursively populate the value from the JSON,
+				// not just the computed ones
+				dec = d.alwaysUpdateDecoder(structSliceType)
+			} else {
+				dec = originalDec
+			}
 
 			newObjectListValue := reflect.New(structSliceType).Elem()
 			existingAny, _ := existingObjectListValue.AsStructSlice(ctx)
 			newObjectListValue.Set(reflect.ValueOf(existingAny))
+
 			err := dec(node, newObjectListValue, state)
 			if err != nil {
 				return err
@@ -782,7 +758,8 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 	if t.Implements(reflect.TypeOf((*customfield.ListLike)(nil)).Elem()) {
 		structType := t.Field(0).Type
 		sliceOfStruct := reflect.SliceOf(structType)
-		dec := d.typeDecoder(sliceOfStruct)
+		var dec decoderFunc
+		originalDec := d.typeDecoder(sliceOfStruct)
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			if !shouldUpdateNested(value, b) {
 				return nil
@@ -794,6 +771,13 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 					value.Set(reflect.ValueOf(nullValue))
 					return nil
 				}
+			}
+			if b == IfUnset && (objectListValue.IsNull() || objectListValue.IsUnknown()) {
+				// if the value is unset, we want to recursively populate the value from the JSON,
+				// not just the computed ones
+				dec = d.alwaysUpdateDecoder(sliceOfStruct)
+			} else {
+				dec = originalDec
 			}
 			lv, _ := objectListValue.ValueAttr(ctx)
 			val := reflect.New(sliceOfStruct).Elem()
@@ -811,7 +795,8 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 	if t.Implements(reflect.TypeOf((*customfield.NestedObjectMapLike)(nil)).Elem()) {
 		structType := t.Field(0).Type
 		structMapType := reflect.MapOf(reflect.TypeOf(""), structType)
-		dec := d.typeDecoder(structMapType)
+		var dec decoderFunc
+		originalDec := d.typeDecoder(structMapType)
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			if !shouldUpdateNested(value, b) {
 				return nil
@@ -823,6 +808,14 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 					value.Set(reflect.ValueOf(nullValue))
 					return nil
 				}
+			}
+
+			if b == IfUnset && (existingObjectMapValue.IsNull() || existingObjectMapValue.IsUnknown()) {
+				// if the value is unset, we want to recursively populate the value from the JSON,
+				// not just the computed ones
+				dec = d.alwaysUpdateDecoder(structMapType)
+			} else {
+				dec = originalDec
 			}
 
 			newObjectMapValue := reflect.New(structMapType).Elem()
@@ -842,7 +835,8 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 	if t.Implements(reflect.TypeOf((*customfield.MapLike)(nil)).Elem()) {
 		structType := t.Field(0).Type
 		mapOfStruct := reflect.MapOf(reflect.TypeOf(""), structType)
-		dec := d.typeDecoder(mapOfStruct)
+		var dec decoderFunc
+		originalDec := d.typeDecoder(mapOfStruct)
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			if !shouldUpdateNested(value, b) {
 				return nil
@@ -854,6 +848,13 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 					value.Set(reflect.ValueOf(nullValue))
 					return nil
 				}
+			}
+			if b == IfUnset && (objectMapValue.IsNull() || objectMapValue.IsUnknown()) {
+				// if the value is unset, we want to recursively populate the value from the JSON,
+				// not just the computed ones
+				dec = d.alwaysUpdateDecoder(mapOfStruct)
+			} else {
+				dec = originalDec
 			}
 			mv, _ := objectMapValue.ValueAttr(ctx)
 			val := reflect.New(mapOfStruct).Elem()
@@ -1140,7 +1141,6 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 				_ = fn(gjson.Result{}, dest, state)
 			}
 		}
-
 		if extraDecoder != nil && typedExtraFields.Len() > 0 {
 			value.FieldByIndex(extraDecoder.idx).Set(typedExtraFields)
 		}
@@ -1440,4 +1440,14 @@ func (d *decoderBuilder) parseArrayOfValues(node gjson.Result) (attr.Type, []att
 		return nil, nil, loopErr
 	}
 	return elementType, attributes, nil
+}
+
+func (d *decoderBuilder) alwaysUpdateDecoder(t reflect.Type) decoderFunc {
+	normalBuilder := &decoderBuilder{
+		root:                  d.root,
+		dateFormat:            d.dateFormat,
+		unmarshalComputedOnly: false,
+		updateBehavior:        Always,
+	}
+	return normalBuilder.typeDecoder(t)
 }

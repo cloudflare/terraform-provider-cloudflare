@@ -45,6 +45,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"virtual_network_id": schema.StringAttribute{
 								Description: "(optional) Private virtual network identifier for the target. If omitted, the default virtual network ID will be used.",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
@@ -59,6 +60,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"virtual_network_id": schema.StringAttribute{
 								Description: "(optional) Private virtual network identifier for the target. If omitted, the default virtual network ID will be used.",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
