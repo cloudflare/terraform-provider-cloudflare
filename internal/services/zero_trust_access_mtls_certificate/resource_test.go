@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -42,20 +41,19 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		return clientErr
 	}
 
-	regex := regexp.MustCompile(`^[a-z]{10}$`)
-
+	// In test environment, be more aggressive about cleanup to prevent certificate conflicts
+	// This prevents "certificate already exists" errors in tests
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	accountCerts, _, err := client.ListAccessMutualTLSCertificates(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessMutualTLSCertificatesParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Access Mutual TLS certificates: %s", err))
 		return err
 	}
+	
+	tflog.Info(ctx, fmt.Sprintf("Found %d certificates in account, cleaning all to prevent test conflicts", len(accountCerts)))
+	
 	for _, cert := range accountCerts {
-		tflog.Debug(ctx, fmt.Sprintf("Found certificate: Name=%s, ID=%s, Matches=%v", cert.Name, cert.ID, regex.MatchString(cert.Name)))
-		// only delete certificates that appear to be created by this provider
-		if !regex.MatchString(cert.Name) {
-			continue
-		}
+		tflog.Info(ctx, fmt.Sprintf("Deleting certificate: Name=%s, ID=%s, Hostnames=%v", cert.Name, cert.ID, cert.AssociatedHostnames))
 
 		// to delete we need to update first with empty hostnames
 		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.UpdateAccessMutualTLSCertificateParams{
@@ -103,12 +101,10 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		return err
 	}
 
+	tflog.Info(ctx, fmt.Sprintf("Found %d certificates in zone, cleaning all to prevent test conflicts", len(zoneCerts)))
+
 	for _, cert := range zoneCerts {
-		tflog.Debug(ctx, fmt.Sprintf("Found zone certificate: Name=%s, ID=%s, Matches=%v", cert.Name, cert.ID, regex.MatchString(cert.Name)))
-		// only delete certificates that appear to be created by this provider
-		if !regex.MatchString(cert.Name) {
-			continue
-		}
+		tflog.Info(ctx, fmt.Sprintf("Deleting zone certificate: Name=%s, ID=%s, Hostnames=%v", cert.Name, cert.ID, cert.AssociatedHostnames))
 
 		// to delete we need to update first with empty hostnames
 		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateAccessMutualTLSCertificateParams{
@@ -163,28 +159,28 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
-	// Use a different certificate for v5 tests to avoid conflicts with migration tests
+	// Use unique certificate for basic test to avoid conflicts
 	cert := `-----BEGIN CERTIFICATE-----
-MIIDpTCCAo2gAwIBAgIUGcPhc0KDNFqTyQ9IK1ehWatdfTEwDQYJKoZIhvcNAQEL
-BQAwYjELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJh
-bmNpc2NvMRAwDgYDVQQKDAdWNSBUZXN0MRwwGgYDVQQDDBN2NS10ZXN0LmV4YW1w
-bGUuY29tMB4XDTI1MDgyMTEzMjQxMFoXDTI2MDgyMTEzMjQxMFowYjELMAkGA1UE
-BhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMRAwDgYD
-VQQKDAdWNSBUZXN0MRwwGgYDVQQDDBN2NS10ZXN0LmV4YW1wbGUuY29tMIIBIjAN
-BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt45TCJJPHs2CjVoy4Cd9M0d8GGHz
-bUlN/Y0grUy47+m2QT0nEbrim7NfuVQeTOd1aofBAw0QBhR3ApD40g8PbEys1rEx
-3dlH2JThG7HKjH2Uhhdj46SK+0MEf5PL26hIIJyLPlE8WwvJ8uoj6JINVMCXLim7
-otevGrAYnObaAk/BEVwiNpo7GdmI0rsH0vDxULU8+4CAuaALA5vszINWC3jtT4wn
-igHY6H4doSpqn6qP2RkaN8vqSjrQwpBumZQWqazrCR/vqUehNBUEhaWWn3kK4XY/
-gcXVJmlpksD+UWEIZMMGMV+hK6A6i2JWPSp+U3tuoi/W5xdkYQGm96Om7QIDAQAB
-o1MwUTAdBgNVHQ4EFgQUjqpyEKQfRT2eFZU8Mbsgu0m116AwHwYDVR0jBBgwFoAU
-jqpyEKQfRT2eFZU8Mbsgu0m116AwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
-AQsFAAOCAQEAgdeIKNVDH+IvjtARXCyw5smqkRZ0TfQAohuyAhww8ps3QRf5Gdsx
-AdY9NOkNvSvFb5QY3ksGkJG/5VFDMExz3N4ywz9lSKcGMnDvK3tbzJvYxI/aO8dV
-LwEMWHghph18k2tPfFyBQlEztuLWEPnKWfF+bbE7DnrlFRRnHIrRFd9LKu9Ai1F0
-VAo7LlRIXTnzoHrDtQ6pEhVKfIEUYfavGyHAC+REXIXN8hNV9sLcJrW4olvHg4Cc
-4tXBQwTUd0MrApxyshtiLC5xPv7Mm9B5hFCpndRcRl+b21v10oWRPhzSuSxvyDs9
-Jx+GyRD+HSQ8BcvCgDuVNzKMoCFjj9J9Jw==
+MIIDsTCCApmgAwIBAgIUTaqzZvhPgvlEKYHsKdHKvshta/YwDQYJKoZIhvcNAQEL
+BQAwaDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJh
+bmNpc2NvMRMwEQYDVQQKDApCYXNpYyBUZXN0MR8wHQYDVQQDDBZiYXNpYy10ZXN0
+LmV4YW1wbGUuY29tMB4XDTI1MDgyNTEyNDUzMFoXDTI2MDgyNTEyNDUzMFowaDEL
+MAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2Nv
+MRMwEQYDVQQKDApCYXNpYyBUZXN0MR8wHQYDVQQDDBZiYXNpYy10ZXN0LmV4YW1w
+bGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkmzUoLpL0Upy
+luplSqgz0ec44trHhr7dhh0Omam2BI9fZziRWqFmF8sodieIvL51Wzko36WYttqY
+6dv8q3+GLoVN2X0BaF2As0hCphFiFC1I3k4AlHwUx96SUlK4cvyS46bP+nlO6zWG
+JzH4i80Cp6LkFXI5j84yQcAqCwxyoEVlgQLz+e5bgs+VufMDyo9TQ9GXy9EZ1Ysi
+bG6DvxNnTDAf0P5c1t5BXe1EeB0413lRN7mrpgH0kxM43SwcMWx6dx3IDLEv82oo
+wpc98FPqeLK2ZN62luO0ZwBhmECBhl1ABCmOF/n6Yavx8rjLdN/MBO7/AODsyjKl
+eE2HKhYrAQIDAQABo1MwUTAdBgNVHQ4EFgQUgqmZSicLOQY9zOKORrF2XACXzpMw
+HwYDVR0jBBgwFoAUgqmZSicLOQY9zOKORrF2XACXzpMwDwYDVR0TAQH/BAUwAwEB
+/zANBgkqhkiG9w0BAQsFAAOCAQEAJfFylVu/lVDAqUpgWOe0ZWF0djEiw+wphgC6
+2EshvccoW3YLku0XPPc1+DZEjMtCMh06woaH1R8koWXnOjs2com2UA2ccDB3mkZG
+Wl0sBxQLPu/Gj6jKbXnWm24morGzYWyZlLNP9178tVdhMgNMOR50qB6QsQLcDRHu
+Tj/DLAsk96PEw3AZ/Lad3oJs5me0uVxPxrAcqKtrAOx2CpMxmvFNZ5ZiKr8b8uJQ
+0X2o8qiA8Qd4qMTnI8lHpuuGsun/RIiBBxkzHDrc0qZVEm2sqE97tA0vBczcn7fN
+jzhIPJ0iyPgZhFlsHjGxWghkaLqdCdtDOSdb6SepEZHaq32j/A==
 -----END CERTIFICATE-----`
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -252,28 +248,28 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
-	// Use a different certificate for v5 tests to avoid conflicts with migration tests
+	// Use unique certificate for zone test to avoid conflicts
 	cert := `-----BEGIN CERTIFICATE-----
-MIIDpTCCAo2gAwIBAgIUGcPhc0KDNFqTyQ9IK1ehWatdfTEwDQYJKoZIhvcNAQEL
-BQAwYjELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJh
-bmNpc2NvMRAwDgYDVQQKDAdWNSBUZXN0MRwwGgYDVQQDDBN2NS10ZXN0LmV4YW1w
-bGUuY29tMB4XDTI1MDgyMTEzMjQxMFoXDTI2MDgyMTEzMjQxMFowYjELMAkGA1UE
-BhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMRAwDgYD
-VQQKDAdWNSBUZXN0MRwwGgYDVQQDDBN2NS10ZXN0LmV4YW1wbGUuY29tMIIBIjAN
-BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt45TCJJPHs2CjVoy4Cd9M0d8GGHz
-bUlN/Y0grUy47+m2QT0nEbrim7NfuVQeTOd1aofBAw0QBhR3ApD40g8PbEys1rEx
-3dlH2JThG7HKjH2Uhhdj46SK+0MEf5PL26hIIJyLPlE8WwvJ8uoj6JINVMCXLim7
-otevGrAYnObaAk/BEVwiNpo7GdmI0rsH0vDxULU8+4CAuaALA5vszINWC3jtT4wn
-igHY6H4doSpqn6qP2RkaN8vqSjrQwpBumZQWqazrCR/vqUehNBUEhaWWn3kK4XY/
-gcXVJmlpksD+UWEIZMMGMV+hK6A6i2JWPSp+U3tuoi/W5xdkYQGm96Om7QIDAQAB
-o1MwUTAdBgNVHQ4EFgQUjqpyEKQfRT2eFZU8Mbsgu0m116AwHwYDVR0jBBgwFoAU
-jqpyEKQfRT2eFZU8Mbsgu0m116AwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
-AQsFAAOCAQEAgdeIKNVDH+IvjtARXCyw5smqkRZ0TfQAohuyAhww8ps3QRf5Gdsx
-AdY9NOkNvSvFb5QY3ksGkJG/5VFDMExz3N4ywz9lSKcGMnDvK3tbzJvYxI/aO8dV
-LwEMWHghph18k2tPfFyBQlEztuLWEPnKWfF+bbE7DnrlFRRnHIrRFd9LKu9Ai1F0
-VAo7LlRIXTnzoHrDtQ6pEhVKfIEUYfavGyHAC+REXIXN8hNV9sLcJrW4olvHg4Cc
-4tXBQwTUd0MrApxyshtiLC5xPv7Mm9B5hFCpndRcRl+b21v10oWRPhzSuSxvyDs9
-Jx+GyRD+HSQ8BcvCgDuVNzKMoCFjj9J9Jw==
+MIIDrTCCApWgAwIBAgIUU3Ss5iR+GdD6EeSfS+12wbzTvK4wDQYJKoZIhvcNAQEL
+BQAwZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJh
+bmNpc2NvMRIwEAYDVQQKDAlab25lIFRlc3QxHjAcBgNVBAMMFXpvbmUtdGVzdC5l
+eGFtcGxlLmNvbTAeFw0yNTA4MjUxMjQ1MjRaFw0yNjA4MjUxMjQ1MjRaMGYxCzAJ
+BgNVBAYTAlVTMQswCQYDVQQIDAJDQTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzES
+MBAGA1UECgwJWm9uZSBUZXN0MR4wHAYDVQQDDBV6b25lLXRlc3QuZXhhbXBsZS5j
+b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC3uxA57+zYxNQzRo9B
+O3TR2z82DJjEfkMjZm5OlutG7Mi5J5HIa5rexBkn+aOYtTpu1idfV3RESsPXclYg
+kGI5Ywo8PR4DjFD7Tu/0ZgdeftaThuc1PQnxqP+KZ3Azjke3o6KfhqtNiRO/qLWL
+sEaIKpHlA7RFWytqONTwG+FGYbvX3h+ox/DQA4vdzi3xHCyf1XsWr1uoPasIZn1L
+1sHI5+wD2JHpOxWli9VplPXVIKGMPnUmysawn2H5kcTJAEJJoRHDTBIlfR5MnLG2
+vnaUE9cKZ96pUIrl+4El1IjxGd30tbld3YQYgCrhbVt/pcQXyUmhKgrZv/QrV9o2
+v2T7AgMBAAGjUzBRMB0GA1UdDgQWBBR4RNyAV3GbgaAi75iRWmJbM5mbMDAfBgNV
+HSMEGDAWgBR4RNyAV3GbgaAi75iRWmJbM5mbMDAPBgNVHRMBAf8EBTADAQH/MA0G
+CSqGSIb3DQEBCwUAA4IBAQB6ewMW4W0znrb7AcqVCnc6nz7mFY+uwVldJN3nywW4
+iO1TAqUczEhzhEnz3Ly+27o3gkjVPmqAPSge8kLNAKFDJ43xn2G28u7UhSo4b6IN
+EPV7b3GIFSBfVd0S8D7dYnlKbE4YAjx+A84+SrqwXg3NfD5ES/XogGE9VWxbN8To
+LwvNJwCB23tldWpGiGXwmQVfA0ptA4ys4GoU/ss0BEg9h4BlPjnlwcw5O9cLdZTs
+6Dv+537EyG/WsdyNAs/TLeHgM+I9yw4SePhaVq2Zhv/Tz4JryIuDgpp2iwVEnSB/
+Ujl4YD+WK1PhWs9G3UVUeGG+93ZVJRC6Em6ZMMMFxQyL
 -----END CERTIFICATE-----`
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -340,28 +336,28 @@ func TestAccCloudflareAccessMutualTLSMinimal(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
-	// Use a different certificate for v5 tests to avoid conflicts with migration tests
+	// Use unique certificate for minimal test to avoid conflicts
 	cert := `-----BEGIN CERTIFICATE-----
-MIIDpTCCAo2gAwIBAgIUGcPhc0KDNFqTyQ9IK1ehWatdfTEwDQYJKoZIhvcNAQEL
-BQAwYjELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJh
-bmNpc2NvMRAwDgYDVQQKDAdWNSBUZXN0MRwwGgYDVQQDDBN2NS10ZXN0LmV4YW1w
-bGUuY29tMB4XDTI1MDgyMTEzMjQxMFoXDTI2MDgyMTEzMjQxMFowYjELMAkGA1UE
-BhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMRAwDgYD
-VQQKDAdWNSBUZXN0MRwwGgYDVQQDDBN2NS10ZXN0LmV4YW1wbGUuY29tMIIBIjAN
-BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt45TCJJPHs2CjVoy4Cd9M0d8GGHz
-bUlN/Y0grUy47+m2QT0nEbrim7NfuVQeTOd1aofBAw0QBhR3ApD40g8PbEys1rEx
-3dlH2JThG7HKjH2Uhhdj46SK+0MEf5PL26hIIJyLPlE8WwvJ8uoj6JINVMCXLim7
-otevGrAYnObaAk/BEVwiNpo7GdmI0rsH0vDxULU8+4CAuaALA5vszINWC3jtT4wn
-igHY6H4doSpqn6qP2RkaN8vqSjrQwpBumZQWqazrCR/vqUehNBUEhaWWn3kK4XY/
-gcXVJmlpksD+UWEIZMMGMV+hK6A6i2JWPSp+U3tuoi/W5xdkYQGm96Om7QIDAQAB
-o1MwUTAdBgNVHQ4EFgQUjqpyEKQfRT2eFZU8Mbsgu0m116AwHwYDVR0jBBgwFoAU
-jqpyEKQfRT2eFZU8Mbsgu0m116AwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
-AQsFAAOCAQEAgdeIKNVDH+IvjtARXCyw5smqkRZ0TfQAohuyAhww8ps3QRf5Gdsx
-AdY9NOkNvSvFb5QY3ksGkJG/5VFDMExz3N4ywz9lSKcGMnDvK3tbzJvYxI/aO8dV
-LwEMWHghph18k2tPfFyBQlEztuLWEPnKWfF+bbE7DnrlFRRnHIrRFd9LKu9Ai1F0
-VAo7LlRIXTnzoHrDtQ6pEhVKfIEUYfavGyHAC+REXIXN8hNV9sLcJrW4olvHg4Cc
-4tXBQwTUd0MrApxyshtiLC5xPv7Mm9B5hFCpndRcRl+b21v10oWRPhzSuSxvyDs9
-Jx+GyRD+HSQ8BcvCgDuVNzKMoCFjj9J9Jw==
+MIIDuTCCAqGgAwIBAgIUOLxKkiemLStP0PSReIA36itjxpEwDQYJKoZIhvcNAQEL
+BQAwbDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJh
+bmNpc2NvMRUwEwYDVQQKDAxNaW5pbWFsIFRlc3QxITAfBgNVBAMMGG1pbmltYWwt
+dGVzdC5leGFtcGxlLmNvbTAeFw0yNTA4MjUxMjQ1MTlaFw0yNjA4MjUxMjQ1MTla
+MGwxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJDQTEWMBQGA1UEBwwNU2FuIEZyYW5j
+aXNjbzEVMBMGA1UECgwMTWluaW1hbCBUZXN0MSEwHwYDVQQDDBhtaW5pbWFsLXRl
+c3QuZXhhbXBsZS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDJ
+RiCi73nTalZfCy1GKHU4Rj5RWCUDkMPavkIjSQDbdgYpNqQSyMLNZBH0NciavNHC
+QweQmAuDOmgxXwc8iDFx/n69UrkV5viu8siuYWnX9LLKmzDUrncUvguSLVl2iH/a
+H5ZJya/qnMlu84Ks2iKX2KINbY3A/Py3TvTWDO10W5Ocmi+WQBxzLIHBY4QE/bpV
+gtWJF5482v0nT8nQ6ITYOoC5csr4L/ukhrz5460j3pFdE3gRQu5LYhQlU1rygpWA
+SU6zCP/jkUxEIPiRRUhZxbM8IPebnRr8oD9TVqjiZpJnbf6LtoxdWRD6YDhqORJg
+CcKYO8xVKtzaOAzRbxUbAgMBAAGjUzBRMB0GA1UdDgQWBBSZU4SVPnjPhKQ5PqCV
+Va55bSHpxDAfBgNVHSMEGDAWgBSZU4SVPnjPhKQ5PqCVVa55bSHpxDAPBgNVHRMB
+Af8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBUG9H2YLQKkUmSe62h972mxL2Y
+5LXJBAB0Ys+UyJSGX1pouTZVBYf1h7JJGHgQJT3ITQmn04ipIGLvqYQ2fzvCsAdv
+DuQwvWnX70XFQGbZfb8Iu9Yq+6/zHW5iraDqUakDCHybLKgjxX+1+n3fP9xfHSFl
+3/wO0yvffxsTMnTFz+4ZVnPl9R948NaeDR+hePZKnabuGozUrRqy/Al7Bcigwy6X
+Gsj65OJaR1Y2l1B1gmQlULcbGYV4vQzYosy3mdpd6m8wsP1KZ9mGCPJ/SspW0tiY
+SZ0xvbqc2JanR3lB6r5+QAI8KZPjiUInAi/kO0+TAQzQzGLwEgR/cmYHpWsf
 -----END CERTIFICATE-----`
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 

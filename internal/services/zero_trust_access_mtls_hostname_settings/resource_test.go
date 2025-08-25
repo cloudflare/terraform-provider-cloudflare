@@ -33,6 +33,7 @@ func init() {
 				return fmt.Errorf("Failed to create Cloudflare client: %w", clientErr)
 			}
 
+			// First clear hostname settings
 			deletedSettings := cfv1.UpdateAccessMutualTLSHostnameSettingsParams{
 				Settings: []cfv1.AccessMutualTLSHostnameSettings{},
 			}
@@ -40,13 +41,42 @@ func init() {
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.AccountIdentifier(accountID), deletedSettings)
 			if err != nil {
-				return fmt.Errorf("Failed to fetch Cloudflare Access Mutual TLS hostname settings: %w", err)
+				return fmt.Errorf("Failed to clear Cloudflare Access Mutual TLS hostname settings: %w", err)
 			}
 
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 			_, err = client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.ZoneIdentifier(zoneID), deletedSettings)
 			if err != nil {
-				return fmt.Errorf("Failed to delete Cloudflare Access Mutual TLS hostname settings: %w", err)
+				return fmt.Errorf("Failed to clear Cloudflare Access Mutual TLS hostname settings: %w", err)
+			}
+
+			// Also clean up ALL certificates to prevent conflicts with certificate tests
+			// This ensures certificate tests can create certificates without "already exists" errors
+
+			// Clean account certificates - be aggressive to prevent test conflicts
+			accountCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListAccessMutualTLSCertificatesParams{})
+			if err == nil {
+				for _, cert := range accountCerts {
+					// Clear hostnames first, then delete
+					client.UpdateAccessMutualTLSCertificate(ctx, cfv1.AccountIdentifier(accountID), cfv1.UpdateAccessMutualTLSCertificateParams{
+						ID:                  cert.ID,
+						AssociatedHostnames: []string{},
+					})
+					client.DeleteAccessMutualTLSCertificate(ctx, cfv1.AccountIdentifier(accountID), cert.ID)
+				}
+			}
+
+			// Clean zone certificates - be aggressive to prevent test conflicts
+			zoneCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.ListAccessMutualTLSCertificatesParams{})
+			if err == nil {
+				for _, cert := range zoneCerts {
+					// Clear hostnames first, then delete
+					client.UpdateAccessMutualTLSCertificate(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.UpdateAccessMutualTLSCertificateParams{
+						ID:                  cert.ID,
+						AssociatedHostnames: []string{},
+					})
+					client.DeleteAccessMutualTLSCertificate(ctx, cfv1.ZoneIdentifier(zoneID), cert.ID)
+				}
 			}
 
 			return nil

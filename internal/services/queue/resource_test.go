@@ -7,24 +7,25 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-
 func init() {
-	resource.AddTestSweepers("cloudflare_queue", &resource.Sweeper{
-		Name: "cloudflare_queue",
-		F:    testSweepCloudflareQueue,
-	})
+	// TODO: fixme
+	//resource.AddTestSweepers("cloudflare_queue", &resource.Sweeper{
+	//	Name: "cloudflare_queue",
+	//	F:    testSweepCloudflareQueue,
+	//})
 }
 
 func testSweepCloudflareQueue(r string) error {
