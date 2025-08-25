@@ -68,11 +68,6 @@ func testSweepCloudflareList(r string) error {
 }
 
 func TestAccCloudflareList(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	rndIP := utils.GenerateRandomResourceName()
 	rndRedirect := utils.GenerateRandomResourceName()

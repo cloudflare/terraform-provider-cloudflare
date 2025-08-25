@@ -101,7 +101,7 @@ func (r *ListResource) Create(ctx context.Context, req resource.CreateRequest, r
 			return
 		}
 
-		itemsSet, diags := getAllListItems(ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString())
+		itemsSet, diags := getAllListItems[ListItemModel](ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString(), "")
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return
@@ -162,7 +162,7 @@ func (r *ListResource) Update(ctx context.Context, req resource.UpdateRequest, r
 			return
 		}
 
-		itemsSet, diags := getAllListItems(ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString())
+		itemsSet, diags := getAllListItems[ListItemModel](ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString(), "")
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return
@@ -225,7 +225,7 @@ func (r *ListResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 
 	if !prev.Items.IsNull() {
 
-		itemsSet, diags := getAllListItems(ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString())
+		itemsSet, diags := getAllListItems[ListItemModel](ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString(), "")
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return
@@ -309,7 +309,7 @@ func (r *ListResource) ImportState(ctx context.Context, req resource.ImportState
 	}
 	data = &env.Result
 
-	itemsSet, diags := getAllListItems(ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString())
+	itemsSet, diags := getAllListItems[ListItemModel](ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString(), "")
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -397,9 +397,9 @@ func bulkUpdateList(ctx context.Context, client *cloudflare.Client, accountID, l
 	return diagnostics
 }
 
-func getAllListItems(ctx context.Context, client *cloudflare.Client, accountID, listID string) ([]ListItemModel, diag.Diagnostics) {
+func getAllListItems[M any](ctx context.Context, client *cloudflare.Client, accountID, listID, search string) ([]M, diag.Diagnostics) {
 	var diagnostics diag.Diagnostics
-	paginatedItems := make([]ListItemModel, 0)
+	paginatedItems := make([]M, 0)
 
 	listItems := client.Rules.Lists.Items.ListAutoPaging(
 		ctx,
@@ -407,6 +407,7 @@ func getAllListItems(ctx context.Context, client *cloudflare.Client, accountID, 
 		rules.ListItemListParams{
 			AccountID: cloudflare.F(accountID),
 			PerPage:   cloudflare.F(int64(500)),
+			Search:    cloudflare.F(search),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -422,7 +423,7 @@ func getAllListItems(ctx context.Context, client *cloudflare.Client, accountID, 
 	for listItems.Next() {
 		current := listItems.Current()
 
-		var item ListItemModel
+		var item M
 		err := apijson.UnmarshalRoot([]byte(current.JSON.RawJSON()), &item)
 		if err != nil {
 			diagnostics.AddError("failed to unmarshal list item", err.Error())

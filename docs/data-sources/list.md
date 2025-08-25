@@ -15,6 +15,7 @@ description: |-
 data "cloudflare_list" "example_list" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   list_id = "2c0fc9fa937b11eaa1b71c4d701ab86e"
+  search = "1.1.1.1"
 }
 ```
 
@@ -26,16 +27,54 @@ data "cloudflare_list" "example_list" {
 - `account_id` (String) The Account ID for this resource.
 - `list_id` (String) The unique ID of the list.
 
+### Optional
+
+- `search` (String) A search query to filter returned items. Its meaning depends on the list type: IP addresses must start with the provided string, hostnames and bulk redirects must contain the string, and ASNs must match the string exactly.
+
 ### Read-Only
 
 - `created_on` (String) The RFC 3339 timestamp of when the list was created.
 - `description` (String) An informative summary of the list.
 - `id` (String) The unique ID of the list.
+- `items` (Attributes Set) The items in the list. If set, this overwrites all items in the list. Do not use with `cloudflare_list_item`. (see [below for nested schema](#nestedatt--items))
 - `kind` (String) The type of the list. Each type supports specific list items (IP addresses, ASNs, hostnames or redirects).
 Available values: "ip", "redirect", "hostname", "asn".
 - `modified_on` (String) The RFC 3339 timestamp of when the list was last modified.
 - `name` (String) An informative name for the list. Use this name in filter and rule expressions.
 - `num_items` (Number) The number of items in the list.
 - `num_referencing_filters` (Number) The number of [filters](/api/resources/filters/) referencing the list.
+
+<a id="nestedatt--items"></a>
+### Nested Schema for `items`
+
+Read-Only:
+
+- `asn` (Number) A non-negative 32 bit integer
+- `comment` (String) An informative summary of the list item.
+- `hostname` (Attributes) Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-). (see [below for nested schema](#nestedatt--items--hostname))
+- `ip` (String) An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.
+- `redirect` (Attributes) The definition of the redirect. (see [below for nested schema](#nestedatt--items--redirect))
+
+<a id="nestedatt--items--hostname"></a>
+### Nested Schema for `items.hostname`
+
+Read-Only:
+
+- `exclude_exact_hostname` (Boolean) Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.
+- `url_hostname` (String)
+
+
+<a id="nestedatt--items--redirect"></a>
+### Nested Schema for `items.redirect`
+
+Read-Only:
+
+- `include_subdomains` (Boolean)
+- `preserve_path_suffix` (Boolean)
+- `preserve_query_string` (Boolean)
+- `source_url` (String)
+- `status_code` (Number) Available values: 301, 302, 307, 308.
+- `subpath_matching` (Boolean)
+- `target_url` (String)
 
 
