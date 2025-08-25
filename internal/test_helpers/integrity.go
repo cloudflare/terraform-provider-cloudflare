@@ -48,6 +48,7 @@ type bug struct {
 
 type missing struct {
 	path path
+	kind string
 	what string
 }
 
@@ -67,7 +68,7 @@ func (e *bug) Error() string {
 	return fmt.Sprintf("bug at %q: %q", e.id(), e.msg)
 }
 func (e *missing) Error() string {
-	return fmt.Sprintf("missing at %q: %q", e.id(), e.what)
+	return fmt.Sprintf("missing at %q on %s: %q", e.id(), e.kind, e.what)
 }
 func (e *mismatch) Error() string {
 	found := "<MISSING>"
@@ -487,7 +488,7 @@ func walk(path path, attribute attrlike, model reflect.Type) (errs codingerrors)
 				_, ok := m.(customfield.NormalizingDynamicPlanModifier)
 				return ok
 			}) {
-				return append(errs, &missing{path: path, what: "NormalizingDynamicPlanModifier"})
+				return append(errs, &missing{path: path, kind: "schema", what: "PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()}"})
 			}
 		}
 	case ds.BoolAttribute, rs.BoolAttribute, basetypes.BoolType:
