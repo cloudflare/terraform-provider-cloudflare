@@ -21,10 +21,10 @@ type ZeroTrustDLPCustomEntryModel struct {
 	Enabled       types.Bool                                                       `tfsdk:"enabled" json:"enabled,required"`
 	Name          types.String                                                     `tfsdk:"name" json:"name,required"`
 	Pattern       *ZeroTrustDLPCustomEntryPatternModel                             `tfsdk:"pattern" json:"pattern,required"`
-	Type          types.String                                                     `tfsdk:"type" json:"type,optional"`
 	CaseSensitive types.Bool                                                       `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	CreatedAt     timetypes.RFC3339                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Secret        types.Bool                                                       `tfsdk:"secret" json:"secret,computed"`
+	Type          types.String                                                     `tfsdk:"type" json:"type,computed"`
 	UpdatedAt     timetypes.RFC3339                                                `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPCustomEntryConfidenceModel] `tfsdk:"confidence" json:"confidence,computed"`
 	Variant       customfield.NestedObject[ZeroTrustDLPCustomEntryVariantModel]    `tfsdk:"variant" json:"variant,computed"`

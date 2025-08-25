@@ -151,6 +151,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/web3_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/web_analytics_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/web_analytics_site"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/worker"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/worker_version"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_cron_trigger"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_custom_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_deployment"
@@ -391,6 +393,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		waiting_room_rules.NewResource,
 		waiting_room_settings.NewResource,
 		web3_hostname.NewResource,
+		worker.NewResource,
+		worker_version.NewResource,
 		workers_route.NewResource,
 		workers_script.NewResource,
 		workers_script_subdomain.NewResource,
@@ -631,6 +635,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		waiting_room_settings.NewWaitingRoomSettingsDataSource,
 		web3_hostname.NewWeb3HostnameDataSource,
 		web3_hostname.NewWeb3HostnamesDataSource,
+		worker.NewWorkerDataSource,
+		worker.NewWorkersDataSource,
+		worker_version.NewWorkerVersionDataSource,
+		worker_version.NewWorkerVersionsDataSource,
 		workers_route.NewWorkersRouteDataSource,
 		workers_route.NewWorkersRoutesDataSource,
 		workers_script.NewWorkersScriptDataSource,
@@ -780,6 +788,12 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_dlp_predefined_profile.NewZeroTrustDLPPredefinedProfileDataSource,
 		zero_trust_dlp_entry.NewZeroTrustDLPEntryDataSource,
 		zero_trust_dlp_entry.NewZeroTrustDLPEntriesDataSource,
+		zero_trust_dlp_custom_entry.NewZeroTrustDLPCustomEntryDataSource,
+		zero_trust_dlp_custom_entry.NewZeroTrustDLPCustomEntriesDataSource,
+		zero_trust_dlp_predefined_entry.NewZeroTrustDLPPredefinedEntryDataSource,
+		zero_trust_dlp_predefined_entry.NewZeroTrustDLPPredefinedEntriesDataSource,
+		zero_trust_dlp_integration_entry.NewZeroTrustDLPIntegrationEntryDataSource,
+		zero_trust_dlp_integration_entry.NewZeroTrustDLPIntegrationEntriesDataSource,
 		zero_trust_gateway_categories.NewZeroTrustGatewayCategoriesListDataSource,
 		zero_trust_gateway_app_types.NewZeroTrustGatewayAppTypesListDataSource,
 		zero_trust_gateway_settings.NewZeroTrustGatewaySettingsDataSource,

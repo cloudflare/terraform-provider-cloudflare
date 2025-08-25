@@ -55,17 +55,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"type": schema.StringAttribute{
-				Description: `Available values: "custom", "predefined", "integration".`,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"custom",
-						"predefined",
-						"integration",
-					),
-				},
-			},
 			"case_sensitive": schema.BoolAttribute{
 				Description: "Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
 				Computed:    true,
@@ -76,6 +65,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"secret": schema.BoolAttribute{
 				Computed: true,
+			},
+			"type": schema.StringAttribute{
+				Description: `Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".`,
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"custom",
+						"predefined",
+						"integration",
+						"exact_data",
+						"document_fingerprint",
+						"word_list",
+					),
+				},
 			},
 			"updated_at": schema.StringAttribute{
 				Computed:   true,
