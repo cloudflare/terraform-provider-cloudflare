@@ -23,6 +23,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
 func init() {
 	resource.AddTestSweepers("cloudflare_dns_record", &resource.Sweeper{
 		Name: "cloudflare_dns_record",
@@ -35,9 +39,10 @@ func testSweepCloudflareRecord(r string) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
 	}
 
-	// Clean up the account level rulesets
+	// Clean up test DNS records only
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	if zoneID == "" {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
@@ -46,6 +51,7 @@ func testSweepCloudflareRecord(r string) error {
 	records, _, err := client.ListDNSRecords(context.Background(), cfold.ZoneIdentifier(zoneID), cfold.ListDNSRecordsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare DNS records: %s", err))
+		return err
 	}
 
 	if len(records) == 0 {
@@ -54,9 +60,14 @@ func testSweepCloudflareRecord(r string) error {
 	}
 
 	for _, record := range records {
-		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare DNS record ID: %s", record.ID))
-		//nolint:errcheck
-		client.DeleteDNSRecord(context.Background(), cfold.ZoneIdentifier(zoneID), record.ID)
+		// Only delete test records - those that start with tf-acctest- or contain terraform test patterns
+		if strings.HasPrefix(record.Name, "tf-acctest-") || strings.Contains(record.Name, "tf-acctest") {
+			tflog.Info(ctx, fmt.Sprintf("Deleting test DNS record ID: %s, Name: %s", record.ID, record.Name))
+			err := client.DeleteDNSRecord(context.Background(), cfold.ZoneIdentifier(zoneID), record.ID)
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete DNS record %s: %s", record.ID, err))
+			}
+		}
 	}
 
 	return nil

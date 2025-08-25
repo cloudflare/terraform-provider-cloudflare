@@ -22,6 +22,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 func init() {
 	resource.AddTestSweepers("cloudflare_url_normalization_settings", &resource.Sweeper{
 		Name: "cloudflare_url_normalization_settings",

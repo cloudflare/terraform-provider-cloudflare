@@ -15,6 +15,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 func init() {
 	resource.AddTestSweepers("cloudflare_mtls_certificate", &resource.Sweeper{
 		Name: "cloudflare_mtls_certificate",

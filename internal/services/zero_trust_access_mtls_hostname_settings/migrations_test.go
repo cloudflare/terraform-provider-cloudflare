@@ -15,11 +15,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
-func TestMain(m *testing.M) {
-	// Clean up any existing settings before running tests using existing sweeper
-	resource.TestMain(m)
-}
-
 // waitBetweenTests adds a delay to prevent API conflicts between tests
 func waitBetweenTests(t *testing.T) {
 	t.Helper()
@@ -184,8 +179,8 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations(t *testi
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	testCases := []struct {
-		name                      string
-		chinaNetwork              bool
+		name                        string
+		chinaNetwork                bool
 		clientCertificateForwarding bool
 	}{
 		// Skip BothFalse case - v4 provider behavior with all-false booleans causes plan diffs

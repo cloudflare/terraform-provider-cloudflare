@@ -17,6 +17,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
+func TestMain(m *testing.M) {
+	// Clean up any existing settings before running tests using existing sweeper
+	resource.TestMain(m)
+}
+
 func init() {
 	resource.AddTestSweepers("cloudflare_zero_trust_access_mtls_hostname_settings", &resource.Sweeper{
 		Name: "cloudflare_zero_trust_access_mtls_hostname_settings",
