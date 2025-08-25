@@ -131,6 +131,39 @@ resource "cloudflare_zone_settings_override" "zone_settings" {
 }`,
 			Expected: []string{},
 		},
+		{
+			Name: "excludes deprecated universal_ssl setting",
+			Config: `
+resource "cloudflare_zone_settings_override" "zone_settings" {
+  zone_id = var.zone_id
+
+  settings {
+    ssl = "strict"
+    universal_ssl = ""
+    automatic_https_rewrites = "on"
+  }
+}`,
+			Expected: []string{`
+resource "cloudflare_zone_setting" "zone_settings_ssl" {
+  zone_id    = var.zone_id
+  setting_id = "ssl"
+  value      = "strict"
+}`, `
+resource "cloudflare_zone_setting" "zone_settings_automatic_https_rewrites" {
+  zone_id    = var.zone_id
+  setting_id = "automatic_https_rewrites"
+  value      = "on"
+}`, `
+import {
+  to = cloudflare_zone_setting.zone_settings_ssl
+  id = "${var.zone_id}/ssl"
+}`, `
+import {
+  to = cloudflare_zone_setting.zone_settings_automatic_https_rewrites
+  id = "${var.zone_id}/automatic_https_rewrites"
+}`,
+			},
+		},
 	}
 
 	RunTransformationTests(t, tests, transformFile)
