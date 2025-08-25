@@ -25,6 +25,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The unique ID of the list.",
 				Required:    true,
 			},
+			"per_page": schema.Int64Attribute{
+				Description: "Amount of results to include in each paginated response. A non-negative 32 bit integer.",
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 500),
+				},
+			},
 			"search": schema.StringAttribute{
 				Description: "A search query to filter returned items. Its meaning depends on the list type: IP addresses must start with the provided string, hostnames and bulk redirects must contain the string, and ASNs must match the string exactly.",
 				Optional:    true,
