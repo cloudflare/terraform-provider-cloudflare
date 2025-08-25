@@ -5,12 +5,6 @@ import (
 	"regexp"
 	"strings"
 	"testing"
-
-	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
-	"github.com/google/go-cmp/cmp"
-	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/hcl/v2/hclwrite"
-	"github.com/stretchr/testify/assert"
 )
 
 // TestCase represents a single test case for HCL transformation
@@ -25,21 +19,20 @@ type TestCase struct {
 func RunTransformationTests(t *testing.T, tests []TestCase, transformFunc func([]byte, string) ([]byte, error)) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			// Parse the input
-			file, diags := hclwrite.ParseConfig([]byte(tt.Config), "test.tf", hcl.InitialPos)
-			assert.False(t, diags.HasErrors())
-
-			// Transform the file
-			result, err := transformFunc(file.Bytes(), "test.tf")
-			assert.NoError(t, err)
+			// Transform the config
+			result, err := transformFunc([]byte(tt.Config), "test.tf")
+			if err != nil {
+				t.Fatalf("Failed to transform: %v", err)
+			}
+			
 			resultString := normalizeWhitespace(string(result))
-
+			
 			// Check each expected output
 			for _, expected := range tt.Expected {
 				normalizedExpected := normalizeWhitespace(expected)
-				formattedResult := ast.FormatString(string(result))
-				formattedExpected := ast.FormatString(expected)
-				assert.Contains(t, resultString, normalizedExpected, cmp.Diff(formattedExpected, formattedResult))
+				if !strings.Contains(resultString, normalizedExpected) {
+					t.Errorf("Expected output not found.\nExpected:\n%s\n\nGot:\n%s", expected, string(result))
+				}
 			}
 		})
 	}
