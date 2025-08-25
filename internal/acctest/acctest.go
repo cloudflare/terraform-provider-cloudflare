@@ -646,6 +646,7 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	if err != nil {
 		t.Fatalf("Failed to read state file: %v", err)
 	}
+	debugLogf(t, "Config is: %s", string(state))
 	debugLogf(t, "State is: %s", string(state))
 	cmd := exec.Command("go", "run", "-C", migratePath, ".", "-config", tmpDir, "-patterns-dir", patternsDir, "-state", filepath.Join(stateDir, "terraform.tfstate"))
 	cmd.Dir = tmpDir

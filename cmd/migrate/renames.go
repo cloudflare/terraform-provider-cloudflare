@@ -32,7 +32,7 @@ func applyRenames(block *hclwrite.Block) {
 			block.Body().RenameAttribute(rename.old, rename.new)
 		}
 	}
-	
+
 	// Also rename resource references in attribute values
 	renameResourceReferences(block.Body())
 }
@@ -42,12 +42,17 @@ func applyRenames(block *hclwrite.Block) {
 func renameResourceReferences(body *hclwrite.Body) {
 	// Map of old resource names to new ones
 	resourceTypeRenames := map[string]string{
-		"cloudflare_access_policy": "cloudflare_zero_trust_access_policy",
+		"cloudflare_access_policy":      "cloudflare_zero_trust_access_policy",
 		"cloudflare_access_application": "cloudflare_zero_trust_access_application",
-		"cloudflare_access_group": "cloudflare_zero_trust_access_group",
-		// Add more renames as needed
+		"cloudflare_access_group":       "cloudflare_zero_trust_access_group",
+		// Workers resource renames
+		"cloudflare_worker_route":        "cloudflare_workers_route",
+		"cloudflare_worker_script":       "cloudflare_workers_script",
+		"cloudflare_worker_cron_trigger": "cloudflare_workers_cron_trigger",
+		"cloudflare_worker_domain":       "cloudflare_workers_custom_domain",
+		"cloudflare_worker_secret":       "cloudflare_workers_secret",
 	}
-	
+
 	// Process all attributes
 	for name, attr := range body.Attributes() {
 		tokens := attr.Expr().BuildTokens(nil)
@@ -59,14 +64,15 @@ func renameResourceReferences(body *hclwrite.Body) {
 }
 
 // renameResourceReferencesInTokens renames resource references in token stream
+// Handles both resource type renames and attribute renames within references
 func renameResourceReferencesInTokens(tokens hclwrite.Tokens, renames map[string]string) hclwrite.Tokens {
 	var result hclwrite.Tokens
 	changed := false
 	i := 0
-	
+
 	for i < len(tokens) {
 		token := tokens[i]
-		
+
 		// Look for identifiers that match resource names
 		if token.Type == hclsyntax.TokenIdent {
 			resourceType := string(token.Bytes)
@@ -79,18 +85,67 @@ func renameResourceReferencesInTokens(tokens hclwrite.Tokens, renames map[string
 						Bytes: []byte(newType),
 					})
 					changed = true
-					i++
+
+					// Add the dot
+					result = append(result, tokens[i+1])
+					i += 2
+
+					// Skip resource name (e.g., "my_worker")
+					if i < len(tokens) && tokens[i].Type == hclsyntax.TokenIdent {
+						result = append(result, tokens[i])
+						i++
+
+						// Check for another dot (attribute access)
+						if i < len(tokens) && tokens[i].Type == hclsyntax.TokenDot {
+							result = append(result, tokens[i]) // Add dot
+							i++
+
+							// Check for attribute rename
+							if i < len(tokens) && tokens[i].Type == hclsyntax.TokenIdent {
+								attrName := string(tokens[i].Bytes)
+								newAttrName := renameWorkerAttribute(resourceType, newType, attrName)
+								if newAttrName != attrName {
+									result = append(result, &hclwrite.Token{
+										Type:  hclsyntax.TokenIdent,
+										Bytes: []byte(newAttrName),
+									})
+									changed = true
+									i++
+									continue
+								}
+							}
+						}
+					}
 					continue
 				}
 			}
 		}
-		
+
 		result = append(result, token)
 		i++
 	}
-	
+
 	if changed {
 		return result
 	}
 	return nil // Return nil if no changes were made
+}
+
+// renameWorkerAttribute handles attribute renames for worker resource references
+func renameWorkerAttribute(oldResourceType, newResourceType, attrName string) string {
+	// Handle workers_script attribute renames
+	if oldResourceType == "cloudflare_worker_script" && newResourceType == "cloudflare_workers_script" {
+		if attrName == "name" {
+			return "script_name"
+		}
+	}
+
+	// Handle workers_route attribute renames
+	if oldResourceType == "cloudflare_worker_route" && newResourceType == "cloudflare_workers_route" {
+		if attrName == "script_name" {
+			return "script"
+		}
+	}
+
+	return attrName // No change
 }
