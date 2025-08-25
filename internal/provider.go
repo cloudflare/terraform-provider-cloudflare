@@ -506,6 +506,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		stream_watermark.NewResource,
 		stream_webhook.NewResource,
 		stream_caption_language.NewResource,
+		stream_download.NewResource,
 		notification_policy_webhooks.NewResource,
 		notification_policy.NewResource,
 		d1_database.NewResource,
