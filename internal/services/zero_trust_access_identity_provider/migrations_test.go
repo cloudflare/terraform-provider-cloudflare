@@ -17,10 +17,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
-func TestMain(m *testing.M) {
-	resource.TestMain(m)
-}
-
 // TestMigrateZeroTrustAccessIdentityProvider_OneTimePin_Basic tests basic migration from v4 to v5
 func TestMigrateZeroTrustAccessIdentityProvider_OneTimePin_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the OTP Access
@@ -243,11 +239,11 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 				})),
 				// Verify scim_config block converted to object, deprecated field removed
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("scim_config"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
-					"enabled":                   knownvalue.Bool(true),
-					"seat_deprovision":          knownvalue.Bool(true),
-					"user_deprovision":          knownvalue.Bool(true),
-					"identity_update_behavior":  knownvalue.StringExact("no_action"),
-					"secret":                    knownvalue.NotNull(),
+					"enabled":                  knownvalue.Bool(true),
+					"seat_deprovision":         knownvalue.Bool(true),
+					"user_deprovision":         knownvalue.Bool(true),
+					"identity_update_behavior": knownvalue.StringExact("no_action"),
+					"secret":                   knownvalue.NotNull(),
 					"scim_base_url":            knownvalue.NotNull(),
 				})),
 			}),
@@ -314,22 +310,22 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("saml")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
-				// Verify config block converted to object with cert field renamed and converted to list
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("config"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
-					"issuer_url":     knownvalue.StringExact("jumpcloud"),
-					"sso_target_url": knownvalue.StringExact("https://sso.myexample.jumpcloud.com/saml2/cloudflareaccess"),
-					"attributes":     knownvalue.ListExact([]knownvalue.Check{
-						knownvalue.StringExact("email"),
-						knownvalue.StringExact("username"),
-					}),
-					"sign_request": knownvalue.Bool(true),
-					// Critical: idp_public_cert should be migrated to idp_public_certs as a list
-					"idp_public_certs": knownvalue.ListExact([]knownvalue.Check{
-						knownvalue.StringExact("MIIDpDCCAoygAwIBAgIGAV2ka+55MA0GCSqGSIb3DQEBCwUAMIGSMQswCQYDVQQGEwJVUzETMBEGA1UEC…..GF/Q2/MHadws97cZguTnQyuOqPuHbnN83d/2l1NSYKCbHt24o"),
-					}),
-					"redirect_url": knownvalue.NotNull(),
-				})),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					// Verify config block converted to object with cert field renamed and converted to list
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("config"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
+						"issuer_url":     knownvalue.StringExact("jumpcloud"),
+						"sso_target_url": knownvalue.StringExact("https://sso.myexample.jumpcloud.com/saml2/cloudflareaccess"),
+						"attributes": knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.StringExact("email"),
+							knownvalue.StringExact("username"),
+						}),
+						"sign_request": knownvalue.Bool(true),
+						// Critical: idp_public_cert should be migrated to idp_public_certs as a list
+						"idp_public_certs": knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.StringExact("MIIDpDCCAoygAwIBAgIGAV2ka+55MA0GCSqGSIb3DQEBCwUAMIGSMQswCQYDVQQGEwJVUzETMBEGA1UEC…..GF/Q2/MHadws97cZguTnQyuOqPuHbnN83d/2l1NSYKCbHt24o"),
+						}),
+						"redirect_url": knownvalue.NotNull(),
+					})),
 				},
 			},
 			{
@@ -381,7 +377,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("config"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
 					"client_id":     knownvalue.StringExact("test"),
 					"client_secret": knownvalue.StringExact("secret"),
-					"redirect_url":            knownvalue.NotNull(),
+					"redirect_url":  knownvalue.NotNull(),
 				})),
 			}),
 			{
@@ -488,7 +484,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("azureAD")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
-				// Verify config block converted to object  
+				// Verify config block converted to object
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("config"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
 					"client_id":     knownvalue.StringExact("test"),
 					"client_secret": knownvalue.StringExact("test"),
