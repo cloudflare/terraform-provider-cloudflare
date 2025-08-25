@@ -20,6 +20,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 var (
 	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 )

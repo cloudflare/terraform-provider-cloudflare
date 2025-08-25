@@ -14,6 +14,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 func init() {
 	resource.AddTestSweepers("cloudflare_waiting_room", &resource.Sweeper{
 		Name: "cloudflare_waiting_room",
