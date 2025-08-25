@@ -42,10 +42,15 @@ SERVICES=(
     "./internal/services/email_security_trusted_domains"
     "./internal/services/ip_ranges"
     "./internal/services/list"
+    "./internal/services/list_item"
     "./internal/services/logpull_retention"
     "./internal/services/logpush_job"
     "./internal/services/logpush_ownership_challenge"
     "./internal/services/magic_transit_connector"
+    "./internal/services/magic_wan_ipsec_tunnel"
+    "./internal/services/magic_wan_gre_tunnel"
+    "./internal/services/magic_wan_static_route"
+    "./internal/services/managed_transforms"
     "./internal/services/observatory_scheduled_test"
     "./internal/services/origin_ca_certificate"
     "./internal/services/page_rule"
@@ -98,7 +103,7 @@ SERVICES=(
 set -e
 
 # Configuration
-PARALLEL_JOBS=${PARALLEL_JOBS:-2}  # Number of parallel jobs (can be overridden)
+PARALLEL_JOBS=${PARALLEL_JOBS:-3}  # Number of parallel jobs (can be overridden)
 LOG_DIR="./test-logs"
 SWEEP_TIMEOUT="5m"
 TEST_TIMEOUT="15m"
@@ -178,7 +183,7 @@ run_sweeper() {
     local service_name=$(basename "$service")
     local sweeper_name="cloudflare_${service_name}"
     
-    if TF_ACC=1 go test -v "$service" -sweep=us-west-2 -sweep-run="$sweeper_name" -timeout "$SWEEP_TIMEOUT" >> "$log_file" 2>&1; then
+    if TF_ACC=1 go test -v "$service" -sweep=all -sweep-run="$sweeper_name" -timeout "$SWEEP_TIMEOUT" >> "$log_file" 2>&1; then
         local end_time=$(date +%s)
         local duration=$((end_time - start_time))
         log "${GREEN}✓ Sweeper completed: $service (${duration}s total)${NC}" >> "$log_file"
@@ -336,30 +341,16 @@ main() {
     printf '%s\n' "${SERVICES[@]}" | xargs -I {} -P "$PARALLEL_JOBS" bash -c 'process_service "$@"' _ {}
     parallel_result=$?
     
-    # Kill the background monitors and any tail processes
-    kill $progress_pid 2>/dev/null || true
-    kill $tail_monitor_pid 2>/dev/null || true
-    # Kill all child processes of the tail monitor (the individual tail -f processes)
-    pkill -P $tail_monitor_pid 2>/dev/null || true
-    # Kill any remaining tail processes on our log files
-    pkill -f "tail -f.*$LOG_DIR" 2>/dev/null || true
-    
-    # Wait a moment for background processes to finish
-    sleep 2
-    
+    # Calculate timing and count results first (outside the atomic block)
     local end_time=$(date +%s)
     local total_duration=$((end_time - start_time))
     local minutes=$((total_duration / 60))
     local seconds=$((total_duration % 60))
     
-    echo ""
-    log "${GREEN}=== EXECUTION SUMMARY ===${NC}"
-    log "${WHITE}Total execution time: ${minutes}m ${seconds}s${NC}"
-    
     # Count results
     local passed=0
     local failed=0
-    local failed_services=()
+    local failed_list=""
     
     for service in "${SERVICES[@]}"; do
         local service_name=$(basename "$service")
@@ -369,36 +360,49 @@ main() {
             ((passed++))
         else
             ((failed++))
-            failed_services+=("$service")
+            failed_list="$failed_list$service "
         fi
     done
     
-    log "${GREEN}Passed: $passed${NC}"
-    log "${RED}Failed: $failed${NC}"
-    
-    if [ $failed -gt 0 ]; then
+    # Create summary output atomically to minimize interruption window
+    {
         echo ""
-        log "${RED}Failed services:${NC}"
-        for service in "${failed_services[@]}"; do
-            log "${RED}  - $service${NC}"
-        done
-        echo ""
-        log "${YELLOW}Check individual log files in $LOG_DIR for detailed error information${NC}"
-    fi
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] === EXECUTION SUMMARY ==="
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Total execution time: ${minutes}m ${seconds}s"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Passed: $passed"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Failed: $failed"
+        
+        if [ $failed -gt 0 ]; then
+            echo ""
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] Failed services:"
+            for service in $failed_list; do
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')]   - $service"
+            done
+            echo ""
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] Check individual log files in $LOG_DIR for detailed error information"
+        fi
+        
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Summary complete"
+    } | cat  # Using cat to force immediate output as a single block
     
-    # Return non-zero if any tests failed
+    # NOW start cleanup after summary is shown
+    log "${WHITE}Cleaning up background processes...${NC}"
+    kill $progress_pid 2>/dev/null || true
+    kill $tail_monitor_pid 2>/dev/null || true
+    pkill -P $tail_monitor_pid 2>/dev/null || true
+    
+    # Final status message
     if [ $failed -gt 0 ] || [ $parallel_result -ne 0 ]; then
+        log "${RED}Some tests failed - see details above${NC}"
         exit 1
     fi
     
     log "${GREEN}All tests completed successfully!${NC}"
 }
 
-# Handle cleanup on exit
+# Simple cleanup function for any remaining background processes
 cleanup() {
-    log "${YELLOW}Cleaning up background processes...${NC}"
-    jobs -p | xargs -r kill 2>/dev/null || true
-    # Kill any remaining tail processes on our log files
+    jobs -p | xargs -r kill -TERM 2>/dev/null || true
     pkill -f "tail -f.*$LOG_DIR" 2>/dev/null || true
 }
 
