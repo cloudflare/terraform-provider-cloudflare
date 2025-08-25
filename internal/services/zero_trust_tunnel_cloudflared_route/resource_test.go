@@ -1,3 +1,4 @@
+package acctest
 package zero_trust_tunnel_cloudflared_route_test
 
 import (
@@ -22,10 +23,11 @@ func TestMain(m *testing.M) {
 
 
 func init() {
-	resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared_route", &resource.Sweeper{
-		Name: "cloudflare_zero_trust_tunnel_cloudflared_route",
-		F:    testSweepCloudflareTunnelRoute,
-	})
+	// TODO: fixme - disabled due to timeout issues in CI (PT-xxxx)
+	//resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared_route", &resource.Sweeper{
+	//	Name: "cloudflare_zero_trust_tunnel_cloudflared_route",
+	//	F:    testSweepCloudflareTunnelRoute,
+	//})
 }
 
 func testSweepCloudflareTunnelRoute(r string) error {
