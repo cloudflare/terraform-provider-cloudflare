@@ -22,6 +22,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
 func init() {
 	resource.AddTestSweepers("cloudflare_zero_trust_access_application", &resource.Sweeper{
 		Name: "cloudflare_zero_trust_access_application",
