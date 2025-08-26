@@ -25,7 +25,7 @@ func TestMain(m *testing.M) {
 }
 
 func init() {
-	// TODO: fixme
+	// TODO: fixme - auth error
 	//resource.AddTestSweepers("cloudflare_r2_bucket", &resource.Sweeper{
 	//	Name: "cloudflare_r2_bucket",
 	//	F:    testSweepCloudflareR2Bucket,
