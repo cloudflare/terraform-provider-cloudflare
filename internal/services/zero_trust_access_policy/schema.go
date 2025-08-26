@@ -5,6 +5,7 @@ package zero_trust_access_policy
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -99,6 +100,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"exclude": schema.SetNestedAttribute{
 				Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyExcludeModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Validators: []validator.Object{
 						customvalidator.ObjectSizeAtMost(1),
@@ -360,7 +362,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"include": schema.SetNestedAttribute{
 				Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyIncludeModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Validators: []validator.Object{
 						customvalidator.ObjectSizeAtMost(1),
@@ -623,6 +627,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"require": schema.SetNestedAttribute{
 				Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyRequireModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Validators: []validator.Object{
 						customvalidator.ObjectSizeAtMost(1),
