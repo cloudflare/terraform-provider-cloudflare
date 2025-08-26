@@ -4,6 +4,7 @@ package bot_management
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,7 +12,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/bot_management"
 	"github.com/cloudflare/cloudflare-go/v5/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijsoncustom"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -64,13 +64,15 @@ func (r *BotManagementResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
+	// Convert Terraform model to API model
+	apiModel := data.ToAPIModel()
+	dataBytes, err := json.Marshal(apiModel)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+	
 	res := new(http.Response)
-	env := BotManagementResultEnvelope{*data}
 	_, err = r.client.BotManagement.Update(
 		ctx,
 		bot_management.BotManagementUpdateParams{
@@ -84,13 +86,17 @@ func (r *BotManagementResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijsoncustom.UnmarshalComputed(bytes, &env)
+	var env BotManagementResultEnvelope
+	err = json.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	
+	// Update the state from API response
+	data.UpdateFromAPIModel(env.Result)
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -113,13 +119,15 @@ func (r *BotManagementResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+	// Convert Terraform model to API model
+	apiModel := data.ToAPIModel()
+	dataBytes, err := json.Marshal(apiModel)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+	
 	res := new(http.Response)
-	env := BotManagementResultEnvelope{*data}
 	_, err = r.client.BotManagement.Update(
 		ctx,
 		bot_management.BotManagementUpdateParams{
@@ -133,13 +141,18 @@ func (r *BotManagementResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijsoncustom.UnmarshalComputed(bytes, &env)
+	var env BotManagementResultEnvelope
+	err = json.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	
+	// Start with current state, then update from API response (preserves values for missing fields)
+	*data = *state
+	data.UpdateFromAPIModel(env.Result)
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -155,7 +168,6 @@ func (r *BotManagementResource) Read(ctx context.Context, req resource.ReadReque
 	}
 
 	res := new(http.Response)
-	env := BotManagementResultEnvelope{*data}
 	_, err := r.client.BotManagement.Get(
 		ctx,
 		bot_management.BotManagementGetParams{
@@ -173,13 +185,17 @@ func (r *BotManagementResource) Read(ctx context.Context, req resource.ReadReque
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijsoncustom.Unmarshal(bytes, &env)
+	var env BotManagementResultEnvelope
+	err = json.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	
+	// Update the state from API response (preserves existing values for missing fields)
+	data.UpdateFromAPIModel(env.Result)
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -206,7 +222,6 @@ func (r *BotManagementResource) ImportState(ctx context.Context, req resource.Im
 	data.ZoneID = types.StringValue(path)
 
 	res := new(http.Response)
-	env := BotManagementResultEnvelope{*data}
 	_, err := r.client.BotManagement.Get(
 		ctx,
 		bot_management.BotManagementGetParams{
@@ -219,13 +234,17 @@ func (r *BotManagementResource) ImportState(ctx context.Context, req resource.Im
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijsoncustom.Unmarshal(bytes, &env)
+	var env BotManagementResultEnvelope
+	err = json.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	
+	// Update the state from API response
+	data.UpdateFromAPIModel(env.Result)
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
