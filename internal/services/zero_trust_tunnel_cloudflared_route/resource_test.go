@@ -9,23 +9,24 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-
 func init() {
-	resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared_route", &resource.Sweeper{
-		Name: "cloudflare_zero_trust_tunnel_cloudflared_route",
-		F:    testSweepCloudflareTunnelRoute,
-	})
+	// TODO: fixme - can't delete routes due to error from API
+	//resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared_route", &resource.Sweeper{
+	//	Name: "cloudflare_zero_trust_tunnel_cloudflared_route",
+	//	F:    testSweepCloudflareTunnelRoute,
+	//})
 }
 
 func testSweepCloudflareTunnelRoute(r string) error {
