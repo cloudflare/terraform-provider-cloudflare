@@ -1,9 +1,19 @@
 package main
 
 import (
+	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
+	"github.com/tidwall/sjson"
 	"github.com/zclconf/go-cty/cty"
 )
+
+// isDeprecatedSetting checks if a setting is deprecated and should be skipped
+func isDeprecatedSetting(settingName string) bool {
+	deprecatedSettings := map[string]bool{
+		"universal_ssl": true, // No longer exists in zone settings API
+	}
+	return deprecatedSettings[settingName]
+}
 
 // mapSettingName translates v4 setting names to v5 setting names
 // This handles cases where the v4 provider used different names internally
@@ -11,7 +21,7 @@ func mapSettingName(v4Name string) string {
 	settingNameMap := map[string]string{
 		"zero_rtt": "0rtt", // v4 used "zero_rtt" but API expects "0rtt"
 	}
-	
+
 	if v5Name, exists := settingNameMap[v4Name]; exists {
 		return v5Name
 	}
@@ -43,6 +53,11 @@ func transformZoneSettingsBlock(oldBlock *hclwrite.Block) []*hclwrite.Block {
 		if settingsBlock.Type() == "settings" {
 			// Process regular attributes - migrate ALL attributes dynamically
 			for name, attr := range settingsBlock.Body().Attributes() {
+				// Skip deprecated settings that no longer exist in the API
+				if isDeprecatedSetting(name) {
+					continue
+				}
+
 				// Map the v4 setting name to the correct v5 setting name
 				mappedSettingName := mapSettingName(name)
 				resourceFullName := resourceName + "_" + name
@@ -53,7 +68,7 @@ func transformZoneSettingsBlock(oldBlock *hclwrite.Block) []*hclwrite.Block {
 					attr,
 				)
 				newBlocks = append(newBlocks, newBlock)
-				
+
 				// Create import block for this resource
 				importBlock := createImportBlock(resourceFullName, mappedSettingName, zoneIDAttr)
 				newBlocks = append(newBlocks, importBlock)
@@ -119,8 +134,24 @@ func transformSecurityHeaderBlock(baseName string, zoneIDAttr *hclwrite.Attribut
 	body.SetAttributeValue("setting_id", cty.StringVal("security_header"))
 
 	// Build the object tokens manually to preserve variable references
-	objectTokens := buildObjectFromBlock(securityHeaderBlock)
-	body.SetAttributeRaw("value", objectTokens)
+	// Security header needs to be wrapped in strict_transport_security for v5 API
+	innerObjectTokens := buildObjectFromBlock(securityHeaderBlock)
+
+	// Create the wrapper object with strict_transport_security key
+	wrapperTokens := []*hclwrite.Token{
+		{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")},
+		{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+		{Type: hclsyntax.TokenIdent, Bytes: []byte("strict_transport_security")},
+		{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")},
+	}
+	wrapperTokens = append(wrapperTokens, innerObjectTokens...)
+	wrapperTokens = append(wrapperTokens,
+		[]*hclwrite.Token{
+			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+			{Type: hclsyntax.TokenCBrace, Bytes: []byte("}")},
+		}...)
+
+	body.SetAttributeRaw("value", wrapperTokens)
 
 	return block
 }
@@ -150,23 +181,23 @@ func transformNELBlock(baseName string, zoneIDAttr *hclwrite.Attribute, nelBlock
 func buildObjectFromBlock(block *hclwrite.Block) hclwrite.Tokens {
 	// Get attributes in their original order
 	orderedAttrs := AttributesOrdered(block.Body())
-	
+
 	// Build a list of attribute tokens preserving the original order
 	var attrs []hclwrite.ObjectAttrTokens
-	
+
 	for _, attrInfo := range orderedAttrs {
 		// Create tokens for the attribute name (as a simple identifier)
 		nameTokens := hclwrite.TokensForIdentifier(attrInfo.Name)
-		
+
 		// Get the value tokens from the attribute's expression
 		valueTokens := attrInfo.Attribute.Expr().BuildTokens(nil)
-		
+
 		attrs = append(attrs, hclwrite.ObjectAttrTokens{
 			Name:  nameTokens,
 			Value: valueTokens,
 		})
 	}
-	
+
 	// Use the built-in TokensForObject function to create properly formatted object tokens
 	return hclwrite.TokensForObject(attrs)
 }
@@ -183,9 +214,17 @@ func createImportBlock(resourceName, settingID string, zoneIDAttr *hclwrite.Attr
 	// Build the "id" value: "${zone_id}/setting_id"
 	if zoneIDAttr != nil {
 		zoneIDTokens := zoneIDAttr.Expr().BuildTokens(nil)
-		idTokens := buildTemplateStringTokens(zoneIDTokens, "/" + settingID)
+		idTokens := buildTemplateStringTokens(zoneIDTokens, "/"+settingID)
 		body.SetAttributeRaw("id", idTokens)
 	}
 
 	return block
+}
+
+// transformZoneSettingsStateJSON handles zone settings state transformation
+// For delete + import approach, we delete the resource from the JSON directly
+func transformZoneSettingsStateJSON(jsonData, resourcePath string) string {
+	// Delete the zone_settings_override resource - import blocks will handle state creation
+	result, _ := sjson.Delete(jsonData, resourcePath)
+	return result
 }

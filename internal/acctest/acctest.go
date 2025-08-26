@@ -664,6 +664,36 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	debugLogf(t, "New State is: %s", string(newState))
 }
 
+// MigrationTestStepWithPlan creates test steps for migrations that need plan processing after migration
+// This handles resources that can't use state upgraders and need plan/refresh to correct state
+// Returns multiple steps: migration step, plan step to process changes, then validation step
+func MigrationTestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exactVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
+	// First step: run migration
+	migrationStep := MigrationTestStep(t, v4Config, tmpDir, exactVersion, nil) // No state checks yet
+	
+	// Second step: run plan to process import blocks and state corrections
+	planStep := resource.TestStep{
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		PlanOnly:                 true, // Just run plan to process imports/corrections
+	}
+	
+	// Third step: verify final plan is clean and state is correct
+	validationStep := resource.TestStep{
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: []plancheck.PlanCheck{
+				DebugNonEmptyPlan,
+				ExpectEmptyPlanExceptFalseyToNull, // Should be clean after processing
+			},
+		},
+		ConfigStateChecks: stateChecks,
+	}
+	
+	return []resource.TestStep{migrationStep, planStep, validationStep}
+}
+
 // MigrationTestStep creates a test step that runs the migration command and validates with v5 provider
 func MigrationTestStep(t *testing.T, v4Config string, tmpDir string, exactVersion string, stateChecks []statecheck.StateCheck) resource.TestStep {
 	// Choose the appropriate plan check based on the version

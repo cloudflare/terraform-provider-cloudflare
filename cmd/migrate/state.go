@@ -47,6 +47,12 @@ func transformStateJSON(data []byte) ([]byte, error) {
 		resourceType := resource.Get("type").String()
 		resourcePath := fmt.Sprintf("resources.%d", ridx.Int())
 
+		// Handle zone_settings_override -> zone_setting transformation
+		if resourceType == "cloudflare_zone_settings_override" {
+			result = transformZoneSettingsStateJSON(result, resourcePath)
+			return true // Continue to next resource
+		}
+
 		// Process each instance
 		instances := resource.Get("instances")
 		instances.ForEach(func(iidx, instance gjson.Result) bool {
@@ -73,6 +79,7 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 		return true
 	})
+
 
 	// Pretty format with proper indentation
 	return pretty.PrettyOptions([]byte(result), &pretty.Options{
@@ -149,10 +156,10 @@ func transformLoadBalancerPoolStateJSON(json string, instancePath string) string
 // transformTieredCacheStateJSON handles v4 to v5 state migration for cloudflare_tiered_cache
 func transformTieredCacheStateJSON(json string, instancePath string, resourcePath string) string {
 	attrPath := instancePath + ".attributes"
-	
+
 	// Get the cache_type value
 	cacheType := gjson.Get(json, attrPath+".cache_type")
-	
+
 	if cacheType.Exists() {
 		switch cacheType.String() {
 		case "generic":
@@ -161,19 +168,19 @@ func transformTieredCacheStateJSON(json string, instancePath string, resourcePat
 			// Remove cache_type and add value="on"
 			json, _ = sjson.Delete(json, attrPath+".cache_type")
 			json, _ = sjson.Set(json, attrPath+".value", "on")
-			
+
 		case "smart":
 			// Keep as cloudflare_tiered_cache but transform attribute
 			json, _ = sjson.Delete(json, attrPath+".cache_type")
 			json, _ = sjson.Set(json, attrPath+".value", "on")
-			
+
 		case "off":
 			// Keep as cloudflare_tiered_cache but transform attribute
 			json, _ = sjson.Delete(json, attrPath+".cache_type")
 			json, _ = sjson.Set(json, attrPath+".value", "off")
 		}
 	}
-	
+
 	return json
 }
 
@@ -227,10 +234,10 @@ func transformLoadBalancerPoolState(attributes map[string]interface{}) {
 	// This function is called from tests, so we need to keep it
 	// We'll convert the map to JSON, transform it, and convert back
 	// This is not efficient but maintains the existing interface
-	
+
 	// For now, keeping the old implementation to not break tests
 	// The actual state transformation uses the JSON version above
-	
+
 	// 1. Transform load_shedding from array to object
 	if loadShedding, ok := attributes["load_shedding"]; ok {
 		if arr, ok := loadShedding.([]interface{}); ok {
@@ -299,7 +306,7 @@ func transformLoadBalancerPoolState(attributes map[string]interface{}) {
 func transformLoadBalancerState(attributes map[string]interface{}) {
 	// This function is called from tests, so we need to keep it
 	// For now, keeping the old implementation to not break tests
-	
+
 	// Rename fallback_pool_id to fallback_pool
 	if fallbackPoolID, ok := attributes["fallback_pool_id"]; ok {
 		attributes["fallback_pool"] = fallbackPoolID
@@ -389,7 +396,7 @@ func transformZeroTrustAccessIdentityProviderStateJSON(json string, instancePath
 	// 4. Handle field normalization - remove empty/null/false fields from config
 	// The v5 provider only includes relevant fields, not all possible fields
 	configPath := attrPath + ".config"
-	
+
 	// Remove false boolean values
 	boolFields := []string{"sign_request", "conditional_access_enabled", "support_groups", "pkce_enabled"}
 	for _, field := range boolFields {
@@ -399,7 +406,7 @@ func transformZeroTrustAccessIdentityProviderStateJSON(json string, instancePath
 			json, _ = sjson.Delete(json, fieldPath)
 		}
 	}
-	
+
 	// Remove empty strings
 	stringFields := []string{"client_secret", "client_id", "apps_domain", "auth_url", "certs_url", "directory_id", "email_claim_name", "okta_account", "onelogin_account", "ping_env_id", "issuer_url", "sso_target_url", "token_url", "email_attribute_name", "centrify_account", "centrify_app_id", "authorization_server_id"}
 	for _, field := range stringFields {
@@ -409,7 +416,7 @@ func transformZeroTrustAccessIdentityProviderStateJSON(json string, instancePath
 			json, _ = sjson.Delete(json, fieldPath)
 		}
 	}
-	
+
 	// Remove empty arrays
 	arrayFields := []string{"claims", "scopes", "attributes", "header_attributes", "idp_public_certs"}
 	for _, field := range arrayFields {
@@ -419,7 +426,7 @@ func transformZeroTrustAccessIdentityProviderStateJSON(json string, instancePath
 			json, _ = sjson.Delete(json, fieldPath)
 		}
 	}
-	
+
 	// Remove null values
 	nullableFields := []string{"prompt"}
 	for _, field := range nullableFields {
