@@ -92,4 +92,4 @@ pattern cloudflare_terraform_v5_resource_renames_state() {
   }
 }
 
-cloudflare_terraform_v4_40_0_zero_trust_namespace_renames_state()
+cloudflare_terraform_v5_resource_renames_state()
