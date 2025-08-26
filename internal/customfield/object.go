@@ -182,6 +182,11 @@ func (v NestedObject[T]) ValueAny(ctx context.Context) (any, diag.Diagnostics) {
 func (v NestedObject[T]) Value(ctx context.Context) (*T, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
+	// If the value is null, return nil
+	if v.ObjectValue.IsNull() {
+		return nil, diags
+	}
+
 	ptr := new(T)
 
 	diags.Append(v.ObjectValue.As(ctx, ptr, basetypes.ObjectAsOptions{})...)
