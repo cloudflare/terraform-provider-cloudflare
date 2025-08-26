@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"testing"
 )
 
@@ -317,4 +318,52 @@ func TestTransformStateJSON(t *testing.T) {
 	}
 
 	RunFullStateTransformationTests(t, tests)
+}
+
+func TestTransformManagedTransformsState(t *testing.T) {
+	// Test state with managed_transforms that's missing response headers
+	testState := `{
+		"version": 4,
+		"resources": [{
+			"type": "cloudflare_managed_transforms",
+			"instances": [{
+				"attributes": {
+					"id": "test-zone-id",
+					"zone_id": "test-zone-id",
+					"managed_request_headers": [
+						{"id": "add_true_client_ip_headers", "enabled": true}
+					]
+				}
+			}]
+		}]
+	}`
+
+	// Transform the state
+	result, err := transformStateJSON([]byte(testState))
+	if err != nil {
+		t.Fatalf("Failed to transform state: %v", err)
+	}
+
+	// Parse the result
+	var resultMap map[string]interface{}
+	if err := json.Unmarshal(result, &resultMap); err != nil {
+		t.Fatalf("Failed to parse result: %v", err)
+	}
+
+	// Check if managed_response_headers was added
+	resources := resultMap["resources"].([]interface{})
+	resource := resources[0].(map[string]interface{})
+	instances := resource["instances"].([]interface{})
+	instance := instances[0].(map[string]interface{})
+	attributes := instance["attributes"].(map[string]interface{})
+
+	if _, exists := attributes["managed_response_headers"]; !exists {
+		t.Error("managed_response_headers was not added to the state")
+	}
+
+	// Verify it's an empty array
+	responseHeaders := attributes["managed_response_headers"].([]interface{})
+	if len(responseHeaders) != 0 {
+		t.Errorf("Expected empty managed_response_headers, got %v", responseHeaders)
+	}
 }

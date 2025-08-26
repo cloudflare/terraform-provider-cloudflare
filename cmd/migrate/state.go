@@ -72,6 +72,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_zero_trust_access_identity_provider", "cloudflare_access_identity_provider":
 				result = transformZeroTrustAccessIdentityProviderStateJSON(result, path)
+
+			case "cloudflare_managed_transforms":
+				result = transformManagedTransformsStateJSON(result, path)
 			}
 
 			return true
@@ -440,6 +443,25 @@ func transformZeroTrustAccessIdentityProviderStateJSON(json string, instancePath
 	// 5. Remove deprecated fields
 	json, _ = sjson.Delete(json, attrPath+".config.api_token")
 	json, _ = sjson.Delete(json, attrPath+".scim_config.group_member_deprovision")
+
+	return json
+}
+
+// transformManagedTransformsStateJSON handles v4 to v5 state migration for cloudflare_managed_transforms
+func transformManagedTransformsStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// Check if managed_request_headers exists, if not add empty array
+	requestHeaders := gjson.Get(json, attrPath+".managed_request_headers")
+	if !requestHeaders.Exists() {
+		json, _ = sjson.Set(json, attrPath+".managed_request_headers", []interface{}{})
+	}
+
+	// Check if managed_response_headers exists, if not add empty array
+	responseHeaders := gjson.Get(json, attrPath+".managed_response_headers")
+	if !responseHeaders.Exists() {
+		json, _ = sjson.Set(json, attrPath+".managed_response_headers", []interface{}{})
+	}
 
 	return json
 }
