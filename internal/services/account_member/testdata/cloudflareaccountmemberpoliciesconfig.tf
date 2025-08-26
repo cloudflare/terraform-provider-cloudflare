@@ -1,3 +1,7 @@
+data "cloudflare_resource_groups" "example_resource_groups" {
+  account_id = "%s"
+}
+
 resource "cloudflare_account_member" "%s" {
   account_id = "%s"
   email      = "%s"
@@ -8,13 +12,7 @@ resource "cloudflare_account_member" "%s" {
       id = "%s"
     }]
     resource_groups = [{
-      // TODO: add resource groups id to make the test work, need to expose resource groups endpoint in terraform
-      scope = {
-        key = "com.cloudflare.api.account.%s"
-        objects = [{
-          key = "*"
-        }]
-      }
+      id = data.cloudflare_resource_groups.example_resource_groups.result[0].id
     }]
   }]
 }

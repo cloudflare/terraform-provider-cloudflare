@@ -73,8 +73,8 @@ func unmarshalCustom(data []byte, configuredModel *AccountMemberModel) (*Account
 	configUsesPolicies := !configuredModel.Policies.IsNull() && !configuredModel.Policies.IsUnknown()
 
 	if configUsesRoles && !configUsesPolicies {
-		// User configured roles - compare only roles, ignore auto-generated policies
-		result.Policies = customfield.NullObjectList[AccountMemberPoliciesModel](context.Background())
+		// User configured roles - preserve computed policies from API to prevent diffs
+		// Don't modify result.Policies - let it keep the computed values from API response
 
 		// Extract role IDs from GET response (roles come as objects with id field)
 		var fullResponse struct {
@@ -95,11 +95,8 @@ func unmarshalCustom(data []byte, configuredModel *AccountMemberModel) (*Account
 			result.Roles = configuredModel.Roles
 		}
 	} else if configUsesPolicies && !configUsesRoles {
-		// User configured policies - clear roles and handle policies properly
+		// User configured policies - ignore roles, set roles to nil to prevent diffs
 		result.Roles = nil
-
-		// The key issue: we need to ensure the policies structure matches what Terraform expects
-		// while preserving computed fields from the API response
 
 		// Extract policies from the API response and ensure they match the configured structure
 		var fullResponse struct {
@@ -120,7 +117,9 @@ func unmarshalCustom(data []byte, configuredModel *AccountMemberModel) (*Account
 			result.Policies = configuredModel.Policies
 		}
 	} else {
+		// Fallback: preserve configured values
 		result.Roles = configuredModel.Roles
+		result.Policies = configuredModel.Policies
 	}
 
 	return result, nil
