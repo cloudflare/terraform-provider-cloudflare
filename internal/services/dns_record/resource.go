@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -262,6 +263,26 @@ func (r *DNSRecordResource) ImportState(ctx context.Context, req resource.Import
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSRecordResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	// Only proceed if we have a plan (not destroying)
+	if req.Plan.Raw.IsNull() {
+		return
+	}
 
+	var plan DNSRecordModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Handle tags_modified_on drift: if tags is empty/null, ensure tags_modified_on is null
+	// This works around terraform-plugin-framework issue #898 where computed fields adjacent
+	// to optional+computed collections show as "known after apply"
+	tagsIsEmpty := plan.Tags.IsNull() || (!plan.Tags.IsUnknown() && len(plan.Tags.Elements()) == 0)
+
+	if tagsIsEmpty && plan.TagsModifiedOn.IsUnknown() {
+		// Set tags_modified_on to null when tags are empty, preventing drift
+		plan.TagsModifiedOn = timetypes.NewRFC3339Null()
+		resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
+	}
 }
