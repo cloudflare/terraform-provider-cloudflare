@@ -141,6 +141,10 @@ func (r *LoadBalancerPoolResource) Update(ctx context.Context, req resource.Upda
 	}
 	data = &env.Result
 
+	// Reset created_on to the value from state
+	// The API seems to return 0001-01-01T00:00:00Z on update
+	data.CreatedOn = state.CreatedOn
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
