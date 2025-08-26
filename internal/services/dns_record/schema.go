@@ -16,6 +16,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -50,6 +52,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.All(
 						stringvalidator.ConflictsWith(path.MatchRoot("data")),
 					),
+				},
+				PlanModifiers: []planmodifier.String{
+					NormalizeContent(), // Normalize content based on record type
 				},
 			},
 			"priority": schema.Float64Attribute{
@@ -340,12 +345,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
+				PlanModifiers: []planmodifier.Set{
+					NormalizeEmptySet(),
+				},
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Settings for the DNS record.",
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[DNSRecordSettingsModel](ctx),
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.UseStateForUnknown(),
+					PreserveStateIfConfigNull(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"ipv4_only": schema.BoolAttribute{
 						Description: "When enabled, only A records will be generated, and AAAA records will not be created. This setting is intended for exceptional cases. Note that this option only applies to proxied records and it has no effect on whether Cloudflare communicates with the origin using IPv4 or IPv6.",
@@ -368,30 +380,48 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the record comment was last modified. Omitted if there is no comment.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{
+					OmitIfRelatedFieldNull(path.Root("comment")),
+				},
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the record was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the record was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"proxiable": schema.BoolAttribute{
 				Description: "Whether the record can be proxied by Cloudflare or not.",
 				Computed:    true,
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"tags_modified_on": schema.StringAttribute{
 				Description: "When the record tags were last modified. Omitted if there are no tags.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{
+					OmitIfRelatedSetEmpty(path.Root("tags")),
+				},
 			},
 			"meta": schema.StringAttribute{
 				Description: "Extra Cloudflare-specific information about the record.",
 				Computed:    true,
 				CustomType:  jsontypes.NormalizedType{},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"name": schema.StringAttribute{
 				Description: "DNS record name (or @ for the zone apex) in Punycode.",
