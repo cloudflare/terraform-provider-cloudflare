@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
@@ -59,7 +60,7 @@ func testSweepCloudflareTunnelRoute(r string) error {
 	return nil
 }
 
-func TestAccCloudflareTunnelRoute_Exists(t *testing.T) {
+func TestAccCloudflareTunnelRoute_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -71,14 +72,27 @@ func TestAccCloudflareTunnelRoute_Exists(t *testing.T) {
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
+			// Create
 			{
-				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, "10.0.0.20/32"),
+				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, "10.10.10.10/32"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttrSet(name, "tunnel_id"),
-					resource.TestCheckResourceAttr(name, "network", "10.0.0.20/32"),
+					resource.TestCheckResourceAttr(name, "network", "10.10.10.10/32"),
 					resource.TestCheckResourceAttr(name, "comment", rnd),
 				),
+			},
+			// Update
+			{
+				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, "20.20.20.20/32"),
+				Check:  resource.TestCheckResourceAttr(name, "network", "20.20.20.20/32"),
+			},
+			// Import
+			{
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportState:         true,
+				ImportStateVerify:   true,
 			},
 		},
 	})
@@ -112,6 +126,94 @@ func TestAccCloudflareTunnelRoute_UpdateComment(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareTunnelRoute_NoComment(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_route.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	cidr := "10.5.3.1/32"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRouteNoComment(rnd, accountID, cidr),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttrSet(name, "tunnel_id"),
+					resource.TestCheckResourceAttr(name, "network", cidr),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareTunnelRoute_UpdateTunnel(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_route.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	tunnel1 := fmt.Sprintf("%s_tun1", rnd)
+	tunnel2 := fmt.Sprintf("%s_tun2", rnd)
+	tunnel1Id := ""
+	tunnel2Id := ""
+	var tunnel1IdPtr *string = &tunnel1Id
+	var tunnel2IdPtr *string = &tunnel2Id
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRouteUpdateTunnel(accountID, tunnel1, tunnel2, rnd, tunnel1),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					getTunnelId(tunnel1, tunnel1IdPtr),
+					getTunnelId(tunnel2, tunnel2IdPtr),
+					resource.TestCheckResourceAttrPtr(name, "tunnel_id", tunnel1IdPtr),
+				),
+			},
+			{
+				Config: testAccCloudflareRouteUpdateTunnel(accountID, tunnel1, tunnel2, rnd, tunnel2),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttrPtr(name, "tunnel_id", tunnel2IdPtr),
+				),
+			},
+		},
+	})
+}
+
+func getTunnelId(tunnelName string, tunnel1Id *string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		resourceName := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared.%s", tunnelName)
+
+		// Get the resource instance from the state
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("resource not found: %s", resourceName)
+		}
+
+		// Access the instance's attributes directly
+		*tunnel1Id = rs.Primary.Attributes["id"]
+
+		return nil
+	}
+}
+
 func testAccCloudflareTunnelRouteSimple(ID, comment, accountID, network string) string {
-	return acctest.LoadTestCase("tunnelroutesimple.tf", ID, comment, accountID, network)
+	return acctest.LoadTestCase("route_simple.tf", ID, comment, accountID, network)
+}
+
+func testAccCloudflareRouteNoComment(ID, accountID, network string) string {
+	return acctest.LoadTestCase("route_no_comment.tf", ID, accountID, network)
+}
+
+func testAccCloudflareRouteUpdateTunnel(accountID, tunnel1, tunnel2, ID, tunnel string) string {
+	return acctest.LoadTestCase("route_update_tunnel.tf", accountID, tunnel1, tunnel2, ID, tunnel)
 }
