@@ -22,11 +22,10 @@ func TestMain(m *testing.M) {
 }
 
 func init() {
-	// TODO: fixme - can't delete routes due to error from API
-	//resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared_route", &resource.Sweeper{
-	//	Name: "cloudflare_zero_trust_tunnel_cloudflared_route",
-	//	F:    testSweepCloudflareTunnelRoute,
-	//})
+	resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared_route", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_tunnel_cloudflared_route",
+		F:    testSweepCloudflareTunnelRoute,
+	})
 }
 
 func testSweepCloudflareTunnelRoute(r string) error {
@@ -40,8 +39,8 @@ func testSweepCloudflareTunnelRoute(r string) error {
 	if accountID == "" {
 		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
 	}
-
-	tunnelRoutes, err := client.ListTunnelRoutes(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.TunnelRoutesListParams{})
+	isDeleted := false
+	tunnelRoutes, err := client.ListTunnelRoutes(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.TunnelRoutesListParams{IsDeleted: &isDeleted})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Tunnel Routes: %s", err))
 	}
