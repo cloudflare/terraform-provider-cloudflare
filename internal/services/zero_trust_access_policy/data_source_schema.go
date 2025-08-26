@@ -83,10 +83,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
-			"approval_groups": schema.ListNestedAttribute{
+			"approval_groups": schema.SetNestedAttribute{
 				Description: "Administrators who can approve a temporary authentication request.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessPolicyApprovalGroupsDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyApprovalGroupsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"approvals_needed": schema.Float64Attribute{
@@ -109,10 +109,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"exclude": schema.ListNestedAttribute{
+			"exclude": schema.SetNestedAttribute{
 				Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessPolicyExcludeDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyExcludeDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
@@ -393,10 +393,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"include": schema.ListNestedAttribute{
+			"include": schema.SetNestedAttribute{
 				Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessPolicyIncludeDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyIncludeDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
@@ -677,10 +677,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"require": schema.ListNestedAttribute{
+			"require": schema.SetNestedAttribute{
 				Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessPolicyRequireDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyRequireDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{

@@ -65,7 +65,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Require users to enter a justification when they log in to the application.",
 				Optional:    true,
 			},
-			"approval_groups": schema.ListNestedAttribute{
+			"approval_groups": schema.SetNestedAttribute{
 				Description: "Administrators who can approve a temporary authentication request.",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -95,11 +95,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     stringdefault.StaticString("24h"),
 			},
-			"exclude": schema.ListNestedAttribute{
+			"exclude": schema.SetNestedAttribute{
 				Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessPolicyExcludeModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyExcludeModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
@@ -356,11 +356,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"include": schema.ListNestedAttribute{
+			"include": schema.SetNestedAttribute{
 				Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessPolicyIncludeModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyIncludeModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
@@ -617,11 +617,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"require": schema.ListNestedAttribute{
+			"require": schema.SetNestedAttribute{
 				Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessPolicyRequireModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyRequireModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{

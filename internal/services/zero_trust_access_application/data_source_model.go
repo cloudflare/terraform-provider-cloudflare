@@ -52,7 +52,7 @@ type ZeroTrustAccessApplicationDataSourceModel struct {
 	AllowedIdPs                 customfield.List[types.String]                                                        `tfsdk:"allowed_idps" json:"allowed_idps,computed"`
 	CustomPages                 customfield.List[types.String]                                                        `tfsdk:"custom_pages" json:"custom_pages,computed"`
 	SelfHostedDomains           customfield.List[types.String]                                                        `tfsdk:"self_hosted_domains" json:"self_hosted_domains,computed"`
-	Tags                        customfield.List[types.String]                                                        `tfsdk:"tags" json:"tags,computed"`
+	Tags                        customfield.Set[types.String]                                                         `tfsdk:"tags" json:"tags,computed"`
 	CORSHeaders                 customfield.NestedObject[ZeroTrustAccessApplicationCORSHeadersDataSourceModel]        `tfsdk:"cors_headers" json:"cors_headers,computed"`
 	Destinations                customfield.NestedObjectList[ZeroTrustAccessApplicationDestinationsDataSourceModel]   `tfsdk:"destinations" json:"destinations,computed"`
 	FooterLinks                 customfield.NestedObjectList[ZeroTrustAccessApplicationFooterLinksDataSourceModel]    `tfsdk:"footer_links" json:"footer_links,computed"`
@@ -139,22 +139,22 @@ type ZeroTrustAccessApplicationLandingPageDesignDataSourceModel struct {
 }
 
 type ZeroTrustAccessApplicationPoliciesDataSourceModel struct {
-	ID                           types.String                                                                                  `tfsdk:"id" json:"id,computed"`
-	ApprovalGroups               customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesApprovalGroupsDataSourceModel] `tfsdk:"approval_groups" json:"approval_groups,computed"`
-	ApprovalRequired             types.Bool                                                                                    `tfsdk:"approval_required" json:"approval_required,computed"`
-	CreatedAt                    timetypes.RFC3339                                                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Decision                     types.String                                                                                  `tfsdk:"decision" json:"decision,computed"`
-	Exclude                      customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesExcludeDataSourceModel]        `tfsdk:"exclude" json:"exclude,computed"`
-	Include                      customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesIncludeDataSourceModel]        `tfsdk:"include" json:"include,computed"`
-	IsolationRequired            types.Bool                                                                                    `tfsdk:"isolation_required" json:"isolation_required,computed"`
-	Name                         types.String                                                                                  `tfsdk:"name" json:"name,computed"`
-	Precedence                   types.Int64                                                                                   `tfsdk:"precedence" json:"precedence,computed"`
-	PurposeJustificationPrompt   types.String                                                                                  `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
-	PurposeJustificationRequired types.Bool                                                                                    `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
-	Require                      customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesRequireDataSourceModel]        `tfsdk:"require" json:"require,computed"`
-	SessionDuration              types.String                                                                                  `tfsdk:"session_duration" json:"session_duration,computed"`
-	UpdatedAt                    timetypes.RFC3339                                                                             `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	ConnectionRules              customfield.NestedObject[ZeroTrustAccessApplicationPoliciesConnectionRulesDataSourceModel]    `tfsdk:"connection_rules" json:"connection_rules,computed"`
+	ID                           types.String                                                                                 `tfsdk:"id" json:"id,computed"`
+	ApprovalGroups               customfield.NestedObjectSet[ZeroTrustAccessApplicationPoliciesApprovalGroupsDataSourceModel] `tfsdk:"approval_groups" json:"approval_groups,computed"`
+	ApprovalRequired             types.Bool                                                                                   `tfsdk:"approval_required" json:"approval_required,computed"`
+	CreatedAt                    timetypes.RFC3339                                                                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Decision                     types.String                                                                                 `tfsdk:"decision" json:"decision,computed"`
+	Exclude                      customfield.NestedObjectSet[ZeroTrustAccessApplicationPoliciesExcludeDataSourceModel]        `tfsdk:"exclude" json:"exclude,computed"`
+	Include                      customfield.NestedObjectSet[ZeroTrustAccessApplicationPoliciesIncludeDataSourceModel]        `tfsdk:"include" json:"include,computed"`
+	IsolationRequired            types.Bool                                                                                   `tfsdk:"isolation_required" json:"isolation_required,computed"`
+	Name                         types.String                                                                                 `tfsdk:"name" json:"name,computed"`
+	Precedence                   types.Int64                                                                                  `tfsdk:"precedence" json:"precedence,computed"`
+	PurposeJustificationPrompt   types.String                                                                                 `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
+	PurposeJustificationRequired types.Bool                                                                                   `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
+	Require                      customfield.NestedObjectSet[ZeroTrustAccessApplicationPoliciesRequireDataSourceModel]        `tfsdk:"require" json:"require,computed"`
+	SessionDuration              types.String                                                                                 `tfsdk:"session_duration" json:"session_duration,computed"`
+	UpdatedAt                    timetypes.RFC3339                                                                            `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	ConnectionRules              customfield.NestedObject[ZeroTrustAccessApplicationPoliciesConnectionRulesDataSourceModel]   `tfsdk:"connection_rules" json:"connection_rules,computed"`
 }
 
 type ZeroTrustAccessApplicationPoliciesApprovalGroupsDataSourceModel struct {

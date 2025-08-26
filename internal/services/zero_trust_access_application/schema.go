@@ -406,11 +406,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:         customfield.NewListType[types.String](ctx),
 				ElementType:        types.StringType,
 			},
-			"tags": schema.ListAttribute{
+			"tags": schema.SetAttribute{
 				Description: "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",
 				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"destinations": schema.ListNestedAttribute{
@@ -514,11 +514,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"include": schema.ListNestedAttribute{
+						"include": schema.SetNestedAttribute{
 							Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -800,11 +800,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"exclude": schema.ListNestedAttribute{
+						"exclude": schema.SetNestedAttribute{
 							Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -1061,11 +1061,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"require": schema.ListNestedAttribute{
+						"require": schema.SetNestedAttribute{
 							Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
 							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesRequireModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesRequireModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
