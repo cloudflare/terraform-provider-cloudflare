@@ -15,12 +15,73 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_magic_wan_static_route", &resource.Sweeper{
+		Name: "cloudflare_magic_wan_static_route",
+		F:    testSweepCloudflareMagicWanStaticRoute,
+	})
+}
+
+func testSweepCloudflareMagicWanStaticRoute(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return fmt.Errorf("failed to create Cloudflare client: %w", clientErr)
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		return fmt.Errorf("CLOUDFLARE_ACCOUNT_ID must be set")
+	}
+
+	tflog.Info(ctx, "Starting to list static routes for sweeping")
+	routes, err := client.ListMagicTransitStaticRoutes(ctx, accountID)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch static routes: %s", err))
+		return fmt.Errorf("failed to fetch static routes: %w", err)
+	}
+
+	if len(routes) == 0 {
+		tflog.Info(ctx, "No static routes to sweep")
+		return nil
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Found %d static routes to sweep", len(routes)))
+
+	deletedCount := 0
+	failedCount := 0
+
+	for _, route := range routes {
+		tflog.Info(ctx, fmt.Sprintf("Deleting static route: %s (%s)", route.Description, route.ID))
+		
+		_, err := client.DeleteMagicTransitStaticRoute(ctx, accountID, route.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete static route %s: %s", route.ID, err))
+			failedCount++
+			continue
+		}
+		
+		deletedCount++
+		tflog.Info(ctx, fmt.Sprintf("Successfully deleted static route: %s", route.ID))
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Completed sweeping static routes: deleted %d, failed %d", deletedCount, failedCount))
+	return nil
+}
+
 func TestAccCloudflareStaticRoute_Exists(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	cfIP := utils.LookupMagicWanCfIP(t, accountID)
-	config := testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP)
+	// Generate unique interface address to avoid conflicts
+	interfaceAddr := fmt.Sprintf("10.214.%d.9/31", utils.RandIntRange(1, 254))
+	config := testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP, interfaceAddr)
 
 	var StaticRoute cloudflare.MagicTransitStaticRoute
 
@@ -93,6 +154,8 @@ func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	cfIP := utils.LookupMagicWanCfIP(t, accountID)
+	// Generate unique interface address to avoid conflicts
+	interfaceAddr := fmt.Sprintf("10.214.%d.9/31", utils.RandIntRange(1, 254))
 
 	var StaticRoute cloudflare.MagicTransitStaticRoute
 
@@ -101,14 +164,14 @@ func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP, interfaceAddr),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					resource.TestCheckResourceAttr(name, "description", rnd),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd+"-updated", accountID, 100, cfIP),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd+"-updated", accountID, 100, cfIP, interfaceAddr),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					resource.TestCheckResourceAttr(name, "description", rnd+"-updated"),
@@ -123,6 +186,8 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	cfIP := utils.LookupMagicWanCfIP(t, accountID)
+	// Generate unique interface address to avoid conflicts
+	interfaceAddr := fmt.Sprintf("10.214.%d.9/31", utils.RandIntRange(1, 254))
 
 	var StaticRoute cloudflare.MagicTransitStaticRoute
 	var initialID string
@@ -132,7 +197,7 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP, interfaceAddr),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					resource.TestCheckResourceAttr(name, "weight", "100"),
@@ -142,7 +207,7 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 				PreConfig: func() {
 					initialID = StaticRoute.ID
 				},
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd+"-updated", accountID, 200, cfIP),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd+"-updated", accountID, 200, cfIP, interfaceAddr),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					func(state *terraform.State) error {
@@ -159,6 +224,6 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareStaticRouteSimple(ID, description, accountID string, weight int, cfIP string) string {
-	return acctest.LoadTestCase("staticroutesimple.tf", ID, description, accountID, weight, cfIP)
+func testAccCheckCloudflareStaticRouteSimple(ID, description, accountID string, weight int, cfIP, interfaceAddr string) string {
+	return acctest.LoadTestCase("staticroutesimple.tf", ID, description, accountID, weight, cfIP, interfaceAddr)
 }
