@@ -88,6 +88,52 @@ func TestWorkersScriptTransformation(t *testing.T) {
   content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
 }`},
 		},
+		{
+			Name: "workers_script with d1_database_binding (should map to d1 type)",
+			Config: `resource "cloudflare_workers_script" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name = "my-worker"
+  content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  
+  d1_database_binding {
+    name = "MY_DB"
+    database_id = "db123"
+  }
+}`,
+			Expected: []string{`resource "cloudflare_workers_script" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  bindings = [{
+    type        = "d1"
+    database_id = "db123"
+    name        = "MY_DB"
+  }]
+}`},
+		},
+		{
+			Name: "workers_script with hyperdrive_config_binding (should map to hyperdrive type)",
+			Config: `resource "cloudflare_workers_script" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name = "my-worker"
+  content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  
+  hyperdrive_config_binding {
+    name = "HYPERDRIVE"
+    binding_id = "hyperdrive123"
+  }
+}`,
+			Expected: []string{`resource "cloudflare_workers_script" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  bindings = [{
+    type       = "hyperdrive"
+    binding_id = "hyperdrive123"
+    name       = "HYPERDRIVE"
+  }]
+}`},
+		},
 	}
 
 	RunTransformationTests(t, tests, transformFile)

@@ -199,50 +199,56 @@ func UpdateSecretTextsFromState[T any](
 
 	attrTypes := objType.AttributeTypes()
 
-	for _, val := range refreshedElems {
-		refreshedObj, ok := val.(basetypes.ObjectValue)
+	// Iterate through state elements first to preserve ordering
+	for _, stateVal := range stateElems {
+		stateObj, ok := stateVal.(basetypes.ObjectValue)
 		if !ok {
-			updatedElems = append(updatedElems, val)
+			updatedElems = append(updatedElems, stateVal)
 			continue
 		}
 
-		refreshedAttrs := refreshedObj.Attributes()
-		typeAttr := refreshedAttrs["type"]
-		nameAttr := refreshedAttrs["name"]
+		stateAttrs := stateObj.Attributes()
+		typeAttr := stateAttrs["type"]
+		nameAttr := stateAttrs["name"]
 
 		if typeAttr.IsNull() || nameAttr.IsNull() {
-			updatedElems = append(updatedElems, val)
+			updatedElems = append(updatedElems, stateVal)
 			continue
 		}
 
 		if typeAttr.(types.String).ValueString() != "secret_text" {
-			updatedElems = append(updatedElems, val)
+			updatedElems = append(updatedElems, stateVal)
 			continue
 		}
 
 		name := nameAttr.(types.String).ValueString()
 
-		var originalText attr.Value
-		var foundInState bool
-		for _, stateVal := range stateElems {
-			stateObj, ok := stateVal.(basetypes.ObjectValue)
+		// Find matching element in refreshed data
+		var refreshedObj basetypes.ObjectValue
+		var foundInRefreshed bool
+		for _, refreshedVal := range refreshedElems {
+			refreshedObjCandidate, ok := refreshedVal.(basetypes.ObjectValue)
 			if !ok {
 				continue
 			}
-			stateAttrs := stateObj.Attributes()
-			if stateAttrs["type"].(types.String).ValueString() == "secret_text" &&
-				stateAttrs["name"].(types.String).ValueString() == name {
-				originalText = stateAttrs["text"]
-				foundInState = true
+			refreshedAttrs := refreshedObjCandidate.Attributes()
+			if refreshedAttrs["type"].(types.String).ValueString() == "secret_text" &&
+				refreshedAttrs["name"].(types.String).ValueString() == name {
+				refreshedObj = refreshedObjCandidate
+				foundInRefreshed = true
 				break
 			}
 		}
 
-		if !foundInState {
+		if !foundInRefreshed {
+			// Element was removed from API, skip it
 			continue
 		}
 
+		// Preserve original secret text from state
+		originalText := stateAttrs["text"]
 		if originalText != nil && !originalText.IsNull() && !originalText.IsUnknown() {
+			refreshedAttrs := refreshedObj.Attributes()
 			refreshedAttrs["text"] = originalText
 
 			newObj, d := basetypes.NewObjectValue(attrTypes, refreshedAttrs)
@@ -251,6 +257,44 @@ func UpdateSecretTextsFromState[T any](
 		}
 
 		updatedElems = append(updatedElems, refreshedObj)
+	}
+
+	// Add any new elements from API that weren't in state
+	for _, refreshedVal := range refreshedElems {
+		refreshedObj, ok := refreshedVal.(basetypes.ObjectValue)
+		if !ok {
+			continue
+		}
+
+		refreshedAttrs := refreshedObj.Attributes()
+		typeAttr := refreshedAttrs["type"]
+		nameAttr := refreshedAttrs["name"]
+
+		if typeAttr.IsNull() || nameAttr.IsNull() {
+			continue
+		}
+
+		name := nameAttr.(types.String).ValueString()
+
+		// Check if this element was already processed from state
+		var foundInState bool
+		for _, stateVal := range stateElems {
+			stateObj, ok := stateVal.(basetypes.ObjectValue)
+			if !ok {
+				continue
+			}
+			stateAttrs := stateObj.Attributes()
+			if stateAttrs["type"].(types.String).ValueString() == refreshedAttrs["type"].(types.String).ValueString() &&
+				stateAttrs["name"].(types.String).ValueString() == name {
+				foundInState = true
+				break
+			}
+		}
+
+		if !foundInState {
+			// This is a new element from the API, add it
+			updatedElems = append(updatedElems, refreshedObj)
+		}
 	}
 
 	value, d := types.ListValue(refreshed.ElementType(ctx), updatedElems)

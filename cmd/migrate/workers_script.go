@@ -61,9 +61,6 @@ func transformWorkersScriptStateJSON(jsonStr string, path string) string {
 	dispatchNamespacePath := path + ".attributes.dispatch_namespace"
 	result, _ = sjson.Delete(result, dispatchNamespacePath)
 
-	// Remove hyperdrive_config_binding which exists in v4 but not expected in v5 schema
-	hyperdriveConfigBindingPath := path + ".attributes.hyperdrive_config_binding"
-	result, _ = sjson.Delete(result, hyperdriveConfigBindingPath)
 
 	// Remove module attribute which exists in v4 but causes issues in v5
 	modulePath := path + ".attributes.module"
@@ -97,6 +94,7 @@ func transformBindingsInState(jsonStr string, path string) string {
 		"analytics_engine_binding",
 		"service_binding",
 		"webassembly_binding",
+		"hyperdrive_config_binding",
 	}
 
 	var bindings []interface{}
@@ -111,6 +109,14 @@ func transformBindingsInState(jsonStr string, path string) string {
 			bindingType := bindingAttr
 			if bindingType[len(bindingType)-8:] == "_binding" {
 				bindingType = bindingType[:len(bindingType)-8]
+			}
+			
+			// Special case mappings for specific binding types
+			switch bindingAttr {
+			case "d1_database_binding":
+				bindingType = "d1"
+			case "hyperdrive_config_binding":
+				bindingType = "hyperdrive"
 			}
 
 			// Parse the binding data and add type field
@@ -134,7 +140,7 @@ func transformBindingsInState(jsonStr string, path string) string {
 		}
 	}
 
-	// If we found any bindings, set the unified bindings attribute
+	// If we found any bindings, add them to the state (preserve original ordering)
 	if len(bindings) > 0 {
 		bindingsPath := path + ".attributes.bindings"
 		result, _ = sjson.Set(result, bindingsPath, bindings)
@@ -157,10 +163,11 @@ func transformBindings(block *hclwrite.Block, diags ast.Diagnostics) {
 		"secret_text_binding":      "secret_text",
 		"r2_bucket_binding":        "r2_bucket",
 		"queue_binding":            "queue",
-		"d1_database_binding":      "d1_database",
+		"d1_database_binding":      "d1",
 		"analytics_engine_binding": "analytics_engine",
 		"service_binding":          "service",
 		"webassembly_binding":      "webassembly",
+		"hyperdrive_config_binding": "hyperdrive",
 	}
 
 	// Scan all blocks to find binding blocks
