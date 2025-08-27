@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*WorkersScriptsDataSource)(nil)
@@ -44,6 +45,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The id of the script in the Workers system. Usually the script name.",
 							Computed:    true,
 						},
+						"compatibility_date": schema.StringAttribute{
+							Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
+							Computed:    true,
+						},
+						"compatibility_flags": schema.SetAttribute{
+							Description: "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
+							Computed:    true,
+							CustomType:  customfield.NewSetType[types.String](ctx),
+							ElementType: types.StringType,
+						},
 						"created_on": schema.StringAttribute{
 							Description: "When the script was created.",
 							Computed:    true,
@@ -53,6 +64,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Hashed script content, can be used in a If-None-Match header when updating.",
 							Computed:    true,
 						},
+						"handlers": schema.ListAttribute{
+							Description: "The names of handlers exported as part of the default export.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
 						"has_assets": schema.BoolAttribute{
 							Description: "Whether a Worker contains assets.",
 							Computed:    true,
@@ -61,14 +78,41 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Whether a Worker contains modules.",
 							Computed:    true,
 						},
+						"last_deployed_from": schema.StringAttribute{
+							Description: "The client most recently used to deploy this Worker.",
+							Computed:    true,
+						},
 						"logpush": schema.BoolAttribute{
 							Description: "Whether Logpush is turned on for the Worker.",
+							Computed:    true,
+						},
+						"migration_tag": schema.StringAttribute{
+							Description: "The tag of the Durable Object migration that was most recently applied for this Worker.",
 							Computed:    true,
 						},
 						"modified_on": schema.StringAttribute{
 							Description: "When the script was last modified.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
+						},
+						"named_handlers": schema.ListNestedAttribute{
+							Description: "Named exports, such as Durable Object class implementations and named entrypoints.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectListType[WorkersScriptsNamedHandlersDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"handlers": schema.ListAttribute{
+										Description: "The names of handlers exported as part of the named export.",
+										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
+										ElementType: types.StringType,
+									},
+									"name": schema.StringAttribute{
+										Description: "The name of the export.",
+										Computed:    true,
+									},
+								},
+							},
 						},
 						"placement": schema.SingleNestedAttribute{
 							Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
