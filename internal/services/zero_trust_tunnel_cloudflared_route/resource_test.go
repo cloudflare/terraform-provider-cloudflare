@@ -11,7 +11,10 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
@@ -88,7 +91,26 @@ func TestAccCloudflareTunnelRoute_Basic(t *testing.T) {
 			// Update
 			{
 				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, subnet2),
-				Check:  resource.TestCheckResourceAttr(name, "network", subnet2),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(
+							name,
+							tfjsonpath.New("network"),
+							knownvalue.StringExact(subnet2),
+						),
+					},
+				},
+				Check: resource.TestCheckResourceAttr(name, "network", subnet2),
+			},
+			// Re-applying same change does not produce drift
+			{
+				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, subnet2),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 			// Import
 			{
