@@ -22,6 +22,7 @@ import (
 var _ resource.ResourceWithConfigure = (*ArgoTieredCachingResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ArgoTieredCachingResource)(nil)
 var _ resource.ResourceWithImportState = (*ArgoTieredCachingResource)(nil)
+var _ resource.ResourceWithMoveState = (*ArgoTieredCachingResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ArgoTieredCachingResource{}
