@@ -282,6 +282,11 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		if isAccessGroupResource(block) {
 			transformAccessGroupBlock(block, diags)
 		}
+
+		if isDNSRecordResource(block) {
+			// Process DNS record to fix CAA flags
+			ProcessDNSRecordConfig(file)
+		}
 	}
 
 	// Remove old blocks
