@@ -7,3 +7,5 @@ pattern cloudflare_terraform_v5() {
     cloudflare_zero_trust_access_policy_v5(),
   }
 }
+
+cloudflare_terraform_v5()

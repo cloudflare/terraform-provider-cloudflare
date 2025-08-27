@@ -374,7 +374,7 @@ func normalizeResponse(response *ManagedTransformsModel, state *ManagedTransform
 	}
 	if response.ManagedResponseHeaders != nil {
 		stateManagedResponseHeaders := []*ManagedTransformsManagedResponseHeadersModel{}
-		if state != nil && state.ManagedRequestHeaders != nil {
+		if state != nil && state.ManagedResponseHeaders != nil {
 			stateManagedResponseHeaders = *state.ManagedResponseHeaders
 		}
 

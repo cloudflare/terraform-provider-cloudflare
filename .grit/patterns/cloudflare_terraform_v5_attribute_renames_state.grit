@@ -236,3 +236,5 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
     }
   }
 }
+
+cloudflare_terraform_v5_attribute_renames_state()
