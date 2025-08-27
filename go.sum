@@ -24,8 +24,8 @@ github.com/bwesterb/go-ristretto v1.2.0/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7N
 github.com/cloudflare/circl v1.1.0/go.mod h1:prBCrKB9DV4poKZY1l9zBXg2QJY7mvgRvtMxxK7fi4I=
 github.com/cloudflare/circl v1.6.1 h1:zqIqSPIndyBh1bjLVVDHMPpVKqp8Su/V+6MeDzzQBQ0=
 github.com/cloudflare/circl v1.6.1/go.mod h1:uddAzsPgqdMAYatqJ0lsjX1oECcQLIlRpzZh3pJrofs=
-github.com/cloudflare/cloudflare-go/v5 v5.1.1-0.20250827142949-c42069832b13 h1:PMfpV/sI+AHKaevaAo0NP51dTfOGah+lvzoUmFI4DMo=
-github.com/cloudflare/cloudflare-go/v5 v5.1.1-0.20250827142949-c42069832b13/go.mod h1:C6OjOlDHOk/g7lXehothXJRFZrSIJMLzOZB2SXQhcjk=
+github.com/cloudflare/cloudflare-go/v5 v5.1.1-0.20250827155735-43d35417a465 h1:9T3BSZJwehzlF9vSkjqhNBAfcSiG2Y4XMgDY9qelc7A=
+github.com/cloudflare/cloudflare-go/v5 v5.1.1-0.20250827155735-43d35417a465/go.mod h1:C6OjOlDHOk/g7lXehothXJRFZrSIJMLzOZB2SXQhcjk=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
