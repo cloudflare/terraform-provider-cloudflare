@@ -646,7 +646,6 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	if err != nil {
 		t.Fatalf("Failed to read state file: %v", err)
 	}
-	debugLogf(t, "State is: %s", string(state))
 	cmd := exec.Command("go", "run", "-C", migratePath, ".", "-config", tmpDir, "-patterns-dir", patternsDir, "-state", filepath.Join(stateDir, "terraform.tfstate"))
 	cmd.Dir = tmpDir
 	// Capture output for debugging
@@ -654,14 +653,22 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 
 	debugLogf(t, "Migration output:\n%s", string(output))
 
+	debugLogf(t, "Previous state is: %s", string(state))
+	newState, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
+	if err != nil {
+		t.Fatalf("Failed to read new state file: %v", err)
+	}
+	debugLogf(t, "New state is: %s", string(newState))
+	debugLogf(t, "Previous config is: %s", string(v4Config))
+	newConfig, err := os.ReadFile(filepath.Join(tmpDir, "test_migration.tf"))
+	if err != nil {
+		t.Fatalf("Failed to read new config file: %v", err)
+	}
+	debugLogf(t, "New config is: %s", string(newConfig))
+
 	if err != nil {
 		t.Fatalf("Migration command failed: %v", err)
 	}
-	newState, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
-	if err != nil {
-		t.Fatalf("Failed to read state file: %v", err)
-	}
-	debugLogf(t, "New State is: %s", string(newState))
 }
 
 // MigrationTestStepWithPlan creates test steps for migrations that need plan processing after migration
@@ -670,14 +677,14 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 func MigrationTestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exactVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
 	// First step: run migration
 	migrationStep := MigrationTestStep(t, v4Config, tmpDir, exactVersion, nil) // No state checks yet
-	
+
 	// Second step: run plan to process import blocks and state corrections
 	planStep := resource.TestStep{
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
 		ConfigDirectory:          config.StaticDirectory(tmpDir),
 		PlanOnly:                 true, // Just run plan to process imports/corrections
 	}
-	
+
 	// Third step: verify final plan is clean and state is correct
 	validationStep := resource.TestStep{
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
@@ -690,7 +697,7 @@ func MigrationTestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exa
 		},
 		ConfigStateChecks: stateChecks,
 	}
-	
+
 	return []resource.TestStep{migrationStep, planStep, validationStep}
 }
 

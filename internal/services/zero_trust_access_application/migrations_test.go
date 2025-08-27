@@ -493,6 +493,72 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 	})
 }
 
+// TestMigrateZeroTrustAccessApplication_DestinationsV4toV5 tests migration of destinations block to object
+func TestMigrateZeroTrustAccessApplication_DestinationsV4toV5(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_application." + rnd
+	tmpDir := t.TempDir()
+
+	// V4 config with destinations as blocks
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[1]s"
+  domain     = "%[1]s.%[3]s"
+  type       = "self_hosted"
+  http_only_cookie_attribute = false
+  
+  destinations {
+    type = "public"
+    uri  = "%[1]s.%[3]s"
+  }
+}`, rnd, accountID, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
+		CheckDestroy: nil,
+		WorkingDir:   tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4.52.1 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "4.52.1",
+					},
+				},
+				Config: v4Config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destinations"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+				},
+			},
+			// Step 2: Run migration and verify state transformation
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
+				// In v5, destinations should be transformed from blocks to objects
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destinations"), knownvalue.ListSizeExact(1)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+			}),
+		},
+	})
+}
+
 // TestMigrateZeroTrustAccessApplication_MultiVersion tests migration across multiple version pairs
 func TestMigrateZeroTrustAccessApplication_MultiVersion(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
