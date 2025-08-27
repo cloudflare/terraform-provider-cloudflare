@@ -11,6 +11,19 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
+// v4BindingToV5Type maps v4 binding attribute/block names to v5 binding types
+var v4BindingToV5Type = map[string]string{
+	"plain_text_binding":        "plain_text",
+	"kv_namespace_binding":      "kv_namespace",
+	"secret_text_binding":       "secret_text",
+	"r2_bucket_binding":         "r2_bucket",
+	"queue_binding":             "queue",
+	"d1_database_binding":       "d1",
+	"analytics_engine_binding":  "analytics_engine",
+	"service_binding":           "service",
+	"hyperdrive_config_binding": "hyperdrive",
+}
+
 // isWorkersScriptResource checks if a block is a workers_script resource
 func isWorkersScriptResource(block *hclwrite.Block) bool {
 	return block.Type() == "resource" &&
@@ -24,7 +37,8 @@ func isWorkersScriptResource(block *hclwrite.Block) bool {
 // Also transforms v4 binding blocks to v5 bindings list
 func transformWorkersScriptBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 	// Handle resource rename: cloudflare_worker_script -> cloudflare_workers_script
-	if len(block.Labels()) >= 1 && block.Labels()[0] == "cloudflare_worker_script" {
+	if len(block.Labels()) >= 1 &&
+		block.Labels()[0] == "cloudflare_worker_script" {
 		block.SetLabels([]string{"cloudflare_workers_script", block.Labels()[1]})
 	}
 
@@ -61,7 +75,6 @@ func transformWorkersScriptStateJSON(jsonStr string, path string) string {
 	dispatchNamespacePath := path + ".attributes.dispatch_namespace"
 	result, _ = sjson.Delete(result, dispatchNamespacePath)
 
-
 	// Remove module attribute which exists in v4 but causes issues in v5
 	modulePath := path + ".attributes.module"
 	result, _ = sjson.Delete(result, modulePath)
@@ -84,17 +97,10 @@ func transformBindingsInState(jsonStr string, path string) string {
 	result := jsonStr
 
 	// List of v4 binding attribute names to look for
-	v4BindingAttributes := []string{
-		"plain_text_binding",
-		"kv_namespace_binding",
-		"secret_text_binding",
-		"r2_bucket_binding",
-		"queue_binding",
-		"d1_database_binding",
-		"analytics_engine_binding",
-		"service_binding",
-		"webassembly_binding",
-		"hyperdrive_config_binding",
+	// Get list of v4 binding attribute names from the map
+	var v4BindingAttributes []string
+	for bindingAttr := range v4BindingToV5Type {
+		v4BindingAttributes = append(v4BindingAttributes, bindingAttr)
 	}
 
 	var bindings []interface{}
@@ -105,18 +111,11 @@ func transformBindingsInState(jsonStr string, path string) string {
 		bindingValue := gjson.Get(jsonStr, bindingPath)
 
 		if bindingValue.Exists() {
-			// Convert binding attribute name to binding type
-			bindingType := bindingAttr
-			if bindingType[len(bindingType)-8:] == "_binding" {
-				bindingType = bindingType[:len(bindingType)-8]
-			}
-			
-			// Special case mappings for specific binding types
-			switch bindingAttr {
-			case "d1_database_binding":
-				bindingType = "d1"
-			case "hyperdrive_config_binding":
-				bindingType = "hyperdrive"
+			// Map v4 binding attribute to v5 binding type
+			bindingType, supported := v4BindingToV5Type[bindingAttr]
+			if !supported {
+				// Skip unknown binding types
+				continue
 			}
 
 			// Parse the binding data and add type field
@@ -181,22 +180,9 @@ func transformBindings(block *hclwrite.Block, diags ast.Diagnostics) {
 	var bindings []hclsyntax.Expression
 	var blocksToRemove []*hclwrite.Block
 
-	// Map of v4 block types to v5 binding types
-	blockTypeToBindingType := map[string]string{
-		"plain_text_binding":       "plain_text",
-		"kv_namespace_binding":     "kv_namespace",
-		"secret_text_binding":      "secret_text",
-		"r2_bucket_binding":        "r2_bucket",
-		"queue_binding":            "queue",
-		"d1_database_binding":      "d1",
-		"analytics_engine_binding": "analytics_engine",
-		"service_binding":          "service",
-		"hyperdrive_config_binding": "hyperdrive",
-	}
-
 	// Scan all blocks to find binding blocks
 	for _, childBlock := range block.Body().Blocks() {
-		if bindingType, isBindingBlock := blockTypeToBindingType[childBlock.Type()]; isBindingBlock {
+		if bindingType, isBindingBlock := v4BindingToV5Type[childBlock.Type()]; isBindingBlock {
 			// Convert this block to a binding object
 			binding := transformBindingBlock(childBlock, bindingType, diags)
 			if binding != nil {
