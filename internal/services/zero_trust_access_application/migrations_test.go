@@ -643,3 +643,80 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		})
 	}
 }
+
+// TestMigrateZeroTrustAccessApplication_PoliciesV4toV5 tests migration of policies from v4 ID list to v5 objects
+func TestMigrateZeroTrustAccessApplication_PoliciesV4toV5(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	appResourceName := "cloudflare_access_application." + rnd // v4 uses old resource names
+	policyResourceName := "cloudflare_access_policy." + rnd
+	tmpDir := t.TempDir()
+
+	// V4 config with policies as list of IDs
+	// Note: In v4, access_policy used blocks, and access_application just referenced IDs
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_access_policy" "%[1]s" {
+  account_id     = "%[2]s"
+  name           = "%[1]s-policy"
+  decision       = "allow"
+  application_id = cloudflare_access_application.%[1]s.id
+  precedence     = 1
+  
+  include {
+    email = ["test@example.com"]
+  }
+}
+
+resource "cloudflare_access_application" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[1]s"
+  domain     = "%[1]s.%[3]s"
+  type       = "self_hosted"
+  http_only_cookie_attribute = false
+}`, rnd, accountID, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
+		CheckDestroy: nil,
+		WorkingDir:   tmpDir,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v4.52.1 provider
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "4.52.1",
+					},
+				},
+				Config: v4Config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(appResourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(appResourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
+					statecheck.ExpectKnownValue(appResourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
+					statecheck.ExpectKnownValue(policyResourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s-policy", rnd))),
+					statecheck.ExpectKnownValue(policyResourceName, tfjsonpath.New("application_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(appResourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+				},
+			},
+			// Step 2: Run migration and verify state transformation
+			// The migration tool should rename resources and transform the policy association
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+				// After migration, resources are renamed to zero_trust_* prefix
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_access_application."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_access_application."+rnd, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_access_application."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_access_policy."+rnd, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s-policy", rnd))),
+				statecheck.ExpectKnownValue("cloudflare_zero_trust_access_application."+rnd, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+			}),
+		},
+	})
+}
