@@ -64,6 +64,9 @@ func TestAccCloudflareTunnelRoute_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	// Generate unique IP subnets to avoid conflicts
+	subnet1 := fmt.Sprintf("10.%d.%d.10/32", utils.RandIntRange(10, 250), utils.RandIntRange(10, 250))
+	subnet2 := fmt.Sprintf("20.%d.%d.20/32", utils.RandIntRange(10, 250), utils.RandIntRange(10, 250))
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -74,18 +77,18 @@ func TestAccCloudflareTunnelRoute_Basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create
 			{
-				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, "10.10.10.10/32"),
+				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, subnet1),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttrSet(name, "tunnel_id"),
-					resource.TestCheckResourceAttr(name, "network", "10.10.10.10/32"),
+					resource.TestCheckResourceAttr(name, "network", subnet1),
 					resource.TestCheckResourceAttr(name, "comment", rnd),
 				),
 			},
 			// Update
 			{
-				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, "20.20.20.20/32"),
-				Check:  resource.TestCheckResourceAttr(name, "network", "20.20.20.20/32"),
+				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, subnet2),
+				Check:  resource.TestCheckResourceAttr(name, "network", subnet2),
 			},
 			// Import
 			{
@@ -102,6 +105,8 @@ func TestAccCloudflareTunnelRoute_UpdateComment(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	// Generate unique IP subnet to avoid conflicts
+	subnet := fmt.Sprintf("10.%d.%d.10/32", utils.RandIntRange(10, 250), utils.RandIntRange(10, 250))
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -111,13 +116,13 @@ func TestAccCloudflareTunnelRoute_UpdateComment(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, "10.0.0.10/32"),
+				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, subnet),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "comment", rnd),
 				),
 			},
 			{
-				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd+"-updated", accountID, "10.0.0.10/32"),
+				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd+"-updated", accountID, subnet),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "comment", rnd+"-updated"),
 				),
@@ -130,7 +135,8 @@ func TestAccCloudflareTunnelRoute_NoComment(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	cidr := "10.5.3.1/32"
+	// Generate unique IP subnet to avoid conflicts
+	cidr := fmt.Sprintf("10.%d.%d.1/32", utils.RandIntRange(10, 250), utils.RandIntRange(10, 250))
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
