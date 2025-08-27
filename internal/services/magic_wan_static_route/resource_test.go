@@ -79,9 +79,11 @@ func TestAccCloudflareStaticRoute_Exists(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	cfIP := utils.LookupMagicWanCfIP(t, accountID)
-	// Generate unique interface address to avoid conflicts
-	interfaceAddr := fmt.Sprintf("10.214.%d.9/31", utils.RandIntRange(1, 254))
-	config := testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP, interfaceAddr)
+	// Generate unique interface address and corresponding nexthop to avoid conflicts
+	subnetBase := utils.RandIntRange(1, 254)
+	interfaceAddr := fmt.Sprintf("10.214.%d.9/31", subnetBase)
+	nexthop := fmt.Sprintf("10.214.%d.8", subnetBase) // Peer IP in /31 subnet
+	config := testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP, interfaceAddr, nexthop)
 
 	var StaticRoute cloudflare.MagicTransitStaticRoute
 
@@ -95,7 +97,7 @@ func TestAccCloudflareStaticRoute_Exists(t *testing.T) {
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					resource.TestCheckResourceAttr(name, "description", rnd),
 					resource.TestCheckResourceAttr(name, "prefix", "10.100.0.0/24"),
-					resource.TestCheckResourceAttr(name, "nexthop", "10.214.0.8"),
+					resource.TestCheckResourceAttr(name, "nexthop", nexthop),
 					resource.TestCheckResourceAttr(name, "priority", "100"),
 					resource.TestCheckResourceAttr(name, "weight", "100"),
 				),
@@ -154,8 +156,10 @@ func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	cfIP := utils.LookupMagicWanCfIP(t, accountID)
-	// Generate unique interface address to avoid conflicts
-	interfaceAddr := fmt.Sprintf("10.214.%d.9/31", utils.RandIntRange(1, 254))
+	// Generate unique interface address and corresponding nexthop to avoid conflicts
+	subnetBase := utils.RandIntRange(1, 254)
+	interfaceAddr := fmt.Sprintf("10.214.%d.9/31", subnetBase)
+	nexthop := fmt.Sprintf("10.214.%d.8", subnetBase) // Peer IP in /31 subnet
 
 	var StaticRoute cloudflare.MagicTransitStaticRoute
 
@@ -164,14 +168,14 @@ func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP, interfaceAddr),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP, interfaceAddr, nexthop),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					resource.TestCheckResourceAttr(name, "description", rnd),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd+"-updated", accountID, 100, cfIP, interfaceAddr),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd+"-updated", accountID, 100, cfIP, interfaceAddr, nexthop),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					resource.TestCheckResourceAttr(name, "description", rnd+"-updated"),
@@ -186,8 +190,10 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	cfIP := utils.LookupMagicWanCfIP(t, accountID)
-	// Generate unique interface address to avoid conflicts
-	interfaceAddr := fmt.Sprintf("10.214.%d.9/31", utils.RandIntRange(1, 254))
+	// Generate unique interface address and corresponding nexthop to avoid conflicts
+	subnetBase := utils.RandIntRange(1, 254)
+	interfaceAddr := fmt.Sprintf("10.214.%d.9/31", subnetBase)
+	nexthop := fmt.Sprintf("10.214.%d.8", subnetBase) // Peer IP in /31 subnet
 
 	var StaticRoute cloudflare.MagicTransitStaticRoute
 	var initialID string
@@ -197,7 +203,7 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP, interfaceAddr),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd, accountID, 100, cfIP, interfaceAddr, nexthop),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					resource.TestCheckResourceAttr(name, "weight", "100"),
@@ -207,7 +213,7 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 				PreConfig: func() {
 					initialID = StaticRoute.ID
 				},
-				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd+"-updated", accountID, 200, cfIP, interfaceAddr),
+				Config: testAccCheckCloudflareStaticRouteSimple(rnd, rnd+"-updated", accountID, 200, cfIP, interfaceAddr, nexthop),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					func(state *terraform.State) error {
@@ -224,6 +230,6 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareStaticRouteSimple(ID, description, accountID string, weight int, cfIP, interfaceAddr string) string {
-	return acctest.LoadTestCase("staticroutesimple.tf", ID, description, accountID, weight, cfIP, interfaceAddr)
+func testAccCheckCloudflareStaticRouteSimple(ID, description, accountID string, weight int, cfIP, interfaceAddr, nexthop string) string {
+	return acctest.LoadTestCase("staticroutesimple.tf", ID, description, accountID, weight, cfIP, interfaceAddr, nexthop)
 }
