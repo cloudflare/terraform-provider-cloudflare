@@ -121,6 +121,7 @@ pattern cloudflare_terraform_v5_block_to_attribute_configuration() {
     inline_cloudflare_block_to_list(`match`) as $block where { $block <: within `resource "cloudflare_rate_limit" $_ { $_ }` },
     inline_cloudflare_block_to_list(`request`) as $block where { $block <: within `resource "cloudflare_rate_limit" $_ { $_ }` },
     inline_cloudflare_block_to_map(`data`) as $block where { $block <: within `resource "cloudflare_record" $_ { $_ }` },
+    inline_cloudflare_block_to_map(`data`) as $block where { $block <: within `resource "cloudflare_dns_record" $_ { $_ }` },
     inline_cloudflare_block_to_list(`behavior`) as $block where { $block <: within `resource "cloudflare_risk_behavior" $_ { $_ }` },
     inline_cloudflare_block_to_list(`rules`) as $block where { $block <: within `resource "cloudflare_ruleset" $_ { $_ }` },
     inline_cloudflare_block_to_map(`action_parameters`) as $block where { $block <: within `resource "cloudflare_ruleset" $_ { $_ }` },
