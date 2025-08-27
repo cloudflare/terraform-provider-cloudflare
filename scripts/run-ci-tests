@@ -4,11 +4,10 @@
 # Supports both acceptance tests and migration tests
 # Dynamically detects which services have sweeper implementations by grepping for AddTestSweepers
 
-# ./internal/services/api_token
-# 'api_token' requires token-based auth, and our current CI assumes key-based auth.
-# These tests otherwise pass.
-# TODO: support multiple auth schemes in CI for acceptance tests
-
+# ./internal/services/account
+# account creation can only be done by a tenant admin and the current CI does 
+# have that support.
+# TODO: support tenant admin auth for acceptance tests
 
 # List of service paths to test
 SERVICES=(
@@ -23,6 +22,7 @@ SERVICES=(
     "./internal/services/account_token"
     "./internal/services/address_map"
     "./internal/services/api_shield"
+    "./internal/services/api_token"
     "./internal/services/argo_smart_routing"
     "./internal/services/argo_tiered_caching"
     "./internal/services/authenticated_origin_pulls"
