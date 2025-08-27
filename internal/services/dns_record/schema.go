@@ -54,7 +54,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				PlanModifiers: []planmodifier.String{
-					NormalizeContent(), // Normalize content based on record type
+					stringplanmodifier.UseStateForUnknown(),
+					NormalizeContent(), // Handle case, trailing dots and IPv6 normalization
 				},
 			},
 			"priority": schema.Float64Attribute{
@@ -380,9 +381,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the record comment was last modified. Omitted if there is no comment.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{
-					OmitIfRelatedFieldNull(path.Root("comment")),
-				},
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the record was created.",
@@ -396,9 +394,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the record was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 			"proxiable": schema.BoolAttribute{
 				Description: "Whether the record can be proxied by Cloudflare or not.",
@@ -411,9 +406,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the record tags were last modified. Omitted if there are no tags.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{
-					OmitIfRelatedSetEmpty(path.Root("tags")),
-				},
 			},
 			"meta": schema.StringAttribute{
 				Description: "Extra Cloudflare-specific information about the record.",
@@ -426,6 +418,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"name": schema.StringAttribute{
 				Description: "DNS record name (or @ for the zone apex) in Punycode.",
 				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					FQDNNormalizePlanModifier(), // Custom plan modifier to handle FQDN normalization
+				},
 			},
 		},
 	}

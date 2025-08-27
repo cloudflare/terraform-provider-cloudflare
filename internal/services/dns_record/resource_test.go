@@ -978,6 +978,49 @@ func testAccCheckCloudflareRecordConfigCNAMECase(zoneID, rnd, domain string) str
 	return acctest.LoadTestCase("dns_record_cname_case.tf", rnd, zoneID, domain)
 }
 
+// Test FQDN normalization for DNS record names
+func TestAccCloudflareRecord_FQDNNormalize(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigFQDNNormalize(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					// Check subdomain record
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_subdomain", rnd), "type", "A"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_subdomain", rnd), "content", "192.168.0.100"),
+
+					// Check apex record
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_apex", rnd), "type", "A"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_apex", rnd), "content", "192.168.0.101"),
+
+					// Check multi-level subdomain
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_subdomain_multi", rnd), "type", "A"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("cloudflare_dns_record.%s_subdomain_multi", rnd), "content", "192.168.0.102"),
+
+					acctest.DumpState,
+				),
+			},
+			// Second step: Apply same config again - should NOT show drift for name fields
+			{
+				Config:             testAccCheckCloudflareRecordConfigFQDNNormalize(zoneID, rnd, domain),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // We expect NO changes
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareRecordConfigFQDNNormalize(zoneID, rnd, domain string) string {
+	return acctest.LoadTestCase("dns_record_fqdn_normalize.tf", rnd, zoneID, domain)
+}
+
 func testAccCheckCloudflareRecordConfigComputedDrift(zoneID, rnd, domain string) string {
 	return acctest.LoadTestCase("dns_record_computed_drift.tf", rnd, zoneID, domain)
 }

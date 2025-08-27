@@ -275,6 +275,13 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 		return
 	}
 
+	commentIsEmpty := plan.Comment.IsNull() || (!plan.Comment.IsUnknown() && plan.Comment.ValueString() == "")
+	if commentIsEmpty && plan.CommentModifiedOn.IsUnknown() {
+		// Set comment_modified_on to null when comment is empty, preventing drift
+		plan.CommentModifiedOn = timetypes.NewRFC3339Null()
+		resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
+	}
+
 	// Handle tags_modified_on drift: if tags is empty/null, ensure tags_modified_on is null
 	// This works around terraform-plugin-framework issue #898 where computed fields adjacent
 	// to optional+computed collections show as "known after apply"

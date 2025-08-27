@@ -2,6 +2,7 @@ package dns_record
 
 import (
 	"context"
+	"net"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -12,34 +13,55 @@ import (
 )
 
 // normalizeContentPlanModifier implements a plan modifier that normalizes DNS record content
-// based on the record type to match what the Cloudflare API returns.
+// by handling trailing dots and IPv6 address normalization in addition to case normalization.
 type normalizeContentPlanModifier struct{}
 
-// NormalizeContent returns a plan modifier that normalizes DNS record content.
-// For CNAME, NS, MX, and PTR records, the content is lowercased to match API behavior.
+// NormalizeContent returns a plan modifier that handles comprehensive content normalization.
+// It prevents drift when the API returns normalized values (trailing dots, IPv6 formats, case normalization).
 func NormalizeContent() planmodifier.String {
 	return normalizeContentPlanModifier{}
 }
 
 func (m normalizeContentPlanModifier) Description(ctx context.Context) string {
-	return "Normalizes DNS record content to match Cloudflare API behavior"
+	return "Normalizes DNS record content to handle case, trailing dots and IPv6 address formats"
 }
 
 func (m normalizeContentPlanModifier) MarkdownDescription(ctx context.Context) string {
-	return "Normalizes DNS record content to match Cloudflare API behavior (e.g., lowercases CNAME content)"
+	return "Normalizes DNS record content to handle case, trailing dots and IPv6 address formats"
 }
 
 func (m normalizeContentPlanModifier) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
-	// Nothing to do if there is no planned value
+	// Nothing to do if there is no state value.
+	if req.StateValue.IsNull() {
+		return
+	}
+
+	// Nothing to do if there is no planned value.
 	if req.PlanValue.IsNull() || req.PlanValue.IsUnknown() {
 		return
 	}
 
-	// Nothing to do if there is no state value (resource is being created)
-	if req.StateValue.IsNull() || req.StateValue.IsUnknown() {
+	// Nothing to do if values are already equal
+	if req.PlanValue.Equal(req.StateValue) {
 		return
 	}
 
+	stateValue := req.StateValue.ValueString()
+	planValue := req.PlanValue.ValueString()
+
+	// First, check IPv6 normalization
+	if suppressMatchingIPv6(stateValue, planValue) {
+		resp.PlanValue = req.StateValue
+		return
+	}
+
+	// Then check trailing dot normalization
+	if suppressTrailingDots(stateValue, planValue) {
+		resp.PlanValue = req.StateValue
+		return
+	}
+
+	// Finally, check case normalization for DNS records (our original logic)
 	// Get the record type to determine normalization rules
 	var recordType types.String
 	diags := req.Plan.GetAttribute(ctx, path.Root("type"), &recordType)
@@ -49,23 +71,20 @@ func (m normalizeContentPlanModifier) PlanModifyString(ctx context.Context, req 
 	}
 
 	// Apply normalization based on record type
-	plannedContent := req.PlanValue.ValueString()
-	stateContent := req.StateValue.ValueString()
-
 	// For CNAME, NS, MX (content part), and PTR records, the API lowercases domain names
 	switch strings.ToUpper(recordType.ValueString()) {
 	case "CNAME", "NS", "PTR":
 		// If the lowercase version of planned matches lowercase state, keep state value
 		// This handles cases where API partially normalizes case
-		if strings.ToLower(plannedContent) == strings.ToLower(stateContent) {
+		if strings.ToLower(planValue) == strings.ToLower(stateValue) {
 			resp.PlanValue = req.StateValue
 			return
 		}
 	case "MX":
 		// MX records have priority and domain, only domain part is lowercased
 		// Format is typically "10 mail.example.com"
-		plannedParts := strings.SplitN(plannedContent, " ", 2)
-		stateParts := strings.SplitN(stateContent, " ", 2)
+		plannedParts := strings.SplitN(planValue, " ", 2)
+		stateParts := strings.SplitN(stateValue, " ", 2)
 
 		if len(plannedParts) == 2 && len(stateParts) == 2 {
 			// Compare priority and lowercased domain
@@ -293,4 +312,149 @@ func (m preserveStateIfConfigNullPlanModifier) PlanModifyObject(ctx context.Cont
 	}
 
 	// For other cases, use standard behavior
+}
+
+// fqdnNormalizePlanModifier implements a plan modifier that normalizes DNS record names
+// by comparing the configured name (potentially a subdomain) with the state name (FQDN from API).
+type fqdnNormalizePlanModifier struct{}
+
+// FQDNNormalizePlanModifier returns a plan modifier that handles FQDN normalization for DNS record names.
+// It prevents drift when the API returns FQDN but the configuration uses subdomain.
+func FQDNNormalizePlanModifier() planmodifier.String {
+	return fqdnNormalizePlanModifier{}
+}
+
+func (m fqdnNormalizePlanModifier) Description(ctx context.Context) string {
+	return "Normalizes DNS record name to handle FQDN vs subdomain differences"
+}
+
+func (m fqdnNormalizePlanModifier) MarkdownDescription(ctx context.Context) string {
+	return "Normalizes DNS record name to handle FQDN vs subdomain differences"
+}
+
+func (m fqdnNormalizePlanModifier) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
+	// Nothing to do if there is no state value.
+	if req.StateValue.IsNull() {
+		return
+	}
+
+	// Nothing to do if there is no planned value.
+	if req.PlanValue.IsNull() || req.PlanValue.IsUnknown() {
+		return
+	}
+
+	// Nothing to do if values are already equal
+	if req.PlanValue.Equal(req.StateValue) {
+		return
+	}
+
+	stateValue := req.StateValue.ValueString()
+	planValue := req.PlanValue.ValueString()
+
+	// Check if the state value is an FQDN that ends with a zone suffix
+	// and the plan value is the same without the zone suffix
+	if strings.HasSuffix(stateValue, ".") {
+		stateValue = strings.TrimSuffix(stateValue, ".")
+	}
+	if strings.HasSuffix(planValue, ".") {
+		planValue = strings.TrimSuffix(planValue, ".")
+	}
+
+	// If the plan value is "@" (apex), it should match the zone name in the state
+	if planValue == "@" {
+		// The state would have the full zone name
+		// Since we can't easily get the zone name here without an API call,
+		// we'll check if the state has more parts than just @
+		if stateValue != "@" && strings.Contains(stateValue, ".") {
+			// Keep the state value to prevent drift
+			resp.PlanValue = req.StateValue
+			return
+		}
+	}
+
+	// Check if state is FQDN and plan is subdomain of the same record
+	// For example: state="static.example.com.terraform.cfapi.net" plan="static.example.com"
+	if strings.HasPrefix(stateValue, planValue+".") {
+		// The plan value is a prefix of the state value with a domain suffix
+		// This is the expected case - keep the state value to prevent drift
+		resp.PlanValue = req.StateValue
+		return
+	}
+
+	// Check for the case where both have the same subdomain but state has zone suffix
+	// Extract the first part (subdomain) from both values
+	stateParts := strings.Split(stateValue, ".")
+	planParts := strings.Split(planValue, ".")
+
+	// If plan has fewer parts and matches the beginning of state, it's likely the subdomain
+	if len(planParts) < len(stateParts) {
+		matches := true
+		for i, part := range planParts {
+			if i >= len(stateParts) || part != stateParts[i] {
+				matches = false
+				break
+			}
+		}
+		if matches {
+			// Plan is subdomain, state is FQDN - keep state value
+			resp.PlanValue = req.StateValue
+			return
+		}
+	}
+
+	// If the values are semantically the same (just different FQDN format), keep state
+	// This handles edge cases we might not have covered above
+	if isSameDNSRecord(planValue, stateValue) {
+		resp.PlanValue = req.StateValue
+		return
+	}
+}
+
+// isSameDNSRecord checks if two DNS names refer to the same record,
+// accounting for FQDN vs subdomain differences
+func isSameDNSRecord(plan, state string) bool {
+	// Normalize by removing trailing dots
+	plan = strings.TrimSuffix(plan, ".")
+	state = strings.TrimSuffix(state, ".")
+
+	// If one is clearly an FQDN of the other
+	if strings.HasPrefix(state, plan+".") || strings.HasPrefix(plan, state+".") {
+		return true
+	}
+
+	// Check if they have the same first label (subdomain)
+	planFirst := strings.Split(plan, ".")[0]
+	stateFirst := strings.Split(state, ".")[0]
+
+	// If the first parts match and one has more parts (zone suffix), they're likely the same
+	if planFirst == stateFirst && len(strings.Split(plan, ".")) != len(strings.Split(state, ".")) {
+		return true
+	}
+
+	return false
+}
+
+// suppressTrailingDots checks if two values are the same after removing trailing dots
+func suppressTrailingDots(old, new string) bool {
+	newTrimmed := strings.TrimSuffix(new, ".")
+
+	// Ensure to distinguish values consists of dots only.
+	if newTrimmed == "" {
+		return old == new
+	}
+
+	return strings.TrimSuffix(old, ".") == newTrimmed
+}
+
+// suppressMatchingIPv6 checks if two IPv6 addresses are equivalent
+func suppressMatchingIPv6(old, new string) bool {
+	oldIPv6 := net.ParseIP(old)
+	if oldIPv6 == nil || oldIPv6.To16() == nil {
+		return false
+	}
+	newIPv6 := net.ParseIP(new)
+	if newIPv6 == nil || newIPv6.To16() == nil {
+		return false
+	}
+	return oldIPv6.Equal(newIPv6)
 }
