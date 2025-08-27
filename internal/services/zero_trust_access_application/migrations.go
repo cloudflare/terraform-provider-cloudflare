@@ -600,7 +600,7 @@ func upgradeZeroTrustAccessApplicationStateV0toV1(ctx context.Context, req resou
 		}
 	}
 
-	// Destinations: List[Block] -> List[Object]  
+	// Destinations: List[Block] -> List[Object]
 	if destinationsData, ok := oldState["destinations"].([]interface{}); ok && len(destinationsData) > 0 {
 		migratedDestinations := migrateDestinationsBlocksToObjects(destinationsData)
 		if len(migratedDestinations) > 0 {
@@ -610,7 +610,7 @@ func upgradeZeroTrustAccessApplicationStateV0toV1(ctx context.Context, req resou
 
 	// Add new v5 attributes with defaults where appropriate
 	// allow_iframe is new in v5 - leave as null
-	// read_service_tokens_from_header is new in v5 - leave as null 
+	// read_service_tokens_from_header is new in v5 - leave as null
 	// path_cookie_attribute is new in v5 - leave as null
 
 	// Set the upgraded state
@@ -634,7 +634,7 @@ func migrateSetToList(setData []interface{}) []types.String {
 	return result
 }
 
-// migrateStringSliceToList converts interface slice to string slice  
+// migrateStringSliceToList converts interface slice to string slice
 func migrateStringSliceToList(sliceData []interface{}) []types.String {
 	var result []types.String
 	for _, item := range sliceData {
