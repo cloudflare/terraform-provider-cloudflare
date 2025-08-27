@@ -105,9 +105,9 @@ func TestWorkersScriptTransformation(t *testing.T) {
   script_name = "my-worker"
   content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
   bindings = [{
-    type        = "d1"
-    database_id = "db123"
-    name        = "MY_DB"
+    type = "d1"
+    id   = "db123"
+    name = "MY_DB"
   }]
 }`},
 		},
@@ -133,6 +133,30 @@ func TestWorkersScriptTransformation(t *testing.T) {
     name       = "HYPERDRIVE"
   }]
 }`},
+		},
+		{
+			Name: "workers_script with webassembly_binding (should generate warning and remove)",
+			Config: `resource "cloudflare_workers_script" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name = "my-worker"
+  content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  
+  webassembly_binding {
+    name = "WASM_MODULE"
+    module = "wasm_bg.wasm"
+  }
+}`,
+			Expected: []string{
+				`resource "cloudflare_workers_script" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+
+  # MIGRATION WARNING: webassembly_binding is not supported in v5.
+  # WebAssembly modules must be bundled into the script content instead.
+  # Please update your build process and remove this warning.
+}`,
+			},
 		},
 	}
 
