@@ -10,12 +10,8 @@ import (
 	"github.com/cloudflare/cloudflare-go/v5/addressing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
-	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
-	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 var zoneID = os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -209,4 +205,3 @@ func testAccCheckCloudflareRegionalHostnameDestroy(s *terraform.State) error {
 
 	return nil
 }
-
