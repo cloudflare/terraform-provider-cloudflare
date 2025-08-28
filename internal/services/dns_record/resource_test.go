@@ -18,7 +18,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
@@ -60,15 +62,15 @@ func testSweepCloudflareRecord(r string) error {
 	}
 
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	
+
 	for _, record := range records {
 		shouldDelete := false
-		
+
 		// Delete test records - those that start with tf-acctest- or contain terraform test patterns
 		if strings.HasPrefix(record.Name, "tf-acctest-") || strings.Contains(record.Name, "tf-acctest") {
 			shouldDelete = true
 		}
-		
+
 		// Also clean up apex domain records if they are A/AAAA/CNAME records that could conflict with tests
 		// Only delete apex records that are likely from tests (A/AAAA records pointing to test IPs or CNAME records)
 		if domain != "" && record.Name == domain {
@@ -80,7 +82,7 @@ func testSweepCloudflareRecord(r string) error {
 				shouldDelete = true
 			}
 		}
-		
+
 		if shouldDelete {
 			tflog.Info(ctx, fmt.Sprintf("Deleting test DNS record ID: %s, Name: %s, Type: %s, Content: %s", record.ID, record.Name, record.Type, record.Content))
 			err := client.DeleteDNSRecord(context.Background(), cfold.ZoneIdentifier(zoneID), record.ID)
@@ -846,6 +848,18 @@ func TestAccCloudflareRecord_CommentModifiedOn(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "comment", "Test comment for drift"),
 					resource.TestCheckResourceAttrSet(resourceName, "comment_modified_on"),
 				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectNonEmptyPlan(),
+						plancheck.ExpectUnknownValue(resourceName, tfjsonpath.New("comment_modified_on")),
+					},
+					PostApplyPostRefresh: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			{
+				Config:   testAccCheckCloudflareRecordConfigCommentModified(zoneID, "tf-acctest-basic", rnd, domain),
+				PlanOnly: true,
 			},
 		},
 	})
