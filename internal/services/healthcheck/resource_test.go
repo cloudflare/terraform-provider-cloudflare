@@ -120,6 +120,126 @@ func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareHealthcheckHTTPSExists(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck
+	// service does not yet support the API tokens.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
+	var healthcheck cloudflare.Healthcheck
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHealthcheckHTTPS(zoneID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
+					resource.TestCheckResourceAttr(name, "header.#", "0"),
+					resource.TestCheckResourceAttr(name, "http_config.port", "443"),
+					resource.TestCheckResourceAttr(name, "http_config.method", "GET"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareHealthcheckHTTPSUpdate(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck
+	// service does not yet support the API tokens.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
+	var healthcheck cloudflare.Healthcheck
+	var initialID string
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHealthcheckHTTPS(zoneID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+				),
+			},
+			{
+				PreConfig: func() {
+					initialID = healthcheck.ID
+				},
+				Config: testAccCheckCloudflareHealthcheckHTTPS(zoneID, rnd+"-updated"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
+					func(state *terraform.State) error {
+						if initialID != healthcheck.ID {
+							return fmt.Errorf("wanted update but healthcheck got recreated (id changed %q -> %q)", initialID, healthcheck.ID)
+						}
+						return nil
+					},
+					resource.TestCheckResourceAttr(name, "name", rnd+"-updated"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareHealthcheckHTTPUpdate(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck
+	// service does not yet support the API tokens.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
+	var healthcheck cloudflare.Healthcheck
+	var initialID string
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHealthcheckHTTP(zoneID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+				),
+			},
+			{
+				PreConfig: func() {
+					initialID = healthcheck.ID
+				},
+				Config: testAccCheckCloudflareHealthcheckHTTP(zoneID, rnd+"-updated"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
+					func(state *terraform.State) error {
+						if initialID != healthcheck.ID {
+							return fmt.Errorf("wanted update but healthcheck got recreated (id changed %q -> %q)", initialID, healthcheck.ID)
+						}
+						return nil
+					},
+					resource.TestCheckResourceAttr(name, "name", rnd+"-updated"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareHealthcheckMissingRequired(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -169,6 +289,10 @@ func testAccCheckCloudflareHealthcheckTCP(zoneID, name, ID string) string {
 
 func testAccCheckCloudflareHealthcheckHTTP(zoneID, ID string) string {
 	return acctest.LoadTestCase("healthcheckhttp.tf", zoneID, ID)
+}
+
+func testAccCheckCloudflareHealthcheckHTTPS(zoneID, ID string) string {
+	return acctest.LoadTestCase("healthcheckhttps.tf", zoneID, ID)
 }
 
 func testAccCheckHealthcheckConfigMissingRequired(zoneID, ID string) string {
