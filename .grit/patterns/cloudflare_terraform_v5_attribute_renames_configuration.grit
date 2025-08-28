@@ -180,8 +180,24 @@ pattern cloudflare_terraform_v5_attribute_renames_configuration() {
     // cloudflare_record
     `allow_overwrite = $id` => . where { $id <: within `resource "cloudflare_record" $_ { $_ }` },
     `flags = "$v"`as $flag => `flags = $v` where { $flag <: within `resource "cloudflare_record" $_ { $_ }` },
+    `value = $v` as $attr => `content = $v` where { $attr <: within `resource "cloudflare_record" $_ { $_ }` },
     `data { $inner }` as $data => `data = {
         $inner
-    } `where { $data <: within `resource "cloudflare_record" $_ { $_ }` },
+    }` where { 
+      $data <: within `resource "cloudflare_record" $_ { $_ }`,
+      $inner <: maybe contains `content = $c` => `value = $c`
+    },
+
+    // cloudflare_dns_record (renamed from cloudflare_record)
+    `allow_overwrite = $id` => . where { $id <: within `resource "cloudflare_dns_record" $_ { $_ }` },
+    `flags = "$v"`as $flag => `flags = $v` where { $flag <: within `resource "cloudflare_dns_record" $_ { $_ }` },
+    `hostname = $v` => . where { $v <: within `resource "cloudflare_dns_record" $_ { $_ }` },
+    `value = $v` as $attr => `content = $v` where { $attr <: within `resource "cloudflare_dns_record" $_ { $_ }` },
+    `data { $inner }` as $data => `data = {
+        $inner
+    }` where { 
+      $data <: within `resource "cloudflare_dns_record" $_ { $_ }`,
+      $inner <: maybe contains `content = $c` => `value = $c`
+    },
   }
 }

@@ -201,18 +201,6 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
         }
     },
 
-    // cloudflare_record
-    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
-        $resource_type <: contains `cloudflare_record`,
-        $instances <: any {
-          contains `"data": [{$obj}]` => `"data": {
-              $obj
-          }`,
-          contains `"data": []` => `"data": {}`,
-          contains `"hostname": $_` => .,
-          contains `"allow_overwrite": $_` => .,
-        }
-    },
 
     // cloudflare_origin_ca_certificate
     `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
