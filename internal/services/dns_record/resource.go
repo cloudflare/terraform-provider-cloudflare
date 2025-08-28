@@ -334,7 +334,20 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 		contentChanged := false
 		if plan.Data == nil {
 			// Regular record using content field
-			contentChanged = !plan.Content.Equal(state.Content)
+			// Special handling for CNAME records: DNS is case-insensitive
+			if !plan.Type.IsNull() && plan.Type.ValueString() == "CNAME" &&
+				!plan.Content.IsNull() && !state.Content.IsNull() {
+				// Do case-insensitive comparison for CNAME content
+				planContent := strings.ToLower(plan.Content.ValueString())
+				stateContent := strings.ToLower(state.Content.ValueString())
+				contentChanged = planContent != stateContent
+				// If only case differs, preserve the state value to prevent drift
+				if !contentChanged && plan.Content.ValueString() != state.Content.ValueString() {
+					plan.Content = state.Content
+				}
+			} else {
+				contentChanged = !plan.Content.Equal(state.Content)
+			}
 		} else {
 			// Record using data field (like CAA), content is computed
 			// Don't consider content changes for these records
