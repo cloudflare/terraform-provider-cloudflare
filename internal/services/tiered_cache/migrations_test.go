@@ -18,50 +18,185 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-// TestMigrateTieredCache_Smart tests migration from v4 cache_type = "smart" to v5 value = "on"
-func TestMigrateTieredCache_Smart(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_tiered_cache." + rnd
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	tmpDir := t.TempDir()
-
-	// V4 config using cache_type = "smart"
-	v4Config := fmt.Sprintf(`
+// Config generators for different provider versions
+func tieredCacheConfigV4Smart(rnd, zoneID string) string {
+	return fmt.Sprintf(`
 resource "cloudflare_tiered_cache" "%[1]s" {
   zone_id    = "%[2]s"
   cache_type = "smart"
 }`, rnd, zoneID)
+}
 
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
+func tieredCacheConfigV4Off(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_tiered_cache" "%[1]s" {
+  zone_id    = "%[2]s"
+  cache_type = "off"
+}`, rnd, zoneID)
+}
+
+func tieredCacheConfigV4Generic(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_tiered_cache" "%[1]s" {
+  zone_id    = "%[2]s"
+  cache_type = "generic"
+}`, rnd, zoneID)
+}
+
+func tieredCacheConfigV5On(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_tiered_cache" "%[1]s" {
+  zone_id = "%[2]s"
+  value   = "on"
+}`, rnd, zoneID)
+}
+
+func tieredCacheConfigV5Off(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_tiered_cache" "%[1]s" {
+  zone_id = "%[2]s"
+  value   = "off"
+}`, rnd, zoneID)
+}
+
+// TestMigrateTieredCacheMultiVersion tests migration from multiple provider versions
+func TestMigrateTieredCacheMultiVersion_Smart(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	testCases := []struct {
+		name       string
+		version    string
+		configFunc func(rnd, zoneID string) string
+	}{
+		{
+			name:       "from_v4_52_1",
+			version:    "4.52.1",
+			configFunc: tieredCacheConfigV4Smart,
 		},
-		CheckDestroy: nil, // Migration tests don't need destroy checks
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				// Step 1: Create with v4 provider
+		{
+			name:       "from_v5_0_0",
+			version:    "5.0.0",
+			configFunc: tieredCacheConfigV5On,
+		},
+		{
+			name:       "from_v5_8_4", // Current stable release
+			version:    "5.8.4",
+			configFunc: tieredCacheConfigV5On,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_tiered_cache." + rnd
+			tmpDir := t.TempDir()
+
+			config := tc.configFunc(rnd, zoneID)
+
+			// Build test steps
+			steps := []resource.TestStep{}
+
+			// Step 1: Create with specific provider version
+			steps = append(steps, resource.TestStep{
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
+						VersionConstraint: tc.version,
 					},
 				},
-				Config: v4Config,
-				ConfigStateChecks: []statecheck.StateCheck{
+				Config: config,
+			})
+
+			// Step 2: Run migration (for v4) or just upgrade provider (for v5)
+			steps = append(steps,
+				acctest.MigrationTestStep(t, config, tmpDir, tc.version, []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cache_type"), knownvalue.StringExact("smart")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("on")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("editable"), knownvalue.Bool(true)),
+				}),
+			)
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_ZoneID(t)
 				},
-			},
-			// Step 2: Run migration and verify state transformation
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("on")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
-			}),
+				WorkingDir: tmpDir,
+				Steps:      steps,
+			})
+		})
+	}
+}
+
+// TestMigrateTieredCacheMultiVersion tests migration with "off" value
+func TestMigrateTieredCacheMultiVersion_Off(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	testCases := []struct {
+		name       string
+		version    string
+		configFunc func(rnd, zoneID string) string
+	}{
+		{
+			name:       "from_v4_52_1",
+			version:    "4.52.1",
+			configFunc: tieredCacheConfigV4Off,
 		},
-	})
+		{
+			name:       "from_v5_0_0",
+			version:    "5.0.0",
+			configFunc: tieredCacheConfigV5Off,
+		},
+		{
+			name:       "from_v5_8_4", // Current stable release
+			version:    "5.8.4",
+			configFunc: tieredCacheConfigV5Off,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_tiered_cache." + rnd
+			tmpDir := t.TempDir()
+
+			config := tc.configFunc(rnd, zoneID)
+
+			// Build test steps
+			steps := []resource.TestStep{}
+
+			// Step 1: Create with specific provider version
+			steps = append(steps, resource.TestStep{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: tc.version,
+					},
+				},
+				Config: config,
+			})
+
+			// Step 2: Run migration (for v4) or just upgrade provider (for v5)
+			steps = append(steps,
+				acctest.MigrationTestStep(t, config, tmpDir, tc.version, []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("off")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("editable"), knownvalue.Bool(true)),
+				}),
+			)
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_ZoneID(t)
+				},
+				WorkingDir: tmpDir,
+				Steps:      steps,
+			})
+		})
+	}
 }
 
 // TestMigrateTieredCache_Generic tests migration from v4 cache_type = "generic"
@@ -74,17 +209,13 @@ func TestMigrateTieredCache_Generic(t *testing.T) {
 	tmpDir := t.TempDir()
 
 	// V4 config using cache_type = "generic"
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_tiered_cache" "%[1]s" {
-  zone_id    = "%[2]s"
-  cache_type = "generic"
-}`, rnd, zoneID)
+	v4Config := tieredCacheConfigV4Generic(rnd, zoneID)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_ZoneID(t)
 		},
-		CheckDestroy: nil, // Migration tests don't need destroy checks
 		WorkingDir: tmpDir,
 		Steps: []resource.TestStep{
 			{
@@ -114,116 +245,107 @@ resource "cloudflare_tiered_cache" "%[1]s" {
 	})
 }
 
-// TestMigrateTieredCache_Off tests migration from v4 cache_type = "off" to v5 value = "off"
-func TestMigrateTieredCache_Off(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_tiered_cache." + rnd
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	tmpDir := t.TempDir()
-
-	// V4 config using cache_type = "off"
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_tiered_cache" "%[1]s" {
-  zone_id    = "%[2]s"
-  cache_type = "off"
-}`, rnd, zoneID)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-		},
-		CheckDestroy: nil, // Migration tests don't need destroy checks
-		WorkingDir: tmpDir,
-		Steps: []resource.TestStep{
-			{
-				// Step 1: Create with v4 provider
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "4.52.1",
-					},
-				},
-				Config: v4Config,
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cache_type"), knownvalue.StringExact("off")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
-				},
-			},
-			// Step 2: Run migration and verify state transformation
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact("off")),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
-			}),
-		},
-	})
-}
-
-// TestMigrateTieredCache_AllValues tests value transformations that work with the current resource
-// NOTE: Generic cache_type requires migration to cloudflare_argo_tiered_caching resource (not tested here)
-func TestMigrateTieredCache_AllValues(t *testing.T) {
+// TestMigrateTieredCache_EdgeCases tests various edge cases in migration
+func TestMigrateTieredCache_EdgeCases(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	testCases := []struct {
-		name        string
-		v4Value     string
-		v5Value     string
-		description string
+	// Test edge cases with value transformations
+	edgeCases := []struct {
+		name           string
+		version        string
+		configFunc     func(rnd, zoneID string) string
+		expectedValue  string
+		expectedChecks func(resourceName, zoneID, expectedValue string) []statecheck.StateCheck
 	}{
 		{
-			name:        "Smart_To_On",
-			v4Value:     "smart",
-			v5Value:     "on",
-			description: "Migration from smart tiered cache to on",
+			name:          "v4_smart_to_on",
+			version:       "4.52.1",
+			configFunc:    tieredCacheConfigV4Smart,
+			expectedValue: "on",
+			expectedChecks: func(resourceName, zoneID, expectedValue string) []statecheck.StateCheck {
+				return []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact(expectedValue)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
+				}
+			},
 		},
 		{
-			name:        "Off_To_Off",
-			v4Value:     "off",
-			v5Value:     "off", 
-			description: "Migration from off tiered cache to off",
+			name:          "v4_off_to_off",
+			version:       "4.52.1",
+			configFunc:    tieredCacheConfigV4Off,
+			expectedValue: "off",
+			expectedChecks: func(resourceName, zoneID, expectedValue string) []statecheck.StateCheck {
+				return []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact(expectedValue)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
+				}
+			},
+		},
+		{
+			name:          "v5_on_remains_on",
+			version:       "5.0.0",
+			configFunc:    tieredCacheConfigV5On,
+			expectedValue: "on",
+			expectedChecks: func(resourceName, zoneID, expectedValue string) []statecheck.StateCheck {
+				return []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact(expectedValue)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
+				}
+			},
+		},
+		{
+			name:          "v5_off_remains_off",
+			version:       "5.8.4",
+			configFunc:    tieredCacheConfigV5Off,
+			expectedValue: "off",
+			expectedChecks: func(resourceName, zoneID, expectedValue string) []statecheck.StateCheck {
+				return []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact(expectedValue)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
+				}
+			},
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
+	for _, tc := range edgeCases {
 		t.Run(tc.name, func(t *testing.T) {
 			rnd := utils.GenerateRandomResourceName()
 			resourceName := "cloudflare_tiered_cache." + rnd
 			tmpDir := t.TempDir()
 
-			v4Config := fmt.Sprintf(`
-resource "cloudflare_tiered_cache" "%[1]s" {
-  zone_id    = "%[2]s"
-  cache_type = "%[3]s"
-}`, rnd, zoneID, tc.v4Value)
+			config := tc.configFunc(rnd, zoneID)
+			expectedChecks := tc.expectedChecks(resourceName, zoneID, tc.expectedValue)
+
+			// Build test steps
+			steps := []resource.TestStep{}
+
+			// Step 1: Create with specific provider version
+			steps = append(steps, resource.TestStep{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: tc.version,
+					},
+				},
+				Config: config,
+			})
+
+			// Step 2: Run migration (for v4) or just upgrade provider (for v5)
+			steps = append(steps,
+				acctest.MigrationTestStep(t, config, tmpDir, tc.version, expectedChecks),
+			)
 
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_ZoneID(t)
 				},
 				WorkingDir: tmpDir,
-				Steps: []resource.TestStep{
-					{
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								Source:            "cloudflare/cloudflare",
-								VersionConstraint: "4.52.1",
-							},
-						},
-						Config: v4Config,
-						ConfigStateChecks: []statecheck.StateCheck{
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cache_type"), knownvalue.StringExact(tc.v4Value)),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
-						},
-					},
-					acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("value"), knownvalue.StringExact(tc.v5Value)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(zoneID)),
-					}),
-				},
+				Steps:      steps,
 			})
 		})
 	}
