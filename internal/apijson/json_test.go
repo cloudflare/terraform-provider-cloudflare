@@ -793,6 +793,217 @@ var updateTests = map[string]struct {
 		`{"bool_value":null,"data":null,"float_value":null,"optional_array":null,"string_value":null}`,
 	},
 
+	"nested object null to non-null": {
+		TfsdkStructs{
+			DataObject: customfield.NullObject[EmbeddedTfsdkStruct](ctx),
+		},
+		TfsdkStructs{
+			DataObject: customfield.NewObjectMust(ctx, &EmbeddedTfsdkStruct{
+				EmbeddedString: types.StringValue("new_value"),
+				EmbeddedInt:    types.Int64Value(42),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
+			}),
+		},
+		`{"data_object":{"embedded_int":42,"embedded_string":"new_value"}}`,
+		`{"data_object":{"embedded_int":42,"embedded_string":"new_value"}}`,
+	},
+
+	"nested object non-null to null": {
+		TfsdkStructs{
+			DataObject: customfield.NewObjectMust(ctx, &EmbeddedTfsdkStruct{
+				EmbeddedString: types.StringValue("old_value"),
+				EmbeddedInt:    types.Int64Value(10),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
+			}),
+		},
+		TfsdkStructs{
+			DataObject: customfield.NullObject[EmbeddedTfsdkStruct](ctx),
+		},
+		`{"data_object":null}`,
+		`{"data_object":null}`,
+	},
+
+	"nested object with null state preserves null": {
+		customfield.NullObject[TfsdkStructs](ctx),
+		customfield.NullObject[TfsdkStructs](ctx),
+		``,
+		``,
+	},
+
+	"nested object list null to non-null": {
+		customfield.NullObjectList[TfsdkStructs](ctx),
+		customfield.NewObjectListMust(ctx, []TfsdkStructs{
+			{
+				BoolValue:   types.BoolValue(true),
+				StringValue: types.StringValue("test"),
+			},
+		}),
+		`[{"bool_value":true,"string_value":"test"}]`,
+		`[{"bool_value":true,"string_value":"test"}]`,
+	},
+
+	"nested object list non-null to null": {
+		customfield.NewObjectListMust(ctx, []TfsdkStructs{
+			{
+				BoolValue:   types.BoolValue(true),
+				StringValue: types.StringValue("test"),
+			},
+		}),
+		customfield.NullObjectList[TfsdkStructs](ctx),
+		`null`,
+		`null`,
+	},
+
+	"nested object list with null state preserves null": {
+		customfield.NullObjectList[TfsdkStructs](ctx),
+		customfield.NullObjectList[TfsdkStructs](ctx),
+		``,
+		``,
+	},
+
+	"nested object map null to non-null": {
+		customfield.NullObjectMap[TfsdkStructs](ctx),
+		customfield.NewObjectMapMust(ctx, map[string]TfsdkStructs{
+			"key1": {
+				BoolValue:   types.BoolValue(true),
+				StringValue: types.StringValue("test"),
+			},
+		}),
+		`{"key1":{"bool_value":true,"string_value":"test"}}`,
+		`{"key1":{"bool_value":true,"string_value":"test"}}`,
+	},
+
+	"nested object map non-null to null": {
+		customfield.NewObjectMapMust(ctx, map[string]TfsdkStructs{
+			"key1": {
+				BoolValue:   types.BoolValue(true),
+				StringValue: types.StringValue("test"),
+			},
+		}),
+		customfield.NullObjectMap[TfsdkStructs](ctx),
+		`null`,
+		`null`,
+	},
+
+	"nested object map with null state preserves null": {
+		customfield.NullObjectMap[TfsdkStructs](ctx),
+		customfield.NullObjectMap[TfsdkStructs](ctx),
+		``,
+		``,
+	},
+
+	"nested object set null to non-null": {
+		customfield.NullObjectSet[TfsdkStructs](ctx),
+		customfield.NewObjectSetMust(ctx, []TfsdkStructs{
+			{
+				BoolValue:   types.BoolValue(true),
+				StringValue: types.StringValue("test"),
+			},
+		}),
+		`[{"bool_value":true,"string_value":"test"}]`,
+		`[{"bool_value":true,"string_value":"test"}]`,
+	},
+
+	"nested object set non-null to null": {
+		customfield.NewObjectSetMust(ctx, []TfsdkStructs{
+			{
+				BoolValue:   types.BoolValue(true),
+				StringValue: types.StringValue("test"),
+			},
+		}),
+		customfield.NullObjectSet[TfsdkStructs](ctx),
+		`null`,
+		`null`,
+	},
+
+	"nested object set with null state preserves null": {
+		customfield.NullObjectSet[TfsdkStructs](ctx),
+		customfield.NullObjectSet[TfsdkStructs](ctx),
+		``,
+		``,
+	},
+
+	"list null to non-null": {
+		customfield.NullList[types.String](ctx),
+		customfield.NewListMust[types.String](ctx, []attr.Value{
+			types.StringValue("test1"),
+			types.StringValue("test2"),
+		}),
+		`["test1","test2"]`,
+		`["test1","test2"]`,
+	},
+
+	"list non-null to null": {
+		customfield.NewListMust[types.String](ctx, []attr.Value{
+			types.StringValue("test1"),
+			types.StringValue("test2"),
+		}),
+		customfield.NullList[types.String](ctx),
+		`null`,
+		`null`,
+	},
+
+	"list with null state preserves null": {
+		customfield.NullList[types.String](ctx),
+		customfield.NullList[types.String](ctx),
+		``,
+		``,
+	},
+
+	"map null to non-null": {
+		customfield.NullMap[types.String](ctx),
+		customfield.NewMapMust[types.String](ctx, map[string]types.String{
+			"key1": types.StringValue("value1"),
+			"key2": types.StringValue("value2"),
+		}),
+		`{"key1":"value1","key2":"value2"}`,
+		`{"key1":"value1","key2":"value2"}`,
+	},
+
+	"map non-null to null": {
+		customfield.NewMapMust[types.String](ctx, map[string]types.String{
+			"key1": types.StringValue("value1"),
+			"key2": types.StringValue("value2"),
+		}),
+		customfield.NullMap[types.String](ctx),
+		`null`,
+		`null`,
+	},
+
+	"map with null state preserves null": {
+		customfield.NullMap[types.String](ctx),
+		customfield.NullMap[types.String](ctx),
+		``,
+		``,
+	},
+
+	"set null to non-null": {
+		customfield.NullSet[types.String](ctx),
+		customfield.NewSetMust[types.String](ctx, []attr.Value{
+			types.StringValue("test1"),
+			types.StringValue("test2"),
+		}),
+		`["test1","test2"]`,
+		`["test1","test2"]`,
+	},
+
+	"set non-null to null": {
+		customfield.NewSetMust[types.String](ctx, []attr.Value{
+			types.StringValue("test1"),
+			types.StringValue("test2"),
+		}),
+		customfield.NullSet[types.String](ctx),
+		`null`,
+		`null`,
+	},
+
+	"set with null state preserves null": {
+		customfield.NullSet[types.String](ctx),
+		customfield.NullSet[types.String](ctx),
+		``,
+		``,
+	},
+
 	"set empty array": {
 		TfsdkStructs{
 			FloatValue:    types.Float64Value(3.14),

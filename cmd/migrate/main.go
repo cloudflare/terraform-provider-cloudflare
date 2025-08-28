@@ -235,6 +235,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			newBlocks = append(newBlocks, transformZoneSettingsBlock(block)...)
 		}
 
+		if isRegionalHostnameResource(block) {
+			transformRegionalHostnameBlock(block)
+		}
+
 		if isLoadBalancerPoolResource(block) {
 			transformLoadBalancerPoolBlock(block)
 		}
@@ -267,6 +271,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 
 		if isManagedTransformsResource(block) {
 			transformManagedTransformsBlock(block)
+		}
+
+		if isAccessGroupResource(block) {
+			transformAccessGroupBlock(block, diags)
 		}
 	}
 

@@ -22,6 +22,7 @@ type AccountDataSourceModel struct {
 	AccountID types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedOn timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Name      types.String                                             `tfsdk:"name" json:"name,computed"`
+	Type      types.String                                             `tfsdk:"type" json:"type,computed"`
 	Settings  customfield.NestedObject[AccountSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
 	Filter    *AccountFindOneByDataSourceModel                         `tfsdk:"filter"`
 }

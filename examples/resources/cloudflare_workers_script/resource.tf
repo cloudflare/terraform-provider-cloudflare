@@ -1,7 +1,6 @@
 resource "cloudflare_workers_script" "example_workers_script" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   script_name = "this-is_my_script-01"
-  main_module = "worker.js"
   assets = {
     config = {
       headers = <<EOT
@@ -32,7 +31,11 @@ resource "cloudflare_workers_script" "example_workers_script" {
   content_sha256 = filesha256("worker.js")
   keep_assets = false
   keep_bindings = ["kv_namespace"]
+  limits = {
+    cpu_ms = 50
+  }
   logpush = false
+  main_module = "worker.js"
   migrations = {
     deleted_classes = ["string"]
     new_classes = ["string"]

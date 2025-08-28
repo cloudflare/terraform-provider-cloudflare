@@ -36,6 +36,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)",
 				Computed:    true,
 			},
+			"bm_cookie_enabled": schema.BoolAttribute{
+				Description: "Indicates that the bot management cookie can be placed on end user devices accessing the site. Defaults to true",
+				Computed:    true,
+			},
 			"crawler_protection": schema.StringAttribute{
 				Description: "Enable rule to punish AI Scrapers and Crawlers via a link maze.\nAvailable values: \"enabled\", \"disabled\".",
 				Computed:    true,
