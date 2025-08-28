@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -273,11 +274,7 @@ func upgradeZeroTrustAccessPolicyStateV0toV1(ctx context.Context, req resource.U
 			}
 		}
 		if len(includeRules) > 0 {
-			var includeRulesPtrs []*ZeroTrustAccessPolicyIncludeModel
-			for i := range includeRules {
-				includeRulesPtrs = append(includeRulesPtrs, &includeRules[i])
-			}
-			newState.Include = &includeRulesPtrs
+			newState.Include, _ = customfield.NewObjectSet[ZeroTrustAccessPolicyIncludeModel](ctx, includeRules)
 		}
 	}
 
@@ -291,11 +288,7 @@ func upgradeZeroTrustAccessPolicyStateV0toV1(ctx context.Context, req resource.U
 			}
 		}
 		if len(excludeRules) > 0 {
-			var excludeRulesPtrs []*ZeroTrustAccessPolicyExcludeModel
-			for i := range excludeRules {
-				excludeRulesPtrs = append(excludeRulesPtrs, &excludeRules[i])
-			}
-			newState.Exclude = &excludeRulesPtrs
+			newState.Exclude, _ = customfield.NewObjectSet[ZeroTrustAccessPolicyExcludeModel](ctx, excludeRules)
 		}
 	}
 
@@ -309,11 +302,7 @@ func upgradeZeroTrustAccessPolicyStateV0toV1(ctx context.Context, req resource.U
 			}
 		}
 		if len(requireRules) > 0 {
-			var requireRulesPtrs []*ZeroTrustAccessPolicyRequireModel
-			for i := range requireRules {
-				requireRulesPtrs = append(requireRulesPtrs, &requireRules[i])
-			}
-			newState.Require = &requireRulesPtrs
+			newState.Require, _ = customfield.NewObjectSet[ZeroTrustAccessPolicyRequireModel](ctx, requireRules)
 		}
 	}
 

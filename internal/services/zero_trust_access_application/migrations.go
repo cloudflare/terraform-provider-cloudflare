@@ -524,7 +524,7 @@ func upgradeZeroTrustAccessApplicationStateV0toV1(ctx context.Context, req resou
 	if tags, ok := oldState["tags"].([]interface{}); ok {
 		migratedTags := migrateStringSliceToList(tags)
 		if len(migratedTags) > 0 {
-			newState.Tags, _ = customfield.NewList[types.String](ctx, migratedTags)
+			newState.Tags, _ = customfield.NewSet[types.String](ctx, migratedTags)
 		}
 	}
 
