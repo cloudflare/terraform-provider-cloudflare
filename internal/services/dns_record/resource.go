@@ -293,11 +293,11 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 	if state != nil && !plan.Name.IsUnknown() && !state.Name.IsNull() {
 		planName := plan.Name.ValueString()
 		stateName := state.Name.ValueString()
-		
+
 		// Remove trailing dots for comparison
 		planNameNorm := strings.TrimSuffix(planName, ".")
 		stateNameNorm := strings.TrimSuffix(stateName, ".")
-		
+
 		// Check if plan is "@" (apex) and state is the zone name
 		if planName == "@" && stateName != "@" && strings.Contains(stateName, ".") {
 			plan.Name = state.Name
@@ -327,7 +327,7 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 	if state != nil {
 		// Check if there are actual configuration changes
 		hasConfigChanges := false
-		
+
 		// Check for changes in user-configurable fields
 		// For CAA and other records that use data field, content might be computed
 		// so we need to be careful about comparing it
@@ -340,14 +340,37 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 			// Don't consider content changes for these records
 			contentChanged = false
 		}
-		
+
+		// Special handling for tags: treat empty list and null as equivalent
+		// Also, when tags is unknown (marked by Terraform as "known after apply"),
+		// don't consider it as a change if state is empty
+		tagsChanged := false
+
+		if plan.Tags.IsUnknown() {
+			// When plan tags is unknown and state is empty, no real change
+			stateTagsEmpty := state.Tags.IsNull() || (!state.Tags.IsUnknown() && len(state.Tags.Elements()) == 0)
+			tagsChanged = !stateTagsEmpty
+		} else {
+			// Normal comparison when plan tags is known
+			planTagsEmpty := plan.Tags.IsNull() || len(plan.Tags.Elements()) == 0
+			stateTagsEmpty := state.Tags.IsNull() || (!state.Tags.IsUnknown() && len(state.Tags.Elements()) == 0)
+
+			if planTagsEmpty && stateTagsEmpty {
+				// Both are empty, no change
+				tagsChanged = false
+			} else {
+				// At least one is not empty, use regular comparison
+				tagsChanged = !plan.Tags.Equal(state.Tags)
+			}
+		}
+
 		if !plan.Name.Equal(state.Name) || !plan.Type.Equal(state.Type) ||
 			contentChanged || !plan.TTL.Equal(state.TTL) ||
 			!plan.Proxied.Equal(state.Proxied) || !plan.Priority.Equal(state.Priority) ||
-			!plan.Comment.Equal(state.Comment) || !plan.Tags.Equal(state.Tags) {
+			!plan.Comment.Equal(state.Comment) || tagsChanged {
 			hasConfigChanges = true
 		}
-		
+
 		// Check if data field has changes (for CAA records)
 		// This is complex because we'd need to compare all subfields
 		// For now, assume data hasn't changed if both plan and state have it
@@ -355,27 +378,27 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 			// One is nil and the other is not
 			hasConfigChanges = true
 		}
-		
+
 		// Always preserve created_on since it never changes
 		if plan.CreatedOn.IsUnknown() {
 			plan.CreatedOn = state.CreatedOn
 		}
-		
+
 		// Only preserve modified_on if there are no config changes
 		if plan.ModifiedOn.IsUnknown() && !hasConfigChanges {
 			plan.ModifiedOn = state.ModifiedOn
 		}
-		
+
 		// Preserve proxiable flag
 		if plan.Proxiable.IsUnknown() {
 			plan.Proxiable = state.Proxiable
 		}
-		
+
 		// Preserve meta field
 		if plan.Meta.IsUnknown() {
 			plan.Meta = state.Meta
 		}
-		
+
 		// For CAA records and others that use data field, preserve computed content
 		if plan.Content.IsUnknown() && plan.Data != nil {
 			plan.Content = state.Content
