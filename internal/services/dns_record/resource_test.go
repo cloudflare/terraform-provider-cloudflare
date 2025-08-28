@@ -59,10 +59,30 @@ func testSweepCloudflareRecord(r string) error {
 		return nil
 	}
 
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	
 	for _, record := range records {
-		// Only delete test records - those that start with tf-acctest- or contain terraform test patterns
+		shouldDelete := false
+		
+		// Delete test records - those that start with tf-acctest- or contain terraform test patterns
 		if strings.HasPrefix(record.Name, "tf-acctest-") || strings.Contains(record.Name, "tf-acctest") {
-			tflog.Info(ctx, fmt.Sprintf("Deleting test DNS record ID: %s, Name: %s", record.ID, record.Name))
+			shouldDelete = true
+		}
+		
+		// Also clean up apex domain records if they are A/AAAA/CNAME records that could conflict with tests
+		// Only delete apex records that are likely from tests (A/AAAA records pointing to test IPs or CNAME records)
+		if domain != "" && record.Name == domain {
+			if record.Type == "A" && (strings.HasPrefix(record.Content, "192.168.") || strings.HasPrefix(record.Content, "10.0.") || strings.HasPrefix(record.Content, "172.16.")) {
+				shouldDelete = true
+			} else if record.Type == "AAAA" && strings.HasPrefix(record.Content, "2001:db8:") {
+				shouldDelete = true
+			} else if record.Type == "CNAME" {
+				shouldDelete = true
+			}
+		}
+		
+		if shouldDelete {
+			tflog.Info(ctx, fmt.Sprintf("Deleting test DNS record ID: %s, Name: %s, Type: %s, Content: %s", record.ID, record.Name, record.Type, record.Content))
 			err := client.DeleteDNSRecord(context.Background(), cfold.ZoneIdentifier(zoneID), record.ID)
 			if err != nil {
 				tflog.Error(ctx, fmt.Sprintf("Failed to delete DNS record %s: %s", record.ID, err))
