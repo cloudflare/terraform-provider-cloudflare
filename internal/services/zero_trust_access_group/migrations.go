@@ -4,7 +4,6 @@ package zero_trust_access_group
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -13,11 +12,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/tidwall/gjson"
 )
 
 var _ resource.ResourceWithUpgradeState = (*ZeroTrustAccessGroupResource)(nil)
 
-// zeroTrustAccessGroupResourceSchemaV0 defines the v0 schema (v4 provider format)
+// zeroTrustAccessGroupResourceSchemaV0 defines the v0 schema
+// Only includes simple attributes that are consistent between v4 and v5
+// Complex fields (include/exclude/require) are handled via raw JSON
 var zeroTrustAccessGroupResourceSchemaV0 = schema.Schema{
 	Attributes: map[string]schema.Attribute{
 		"account_id": schema.StringAttribute{
@@ -39,263 +41,12 @@ var zeroTrustAccessGroupResourceSchemaV0 = schema.Schema{
 			},
 		},
 		"name": schema.StringAttribute{
-			Required: true,
+			Optional: true,
 		},
 	},
-	Blocks: map[string]schema.Block{
-		"include": schema.ListNestedBlock{
-			NestedObject: schema.NestedBlockObject{
-				Attributes: map[string]schema.Attribute{
-					"email": schema.ListAttribute{
-						ElementType: types.StringType,
-						Optional:    true,
-					},
-					"email_domain": schema.ListAttribute{
-						ElementType: types.StringType,
-						Optional:    true,
-					},
-					"ip": schema.ListAttribute{
-						ElementType: types.StringType,
-						Optional:    true,
-					},
-					"everyone": schema.BoolAttribute{
-						Optional: true,
-					},
-					"certificate": schema.BoolAttribute{
-						Optional: true,
-					},
-					"any_valid_service_token": schema.BoolAttribute{
-						Optional: true,
-					},
-				},
-				Blocks: map[string]schema.Block{
-					"azure": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"id": schema.ListAttribute{
-									ElementType: types.StringType,
-									Optional:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-					"github": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"name": schema.StringAttribute{
-									Optional: true,
-								},
-								"teams": schema.ListAttribute{
-									ElementType: types.StringType,
-									Optional:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-					"gsuite": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"email": schema.ListAttribute{
-									ElementType: types.StringType,
-									Optional:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-					"okta": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"name": schema.ListAttribute{
-									ElementType: types.StringType,
-									Optional:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-		"exclude": schema.ListNestedBlock{
-			NestedObject: schema.NestedBlockObject{
-				Attributes: map[string]schema.Attribute{
-					"email": schema.ListAttribute{
-						ElementType: types.StringType,
-						Optional:    true,
-					},
-					"email_domain": schema.ListAttribute{
-						ElementType: types.StringType,
-						Optional:    true,
-					},
-					"ip": schema.ListAttribute{
-						ElementType: types.StringType,
-						Optional:    true,
-					},
-					"everyone": schema.BoolAttribute{
-						Optional: true,
-					},
-					"certificate": schema.BoolAttribute{
-						Optional: true,
-					},
-					"any_valid_service_token": schema.BoolAttribute{
-						Optional: true,
-					},
-				},
-				Blocks: map[string]schema.Block{
-					"azure": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"id": schema.ListAttribute{
-									ElementType: types.StringType,
-									Optional:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-					"github": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"name": schema.StringAttribute{
-									Optional: true,
-								},
-								"teams": schema.ListAttribute{
-									ElementType: types.StringType,
-									Optional:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-					"gsuite": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"email": schema.ListAttribute{
-									ElementType: types.StringType,
-									Optional:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-					"okta": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"name": schema.ListAttribute{
-									ElementType: types.StringType,
-									Optional:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-		"require": schema.ListNestedBlock{
-			NestedObject: schema.NestedBlockObject{
-				Attributes: map[string]schema.Attribute{
-					"email": schema.ListAttribute{
-						ElementType: types.StringType,
-						Optional:    true,
-					},
-					"email_domain": schema.ListAttribute{
-						ElementType: types.StringType,
-						Optional:    true,
-					},
-					"ip": schema.ListAttribute{
-						ElementType: types.StringType,
-						Optional:    true,
-					},
-					"everyone": schema.BoolAttribute{
-						Optional: true,
-					},
-					"certificate": schema.BoolAttribute{
-						Optional: true,
-					},
-					"any_valid_service_token": schema.BoolAttribute{
-						Optional: true,
-					},
-				},
-				Blocks: map[string]schema.Block{
-					"azure": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"id": schema.ListAttribute{
-									ElementType: types.StringType,
-									Optional:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-					"github": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"name": schema.StringAttribute{
-									Optional: true,
-								},
-								"teams": schema.ListAttribute{
-									ElementType: types.StringType,
-									Optional:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-					"gsuite": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"email": schema.ListAttribute{
-									ElementType: types.StringType,
-									Optional:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-					"okta": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"name": schema.ListAttribute{
-									ElementType: types.StringType,
-									Optional:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	},
+	// Note: include, exclude, and require are intentionally omitted
+	// They have different structures in v4 (blocks with arrays) vs v5 (list of objects)
+	// and will be handled via raw JSON manipulation
 }
 
 func (r *ZeroTrustAccessGroupResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
@@ -309,84 +60,76 @@ func (r *ZeroTrustAccessGroupResource) UpgradeState(ctx context.Context) map[int
 }
 
 func upgradeZeroTrustAccessGroupStateV0toV1(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	// Parse the old state using the raw state data
-	var oldState map[string]interface{}
 	if req.RawState == nil || len(req.RawState.JSON) == 0 {
 		return
 	}
 
-	// Extract raw state attributes from JSON
-	err := json.Unmarshal(req.RawState.JSON, &oldState)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Failed to parse raw state",
-			fmt.Sprintf("Could not parse raw state during migration: %s", err),
-		)
+	// Get simple attributes from typed state
+	var priorStateData struct {
+		ID        types.String `tfsdk:"id"`
+		AccountID types.String `tfsdk:"account_id"`
+		ZoneID    types.String `tfsdk:"zone_id"`
+		Name      types.String `tfsdk:"name"`
+	}
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &priorStateData)...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	tflog.Info(ctx, "Starting zero trust access group state migration from v0 to v1")
 
-	// Create new state structure
+	// Create new state structure with simple attributes
 	var newState ZeroTrustAccessGroupModel
+	newState.ID = priorStateData.ID
+	newState.AccountID = priorStateData.AccountID
+	newState.ZoneID = priorStateData.ZoneID
+	newState.Name = priorStateData.Name
 
-	// Migrate basic attributes
-	if id, ok := oldState["id"].(string); ok && id != "" {
-		newState.ID = types.StringValue(id)
-	}
-	if accountID, ok := oldState["account_id"].(string); ok && accountID != "" {
-		newState.AccountID = types.StringValue(accountID)
-	}
-	if zoneID, ok := oldState["zone_id"].(string); ok && zoneID != "" {
-		newState.ZoneID = types.StringValue(zoneID)
-	}
-	if name, ok := oldState["name"].(string); ok && name != "" {
-		newState.Name = types.StringValue(name)
-	}
+	// Use raw JSON to handle include/exclude/require which have different formats in v4 vs v5
+	rawJSON := string(req.RawState.JSON)
 
-	// Migrate include rules
-	if includeData, ok := oldState["include"].([]interface{}); ok && len(includeData) > 0 {
-		var includeRules []ZeroTrustAccessGroupIncludeModel
-		for _, includeItem := range includeData {
-			if includeMap, ok := includeItem.(map[string]interface{}); ok {
-				migratedRules := migrateV4IncludeRuleBlock(includeMap)
-				includeRules = append(includeRules, migratedRules...)
-			}
-		}
-		if len(includeRules) > 0 {
-			var includeRulesPtrs []*ZeroTrustAccessGroupIncludeModel
-			for i := range includeRules {
-				includeRulesPtrs = append(includeRulesPtrs, &includeRules[i])
-			}
-			newState.Include = &includeRulesPtrs
+	// Check if this is v4 format (blocks with arrays) or v5 format (list of objects)
+	includeValue := gjson.Get(rawJSON, "include")
+	if includeValue.Exists() && includeValue.IsArray() && len(includeValue.Array()) > 0 {
+		firstItem := includeValue.Array()[0]
+
+		// Check if it's v4 format: include[0].email is an array
+		// Or v5 format: include[0].email is an object
+		if firstItem.Get("email").IsArray() {
+			// V4 format - migrate from blocks with arrays
+			newState.Include = migrateV4IncludeRules(rawJSON)
+		} else if firstItem.Get("email").IsObject() {
+			// V5 format - already in correct structure, just parse it
+			newState.Include = parseV5IncludeRules(rawJSON)
 		}
 	}
 
-	// Migrate exclude rules
-	if excludeData, ok := oldState["exclude"].([]interface{}); ok && len(excludeData) > 0 {
-		var excludeRules []*ZeroTrustAccessGroupExcludeModel
-		for _, excludeItem := range excludeData {
-			if excludeMap, ok := excludeItem.(map[string]interface{}); ok {
-				migratedRules := migrateV4ExcludeRuleBlock(excludeMap)
-				excludeRules = append(excludeRules, migratedRules...)
-			}
-		}
-		if len(excludeRules) > 0 {
-			newState.Exclude = &excludeRules
+	// Handle exclude rules
+	excludeValue := gjson.Get(rawJSON, "exclude")
+	if excludeValue.Exists() && excludeValue.IsArray() && len(excludeValue.Array()) > 0 {
+		firstItem := excludeValue.Array()[0]
+
+		if firstItem.Get("email").IsArray() || firstItem.Get("email_domain").IsArray() || firstItem.Get("ip").IsArray() {
+			// V4 format
+			newState.Exclude = migrateV4ExcludeRules(rawJSON)
+		} else {
+			// V5 format
+			newState.Exclude = parseV5ExcludeRules(rawJSON)
 		}
 	}
 
-	// Migrate require rules
-	if requireData, ok := oldState["require"].([]interface{}); ok && len(requireData) > 0 {
-		var requireRules []*ZeroTrustAccessGroupRequireModel
-		for _, requireItem := range requireData {
-			if requireMap, ok := requireItem.(map[string]interface{}); ok {
-				migratedRules := migrateV4RequireRuleBlock(requireMap)
-				requireRules = append(requireRules, migratedRules...)
-			}
-		}
-		if len(requireRules) > 0 {
-			newState.Require = &requireRules
+	// Handle require rules
+	requireValue := gjson.Get(rawJSON, "require")
+	if requireValue.Exists() && requireValue.IsArray() && len(requireValue.Array()) > 0 {
+		firstItem := requireValue.Array()[0]
+
+		if firstItem.Get("email").IsArray() || firstItem.Get("email_domain").IsArray() || firstItem.Get("ip").IsArray() {
+			// V4 format
+			newState.Require = migrateV4RequireRules(rawJSON)
+		} else {
+			// V5 format
+			newState.Require = parseV5RequireRules(rawJSON)
 		}
 	}
 
@@ -400,550 +143,344 @@ func upgradeZeroTrustAccessGroupStateV0toV1(ctx context.Context, req resource.Up
 	tflog.Info(ctx, "Successfully migrated zero trust access group state from v0 to v1")
 }
 
-// migrateV4IncludeRuleBlock converts a v4 include rule block to multiple v5 include rule objects
-// Processes attributes in a fixed order for deterministic results
-func migrateV4IncludeRuleBlock(ruleMap map[string]interface{}) []ZeroTrustAccessGroupIncludeModel {
-	var rules []ZeroTrustAccessGroupIncludeModel
+// migrateV4IncludeRules handles v4 format where include is a block with arrays
+func migrateV4IncludeRules(rawJSON string) *[]*ZeroTrustAccessGroupIncludeModel {
+	includeValue := gjson.Get(rawJSON, "include")
+	if !includeValue.Exists() || !includeValue.IsArray() {
+		return nil
+	}
 
-	// Process in fixed order: email, email_domain, ip
-	// This matches the config migration order
-	
-	// Handle email arrays -> multiple email objects
-	if emails, ok := ruleMap["email"].([]interface{}); ok {
+	var rules []*ZeroTrustAccessGroupIncludeModel
+
+	for _, includeBlock := range includeValue.Array() {
+		// Process email arrays
+		emails := includeBlock.Get("email").Array()
 		for _, email := range emails {
-			if emailStr, ok := email.(string); ok && emailStr != "" && emailStr != "<nil>" && emailStr != "null" {
-				// Create completely clean object with ONLY email field initialized
-				rule := ZeroTrustAccessGroupIncludeModel{}
-				rule.Email = &ZeroTrustAccessGroupIncludeEmailModel{
-					Email: types.StringValue(emailStr),
-				}
-				rules = append(rules, rule)
+			rule := &ZeroTrustAccessGroupIncludeModel{
+				Email: &ZeroTrustAccessGroupIncludeEmailModel{
+					Email: types.StringValue(email.String()),
+				},
 			}
+			rules = append(rules, rule)
 		}
-	}
 
-	// Handle email_domain arrays -> multiple email_domain objects
-	if emailDomains, ok := ruleMap["email_domain"].([]interface{}); ok {
-		for _, domain := range emailDomains {
-			if domain == nil {
-				continue // Skip nil values explicitly
+		// Process email_domain arrays
+		domains := includeBlock.Get("email_domain").Array()
+		for _, domain := range domains {
+			rule := &ZeroTrustAccessGroupIncludeModel{
+				EmailDomain: &ZeroTrustAccessGroupIncludeEmailDomainModel{
+					Domain: types.StringValue(domain.String()),
+				},
 			}
-			if domainStr, ok := domain.(string); ok && domainStr != "" && domainStr != "<nil>" && domainStr != "null" {
-				// Create completely clean object with ONLY email_domain field initialized
-				rule := ZeroTrustAccessGroupIncludeModel{}
-				rule.EmailDomain = &ZeroTrustAccessGroupIncludeEmailDomainModel{
-					Domain: types.StringValue(domainStr),
-				}
-				rules = append(rules, rule)
-			}
+			rules = append(rules, rule)
 		}
-	}
 
-	// Handle ip arrays -> multiple ip objects
-	if ips, ok := ruleMap["ip"].([]interface{}); ok {
+		// Process IP arrays
+		ips := includeBlock.Get("ip").Array()
 		for _, ip := range ips {
-			if ipStr, ok := ip.(string); ok && ipStr != "" && ipStr != "<nil>" && ipStr != "null" {
-				// Create completely clean object with ONLY ip field initialized
-				rule := ZeroTrustAccessGroupIncludeModel{}
-				rule.IP = &ZeroTrustAccessGroupIncludeIPModel{
-					IP: types.StringValue(ipStr),
-				}
-				rules = append(rules, rule)
+			rule := &ZeroTrustAccessGroupIncludeModel{
+				IP: &ZeroTrustAccessGroupIncludeIPModel{
+					IP: types.StringValue(ip.String()),
+				},
 			}
+			rules = append(rules, rule)
+		}
+
+		// Process boolean fields
+		if includeBlock.Get("everyone").Bool() {
+			rule := &ZeroTrustAccessGroupIncludeModel{
+				Everyone: &ZeroTrustAccessGroupIncludeEveryoneModel{},
+			}
+			rules = append(rules, rule)
+		}
+
+		if includeBlock.Get("certificate").Bool() {
+			rule := &ZeroTrustAccessGroupIncludeModel{
+				Certificate: &ZeroTrustAccessGroupIncludeCertificateModel{},
+			}
+			rules = append(rules, rule)
+		}
+
+		if includeBlock.Get("any_valid_service_token").Bool() {
+			rule := &ZeroTrustAccessGroupIncludeModel{
+				AnyValidServiceToken: &ZeroTrustAccessGroupIncludeAnyValidServiceTokenModel{},
+			}
+			rules = append(rules, rule)
 		}
 	}
 
-	// Handle azure blocks -> multiple azure_ad objects
-	// V4 structure: azure = [{ id = ["group1", "group2"], identity_provider_id = "provider" }]
-	// V5 structure: azure_ad = { id = "group1", identity_provider_id = "provider" }
-	if azureBlocks, ok := ruleMap["azure"].([]interface{}); ok {
-		for _, azureBlock := range azureBlocks {
-			if azureMap, ok := azureBlock.(map[string]interface{}); ok {
-				identityProviderID := ""
-				if providerID, ok := azureMap["identity_provider_id"].(string); ok {
-					identityProviderID = providerID
-				}
-				
-				// Handle ID arrays
-				if ids, ok := azureMap["id"].([]interface{}); ok {
-					for _, id := range ids {
-						if idStr, ok := id.(string); ok {
-							// Create completely clean object with ONLY azure_ad field initialized
-							rule := ZeroTrustAccessGroupIncludeModel{}
-							rule.AzureAD = &ZeroTrustAccessGroupIncludeAzureADModel{
-								ID: types.StringValue(idStr),
-								IdentityProviderID: types.StringValue(identityProviderID),
-							}
-							rules = append(rules, rule)
-						}
-					}
-				}
-			}
-		}
+	if len(rules) > 0 {
+		return &rules
 	}
-
-	// Handle github blocks -> multiple github_organization objects
-	// V4 structure: github = [{ name = "org", teams = ["team1", "team2"], identity_provider_id = "provider" }]
-	// V5 structure: github_organization = { name = "org", team = "team1", identity_provider_id = "provider" }
-	if githubBlocks, ok := ruleMap["github"].([]interface{}); ok {
-		for _, githubBlock := range githubBlocks {
-			if githubMap, ok := githubBlock.(map[string]interface{}); ok {
-				name := ""
-				identityProviderID := ""
-				if nameStr, ok := githubMap["name"].(string); ok {
-					name = nameStr
-				}
-				if providerID, ok := githubMap["identity_provider_id"].(string); ok {
-					identityProviderID = providerID
-				}
-				
-				// Handle teams arrays
-				if teams, ok := githubMap["teams"].([]interface{}); ok {
-					for _, team := range teams {
-						if teamStr, ok := team.(string); ok {
-							// Create completely clean object with ONLY github_organization field initialized
-							rule := ZeroTrustAccessGroupIncludeModel{}
-							rule.GitHubOrganization = &ZeroTrustAccessGroupIncludeGitHubOrganizationModel{
-								Name: types.StringValue(name),
-								Team: types.StringValue(teamStr),
-								IdentityProviderID: types.StringValue(identityProviderID),
-							}
-							rules = append(rules, rule)
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// Handle gsuite blocks -> expand email arrays
-	// V4 structure: gsuite = [{ email = ["user1@example.com", "user2@example.com"], identity_provider_id = "provider" }]
-	// V5 structure: gsuite = { email = "user1@example.com", identity_provider_id = "provider" }
-	if gsuiteBlocks, ok := ruleMap["gsuite"].([]interface{}); ok {
-		for _, gsuiteBlock := range gsuiteBlocks {
-			if gsuiteMap, ok := gsuiteBlock.(map[string]interface{}); ok {
-				identityProviderID := ""
-				if providerID, ok := gsuiteMap["identity_provider_id"].(string); ok {
-					identityProviderID = providerID
-				}
-				
-				// Handle email arrays
-				if emails, ok := gsuiteMap["email"].([]interface{}); ok {
-					for _, email := range emails {
-						if emailStr, ok := email.(string); ok {
-							// Create completely clean object with ONLY gsuite field initialized
-							rule := ZeroTrustAccessGroupIncludeModel{}
-							rule.GSuite = &ZeroTrustAccessGroupIncludeGSuiteModel{
-								Email: types.StringValue(emailStr),
-								IdentityProviderID: types.StringValue(identityProviderID),
-							}
-							rules = append(rules, rule)
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// Handle okta blocks -> expand name arrays
-	// V4 structure: okta = [{ name = ["group1", "group2"], identity_provider_id = "provider" }]
-	// V5 structure: okta = { name = "group1", identity_provider_id = "provider" }
-	if oktaBlocks, ok := ruleMap["okta"].([]interface{}); ok {
-		for _, oktaBlock := range oktaBlocks {
-			if oktaMap, ok := oktaBlock.(map[string]interface{}); ok {
-				identityProviderID := ""
-				if providerID, ok := oktaMap["identity_provider_id"].(string); ok {
-					identityProviderID = providerID
-				}
-				
-				// Handle name arrays
-				if names, ok := oktaMap["name"].([]interface{}); ok {
-					for _, name := range names {
-						if nameStr, ok := name.(string); ok {
-							// Create completely clean object with ONLY okta field initialized
-							rule := ZeroTrustAccessGroupIncludeModel{}
-							rule.Okta = &ZeroTrustAccessGroupIncludeOktaModel{
-								Name: types.StringValue(nameStr),
-								IdentityProviderID: types.StringValue(identityProviderID),
-							}
-							rules = append(rules, rule)
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// Handle boolean attributes -> empty objects
-	// V4 structure: everyone = true, certificate = true, any_valid_service_token = true
-	// V5 structure: everyone = {}, certificate = {}, any_valid_service_token = {}
-	if everyone, ok := ruleMap["everyone"].(bool); ok && everyone {
-		// Create completely clean object with ONLY everyone field initialized
-		rule := ZeroTrustAccessGroupIncludeModel{}
-		rule.Everyone = &ZeroTrustAccessGroupIncludeEveryoneModel{}
-		rules = append(rules, rule)
-	}
-	
-	if certificate, ok := ruleMap["certificate"].(bool); ok && certificate {
-		// Create completely clean object with ONLY certificate field initialized
-		rule := ZeroTrustAccessGroupIncludeModel{}
-		rule.Certificate = &ZeroTrustAccessGroupIncludeCertificateModel{}
-		rules = append(rules, rule)
-	}
-	
-	if anyValidServiceToken, ok := ruleMap["any_valid_service_token"].(bool); ok && anyValidServiceToken {
-		// Create completely clean object with ONLY any_valid_service_token field initialized
-		rule := ZeroTrustAccessGroupIncludeModel{}
-		rule.AnyValidServiceToken = &ZeroTrustAccessGroupIncludeAnyValidServiceTokenModel{}
-		rules = append(rules, rule)
-	}
-
-	return rules
+	return nil
 }
 
-// migrateV4ExcludeRuleBlock converts a v4 exclude rule block to multiple v5 exclude rule objects
-func migrateV4ExcludeRuleBlock(ruleMap map[string]interface{}) []*ZeroTrustAccessGroupExcludeModel {
+// parseV5IncludeRules handles v5 format where include is already a list of objects
+func parseV5IncludeRules(rawJSON string) *[]*ZeroTrustAccessGroupIncludeModel {
+	includeValue := gjson.Get(rawJSON, "include")
+	if !includeValue.Exists() || !includeValue.IsArray() {
+		return nil
+	}
+
+	var rules []*ZeroTrustAccessGroupIncludeModel
+
+	for _, item := range includeValue.Array() {
+		rule := &ZeroTrustAccessGroupIncludeModel{}
+
+		// Check which field is present in this object
+		if email := item.Get("email"); email.Exists() && email.IsObject() {
+			rule.Email = &ZeroTrustAccessGroupIncludeEmailModel{
+				Email: types.StringValue(email.Get("email").String()),
+			}
+		} else if emailDomain := item.Get("email_domain"); emailDomain.Exists() && emailDomain.IsObject() {
+			rule.EmailDomain = &ZeroTrustAccessGroupIncludeEmailDomainModel{
+				Domain: types.StringValue(emailDomain.Get("domain").String()),
+			}
+		} else if ip := item.Get("ip"); ip.Exists() && ip.IsObject() {
+			rule.IP = &ZeroTrustAccessGroupIncludeIPModel{
+				IP: types.StringValue(ip.Get("ip").String()),
+			}
+		} else if item.Get("everyone").Exists() {
+			rule.Everyone = &ZeroTrustAccessGroupIncludeEveryoneModel{}
+		} else if item.Get("certificate").Exists() {
+			rule.Certificate = &ZeroTrustAccessGroupIncludeCertificateModel{}
+		} else if item.Get("any_valid_service_token").Exists() {
+			rule.AnyValidServiceToken = &ZeroTrustAccessGroupIncludeAnyValidServiceTokenModel{}
+		}
+
+		rules = append(rules, rule)
+	}
+
+	if len(rules) > 0 {
+		return &rules
+	}
+	return nil
+}
+
+// migrateV4ExcludeRules handles v4 format for exclude rules
+func migrateV4ExcludeRules(rawJSON string) *[]*ZeroTrustAccessGroupExcludeModel {
+	excludeValue := gjson.Get(rawJSON, "exclude")
+	if !excludeValue.Exists() || !excludeValue.IsArray() {
+		return nil
+	}
+
 	var rules []*ZeroTrustAccessGroupExcludeModel
 
-	// Process attributes in same order as include rules for consistency
-	
-	// Handle email arrays -> multiple email objects
-	if emails, ok := ruleMap["email"].([]interface{}); ok {
+	for _, excludeBlock := range excludeValue.Array() {
+		// Process email arrays
+		emails := excludeBlock.Get("email").Array()
 		for _, email := range emails {
-			if emailStr, ok := email.(string); ok {
-				// Create completely clean object with ONLY email field initialized
-				rule := &ZeroTrustAccessGroupExcludeModel{}
-				rule.Email = &ZeroTrustAccessGroupExcludeEmailModel{
-					Email: types.StringValue(emailStr),
-				}
-				rules = append(rules, rule)
+			rule := &ZeroTrustAccessGroupExcludeModel{
+				Email: &ZeroTrustAccessGroupExcludeEmailModel{
+					Email: types.StringValue(email.String()),
+				},
 			}
+			rules = append(rules, rule)
 		}
-	}
 
-	// Handle email_domain arrays -> multiple email_domain objects
-	if emailDomains, ok := ruleMap["email_domain"].([]interface{}); ok {
-		for _, domain := range emailDomains {
-			if domainStr, ok := domain.(string); ok {
-				// Create completely clean object with ONLY email_domain field initialized
-				rule := &ZeroTrustAccessGroupExcludeModel{}
-				rule.EmailDomain = &ZeroTrustAccessGroupExcludeEmailDomainModel{
-					Domain: types.StringValue(domainStr),
-				}
-				rules = append(rules, rule)
+		// Process email_domain arrays
+		domains := excludeBlock.Get("email_domain").Array()
+		for _, domain := range domains {
+			rule := &ZeroTrustAccessGroupExcludeModel{
+				EmailDomain: &ZeroTrustAccessGroupExcludeEmailDomainModel{
+					Domain: types.StringValue(domain.String()),
+				},
 			}
+			rules = append(rules, rule)
 		}
-	}
 
-	// Handle ip arrays -> multiple ip objects
-	if ips, ok := ruleMap["ip"].([]interface{}); ok {
+		// Process IP arrays
+		ips := excludeBlock.Get("ip").Array()
 		for _, ip := range ips {
-			if ipStr, ok := ip.(string); ok {
-				// Create completely clean object with ONLY ip field initialized
-				rule := &ZeroTrustAccessGroupExcludeModel{}
-				rule.IP = &ZeroTrustAccessGroupExcludeIPModel{
-					IP: types.StringValue(ipStr),
-				}
-				rules = append(rules, rule)
+			rule := &ZeroTrustAccessGroupExcludeModel{
+				IP: &ZeroTrustAccessGroupExcludeIPModel{
+					IP: types.StringValue(ip.String()),
+				},
 			}
+			rules = append(rules, rule)
+		}
+
+		// Process boolean fields
+		if excludeBlock.Get("everyone").Bool() {
+			rule := &ZeroTrustAccessGroupExcludeModel{
+				Everyone: &ZeroTrustAccessGroupExcludeEveryoneModel{},
+			}
+			rules = append(rules, rule)
+		}
+
+		if excludeBlock.Get("certificate").Bool() {
+			rule := &ZeroTrustAccessGroupExcludeModel{
+				Certificate: &ZeroTrustAccessGroupExcludeCertificateModel{},
+			}
+			rules = append(rules, rule)
+		}
+
+		if excludeBlock.Get("any_valid_service_token").Bool() {
+			rule := &ZeroTrustAccessGroupExcludeModel{
+				AnyValidServiceToken: &ZeroTrustAccessGroupExcludeAnyValidServiceTokenModel{},
+			}
+			rules = append(rules, rule)
 		}
 	}
 
-	// Handle azure blocks -> multiple azure_ad objects
-	if azureBlocks, ok := ruleMap["azure"].([]interface{}); ok {
-		for _, azureBlock := range azureBlocks {
-			if azureMap, ok := azureBlock.(map[string]interface{}); ok {
-				identityProviderID := ""
-				if providerID, ok := azureMap["identity_provider_id"].(string); ok {
-					identityProviderID = providerID
-				}
-				
-				if ids, ok := azureMap["id"].([]interface{}); ok {
-					for _, id := range ids {
-						if idStr, ok := id.(string); ok {
-							rules = append(rules, &ZeroTrustAccessGroupExcludeModel{
-								AzureAD: &ZeroTrustAccessGroupExcludeAzureADModel{
-									ID: types.StringValue(idStr),
-									IdentityProviderID: types.StringValue(identityProviderID),
-								},
-							})
-						}
-					}
-				}
-			}
-		}
+	if len(rules) > 0 {
+		return &rules
 	}
-
-	// Handle github blocks -> multiple github_organization objects
-	if githubBlocks, ok := ruleMap["github"].([]interface{}); ok {
-		for _, githubBlock := range githubBlocks {
-			if githubMap, ok := githubBlock.(map[string]interface{}); ok {
-				name := ""
-				identityProviderID := ""
-				if nameStr, ok := githubMap["name"].(string); ok {
-					name = nameStr
-				}
-				if providerID, ok := githubMap["identity_provider_id"].(string); ok {
-					identityProviderID = providerID
-				}
-				
-				if teams, ok := githubMap["teams"].([]interface{}); ok {
-					for _, team := range teams {
-						if teamStr, ok := team.(string); ok {
-							rules = append(rules, &ZeroTrustAccessGroupExcludeModel{
-								GitHubOrganization: &ZeroTrustAccessGroupExcludeGitHubOrganizationModel{
-									Name: types.StringValue(name),
-									Team: types.StringValue(teamStr),
-									IdentityProviderID: types.StringValue(identityProviderID),
-								},
-							})
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// Handle gsuite blocks -> expand email arrays
-	if gsuiteBlocks, ok := ruleMap["gsuite"].([]interface{}); ok {
-		for _, gsuiteBlock := range gsuiteBlocks {
-			if gsuiteMap, ok := gsuiteBlock.(map[string]interface{}); ok {
-				identityProviderID := ""
-				if providerID, ok := gsuiteMap["identity_provider_id"].(string); ok {
-					identityProviderID = providerID
-				}
-				
-				if emails, ok := gsuiteMap["email"].([]interface{}); ok {
-					for _, email := range emails {
-						if emailStr, ok := email.(string); ok {
-							rules = append(rules, &ZeroTrustAccessGroupExcludeModel{
-								GSuite: &ZeroTrustAccessGroupExcludeGSuiteModel{
-									Email: types.StringValue(emailStr),
-									IdentityProviderID: types.StringValue(identityProviderID),
-								},
-							})
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// Handle okta blocks -> expand name arrays
-	if oktaBlocks, ok := ruleMap["okta"].([]interface{}); ok {
-		for _, oktaBlock := range oktaBlocks {
-			if oktaMap, ok := oktaBlock.(map[string]interface{}); ok {
-				identityProviderID := ""
-				if providerID, ok := oktaMap["identity_provider_id"].(string); ok {
-					identityProviderID = providerID
-				}
-				
-				if names, ok := oktaMap["name"].([]interface{}); ok {
-					for _, name := range names {
-						if nameStr, ok := name.(string); ok {
-							rules = append(rules, &ZeroTrustAccessGroupExcludeModel{
-								Okta: &ZeroTrustAccessGroupExcludeOktaModel{
-									Name: types.StringValue(nameStr),
-									IdentityProviderID: types.StringValue(identityProviderID),
-								},
-							})
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// Handle boolean attributes -> empty objects
-	if everyone, ok := ruleMap["everyone"].(bool); ok && everyone {
-		rules = append(rules, &ZeroTrustAccessGroupExcludeModel{
-			Everyone: &ZeroTrustAccessGroupExcludeEveryoneModel{},
-		})
-	}
-	
-	if certificate, ok := ruleMap["certificate"].(bool); ok && certificate {
-		rules = append(rules, &ZeroTrustAccessGroupExcludeModel{
-			Certificate: &ZeroTrustAccessGroupExcludeCertificateModel{},
-		})
-	}
-	
-	if anyValidServiceToken, ok := ruleMap["any_valid_service_token"].(bool); ok && anyValidServiceToken {
-		rules = append(rules, &ZeroTrustAccessGroupExcludeModel{
-			AnyValidServiceToken: &ZeroTrustAccessGroupExcludeAnyValidServiceTokenModel{},
-		})
-	}
-
-	return rules
+	return nil
 }
 
-// migrateV4RequireRuleBlock converts a v4 require rule block to multiple v5 require rule objects
-func migrateV4RequireRuleBlock(ruleMap map[string]interface{}) []*ZeroTrustAccessGroupRequireModel {
+// parseV5ExcludeRules handles v5 format for exclude rules
+func parseV5ExcludeRules(rawJSON string) *[]*ZeroTrustAccessGroupExcludeModel {
+	excludeValue := gjson.Get(rawJSON, "exclude")
+	if !excludeValue.Exists() || !excludeValue.IsArray() {
+		return nil
+	}
+
+	var rules []*ZeroTrustAccessGroupExcludeModel
+
+	for _, item := range excludeValue.Array() {
+		rule := &ZeroTrustAccessGroupExcludeModel{}
+
+		// Check which field is present in this object
+		if email := item.Get("email"); email.Exists() && email.IsObject() {
+			rule.Email = &ZeroTrustAccessGroupExcludeEmailModel{
+				Email: types.StringValue(email.Get("email").String()),
+			}
+		} else if emailDomain := item.Get("email_domain"); emailDomain.Exists() && emailDomain.IsObject() {
+			rule.EmailDomain = &ZeroTrustAccessGroupExcludeEmailDomainModel{
+				Domain: types.StringValue(emailDomain.Get("domain").String()),
+			}
+		} else if ip := item.Get("ip"); ip.Exists() && ip.IsObject() {
+			rule.IP = &ZeroTrustAccessGroupExcludeIPModel{
+				IP: types.StringValue(ip.Get("ip").String()),
+			}
+		} else if item.Get("everyone").Exists() {
+			rule.Everyone = &ZeroTrustAccessGroupExcludeEveryoneModel{}
+		} else if item.Get("certificate").Exists() {
+			rule.Certificate = &ZeroTrustAccessGroupExcludeCertificateModel{}
+		} else if item.Get("any_valid_service_token").Exists() {
+			rule.AnyValidServiceToken = &ZeroTrustAccessGroupExcludeAnyValidServiceTokenModel{}
+		}
+
+		rules = append(rules, rule)
+	}
+
+	if len(rules) > 0 {
+		return &rules
+	}
+	return nil
+}
+
+// migrateV4RequireRules handles v4 format for require rules
+func migrateV4RequireRules(rawJSON string) *[]*ZeroTrustAccessGroupRequireModel {
+	requireValue := gjson.Get(rawJSON, "require")
+	if !requireValue.Exists() || !requireValue.IsArray() {
+		return nil
+	}
+
 	var rules []*ZeroTrustAccessGroupRequireModel
 
-	// Process attributes in same order as include rules for consistency
-	
-	// Handle email arrays -> multiple email objects
-	if emails, ok := ruleMap["email"].([]interface{}); ok {
+	for _, requireBlock := range requireValue.Array() {
+		// Process email arrays
+		emails := requireBlock.Get("email").Array()
 		for _, email := range emails {
-			if emailStr, ok := email.(string); ok {
-				rules = append(rules, &ZeroTrustAccessGroupRequireModel{
-					Email: &ZeroTrustAccessGroupRequireEmailModel{
-						Email: types.StringValue(emailStr),
-					},
-				})
+			rule := &ZeroTrustAccessGroupRequireModel{
+				Email: &ZeroTrustAccessGroupRequireEmailModel{
+					Email: types.StringValue(email.String()),
+				},
 			}
+			rules = append(rules, rule)
 		}
-	}
 
-	// Handle email_domain arrays -> multiple email_domain objects
-	if emailDomains, ok := ruleMap["email_domain"].([]interface{}); ok {
-		for _, domain := range emailDomains {
-			if domainStr, ok := domain.(string); ok {
-				rules = append(rules, &ZeroTrustAccessGroupRequireModel{
-					EmailDomain: &ZeroTrustAccessGroupRequireEmailDomainModel{
-						Domain: types.StringValue(domainStr),
-					},
-				})
+		// Process email_domain arrays
+		domains := requireBlock.Get("email_domain").Array()
+		for _, domain := range domains {
+			rule := &ZeroTrustAccessGroupRequireModel{
+				EmailDomain: &ZeroTrustAccessGroupRequireEmailDomainModel{
+					Domain: types.StringValue(domain.String()),
+				},
 			}
+			rules = append(rules, rule)
 		}
-	}
 
-	// Handle ip arrays -> multiple ip objects
-	if ips, ok := ruleMap["ip"].([]interface{}); ok {
+		// Process IP arrays
+		ips := requireBlock.Get("ip").Array()
 		for _, ip := range ips {
-			if ipStr, ok := ip.(string); ok {
-				rules = append(rules, &ZeroTrustAccessGroupRequireModel{
-					IP: &ZeroTrustAccessGroupRequireIPModel{
-						IP: types.StringValue(ipStr),
-					},
-				})
+			rule := &ZeroTrustAccessGroupRequireModel{
+				IP: &ZeroTrustAccessGroupRequireIPModel{
+					IP: types.StringValue(ip.String()),
+				},
 			}
+			rules = append(rules, rule)
+		}
+
+		// Process boolean fields
+		if requireBlock.Get("everyone").Bool() {
+			rule := &ZeroTrustAccessGroupRequireModel{
+				Everyone: &ZeroTrustAccessGroupRequireEveryoneModel{},
+			}
+			rules = append(rules, rule)
+		}
+
+		if requireBlock.Get("certificate").Bool() {
+			rule := &ZeroTrustAccessGroupRequireModel{
+				Certificate: &ZeroTrustAccessGroupRequireCertificateModel{},
+			}
+			rules = append(rules, rule)
+		}
+
+		if requireBlock.Get("any_valid_service_token").Bool() {
+			rule := &ZeroTrustAccessGroupRequireModel{
+				AnyValidServiceToken: &ZeroTrustAccessGroupRequireAnyValidServiceTokenModel{},
+			}
+			rules = append(rules, rule)
 		}
 	}
 
-	// Handle azure blocks -> multiple azure_ad objects
-	if azureBlocks, ok := ruleMap["azure"].([]interface{}); ok {
-		for _, azureBlock := range azureBlocks {
-			if azureMap, ok := azureBlock.(map[string]interface{}); ok {
-				identityProviderID := ""
-				if providerID, ok := azureMap["identity_provider_id"].(string); ok {
-					identityProviderID = providerID
-				}
-				
-				if ids, ok := azureMap["id"].([]interface{}); ok {
-					for _, id := range ids {
-						if idStr, ok := id.(string); ok {
-							rules = append(rules, &ZeroTrustAccessGroupRequireModel{
-								AzureAD: &ZeroTrustAccessGroupRequireAzureADModel{
-									ID: types.StringValue(idStr),
-									IdentityProviderID: types.StringValue(identityProviderID),
-								},
-							})
-						}
-					}
-				}
+	if len(rules) > 0 {
+		return &rules
+	}
+	return nil
+}
+
+// parseV5RequireRules handles v5 format for require rules
+func parseV5RequireRules(rawJSON string) *[]*ZeroTrustAccessGroupRequireModel {
+	requireValue := gjson.Get(rawJSON, "require")
+	if !requireValue.Exists() || !requireValue.IsArray() {
+		return nil
+	}
+
+	var rules []*ZeroTrustAccessGroupRequireModel
+
+	for _, item := range requireValue.Array() {
+		rule := &ZeroTrustAccessGroupRequireModel{}
+
+		// Check which field is present in this object
+		if email := item.Get("email"); email.Exists() && email.IsObject() {
+			rule.Email = &ZeroTrustAccessGroupRequireEmailModel{
+				Email: types.StringValue(email.Get("email").String()),
 			}
-		}
-	}
-
-	// Handle github blocks -> multiple github_organization objects
-	if githubBlocks, ok := ruleMap["github"].([]interface{}); ok {
-		for _, githubBlock := range githubBlocks {
-			if githubMap, ok := githubBlock.(map[string]interface{}); ok {
-				name := ""
-				identityProviderID := ""
-				if nameStr, ok := githubMap["name"].(string); ok {
-					name = nameStr
-				}
-				if providerID, ok := githubMap["identity_provider_id"].(string); ok {
-					identityProviderID = providerID
-				}
-				
-				if teams, ok := githubMap["teams"].([]interface{}); ok {
-					for _, team := range teams {
-						if teamStr, ok := team.(string); ok {
-							rules = append(rules, &ZeroTrustAccessGroupRequireModel{
-								GitHubOrganization: &ZeroTrustAccessGroupRequireGitHubOrganizationModel{
-									Name: types.StringValue(name),
-									Team: types.StringValue(teamStr),
-									IdentityProviderID: types.StringValue(identityProviderID),
-								},
-							})
-						}
-					}
-				}
+		} else if emailDomain := item.Get("email_domain"); emailDomain.Exists() && emailDomain.IsObject() {
+			rule.EmailDomain = &ZeroTrustAccessGroupRequireEmailDomainModel{
+				Domain: types.StringValue(emailDomain.Get("domain").String()),
 			}
-		}
-	}
-
-	// Handle gsuite blocks -> expand email arrays
-	if gsuiteBlocks, ok := ruleMap["gsuite"].([]interface{}); ok {
-		for _, gsuiteBlock := range gsuiteBlocks {
-			if gsuiteMap, ok := gsuiteBlock.(map[string]interface{}); ok {
-				identityProviderID := ""
-				if providerID, ok := gsuiteMap["identity_provider_id"].(string); ok {
-					identityProviderID = providerID
-				}
-				
-				if emails, ok := gsuiteMap["email"].([]interface{}); ok {
-					for _, email := range emails {
-						if emailStr, ok := email.(string); ok {
-							rules = append(rules, &ZeroTrustAccessGroupRequireModel{
-								GSuite: &ZeroTrustAccessGroupRequireGSuiteModel{
-									Email: types.StringValue(emailStr),
-									IdentityProviderID: types.StringValue(identityProviderID),
-								},
-							})
-						}
-					}
-				}
+		} else if ip := item.Get("ip"); ip.Exists() && ip.IsObject() {
+			rule.IP = &ZeroTrustAccessGroupRequireIPModel{
+				IP: types.StringValue(ip.Get("ip").String()),
 			}
+		} else if item.Get("everyone").Exists() {
+			rule.Everyone = &ZeroTrustAccessGroupRequireEveryoneModel{}
+		} else if item.Get("certificate").Exists() {
+			rule.Certificate = &ZeroTrustAccessGroupRequireCertificateModel{}
+		} else if item.Get("any_valid_service_token").Exists() {
+			rule.AnyValidServiceToken = &ZeroTrustAccessGroupRequireAnyValidServiceTokenModel{}
 		}
+
+		rules = append(rules, rule)
 	}
 
-	// Handle okta blocks -> expand name arrays
-	if oktaBlocks, ok := ruleMap["okta"].([]interface{}); ok {
-		for _, oktaBlock := range oktaBlocks {
-			if oktaMap, ok := oktaBlock.(map[string]interface{}); ok {
-				identityProviderID := ""
-				if providerID, ok := oktaMap["identity_provider_id"].(string); ok {
-					identityProviderID = providerID
-				}
-				
-				if names, ok := oktaMap["name"].([]interface{}); ok {
-					for _, name := range names {
-						if nameStr, ok := name.(string); ok {
-							rules = append(rules, &ZeroTrustAccessGroupRequireModel{
-								Okta: &ZeroTrustAccessGroupRequireOktaModel{
-									Name: types.StringValue(nameStr),
-									IdentityProviderID: types.StringValue(identityProviderID),
-								},
-							})
-						}
-					}
-				}
-			}
-		}
+	if len(rules) > 0 {
+		return &rules
 	}
-
-	// Handle boolean attributes -> empty objects
-	if everyone, ok := ruleMap["everyone"].(bool); ok && everyone {
-		rules = append(rules, &ZeroTrustAccessGroupRequireModel{
-			Everyone: &ZeroTrustAccessGroupRequireEveryoneModel{},
-		})
-	}
-	
-	if certificate, ok := ruleMap["certificate"].(bool); ok && certificate {
-		rules = append(rules, &ZeroTrustAccessGroupRequireModel{
-			Certificate: &ZeroTrustAccessGroupRequireCertificateModel{},
-		})
-	}
-	
-	if anyValidServiceToken, ok := ruleMap["any_valid_service_token"].(bool); ok && anyValidServiceToken {
-		rules = append(rules, &ZeroTrustAccessGroupRequireModel{
-			AnyValidServiceToken: &ZeroTrustAccessGroupRequireAnyValidServiceTokenModel{},
-		})
-	}
-
-	return rules
+	return nil
 }
