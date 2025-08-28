@@ -15,6 +15,7 @@ SERVICES=(
     "./internal/services/account_api_token_permission_groups"
     "./internal/services/account_dns_settings"
     "./internal/services/account_dns_settings_internal_view"
+    "./internal/services/account_member"
     "./internal/services/account_permission_group"
     "./internal/services/account_role"
     "./internal/services/account_subscription"
