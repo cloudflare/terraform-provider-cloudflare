@@ -812,6 +812,45 @@ func TestAccCloudflareRecord_CNAMECase(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_CommentModifiedOn(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigWithoutComment(zoneID, "tf-acctest-basic", rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tf-acctest-basic.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
+					resource.TestMatchResourceAttr(resourceName, consts.ZoneIDSchemaKey, regexp.MustCompile("^[a-z0-9]{32}$")),
+					resource.TestCheckResourceAttr(resourceName, "ttl", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "type", "A"),
+					resource.TestCheckNoResourceAttr(resourceName, "comment_modified_on"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRecordConfigCommentModified(zoneID, "tf-acctest-basic", rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tf-acctest-basic.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
+					resource.TestMatchResourceAttr(resourceName, consts.ZoneIDSchemaKey, regexp.MustCompile("^[a-z0-9]{32}$")),
+					resource.TestCheckResourceAttr(resourceName, "ttl", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "comment", "Test comment for drift"),
+					resource.TestCheckResourceAttrSet(resourceName, "comment_modified_on"),
+				),
+			},
+		},
+	})
+}
+
 // Test FQDN normalization for DNS record names
 func TestAccCloudflareRecord_FQDNNormalize(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -1072,6 +1111,14 @@ func testAccCheckCloudflareRecordConfigNoTags(zoneID, name, rnd, domain string) 
 
 func testAccCheckCloudflareRecordDNSKEY(zoneID, name string) string {
 	return acctest.LoadTestCase("recorddnskey.tf", zoneID, name)
+}
+
+func testAccCheckCloudflareRecordConfigWithoutComment(zoneID, name, rnd, domain string) string {
+	return acctest.LoadTestCase("dnsrecordswithoutcomment.tf", zoneID, name, rnd, domain)
+}
+
+func testAccCheckCloudflareRecordConfigCommentModified(zoneID, name, rnd, domain string) string {
+	return acctest.LoadTestCase("dnsrecordcommentmodified.tf", zoneID, name, rnd, domain)
 }
 
 func suppressTrailingDots(k, old, new string, d *schema.ResourceData) bool {
