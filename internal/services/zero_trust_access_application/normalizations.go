@@ -228,18 +228,18 @@ func normalizeImportZeroTrustAccessApplicationAPIData(ctx context.Context, data 
 			if !policy.ID.IsNull() && !policy.ID.IsUnknown() {
 				policy.Decision = types.StringNull()
 				policy.Name = types.StringNull()
-				policy.Include = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
-				policy.Require = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesRequireModel](ctx)
-				policy.Exclude = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx)
+				policy.Include = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
+				policy.Require = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesRequireModel](ctx)
+				policy.Exclude = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx)
 			} else {
 				if !policy.Include.IsNull() && len(policy.Include.Elements()) == 0 {
-					policy.Include = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
+					policy.Include = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
 				}
 				if !policy.Require.IsNull() && len(policy.Require.Elements()) == 0 {
-					policy.Require = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesRequireModel](ctx)
+					policy.Require = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesRequireModel](ctx)
 				}
 				if !policy.Exclude.IsNull() && len(policy.Exclude.Elements()) == 0 {
-					policy.Exclude = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx)
+					policy.Exclude = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx)
 				}
 			}
 		}
@@ -247,7 +247,7 @@ func normalizeImportZeroTrustAccessApplicationAPIData(ctx context.Context, data 
 
 	if !data.Tags.IsNull() && !data.Tags.IsUnknown() {
 		if len(data.Tags.Elements()) == 0 {
-			data.Tags = customfield.NullList[types.String](ctx)
+			data.Tags = customfield.NullSet[types.String](ctx)
 		}
 	}
 

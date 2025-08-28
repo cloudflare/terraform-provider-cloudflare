@@ -146,7 +146,7 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 	res.Plan.Set(ctx, &planApp)
 }
 
-func normalizeTagsOrder(ctx context.Context, planTags *customfield.List[types.String], stateTags customfield.List[types.String]) {
+func normalizeTagsOrder(ctx context.Context, planTags *customfield.Set[types.String], stateTags customfield.Set[types.String]) {
 	var stateStrings, planStrings []string
 
 	for _, elem := range stateTags.Elements() {
@@ -161,6 +161,7 @@ func normalizeTagsOrder(ctx context.Context, planTags *customfield.List[types.St
 		}
 	}
 
+	// For Sets, order doesn't matter, so we just check if they contain the same elements
 	if len(stateStrings) == len(planStrings) {
 		slices.Sort(stateStrings)
 		slices.Sort(planStrings)
