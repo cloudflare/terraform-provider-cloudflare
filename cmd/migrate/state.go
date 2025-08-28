@@ -75,6 +75,10 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_managed_transforms":
 				result = transformManagedTransformsStateJSON(result, path)
+
+			case "cloudflare_argo":
+				// cloudflare_argo needs special handling as it may split into multiple resources
+				result = transformArgoStateJSON(result, path, resourcePath)
 			}
 
 			return true
@@ -463,5 +467,62 @@ func transformManagedTransformsStateJSON(json string, instancePath string) strin
 		json, _ = sjson.Set(json, attrPath+".managed_response_headers", []interface{}{})
 	}
 
+	return json
+}
+
+// transformArgoStateJSON handles v4 to v5 state migration for cloudflare_argo
+// The cloudflare_argo resource is split into cloudflare_argo_smart_routing and/or cloudflare_argo_tiered_caching
+func transformArgoStateJSON(json string, instancePath string, resourcePath string) string {
+	attrPath := instancePath + ".attributes"
+	
+	// Get the smart_routing and tiered_caching values
+	smartRouting := gjson.Get(json, attrPath+".smart_routing")
+	tieredCaching := gjson.Get(json, attrPath+".tiered_caching")
+	
+	// Determine which resource type to use based on attributes
+	// Note: In state files, we can only represent one resource type per resource block
+	// When both attributes exist with non-null values, we prioritize smart_routing
+	// A proper migration would need to handle splitting into multiple resources at the Terraform config level
+	
+	// Check if smart_routing exists and is not null
+	if smartRouting.Exists() && smartRouting.Type != gjson.Null {
+		// Transform to cloudflare_argo_smart_routing
+		json, _ = sjson.Set(json, resourcePath+".type", "cloudflare_argo_smart_routing")
+		
+		// Rename smart_routing to value
+		json, _ = sjson.Set(json, attrPath+".value", smartRouting.Value())
+		json, _ = sjson.Delete(json, attrPath+".smart_routing")
+		
+		// Remove tiered_caching if it exists
+		if tieredCaching.Exists() {
+			json, _ = sjson.Delete(json, attrPath+".tiered_caching")
+			// Note: This loses the tiered_caching value - proper migration requires config-level handling
+		}
+	} else if tieredCaching.Exists() && tieredCaching.Type != gjson.Null {
+		// Transform to cloudflare_argo_tiered_caching if tiered_caching exists and is not null
+		json, _ = sjson.Set(json, resourcePath+".type", "cloudflare_argo_tiered_caching")
+		
+		// Rename tiered_caching to value
+		json, _ = sjson.Set(json, attrPath+".value", tieredCaching.Value())
+		json, _ = sjson.Delete(json, attrPath+".tiered_caching")
+		
+		// Remove smart_routing if it exists (and is null)
+		if smartRouting.Exists() {
+			json, _ = sjson.Delete(json, attrPath+".smart_routing")
+		}
+	} else {
+		// Both are null or don't exist - default to cloudflare_argo_smart_routing with value "off"
+		json, _ = sjson.Set(json, resourcePath+".type", "cloudflare_argo_smart_routing")
+		json, _ = sjson.Set(json, attrPath+".value", "off")
+		
+		// Clean up null attributes
+		if smartRouting.Exists() {
+			json, _ = sjson.Delete(json, attrPath+".smart_routing")
+		}
+		if tieredCaching.Exists() {
+			json, _ = sjson.Delete(json, attrPath+".tiered_caching")
+		}
+	}
+	
 	return json
 }

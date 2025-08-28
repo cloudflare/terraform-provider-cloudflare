@@ -265,6 +265,12 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			}
 		}
 
+		if isArgoResource(block) {
+			// Transform cloudflare_argo to separate resources
+			blocksToRemove = append(blocksToRemove, block)
+			newBlocks = append(newBlocks, transformArgoBlock(block)...)
+		}
+
 		if isZeroTrustAccessMTLSHostnameSettingsResource(block) {
 			transformZeroTrustAccessMTLSHostnameSettingsBlock(block, diags)
 		}
