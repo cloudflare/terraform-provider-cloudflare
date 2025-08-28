@@ -93,6 +93,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Token provided upon successful upload of all files from a registered manifest.",
 						Optional:    true,
 						Sensitive:   true,
+						WriteOnly:   true,
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
@@ -217,8 +218,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"content_base64": schema.StringAttribute{
-							Description: "The base64-encoded module content.",
+						"content_file": schema.StringAttribute{
+							Description: "The file path of the module content.",
 							Required:    true,
 						},
 						"content_type": schema.StringAttribute{
@@ -228,6 +229,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "The name of the module.",
 							Required:    true,
+						},
+						"content_sha256": schema.StringAttribute{
+							Description: "The SHA-256 hash of the module content.",
+							Computed:    true,
+							PlanModifiers: []planmodifier.String{
+								ComputeSHA256HashOfContentFile(),
+							},
 						},
 					},
 				},
@@ -293,7 +301,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"bindings": schema.ListNestedAttribute{
 				Description: "List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.",
-				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectListType[WorkerVersionBindingsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
@@ -374,6 +381,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The exported class name of the Durable Object.",
 							Computed:    true,
 							Optional:    true,
+							PlanModifiers: []planmodifier.String{
+								UnknownOnlyIf("type", "durable_object_namespace"),
+							},
 						},
 						"environment": schema.StringAttribute{
 							Description: "The environment of the script_name to bind to.",
@@ -383,11 +393,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "Namespace identifier tag.",
 							Computed:    true,
 							Optional:    true,
+							PlanModifiers: []planmodifier.String{
+								UnknownOnlyIf("type", "durable_object_namespace"),
+							},
 						},
 						"script_name": schema.StringAttribute{
 							Description: "The script where the Durable Object is defined, if it is external to this Worker.",
 							Computed:    true,
 							Optional:    true,
+							PlanModifiers: []planmodifier.String{
+								UnknownOnlyIf("type", "durable_object_namespace"),
+							},
 						},
 						"json": schema.StringAttribute{
 							Description: "JSON data to use.",
@@ -450,6 +466,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"usages": schema.SetAttribute{
 							Description: "Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).",
 							Optional:    true,
+							CustomType:  customfield.NewSetType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"key_base64": schema.StringAttribute{
