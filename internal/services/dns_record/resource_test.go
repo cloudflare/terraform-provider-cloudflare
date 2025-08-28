@@ -144,7 +144,7 @@ func TestAccCloudflareRecord_Apex(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					testAccCheckCloudflareRecordAttributes(&record),
-					resource.TestCheckResourceAttr(resourceName, "name", domain),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
 				),

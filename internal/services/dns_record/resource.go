@@ -7,15 +7,19 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v5"
 	"github.com/cloudflare/cloudflare-go/v5/dns"
 	"github.com/cloudflare/cloudflare-go/v5/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -262,6 +266,179 @@ func (r *DNSRecordResource) ImportState(ctx context.Context, req resource.Import
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSRecordResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	// Only proceed if we have a plan (not destroying)
+	if req.Plan.Raw.IsNull() {
+		return
+	}
 
+	var plan DNSRecordModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Get the current state if it exists
+	var state *DNSRecordModel
+	if !req.State.Raw.IsNull() {
+		state = &DNSRecordModel{}
+		resp.Diagnostics.Append(req.State.Get(ctx, state)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+	}
+
+	// Handle name normalization for FQDN vs subdomain
+	// The API returns FQDN but users often configure subdomain
+	if state != nil && !plan.Name.IsUnknown() && !state.Name.IsNull() {
+		planName := plan.Name.ValueString()
+		stateName := state.Name.ValueString()
+		
+		// Remove trailing dots for comparison
+		planNameNorm := strings.TrimSuffix(planName, ".")
+		stateNameNorm := strings.TrimSuffix(stateName, ".")
+		
+		// Check if plan is "@" (apex) and state is the zone name
+		if planName == "@" && stateName != "@" && strings.Contains(stateName, ".") {
+			plan.Name = state.Name
+		} else if strings.HasPrefix(stateNameNorm, planNameNorm+".") {
+			// State is FQDN, plan is subdomain - keep state to prevent drift
+			plan.Name = state.Name
+		} else if planNameNorm != stateNameNorm {
+			// Check if they're semantically the same record
+			planParts := strings.Split(planNameNorm, ".")
+			stateParts := strings.Split(stateNameNorm, ".")
+			if len(planParts) < len(stateParts) {
+				matches := true
+				for i, part := range planParts {
+					if i >= len(stateParts) || part != stateParts[i] {
+						matches = false
+						break
+					}
+				}
+				if matches {
+					plan.Name = state.Name
+				}
+			}
+		}
+	}
+
+	// Preserve computed fields from state during updates
+	if state != nil {
+		// Check if there are actual configuration changes
+		hasConfigChanges := false
+		
+		// Check for changes in user-configurable fields
+		// For CAA and other records that use data field, content might be computed
+		// so we need to be careful about comparing it
+		contentChanged := false
+		if plan.Data == nil {
+			// Regular record using content field
+			contentChanged = !plan.Content.Equal(state.Content)
+		} else {
+			// Record using data field (like CAA), content is computed
+			// Don't consider content changes for these records
+			contentChanged = false
+		}
+		
+		if !plan.Name.Equal(state.Name) || !plan.Type.Equal(state.Type) ||
+			contentChanged || !plan.TTL.Equal(state.TTL) ||
+			!plan.Proxied.Equal(state.Proxied) || !plan.Priority.Equal(state.Priority) ||
+			!plan.Comment.Equal(state.Comment) || !plan.Tags.Equal(state.Tags) {
+			hasConfigChanges = true
+		}
+		
+		// Check if data field has changes (for CAA records)
+		// This is complex because we'd need to compare all subfields
+		// For now, assume data hasn't changed if both plan and state have it
+		if (plan.Data == nil) != (state.Data == nil) {
+			// One is nil and the other is not
+			hasConfigChanges = true
+		}
+		
+		// Always preserve created_on since it never changes
+		if plan.CreatedOn.IsUnknown() {
+			plan.CreatedOn = state.CreatedOn
+		}
+		
+		// Only preserve modified_on if there are no config changes
+		if plan.ModifiedOn.IsUnknown() && !hasConfigChanges {
+			plan.ModifiedOn = state.ModifiedOn
+		}
+		
+		// Preserve proxiable flag
+		if plan.Proxiable.IsUnknown() {
+			plan.Proxiable = state.Proxiable
+		}
+		
+		// Preserve meta field
+		if plan.Meta.IsUnknown() {
+			plan.Meta = state.Meta
+		}
+		
+		// For CAA records and others that use data field, preserve computed content
+		if plan.Content.IsUnknown() && plan.Data != nil {
+			plan.Content = state.Content
+		}
+
+		// Handle settings: preserve from state if not explicitly set
+		if plan.Settings.IsUnknown() || plan.Settings.IsNull() {
+			plan.Settings = state.Settings
+		} else if !plan.Settings.IsNull() {
+			// If settings is set in plan, ensure nested fields have defaults
+			var settingsData DNSRecordSettingsModel
+			resp.Diagnostics.Append(plan.Settings.As(ctx, &settingsData, basetypes.ObjectAsOptions{})...)
+			if !resp.Diagnostics.HasError() {
+				updated := false
+				// Set defaults for unset boolean fields to false
+				if settingsData.IPV4Only.IsUnknown() {
+					settingsData.IPV4Only = types.BoolValue(false)
+					updated = true
+				}
+				if settingsData.IPV6Only.IsUnknown() {
+					settingsData.IPV6Only = types.BoolValue(false)
+					updated = true
+				}
+				if settingsData.FlattenCNAME.IsUnknown() {
+					settingsData.FlattenCNAME = types.BoolValue(false)
+					updated = true
+				}
+				if updated {
+					plan.Settings = customfield.NewObjectMust(ctx, &settingsData)
+				}
+			}
+		}
+
+		// Handle tags: preserve empty set from state to avoid showing as unknown
+		if plan.Tags.IsUnknown() {
+			if state.Tags.IsNull() || len(state.Tags.Elements()) == 0 {
+				plan.Tags = state.Tags
+			}
+		}
+	}
+
+	commentIsEmpty := plan.Comment.IsNull() || (!plan.Comment.IsUnknown() && plan.Comment.ValueString() == "")
+	if commentIsEmpty && plan.CommentModifiedOn.IsUnknown() {
+		// Set comment_modified_on to null when comment is empty, preventing drift
+		plan.CommentModifiedOn = timetypes.NewRFC3339Null()
+	}
+
+	// Handle tags_modified_on drift: if tags is empty/null, ensure tags_modified_on is null
+	// This works around terraform-plugin-framework issue #898 where computed fields adjacent
+	// to optional+computed collections show as "known after apply"
+	tagsIsEmpty := plan.Tags.IsNull() || (!plan.Tags.IsUnknown() && len(plan.Tags.Elements()) == 0)
+
+	if tagsIsEmpty && plan.TagsModifiedOn.IsUnknown() {
+		// Set tags_modified_on to null when tags are empty, preventing drift
+		plan.TagsModifiedOn = timetypes.NewRFC3339Null()
+	} else if !tagsIsEmpty && plan.TagsModifiedOn.IsUnknown() && state != nil {
+		// If tags haven't changed, preserve tags_modified_on from state
+		if plan.Tags.Equal(state.Tags) {
+			plan.TagsModifiedOn = state.TagsModifiedOn
+		}
+		// Otherwise let it be unknown (will be updated by the API)
+	}
+
+	// Set the updated plan
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
 }
