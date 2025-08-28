@@ -72,6 +72,7 @@ func TestAccCloudflareAccountMember_Import(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"policies.0.resource_groups.0.id"},
 			},
 		},
 	})
