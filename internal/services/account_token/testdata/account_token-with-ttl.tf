@@ -1,15 +1,21 @@
-resource "cloudflare_account_token" "%[1]s" {
-	name = "%[1]s"
-  	account_id = "%[2]s"
+data "cloudflare_account_api_token_permission_groups_list" "dns_read" {
+  account_id = "%[2]s"
+  name       = "DNS Read"
+  scope      = "com.cloudflare.api.account.zone"
+}
 
-	policies = [{
-		effect = "allow"
-		permission_groups = [{ id = "%[3]s" }]
-		resources = {
-			"com.cloudflare.api.account.%[2]s" = "*"
-		}
-	}]
+resource "cloudflare_account_token" "test_account_token" {
+  name       = "%[1]s"
+  account_id = "%[2]s"
 
-	not_before = "2018-07-01T05:20:00Z"
-	expires_on = "2032-01-01T00:00:00Z"
+  policies = [{
+    effect            = "allow"
+    permission_groups = [{ id = data.cloudflare_account_api_token_permission_groups_list.dns_read.result[0].id }]
+    resources = {
+      "com.cloudflare.api.account.%[2]s" = "*"
+    }
+  }]
+
+  not_before = "2018-07-01T05:20:00Z"
+  expires_on = "%[3]s"
 }
