@@ -134,9 +134,10 @@ NC='\033[0m' # No Color
 # Create log directory
 mkdir -p "$LOG_DIR"
 
-# Function to log with timestamp
+# Function to log with timestamp and job ID
 log() {
-    echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+    local job_id="${JOB_ID:-MAIN}"
+    echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] [${job_id}] $1"
 }
 
 # Function to check if a service has a sweeper by grepping for AddTestSweepers
@@ -188,12 +189,12 @@ run_sweeper() {
     # Check if this service has a sweeper implementation
     if ! has_sweeper "$service"; then
         log "${YELLOW}Skipping sweeper for $service (no sweeper implemented)${NC}" > "$log_file"
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Skipping sweeper for $service (no sweeper implemented)"
+        log "Skipping sweeper for $service (no sweeper implemented)"
         return 0
     fi
     
     log "${WHITE}Sweeping: $service${NC}" > "$log_file"
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Sweeping: $service"
+    log "Sweeping: $service"
     
     # Use the correct sweeper syntax with -sweep-run parameter
     local service_name=$(basename "$service")
@@ -211,13 +212,13 @@ run_sweeper() {
         local end_time=$(date +%s)
         local duration=$((end_time - start_time))
         log "${GREEN}✓ Sweeper completed: $service (${duration}s total)${NC}" >> "$log_file"
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ✓ Sweeper completed: $service (${duration}s total)"
+        log "✓ Sweeper completed: $service (${duration}s total)"
         return 0
     else
         local end_time=$(date +%s)
         local duration=$((end_time - start_time))
         log "${RED}✗ Sweeper failed: $service (${duration}s total) - check $log_file${NC}" >> "$log_file"
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ✗ Sweeper failed: $service (${duration}s total) - check $log_file"
+        log "✗ Sweeper failed: $service (${duration}s total) - check $log_file"
         return 1
     fi
 }
@@ -238,7 +239,7 @@ run_tests() {
         # Check if this service has migration tests
         if ! has_migration_tests "$service"; then
             log "${YELLOW}Skipping $test_name for $service (no migration tests found)${NC}" > "$log_file"
-            echo "[$(date '+%Y-%m-%d %H:%M:%S')] Skipping $test_name for $service (no migration tests found)"
+            log "Skipping $test_name for $service (no migration tests found)"
             return 0
         fi
     else
@@ -247,7 +248,7 @@ run_tests() {
     fi
     
     log "${WHITE}Running $test_name: $service${NC}" > "$log_file"
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Running $test_name: $service"
+    log "Running $test_name: $service"
     
     # Build command with optional parallel flag
     local test_cmd="TF_ACC=1 go test -run \"$test_pattern\" -count 1 -timeout \"$TEST_TIMEOUT\""
@@ -263,13 +264,13 @@ run_tests() {
         local end_time=$(date +%s)
         local duration=$((end_time - start_time))
         log "${GREEN}✓ Tests completed successfully for $service (${duration}s)${NC}" >> "$log_file"
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ✓ Tests completed successfully for $service (${duration}s)"
+        log "✓ Tests completed successfully for $service (${duration}s)"
         return 0
     else
         local end_time=$(date +%s)
         local duration=$((end_time - start_time))
         log "${RED}✗ Tests failed for $service (${duration}s) - check $log_file${NC}" >> "$log_file"
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ✗ Tests failed for $service (${duration}s) - check $log_file"
+        log "✗ Tests failed for $service (${duration}s) - check $log_file"
         return 1
     fi
 }
@@ -282,7 +283,19 @@ process_service() {
     local service=$(parse_service_config "$service_config" "resource")
     local parallel_count=$(parse_service_config "$service_config" "parallel")
     
+    # Generate unique Job ID for this parallel execution
     local service_name=$(basename "$service")
+    # Use nanoseconds if available (Linux), otherwise use seconds + random (macOS/BSD)
+    local timestamp
+    if date +%s%N >/dev/null 2>&1; then
+        timestamp=$(date +%s%N | cut -b1-13)  # milliseconds
+    else
+        timestamp="$(date +%s)$RANDOM"  # seconds + random number
+    fi
+    local short_hash=$(echo "$service_name$timestamp" | md5sum 2>/dev/null || echo "$service_name$timestamp" | openssl md5 | cut -d' ' -f2)
+    short_hash=$(echo "$short_hash" | cut -c1-6)
+    export JOB_ID="J${short_hash}"
+    
     local combined_log="$LOG_DIR/${service_name}-combined.log"
     local start_time=$(date +%s)
     
@@ -314,17 +327,20 @@ process_service() {
         return $test_result
     } > "$combined_log" 2>&1
     
-    # Always show the result summary
-    tail -1 "$combined_log"
+    # Always show the result summary (with Job ID for tracking)
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${JOB_ID}] $(tail -1 "$combined_log" | sed 's/\[[^]]*\] \[MAIN\] //' | sed 's/\[[^]]*\] //')"
     return $?
 }
 
 # Export function so it can be used by xargs
 export -f process_service run_sweeper run_tests log has_sweeper has_migration_tests parse_service_config
-export LOG_DIR SWEEP_TIMEOUT TEST_TIMEOUT TEST_TYPE RED GREEN YELLOW WHITE NC
+export LOG_DIR SWEEP_TIMEOUT TEST_TIMEOUT TEST_TYPE RED GREEN YELLOW WHITE NC JOB_ID
 
 # Main execution
 main() {
+    # Set main Job ID for orchestration logs
+    export JOB_ID="MAIN"
+    
     local start_time=$(date +%s)
     local test_name_display
     
@@ -348,6 +364,7 @@ main() {
     
     # Start a background job to show progress counts
     (
+        export JOB_ID="PROG"
         while sleep 30; do
             completed=$(find "$LOG_DIR" -name "*-combined.log" -exec grep -l "✓ Completed:\|✗ Failed:" {} \; 2>/dev/null | wc -l | tr -d ' ')
             total=${#SERVICES[@]}
@@ -420,25 +437,28 @@ main() {
     # Kill any remaining child processes silently
     pkill -P $tail_monitor_pid >/dev/null 2>&1 || true
     
+    # Reset to main Job ID for summary
+    export JOB_ID="MAIN"
+    
     # Create summary output atomically to minimize interruption window
     {
         echo ""
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] === EXECUTION SUMMARY ==="
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Total execution time: ${minutes}m ${seconds}s"
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Passed: $passed"
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Failed: $failed"
+        log "=== EXECUTION SUMMARY ==="
+        log "Total execution time: ${minutes}m ${seconds}s"
+        log "Passed: $passed"
+        log "Failed: $failed"
         
         if [ $failed -gt 0 ]; then
             echo ""
-            echo "[$(date '+%Y-%m-%d %H:%M:%S')] Failed services:"
+            log "Failed services:"
             for service in $failed_list; do
-                echo "[$(date '+%Y-%m-%d %H:%M:%S')]   - $service"
+                log "  - $service"
             done
             echo ""
-            echo "[$(date '+%Y-%m-%d %H:%M:%S')] Check individual log files in $LOG_DIR for detailed error information"
+            log "Check individual log files in $LOG_DIR for detailed error information"
         fi
         
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Summary complete"
+        log "Summary complete"
     } | cat  # Using cat to force immediate output as a single block
     
     # Final status message - only fail if actual tests failed, not xargs issues
