@@ -2,12 +2,24 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
+	"github.com/zclconf/go-cty/cty"
 )
+
+// Global mapping of application references to policy resource names
+// Key: application reference expression (e.g., "cloudflare_zero_trust_access_application.app.id")
+// Value: list of policy resource names that should be associated
+var applicationPolicyMapping = make(map[string][]PolicyReference)
+
+type PolicyReference struct {
+	ResourceName string // e.g., "cloudflare_zero_trust_access_policy.allow"
+	Precedence   int    // Original precedence value from v4
+}
 
 // isAccessPolicyResource checks if a block is a cloudflare_zero_trust_access_policy resource
 // (grit has already renamed from cloudflare_access_policy)
@@ -17,11 +29,12 @@ func isAccessPolicyResource(block *hclwrite.Block) bool {
 		block.Labels()[0] == "cloudflare_zero_trust_access_policy"
 }
 
-// transformAccessPolicyBlock transforms include/exclude/require attributes
+// transformAccessPolicyBlock transforms include/exclude/require attributes and handles application-policy mapping
 // Handles:
 // 1. Boolean attributes (everyone, certificate, any_valid_service_token) -> empty objects
 // 2. Array attributes (email, group, ip, email_domain) -> split into multiple objects
 // 3. Github blocks -> rename to github_organization and expand teams
+// 4. Collect application_id -> policy mapping for later use in access_application transformation
 //
 // Example transformations:
 // Before: include = [{ everyone = true }]
@@ -30,8 +43,13 @@ func isAccessPolicyResource(block *hclwrite.Block) bool {
 // Before: include = [{ email = ["user1@example.com", "user2@example.com"] }]
 // After:  include = [{ email = { email = "user1@example.com" } }, { email = { email = "user2@example.com" } }]
 func transformAccessPolicyBlock(block *hclwrite.Block, diags ast.Diagnostics) {
-	// Process include, exclude, and require attributes (grit has already converted them to lists)
-
+	// STEP 1: Collect application-policy relationship before removing application_id
+	collectApplicationPolicyMapping(block, diags)
+	
+	// STEP 2: Remove deprecated attributes that caused orphaned policies
+	removeDeprecatedPolicyAttributes(block)
+	
+	// STEP 3: Process include, exclude, and require attributes (grit has already converted them to lists)
 	transforms := map[string]ast.ExprTransformer{
 		"include": transformPolicyRuleListItem,
 		"exclude": transformPolicyRuleListItem,
@@ -408,4 +426,129 @@ func boolToEmptyObject(attrVal *hclsyntax.Expression, diags ast.Diagnostics) {
 	}
 
 	*attrVal = &hclsyntax.ObjectConsExpr{}
+}
+
+// collectApplicationPolicyMapping extracts application_id and precedence from policy blocks
+// and stores the mapping for later use in access_application transformation
+func collectApplicationPolicyMapping(block *hclwrite.Block, diags ast.Diagnostics) {
+	body := block.Body()
+	
+	// Get the policy resource name (e.g., "cloudflare_zero_trust_access_policy.allow")
+	if len(block.Labels()) < 2 {
+		return
+	}
+	policyResourceName := fmt.Sprintf("%s.%s", block.Labels()[0], block.Labels()[1])
+	
+	// Extract application_id reference
+	applicationIDAttr := body.GetAttribute("application_id")
+	if applicationIDAttr == nil {
+		return
+	}
+	
+	// Convert the application_id expression to string
+	applicationRef := extractApplicationReference(applicationIDAttr, diags)
+	if applicationRef == "" {
+		return
+	}
+	
+	// Extract precedence value
+	precedence := 0
+	if precedenceAttr := body.GetAttribute("precedence"); precedenceAttr != nil {
+		// Convert hclwrite.Expression to string using tokens
+		tokens := precedenceAttr.Expr().BuildTokens(nil)
+		var precedenceStr strings.Builder
+		for _, token := range tokens {
+			precedenceStr.WriteString(string(token.Bytes))
+		}
+		precedenceText := strings.TrimSpace(precedenceStr.String())
+		if precedenceText != "" {
+			// Simple integer parsing - precedence is usually a small number
+			fmt.Sscanf(precedenceText, "%d", &precedence)
+		}
+	}
+	
+	// Store the mapping
+	policyRef := PolicyReference{
+		ResourceName: policyResourceName,
+		Precedence:   precedence,
+	}
+	
+	applicationPolicyMapping[applicationRef] = append(applicationPolicyMapping[applicationRef], policyRef)
+}
+
+// extractApplicationReference converts an application_id attribute expression to a reference string
+// Handles both direct references (cloudflare_zero_trust_access_application.app.id) and string literals
+func extractApplicationReference(attr *hclwrite.Attribute, diags ast.Diagnostics) string {
+	if attr == nil {
+		return ""
+	}
+	
+	// Get the raw expression as string - this preserves variable references
+	tokens := attr.Expr().BuildTokens(nil)
+	var result strings.Builder
+	for _, token := range tokens {
+		result.WriteString(string(token.Bytes))
+	}
+	
+	exprStr := strings.TrimSpace(result.String())
+	
+	// If it's a resource reference, return as-is
+	if strings.Contains(exprStr, "cloudflare_zero_trust_access_application") || 
+	   strings.Contains(exprStr, "cloudflare_access_application") {
+		return exprStr
+	}
+	
+	// If it's a string literal, extract the application ID  
+	// This handles cases like application_id = "app-id-123"
+	if strings.HasPrefix(exprStr, `"`) && strings.HasSuffix(exprStr, `"`) {
+		return strings.Trim(exprStr, `"`)
+	}
+	
+	// Variable reference like var.app_id
+	return exprStr
+}
+
+// removeDeprecatedPolicyAttributes removes attributes that are no longer supported in v5
+func removeDeprecatedPolicyAttributes(block *hclwrite.Block) {
+	body := block.Body()
+	
+	deprecatedAttrs := []string{
+		"application_id", // Critical: policies no longer reference applications directly
+		"precedence",     // Moved to application level
+		"zone_id",        // Only account-level policies supported in v5
+	}
+	
+	for _, attr := range deprecatedAttrs {
+		if body.GetAttribute(attr) != nil {
+			body.RemoveAttribute(attr)
+		}
+	}
+}
+
+// generateMovedBlocks creates moved blocks for policy resources that have been restructured
+// This helps users track that policies now live under application resources
+func generateMovedBlocks() []*hclwrite.Block {
+	var movedBlocks []*hclwrite.Block
+	
+	for applicationRef, policies := range applicationPolicyMapping {
+		for _, policy := range policies {
+			movedBlock := hclwrite.NewBlock("moved", nil)
+			body := movedBlock.Body()
+			
+			// Add explanatory comment before the moved block
+			commentTokens := []*hclwrite.Token{
+				{Type: hclsyntax.TokenComment, Bytes: []byte(fmt.Sprintf("# Policy %s was associated with %s in v4, now standalone in v5\n", policy.ResourceName, applicationRef))},
+			}
+			body.AppendUnstructuredTokens(commentTokens)
+			
+			// Set the from and to addresses  
+			// For moved blocks, we'll create informational entries that document the relationship change
+			body.SetAttributeValue("from", cty.StringVal(policy.ResourceName))
+			body.SetAttributeValue("to", cty.StringVal(policy.ResourceName))
+			
+			movedBlocks = append(movedBlocks, movedBlock)
+		}
+	}
+	
+	return movedBlocks
 }
