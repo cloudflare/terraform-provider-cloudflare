@@ -9,102 +9,111 @@
 # have that support.
 # TODO: support tenant admin auth for acceptance tests
 
-# List of service paths to test
-SERVICES=(
-    "./internal/services/account"
-    "./internal/services/account_api_token_permission_groups"
-    "./internal/services/account_dns_settings"
-    "./internal/services/account_dns_settings_internal_view"
-    "./internal/services/account_member"
-    "./internal/services/account_permission_group"
-    "./internal/services/account_role"
-    "./internal/services/account_subscription"
-    "./internal/services/account_token"
-    "./internal/services/address_map"
-    "./internal/services/api_shield"
-    "./internal/services/api_token"
-    "./internal/services/argo_smart_routing"
-    "./internal/services/argo_tiered_caching"
-    "./internal/services/authenticated_origin_pulls"
-    "./internal/services/authenticated_origin_pulls_certificate"
-    "./internal/services/byo_ip_prefix"
-    "./internal/services/certificate_pack"
-    "./internal/services/cloud_connector_rules"
-    "./internal/services/custom_pages"
-    "./internal/services/custom_ssl"
-    "./internal/services/dns_record"
-    "./internal/services/dns_settings_internal_view"
-    "./internal/services/dns_zone_transfers_acl"
-    "./internal/services/dns_zone_transfers_tsig"
-    "./internal/services/email_routing_catch_all"
-    "./internal/services/email_routing_dns"
-    "./internal/services/email_routing_rule"
-    "./internal/services/email_security_impersonation_registry"
-    "./internal/services/email_security_trusted_domains"
-    "./internal/services/ip_ranges"
-    "./internal/services/list"
-    "./internal/services/list_item"
-    "./internal/services/load_balancer"
-    "./internal/services/load_balancer_monitor"
-    "./internal/services/load_balancer_pool"
-    "./internal/services/logpull_retention"
-    "./internal/services/logpush_job"
-    "./internal/services/logpush_ownership_challenge"
-    "./internal/services/magic_transit_connector"
-    "./internal/services/magic_wan_ipsec_tunnel"
-    "./internal/services/magic_wan_gre_tunnel"
-    "./internal/services/magic_wan_static_route"
-    "./internal/services/managed_transforms"
-    "./internal/services/observatory_scheduled_test"
-    "./internal/services/origin_ca_certificate"
-    "./internal/services/page_rule"
-    "./internal/services/pages_domain"
-    "./internal/services/pages_project"
-    "./internal/services/queue"
-    "./internal/services/r2_bucket"
-    "./internal/services/regional_tiered_cache"
-    "./internal/services/ruleset"
-    "./internal/services/spectrum_application"
-    "./internal/services/tiered_cache"
-    "./internal/services/turnstile_widget"
-    "./internal/services/url_normalization_settings"
-    "./internal/services/waiting_room_settings"
-    "./internal/services/workers_cron_trigger"
-    "./internal/services/workers_custom_domain"
-    "./internal/services/workers_for_platforms_dispatch_namespace"
-    "./internal/services/workers_kv_namespace"
-    "./internal/services/workers_route"
-    "./internal/services/workers_script"
-    "./internal/services/zero_trust_access_application"
-    "./internal/services/zero_trust_access_custom_page"
-    "./internal/services/zero_trust_access_group"
-    "./internal/services/zero_trust_access_identity_provider"
-    "./internal/services/zero_trust_access_key_configuration"
-    "./internal/services/zero_trust_access_mtls_certificate"
-    "./internal/services/zero_trust_access_mtls_hostname_settings"
-    "./internal/services/zero_trust_access_policy"
-    "./internal/services/zero_trust_access_service_token"
-    "./internal/services/zero_trust_access_short_lived_certificate"
-    "./internal/services/zero_trust_access_tag"
-    "./internal/services/zero_trust_device_custom_profile"
-    "./internal/services/zero_trust_device_custom_profile_local_domain_fallback"
-    "./internal/services/zero_trust_device_default_profile_certificates"
-    "./internal/services/zero_trust_device_managed_networks"
-    "./internal/services/zero_trust_gateway_proxy_endpoint"
-    "./internal/services/zero_trust_gateway_settings"
-    "./internal/services/zero_trust_list"
-    "./internal/services/zero_trust_organization"
-    "./internal/services/zero_trust_tunnel_cloudflared"
-    "./internal/services/zero_trust_tunnel_cloudflared_route"
-    "./internal/services/zero_trust_tunnel_cloudflared_token"
-    "./internal/services/zone"
-    "./internal/services/zone_cache_reserve"
-    "./internal/services/zone_cache_variants"
-    "./internal/services/zone_hold"
-    "./internal/services/zone_lockdown"
-    "./internal/services/zone_setting"
-    "./internal/services/zone_subscription"
+# List of services with their parallel test configuration
+# Each service is defined as: resource=<path> parallel=<number>
+# parallel=1 means sequential execution, parallel=0 means use default (GOMAXPROCS)
+declare -a SERVICES=(
+    "resource=./internal/services/account parallel=0"
+    "resource=./internal/services/account_api_token_permission_groups parallel=0"
+    "resource=./internal/services/account_dns_settings parallel=0"
+    "resource=./internal/services/account_dns_settings_internal_view parallel=0"
+    "resource=./internal/services/account_member parallel=0"
+    "resource=./internal/services/account_permission_group parallel=0"
+    "resource=./internal/services/account_role parallel=0"
+    "resource=./internal/services/account_subscription parallel=0"
+    "resource=./internal/services/account_token parallel=0"
+    "resource=./internal/services/address_map parallel=0"
+    "resource=./internal/services/api_shield parallel=0"
+    "resource=./internal/services/api_token parallel=0"
+    "resource=./internal/services/argo_smart_routing parallel=0"
+    "resource=./internal/services/argo_tiered_caching parallel=0"
+    "resource=./internal/services/authenticated_origin_pulls parallel=0"
+    "resource=./internal/services/authenticated_origin_pulls_certificate parallel=0"
+    "resource=./internal/services/byo_ip_prefix parallel=0"
+    "resource=./internal/services/certificate_pack parallel=0"
+    "resource=./internal/services/cloud_connector_rules parallel=0"
+    "resource=./internal/services/custom_pages parallel=0"
+    "resource=./internal/services/custom_ssl parallel=0"
+    "resource=./internal/services/dns_record parallel=0"
+    "resource=./internal/services/dns_settings_internal_view parallel=0"
+    "resource=./internal/services/dns_zone_transfers_acl parallel=0"
+    "resource=./internal/services/dns_zone_transfers_tsig parallel=0"
+    "resource=./internal/services/email_routing_catch_all parallel=0"
+    "resource=./internal/services/email_routing_dns parallel=0"
+    "resource=./internal/services/email_routing_rule parallel=0"
+    "resource=./internal/services/email_security_impersonation_registry parallel=0"
+    "resource=./internal/services/email_security_trusted_domains parallel=0"
+    "resource=./internal/services/ip_ranges parallel=0"
+    "resource=./internal/services/list parallel=0"
+    "resource=./internal/services/list_item parallel=1"
+    "resource=./internal/services/load_balancer parallel=0"
+    "resource=./internal/services/load_balancer_monitor parallel=0"
+    "resource=./internal/services/load_balancer_pool parallel=0"
+    "resource=./internal/services/logpull_retention parallel=0"
+    "resource=./internal/services/logpush_job parallel=0"
+    "resource=./internal/services/logpush_ownership_challenge parallel=0"
+    "resource=./internal/services/magic_transit_connector parallel=0"
+    "resource=./internal/services/magic_wan_ipsec_tunnel parallel=1"
+    "resource=./internal/services/magic_wan_gre_tunnel parallel=1"
+    "resource=./internal/services/magic_wan_static_route parallel=1"
+    "resource=./internal/services/managed_transforms parallel=1"
+    "resource=./internal/services/observatory_scheduled_test parallel=0"
+    "resource=./internal/services/origin_ca_certificate parallel=0"
+    "resource=./internal/services/page_rule parallel=0"
+    "resource=./internal/services/pages_domain parallel=0"
+    "resource=./internal/services/pages_project parallel=0"
+    "resource=./internal/services/queue parallel=0"
+    "resource=./internal/services/r2_bucket parallel=0"
+    "resource=./internal/services/regional_tiered_cache parallel=0"
+    "resource=./internal/services/ruleset parallel=0"
+    "resource=./internal/services/spectrum_application parallel=0"
+    "resource=./internal/services/tiered_cache parallel=0"
+    "resource=./internal/services/turnstile_widget parallel=0"
+    "resource=./internal/services/url_normalization_settings parallel=0"
+    "resource=./internal/services/waiting_room_settings parallel=0"
+    "resource=./internal/services/workers_cron_trigger parallel=0"
+    "resource=./internal/services/workers_custom_domain parallel=0"
+    "resource=./internal/services/workers_for_platforms_dispatch_namespace parallel=0"
+    "resource=./internal/services/workers_kv_namespace parallel=0"
+    "resource=./internal/services/workers_route parallel=0"
+    "resource=./internal/services/workers_script parallel=0"
+    "resource=./internal/services/zero_trust_access_application parallel=0"
+    "resource=./internal/services/zero_trust_access_custom_page parallel=0"
+    "resource=./internal/services/zero_trust_access_group parallel=0"
+    "resource=./internal/services/zero_trust_access_identity_provider parallel=0"
+    "resource=./internal/services/zero_trust_access_key_configuration parallel=0"
+    "resource=./internal/services/zero_trust_access_mtls_certificate parallel=0"
+    "resource=./internal/services/zero_trust_access_mtls_hostname_settings parallel=0"
+    "resource=./internal/services/zero_trust_access_policy parallel=0"
+    "resource=./internal/services/zero_trust_access_service_token parallel=0"
+    "resource=./internal/services/zero_trust_access_short_lived_certificate parallel=0"
+    "resource=./internal/services/zero_trust_access_tag parallel=0"
+    "resource=./internal/services/zero_trust_device_custom_profile parallel=0"
+    "resource=./internal/services/zero_trust_device_custom_profile_local_domain_fallback parallel=0"
+    "resource=./internal/services/zero_trust_device_default_profile_certificates parallel=0"
+    "resource=./internal/services/zero_trust_device_managed_networks parallel=0"
+    "resource=./internal/services/zero_trust_gateway_proxy_endpoint parallel=0"
+    "resource=./internal/services/zero_trust_gateway_settings parallel=0"
+    "resource=./internal/services/zero_trust_list parallel=0"
+    "resource=./internal/services/zero_trust_organization parallel=0"
+    "resource=./internal/services/zero_trust_tunnel_cloudflared parallel=0"
+    "resource=./internal/services/zero_trust_tunnel_cloudflared_route parallel=0"
+    "resource=./internal/services/zero_trust_tunnel_cloudflared_token parallel=0"
+    "resource=./internal/services/zone parallel=0"
+    "resource=./internal/services/zone_cache_reserve parallel=0"
+    "resource=./internal/services/zone_cache_variants parallel=0"
+    "resource=./internal/services/zone_hold parallel=0"
+    "resource=./internal/services/zone_lockdown parallel=0"
+    "resource=./internal/services/zone_setting parallel=0"
+    "resource=./internal/services/zone_subscription parallel=0"
 )
+
+# Helper function to parse service configuration
+parse_service_config() {
+    local config="$1"
+    local key="$2"
+    echo "$config" | grep -o "$key=[^ ]*" | cut -d= -f2-
+}
 
 set -e
 
@@ -172,6 +181,7 @@ has_migration_tests() {
 # Function to run sweeper for a service
 run_sweeper() {
     local service="$1"
+    local parallel_count="$2"
     local log_file="$LOG_DIR/$(basename "$service")-sweeper.log"
     local start_time=$(date +%s)
     
@@ -189,7 +199,15 @@ run_sweeper() {
     local service_name=$(basename "$service")
     local sweeper_name="cloudflare_${service_name}"
     
-    if TF_ACC=1 go test -v "$service" -sweep=all -sweep-run="$sweeper_name" -timeout "$SWEEP_TIMEOUT" >> "$log_file" 2>&1; then
+    # Build command with optional parallel flag
+    local test_cmd="TF_ACC=1 go test -v \"$service\" -sweep=all -sweep-run=\"$sweeper_name\" -timeout \"$SWEEP_TIMEOUT\""
+    
+    # Add parallel flag if specified and not 0
+    if [ "$parallel_count" -gt 0 ]; then
+        test_cmd="$test_cmd -parallel $parallel_count"
+    fi
+    
+    if eval "$test_cmd" >> "$log_file" 2>&1; then
         local end_time=$(date +%s)
         local duration=$((end_time - start_time))
         log "${GREEN}✓ Sweeper completed: $service (${duration}s total)${NC}" >> "$log_file"
@@ -207,6 +225,7 @@ run_sweeper() {
 # Function to run tests for a service
 run_tests() {
     local service="$1"
+    local parallel_count="$2"
     local log_file="$LOG_DIR/$(basename "$service")-tests.log"
     local start_time=$(date +%s)
     local test_pattern test_name
@@ -230,7 +249,17 @@ run_tests() {
     log "${WHITE}Running $test_name: $service${NC}" > "$log_file"
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Running $test_name: $service"
     
-    if TF_ACC=1 go test -run "$test_pattern" -count 1 -timeout "$TEST_TIMEOUT" "$service" >> "$log_file" 2>&1; then
+    # Build command with optional parallel flag
+    local test_cmd="TF_ACC=1 go test -run \"$test_pattern\" -count 1 -timeout \"$TEST_TIMEOUT\""
+    
+    # Add parallel flag if specified and not 0
+    if [ "$parallel_count" -gt 0 ]; then
+        test_cmd="$test_cmd -parallel $parallel_count"
+    fi
+    
+    test_cmd="$test_cmd \"$service\""
+    
+    if eval "$test_cmd" >> "$log_file" 2>&1; then
         local end_time=$(date +%s)
         local duration=$((end_time - start_time))
         log "${GREEN}✓ Tests completed successfully for $service (${duration}s)${NC}" >> "$log_file"
@@ -247,17 +276,22 @@ run_tests() {
 
 # Function to process a single service (sweeper + tests)
 process_service() {
-    local service="$1"
+    local service_config="$1"
+    
+    # Parse service configuration
+    local service=$(parse_service_config "$service_config" "resource")
+    local parallel_count=$(parse_service_config "$service_config" "parallel")
+    
     local service_name=$(basename "$service")
     local combined_log="$LOG_DIR/${service_name}-combined.log"
     local start_time=$(date +%s)
     
     {
-        log "${WHITE}Processing service: $service${NC}"
+        log "${WHITE}Processing service: $service (parallel=$parallel_count)${NC}"
         
         # Only run sweepers for acceptance tests, not migration tests
         if [ "$TEST_TYPE" != "migration" ]; then
-            if ! run_sweeper "$service"; then
+            if ! run_sweeper "$service" "$parallel_count"; then
                 log "${YELLOW}Sweeper issues for $service, continuing with tests...${NC}"
             fi
         else
@@ -265,7 +299,7 @@ process_service() {
         fi
         
         # Run tests
-        run_tests "$service"
+        run_tests "$service" "$parallel_count"
         local test_result=$?
         
         local end_time=$(date +%s)
@@ -286,7 +320,7 @@ process_service() {
 }
 
 # Export function so it can be used by xargs
-export -f process_service run_sweeper run_tests log has_sweeper has_migration_tests
+export -f process_service run_sweeper run_tests log has_sweeper has_migration_tests parse_service_config
 export LOG_DIR SWEEP_TIMEOUT TEST_TIMEOUT TEST_TYPE RED GREEN YELLOW WHITE NC
 
 # Main execution
@@ -361,7 +395,8 @@ main() {
     # Temporarily disable exit on error during counting
     set +e
     
-    for service in "${SERVICES[@]}"; do
+    for service_config in "${SERVICES[@]}"; do
+        local service=$(parse_service_config "$service_config" "resource")
         local service_name=$(basename "$service")
         local combined_log="$LOG_DIR/${service_name}-combined.log"
         
@@ -475,7 +510,11 @@ while [[ $# -gt 0 ]]; do
     case $1 in
         --dry-run)
             echo "Would run ${#SERVICES[@]} services with $PARALLEL_JOBS parallel jobs ($TEST_TYPE tests)"
-            printf '%s\n' "${SERVICES[@]}"
+            for service_config in "${SERVICES[@]}"; do
+                service=$(parse_service_config "$service_config" "resource")
+                parallel_count=$(parse_service_config "$service_config" "parallel")
+                echo "$service (parallel=$parallel_count)"
+            done
             exit 0
             ;;
         --jobs)
