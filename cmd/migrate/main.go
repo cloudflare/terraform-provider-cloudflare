@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
@@ -18,6 +20,7 @@ func main() {
 	configDir := flag.String("config", "", "Directory containing Terraform files to migrate (defaults to current directory)")
 	stateFile := flag.String("state", "", "Terraform state file to migrate (defaults to first .tfstate file in current directory)")
 	useGrit := flag.Bool("grit", true, "Use grit for initial migrations (default: true)")
+	patternsDir := flag.String("patterns-dir", "", "Local directory to get patterns from (otherwise they're pulled from github)")
 	flag.Parse()
 
 	// Default config directory to current working directory if not specified
@@ -71,7 +74,7 @@ func main() {
 			gritStateFile = ""
 		}
 
-		if err := runGritMigrations(gritConfigDir, gritStateFile, *dryRun); err != nil {
+		if err := runGritMigrations(gritConfigDir, gritStateFile, *patternsDir, *dryRun); err != nil {
 			log.Fatalf("Error running grit migrations: %v", err)
 		}
 		fmt.Println("Grit migrations completed")
@@ -130,7 +133,7 @@ func processConfigDirectory(directory string, dryRun bool) error {
 		// Process the file
 		if err := processFile(path, dryRun); err != nil {
 			log.Printf("Error processing file %s: %v", path, err)
-			return err
+			// return err
 		}
 
 		return nil
@@ -154,12 +157,15 @@ func processStateFile(stateFile string, dryRun bool) error {
 
 	fmt.Printf("Processing state file: %s\n", stateFile)
 
-	// For now, just log that we would process it
 	if dryRun {
 		fmt.Printf("  ✗ Would update state file %s\n", stateFile)
 		fmt.Printf("    State file size: %d bytes\n", info.Size())
 	} else {
-		fmt.Printf("  ✓ Would update state file %s (not implemented yet)\n", stateFile)
+		// Actually transform the state file
+		if err := transformStateFile(stateFile); err != nil {
+			return fmt.Errorf("failed to transform state file: %v", err)
+		}
+		fmt.Printf("  ✓ Updated state file %s\n", stateFile)
 	}
 
 	return nil
@@ -197,10 +203,21 @@ func processFile(filename string, dryRun bool) error {
 }
 
 func transformFile(content []byte, filename string) ([]byte, error) {
-	file, diags := hclwrite.ParseConfig(content, filename, hcl.InitialPos)
-	if diags.HasErrors() {
-		return nil, fmt.Errorf("failed to parse HCL in %s: %s", filename, diags.Error())
+	// Create new diagnostics collector for this file
+	diags := ast.NewDiagnostics()
+	// First, transform header blocks in load_balancer_pool resources at the string level
+	// This is needed because grit leaves header blocks inside origins lists, which causes parsing issues
+	contentStr := string(content)
+	contentStr = transformLoadBalancerPoolHeaders(contentStr)
+	// Also transform tiered_cache values at the string level
+	contentStr = transformTieredCacheValues(contentStr)
+	content = []byte(contentStr)
+
+	file, hcl_diags := hclwrite.ParseConfig(content, filename, hcl.InitialPos)
+	if hcl_diags.HasErrors() {
+		return nil, fmt.Errorf("failed to parse HCL in %s: %s", filename, hcl_diags.Error())
 	}
+	diags.HclDiagnostics.Extend(hcl_diags)
 
 	body := file.Body()
 	blocks := body.Blocks()
@@ -212,9 +229,67 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 	for _, block := range blocks {
 		applyRenames(block)
 
+		// TODO declare a map from resource types to transform functions instead of having all these if statement
 		if isZoneSettingsOverrideResource(block) {
 			blocksToRemove = append(blocksToRemove, block)
 			newBlocks = append(newBlocks, transformZoneSettingsBlock(block)...)
+		}
+
+		if isRegionalHostnameResource(block) {
+			transformRegionalHostnameBlock(block)
+		}
+
+		if isLoadBalancerPoolResource(block) {
+			transformLoadBalancerPoolBlock(block)
+		}
+
+		if isAccessPolicyResource(block) {
+			// TOOD eventually pass diags through to all resource transformers, not just accessPolicyBlock
+			transformAccessPolicyBlock(block, diags)
+		}
+
+		if isAccessApplicationResource(block) {
+			transformAccessApplicationBlock(block, diags)
+		}
+
+		if isZeroTrustAccessIdentityProviderResource(block) {
+			transformZeroTrustAccessIdentityProviderBlock(block, diags)
+		}
+
+		if isTieredCacheResource(block) {
+			newTieredCacheBlocks := transformTieredCacheBlock(block)
+			if newTieredCacheBlocks != nil {
+				// This resource needs to be replaced with argo_tiered_caching
+				blocksToRemove = append(blocksToRemove, block)
+				newBlocks = append(newBlocks, newTieredCacheBlocks...)
+			}
+		}
+
+		if isArgoResource(block) {
+			// Transform cloudflare_argo to separate resources
+			blocksToRemove = append(blocksToRemove, block)
+			newBlocks = append(newBlocks, transformArgoBlock(block)...)
+		}
+
+		if isZeroTrustAccessMTLSHostnameSettingsResource(block) {
+			transformZeroTrustAccessMTLSHostnameSettingsBlock(block, diags)
+		}
+
+		if isAccessMutualTLSHostnameSettingsResource(block) {
+			transformZeroTrustAccessMTLSHostnameSettingsBlock(block, diags)
+		}
+
+		if isManagedTransformsResource(block) {
+			transformManagedTransformsBlock(block)
+		}
+
+		if isAccessGroupResource(block) {
+			transformAccessGroupBlock(block, diags)
+		}
+
+		if isDNSRecordResource(block) {
+			// Process DNS record to fix CAA flags
+			ProcessDNSRecordConfig(file)
 		}
 	}
 
@@ -228,6 +303,24 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		body.AppendBlock(block)
 	}
 
+	// Generate moved blocks for policy transitions if we have application-policy mappings
+	if len(applicationPolicyMapping) > 0 {
+		movedBlocks := generateMovedBlocks()
+		for _, block := range movedBlocks {
+			body.AppendBlock(block)
+		}
+	}
+
 	formatted := hclwrite.Format(file.Bytes())
+
+	// Report diagnostics
+	// TODO make this controlled by a flag or something
+	for _, d := range diags.HclDiagnostics {
+		log.Println(strings.Join([]string{d.Summary, d.Detail}, "\n"))
+	}
+	for _, e := range diags.ComplicatedHCL {
+		spew.Dump("Gave up dealing with expression:", e)
+	}
+
 	return formatted, nil
 }

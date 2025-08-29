@@ -5,12 +5,13 @@ import (
 	"regexp"
 	"slices"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 var (
@@ -112,11 +113,17 @@ func modifyNestedPoliciesPlan(_ context.Context, planApp *ZeroTrustAccessApplica
 }
 
 func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resource.ModifyPlanResponse) {
-	var planApp, stateApp *ZeroTrustAccessApplicationModel
+	var planApp, stateApp, configApp *ZeroTrustAccessApplicationModel
 	res.Diagnostics.Append(req.Plan.Get(ctx, &planApp)...)
 	res.Diagnostics.Append(req.State.Get(ctx, &stateApp)...)
+	res.Diagnostics.Append(req.Config.Get(ctx, &configApp)...)
 	if res.Diagnostics.HasError() || planApp == nil {
 		return
+	}
+
+	// If tags are not configured, ensure they stay null in the plan
+	if configApp != nil && configApp.Tags.IsNull() {
+		planApp.Tags = customfield.NullSet[types.String](ctx)
 	}
 
 	modifyPlanForDomains(ctx, planApp, stateApp)
@@ -139,14 +146,20 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 
 	// Handle tags order normalization - API returns alphabetically sorted tags
 	// but we want to preserve the user's configuration order
-	if stateApp != nil && !planApp.Tags.IsNull() && !stateApp.Tags.IsNull() && !planApp.Tags.IsUnknown() {
-		normalizeTagsOrder(ctx, &planApp.Tags, stateApp.Tags)
+	if !planApp.Tags.IsNull() && !planApp.Tags.IsUnknown() && configApp != nil && !configApp.Tags.IsNull() {
+		if stateApp != nil && !stateApp.Tags.IsNull() {
+			// Update scenario: preserve state order if same elements
+			normalizeTagsOrder(ctx, &planApp.Tags, stateApp.Tags)
+		} else {
+			// Create scenario: preserve config order
+			normalizeTagsOrder(ctx, &planApp.Tags, configApp.Tags)
+		}
 	}
 
 	res.Plan.Set(ctx, &planApp)
 }
 
-func normalizeTagsOrder(ctx context.Context, planTags *customfield.List[types.String], stateTags customfield.List[types.String]) {
+func normalizeTagsOrder(ctx context.Context, planTags *customfield.Set[types.String], stateTags customfield.Set[types.String]) {
 	var stateStrings, planStrings []string
 
 	for _, elem := range stateTags.Elements() {
@@ -161,6 +174,7 @@ func normalizeTagsOrder(ctx context.Context, planTags *customfield.List[types.St
 		}
 	}
 
+	// For Sets, order doesn't matter, so we just check if they contain the same elements
 	if len(stateStrings) == len(planStrings) {
 		slices.Sort(stateStrings)
 		slices.Sort(planStrings)

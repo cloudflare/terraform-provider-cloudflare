@@ -5,8 +5,8 @@ package zero_trust_tunnel_cloudflared_route
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -34,8 +34,10 @@ type ZeroTrustTunnelCloudflaredRoutesDataSourceModel struct {
 
 func (m *ZeroTrustTunnelCloudflaredRoutesDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkRouteListParams, diags diag.Diagnostics) {
 	mTunTypes := []zero_trust.NetworkRouteListParamsTunType{}
-	for _, item := range *m.TunTypes {
-		mTunTypes = append(mTunTypes, zero_trust.NetworkRouteListParamsTunType(item.ValueString()))
+	if m.TunTypes != nil {
+		for _, item := range *m.TunTypes {
+			mTunTypes = append(mTunTypes, zero_trust.NetworkRouteListParamsTunType(item.ValueString()))
+		}
 	}
 
 	params = zero_trust.NetworkRouteListParams{

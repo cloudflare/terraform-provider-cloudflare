@@ -7,13 +7,13 @@ resource "cloudflare_load_balancer" "%[3]s" {
 
   region_pools = {
     WNAM = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-    IN   = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
+    SAS   = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
   }
   country_pools = {
     IN = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
   }
   pop_pools = {
-    LHR = ["{cloudflare_load_balancer_pool.%[3]s.id}"]
+    LHR = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
   }
   session_affinity = "cookie"
   steering_policy  = "geo"

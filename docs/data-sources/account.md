@@ -31,6 +31,7 @@ data "cloudflare_account" "example_account" {
 - `id` (String) Account identifier tag.
 - `name` (String) Account name
 - `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--settings))
+- `type` (String) Available values: "standard", "enterprise".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

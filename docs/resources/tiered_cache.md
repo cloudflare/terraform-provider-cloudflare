@@ -23,14 +23,14 @@ resource "cloudflare_tiered_cache" "example_tiered_cache" {
 
 ### Required
 
-- `value` (String) Enable or disable the Smart Tiered Cache
+- `value` (String) Enable or disable the Smart Tiered Cache.
 Available values: "on", "off".
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
-- `editable` (Boolean) Whether the setting is editable
-- `id` (String) Identifier
+- `editable` (Boolean) Whether the setting is editable.
+- `id` (String) Identifier.
 - `modified_on` (String) Last time this setting was modified.
 
 ## Import

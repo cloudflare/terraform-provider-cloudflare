@@ -6,6 +6,7 @@ import (
 
 	ds "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	rs "github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -169,7 +170,9 @@ var datasourceTests = map[string]struct {
 		(*bstype)(nil),
 		ds.Schema{
 			Attributes: map[string]ds.Attribute{
-				"A": rs.DynamicAttribute{},
+				"A": rs.DynamicAttribute{
+					PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()},
+				},
 				"B": rs.BoolAttribute{},
 				"C": rs.Int64Attribute{},
 				"D": rs.Float64Attribute{},
@@ -466,6 +469,9 @@ var resourceTests = map[string]struct {
 				},
 				"I": rs.DynamicAttribute{
 					CustomType: customfield.NormalizedDynamicType{},
+					PlanModifiers: []planmodifier.Dynamic{
+						customfield.NormalizeDynamicPlanModifier(),
+					},
 				},
 			},
 		},

@@ -18,6 +18,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 func init() {
 	resource.AddTestSweepers("cloudflare_zero_trust_access_identity_provider", &resource.Sweeper{
 		Name: "cloudflare_zero_trust_access_identity_provider",

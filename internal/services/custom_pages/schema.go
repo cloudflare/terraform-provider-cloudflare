@@ -20,7 +20,6 @@ var _ resource.ResourceWithConfigValidators = (*CustomPagesResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Error Page Types\nAvailable values: \"under_attack\", \"basic_challenge\", \"waf_challenge\", \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",

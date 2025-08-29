@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/snippets"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -17,6 +17,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
 
 func init() {
 	resource.AddTestSweepers("cloudflare_snippets", &resource.Sweeper{
@@ -29,7 +33,7 @@ func testSweepCloudflareSnippets(r string) error {
 	ctx := context.Background()
 	client := acctest.SharedClient()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	
+
 	if zoneID == "" {
 		// Skip sweeping if no zone ID is set
 		return nil
@@ -55,7 +59,7 @@ func testSweepCloudflareSnippets(r string) error {
 				continue
 			}
 		}
-		
+
 		list, err = list.GetNextPage()
 		if err != nil {
 			break
@@ -118,7 +122,7 @@ func testAccCheckCloudflareSnippetsDestroy(s *terraform.State) error {
 
 		zoneID := rs.Primary.Attributes[consts.ZoneIDSchemaKey]
 		snippetName := rs.Primary.Attributes["snippet_name"]
-		
+
 		_, err := client.Snippets.Get(context.Background(), snippetName, snippets.SnippetGetParams{
 			ZoneID: cloudflare.F(zoneID),
 		})

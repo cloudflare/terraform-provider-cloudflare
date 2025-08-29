@@ -5,8 +5,8 @@ package bot_management
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/bot_management"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/bot_management"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -20,6 +20,7 @@ type BotManagementDataSourceModel struct {
 	ZoneID                       types.String                                                                 `tfsdk:"zone_id" path:"zone_id,required"`
 	AIBotsProtection             types.String                                                                 `tfsdk:"ai_bots_protection" json:"ai_bots_protection,computed"`
 	AutoUpdateModel              types.Bool                                                                   `tfsdk:"auto_update_model" json:"auto_update_model,computed"`
+	BmCookieEnabled              types.Bool                                                                   `tfsdk:"bm_cookie_enabled" json:"bm_cookie_enabled,computed"`
 	CrawlerProtection            types.String                                                                 `tfsdk:"crawler_protection" json:"crawler_protection,computed"`
 	EnableJS                     types.Bool                                                                   `tfsdk:"enable_js" json:"enable_js,computed"`
 	FightMode                    types.Bool                                                                   `tfsdk:"fight_mode" json:"fight_mode,computed"`

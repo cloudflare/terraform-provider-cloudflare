@@ -7,10 +7,12 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*MagicWANGRETunnelDataSource)(nil)
@@ -49,6 +51,74 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"name": schema.StringAttribute{
 						Description: "The name of the tunnel. The name cannot contain spaces or special characters, must be 15 characters or less, and cannot share a name with another GRE tunnel.",
 						Computed:    true,
+					},
+					"bgp": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelGRETunnelBGPDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"customer_asn": schema.Int64Attribute{
+								Description: "ASN used on the customer end of the BGP session",
+								Computed:    true,
+								Validators: []validator.Int64{
+									int64validator.AtLeast(0),
+								},
+							},
+							"extra_prefixes": schema.ListAttribute{
+								Description: "Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.",
+								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
+							"md5_key": schema.StringAttribute{
+								Description: "MD5 key to use for session authentication.\n\nNote that *this is not a security measure*. MD5 is not a valid security mechanism, and the\nkey is not treated as a secret value. This is *only* supported for preventing\nmisconfiguration, not for defending against malicious attacks.\n\nThe MD5 key, if set, must be of non-zero length and consist only of the following types of\ncharacter:\n\n* ASCII alphanumerics: `[a-zA-Z0-9]`\n* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \\|`\n\nIn other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),\nquotation mark (`\"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed\n(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of\nthese disallowed characters will be rejected.",
+								Computed:    true,
+							},
+						},
+					},
+					"bgp_status": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelGRETunnelBGPStatusDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"state": schema.StringAttribute{
+								Description: `Available values: "BGP_DOWN", "BGP_UP", "BGP_ESTABLISHING".`,
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"BGP_DOWN",
+										"BGP_UP",
+										"BGP_ESTABLISHING",
+									),
+								},
+							},
+							"tcp_established": schema.BoolAttribute{
+								Computed: true,
+							},
+							"updated_at": schema.StringAttribute{
+								Computed:   true,
+								CustomType: timetypes.RFC3339Type{},
+							},
+							"bgp_state": schema.StringAttribute{
+								Computed: true,
+							},
+							"cf_speaker_ip": schema.StringAttribute{
+								Computed: true,
+							},
+							"cf_speaker_port": schema.Int64Attribute{
+								Computed: true,
+								Validators: []validator.Int64{
+									int64validator.Between(1, 65535),
+								},
+							},
+							"customer_speaker_ip": schema.StringAttribute{
+								Computed: true,
+							},
+							"customer_speaker_port": schema.Int64Attribute{
+								Computed: true,
+								Validators: []validator.Int64{
+									int64validator.Between(1, 65535),
+								},
+							},
+						},
 					},
 					"created_on": schema.StringAttribute{
 						Description: "The date and time the tunnel was created.",

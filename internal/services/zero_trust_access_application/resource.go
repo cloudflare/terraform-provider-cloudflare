@@ -5,9 +5,9 @@ package zero_trust_access_application
 import (
 	"context"
 	"fmt"
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/option"
-	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -21,6 +21,7 @@ import (
 var _ resource.ResourceWithConfigure = (*ZeroTrustAccessApplicationResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ZeroTrustAccessApplicationResource)(nil)
 var _ resource.ResourceWithImportState = (*ZeroTrustAccessApplicationResource)(nil)
+var _ resource.ResourceWithUpgradeState = (*ZeroTrustAccessApplicationResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustAccessApplicationResource{}

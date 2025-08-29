@@ -42,10 +42,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The serial number of the SOA for the given zone.",
 				Computed:    true,
 			},
-			"peers": schema.ListAttribute{
+			"peers": schema.SetAttribute{
 				Description: "A list of peer tags.",
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 		},

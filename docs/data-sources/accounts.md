@@ -41,6 +41,7 @@ Read-Only:
 - `id` (String) Identifier
 - `name` (String) Account name
 - `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--result--settings))
+- `type` (String) Available values: "standard", "enterprise".
 
 <a id="nestedatt--result--settings"></a>
 ### Nested Schema for `result.settings`

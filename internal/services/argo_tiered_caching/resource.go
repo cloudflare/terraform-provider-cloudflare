@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/argo"
-	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/argo"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -22,6 +22,7 @@ import (
 var _ resource.ResourceWithConfigure = (*ArgoTieredCachingResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ArgoTieredCachingResource)(nil)
 var _ resource.ResourceWithImportState = (*ArgoTieredCachingResource)(nil)
+var _ resource.ResourceWithMoveState = (*ArgoTieredCachingResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ArgoTieredCachingResource{}
