@@ -483,7 +483,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"tags": schema.SetAttribute{
 				Description: "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",
-				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
