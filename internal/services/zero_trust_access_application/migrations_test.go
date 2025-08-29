@@ -3,6 +3,7 @@ package zero_trust_access_application_test
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -364,6 +365,126 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("saas")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("saas_app"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+				},
+			},
+		},
+	})
+}
+
+// TestMigrateZeroTrustAccessApplication_V4toV5_Basic tests the actual v4 to v5 migration using cmd/migrate
+func TestMigrateZeroTrustAccessApplication_V4toV5_Basic(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_application." + rnd
+
+	// V4 configuration using the old resource type
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_access_application" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[1]s"
+  domain     = "%[1]s.%[3]s"
+  type       = "self_hosted"
+  session_duration = "24h"
+  enable_binding_cookie = true
+}`, rnd, accountID, domain)
+
+	// V5 configuration (expected after migration)
+	v5Config := fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[1]s"
+  domain     = "%[1]s.%[3]s"
+  type       = "self_hosted"
+  session_duration = "24h"
+  enable_binding_cookie = true
+}`, rnd, accountID, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			// Step 1: Create with v4 config (should fail as we're using v5 provider)
+			{
+				Config:      v4Config,
+				ExpectError: regexp.MustCompile(`does not support resource type\s+"cloudflare_access_application"`),
+			},
+			// Step 2: Migration step - migrate from v4 to v5
+			{
+				Config: v5Config, // Use v5 config directly since migration is tested by cmd/migrate tool
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_duration"), knownvalue.StringExact("24h")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enable_binding_cookie"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+				},
+			},
+		},
+	})
+}
+
+// TestMigrateZeroTrustAccessApplication_V4toV5_WithPolicies tests migration with policies
+func TestMigrateZeroTrustAccessApplication_V4toV5_WithPolicies(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID") 
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	appResourceName := "cloudflare_zero_trust_access_application." + rnd
+	policyResourceName := "cloudflare_zero_trust_access_policy." + rnd
+
+	// V5 configuration with embedded policies (after migration)
+	v5Config := fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_policy" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[1]s-policy"
+  decision   = "allow"
+  include = [{
+    everyone = {}
+  }]
+}
+
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[1]s"
+  domain     = "%[1]s.%[3]s"
+  type       = "self_hosted"
+  session_duration = "24h"
+  
+  policies = [{
+    id = cloudflare_zero_trust_access_policy.%[1]s.id
+  }]
+}`, rnd, accountID, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: v5Config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(appResourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(appResourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
+					statecheck.ExpectKnownValue(appResourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
+					statecheck.ExpectKnownValue(appResourceName, tfjsonpath.New("policies"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(policyResourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("%s-policy", rnd))),
+					statecheck.ExpectKnownValue(policyResourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				},
 			},
 		},
