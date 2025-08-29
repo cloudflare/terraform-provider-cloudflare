@@ -4,6 +4,7 @@ package zero_trust_access_group
 
 import (
 	"context"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 
@@ -17,7 +18,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessGroupResource)(ni
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 1,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID.",
