@@ -275,6 +275,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			transformZeroTrustAccessMTLSHostnameSettingsBlock(block, diags)
 		}
 
+		if isAccessMutualTLSHostnameSettingsResource(block) {
+			transformZeroTrustAccessMTLSHostnameSettingsBlock(block, diags)
+		}
+
 		if isManagedTransformsResource(block) {
 			transformManagedTransformsBlock(block)
 		}
