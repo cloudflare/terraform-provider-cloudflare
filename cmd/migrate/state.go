@@ -72,6 +72,12 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			resourceType = "cloudflare_zero_trust_access_mtls_hostname_settings"
 		}
 
+		if resourceType == "cloudflare_access_identity_provider" {
+			// Rename cloudflare_access_identity_provider to cloudflare_zero_trust_access_identity_provider
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_identity_provider")
+			resourceType = "cloudflare_zero_trust_access_identity_provider"
+		}
+
 		// Process each instance
 		instances := resource.Get("instances")
 		instances.ForEach(func(iidx, instance gjson.Result) bool {
