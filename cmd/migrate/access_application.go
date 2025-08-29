@@ -34,9 +34,11 @@ func transformAccessApplicationBlock(block *hclwrite.Block, diags ast.Diagnostic
 	// STEP 1: Auto-populate policies from collected access_policy mappings
 	injectCollectedPolicies(block, diags)
 	
-	// STEP 2: Transform existing policies attribute format
+	// STEP 2: Transform existing attribute formats
 	transforms := map[string]ast.ExprTransformer{
-		"policies": transformPoliciesAttribute,
+		"policies":       transformPoliciesAttribute,
+		"allowed_idps":   transformSetToListAttribute,
+		"custom_pages":   transformSetToListAttribute,
 	}
 	ast.ApplyTransformToAttributes(ast.Block{Block: block}, transforms, diags)
 }
@@ -163,4 +165,33 @@ func createPoliciesAttribute(body *hclwrite.Body, policies []PolicyReference) {
 		{Type: hclsyntax.TokenComment, Bytes: []byte("# Policies auto-migrated from v4 access_policy resources\n")},
 	}
 	body.AppendUnstructuredTokens(commentTokens)
+}
+
+// transformSetToListAttribute converts set syntax to list syntax
+// This is needed for attributes like allowed_idps and custom_pages that changed from set to list in v5
+//
+// The transformation preserves the values but changes the syntax:
+// Before: toset(["value1", "value2"])  (v4 set)
+// After:  ["value1", "value2"]         (v5 list)
+func transformSetToListAttribute(expr *hclsyntax.Expression, diags ast.Diagnostics) {
+	if *expr == nil {
+		return
+	}
+
+	// Check if it's a function call (e.g., toset(...))
+	if funcCall, ok := (*expr).(*hclsyntax.FunctionCallExpr); ok {
+		if funcCall.Name == "toset" && len(funcCall.Args) == 1 {
+			// Replace with the inner list expression
+			*expr = funcCall.Args[0]
+			return
+		}
+	}
+
+	// If it's already a tuple/list, leave it as-is
+	if _, ok := (*expr).(*hclsyntax.TupleConsExpr); ok {
+		return
+	}
+
+	// If we can't identify the pattern, leave it unchanged
+	// (grit should handle most cases)
 }
