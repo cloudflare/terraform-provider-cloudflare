@@ -206,13 +206,35 @@ func transformSetToListAttribute(expr *hclsyntax.Expression, diags ast.Diagnosti
 	// (grit should handle most cases)
 }
 
-// removeUnsupportedAttributes removes attributes that don't exist in v5
+// removeUnsupportedAttributes removes attributes that don't exist in v5 or are conditionally invalid
 // The domain_type attribute was removed in v5 as it's no longer supported
+// The skip_app_launcher_login_page can only be set when type = "app_launcher"
 func removeUnsupportedAttributes(block *hclwrite.Block) {
 	body := block.Body()
 	
 	// Remove domain_type attribute - not supported in v5
 	body.RemoveAttribute("domain_type")
+	
+	// Remove skip_app_launcher_login_page if type is not "app_launcher"
+	typeAttr := body.GetAttribute("type")
+	if typeAttr != nil {
+		// Get the type value to check if it's "app_launcher"
+		tokens := typeAttr.Expr().BuildTokens(nil)
+		var typeValue string
+		for _, token := range tokens {
+			typeValue += string(token.Bytes)
+		}
+		
+		// Remove quotes if present and check the value
+		typeValue = strings.Trim(typeValue, `"`)
+		if typeValue != "app_launcher" {
+			// Remove skip_app_launcher_login_page attribute when type is not app_launcher
+			body.RemoveAttribute("skip_app_launcher_login_page")
+		}
+	} else {
+		// If no type attribute, remove skip_app_launcher_login_page as it would be invalid
+		body.RemoveAttribute("skip_app_launcher_login_page")
+	}
 }
 
 // convertDestinationsBlocksToAttribute converts destinations blocks to a list attribute

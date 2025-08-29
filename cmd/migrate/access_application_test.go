@@ -374,3 +374,85 @@ func TestAccessApplicationCombinedMigrations(t *testing.T) {
 
 	RunTransformationTests(t, tests, transformFile)
 }
+
+
+func TestAccessApplicationSkipAppLauncherLoginPageRemoval(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "remove skip_app_launcher_login_page when type is not app_launcher",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id                  = "abc123"
+  name                        = "Test App"
+  domain                      = "test.example.com"
+  type                        = "self_hosted"
+  skip_app_launcher_login_page = false
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  domain     = "test.example.com"
+  type       = "self_hosted"
+}`},
+		},
+		{
+			Name: "preserve skip_app_launcher_login_page when type is app_launcher",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id                  = "abc123"
+  name                        = "Test App"
+  type                        = "app_launcher"
+  skip_app_launcher_login_page = true
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id                   = "abc123"
+  name                         = "Test App"
+  type                         = "app_launcher"
+  skip_app_launcher_login_page = true
+}`},
+		},
+		{
+			Name: "remove skip_app_launcher_login_page when type is warp",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id                  = "abc123"
+  name                        = "Test App"
+  type                        = "warp"
+  skip_app_launcher_login_page = false
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "warp"
+}`},
+		},
+		{
+			Name: "remove skip_app_launcher_login_page when no type attribute",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id                  = "abc123"
+  name                        = "Test App"
+  domain                      = "test.example.com"
+  skip_app_launcher_login_page = false
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  domain     = "test.example.com"
+}`},
+		},
+		{
+			Name: "no skip_app_launcher_login_page to remove",
+			Config: `resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "self_hosted"
+  domain     = "test.example.com"
+}`,
+			Expected: []string{`resource "cloudflare_zero_trust_access_application" "test" {
+  account_id = "abc123"
+  name       = "Test App"
+  type       = "self_hosted"
+  domain     = "test.example.com"
+}`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFile)
+}
