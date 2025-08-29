@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/cache"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -50,7 +50,7 @@ func testAccCheckCloudflareTieredCacheDestroy(s *terraform.State) error {
 		if err != nil {
 			continue
 		}
-		
+
 		// For tiered cache, "deleted" means it's set back to the default "off" state
 		if resp.Value == cache.SmartTieredCacheGetResponseValueOn {
 			return fmt.Errorf("tiered cache still enabled (should be off after destroy)")

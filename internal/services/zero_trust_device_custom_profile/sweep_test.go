@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -66,4 +66,3 @@ func testSweepCloudflareZeroTrustDeviceCustomProfile(region string) error {
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
-

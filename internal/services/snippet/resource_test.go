@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/snippets"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -21,7 +21,6 @@ import (
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
-
 
 func init() {
 	resource.AddTestSweepers("cloudflare_snippet", &resource.Sweeper{
