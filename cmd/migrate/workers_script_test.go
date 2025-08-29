@@ -208,6 +208,67 @@ func TestWorkersScriptTransformation(t *testing.T) {
 }`,
 			},
 		},
+		{
+			Name: "workers_script with module=true (should convert to main_module)",
+			Config: `resource "cloudflare_workers_script" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name = "my-worker"
+  content = "export default { fetch(request) { return new Response('Hello World'); } };"
+  module = true
+}`,
+			Expected: []string{
+				`resource "cloudflare_workers_script" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  content     = "export default { fetch(request) { return new Response('Hello World'); } };"
+  main_module = "worker.js"
+}`,
+			},
+		},
+		{
+			Name: "workers_script with module=false (should convert to body_part)",
+			Config: `resource "cloudflare_workers_script" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name = "my-worker"
+  content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  module = false
+}`,
+			Expected: []string{
+				`resource "cloudflare_workers_script" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  body_part   = "worker.js"
+}`,
+			},
+		},
+		{
+			Name: "workers_script with module=true and existing bindings",
+			Config: `resource "cloudflare_workers_script" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name = "my-worker"
+  content = "export default { fetch(request) { return new Response('Hello World'); } };"
+  module = true
+  
+  plain_text_binding {
+    name = "MY_VAR"
+    text = "my-value"
+  }
+}`,
+			Expected: []string{
+				`resource "cloudflare_workers_script" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  content     = "export default { fetch(request) { return new Response('Hello World'); } };"
+  bindings = [{
+    type = "plain_text"
+    name = "MY_VAR"
+    text = "my-value"
+  }]
+  main_module = "worker.js"
+}`,
+			},
+		},
 	}
 
 	RunTransformationTests(t, tests, transformFile)

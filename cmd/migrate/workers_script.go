@@ -51,6 +51,9 @@ func transformWorkersScriptBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 
 	// Transform v4 dispatch_namespace attribute to v5 dispatch_namespace binding
 	transformDispatchNamespace(block, diags)
+
+	// Transform v4 module attribute to v5 main_module/body_part attributes
+	transformModule(block, diags)
 }
 
 // transformWorkersScriptStateJSON transforms the state JSON for workers_script
@@ -78,9 +81,8 @@ func transformWorkersScriptStateJSON(jsonStr string, path string) string {
 	// Transform v4 dispatch_namespace attribute to v5 dispatch_namespace binding
 	result = transformDispatchNamespaceInState(result, path)
 
-	// Remove module attribute which exists in v4 but causes issues in v5
-	modulePath := path + ".attributes.module"
-	result, _ = sjson.Delete(result, modulePath)
+	// Transform v4 module attribute to v5 main_module/body_part attributes
+	result = transformModuleInState(result, path)
 
 	// Fix placement attribute format: v4 uses array [], v5 expects object {}
 	placementPath := path + ".attributes.placement"
@@ -218,6 +220,37 @@ func transformDispatchNamespaceInState(jsonStr string, path string) string {
 
 	// Remove the original dispatch_namespace attribute
 	result, _ = sjson.Delete(result, dispatchNamespacePath)
+
+	return result
+}
+
+// transformModuleInState transforms v4 module attribute to v5 main_module/body_part attributes in state
+func transformModuleInState(jsonStr string, path string) string {
+	result := jsonStr
+
+	// Check if module attribute exists
+	modulePath := path + ".attributes.module"
+	moduleValue := gjson.Get(jsonStr, modulePath)
+
+	if !moduleValue.Exists() {
+		return result // No module attribute to transform
+	}
+
+	// Extract the boolean value
+	isModule := moduleValue.Bool()
+
+	if isModule {
+		// module = true → main_module = "worker.js" (ES Module syntax)
+		mainModulePath := path + ".attributes.main_module"
+		result, _ = sjson.Set(result, mainModulePath, "worker.js")
+	} else {
+		// module = false → body_part = "worker.js" (Service Worker syntax)
+		bodyPartPath := path + ".attributes.body_part"
+		result, _ = sjson.Set(result, bodyPartPath, "worker.js")
+	}
+
+	// Remove the original module attribute
+	result, _ = sjson.Delete(result, modulePath)
 
 	return result
 }
@@ -405,4 +438,55 @@ func transformDispatchNamespace(block *hclwrite.Block, diags ast.Diagnostics) {
 
 	// Remove the original dispatch_namespace attribute
 	block.Body().RemoveAttribute("dispatch_namespace")
+}
+
+// transformModule transforms v4 module attribute to v5 main_module/body_part attributes
+func transformModule(block *hclwrite.Block, diags ast.Diagnostics) {
+	// Check if block has module attribute
+	moduleAttr := block.Body().GetAttribute("module")
+	if moduleAttr == nil {
+		return // No module attribute to transform
+	}
+
+	// Extract the module value
+	moduleExpr := ast.WriteExpr2Expr(moduleAttr.Expr(), diags)
+	moduleValue := ast.Expr2S(moduleExpr, diags)
+
+	// Handle different boolean representations
+	var isModule bool
+	var parseError bool
+
+	switch strings.ToLower(strings.TrimSpace(moduleValue)) {
+	case "true":
+		isModule = true
+	case "false":
+		isModule = false
+	default:
+		// If we can't parse the value, add a manual migration warning
+		warningTokens := []*hclwrite.Token{
+			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+			{Type: hclsyntax.TokenComment, Bytes: []byte(`  # MIGRATION WARNING: module attribute needs manual migration`)},
+			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+			{Type: hclsyntax.TokenComment, Bytes: []byte(`  # Convert: module = true → main_module = "worker.js"`)},
+			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+			{Type: hclsyntax.TokenComment, Bytes: []byte(`  # Convert: module = false → body_part = "worker.js"`)},
+			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+		}
+		block.Body().AppendUnstructuredTokens(warningTokens)
+		parseError = true
+	}
+
+	if !parseError {
+		// Create the appropriate attribute based on module value
+		if isModule {
+			// module = true → main_module = "worker.js" (ES Module syntax)
+			block.Body().SetAttributeValue("main_module", cty.StringVal("worker.js"))
+		} else {
+			// module = false → body_part = "worker.js" (Service Worker syntax)
+			block.Body().SetAttributeValue("body_part", cty.StringVal("worker.js"))
+		}
+	}
+
+	// Remove the original module attribute
+	block.Body().RemoveAttribute("module")
 }
