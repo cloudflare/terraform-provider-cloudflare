@@ -13,8 +13,8 @@ import (
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-testing/config"
@@ -670,14 +670,14 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 func MigrationTestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exactVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
 	// First step: run migration
 	migrationStep := MigrationTestStep(t, v4Config, tmpDir, exactVersion, nil) // No state checks yet
-	
+
 	// Second step: run plan to process import blocks and state corrections
 	planStep := resource.TestStep{
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
 		ConfigDirectory:          config.StaticDirectory(tmpDir),
 		PlanOnly:                 true, // Just run plan to process imports/corrections
 	}
-	
+
 	// Third step: verify final plan is clean and state is correct
 	validationStep := resource.TestStep{
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
@@ -690,7 +690,7 @@ func MigrationTestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exa
 		},
 		ConfigStateChecks: stateChecks,
 	}
-	
+
 	return []resource.TestStep{migrationStep, planStep, validationStep}
 }
 
