@@ -72,6 +72,12 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			resourceType = "cloudflare_zero_trust_access_mtls_hostname_settings"
 		}
 
+		if resourceType == "cloudflare_access_application" {
+			// Rename cloudflare_access_application to cloudflare_zero_trust_access_application
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_application")
+			resourceType = "cloudflare_zero_trust_access_application"
+		}
+
 		// Process each instance
 		instances := resource.Get("instances")
 		instances.ForEach(func(iidx, instance gjson.Result) bool {
@@ -107,6 +113,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_zero_trust_access_mtls_hostname_settings", "cloudflare_access_mutual_tls_hostname_settings":
 				result = transformZeroTrustAccessMTLSHostnameSettingsStateJSON(result, path)
+
+			case "cloudflare_zero_trust_access_application", "cloudflare_access_application":
+				result = transformZeroTrustAccessApplicationStateJSON(result, path)
 			}
 
 			return true
@@ -840,6 +849,48 @@ func expandArraysInRules(json string, rulesPath string) string {
 	// Replace the rules array with the expanded version
 	if len(expandedRules) > 0 {
 		json, _ = sjson.Set(json, rulesPath, expandedRules)
+	}
+
+	return json
+}
+
+// transformZeroTrustAccessApplicationStateJSON handles v4 to v5 state migration for cloudflare_zero_trust_access_application
+func transformZeroTrustAccessApplicationStateJSON(json string, path string) string {
+	attrPath := path + ".attributes"
+
+	// Transform allowed_idps from set to list (same values, different type metadata)
+	allowedIdPs := gjson.Get(json, attrPath+".allowed_idps")
+	if allowedIdPs.Exists() {
+		// Keep the same values but ensure it's treated as a list in v5
+		json, _ = sjson.Set(json, attrPath+".allowed_idps", allowedIdPs.Value())
+	}
+
+	// Transform custom_pages from set to list (same values, different type metadata)
+	customPages := gjson.Get(json, attrPath+".custom_pages")
+	if customPages.Exists() {
+		// Keep the same values but ensure it's treated as a list in v5
+		json, _ = sjson.Set(json, attrPath+".custom_pages", customPages.Value())
+	}
+
+	// Transform policies from simple string list to complex object list
+	policies := gjson.Get(json, attrPath+".policies")
+	if policies.IsArray() {
+		var transformedPolicies []interface{}
+		policies.ForEach(func(idx, policy gjson.Result) bool {
+			if policy.Type == gjson.String {
+				// Convert string policy ID to object with id field
+				transformedPolicies = append(transformedPolicies, map[string]interface{}{
+					"id": policy.String(),
+				})
+			} else {
+				// Keep as-is if already an object
+				transformedPolicies = append(transformedPolicies, policy.Value())
+			}
+			return true
+		})
+		if len(transformedPolicies) > 0 {
+			json, _ = sjson.Set(json, attrPath+".policies", transformedPolicies)
+		}
 	}
 
 	return json
