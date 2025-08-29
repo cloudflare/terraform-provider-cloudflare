@@ -66,6 +66,12 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			resourceType = "cloudflare_zero_trust_access_policy"
 		}
 
+		if resourceType == "cloudflare_access_group" {
+			// Rename cloudflare_access_group to cloudflare_zero_trust_access_group
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_group")
+			resourceType = "cloudflare_zero_trust_access_group"
+		}
+
 		if resourceType == "cloudflare_access_mutual_tls_hostname_settings" {
 			// Rename to cloudflare_zero_trust_access_mtls_hostname_settings
 			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_mtls_hostname_settings")
@@ -116,6 +122,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_zero_trust_access_application", "cloudflare_access_application":
 				result = transformZeroTrustAccessApplicationStateJSON(result, path)
+
+			case "cloudflare_zero_trust_access_group", "cloudflare_access_group":
+				result = transformZeroTrustAccessGroupStateJSON(result, path)
 			}
 
 			return true
@@ -890,6 +899,165 @@ func transformZeroTrustAccessApplicationStateJSON(json string, path string) stri
 		})
 		if len(transformedPolicies) > 0 {
 			json, _ = sjson.Set(json, attrPath+".policies", transformedPolicies)
+		}
+	}
+
+	return json
+}
+
+// transformZeroTrustAccessGroupStateJSON transforms the state for cloudflare_zero_trust_access_group
+// from v4 format (blocks with arrays) to v5 format (list of objects)
+func transformZeroTrustAccessGroupStateJSON(json, path string) string {
+	attrPath := path + ".attributes"
+
+	// Transform include, exclude, and require rules
+	for _, ruleType := range []string{"include", "exclude", "require"} {
+		rulesPath := attrPath + "." + ruleType
+		rules := gjson.Get(json, rulesPath)
+
+		if !rules.Exists() || !rules.IsArray() || len(rules.Array()) == 0 {
+			continue
+		}
+
+		// Transform from v4 to v5 format
+		var newRules []interface{}
+
+		for _, rule := range rules.Array() {
+			rule.ForEach(func(key, value gjson.Result) bool {
+				keyStr := key.String()
+
+				switch keyStr {
+				// Boolean fields -> empty objects
+				case "everyone", "certificate", "any_valid_service_token":
+					if value.Bool() {
+						newRules = append(newRules, map[string]interface{}{
+							keyStr: map[string]interface{}{},
+						})
+					}
+
+				// Array fields -> multiple objects with nested structure
+				case "email":
+					if value.IsArray() {
+						for _, email := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"email": map[string]interface{}{
+									"email": email.String(),
+								},
+							})
+						}
+					}
+
+				case "email_domain":
+					if value.IsArray() {
+						for _, domain := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"email_domain": map[string]interface{}{
+									"domain": domain.String(),
+								},
+							})
+						}
+					}
+
+				case "ip":
+					if value.IsArray() {
+						for _, ip := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"ip": map[string]interface{}{
+									"ip": ip.String(),
+								},
+							})
+						}
+					}
+
+				case "geo":
+					if value.IsArray() {
+						for _, geo := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"geo": map[string]interface{}{
+									"country_code": geo.String(),
+								},
+							})
+						}
+					}
+
+				case "group":
+					if value.IsArray() {
+						for _, group := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"group": map[string]interface{}{
+									"id": group.String(),
+								},
+							})
+						}
+					}
+
+				case "service_token":
+					if value.IsArray() {
+						for _, token := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"service_token": map[string]interface{}{
+									"token_id": token.String(),
+								},
+							})
+						}
+					}
+
+				case "email_list":
+					if value.IsArray() {
+						for _, list := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"email_list": map[string]interface{}{
+									"id": list.String(),
+								},
+							})
+						}
+					}
+
+				case "ip_list":
+					if value.IsArray() {
+						for _, list := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"ip_list": map[string]interface{}{
+									"id": list.String(),
+								},
+							})
+						}
+					}
+
+				case "login_method":
+					if value.IsArray() {
+						for _, method := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"login_method": map[string]interface{}{
+									"id": method.String(),
+								},
+							})
+						}
+					}
+
+				case "device_posture":
+					if value.IsArray() {
+						for _, posture := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"device_posture": map[string]interface{}{
+									"integration_uid": posture.String(),
+								},
+							})
+						}
+					}
+
+					// Note: More complex transformations like azure->azure_ad, github->github_organization, etc.
+					// are not needed here since those are handled by the config transformation
+					// and the state will already have the correct structure from the API
+				}
+
+				return true // continue iteration
+			})
+		}
+
+		// Replace with new rules
+		if len(newRules) > 0 {
+			json, _ = sjson.Set(json, rulesPath, newRules)
 		}
 	}
 
