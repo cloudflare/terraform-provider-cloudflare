@@ -60,6 +60,12 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			resourceType = "cloudflare_dns_record"
 		}
 
+		if resourceType == "cloudflare_access_mutual_tls_hostname_settings" {
+			// Rename to cloudflare_zero_trust_access_mtls_hostname_settings
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_mtls_hostname_settings")
+			resourceType = "cloudflare_zero_trust_access_mtls_hostname_settings"
+		}
+
 		// Process each instance
 		instances := resource.Get("instances")
 		instances.ForEach(func(iidx, instance gjson.Result) bool {
@@ -89,6 +95,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_dns_record":
 				result = transformDNSRecordStateJSON(result, path, instance)
+
+			case "cloudflare_zero_trust_access_mtls_hostname_settings", "cloudflare_access_mutual_tls_hostname_settings":
+				result = transformZeroTrustAccessMTLSHostnameSettingsStateJSON(result, path)
 			}
 
 			return true
@@ -532,6 +541,35 @@ func transformArgoStateJSON(json string, instancePath string, resourcePath strin
 		if tieredCaching.Exists() {
 			json, _ = sjson.Delete(json, attrPath+".tiered_caching")
 		}
+	}
+
+	return json
+}
+
+// transformZeroTrustAccessMTLSHostnameSettingsStateJSON handles v4 to v5 state migration for cloudflare_zero_trust_access_mtls_hostname_settings
+func transformZeroTrustAccessMTLSHostnameSettingsStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// Transform settings to ensure boolean defaults are set
+	settings := gjson.Get(json, attrPath+".settings")
+	if settings.IsArray() {
+		settings.ForEach(func(idx, setting gjson.Result) bool {
+			settingPath := fmt.Sprintf("%s.settings.%d", attrPath, idx.Int())
+			
+			// Ensure china_network has a value (default to false if missing)
+			chinaNetwork := setting.Get("china_network")
+			if !chinaNetwork.Exists() {
+				json, _ = sjson.Set(json, settingPath+".china_network", false)
+			}
+			
+			// Ensure client_certificate_forwarding has a value (default to false if missing)
+			clientCertForwarding := setting.Get("client_certificate_forwarding")
+			if !clientCertForwarding.Exists() {
+				json, _ = sjson.Set(json, settingPath+".client_certificate_forwarding", false)
+			}
+			
+			return true
+		})
 	}
 
 	return json
