@@ -143,7 +143,7 @@ func expandRuleObjectInAccessGroup(obj *hclsyntax.ObjectConsExpr, diags ast.Diag
 	// Process attributes in the same fixed order as state migration to ensure consistency
 	attributeOrder := []string{
 		"email", "email_domain", "ip", "geo", "group", "service_token", "email_list", "ip_list", "login_method", "device_posture",
-		"common_names", "azure", "github", "gsuite", "okta",
+		"common_names", "azure", "github", "gsuite", "okta", "saml", "external_evaluation",
 		"everyone", "certificate", "any_valid_service_token",
 	}
 

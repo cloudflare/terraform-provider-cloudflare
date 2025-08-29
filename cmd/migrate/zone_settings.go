@@ -51,21 +51,21 @@ func transformZoneSettingsBlock(oldBlock *hclwrite.Block) []*hclwrite.Block {
 	// Find the settings block
 	for _, settingsBlock := range oldBlock.Body().Blocks() {
 		if settingsBlock.Type() == "settings" {
-			// Process regular attributes - migrate ALL attributes dynamically
-			for name, attr := range settingsBlock.Body().Attributes() {
+			// Process regular attributes in deterministic order
+			for _, attrInfo := range AttributesOrdered(settingsBlock.Body()) {
 				// Skip deprecated settings that no longer exist in the API
-				if isDeprecatedSetting(name) {
+				if isDeprecatedSetting(attrInfo.Name) {
 					continue
 				}
 
 				// Map the v4 setting name to the correct v5 setting name
-				mappedSettingName := mapSettingName(name)
-				resourceFullName := resourceName + "_" + name
+				mappedSettingName := mapSettingName(attrInfo.Name)
+				resourceFullName := resourceName + "_" + attrInfo.Name
 				newBlock := createZoneSettingResource(
 					resourceFullName,
 					mappedSettingName, // Use the mapped setting name as the setting_id
 					zoneIDAttr,
-					attr,
+					attrInfo.Attribute,
 				)
 				newBlocks = append(newBlocks, newBlock)
 

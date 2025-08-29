@@ -63,8 +63,10 @@ resource "cloudflare_zone_setting" "zone_settings_security_header" {
   zone_id    = var.zone_id
   setting_id = "security_header"
   value = {
-    enabled  =  var.security_header_enabled
-    max_age  =  var.security_header_max_age
+    strict_transport_security = {
+      enabled = var.security_header_enabled
+      max_age = var.security_header_max_age
+    }
   }
 }`, `
 import {

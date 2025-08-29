@@ -96,7 +96,7 @@ resource "cloudflare_list_item" "persona_webhook_ips" {
       for value in
       local.persona_webhook_ips
       : {
-      	key   = value
+        key   = value
         value = value
       }
     ]

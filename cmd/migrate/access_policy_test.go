@@ -224,10 +224,11 @@ func TestTransformAccessPolicy(t *testing.T) {
 							  decision   = "allow"
 
 							  include = [{
-							    everyone = {}
-							    login_method = ["okta"]
-							  }, {
 							    email = { email = "user@example.com" }
+							  }, {
+							    everyone = {}
+							  }, {
+							    login_method = ["okta"]
 							  }]
 							}`,
 		},
@@ -252,12 +253,13 @@ func TestTransformAccessPolicy(t *testing.T) {
 							  decision   = "allow"
 
 							  include = [{
-							    certificate = {}
-							    login_method = ["github"]
-							  }, {
 							    email = { email = "alice@example.com" }
 							  }, {
 							    group = { id = "admins" }
+							  }, {
+							    certificate = {}
+							  }, {
+							    login_method = ["github"]
 							  }]
 							}`,
 		},
@@ -277,7 +279,6 @@ func TestTransformAccessPolicy(t *testing.T) {
 							  account_id = "abc123"
 							  name       = "Test Policy"
 							  decision   = "allow"
-							  precedence = 1
 
 							  include = [{
 							    login_method = ["saml"]

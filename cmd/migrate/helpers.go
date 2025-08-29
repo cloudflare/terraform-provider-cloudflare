@@ -1,6 +1,9 @@
 package main
 
 import (
+	"strings"
+
+	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
@@ -76,4 +79,39 @@ func buildResourceReference(resourceType, resourceName string) hclwrite.Tokens {
 		{Type: hclsyntax.TokenDot, Bytes: []byte{'.'}},
 		{Type: hclsyntax.TokenIdent, Bytes: []byte(resourceName)},
 	}
+}
+
+// createMovedBlock creates a moved block for resource migration
+func createMovedBlock(from, to string) *hclwrite.Block {
+	block := hclwrite.NewBlock("moved", nil)
+	body := block.Body()
+
+	// Create traversals for from and to
+	fromParts := strings.Split(from, ".")
+	toParts := strings.Split(to, ".")
+
+	// Build from traversal
+	fromTraversal := hcl.Traversal{}
+	for i, part := range fromParts {
+		if i == 0 {
+			fromTraversal = append(fromTraversal, hcl.TraverseRoot{Name: part})
+		} else {
+			fromTraversal = append(fromTraversal, hcl.TraverseAttr{Name: part})
+		}
+	}
+
+	// Build to traversal
+	toTraversal := hcl.Traversal{}
+	for i, part := range toParts {
+		if i == 0 {
+			toTraversal = append(toTraversal, hcl.TraverseRoot{Name: part})
+		} else {
+			toTraversal = append(toTraversal, hcl.TraverseAttr{Name: part})
+		}
+	}
+
+	body.SetAttributeTraversal("from", fromTraversal)
+	body.SetAttributeTraversal("to", toTraversal)
+
+	return block
 }

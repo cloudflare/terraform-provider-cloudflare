@@ -109,11 +109,13 @@ resource "cloudflare_tiered_cache" "example" {
   cache_type = "generic"
 }`,
 			Expected: []string{
-				`resource "cloudflare_argo_tiered_caching" "example" {
+				`
+resource "cloudflare_argo_tiered_caching" "example" {
   zone_id = "test-zone-id"
   value   = "on"
 }`,
-				`moved {
+				`
+moved {
   from = cloudflare_tiered_cache.example
   to   = cloudflare_argo_tiered_caching.example
 }`,
