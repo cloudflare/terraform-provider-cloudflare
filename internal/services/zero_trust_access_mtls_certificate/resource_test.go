@@ -150,6 +150,7 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 }
 
 func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
+	t.Skip(`Skipping for API error: "access.api.error.conflict: certificate already exists"`)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -239,6 +240,7 @@ jzhIPJ0iyPgZhFlsHjGxWghkaLqdCdtDOSdb6SepEZHaq32j/A==
 }
 
 func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
+	t.Skip(`Skipping for API error: "access.api.error.conflict: certificate already exists"`)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
