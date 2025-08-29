@@ -175,6 +175,16 @@ func renameBindingAttributes(bindingMap map[string]interface{}, bindingType stri
 			bindingMap["id"] = databaseID
 			delete(bindingMap, "database_id")
 		}
+	case "hyperdrive_config_binding":
+		// hyperdrive_config_binding: binding → name, id → binding_id
+		if binding, exists := bindingMap["binding"]; exists {
+			bindingMap["name"] = binding
+			delete(bindingMap, "binding")
+		}
+		if id, exists := bindingMap["id"]; exists {
+			bindingMap["binding_id"] = id
+			delete(bindingMap, "id")
+		}
 	}
 }
 
@@ -356,6 +366,14 @@ func renameBindingAttribute(attrName, bindingType string) string {
 		// d1 binding: database_id → id
 		if attrName == "database_id" {
 			return "id"
+		}
+	case "hyperdrive":
+		// hyperdrive binding: binding → name, id → binding_id
+		if attrName == "binding" {
+			return "name"
+		}
+		if attrName == "id" {
+			return "binding_id"
 		}
 	}
 	return attrName

@@ -119,8 +119,8 @@ func TestWorkersScriptTransformation(t *testing.T) {
   content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
   
   hyperdrive_config_binding {
-    name = "HYPERDRIVE"
-    binding_id = "hyperdrive123"
+    binding = "HYPERDRIVE"
+    id = "hyperdrive123"
   }
 }`,
 			Expected: []string{`resource "cloudflare_workers_script" "example" {
@@ -129,8 +129,8 @@ func TestWorkersScriptTransformation(t *testing.T) {
   content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
   bindings = [{
     type       = "hyperdrive"
-    binding_id = "hyperdrive123"
     name       = "HYPERDRIVE"
+    binding_id = "hyperdrive123"
   }]
 }`},
 		},
