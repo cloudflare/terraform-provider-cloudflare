@@ -166,6 +166,10 @@ func transformStateJSON(data []byte) ([]byte, error) {
 		return true
 	})
 
+	// Perform cross-resource state migration for workers_secret -> workers_script bindings
+	// This must happen after all individual resource state transformations
+	result = migrateWorkersSecretsInState(result)
+
 	// Pretty format with proper indentation
 	return pretty.PrettyOptions([]byte(result), &pretty.Options{
 		Indent:   "  ",

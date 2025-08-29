@@ -50,7 +50,7 @@ func renameResourceReferences(body *hclwrite.Body) {
 		"cloudflare_worker_script":       "cloudflare_workers_script",
 		"cloudflare_worker_cron_trigger": "cloudflare_workers_cron_trigger",
 		"cloudflare_worker_domain":       "cloudflare_workers_custom_domain",
-		"cloudflare_worker_secret":       "cloudflare_workers_secret",
+		// Note: cloudflare_worker_secret is migrated to secret_text bindings, not renamed
 	}
 
 	// Process all attributes

@@ -315,9 +315,7 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			transformWorkersDomainBlock(block, diags)
 		}
 
-		if isWorkersSecretResource(block) {
-			transformWorkersSecretBlock(block, diags)
-		}
+		// Note: workers_secret resources are handled by cross-resource migration below
 	}
 
 	// Remove old blocks
@@ -329,6 +327,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 	for _, block := range newBlocks {
 		body.AppendBlock(block)
 	}
+
+	// Perform cross-resource migration for workers_secret -> workers_script secret_text bindings
+	// This must happen after all individual block transformations are complete
+	migrateWorkersSecretsToBindings(file, diags)
 
 	// Generate moved blocks for policy transitions if we have application-policy mappings
 	if len(applicationPolicyMapping) > 0 {
