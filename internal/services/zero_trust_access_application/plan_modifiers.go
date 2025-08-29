@@ -112,11 +112,17 @@ func modifyNestedPoliciesPlan(_ context.Context, planApp *ZeroTrustAccessApplica
 }
 
 func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resource.ModifyPlanResponse) {
-	var planApp, stateApp *ZeroTrustAccessApplicationModel
+	var planApp, stateApp, configApp *ZeroTrustAccessApplicationModel
 	res.Diagnostics.Append(req.Plan.Get(ctx, &planApp)...)
 	res.Diagnostics.Append(req.State.Get(ctx, &stateApp)...)
+	res.Diagnostics.Append(req.Config.Get(ctx, &configApp)...)
 	if res.Diagnostics.HasError() || planApp == nil {
 		return
+	}
+
+	// If tags are not configured, ensure they stay null in the plan
+	if configApp != nil && configApp.Tags.IsNull() {
+		planApp.Tags = customfield.NullSet[types.String](ctx)
 	}
 
 	modifyPlanForDomains(ctx, planApp, stateApp)

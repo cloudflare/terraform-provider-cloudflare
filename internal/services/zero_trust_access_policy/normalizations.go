@@ -48,9 +48,30 @@ func normalizeFalseAndNullBool(data *basetypes.BoolValue, stateData basetypes.Bo
 func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, sourceData *ZeroTrustAccessPolicyModel) diag.Diagnostics {
 	diags := make(diag.Diagnostics, 0)
 
-	normalizeEmptyAndNullNestedObjectSet(&data.Include, sourceData.Include)
-	normalizeEmptyAndNullNestedObjectSet(&data.Require, sourceData.Require)
-	normalizeEmptyAndNullNestedObjectSet(&data.Exclude, sourceData.Exclude)
+	// For rule fields, if they were null in the source (plan/state) and the API returned empty sets,
+	// convert them back to null to prevent "inconsistent result after apply" errors
+	if sourceData.Include.IsNull() && !data.Include.IsNull() && len(data.Include.Elements()) == 0 {
+		data.Include = customfield.NullObjectSet[ZeroTrustAccessPolicyIncludeModel](ctx)
+	}
+	if sourceData.Require.IsNull() && !data.Require.IsNull() && len(data.Require.Elements()) == 0 {
+		data.Require = customfield.NullObjectSet[ZeroTrustAccessPolicyRequireModel](ctx)
+	}
+	if sourceData.Exclude.IsNull() && !data.Exclude.IsNull() && len(data.Exclude.Elements()) == 0 {
+		data.Exclude = customfield.NullObjectSet[ZeroTrustAccessPolicyExcludeModel](ctx)
+	}
+	
+	// For non-empty rule fields, use standard normalization
+	if !sourceData.Include.IsNull() || (!data.Include.IsNull() && len(data.Include.Elements()) > 0) {
+		normalizeEmptyAndNullNestedObjectSet(&data.Include, sourceData.Include)
+	}
+	if !sourceData.Require.IsNull() || (!data.Require.IsNull() && len(data.Require.Elements()) > 0) {
+		normalizeEmptyAndNullNestedObjectSet(&data.Require, sourceData.Require)
+	}
+	if !sourceData.Exclude.IsNull() || (!data.Exclude.IsNull() && len(data.Exclude.Elements()) > 0) {
+		normalizeEmptyAndNullNestedObjectSet(&data.Exclude, sourceData.Exclude)
+	}
+	
+	// For other fields, use the original normalization logic
 	normalizeEmptyAndNullSlice(&data.ApprovalGroups, sourceData.ApprovalGroups)
 	normalizeFalseAndNullBool(&data.PurposeJustificationRequired, sourceData.PurposeJustificationRequired)
 	normalizeFalseAndNullBool(&data.ApprovalRequired, sourceData.ApprovalRequired)
