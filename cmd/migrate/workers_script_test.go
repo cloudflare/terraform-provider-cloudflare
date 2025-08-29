@@ -158,6 +158,56 @@ func TestWorkersScriptTransformation(t *testing.T) {
 }`,
 			},
 		},
+		{
+			Name: "workers_script with dispatch_namespace (should convert to binding)",
+			Config: `resource "cloudflare_workers_script" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name = "my-worker"
+  content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  dispatch_namespace = "my-dispatch-namespace"
+}`,
+			Expected: []string{
+				`resource "cloudflare_workers_script" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  bindings = [{
+    type         = "dispatch_namespace"
+    namespace_id = "my-dispatch-namespace"
+  }]
+}`,
+			},
+		},
+		{
+			Name: "workers_script with dispatch_namespace and existing bindings",
+			Config: `resource "cloudflare_workers_script" "example" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name = "my-worker"
+  content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  dispatch_namespace = "my-dispatch-namespace"
+  
+  plain_text_binding {
+    name = "MY_VAR"
+    text = "my-value"
+  }
+}`,
+			Expected: []string{
+				`resource "cloudflare_workers_script" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  script_name = "my-worker"
+  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
+  bindings = [{
+    type = "plain_text"
+    name = "MY_VAR"
+    text = "my-value"
+    },
+    {
+      type         = "dispatch_namespace"
+      namespace_id = "my-dispatch-namespace"
+  }]
+}`,
+			},
+		},
 	}
 
 	RunTransformationTests(t, tests, transformFile)

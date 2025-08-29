@@ -2,6 +2,7 @@ package main
 
 import (
 	"slices"
+	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
@@ -47,6 +48,9 @@ func transformWorkersScriptBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 
 	// Transform v4 binding blocks to v5 bindings list
 	transformBindings(block, diags)
+
+	// Transform v4 dispatch_namespace attribute to v5 dispatch_namespace binding
+	transformDispatchNamespace(block, diags)
 }
 
 // transformWorkersScriptStateJSON transforms the state JSON for workers_script
@@ -71,9 +75,8 @@ func transformWorkersScriptStateJSON(jsonStr string, path string) string {
 	// Transform v4 binding attributes to v5 bindings list
 	result = transformBindingsInState(result, path)
 
-	// Remove unsupported attributes that exist in v4 but not in v5
-	dispatchNamespacePath := path + ".attributes.dispatch_namespace"
-	result, _ = sjson.Delete(result, dispatchNamespacePath)
+	// Transform v4 dispatch_namespace attribute to v5 dispatch_namespace binding
+	result = transformDispatchNamespaceInState(result, path)
 
 	// Remove module attribute which exists in v4 but causes issues in v5
 	modulePath := path + ".attributes.module"
@@ -171,6 +174,52 @@ func renameBindingAttributes(bindingMap map[string]interface{}, bindingType stri
 			delete(bindingMap, "database_id")
 		}
 	}
+}
+
+// transformDispatchNamespaceInState transforms v4 dispatch_namespace attribute to v5 dispatch_namespace binding in state
+func transformDispatchNamespaceInState(jsonStr string, path string) string {
+	result := jsonStr
+
+	// Check if dispatch_namespace attribute exists
+	dispatchNamespacePath := path + ".attributes.dispatch_namespace"
+	dispatchValue := gjson.Get(jsonStr, dispatchNamespacePath)
+
+	if !dispatchValue.Exists() {
+		return result // No dispatch_namespace to transform
+	}
+
+	// Extract the dispatch namespace value
+	namespaceID := dispatchValue.String()
+
+	// Create dispatch_namespace binding
+	dispatchBinding := map[string]interface{}{
+		"type":         "dispatch_namespace",
+		"namespace_id": namespaceID,
+	}
+
+	// Get existing bindings
+	bindingsPath := path + ".attributes.bindings"
+	existingBindings := gjson.Get(result, bindingsPath)
+
+	var allBindings []interface{}
+
+	// Parse existing bindings if they exist
+	if existingBindings.Exists() && existingBindings.IsArray() {
+		for _, binding := range existingBindings.Array() {
+			allBindings = append(allBindings, binding.Value())
+		}
+	}
+
+	// Add the dispatch_namespace binding
+	allBindings = append(allBindings, dispatchBinding)
+
+	// Update state with new bindings
+	result, _ = sjson.Set(result, bindingsPath, allBindings)
+
+	// Remove the original dispatch_namespace attribute
+	result, _ = sjson.Delete(result, dispatchNamespacePath)
+
+	return result
 }
 
 // transformBindings transforms v4 binding blocks to v5 bindings list
@@ -277,4 +326,83 @@ func renameBindingAttribute(attrName, bindingType string) string {
 		}
 	}
 	return attrName
+}
+
+// transformDispatchNamespace transforms v4 dispatch_namespace attribute to v5 dispatch_namespace binding
+func transformDispatchNamespace(block *hclwrite.Block, diags ast.Diagnostics) {
+	// Check if block has dispatch_namespace attribute
+	dispatchAttr := block.Body().GetAttribute("dispatch_namespace")
+	if dispatchAttr == nil {
+		return // No dispatch_namespace to transform
+	}
+
+	// Extract the dispatch namespace value
+	dispatchExpr := ast.WriteExpr2Expr(dispatchAttr.Expr(), diags)
+	dispatchValue := ast.Expr2S(dispatchExpr, diags)
+
+	// Handle quoted strings by removing quotes
+	if strings.HasPrefix(dispatchValue, `"`) && strings.HasSuffix(dispatchValue, `"`) {
+		dispatchValue = strings.Trim(dispatchValue, `"`)
+	}
+
+	// If we can't parse the value, add a manual migration warning
+	if dispatchValue == "" || strings.Contains(dispatchValue, "var.") || strings.Contains(dispatchValue, "local.") {
+		warningTokens := []*hclwrite.Token{
+			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+			{Type: hclsyntax.TokenComment, Bytes: []byte(`  # MIGRATION WARNING: dispatch_namespace attribute needs manual migration to dispatch_namespace binding`)},
+			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+			{Type: hclsyntax.TokenComment, Bytes: []byte(`  # Convert: dispatch_namespace = "value" → bindings = [{type = "dispatch_namespace", namespace_id = "value"}]`)},
+			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+		}
+		block.Body().AppendUnstructuredTokens(warningTokens)
+		return
+	}
+
+	// Create dispatch_namespace binding
+	dispatchBinding := &hclsyntax.ObjectConsExpr{
+		Items: []hclsyntax.ObjectConsItem{
+			{
+				KeyExpr:   ast.NewKeyExpr("type"),
+				ValueExpr: &hclsyntax.LiteralValueExpr{Val: cty.StringVal("dispatch_namespace")},
+			},
+			{
+				KeyExpr:   ast.NewKeyExpr("namespace_id"),
+				ValueExpr: &hclsyntax.LiteralValueExpr{Val: cty.StringVal(dispatchValue)},
+			},
+		},
+	}
+
+	// Add this binding to the existing bindings or create new bindings attribute
+	existingBindingsAttr := block.Body().GetAttribute("bindings")
+	var allBindings []hclsyntax.Expression
+
+	if existingBindingsAttr != nil {
+		// Parse existing bindings
+		existingExpr := ast.WriteExpr2Expr(existingBindingsAttr.Expr(), diags)
+		if tuple, ok := existingExpr.(*hclsyntax.TupleConsExpr); ok {
+			allBindings = append(allBindings, tuple.Exprs...)
+		} else {
+			// Single binding or other format - preserve it
+			allBindings = append(allBindings, existingExpr)
+		}
+	}
+
+	// Add the dispatch_namespace binding
+	allBindings = append(allBindings, dispatchBinding)
+
+	// Create the new bindings expression
+	bindingsExpr := &hclsyntax.TupleConsExpr{
+		Exprs: allBindings,
+	}
+
+	// Set the bindings attribute
+	transforms := map[string]ast.ExprTransformer{
+		"bindings": func(expr *hclsyntax.Expression, diags ast.Diagnostics) {
+			*expr = bindingsExpr
+		},
+	}
+	ast.ApplyTransformToAttributes(ast.Block{Block: block}, transforms, diags)
+
+	// Remove the original dispatch_namespace attribute
+	block.Body().RemoveAttribute("dispatch_namespace")
 }
