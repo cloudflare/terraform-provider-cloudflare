@@ -15,6 +15,7 @@ description: |-
 data "cloudflare_list_items" "example_list_items" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   list_id = "2c0fc9fa937b11eaa1b71c4d701ab86e"
+  per_page = 1
   search = "1.1.1."
 }
 ```
@@ -30,6 +31,7 @@ data "cloudflare_list_items" "example_list_items" {
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
+- `per_page` (Number) Amount of results to include in each paginated response. A non-negative 32 bit integer.
 - `search` (String) A search query to filter returned items. Its meaning depends on the list type: IP addresses must start with the provided string, hostnames and bulk redirects must contain the string, and ASNs must match the string exactly.
 
 ### Read-Only

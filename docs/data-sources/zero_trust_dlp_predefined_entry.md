@@ -1,19 +1,20 @@
 ---
-page_title: "cloudflare_zero_trust_dlp_entries Data Source - Cloudflare"
+page_title: "cloudflare_zero_trust_dlp_predefined_entry Data Source - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_zero_trust_dlp_entries (Data Source)
+# cloudflare_zero_trust_dlp_predefined_entry (Data Source)
 
 
 
 ## Example Usage
 
 ```terraform
-data "cloudflare_zero_trust_dlp_entries" "example_zero_trust_dlp_entries" {
+data "cloudflare_zero_trust_dlp_predefined_entry" "example_zero_trust_dlp_predefined_entry" {
   account_id = "account_id"
+  entry_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
 }
 ```
 
@@ -26,35 +27,28 @@ data "cloudflare_zero_trust_dlp_entries" "example_zero_trust_dlp_entries" {
 
 ### Optional
 
-- `max_items` (Number) Max items to fetch, default: 1000
+- `entry_id` (String)
 
 ### Read-Only
-
-- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
-
-<a id="nestedatt--result"></a>
-### Nested Schema for `result`
-
-Read-Only:
 
 - `case_sensitive` (Boolean) Only applies to custom word lists.
 Determines if the words should be matched in a case-sensitive manner
 Cannot be set to false if secret is true
-- `confidence` (Attributes) (see [below for nested schema](#nestedatt--result--confidence))
+- `confidence` (Attributes) (see [below for nested schema](#nestedatt--confidence))
 - `created_at` (String)
 - `enabled` (Boolean)
-- `id` (String)
+- `id` (String) The ID of this resource.
 - `name` (String)
-- `pattern` (Attributes) (see [below for nested schema](#nestedatt--result--pattern))
+- `pattern` (Attributes) (see [below for nested schema](#nestedatt--pattern))
 - `profile_id` (String)
 - `secret` (Boolean)
 - `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
-- `variant` (Attributes) (see [below for nested schema](#nestedatt--result--variant))
+- `variant` (Attributes) (see [below for nested schema](#nestedatt--variant))
 - `word_list` (String)
 
-<a id="nestedatt--result--confidence"></a>
-### Nested Schema for `result.confidence`
+<a id="nestedatt--confidence"></a>
+### Nested Schema for `confidence`
 
 Read-Only:
 
@@ -62,8 +56,8 @@ Read-Only:
 - `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service.
 
 
-<a id="nestedatt--result--pattern"></a>
-### Nested Schema for `result.pattern`
+<a id="nestedatt--pattern"></a>
+### Nested Schema for `pattern`
 
 Read-Only:
 
@@ -71,8 +65,8 @@ Read-Only:
 - `validation` (String, Deprecated) Available values: "luhn".
 
 
-<a id="nestedatt--result--variant"></a>
-### Nested Schema for `result.variant`
+<a id="nestedatt--variant"></a>
+### Nested Schema for `variant`
 
 Read-Only:
 

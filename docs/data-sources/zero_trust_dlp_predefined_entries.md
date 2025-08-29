@@ -1,18 +1,18 @@
 ---
-page_title: "cloudflare_zero_trust_dlp_entries Data Source - Cloudflare"
+page_title: "cloudflare_zero_trust_dlp_predefined_entries Data Source - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_zero_trust_dlp_entries (Data Source)
+# cloudflare_zero_trust_dlp_predefined_entries (Data Source)
 
 
 
 ## Example Usage
 
 ```terraform
-data "cloudflare_zero_trust_dlp_entries" "example_zero_trust_dlp_entries" {
+data "cloudflare_zero_trust_dlp_predefined_entries" "example_zero_trust_dlp_predefined_entries" {
   account_id = "account_id"
 }
 ```

@@ -46,6 +46,7 @@ Available values: "accepted", "pending", "rejected".
 
 Read-Only:
 
+- `email` (String) The contact email address of the user.
 - `id` (String) Membership identifier tag.
 - `policies` (Attributes List) Access policy for the membership (see [below for nested schema](#nestedatt--result--policies))
 - `roles` (Attributes List) Roles assigned to this Member. (see [below for nested schema](#nestedatt--result--roles))

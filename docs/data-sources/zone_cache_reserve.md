@@ -22,15 +22,15 @@ data "cloudflare_zone_cache_reserve" "example_zone_cache_reserve" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
-- `editable` (Boolean) Whether the setting is editable
-- `id` (String) ID of the zone setting.
+- `editable` (Boolean) Whether the setting is editable.
+- `id` (String) The identifier of the caching setting.
 Available values: "cache_reserve".
 - `modified_on` (String) Last time this setting was modified.
-- `value` (String) The value of the feature
+- `value` (String) Value of the Cache Reserve zone setting.
 Available values: "on", "off".
 
 
