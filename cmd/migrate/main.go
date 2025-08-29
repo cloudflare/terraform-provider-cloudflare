@@ -303,6 +303,14 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		body.AppendBlock(block)
 	}
 
+	// Generate moved blocks for policy transitions if we have application-policy mappings
+	if len(applicationPolicyMapping) > 0 {
+		movedBlocks := generateMovedBlocks()
+		for _, block := range movedBlocks {
+			body.AppendBlock(block)
+		}
+	}
+
 	formatted := hclwrite.Format(file.Bytes())
 
 	// Report diagnostics

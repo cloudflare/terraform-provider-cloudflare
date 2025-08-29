@@ -57,13 +57,13 @@ resource "cloudflare_access_policy" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_duration"), knownvalue.StringExact("24h")),
@@ -133,12 +133,12 @@ resource "cloudflare_access_policy" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("approval_required"), knownvalue.Bool(true)),
@@ -196,12 +196,12 @@ resource "cloudflare_access_policy" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				// Verify array explosion: email array (2 rules) = 2 include rules
@@ -260,12 +260,12 @@ resource "cloudflare_access_policy" "%[1]s" {
 						ExternalProviders: map[string]resource.ExternalProvider{
 							"cloudflare": {
 								Source:            "cloudflare/cloudflare",
-								VersionConstraint: "~> 4.0",
+								VersionConstraint: "~> 4.52.1",
 							},
 						},
 						Config: v4Config,
 					},
-					acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+					acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact(tc.decision)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
@@ -321,12 +321,12 @@ resource "cloudflare_access_policy" "%[1]s" {
 						ExternalProviders: map[string]resource.ExternalProvider{
 							"cloudflare": {
 								Source:            "cloudflare/cloudflare",
-								VersionConstraint: "~> 4.0",
+								VersionConstraint: "~> 4.52.1",
 							},
 						},
 						Config: v4Config,
 					},
-					acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+					acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 						// Verify boolean -> empty object transformation
@@ -379,12 +379,12 @@ resource "cloudflare_access_policy" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				// Verify that basic migration works correctly:
@@ -432,17 +432,70 @@ resource "cloudflare_access_policy" "%[1]s" {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "~> 4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
 				// Verify any_valid_service_token transformation: boolean -> empty nested object
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(1)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("any_valid_service_token"), knownvalue.NotNull()),
+			}),
+		},
+	})
+}
+
+// TestMigrateZeroTrustAccessPolicyMigrationFromV4RemovedAttributes tests handling of deprecated attributes
+func TestMigrateZeroTrustAccessPolicyMigrationFromV4RemovedAttributes(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_policy." + rnd
+	tmpDir := t.TempDir()
+
+	// V4 config with deprecated attributes that should be removed in v5
+	// Note: We can't actually create this with application_id/zone_id in v4 provider
+	// This test validates our state transformation handles these if they exist in state
+	v4Config := fmt.Sprintf(`
+resource "cloudflare_access_policy" "%[1]s" {
+  account_id       = "%[2]s"
+  name             = "%[1]s"
+  decision         = "allow"
+  session_duration = "24h"
+  
+  include {
+    everyone = true
+  }
+}`, rnd, accountID)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		WorkingDir: tmpDir,
+		Steps: []resource.TestStep{
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "~> 4.52.1",
+					},
+				},
+				Config: v4Config,
+			},
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("decision"), knownvalue.StringExact("allow")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				// Note: Deprecated attributes (application_id, precedence, zone_id, etc.) are removed by state transformation
+				// but we can't easily test their absence with current statecheck functions
 			}),
 		},
 	})

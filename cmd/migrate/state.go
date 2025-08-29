@@ -60,6 +60,12 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			resourceType = "cloudflare_dns_record"
 		}
 
+		if resourceType == "cloudflare_access_policy" {
+			// Rename cloudflare_access_policy to cloudflare_zero_trust_access_policy
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_policy")
+			resourceType = "cloudflare_zero_trust_access_policy"
+		}
+
 		if resourceType == "cloudflare_access_mutual_tls_hostname_settings" {
 			// Rename to cloudflare_zero_trust_access_mtls_hostname_settings
 			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_mtls_hostname_settings")
@@ -86,6 +92,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			case "cloudflare_zero_trust_access_identity_provider", "cloudflare_access_identity_provider":
 				result = transformZeroTrustAccessIdentityProviderStateJSON(result, path)
 
+			case "cloudflare_zero_trust_access_policy":
+				result = transformZeroTrustAccessPolicyStateJSON(result, path)
+
 			case "cloudflare_managed_transforms":
 				result = transformManagedTransformsStateJSON(result, path)
 
@@ -105,7 +114,6 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 		return true
 	})
-
 
 	// Pretty format with proper indentation
 	return pretty.PrettyOptions([]byte(result), &pretty.Options{
@@ -555,21 +563,283 @@ func transformZeroTrustAccessMTLSHostnameSettingsStateJSON(json string, instance
 	if settings.IsArray() {
 		settings.ForEach(func(idx, setting gjson.Result) bool {
 			settingPath := fmt.Sprintf("%s.settings.%d", attrPath, idx.Int())
-			
+
 			// Ensure china_network has a value (default to false if missing)
 			chinaNetwork := setting.Get("china_network")
 			if !chinaNetwork.Exists() {
 				json, _ = sjson.Set(json, settingPath+".china_network", false)
 			}
-			
+
 			// Ensure client_certificate_forwarding has a value (default to false if missing)
 			clientCertForwarding := setting.Get("client_certificate_forwarding")
 			if !clientCertForwarding.Exists() {
 				json, _ = sjson.Set(json, settingPath+".client_certificate_forwarding", false)
 			}
-			
+
 			return true
 		})
+	}
+
+	return json
+}
+
+// transformZeroTrustAccessPolicyStateJSON handles v4 to v5 state migration for cloudflare_zero_trust_access_policy
+func transformZeroTrustAccessPolicyStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// Remove deprecated attributes that were removed in v4→v5 migration
+	deprecatedAttrs := []string{
+		"application_id", // Critical: policies no longer reference applications directly
+		"precedence",     // Moved to application level
+		"zone_id",        // Only account-level policies supported in v5
+	}
+
+	for _, attr := range deprecatedAttrs {
+		if gjson.Get(json, attrPath+"."+attr).Exists() {
+			json, _ = sjson.Delete(json, attrPath+"."+attr)
+		}
+	}
+
+	// Remove attributes that were removed in v5.7.0
+	laterRemovedAttrs := []string{
+		"app_count",
+		"created_at",
+		"updated_at",
+		"reusable",
+	}
+
+	for _, attr := range laterRemovedAttrs {
+		if gjson.Get(json, attrPath+"."+attr).Exists() {
+			json, _ = sjson.Delete(json, attrPath+"."+attr)
+		}
+	}
+
+	// First, expand any arrays within rule objects to multiple rule objects
+	// This handles cases like: include { email = ["a@x.com", "b@x.com"] } -> include [{ email = {...} }, { email = {...} }]
+	ruleFields := []string{"include", "exclude", "require"}
+	for _, field := range ruleFields {
+		json = expandArraysInRules(json, attrPath+"."+field)
+	}
+
+	// Then transform boolean fields in include/exclude/require arrays
+	// v4 had booleans like "everyone = true", v5 has empty objects like "everyone = {}"
+	for _, field := range ruleFields {
+		rules := gjson.Get(json, attrPath+"."+field)
+		if rules.IsArray() {
+			rules.ForEach(func(idx, rule gjson.Result) bool {
+				if rule.IsObject() {
+					rulePath := fmt.Sprintf("%s.%s.%d", attrPath, field, idx.Int())
+					json = transformRuleBooleans(json, rulePath)
+				}
+				return true
+			})
+		}
+	}
+
+	// Transform block attributes to list attributes
+	// These were converted from blocks to attributes in v5
+	blockToAttrFields := []string{
+		"include",
+		"exclude",
+		"require",
+		"approval_groups", // Note: plural in v5, was "approval_group" in v4
+	}
+
+	for _, field := range blockToAttrFields {
+		blockValue := gjson.Get(json, attrPath+"."+field)
+		if blockValue.IsArray() {
+			// Already transformed by earlier processing or already in v5 format
+			continue
+		}
+		if blockValue.Exists() && blockValue.IsObject() {
+			// Convert single block object to array with one element
+			json, _ = sjson.Set(json, attrPath+"."+field, []interface{}{blockValue.Value()})
+		}
+	}
+
+	// Handle approval_group -> approval_groups rename and conversion
+	approvalGroup := gjson.Get(json, attrPath+".approval_group")
+	if approvalGroup.Exists() {
+		if approvalGroup.IsObject() {
+			// Convert single approval_group block to approval_groups array
+			json, _ = sjson.Set(json, attrPath+".approval_groups", []interface{}{approvalGroup.Value()})
+		} else if approvalGroup.IsArray() && len(approvalGroup.Array()) > 0 {
+			// Convert approval_group array to approval_groups
+			json, _ = sjson.Set(json, attrPath+".approval_groups", approvalGroup.Value())
+		}
+		// Remove the old field
+		json, _ = sjson.Delete(json, attrPath+".approval_group")
+	}
+
+	// Special handling for connection_rules - convert block to object
+	connectionRules := gjson.Get(json, attrPath+".connection_rules")
+	if connectionRules.IsArray() {
+		if len(connectionRules.Array()) == 0 {
+			// Empty array becomes null
+			json, _ = sjson.Delete(json, attrPath+".connection_rules")
+		} else {
+			// Take first element as the object value
+			json, _ = sjson.Set(json, attrPath+".connection_rules", connectionRules.Array()[0].Value())
+		}
+	}
+
+	return json
+}
+
+// transformRuleBooleans handles boolean to empty object transformations in rule conditions
+func transformRuleBooleans(json, rulePath string) string {
+	// Boolean fields that become empty objects when true, get removed when false
+	booleanFields := []string{
+		"everyone",
+		"certificate",
+		"any_valid_service_token",
+	}
+
+	for _, field := range booleanFields {
+		fieldPath := rulePath + "." + field
+		fieldValue := gjson.Get(json, fieldPath)
+
+		if fieldValue.Exists() {
+			if fieldValue.Type == gjson.True {
+				// Convert true to empty object
+				json, _ = sjson.Set(json, fieldPath, map[string]interface{}{})
+			} else if fieldValue.Type == gjson.False {
+				// Remove false values entirely
+				json, _ = sjson.Delete(json, fieldPath)
+			}
+		}
+	}
+
+	// Object fields that should be objects, not arrays (handle v4 array -> v5 object conversion)
+	// Also handle raw string values that need to be wrapped in proper nested object format
+	objectFieldsWithWrappers := map[string]string{
+		"auth_context":        "", // Complex object, handle separately
+		"auth_method":         "auth_method",
+		"azure_ad":            "id",
+		"common_name":         "common_name",
+		"device_posture":      "integration_uid",
+		"email":               "email",
+		"email_domain":        "domain",
+		"email_list":          "id",
+		"external_evaluation": "", // Complex object, handle separately
+		"geo":                 "country_code",
+		"github_organization": "", // Complex object, handle separately
+		"group":               "id",
+		"gsuite":              "email",
+		"ip":                  "ip",
+		"ip_list":             "id",
+		"linked_app_token":    "app_uid",
+		"login_method":        "id",
+		"oidc":                "", // Complex object, handle separately
+		"okta":                "name",
+		"saml":                "", // Complex object, handle separately
+		"service_token":       "token_id",
+	}
+
+	for field, innerKey := range objectFieldsWithWrappers {
+		fieldPath := rulePath + "." + field
+		fieldValue := gjson.Get(json, fieldPath)
+
+		if fieldValue.Exists() {
+			if fieldValue.IsArray() {
+				// Handle array values - expand to multiple objects for v5 format
+				arr := fieldValue.Array()
+				if len(arr) == 0 {
+					// Remove empty arrays
+					json, _ = sjson.Delete(json, fieldPath)
+				} else if len(arr) == 1 && innerKey != "" {
+					// Convert single array element to nested object format
+					// e.g., ["test@example.com"] -> {"email": "test@example.com"}
+					stringVal := arr[0].String()
+					nestedObj := map[string]interface{}{
+						innerKey: stringVal,
+					}
+					json, _ = sjson.Set(json, fieldPath, nestedObj)
+				}
+				// Note: Arrays with multiple elements should be handled by config transformation
+			} else if fieldValue.Type == gjson.String {
+				stringVal := fieldValue.String()
+				if stringVal == "" {
+					// Remove empty strings that should be objects
+					json, _ = sjson.Delete(json, fieldPath)
+				} else if innerKey != "" {
+					// Convert raw string to nested object format
+					// e.g., "test@example.com" -> {"email": "test@example.com"}
+					nestedObj := map[string]interface{}{
+						innerKey: stringVal,
+					}
+					json, _ = sjson.Set(json, fieldPath, nestedObj)
+				}
+				// Complex objects with innerKey == "" are handled separately below
+			} else if fieldValue.Type == gjson.Null {
+				// Remove null values that should be objects
+				json, _ = sjson.Delete(json, fieldPath)
+			}
+		}
+	}
+
+	return json
+}
+
+// expandArraysInRules expands array values within rule objects into multiple rule objects
+// This handles the v4 -> v5 migration where arrays like ["a", "b"] become [{field: "a"}, {field: "b"}]
+func expandArraysInRules(json string, rulesPath string) string {
+	rules := gjson.Get(json, rulesPath)
+	if !rules.IsArray() {
+		return json
+	}
+
+	var expandedRules []interface{}
+
+	rules.ForEach(func(idx, rule gjson.Result) bool {
+		if !rule.IsObject() {
+			return true
+		}
+
+		// Fields that can contain arrays that need expansion
+		arrayFields := map[string]string{
+			"email":        "email",
+			"email_domain": "domain",
+			"ip":           "ip",
+			"geo":          "country_code",
+			"group":        "id",
+			// Add more as needed
+		}
+
+		// Process each array field separately and create individual rules for each value
+		for fieldName, innerKey := range arrayFields {
+			fieldValue := gjson.Get(rule.Raw, fieldName)
+			if fieldValue.IsArray() && len(fieldValue.Array()) > 0 {
+				// Create separate rule objects for each array element
+				for _, arrayItem := range fieldValue.Array() {
+					newRule := map[string]interface{}{
+						fieldName: map[string]interface{}{
+							innerKey: arrayItem.String(),
+						},
+					}
+					expandedRules = append(expandedRules, newRule)
+				}
+			}
+		}
+
+		// Handle boolean fields (everyone, certificate, any_valid_service_token)
+		booleanFields := []string{"everyone", "certificate", "any_valid_service_token"}
+		for _, boolField := range booleanFields {
+			fieldValue := gjson.Get(rule.Raw, boolField)
+			if fieldValue.Type == gjson.True {
+				newRule := map[string]interface{}{
+					boolField: map[string]interface{}{},
+				}
+				expandedRules = append(expandedRules, newRule)
+			}
+		}
+
+		return true
+	})
+
+	// Replace the rules array with the expanded version
+	if len(expandedRules) > 0 {
+		json, _ = sjson.Set(json, rulesPath, expandedRules)
 	}
 
 	return json
