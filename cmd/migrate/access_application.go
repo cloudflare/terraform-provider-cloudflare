@@ -30,11 +30,21 @@ func isAccessApplicationResource(block *hclwrite.Block) bool {
 // Phase 2 - Auto-inject collected policies from access_policy blocks:
 // Before: (no policies attribute, but collected from access_policy blocks)
 // After:  policies = [{id = cloudflare_zero_trust_access_policy.allow.id, precedence = 1}, {id = cloudflare_zero_trust_access_policy.deny.id, precedence = 2}]
+//
+// Phase 3 - Remove unsupported attributes and convert blocks to attributes:
+// Before: domain_type = "public" (removed - not supported in v5)
+// Before: destinations { ... } (converted from blocks to list attribute)
 func transformAccessApplicationBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 	// STEP 1: Auto-populate policies from collected access_policy mappings
 	injectCollectedPolicies(block, diags)
 	
-	// STEP 2: Transform existing attribute formats
+	// STEP 2: Remove unsupported attributes
+	removeUnsupportedAttributes(block)
+	
+	// STEP 3: Convert destinations blocks to list attribute
+	convertDestinationsBlocksToAttribute(block, diags)
+	
+	// STEP 4: Transform existing attribute formats
 	transforms := map[string]ast.ExprTransformer{
 		"policies":       transformPoliciesAttribute,
 		"allowed_idps":   transformSetToListAttribute,
@@ -194,4 +204,113 @@ func transformSetToListAttribute(expr *hclsyntax.Expression, diags ast.Diagnosti
 
 	// If we can't identify the pattern, leave it unchanged
 	// (grit should handle most cases)
+}
+
+// removeUnsupportedAttributes removes attributes that don't exist in v5
+// The domain_type attribute was removed in v5 as it's no longer supported
+func removeUnsupportedAttributes(block *hclwrite.Block) {
+	body := block.Body()
+	
+	// Remove domain_type attribute - not supported in v5
+	body.RemoveAttribute("domain_type")
+}
+
+// convertDestinationsBlocksToAttribute converts destinations blocks to a list attribute
+// This handles the change from:
+//   destinations { ... }
+//   destinations { ... }
+// To:
+//   destinations = [{ ... }, { ... }]
+func convertDestinationsBlocksToAttribute(block *hclwrite.Block, diags ast.Diagnostics) {
+	body := block.Body()
+	
+	// Find all destinations blocks
+	var destBlocks []*hclwrite.Block
+	for _, childBlock := range body.Blocks() {
+		if childBlock.Type() == "destinations" {
+			destBlocks = append(destBlocks, childBlock)
+		}
+	}
+	
+	if len(destBlocks) == 0 {
+		return // No destinations blocks to convert
+	}
+	
+	// Build HCL string for the destinations list attribute
+	var destObjects []string
+	for _, destBlock := range destBlocks {
+		// Convert each block to an object representation
+		objectStr := convertDestinationBlockToObject(destBlock)
+		if objectStr != "" {
+			destObjects = append(destObjects, objectStr)
+		}
+	}
+	
+	if len(destObjects) > 0 {
+		// Create the destinations attribute HCL
+		destAttrHCL := fmt.Sprintf(`destinations = [
+  %s
+]`, strings.Join(destObjects, ",\n  "))
+		
+		// Parse the HCL and extract the attribute
+		file, parseDiags := hclwrite.ParseConfig([]byte(destAttrHCL), "", hcl.InitialPos)
+		if parseDiags.HasErrors() {
+			// If we can't parse, add a warning comment instead
+			body.AppendNewline()
+			commentTokens := []*hclwrite.Token{
+				{Type: hclsyntax.TokenComment, Bytes: []byte("# TODO: Manual migration required for destinations blocks\n")},
+			}
+			body.AppendUnstructuredTokens(commentTokens)
+			return
+		}
+		
+		// Find the destinations attribute in the parsed file and copy it
+		for name, attr := range file.Body().Attributes() {
+			if name == "destinations" {
+				body.SetAttributeRaw("destinations", attr.Expr().BuildTokens(nil))
+				break
+			}
+		}
+	}
+	
+	// Remove all destinations blocks after converting to attribute
+	for _, destBlock := range destBlocks {
+		body.RemoveBlock(destBlock)
+	}
+}
+
+// convertDestinationBlockToObject converts a destinations block to its object representation
+// Converts from:
+//   destinations {
+//     uri = "https://example.com"
+//   }
+// To: 
+//   { uri = "https://example.com" }
+func convertDestinationBlockToObject(block *hclwrite.Block) string {
+	if block == nil {
+		return ""
+	}
+	
+	// Get all attributes from the block
+	attrs := block.Body().Attributes()
+	if len(attrs) == 0 {
+		return "{}" // Empty object
+	}
+	
+	// Build attribute strings
+	var attrStrings []string
+	for name, attr := range attrs {
+		// Get the raw tokens for the expression to preserve references and formatting
+		tokens := attr.Expr().BuildTokens(nil)
+		var exprStr string
+		for _, token := range tokens {
+			exprStr += string(token.Bytes)
+		}
+		attrStrings = append(attrStrings, fmt.Sprintf("    %s = %s", name, exprStr))
+	}
+	
+	// Sort for consistent output
+	sort.Strings(attrStrings)
+	
+	return fmt.Sprintf("{\n%s\n  }", strings.Join(attrStrings, "\n"))
 }

@@ -5,12 +5,13 @@ import (
 	"regexp"
 	"slices"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 var (
@@ -145,8 +146,14 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 
 	// Handle tags order normalization - API returns alphabetically sorted tags
 	// but we want to preserve the user's configuration order
-	if stateApp != nil && !planApp.Tags.IsNull() && !stateApp.Tags.IsNull() && !planApp.Tags.IsUnknown() {
-		normalizeTagsOrder(ctx, &planApp.Tags, stateApp.Tags)
+	if !planApp.Tags.IsNull() && !planApp.Tags.IsUnknown() && configApp != nil && !configApp.Tags.IsNull() {
+		if stateApp != nil && !stateApp.Tags.IsNull() {
+			// Update scenario: preserve state order if same elements
+			normalizeTagsOrder(ctx, &planApp.Tags, stateApp.Tags)
+		} else {
+			// Create scenario: preserve config order
+			normalizeTagsOrder(ctx, &planApp.Tags, configApp.Tags)
+		}
 	}
 
 	res.Plan.Set(ctx, &planApp)
