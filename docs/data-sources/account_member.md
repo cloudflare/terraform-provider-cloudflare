@@ -32,6 +32,7 @@ data "cloudflare_account_member" "example_account_member" {
 
 ### Read-Only
 
+- `email` (String) The contact email address of the user.
 - `id` (String) Membership identifier tag.
 - `policies` (Attributes List) Access policy for the membership (see [below for nested schema](#nestedatt--policies))
 - `roles` (Attributes List) Roles assigned to this Member. (see [below for nested schema](#nestedatt--roles))

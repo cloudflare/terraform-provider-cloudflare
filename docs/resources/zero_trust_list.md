@@ -51,7 +51,7 @@ Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP".
 
 Optional:
 
-- `description` (String) The description of the list item, if present
+- `description` (String) The description of the list item, if present.
 - `value` (String) The value of the item in a list.
 
 ## Import

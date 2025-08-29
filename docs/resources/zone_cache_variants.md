@@ -36,12 +36,12 @@ resource "cloudflare_zone_cache_variants" "example_zone_cache_variants" {
 ### Required
 
 - `value` (Attributes) Value of the zone setting. (see [below for nested schema](#nestedatt--value))
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
-- `editable` (Boolean) Whether the setting is editable
-- `id` (String) Identifier
+- `editable` (Boolean) Whether the setting is editable.
+- `id` (String) Identifier.
 - `modified_on` (String) Last time this setting was modified.
 
 <a id="nestedatt--value"></a>

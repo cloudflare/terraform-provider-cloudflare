@@ -39,13 +39,19 @@ data "cloudflare_workers_scripts" "example_workers_scripts" {
 
 Read-Only:
 
+- `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
+- `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
 - `created_on` (String) When the script was created.
 - `etag` (String) Hashed script content, can be used in a If-None-Match header when updating.
+- `handlers` (List of String) The names of handlers exported as part of the default export.
 - `has_assets` (Boolean) Whether a Worker contains assets.
 - `has_modules` (Boolean) Whether a Worker contains modules.
 - `id` (String) The id of the script in the Workers system. Usually the script name.
+- `last_deployed_from` (String) The client most recently used to deploy this Worker.
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
+- `migration_tag` (String) The tag of the Durable Object migration that was most recently applied for this Worker.
 - `modified_on` (String) When the script was last modified.
+- `named_handlers` (Attributes List) Named exports, such as Durable Object class implementations and named entrypoints. (see [below for nested schema](#nestedatt--result--named_handlers))
 - `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). (see [below for nested schema](#nestedatt--result--placement))
 - `placement_mode` (String, Deprecated) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 Available values: "smart".
@@ -53,7 +59,16 @@ Available values: "smart".
 Available values: "SUCCESS", "UNSUPPORTED_APPLICATION", "INSUFFICIENT_INVOCATIONS".
 - `tail_consumers` (Attributes Set) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--result--tail_consumers))
 - `usage_model` (String) Usage model for the Worker invocations.
-Available values: "standard".
+Available values: "standard", "bundled", "unbound".
+
+<a id="nestedatt--result--named_handlers"></a>
+### Nested Schema for `result.named_handlers`
+
+Read-Only:
+
+- `handlers` (List of String) The names of handlers exported as part of the named export.
+- `name` (String) The name of the export.
+
 
 <a id="nestedatt--result--placement"></a>
 ### Nested Schema for `result.placement`

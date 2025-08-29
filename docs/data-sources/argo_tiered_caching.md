@@ -22,15 +22,15 @@ data "cloudflare_argo_tiered_caching" "example_argo_tiered_caching" {
 
 ### Required
 
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
-- `editable` (Boolean) Whether the setting is editable
-- `id` (String) ID of the zone setting.
+- `editable` (Boolean) Whether the setting is editable.
+- `id` (String) The identifier of the caching setting.
 Available values: "tiered_caching".
 - `modified_on` (String) Last time this setting was modified.
-- `value` (String) The value of the feature
+- `value` (String) Value of the Tiered Cache zone setting.
 Available values: "on", "off".
 
 

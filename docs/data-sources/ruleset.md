@@ -48,6 +48,7 @@ Read-Only:
 - `action` (String) The action to perform when the rule matches.
 Available values: "block", "challenge", "compress_response", "ddos_dynamic", "execute", "force_connection_close", "js_challenge", "log", "log_custom_field", "managed_challenge", "redirect", "rewrite", "route", "score", "serve_error", "set_cache_settings", "set_config", "skip".
 - `action_parameters` (Attributes) The parameters configuring the rule's action. (see [below for nested schema](#nestedatt--rules--action_parameters))
+- `categories` (List of String) The categories of the rule.
 - `description` (String) An informative description of the rule.
 - `enabled` (Boolean) Whether the rule should be executed.
 - `exposed_credential_check` (Attributes) Configuration for exposed credential checking. (see [below for nested schema](#nestedatt--rules--exposed_credential_check))
@@ -448,6 +449,7 @@ Read-Only:
 
 Read-Only:
 
+- `origin` (Boolean) Whether to propagate the rewritten URI to origin.
 - `path` (Attributes) A URI path rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--uri--path))
 - `query` (Attributes) A URI query rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--uri--query))
 

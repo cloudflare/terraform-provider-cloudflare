@@ -28,8 +28,8 @@ data "cloudflare_rulesets" "example_rulesets" {
 
 ### Read-Only
 
-- `result` (Attributes List, Deprecated) A list of rulesets. The returned information will not include the rules in each ruleset. (see [below for nested schema](#nestedatt--result))
-- `rulesets` (Attributes List) A list of rulesets. The returned information will not include the rules in each ruleset. (see [below for nested schema](#nestedatt--rulesets))
+- `result` (Attributes Set, Deprecated) A list of rulesets. The returned information will not include the rules in each ruleset. (see [below for nested schema](#nestedatt--result))
+- `rulesets` (Attributes Set) A list of rulesets. The returned information will not include the rules in each ruleset. (see [below for nested schema](#nestedatt--rulesets))
 
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
@@ -40,9 +40,11 @@ Read-Only:
 - `id` (String, Deprecated) The unique ID of the ruleset.
 - `kind` (String, Deprecated) The kind of the ruleset.
 Available values: "managed", "custom", "root", "zone".
+- `last_updated` (String) The timestamp of when the ruleset was last modified.
 - `name` (String, Deprecated) The human-readable name of the ruleset.
 - `phase` (String, Deprecated) The phase of the ruleset.
 Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_transform", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed", "magic_transit_ratelimit".
+- `version` (String) The version of the ruleset.
 
 
 <a id="nestedatt--rulesets"></a>
@@ -54,8 +56,10 @@ Read-Only:
 - `id` (String) The unique ID of the ruleset.
 - `kind` (String) The kind of the ruleset.
 Available values: "managed", "custom", "root", "zone".
+- `last_updated` (String) The timestamp of when the ruleset was last modified.
 - `name` (String) The human-readable name of the ruleset.
 - `phase` (String) The phase of the ruleset.
 Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_transform", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed", "magic_transit_ratelimit".
+- `version` (String) The version of the ruleset.
 
 
