@@ -52,5 +52,4 @@ snapshot:
   version_template: "{{.ShortCommit}}-dev"
 announce:
   discord:
-    enabled: true
-    message_template: "{{ .ProjectName }} ({{ .Version }}) has been released. See the release notes at {{ .ReleaseURL }}"
+    enabled: false
