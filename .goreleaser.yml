@@ -50,6 +50,3 @@ changelog:
   disable: true
 snapshot:
   version_template: "{{.ShortCommit}}-dev"
-announce:
-  discord:
-    enabled: false
