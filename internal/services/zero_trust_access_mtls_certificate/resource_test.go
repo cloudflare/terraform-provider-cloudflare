@@ -49,9 +49,9 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Access Mutual TLS certificates: %s", err))
 		return err
 	}
-	
+
 	tflog.Info(ctx, fmt.Sprintf("Found %d certificates in account, cleaning all to prevent test conflicts", len(accountCerts)))
-	
+
 	for _, cert := range accountCerts {
 		tflog.Info(ctx, fmt.Sprintf("Deleting certificate: Name=%s, ID=%s, Hostnames=%v", cert.Name, cert.ID, cert.AssociatedHostnames))
 
@@ -150,7 +150,6 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 }
 
 func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
-	t.Skip(`Skipping for API error: "access.api.error.conflict: certificate already exists"`)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -240,7 +239,6 @@ jzhIPJ0iyPgZhFlsHjGxWghkaLqdCdtDOSdb6SepEZHaq32j/A==
 }
 
 func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
-	t.Skip(`Skipping for API error: "access.api.error.conflict: certificate already exists"`)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
