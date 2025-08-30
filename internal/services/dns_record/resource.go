@@ -453,10 +453,18 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 		}
 	}
 
+	// Handle comment_modified_on drift: similar to tags_modified_on
 	commentIsEmpty := plan.Comment.IsNull() || (!plan.Comment.IsUnknown() && plan.Comment.ValueString() == "")
+
 	if commentIsEmpty && plan.CommentModifiedOn.IsUnknown() {
 		// Set comment_modified_on to null when comment is empty, preventing drift
 		plan.CommentModifiedOn = timetypes.NewRFC3339Null()
+	} else if !commentIsEmpty && plan.CommentModifiedOn.IsUnknown() && state != nil {
+		// If comment hasn't changed, preserve comment_modified_on from state
+		if plan.Comment.Equal(state.Comment) {
+			plan.CommentModifiedOn = state.CommentModifiedOn
+		}
+		// Otherwise let it be unknown (will be updated by the API)
 	}
 
 	// Handle tags_modified_on drift: if tags is empty/null, ensure tags_modified_on is null
