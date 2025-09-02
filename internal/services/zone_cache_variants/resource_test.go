@@ -13,6 +13,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 func init() {
 	resource.AddTestSweepers("cloudflare_zone_cache_variants", &resource.Sweeper{
 		Name: "cloudflare_zone_cache_variants",

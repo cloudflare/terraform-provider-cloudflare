@@ -5,22 +5,24 @@ package ruleset
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/rulesets"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type RulesetsResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[RulesetsResultDataSourceModel] `json:"result,computed"`
+	Result customfield.NestedObjectSet[RulesetsRulesetDataSourceModel] `json:"result,computed"`
 }
 
 type RulesetsDataSourceModel struct {
 	AccountID types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID    types.String                                                `tfsdk:"zone_id" path:"zone_id,optional"`
 	MaxItems  types.Int64                                                 `tfsdk:"max_items"`
-	Result    customfield.NestedObjectList[RulesetsResultDataSourceModel] `tfsdk:"result"`
+	Rulesets  customfield.NestedObjectSet[RulesetsRulesetDataSourceModel] `tfsdk:"rulesets"`
+	Result    customfield.NestedObjectSet[RulesetsRulesetDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *RulesetsDataSourceModel) toListParams(_ context.Context) (params rulesets.RulesetListParams, diags diag.Diagnostics) {
@@ -35,10 +37,12 @@ func (m *RulesetsDataSourceModel) toListParams(_ context.Context) (params rulese
 	return
 }
 
-type RulesetsResultDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Kind        types.String `tfsdk:"kind" json:"kind,computed"`
-	Name        types.String `tfsdk:"name" json:"name,computed"`
-	Phase       types.String `tfsdk:"phase" json:"phase,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
+type RulesetsRulesetDataSourceModel struct {
+	ID          types.String      `tfsdk:"id" json:"id,computed"`
+	Kind        types.String      `tfsdk:"kind" json:"kind,computed"`
+	Name        types.String      `tfsdk:"name" json:"name,computed"`
+	Phase       types.String      `tfsdk:"phase" json:"phase,computed"`
+	Description types.String      `tfsdk:"description" json:"description,computed"`
+	LastUpdated timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	Version     types.String      `tfsdk:"version" json:"version,computed"`
 }

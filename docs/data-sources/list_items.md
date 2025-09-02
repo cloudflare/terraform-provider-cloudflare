@@ -15,6 +15,7 @@ description: |-
 data "cloudflare_list_items" "example_list_items" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   list_id = "2c0fc9fa937b11eaa1b71c4d701ab86e"
+  per_page = 1
   search = "1.1.1."
 }
 ```
@@ -24,12 +25,13 @@ data "cloudflare_list_items" "example_list_items" {
 
 ### Required
 
-- `account_id` (String) Defines an identifier.
+- `account_id` (String) The Account ID for this resource.
 - `list_id` (String) The unique ID of the list.
 
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
+- `per_page` (Number) Amount of results to include in each paginated response. A non-negative 32 bit integer.
 - `search` (String) A search query to filter returned items. Its meaning depends on the list type: IP addresses must start with the provided string, hostnames and bulk redirects must contain the string, and ASNs must match the string exactly.
 
 ### Read-Only
@@ -42,10 +44,10 @@ data "cloudflare_list_items" "example_list_items" {
 Read-Only:
 
 - `asn` (Number) Defines a non-negative 32 bit integer.
-- `comment` (String) Defines an informative summary of the list item.
+- `comment` (String) Defines	an informative summary of the list item.
 - `created_on` (String) The RFC 3339 timestamp of when the item was created.
 - `hostname` (Attributes) Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-). (see [below for nested schema](#nestedatt--result--hostname))
-- `id` (String) The unique ID of the list.
+- `id` (String) Defines the unique ID of the item in the List.
 - `ip` (String) An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.
 - `modified_on` (String) The RFC 3339 timestamp of when the item was last modified.
 - `redirect` (Attributes) The definition of the redirect. (see [below for nested schema](#nestedatt--result--redirect))
@@ -55,6 +57,7 @@ Read-Only:
 
 Read-Only:
 
+- `exclude_exact_hostname` (Boolean) Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.
 - `url_hostname` (String)
 
 

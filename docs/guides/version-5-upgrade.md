@@ -9,8 +9,8 @@ description: Terraform Cloudflare Provider Version 5 Upgrade Guide
 Version 5 of the Cloudflare Terraform Provider is a ground-up rewrite of the
 provider, using code generation from our OpenAPI spec. While this introduces
 attribute and resource changes, it moves the provider to align more closely
-with the service endpoints. This allows easier automation of the steps to get
-changes into the provider, lowering the delay between new features and complete
+with the service endpoints. This allows automation the steps to get changes
+into the provider lowering the delay between new features and complete
 coverage.
 
 ## Provider Version Configuration
@@ -270,6 +270,8 @@ cloudflare_terraform_v5()
 - Renamed to `cloudflare_workers_custom_domain`
 
 ## cloudflare_worker_script
+
+!> While this resource is the direct migration path, it is no longer recommended. Please use the `cloudflare_worker`, `cloudflare_worker_version`, and `cloudflare_workers_deployment` resources instead. See how to use them in the [developer documentation](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/).
 
 - Renamed to `cloudflare_workers_script`
 
@@ -857,8 +859,8 @@ This has been removed. Users should instead use the:
 
 ## cloudflare_zone
 
-- Zone subscriptions are now controlled independently using the `cloudflare_zone_subscription` resource so the `plan` attribute has been removed.
-- The `zone` attribute has been renamed to `name`.
+- Zone subscriptions are now controlled independently using `cloudflare_zone_subscription` resource.
+- `zone` is now an `name`.
 
   Before
 
@@ -876,7 +878,7 @@ This has been removed. Users should instead use the:
   }
   ```
 
-- The `account_id` attribute has been replaced with an `account` attribute of type object with the `id` attribute inside.
+- `account_id` is now an `account` object with the `id` attribute inside.
 
   Before
 
@@ -1275,6 +1277,8 @@ resource "cloudflare_list_item" "example" {
 - `rules` is now a list of objects (`rules = [{ ... }]`) instead of multiple block attribute (`rules { ... }`).
 
 ## cloudflare_workers_script
+
+!> While this resource is the direct migration path, it is no longer recommended. Please use the `cloudflare_worker`, `cloudflare_worker_version`, and `cloudflare_workers_deployment` resources instead. See how to use them in the [developer documentation](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/).
 
 - `name` is now `script_name`.
 - `analytics_engine_binding` is now a list of objects (`analytics_engine_binding = [{ ... }]`) instead of multiple block attribute (`analytics_engine_binding { ... }`).

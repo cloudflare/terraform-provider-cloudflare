@@ -15,6 +15,7 @@ description: |-
 data "cloudflare_workers_deployment" "example_workers_deployment" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   script_name = "this-is_my_script-01"
+  deployment_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
 }
 ```
 
@@ -24,35 +25,30 @@ data "cloudflare_workers_deployment" "example_workers_deployment" {
 ### Required
 
 - `account_id` (String) Identifier.
-- `script_name` (String) Name of the script.
+- `deployment_id` (String)
+- `script_name` (String) Name of the script, used in URLs and route configuration.
 
 ### Read-Only
 
-- `deployments` (Attributes List) (see [below for nested schema](#nestedatt--deployments))
-
-<a id="nestedatt--deployments"></a>
-### Nested Schema for `deployments`
-
-Read-Only:
-
-- `annotations` (Attributes) (see [below for nested schema](#nestedatt--deployments--annotations))
+- `annotations` (Attributes) (see [below for nested schema](#nestedatt--annotations))
 - `author_email` (String)
 - `created_on` (String)
-- `id` (String)
+- `id` (String) The ID of this resource.
 - `source` (String)
 - `strategy` (String) Available values: "percentage".
-- `versions` (Attributes List) (see [below for nested schema](#nestedatt--deployments--versions))
+- `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))
 
-<a id="nestedatt--deployments--annotations"></a>
-### Nested Schema for `deployments.annotations`
+<a id="nestedatt--annotations"></a>
+### Nested Schema for `annotations`
 
 Read-Only:
 
 - `workers_message` (String) Human-readable message about the deployment. Truncated to 100 bytes.
+- `workers_triggered_by` (String) Operation that triggered the creation of the deployment.
 
 
-<a id="nestedatt--deployments--versions"></a>
-### Nested Schema for `deployments.versions`
+<a id="nestedatt--versions"></a>
+### Nested Schema for `versions`
 
 Read-Only:
 

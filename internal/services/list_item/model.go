@@ -15,7 +15,7 @@ type ListItemResultEnvelope struct {
 type ListItemModel struct {
 	ListID      types.String                                    `tfsdk:"list_id" path:"list_id,required"`
 	AccountID   types.String                                    `tfsdk:"account_id" path:"account_id,required"`
-	ID          types.String                                    `tfsdk:"id" path:"item_id,computed"`
+	ID          types.String                                    `tfsdk:"id" json:"id,computed" path:"item_id,computed"`
 	ASN         types.Int64                                     `tfsdk:"asn" json:"asn,optional"`
 	Comment     types.String                                    `tfsdk:"comment" json:"comment,optional"`
 	IP          types.String                                    `tfsdk:"ip" json:"ip,optional"`
@@ -48,7 +48,8 @@ func (m ListItemModel) MarshalJSONForUpdate(state ListItemModel) (data []byte, e
 }
 
 type ListItemHostnameModel struct {
-	URLHostname types.String `tfsdk:"url_hostname" json:"url_hostname,required"`
+	URLHostname          types.String `tfsdk:"url_hostname" json:"url_hostname,required"`
+	ExcludeExactHostname types.Bool   `tfsdk:"exclude_exact_hostname" json:"exclude_exact_hostname,optional"`
 }
 
 type ListItemRedirectModel struct {

@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -300,6 +300,7 @@ func (r *ZeroTrustAccessGroupResource) ImportState(ctx context.Context, req reso
 	}
 	data = &env.Result
 
+	resp.Diagnostics.Append(normalizeImportZeroTrustAccessGroupAPIData(ctx, data)...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

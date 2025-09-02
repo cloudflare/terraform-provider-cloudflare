@@ -5,8 +5,8 @@ package zero_trust_access_infrastructure_target
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -38,12 +38,16 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toReadParams(_ cont
 
 func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessInfrastructureTargetListParams, diags diag.Diagnostics) {
 	mFilterIPs := []string{}
-	for _, item := range *m.Filter.IPs {
-		mFilterIPs = append(mFilterIPs, item.ValueString())
+	if m.Filter.IPs != nil {
+		for _, item := range *m.Filter.IPs {
+			mFilterIPs = append(mFilterIPs, item.ValueString())
+		}
 	}
 	mFilterTargetIDs := []string{}
-	for _, item := range *m.Filter.TargetIDs {
-		mFilterTargetIDs = append(mFilterTargetIDs, item.ValueString())
+	if m.Filter.TargetIDs != nil {
+		for _, item := range *m.Filter.TargetIDs {
+			mFilterTargetIDs = append(mFilterTargetIDs, item.ValueString())
+		}
 	}
 	mFilterCreatedAfter, errs := m.Filter.CreatedAfter.ValueRFC3339Time()
 	diags.Append(errs...)

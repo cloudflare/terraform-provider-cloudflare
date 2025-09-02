@@ -5,8 +5,8 @@ package account_dns_settings_internal_view
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/dns"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -24,7 +24,7 @@ type AccountDNSSettingsInternalViewDataSourceModel struct {
 	CreatedTime  timetypes.RFC3339                                       `tfsdk:"created_time" json:"created_time,computed" format:"date-time"`
 	ModifiedTime timetypes.RFC3339                                       `tfsdk:"modified_time" json:"modified_time,computed" format:"date-time"`
 	Name         types.String                                            `tfsdk:"name" json:"name,computed"`
-	Zones        customfield.List[types.String]                          `tfsdk:"zones" json:"zones,computed"`
+	Zones        customfield.Set[types.String]                           `tfsdk:"zones" json:"zones,computed"`
 	Filter       *AccountDNSSettingsInternalViewFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

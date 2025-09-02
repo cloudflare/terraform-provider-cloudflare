@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"settings": schema.SingleNestedAttribute{
-				Description: "Account settings",
+				Description: "Account settings.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
@@ -68,11 +68,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsAntivirusNotificationSettingsDataSourceModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{
-										Description: "Set notification on",
+										Description: "Set notification on.",
 										Computed:    true,
 									},
 									"include_context": schema.BoolAttribute{
-										Description: "If true, context information will be passed as query parameters",
+										Description: "If true, context information will be passed as query parameters.",
 										Computed:    true,
 									},
 									"msg": schema.StringAttribute{
@@ -97,7 +97,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"enabled": schema.BoolAttribute{
-								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
+								Description: "Enable only cipher suites and TLS versions compliant with FIPS. 140-2.",
 								Computed:    true,
 							},
 							"footer_text": schema.StringAttribute{
@@ -125,10 +125,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"mode": schema.StringAttribute{
-								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"customized_block_page\", \"redirect_uri\".",
+								Description: "Controls whether the user is redirected to a Cloudflare-hosted block page or to a customer-provided URI.\nAvailable values: \"\", \"customized_block_page\", \"redirect_uri\".",
 								Computed:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("customized_block_page", "redirect_uri"),
+									stringvalidator.OneOfCaseInsensitive(
+										"",
+										"customized_block_page",
+										"redirect_uri",
+									),
 								},
 							},
 							"name": schema.StringAttribute{
@@ -136,11 +140,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"read_only": schema.BoolAttribute{
-								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
+								Description: "This setting was shared via the Orgs API and cannot be edited by the current account.",
 								Computed:    true,
 							},
 							"source_account": schema.StringAttribute{
-								Description: "Account tag of account that shared this setting",
+								Description: "Account tag of account that shared this setting.",
 								Computed:    true,
 							},
 							"suppress_footer": schema.BoolAttribute{
@@ -151,6 +155,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Description: "If mode is redirect_uri: URI to which the user should be redirected.",
 								Computed:    true,
 							},
+							"version": schema.Int64Attribute{
+								Description: "Version number of the setting.",
+								Computed:    true,
+							},
 						},
 					},
 					"body_scanning": schema.SingleNestedAttribute{
@@ -159,8 +167,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsBodyScanningDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"inspection_mode": schema.StringAttribute{
-								Description: "Set the inspection mode to either `deep` or `shallow`.",
+								Description: "Set the inspection mode to either `deep` or `shallow`.\nAvailable values: \"deep\", \"shallow\".",
 								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("deep", "shallow"),
+								},
 							},
 						},
 					},
@@ -191,13 +202,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"custom_certificate": schema.SingleNestedAttribute{
-						Description:        "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`)",
+						Description:        "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`).",
 						Computed:           true,
 						DeprecationMessage: "This attribute is deprecated.",
 						CustomType:         customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsCustomCertificateDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Enable use of custom certificate authority for signing Gateway traffic.",
+								Description: "Enable use of custom certificate authority for signing Gateway. traffic.",
 								Computed:    true,
 							},
 							"id": schema.StringAttribute{
@@ -224,11 +235,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"read_only": schema.BoolAttribute{
-								Description: "This setting was shared via the Orgs API and cannot be edited by the current account",
+								Description: "This setting was shared via the Orgs API and cannot be edited by the current account.",
 								Computed:    true,
 							},
 							"source_account": schema.StringAttribute{
-								Description: "Account tag of account that shared this setting",
+								Description: "Account tag of account that shared this setting.",
+								Computed:    true,
+							},
+							"version": schema.Int64Attribute{
+								Description: "Version number of the setting.",
 								Computed:    true,
 							},
 						},
@@ -239,7 +254,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsFipsDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"tls": schema.BoolAttribute{
-								Description: "Enable only cipher suites and TLS versions compliant with FIPS 140-2.",
+								Description: "Enable only cipher suites and TLS versions compliant with FIPS. 140-2.",
 								Computed:    true,
 							},
 						},
@@ -252,6 +267,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"enabled": schema.BoolAttribute{
 								Description: "Enable filtering via hosts for egress policies.",
 								Computed:    true,
+							},
+						},
+					},
+					"inspection": schema.SingleNestedAttribute{
+						Description: "Setting to define inspection settings.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsInspectionDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"mode": schema.StringAttribute{
+								Description: "Defines the mode of inspection the proxy will use.\n- static: Gateway will use static inspection to inspect HTTP on TCP(80). If TLS decryption is on, Gateway will inspect HTTPS traffic on TCP(443) & UDP(443).\n- dynamic: Gateway will use protocol detection to dynamically inspect HTTP and HTTPS traffic on any port. TLS decryption must be on to inspect HTTPS traffic.\nAvailable values: \"static\", \"dynamic\".",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("static", "dynamic"),
+								},
 							},
 						},
 					},

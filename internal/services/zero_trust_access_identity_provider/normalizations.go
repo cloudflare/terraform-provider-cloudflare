@@ -2,9 +2,9 @@ package zero_trust_access_identity_provider
 
 import (
 	"context"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
@@ -33,11 +33,16 @@ func normalizeReadZeroTrustIDPScimConfigData(ctx context.Context, dataValue, sta
 		dataScimConfig.Secret = stateScimConfig.Secret
 	}
 
+	// SCIMBaseURL is computed on create but doesn't change - preserve from state
+	if !stateScimConfig.SCIMBaseURL.IsUnknown() && !stateScimConfig.SCIMBaseURL.IsNull() {
+		dataScimConfig.SCIMBaseURL = stateScimConfig.SCIMBaseURL
+	}
+
 	*dataValue, diags = customfield.NewObject[ZeroTrustAccessIdentityProviderSCIMConfigModel](ctx, &dataScimConfig)
 	return diags
 }
 
-func normalizeReadZeroTrustIDPConfigData(ctx context.Context, dataValue *ZeroTrustAccessIdentityProviderModel, stateValue ZeroTrustAccessIdentityProviderModel) diag.Diagnostics {
+func normalizeReadZeroTrustIDPConfigData(_ context.Context, dataValue, stateValue *ZeroTrustAccessIdentityProviderModel) diag.Diagnostics {
 	diag := make(diag.Diagnostics, 0)
 	if dataValue.Config == nil || stateValue.Config == nil {
 		return diag
@@ -47,15 +52,17 @@ func normalizeReadZeroTrustIDPConfigData(ctx context.Context, dataValue *ZeroTru
 	normalizeFalseAndNullBool(&dataValue.Config.ConditionalAccessEnabled, stateValue.Config.ConditionalAccessEnabled)
 	normalizeFalseAndNullBool(&dataValue.Config.SupportGroups, stateValue.Config.SupportGroups)
 
+	if dataValue.Config != nil && stateValue.Config != nil && dataValue.Config.ClientSecret.IsNull() {
+		dataValue.Config.ClientSecret = stateValue.Config.ClientSecret
+	}
+
 	return diag
 }
 
-func normalizeReadZeroTrustIDPData(ctx context.Context, dataValue *ZeroTrustAccessIdentityProviderModel, state *tfsdk.State) diag.Diagnostics {
+func normalizeReadZeroTrustIDPData(ctx context.Context, dataValue, stateValue *ZeroTrustAccessIdentityProviderModel) diag.Diagnostics {
 	var (
-		diags      = make(diag.Diagnostics, 0)
-		stateValue ZeroTrustAccessIdentityProviderModel
+		diags = make(diag.Diagnostics, 0)
 	)
-	d := state.Get(ctx, &stateValue)
 
 	diags.Append(normalizeReadZeroTrustIDPConfigData(ctx, dataValue, stateValue)...)
 	if diags.HasError() {
@@ -69,22 +76,6 @@ func normalizeReadZeroTrustIDPData(ctx context.Context, dataValue *ZeroTrustAcce
 		if diags.HasError() {
 			return diags
 		}
-	}
-
-	return d
-}
-
-// Some fields are write-only sensitive and should not be stored in the state.
-// Usually these secrets are injected in the config from a secret store.
-func loadConfigSensitiveValuesForWriting(ctx context.Context, data *ZeroTrustAccessIdentityProviderModel, cfg *tfsdk.Config) diag.Diagnostics {
-	var (
-		diags   = make(diag.Diagnostics, 0)
-		cfgData *ZeroTrustAccessIdentityProviderModel
-	)
-	diags.Append(cfg.Get(ctx, &cfgData)...)
-
-	if data.Config != nil && cfgData.Config != nil {
-		data.Config.ClientSecret = cfgData.Config.ClientSecret
 	}
 
 	return diags

@@ -5,8 +5,8 @@ package list_item
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/rules"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -19,6 +19,7 @@ type ListItemsResultListDataSourceEnvelope struct {
 type ListItemsDataSourceModel struct {
 	AccountID types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
 	ListID    types.String                                                 `tfsdk:"list_id" path:"list_id,required"`
+	PerPage   types.Int64                                                  `tfsdk:"per_page" query:"per_page,optional"`
 	Search    types.String                                                 `tfsdk:"search" query:"search,optional"`
 	MaxItems  types.Int64                                                  `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ListItemsResultDataSourceModel] `tfsdk:"result"`
@@ -29,6 +30,9 @@ func (m *ListItemsDataSourceModel) toListParams(_ context.Context) (params rules
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
+	if !m.PerPage.IsNull() {
+		params.PerPage = cloudflare.F(m.PerPage.ValueInt64())
+	}
 	if !m.Search.IsNull() {
 		params.Search = cloudflare.F(m.Search.ValueString())
 	}
@@ -38,17 +42,18 @@ func (m *ListItemsDataSourceModel) toListParams(_ context.Context) (params rules
 
 type ListItemsResultDataSourceModel struct {
 	ID         types.String                                               `tfsdk:"id" json:"id,computed"`
-	ASN        types.Int64                                                `tfsdk:"asn" json:"asn,computed"`
-	Comment    types.String                                               `tfsdk:"comment" json:"comment,computed"`
 	CreatedOn  types.String                                               `tfsdk:"created_on" json:"created_on,computed"`
-	Hostname   customfield.NestedObject[ListItemsHostnameDataSourceModel] `tfsdk:"hostname" json:"hostname,computed"`
 	IP         types.String                                               `tfsdk:"ip" json:"ip,computed"`
 	ModifiedOn types.String                                               `tfsdk:"modified_on" json:"modified_on,computed"`
+	Comment    types.String                                               `tfsdk:"comment" json:"comment,computed"`
+	Hostname   customfield.NestedObject[ListItemsHostnameDataSourceModel] `tfsdk:"hostname" json:"hostname,computed"`
 	Redirect   customfield.NestedObject[ListItemsRedirectDataSourceModel] `tfsdk:"redirect" json:"redirect,computed"`
+	ASN        types.Int64                                                `tfsdk:"asn" json:"asn,computed"`
 }
 
 type ListItemsHostnameDataSourceModel struct {
-	URLHostname types.String `tfsdk:"url_hostname" json:"url_hostname,computed"`
+	URLHostname          types.String `tfsdk:"url_hostname" json:"url_hostname,computed"`
+	ExcludeExactHostname types.Bool   `tfsdk:"exclude_exact_hostname" json:"exclude_exact_hostname,computed"`
 }
 
 type ListItemsRedirectDataSourceModel struct {

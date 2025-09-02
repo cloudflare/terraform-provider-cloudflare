@@ -5,8 +5,8 @@ package zero_trust_tunnel_cloudflared
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -81,6 +81,7 @@ func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Cont
 type ZeroTrustTunnelCloudflaredsResultDataSourceModel struct {
 	ID              types.String                                                                        `tfsdk:"id" json:"id,computed"`
 	AccountTag      types.String                                                                        `tfsdk:"account_tag" json:"account_tag,computed"`
+	ConfigSrc       types.String                                                                        `tfsdk:"config_src" json:"config_src,computed"`
 	Connections     customfield.NestedObjectList[ZeroTrustTunnelCloudflaredsConnectionsDataSourceModel] `tfsdk:"connections" json:"connections,computed"`
 	ConnsActiveAt   timetypes.RFC3339                                                                   `tfsdk:"conns_active_at" json:"conns_active_at,computed" format:"date-time"`
 	ConnsInactiveAt timetypes.RFC3339                                                                   `tfsdk:"conns_inactive_at" json:"conns_inactive_at,computed" format:"date-time"`

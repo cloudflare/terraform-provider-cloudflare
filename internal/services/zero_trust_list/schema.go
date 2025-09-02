@@ -46,17 +46,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the list.",
 				Required:    true,
 			},
-			"description": schema.StringAttribute{
-				Description: "The description of the list.",
-				Optional:    true,
-			},
-			"items": schema.ListNestedAttribute{
+			"items": schema.SetNestedAttribute{
 				Description: "items to add to the list.",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"description": schema.StringAttribute{
-							Description: "The description of the list item, if present",
+							Description: "The description of the list item, if present.",
 							Optional:    true,
 						},
 						"value": schema.StringAttribute{
@@ -65,6 +61,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"description": schema.StringAttribute{
+				Description: "The description of the list.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,

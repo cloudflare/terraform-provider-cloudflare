@@ -47,6 +47,52 @@ func TestAccCloudflareFallbackDomain_CustomWithAttachedPolicy(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareFallbackDomain_MultipleDomains(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_device_custom_profile_local_domain_fallback.%s", rnd)
+	randomPrecedence := rand.Intn(30)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareFallbackDomain_MultipleDomains(rnd, accountID, randomPrecedence),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "domains.#", "4"),
+					resource.TestCheckResourceAttrSet(name, "policy_id"),
+				),
+			},
+			{
+				Config: testAccCloudflareFallbackDomain_MultipleDomainsUpdated(rnd, accountID, randomPrecedence),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "domains.#", "3"),
+					resource.TestCheckResourceAttrSet(name, "policy_id"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCloudflareFallbackDomain(rnd, accountID, description string, suffix string, dns_server string, precedence int) string {
 	return acctest.LoadTestCase("fallbackdomain.tf", rnd, accountID, description, suffix, dns_server, precedence)
+}
+
+func testAccCloudflareFallbackDomain_MultipleDomains(rnd, accountID string, precedence int) string {
+	return acctest.LoadTestCase("fallbackdomain_multiple-domains.tf", rnd, accountID, precedence)
+}
+func testAccCloudflareFallbackDomain_MultipleDomainsUpdated(rnd, accountID string, precedence int) string {
+	return acctest.LoadTestCase("fallbackdomain_multiple-domains_updated.tf", rnd, accountID, precedence)
 }

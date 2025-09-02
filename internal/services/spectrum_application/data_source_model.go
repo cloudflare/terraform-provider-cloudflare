@@ -5,8 +5,8 @@ package spectrum_application
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/spectrum"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/spectrum"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -33,7 +33,7 @@ type SpectrumApplicationDataSourceModel struct {
 	DNS              customfield.NestedObject[SpectrumApplicationDNSDataSourceModel]       `tfsdk:"dns" json:"dns,computed"`
 	EdgeIPs          customfield.NestedObject[SpectrumApplicationEdgeIPsDataSourceModel]   `tfsdk:"edge_ips" json:"edge_ips,computed"`
 	OriginDNS        customfield.NestedObject[SpectrumApplicationOriginDNSDataSourceModel] `tfsdk:"origin_dns" json:"origin_dns,computed"`
-	OriginPort       types.Dynamic                                                         `tfsdk:"origin_port" json:"origin_port,computed"`
+	OriginPort       customfield.NormalizedDynamicValue                                    `tfsdk:"origin_port" json:"origin_port,computed"`
 }
 
 func (m *SpectrumApplicationDataSourceModel) toReadParams(_ context.Context) (params spectrum.AppGetParams, diags diag.Diagnostics) {

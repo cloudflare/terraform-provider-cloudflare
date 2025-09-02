@@ -5,8 +5,8 @@ package magic_wan_gre_tunnel
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -37,12 +37,32 @@ type MagicWANGRETunnelGRETunnelDataSourceModel struct {
 	CustomerGREEndpoint   types.String                                                                   `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,computed"`
 	InterfaceAddress      types.String                                                                   `tfsdk:"interface_address" json:"interface_address,computed"`
 	Name                  types.String                                                                   `tfsdk:"name" json:"name,computed"`
+	BGP                   customfield.NestedObject[MagicWANGRETunnelGRETunnelBGPDataSourceModel]         `tfsdk:"bgp" json:"bgp,computed"`
+	BGPStatus             customfield.NestedObject[MagicWANGRETunnelGRETunnelBGPStatusDataSourceModel]   `tfsdk:"bgp_status" json:"bgp_status,computed"`
 	CreatedOn             timetypes.RFC3339                                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description           types.String                                                                   `tfsdk:"description" json:"description,computed"`
 	HealthCheck           customfield.NestedObject[MagicWANGRETunnelGRETunnelHealthCheckDataSourceModel] `tfsdk:"health_check" json:"health_check,computed"`
+	InterfaceAddress6     types.String                                                                   `tfsdk:"interface_address6" json:"interface_address6,computed"`
 	ModifiedOn            timetypes.RFC3339                                                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Mtu                   types.Int64                                                                    `tfsdk:"mtu" json:"mtu,computed"`
 	TTL                   types.Int64                                                                    `tfsdk:"ttl" json:"ttl,computed"`
+}
+
+type MagicWANGRETunnelGRETunnelBGPDataSourceModel struct {
+	CustomerASN   types.Int64                    `tfsdk:"customer_asn" json:"customer_asn,computed"`
+	ExtraPrefixes customfield.List[types.String] `tfsdk:"extra_prefixes" json:"extra_prefixes,computed"`
+	Md5Key        types.String                   `tfsdk:"md5_key" json:"md5_key,computed"`
+}
+
+type MagicWANGRETunnelGRETunnelBGPStatusDataSourceModel struct {
+	State               types.String      `tfsdk:"state" json:"state,computed"`
+	TCPEstablished      types.Bool        `tfsdk:"tcp_established" json:"tcp_established,computed"`
+	UpdatedAt           timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	BGPState            types.String      `tfsdk:"bgp_state" json:"bgp_state,computed"`
+	CfSpeakerIP         types.String      `tfsdk:"cf_speaker_ip" json:"cf_speaker_ip,computed"`
+	CfSpeakerPort       types.Int64       `tfsdk:"cf_speaker_port" json:"cf_speaker_port,computed"`
+	CustomerSpeakerIP   types.String      `tfsdk:"customer_speaker_ip" json:"customer_speaker_ip,computed"`
+	CustomerSpeakerPort types.Int64       `tfsdk:"customer_speaker_port" json:"customer_speaker_port,computed"`
 }
 
 type MagicWANGRETunnelGRETunnelHealthCheckDataSourceModel struct {

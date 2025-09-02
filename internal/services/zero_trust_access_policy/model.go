@@ -4,6 +4,7 @@ package zero_trust_access_policy
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -12,19 +13,19 @@ type ZeroTrustAccessPolicyResultEnvelope struct {
 }
 
 type ZeroTrustAccessPolicyModel struct {
-	ID                           types.String                                 `tfsdk:"id" json:"id,computed"`
-	AccountID                    types.String                                 `tfsdk:"account_id" path:"account_id,required"`
-	Decision                     types.String                                 `tfsdk:"decision" json:"decision,required"`
-	Name                         types.String                                 `tfsdk:"name" json:"name,required"`
-	ApprovalRequired             types.Bool                                   `tfsdk:"approval_required" json:"approval_required,optional"`
-	IsolationRequired            types.Bool                                   `tfsdk:"isolation_required" json:"isolation_required,optional"`
-	PurposeJustificationPrompt   types.String                                 `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,optional"`
-	PurposeJustificationRequired types.Bool                                   `tfsdk:"purpose_justification_required" json:"purpose_justification_required,optional"`
-	ApprovalGroups               *[]*ZeroTrustAccessPolicyApprovalGroupsModel `tfsdk:"approval_groups" json:"approval_groups,optional"`
-	SessionDuration              types.String                                 `tfsdk:"session_duration" json:"session_duration,computed_optional"`
-	Exclude                      *[]*ZeroTrustAccessPolicyExcludeModel        `tfsdk:"exclude" json:"exclude,optional"`
-	Include                      *[]*ZeroTrustAccessPolicyIncludeModel        `tfsdk:"include" json:"include,optional"`
-	Require                      *[]*ZeroTrustAccessPolicyRequireModel        `tfsdk:"require" json:"require,optional"`
+	ID                           types.String                                                   `tfsdk:"id" json:"id,computed"`
+	AccountID                    types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
+	Decision                     types.String                                                   `tfsdk:"decision" json:"decision,required"`
+	Name                         types.String                                                   `tfsdk:"name" json:"name,required"`
+	ApprovalRequired             types.Bool                                                     `tfsdk:"approval_required" json:"approval_required,optional"`
+	IsolationRequired            types.Bool                                                     `tfsdk:"isolation_required" json:"isolation_required,optional"`
+	PurposeJustificationPrompt   types.String                                                   `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,optional"`
+	PurposeJustificationRequired types.Bool                                                     `tfsdk:"purpose_justification_required" json:"purpose_justification_required,optional"`
+	ApprovalGroups               *[]*ZeroTrustAccessPolicyApprovalGroupsModel                   `tfsdk:"approval_groups" json:"approval_groups,optional"`
+	SessionDuration              types.String                                                   `tfsdk:"session_duration" json:"session_duration,computed_optional"`
+	Exclude                      customfield.NestedObjectSet[ZeroTrustAccessPolicyExcludeModel] `tfsdk:"exclude" json:"exclude,computed_optional"`
+	Include                      customfield.NestedObjectSet[ZeroTrustAccessPolicyIncludeModel] `tfsdk:"include" json:"include,computed_optional"`
+	Require                      customfield.NestedObjectSet[ZeroTrustAccessPolicyRequireModel] `tfsdk:"require" json:"require,computed_optional"`
 }
 
 func (m ZeroTrustAccessPolicyModel) MarshalJSON() (data []byte, err error) {
@@ -65,6 +66,7 @@ type ZeroTrustAccessPolicyExcludeModel struct {
 	SAML                 *ZeroTrustAccessPolicyExcludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
 	OIDC                 *ZeroTrustAccessPolicyExcludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessPolicyExcludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
+	LinkedAppToken       *ZeroTrustAccessPolicyExcludeLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeGroupModel struct {
@@ -168,6 +170,10 @@ type ZeroTrustAccessPolicyExcludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
 
+type ZeroTrustAccessPolicyExcludeLinkedAppTokenModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
+}
+
 type ZeroTrustAccessPolicyIncludeModel struct {
 	Group                *ZeroTrustAccessPolicyIncludeGroupModel                `tfsdk:"group" json:"group,optional"`
 	AnyValidServiceToken *ZeroTrustAccessPolicyIncludeAnyValidServiceTokenModel `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
@@ -192,6 +198,7 @@ type ZeroTrustAccessPolicyIncludeModel struct {
 	SAML                 *ZeroTrustAccessPolicyIncludeSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
 	OIDC                 *ZeroTrustAccessPolicyIncludeOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessPolicyIncludeServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
+	LinkedAppToken       *ZeroTrustAccessPolicyIncludeLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 }
 
 type ZeroTrustAccessPolicyIncludeGroupModel struct {
@@ -295,6 +302,10 @@ type ZeroTrustAccessPolicyIncludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
 
+type ZeroTrustAccessPolicyIncludeLinkedAppTokenModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
+}
+
 type ZeroTrustAccessPolicyRequireModel struct {
 	Group                *ZeroTrustAccessPolicyRequireGroupModel                `tfsdk:"group" json:"group,optional"`
 	AnyValidServiceToken *ZeroTrustAccessPolicyRequireAnyValidServiceTokenModel `tfsdk:"any_valid_service_token" json:"any_valid_service_token,optional"`
@@ -319,6 +330,7 @@ type ZeroTrustAccessPolicyRequireModel struct {
 	SAML                 *ZeroTrustAccessPolicyRequireSAMLModel                 `tfsdk:"saml" json:"saml,optional"`
 	OIDC                 *ZeroTrustAccessPolicyRequireOIDCModel                 `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken         *ZeroTrustAccessPolicyRequireServiceTokenModel         `tfsdk:"service_token" json:"service_token,optional"`
+	LinkedAppToken       *ZeroTrustAccessPolicyRequireLinkedAppTokenModel       `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 }
 
 type ZeroTrustAccessPolicyRequireGroupModel struct {
@@ -420,4 +432,8 @@ type ZeroTrustAccessPolicyRequireOIDCModel struct {
 
 type ZeroTrustAccessPolicyRequireServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
+}
+
+type ZeroTrustAccessPolicyRequireLinkedAppTokenModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
 }

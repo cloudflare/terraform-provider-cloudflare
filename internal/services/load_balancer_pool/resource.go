@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/load_balancers"
-	"github.com/cloudflare/cloudflare-go/v4/option"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -140,6 +140,10 @@ func (r *LoadBalancerPoolResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 	data = &env.Result
+
+	// Reset created_on to the value from state
+	// The API seems to return 0001-01-01T00:00:00Z on update
+	data.CreatedOn = state.CreatedOn
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

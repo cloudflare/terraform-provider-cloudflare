@@ -15,10 +15,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	ds "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	rs "github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 var _ codingerror = (*mismatch)(nil)
+var _ codingerror = (*missing)(nil)
 var _ codingerror = (*bug)(nil)
 var _ error = (*codingerrors)(nil)
 var _ attrlike = (*att)(nil)
@@ -29,31 +33,42 @@ type codingerror interface {
 	id() string
 }
 
+type path []string
+
 type attrlike interface {
 	val() any
 	tag() string
-	custom([]string) any
+	custom(path) any
 }
 
 type bug struct {
-	path []string
+	path path
 	msg  string
 }
 
+type missing struct {
+	path path
+	kind string
+	what string
+}
+
 type mismatch struct {
-	path     []string
+	path     path
 	expected string
 	tagging  bool
 	tags     string
 	actual   reflect.Type
 }
 
-func pathName(path []string) string {
+func (path path) pathName() string {
 	return "." + strings.Join(path, ".")
 }
 
 func (e *bug) Error() string {
 	return fmt.Sprintf("bug at %q: %q", e.id(), e.msg)
+}
+func (e *missing) Error() string {
+	return fmt.Sprintf("missing at %q on %s: %q", e.id(), e.kind, e.what)
 }
 func (e *mismatch) Error() string {
 	found := "<MISSING>"
@@ -69,10 +84,13 @@ func (e *mismatch) Error() string {
 }
 
 func (e *bug) id() string {
-	return pathName(e.path)
+	return e.path.pathName()
+}
+func (e *missing) id() string {
+	return e.path.pathName()
 }
 func (e *mismatch) id() string {
-	return pathName(e.path)
+	return e.path.pathName()
 }
 
 type codingerrors []codingerror
@@ -107,6 +125,9 @@ func (errs *codingerrors) Report(t *testing.T) {
 	for _, err := range *errs {
 		t.Error(err.Error())
 	}
+	if len(*errs) > 0 {
+		t.Logf("If you are implementing a custom solution, you can suppress these warning(s) by adding the following to the test, as an example:\n + errs.Ignore(%q)\n", (*errs)[0].id())
+	}
 }
 
 type att struct{ v attr.Type }
@@ -139,10 +160,10 @@ func (a *attri) tag() string {
 	}
 }
 
-func (a *att) custom(_ []string) any {
+func (a *att) custom(path) any {
 	return nil
 }
-func (a *attri) custom(path []string) any {
+func (a *attri) custom(path path) any {
 	switch v := (a.v).(type) {
 	case ds.BoolAttribute:
 		return v.CustomType
@@ -210,7 +231,7 @@ func (a *attri) custom(path []string) any {
 		return v.CustomType
 
 	default:
-		log.Printf("custom: Unexpected attribute type at %q: %T", pathName(path), v)
+		log.Printf("custom: Unexpected attribute type at %q: %T", path.pathName(), v)
 		return nil
 	}
 }
@@ -257,10 +278,8 @@ func checkTag(path []string, attr attrlike, field reflect.StructField) (errs cod
 	if !tagged {
 		return
 	}
-	for _, t := range tags {
-		if t == tag {
-			return
-		}
+	if slices.Contains(tags, tag) {
+		return
 	}
 	return codingerrors{&mismatch{path: path, expected: tag, tagging: true, tags: strings.Join(tags, ",")}}
 }
@@ -332,7 +351,7 @@ func checkMapKeys(path []string, model reflect.Type) (errs codingerrors) {
 	return
 }
 
-func walkCollection(path []string, collection attr.TypeWithElementType, kind reflect.Kind, model reflect.Type) (errs codingerrors) {
+func walkCollection(path path, collection attr.TypeWithElementType, kind reflect.Kind, model reflect.Type) (errs codingerrors) {
 	model = deref(model)
 	idx, exp, eltype := "[]", "List[T]", collection.ElementType()
 	bstype, reflectype := reflect.TypeOf((*basetypes.ListValuable)(nil)), reflect.Slice
@@ -341,15 +360,15 @@ func walkCollection(path []string, collection attr.TypeWithElementType, kind ref
 		return append(errs, &bug{path: path, msg: "walkCollection: Unexpected nil ElementType"})
 	}
 	switch t := collection.(type) {
-	case basetypes.ListType:
-	case basetypes.SetType:
+	case basetypes.ListTypable:
+	case basetypes.SetTypable:
 		idx, exp = "<>", "Set<T>"
 		bstype = reflect.TypeOf((*basetypes.SetValuable)(nil))
-	case basetypes.MapType:
+	case basetypes.MapTypable:
 		idx, exp, reflectype = "{}", "Map{T}", reflect.Map
 		bstype = reflect.TypeOf((*basetypes.MapValuable)(nil))
 	default:
-		log.Printf("walkCollection: Unexpected attribute type at %q: %T", pathName(path), t)
+		log.Printf("walkCollection: Unexpected attribute type at %q: %T", path.pathName(), t)
 		return
 	}
 
@@ -364,7 +383,7 @@ func walkCollection(path []string, collection attr.TypeWithElementType, kind ref
 	return append(errs, walk(append(path, idx), &att{eltype}, model)...)
 }
 
-func walkAttriCollection(path []string, attribute ds.Attribute, kind reflect.Kind, model reflect.Type) (errs codingerrors) {
+func walkAttriCollection(path path, attribute ds.Attribute, kind reflect.Kind, model reflect.Type) (errs codingerrors) {
 	model = deref(model)
 	idx, exp, eltype := "[]", "List[T]", (attr.Type)(nil)
 	bstype, reflectype := reflect.TypeOf((*basetypes.ListValuable)(nil)), reflect.Slice
@@ -387,7 +406,7 @@ func walkAttriCollection(path []string, attribute ds.Attribute, kind reflect.Kin
 		idx, exp, eltype = "{}", "Map{T}", t.ElementType
 		bstype, reflectype = reflect.TypeOf((*basetypes.MapValuable)(nil)), reflect.Map
 	default:
-		log.Printf("walkAttriCollection: Unexpected attribute type at %q: %T", pathName(path), t)
+		log.Printf("walkAttriCollection: Unexpected attribute type at %q: %T", path.pathName(), t)
 		return
 	}
 
@@ -415,7 +434,7 @@ func walkAttriCollection(path []string, attribute ds.Attribute, kind reflect.Kin
 	return append(errs, walk(append(path, idx), &att{eltype}, model)...)
 }
 
-func walkNested(path []string, attribute ds.NestedAttribute, kind reflect.Kind, model reflect.Type) (errs codingerrors) {
+func walkNested(path path, attribute ds.NestedAttribute, kind reflect.Kind, model reflect.Type) (errs codingerrors) {
 	model = deref(model)
 	idx, exp := []string{}, "{...}"
 	basetype, reflectype := reflect.TypeOf((*basetypes.ObjectValuable)(nil)), reflect.Struct
@@ -432,7 +451,7 @@ func walkNested(path []string, attribute ds.NestedAttribute, kind reflect.Kind, 
 		basetype, reflectype = reflect.TypeOf((*basetypes.MapValuable)(nil)), reflect.Map
 		idx, exp = []string{"{}"}, "Map{...}"
 	default:
-		log.Printf("walkNested: Unexpected attribute type %q: %T", pathName(path), a)
+		log.Printf("walkNested: Unexpected attribute type %q: %T", path.pathName(), a)
 		return
 	}
 
@@ -455,14 +474,22 @@ func walkNested(path []string, attribute ds.NestedAttribute, kind reflect.Kind, 
 	return append(errs, walkAttributes(append(path, idx...), model, attributes)...)
 }
 
-func walk(path []string, attribute attrlike, model reflect.Type) (errs codingerrors) {
+func walk(path path, attribute attrlike, model reflect.Type) (errs codingerrors) {
 	model = deref(model)
 	kind := model.Kind()
 
 	switch a := attribute.val().(type) {
 	case ds.DynamicAttribute, rs.DynamicAttribute:
-		if !model.ConvertibleTo(reflect.TypeOf(basetypes.DynamicValue{})) {
+		if !model.Implements(reflect.TypeOf((*basetypes.DynamicValuable)(nil)).Elem()) {
 			return append(errs, &mismatch{path: path, expected: "Dynamic", actual: model})
+		}
+		if at, ok := a.(rs.DynamicAttribute); ok {
+			if !slices.ContainsFunc(at.PlanModifiers, func(m planmodifier.Dynamic) bool {
+				_, ok := m.(customfield.NormalizingDynamicPlanModifier)
+				return ok
+			}) {
+				return append(errs, &missing{path: path, kind: "schema", what: "PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()}"})
+			}
 		}
 	case ds.BoolAttribute, rs.BoolAttribute, basetypes.BoolType:
 		if model.Implements(reflect.TypeOf((*basetypes.BoolValuable)(nil)).Elem()) {
@@ -532,7 +559,7 @@ func walk(path []string, attribute attrlike, model reflect.Type) (errs codingerr
 	case ds.SingleNestedAttribute, ds.ListNestedAttribute, ds.MapNestedAttribute, ds.SetNestedAttribute, rs.SingleNestedAttribute, rs.SetNestedAttribute, rs.ListNestedAttribute, rs.MapNestedAttribute:
 		return append(errs, walkNested(path, a.(ds.NestedAttribute), kind, model)...)
 	default:
-		log.Printf("walk: Unexpected attribute type at %q: %T", pathName(path), a)
+		log.Printf("walk: Unexpected attribute type at %q: %T", path.pathName(), a)
 	}
 
 	return

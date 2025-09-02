@@ -30,6 +30,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "If `true`, only include the default virtual network. If `false`, exclude the default virtual network. If empty, all virtual networks will be included.",
 				Optional:    true,
 			},
+			"is_default_network": schema.BoolAttribute{
+				Description: "If `true`, only include the default virtual network. If `false`, exclude the default virtual network. If empty, all virtual networks will be included.",
+				Optional:    true,
+			},
 			"is_deleted": schema.BoolAttribute{
 				Description: "If `true`, only include deleted virtual networks. If `false`, exclude deleted virtual networks. If empty, all virtual networks will be included.",
 				Optional:    true,

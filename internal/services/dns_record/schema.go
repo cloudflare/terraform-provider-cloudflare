@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -19,6 +20,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 var _ resource.ResourceWithConfigValidators = (*DNSRecordResource)(nil)
@@ -96,9 +98,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				Attributes: map[string]schema.Attribute{
-					"flags": schema.Float64Attribute{
+					"flags": schema.DynamicAttribute{
 						Description: "Flags for the CAA record.",
 						Optional:    true,
+						Validators: []validator.Dynamic{
+							customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
+						},
+						CustomType:    customfield.NormalizedDynamicType{},
+						PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()},
 					},
 					"tag": schema.StringAttribute{
 						Description: "Name of the property controlled by this record (e.g.: issue, issuewild, iodef).",
@@ -156,14 +163,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"priority": schema.Float64Attribute{
-						Description: "priority.",
+						Description: "Priority.",
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 65535),
 						},
 					},
 					"target": schema.StringAttribute{
-						Description: "target.",
+						Description: "Target.",
 						Optional:    true,
 					},
 					"altitude": schema.Float64Attribute{
@@ -312,7 +319,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"fingerprint": schema.StringAttribute{
-						Description: "fingerprint.",
+						Description: "Fingerprint.",
 						Optional:    true,
 					},
 				},
@@ -327,11 +334,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
 				Required:    true,
 			},
-			"tags": schema.ListAttribute{
+			"tags": schema.SetAttribute{
 				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
 				Optional:    true,
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"settings": schema.SingleNestedAttribute{

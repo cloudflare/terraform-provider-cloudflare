@@ -6,6 +6,7 @@ import (
 
 	ds "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	rs "github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -66,6 +67,7 @@ type custype struct {
 	F customfield.NestedObjectList[reallysimple]            `tfsdk:"F"`
 	G customfield.NestedObjectSet[reallysimple]             `tfsdk:"G"`
 	H customfield.NestedObjectMap[reallysimple]             `tfsdk:"H"`
+	I customfield.NormalizedDynamicValue                    `tfsdk:"I"`
 }
 
 var ctx = context.TODO()
@@ -168,7 +170,9 @@ var datasourceTests = map[string]struct {
 		(*bstype)(nil),
 		ds.Schema{
 			Attributes: map[string]ds.Attribute{
-				"A": rs.DynamicAttribute{},
+				"A": rs.DynamicAttribute{
+					PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()},
+				},
 				"B": rs.BoolAttribute{},
 				"C": rs.Int64Attribute{},
 				"D": rs.Float64Attribute{},
@@ -261,6 +265,9 @@ var datasourceTests = map[string]struct {
 							"B": ds.Int64Attribute{},
 						},
 					},
+				},
+				"I": ds.DynamicAttribute{
+					CustomType: customfield.NormalizedDynamicType{},
 				},
 			},
 		},
@@ -458,6 +465,12 @@ var resourceTests = map[string]struct {
 							"A": ds.BoolAttribute{},
 							"B": ds.Int64Attribute{},
 						},
+					},
+				},
+				"I": rs.DynamicAttribute{
+					CustomType: customfield.NormalizedDynamicType{},
+					PlanModifiers: []planmodifier.Dynamic{
+						customfield.NormalizeDynamicPlanModifier(),
 					},
 				},
 			},

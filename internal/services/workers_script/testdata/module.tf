@@ -18,6 +18,10 @@ resource "cloudflare_workers_script" "%[1]s" {
   placement = {
     mode = "smart"
   }
+  migrations = {
+    new_tag = "v1"
+    new_sqlite_classes = ["MyDurableObject"]
+  }
   bindings = [
     {
       name = "MY_KV_NAMESPACE"
@@ -28,6 +32,11 @@ resource "cloudflare_workers_script" "%[1]s" {
       name = "MY_QUEUE"
       type = "queue"
       queue_name = cloudflare_queue.%[1]s.queue_name
+    },
+    {
+      name = "SECRET"
+      type = "secret_text"
+      text = "shhh!!"
     }
   ]
   observability = {

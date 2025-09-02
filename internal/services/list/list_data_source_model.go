@@ -5,8 +5,8 @@ package list
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/rules"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -33,10 +33,10 @@ func (m *ListsDataSourceModel) toListParams(_ context.Context) (params rules.Lis
 type ListsResultDataSourceModel struct {
 	ID                    types.String  `tfsdk:"id" json:"id,computed"`
 	CreatedOn             types.String  `tfsdk:"created_on" json:"created_on,computed"`
-	Description           types.String  `tfsdk:"description" json:"description,computed"`
 	Kind                  types.String  `tfsdk:"kind" json:"kind,computed"`
 	ModifiedOn            types.String  `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name                  types.String  `tfsdk:"name" json:"name,computed"`
 	NumItems              types.Float64 `tfsdk:"num_items" json:"num_items,computed"`
 	NumReferencingFilters types.Float64 `tfsdk:"num_referencing_filters" json:"num_referencing_filters,computed"`
+	Description           types.String  `tfsdk:"description" json:"description,computed"`
 }

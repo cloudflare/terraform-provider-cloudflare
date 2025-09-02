@@ -24,7 +24,7 @@ resource "cloudflare_list_item" "example_list_item" {
 
 ### Required
 
-- `account_id` (String) Defines an identifier.
+- `account_id` (String) The Account ID for this resource.
 - `list_id` (String) The unique ID of the list.
 
 ### Optional
@@ -48,6 +48,10 @@ resource "cloudflare_list_item" "example_list_item" {
 Required:
 
 - `url_hostname` (String)
+
+Optional:
+
+- `exclude_exact_hostname` (Boolean) Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.
 
 
 <a id="nestedatt--redirect"></a>

@@ -52,7 +52,7 @@ resource "cloudflare_account_token" "example_account_token" {
 
 - `account_id` (String) Account identifier tag.
 - `name` (String) Token name.
-- `policies` (Attributes Set) List of access policies assigned to the token. (see [below for nested schema](#nestedatt--policies))
+- `policies` (Attributes List) List of access policies assigned to the token. (see [below for nested schema](#nestedatt--policies))
 
 ### Optional
 
@@ -77,7 +77,7 @@ Required:
 
 - `effect` (String) Allow or deny operations against the resources.
 Available values: "allow", "deny".
-- `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
+- `permission_groups` (Attributes Set) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
 - `resources` (Map of String) A list of resource names that the policy applies to.
 
 Read-Only:

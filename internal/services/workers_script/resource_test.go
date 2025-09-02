@@ -4,24 +4,29 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/workers"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 const (
 	scriptContent1    = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
 	scriptContent2    = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
-	moduleContent     = `export default { fetch() { return new Response('Hello world'); }, };`
+	moduleContent     = `import {DurableObject} from 'cloudflare:workers'; export class MyDurableObject extends DurableObject {}; export default { fetch() { return new Response('Hello world'); }, };`
 	encodedWasm       = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
 	compatibilityDate = "2023-03-19"
 	d1DatabaseID      = "ce8b95dc-b376-4ff8-9b9e-1801ed6d745d"
@@ -30,6 +35,31 @@ const (
 var (
 	compatibilityFlags = []string{"nodejs_compat", "web_socket_compression"}
 )
+
+// supportsTerraformWriteOnly checks if the current Terraform version supports WriteOnly attributes (1.11+)
+func supportsTerraformWriteOnly() bool {
+	cmd := exec.Command("terraform", "version")
+	output, err := cmd.Output()
+	if err != nil {
+		return false
+	}
+
+	versionStr := string(output)
+	re := regexp.MustCompile(`Terraform v(\d+)\.(\d+)`)
+	matches := re.FindStringSubmatch(versionStr)
+	if len(matches) < 3 {
+		return false
+	}
+
+	major, err1 := strconv.Atoi(matches[1])
+	minor, err2 := strconv.Atoi(matches[2])
+	if err1 != nil || err2 != nil {
+		return false
+	}
+
+	// WriteOnly attributes require Terraform 1.11+
+	return major > 1 || (major == 1 && minor >= 11)
+}
 
 func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 	t.Parallel()
@@ -47,24 +77,24 @@ func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigServiceWorkerInitial(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "script_name", rnd),
-					resource.TestCheckResourceAttr(name, "content", scriptContent1),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("content"), knownvalue.StringExact(scriptContent1)),
+				},
 			},
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigServiceWorkerUpdate(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "script_name", rnd),
-					resource.TestCheckResourceAttr(name, "content", scriptContent2),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("content"), knownvalue.StringExact(scriptContent2)),
+				},
 			},
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigServiceWorkerUpdateBinding(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "script_name", rnd),
-					resource.TestCheckResourceAttr(name, "content", scriptContent2),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("content"), knownvalue.StringExact(scriptContent2)),
+				},
 			},
 			{
 				PreConfig: func() {
@@ -84,6 +114,13 @@ func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 						plancheck.ExpectNonEmptyPlan(),
 					},
 				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"startup_time_ms"},
 			},
 		},
 	})
@@ -106,15 +143,15 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "script_name", rnd),
-					resource.TestCheckResourceAttr(name, "content", moduleContent),
-					resource.TestCheckResourceAttr(name, "compatibility_date", compatibilityDate),
-					resource.TestCheckResourceAttr(name, "compatibility_flags.#", "2"),
-					resource.TestCheckResourceAttr(name, "compatibility_flags.0", compatibilityFlags[0]),
-					// resource.TestCheckResourceAttr(name, "logpush", "true"),
-					resource.TestCheckResourceAttr(name, "placement.mode", "smart"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("content"), knownvalue.StringExact(moduleContent)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("compatibility_date"), knownvalue.StringExact(compatibilityDate)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("compatibility_flags"), knownvalue.SetSizeExact(2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("compatibility_flags").AtSliceIndex(0), knownvalue.StringExact(compatibilityFlags[0])),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("logpush"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("placement").AtMapKey("mode"), knownvalue.StringExact("smart")),
+				},
 			},
 			{
 				PreConfig: func() {
@@ -134,6 +171,13 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 						plancheck.ExpectNonEmptyPlan(),
 					},
 				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"bindings.2", "bindings.#", "main_module", "startup_time_ms"},
 			},
 		},
 	})
@@ -175,10 +219,10 @@ func TestAcc_WorkerScriptWithContentFile(t *testing.T) {
 					writeContentFile(t, moduleContent)
 				},
 				Config: testAccWorkersScriptConfigWithContentFile(rnd, accountID, contentFile),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "script_name", rnd),
-					resource.TestCheckResourceAttr(name, "content_file", contentFile),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("content_file"), knownvalue.StringExact(contentFile)),
+				},
 			},
 			{
 				PreConfig: func() {
@@ -238,6 +282,13 @@ Content-Type: application/json
 					},
 				},
 			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"content", "content_file", "content_sha256", "main_module", "startup_time_ms"},
+			},
 		},
 	})
 }
@@ -283,6 +334,74 @@ func TestAcc_WorkerScriptWithInvalidContentSHA256(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareWorkerScript_PythonWorker(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_workers_script." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("python_worker.tf", rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("main_module"), knownvalue.StringExact("index.py")),
+				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"content_type", "has_modules", "main_module", "startup_time_ms"},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareWorkerScript_ModuleWithDurableObject(t *testing.T) {
+	t.Parallel()
+
+	if !supportsTerraformWriteOnly() {
+		t.Skip("Skipping test: WriteOnly attributes require Terraform 1.11+ (DurableObject migrations are required)")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_workers_script." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("module_with_durable_object.tf", rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("main_module"), knownvalue.StringExact("worker.js")),
+				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"bindings.0.namespace_id", "has_modules", "main_module", "startup_time_ms"},
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareWorkerScriptConfigServiceWorkerInitial(rnd, accountID string) string {
 	return acctest.LoadTestCase("service_worker_initial.tf", rnd, scriptContent1, accountID)
 }
@@ -296,7 +415,8 @@ func testAccCheckCloudflareWorkerScriptConfigServiceWorkerUpdateBinding(rnd, acc
 }
 
 func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID string) string {
-	return acctest.LoadTestCase("module.tf", rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`))
+	// Use non-migration template to support Terraform < 1.11
+	return acctest.LoadTestCase("module_no_migrations.tf", rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`))
 }
 
 func testAccWorkersScriptConfigWithContentFile(rnd, accountID, contentFile string) string {

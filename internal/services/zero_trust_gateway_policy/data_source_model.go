@@ -5,8 +5,8 @@ package zero_trust_gateway_policy
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -29,7 +29,10 @@ type ZeroTrustGatewayPolicyDataSourceModel struct {
 	Enabled       types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed"`
 	Identity      types.String                                                                `tfsdk:"identity" json:"identity,computed"`
 	Name          types.String                                                                `tfsdk:"name" json:"name,computed"`
+	NotSharable   types.Bool                                                                  `tfsdk:"not_sharable" json:"not_sharable,computed"`
 	Precedence    types.Int64                                                                 `tfsdk:"precedence" json:"precedence,computed"`
+	ReadOnly      types.Bool                                                                  `tfsdk:"read_only" json:"read_only,computed"`
+	SourceAccount types.String                                                                `tfsdk:"source_account" json:"source_account,computed"`
 	Traffic       types.String                                                                `tfsdk:"traffic" json:"traffic,computed"`
 	UpdatedAt     timetypes.RFC3339                                                           `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Version       types.Int64                                                                 `tfsdk:"version" json:"version,computed"`
@@ -55,7 +58,7 @@ type ZeroTrustGatewayPolicyExpirationDataSourceModel struct {
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsDataSourceModel struct {
-	AddHeaders                      customfield.Map[types.String]                                                                   `tfsdk:"add_headers" json:"add_headers,computed"`
+	AddHeaders                      customfield.Map[customfield.List[types.String]]                                                 `tfsdk:"add_headers" json:"add_headers,computed"`
 	AllowChildBypass                types.Bool                                                                                      `tfsdk:"allow_child_bypass" json:"allow_child_bypass,computed"`
 	AuditSSH                        customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsAuditSSHDataSourceModel]             `tfsdk:"audit_ssh" json:"audit_ssh,computed"`
 	BISOAdminControls               customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsDataSourceModel]    `tfsdk:"biso_admin_controls" json:"biso_admin_controls,computed"`

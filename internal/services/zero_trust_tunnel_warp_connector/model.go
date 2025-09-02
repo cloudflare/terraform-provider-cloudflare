@@ -20,6 +20,7 @@ type ZeroTrustTunnelWARPConnectorModel struct {
 	Name            types.String                                                               `tfsdk:"name" json:"name,required"`
 	TunnelSecret    types.String                                                               `tfsdk:"tunnel_secret" json:"tunnel_secret,optional,no_refresh"`
 	AccountTag      types.String                                                               `tfsdk:"account_tag" json:"account_tag,computed"`
+	ConfigSrc       types.String                                                               `tfsdk:"config_src" json:"config_src,computed"`
 	ConnsActiveAt   timetypes.RFC3339                                                          `tfsdk:"conns_active_at" json:"conns_active_at,computed" format:"date-time"`
 	ConnsInactiveAt timetypes.RFC3339                                                          `tfsdk:"conns_inactive_at" json:"conns_inactive_at,computed" format:"date-time"`
 	CreatedAt       timetypes.RFC3339                                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

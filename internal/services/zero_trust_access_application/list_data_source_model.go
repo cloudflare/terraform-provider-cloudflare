@@ -5,8 +5,8 @@ package zero_trust_access_application
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -88,7 +88,7 @@ type ZeroTrustAccessApplicationsResultDataSourceModel struct {
 	ServiceAuth401Redirect      types.Bool                                                                             `tfsdk:"service_auth_401_redirect" json:"service_auth_401_redirect,computed"`
 	SessionDuration             types.String                                                                           `tfsdk:"session_duration" json:"session_duration,computed"`
 	SkipInterstitial            types.Bool                                                                             `tfsdk:"skip_interstitial" json:"skip_interstitial,computed"`
-	Tags                        customfield.List[types.String]                                                         `tfsdk:"tags" json:"tags,computed"`
+	Tags                        customfield.Set[types.String]                                                          `tfsdk:"tags" json:"tags,computed"`
 	UpdatedAt                   timetypes.RFC3339                                                                      `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	SaaSApp                     customfield.NestedObject[ZeroTrustAccessApplicationsSaaSAppDataSourceModel]            `tfsdk:"saas_app" json:"saas_app,computed"`
 	AppLauncherLogoURL          types.String                                                                           `tfsdk:"app_launcher_logo_url" json:"app_launcher_logo_url,computed"`
@@ -122,22 +122,22 @@ type ZeroTrustAccessApplicationsDestinationsDataSourceModel struct {
 }
 
 type ZeroTrustAccessApplicationsPoliciesDataSourceModel struct {
-	ID                           types.String                                                                                   `tfsdk:"id" json:"id,computed"`
-	ApprovalGroups               customfield.NestedObjectList[ZeroTrustAccessApplicationsPoliciesApprovalGroupsDataSourceModel] `tfsdk:"approval_groups" json:"approval_groups,computed"`
-	ApprovalRequired             types.Bool                                                                                     `tfsdk:"approval_required" json:"approval_required,computed"`
-	CreatedAt                    timetypes.RFC3339                                                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Decision                     types.String                                                                                   `tfsdk:"decision" json:"decision,computed"`
-	Exclude                      customfield.NestedObjectList[ZeroTrustAccessApplicationsPoliciesExcludeDataSourceModel]        `tfsdk:"exclude" json:"exclude,computed"`
-	Include                      customfield.NestedObjectList[ZeroTrustAccessApplicationsPoliciesIncludeDataSourceModel]        `tfsdk:"include" json:"include,computed"`
-	IsolationRequired            types.Bool                                                                                     `tfsdk:"isolation_required" json:"isolation_required,computed"`
-	Name                         types.String                                                                                   `tfsdk:"name" json:"name,computed"`
-	Precedence                   types.Int64                                                                                    `tfsdk:"precedence" json:"precedence,computed"`
-	PurposeJustificationPrompt   types.String                                                                                   `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
-	PurposeJustificationRequired types.Bool                                                                                     `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
-	Require                      customfield.NestedObjectList[ZeroTrustAccessApplicationsPoliciesRequireDataSourceModel]        `tfsdk:"require" json:"require,computed"`
-	SessionDuration              types.String                                                                                   `tfsdk:"session_duration" json:"session_duration,computed"`
-	UpdatedAt                    timetypes.RFC3339                                                                              `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	ConnectionRules              customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesConnectionRulesDataSourceModel]    `tfsdk:"connection_rules" json:"connection_rules,computed"`
+	ID                           types.String                                                                                  `tfsdk:"id" json:"id,computed"`
+	ApprovalGroups               customfield.NestedObjectSet[ZeroTrustAccessApplicationsPoliciesApprovalGroupsDataSourceModel] `tfsdk:"approval_groups" json:"approval_groups,computed"`
+	ApprovalRequired             types.Bool                                                                                    `tfsdk:"approval_required" json:"approval_required,computed"`
+	CreatedAt                    timetypes.RFC3339                                                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Decision                     types.String                                                                                  `tfsdk:"decision" json:"decision,computed"`
+	Exclude                      customfield.NestedObjectSet[ZeroTrustAccessApplicationsPoliciesExcludeDataSourceModel]        `tfsdk:"exclude" json:"exclude,computed"`
+	Include                      customfield.NestedObjectSet[ZeroTrustAccessApplicationsPoliciesIncludeDataSourceModel]        `tfsdk:"include" json:"include,computed"`
+	IsolationRequired            types.Bool                                                                                    `tfsdk:"isolation_required" json:"isolation_required,computed"`
+	Name                         types.String                                                                                  `tfsdk:"name" json:"name,computed"`
+	Precedence                   types.Int64                                                                                   `tfsdk:"precedence" json:"precedence,computed"`
+	PurposeJustificationPrompt   types.String                                                                                  `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
+	PurposeJustificationRequired types.Bool                                                                                    `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
+	Require                      customfield.NestedObjectSet[ZeroTrustAccessApplicationsPoliciesRequireDataSourceModel]        `tfsdk:"require" json:"require,computed"`
+	SessionDuration              types.String                                                                                  `tfsdk:"session_duration" json:"session_duration,computed"`
+	UpdatedAt                    timetypes.RFC3339                                                                             `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	ConnectionRules              customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesConnectionRulesDataSourceModel]   `tfsdk:"connection_rules" json:"connection_rules,computed"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesApprovalGroupsDataSourceModel struct {
@@ -170,6 +170,7 @@ type ZeroTrustAccessApplicationsPoliciesExcludeDataSourceModel struct {
 	SAML                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
 	OIDC                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
+	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesExcludeLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesExcludeGroupDataSourceModel struct {
@@ -273,6 +274,10 @@ type ZeroTrustAccessApplicationsPoliciesExcludeServiceTokenDataSourceModel struc
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
+type ZeroTrustAccessApplicationsPoliciesExcludeLinkedAppTokenDataSourceModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
+}
+
 type ZeroTrustAccessApplicationsPoliciesIncludeDataSourceModel struct {
 	Group                customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
 	AnyValidServiceToken customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeAnyValidServiceTokenDataSourceModel] `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
@@ -297,6 +302,7 @@ type ZeroTrustAccessApplicationsPoliciesIncludeDataSourceModel struct {
 	SAML                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
 	OIDC                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
+	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesIncludeLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesIncludeGroupDataSourceModel struct {
@@ -400,6 +406,10 @@ type ZeroTrustAccessApplicationsPoliciesIncludeServiceTokenDataSourceModel struc
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
+type ZeroTrustAccessApplicationsPoliciesIncludeLinkedAppTokenDataSourceModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
+}
+
 type ZeroTrustAccessApplicationsPoliciesRequireDataSourceModel struct {
 	Group                customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
 	AnyValidServiceToken customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireAnyValidServiceTokenDataSourceModel] `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
@@ -424,6 +434,7 @@ type ZeroTrustAccessApplicationsPoliciesRequireDataSourceModel struct {
 	SAML                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
 	OIDC                 customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
+	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessApplicationsPoliciesRequireLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesRequireGroupDataSourceModel struct {
@@ -525,6 +536,10 @@ type ZeroTrustAccessApplicationsPoliciesRequireOIDCDataSourceModel struct {
 
 type ZeroTrustAccessApplicationsPoliciesRequireServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
+}
+
+type ZeroTrustAccessApplicationsPoliciesRequireLinkedAppTokenDataSourceModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesConnectionRulesDataSourceModel struct {

@@ -31,7 +31,7 @@ data "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_custom_p
 - `ai_context_enabled` (Boolean)
 - `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String) Available values: "low", "medium", "high", "very_high".
-- `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
+- `context_awareness` (Attributes, Deprecated) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
 - `created_at` (String) When the profile was created.
 - `description` (String) The description of the profile.
 - `entries` (Attributes List) (see [below for nested schema](#nestedatt--entries))
@@ -77,6 +77,7 @@ Cannot be set to false if secret is true
 - `secret` (Boolean)
 - `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
+- `variant` (Attributes) (see [below for nested schema](#nestedatt--entries--variant))
 - `word_list` (String)
 
 <a id="nestedatt--entries--confidence"></a>
@@ -95,5 +96,15 @@ Read-Only:
 
 - `regex` (String)
 - `validation` (String, Deprecated) Available values: "luhn".
+
+
+<a id="nestedatt--entries--variant"></a>
+### Nested Schema for `entries.variant`
+
+Read-Only:
+
+- `description` (String)
+- `topic_type` (String) Available values: "Intent", "Content".
+- `type` (String) Available values: "PromptTopic".
 
 

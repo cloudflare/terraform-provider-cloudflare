@@ -5,8 +5,8 @@ package zero_trust_dlp_entry
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -32,6 +32,7 @@ type ZeroTrustDLPEntryDataSourceModel struct {
 	UpdatedAt     timetypes.RFC3339                                                    `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPEntryConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
 	Pattern       customfield.NestedObject[ZeroTrustDLPEntryPatternDataSourceModel]    `tfsdk:"pattern" json:"pattern,computed"`
+	Variant       customfield.NestedObject[ZeroTrustDLPEntryVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`
 	WordList      jsontypes.Normalized                                                 `tfsdk:"word_list" json:"word_list,computed"`
 }
 
@@ -51,4 +52,10 @@ type ZeroTrustDLPEntryConfidenceDataSourceModel struct {
 type ZeroTrustDLPEntryPatternDataSourceModel struct {
 	Regex      types.String `tfsdk:"regex" json:"regex,computed"`
 	Validation types.String `tfsdk:"validation" json:"validation,computed"`
+}
+
+type ZeroTrustDLPEntryVariantDataSourceModel struct {
+	TopicType   types.String `tfsdk:"topic_type" json:"topic_type,computed"`
+	Type        types.String `tfsdk:"type" json:"type,computed"`
+	Description types.String `tfsdk:"description" json:"description,computed"`
 }

@@ -8,10 +8,10 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/rulesets"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/rulesets"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijsoncustom"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -92,12 +92,11 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijsoncustom.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -144,7 +143,7 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijsoncustom.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -190,7 +189,7 @@ func (r *RulesetResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijsoncustom.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -276,7 +275,7 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijsoncustom.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -304,7 +303,12 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 		return
 	}
 
-	ruleIDsByRef := make(map[string]types.String)
+	// Do nothing if there is no rules attribute in the state or the plan.
+	if state.Rules.IsNullOrUnknown() || plan.Rules.IsNullOrUnknown() {
+		return
+	}
+
+	rulesByRef := make(map[string]*RulesetRulesModel)
 
 	stateRules, diags := state.Rules.AsStructSliceT(ctx)
 	resp.Diagnostics.Append(diags...)
@@ -312,9 +316,9 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 		return
 	}
 
-	for _, rule := range stateRules {
-		if ref := rule.Ref.ValueString(); ref != "" {
-			ruleIDsByRef[ref] = rule.ID
+	for i := range stateRules {
+		if ref := stateRules[i].Ref.ValueString(); ref != "" {
+			rulesByRef[ref] = &stateRules[i]
 		}
 	}
 
@@ -324,17 +328,21 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 		return
 	}
 
-	for i, rule := range planRules {
-		// Do nothing if the rule's ID is a known planned value.
-		if !rule.ID.IsUnknown() {
-			continue
-		}
+	for i := range planRules {
+		if ref := planRules[i].Ref.ValueString(); ref != "" {
+			if stateRule, ok := rulesByRef[ref]; ok {
+				// If the rule's ref matches a rule from the state, populate its
+				// planned ID using the matching rule.
+				if planRules[i].ID.IsUnknown() {
+					planRules[i].ID = stateRule.ID
+				}
 
-		// If the rule's ref matches a rule in the state, populate the planned
-		// value of its ID with the corresponding ID from the state.
-		if ref := rule.Ref.ValueString(); ref != "" {
-			if id, ok := ruleIDsByRef[ref]; ok {
-				planRules[i].ID = id
+				// If the rule's action is unchanged, populate its planned
+				// logging attribute using the matching rule from the state.
+				if planRules[i].Logging.IsUnknown() &&
+					stateRule.Action.Equal(planRules[i].Action) {
+					planRules[i].Logging = stateRule.Logging
+				}
 			}
 		}
 	}

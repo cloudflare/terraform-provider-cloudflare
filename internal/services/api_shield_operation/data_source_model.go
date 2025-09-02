@@ -5,8 +5,8 @@ package api_shield_operation
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/api_gateway"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/api_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -33,8 +33,10 @@ type APIShieldOperationDataSourceModel struct {
 
 func (m *APIShieldOperationDataSourceModel) toReadParams(_ context.Context) (params api_gateway.OperationGetParams, diags diag.Diagnostics) {
 	mFeature := []api_gateway.OperationGetParamsFeature{}
-	for _, item := range *m.Feature {
-		mFeature = append(mFeature, api_gateway.OperationGetParamsFeature(item.ValueString()))
+	if m.Feature != nil {
+		for _, item := range *m.Feature {
+			mFeature = append(mFeature, api_gateway.OperationGetParamsFeature(item.ValueString()))
+		}
 	}
 
 	params = api_gateway.OperationGetParams{
@@ -47,16 +49,22 @@ func (m *APIShieldOperationDataSourceModel) toReadParams(_ context.Context) (par
 
 func (m *APIShieldOperationDataSourceModel) toListParams(_ context.Context) (params api_gateway.OperationListParams, diags diag.Diagnostics) {
 	mFilterFeature := []api_gateway.OperationListParamsFeature{}
-	for _, item := range *m.Filter.Feature {
-		mFilterFeature = append(mFilterFeature, api_gateway.OperationListParamsFeature(item.ValueString()))
+	if m.Filter.Feature != nil {
+		for _, item := range *m.Filter.Feature {
+			mFilterFeature = append(mFilterFeature, api_gateway.OperationListParamsFeature(item.ValueString()))
+		}
 	}
 	mFilterHost := []string{}
-	for _, item := range *m.Filter.Host {
-		mFilterHost = append(mFilterHost, item.ValueString())
+	if m.Filter.Host != nil {
+		for _, item := range *m.Filter.Host {
+			mFilterHost = append(mFilterHost, item.ValueString())
+		}
 	}
 	mFilterMethod := []string{}
-	for _, item := range *m.Filter.Method {
-		mFilterMethod = append(mFilterMethod, item.ValueString())
+	if m.Filter.Method != nil {
+		for _, item := range *m.Filter.Method {
+			mFilterMethod = append(mFilterMethod, item.ValueString())
+		}
 	}
 
 	params = api_gateway.OperationListParams{

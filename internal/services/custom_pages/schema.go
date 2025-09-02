@@ -5,12 +5,15 @@ package custom_pages
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*CustomPagesResource)(nil)
@@ -19,13 +22,41 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Identifier",
-				Computed:      true,
+				Description: "Error Page Types\nAvailable values: \"under_attack\", \"basic_challenge\", \"waf_challenge\", \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"under_attack",
+						"basic_challenge",
+						"waf_challenge",
+						"waf_block",
+						"ip_block",
+						"country_challenge",
+						"500_errors",
+						"1000_errors",
+						"managed_challenge",
+						"ratelimit_block",
+					),
+				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"identifier": schema.StringAttribute{
-				Description:   "Identifier",
-				Required:      true,
+				Description: "Error Page Types\nAvailable values: \"under_attack\", \"basic_challenge\", \"waf_challenge\", \"waf_block\", \"ip_block\", \"country_challenge\", \"500_errors\", \"1000_errors\", \"managed_challenge\", \"ratelimit_block\".",
+				Required:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"under_attack",
+						"basic_challenge",
+						"waf_challenge",
+						"waf_block",
+						"ip_block",
+						"country_challenge",
+						"500_errors",
+						"1000_errors",
+						"managed_challenge",
+						"ratelimit_block",
+					),
+				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
@@ -47,7 +78,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"url": schema.StringAttribute{
 				Description: "The URL associated with the custom page.",
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
+			},
+			"created_on": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"description": schema.StringAttribute{
+				Computed: true,
+			},
+			"modified_on": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"preview_target": schema.StringAttribute{
+				Computed: true,
+			},
+			"required_tokens": schema.ListAttribute{
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 		},
 	}

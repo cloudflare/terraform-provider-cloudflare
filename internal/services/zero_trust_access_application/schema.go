@@ -4,6 +4,7 @@ package zero_trust_access_application
 
 import (
 	"context"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -47,6 +48,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"allow_authenticate_via_warp": schema.BoolAttribute{
 				Description: "When set to true, users can authenticate to this application using their WARP session.  When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.",
 				Optional:    true,
+				Validators: []validator.Bool{
+					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), authenticateViaWarpCompatibleAppTypes...),
+				},
 			},
 			"allow_iframe": schema.BoolAttribute{
 				Description: "Enables loading application content in an iFrame.",
@@ -396,7 +400,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"protocol": schema.StringAttribute{
-							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\".",
+							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\", \"RDP\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("SSH", "RDP"),
@@ -477,10 +481,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					}...),
 				},
 			},
-			"tags": schema.ListAttribute{
+			"tags": schema.SetAttribute{
 				Description: "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",
-				CustomType:  customfield.NewListType[types.String](ctx),
 				Optional:    true,
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"destinations": schema.ListNestedAttribute{
@@ -616,13 +620,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
 							},
 						},
-						"include": schema.ListNestedAttribute{
+						"include": schema.SetNestedAttribute{
 							Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 							Optional:    true,
-							Validators: []validator.List{
-								listvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("decision")),
+							Validators: []validator.Set{
+								setvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("decision")),
 							},
-							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx),
+							CustomType: customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Validators: []validator.Object{
 									customvalidator.ObjectSizeAtMost(1),
@@ -866,6 +870,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
+												Required:    true,
+											},
+										},
+									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
 												Required:    true,
 											},
 										},
@@ -905,13 +918,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"exclude": schema.ListNestedAttribute{
+						"exclude": schema.SetNestedAttribute{
 							Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 							Optional:    true,
-							Validators: []validator.List{
-								listvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
+							Validators: []validator.Set{
+								setvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
 							},
-							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx),
+							CustomType: customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Validators: []validator.Object{
 									customvalidator.ObjectSizeAtMost(1),
@@ -1155,6 +1168,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
+												Required:    true,
+											},
+										},
+									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
 												Required:    true,
 											},
 										},
@@ -1162,13 +1184,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"require": schema.ListNestedAttribute{
+						"require": schema.SetNestedAttribute{
 							Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
 							Optional:    true,
-							Validators: []validator.List{
-								listvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
+							Validators: []validator.Set{
+								setvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
 							},
-							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesRequireModel](ctx),
+							CustomType: customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesRequireModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Validators: []validator.Object{
 									customvalidator.ObjectSizeAtMost(1),
@@ -1412,6 +1434,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
+												Required:    true,
+											},
+										},
+									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
 												Required:    true,
 											},
 										},

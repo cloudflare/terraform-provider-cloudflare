@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/magic_transit"
-	"github.com/cloudflare/cloudflare-go/v4/option"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -56,7 +56,7 @@ func (r *MagicTransitConnectorResource) Configure(ctx context.Context, req resou
 }
 
 func (r *MagicTransitConnectorResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *MagicTransitConnectorModel
+	var data *CustomMagicTransitConnectorModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -70,7 +70,7 @@ func (r *MagicTransitConnectorResource) Create(ctx context.Context, req resource
 		return
 	}
 	res := new(http.Response)
-	env := MagicTransitConnectorResultEnvelope{*data}
+	env := CustomMagicTransitConnectorResultEnvelope{*data}
 	_, err = r.client.MagicTransit.Connectors.New(
 		ctx,
 		magic_transit.ConnectorNewParams{
@@ -96,7 +96,7 @@ func (r *MagicTransitConnectorResource) Create(ctx context.Context, req resource
 }
 
 func (r *MagicTransitConnectorResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *MagicTransitConnectorModel
+	var data *CustomMagicTransitConnectorModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -104,7 +104,7 @@ func (r *MagicTransitConnectorResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	var state *MagicTransitConnectorModel
+	var state *CustomMagicTransitConnectorModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -117,12 +117,13 @@ func (r *MagicTransitConnectorResource) Update(ctx context.Context, req resource
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+
 	res := new(http.Response)
-	env := MagicTransitConnectorResultEnvelope{*data}
-	_, err = r.client.MagicTransit.Connectors.Update(
+	env := CustomMagicTransitConnectorResultEnvelope{*data}
+	_, err = r.client.MagicTransit.Connectors.Edit(
 		ctx,
 		data.ID.ValueString(),
-		magic_transit.ConnectorUpdateParams{
+		magic_transit.ConnectorEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -145,7 +146,7 @@ func (r *MagicTransitConnectorResource) Update(ctx context.Context, req resource
 }
 
 func (r *MagicTransitConnectorResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *MagicTransitConnectorModel
+	var data *CustomMagicTransitConnectorModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -154,7 +155,7 @@ func (r *MagicTransitConnectorResource) Read(ctx context.Context, req resource.R
 	}
 
 	res := new(http.Response)
-	env := MagicTransitConnectorResultEnvelope{*data}
+	env := CustomMagicTransitConnectorResultEnvelope{*data}
 	_, err := r.client.MagicTransit.Connectors.Get(
 		ctx,
 		data.ID.ValueString(),
@@ -185,7 +186,7 @@ func (r *MagicTransitConnectorResource) Read(ctx context.Context, req resource.R
 }
 
 func (r *MagicTransitConnectorResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *MagicTransitConnectorModel
+	var data *CustomMagicTransitConnectorModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -210,7 +211,7 @@ func (r *MagicTransitConnectorResource) Delete(ctx context.Context, req resource
 }
 
 func (r *MagicTransitConnectorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *MagicTransitConnectorModel = new(MagicTransitConnectorModel)
+	var data *CustomMagicTransitConnectorModel = new(CustomMagicTransitConnectorModel)
 
 	path_account_id := ""
 	path_connector_id := ""
@@ -229,7 +230,7 @@ func (r *MagicTransitConnectorResource) ImportState(ctx context.Context, req res
 	data.ID = types.StringValue(path_connector_id)
 
 	res := new(http.Response)
-	env := MagicTransitConnectorResultEnvelope{*data}
+	env := CustomMagicTransitConnectorResultEnvelope{*data}
 	_, err := r.client.MagicTransit.Connectors.Get(
 		ctx,
 		path_connector_id,

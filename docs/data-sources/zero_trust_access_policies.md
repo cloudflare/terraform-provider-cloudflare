@@ -38,19 +38,19 @@ data "cloudflare_zero_trust_access_policies" "example_zero_trust_access_policies
 Read-Only:
 
 - `app_count` (Number) Number of access applications currently using this policy.
-- `approval_groups` (Attributes List) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--result--approval_groups))
+- `approval_groups` (Attributes Set) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--result--approval_groups))
 - `approval_required` (Boolean) Requires the user to request access from an administrator at the start of each session.
 - `created_at` (String)
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
 Available values: "allow", "deny", "non_identity", "bypass".
-- `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--result--exclude))
+- `exclude` (Attributes Set) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--result--exclude))
 - `id` (String) The UUID of the policy
-- `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--result--include))
+- `include` (Attributes Set) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--result--include))
 - `isolation_required` (Boolean) Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.
 - `name` (String) The name of the Access policy.
 - `purpose_justification_prompt` (String) A custom message that will appear on the purpose justification screen.
 - `purpose_justification_required` (Boolean) Require users to enter a justification when they log in to the application.
-- `require` (Attributes List) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--result--require))
+- `require` (Attributes Set) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--result--require))
 - `reusable` (Boolean)
 - `session_duration` (String) The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
 - `updated_at` (String)
@@ -88,6 +88,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--okta))
@@ -233,6 +234,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--result--exclude--linked_app_token"></a>
+### Nested Schema for `result.exclude.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--result--exclude--login_method"></a>
 ### Nested Schema for `result.exclude.login_method`
 
@@ -302,6 +311,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--include--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--include--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--include--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--result--include--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--include--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--include--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--include--okta))
@@ -447,6 +457,14 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--result--include--linked_app_token"></a>
+### Nested Schema for `result.include.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--result--include--login_method"></a>
 ### Nested Schema for `result.include.login_method`
 
@@ -516,6 +534,7 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--require--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--result--require--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--require--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--result--require--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--result--require--login_method))
 - `oidc` (Attributes) (see [below for nested schema](#nestedatt--result--require--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--require--okta))
@@ -659,6 +678,14 @@ Read-Only:
 Read-Only:
 
 - `id` (String) The ID of a previously created IP list.
+
+
+<a id="nestedatt--result--require--linked_app_token"></a>
+### Nested Schema for `result.require.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
 
 
 <a id="nestedatt--result--require--login_method"></a>

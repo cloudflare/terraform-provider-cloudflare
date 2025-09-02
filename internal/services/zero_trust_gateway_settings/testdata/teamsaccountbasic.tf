@@ -15,14 +15,18 @@ resource "cloudflare_zero_trust_gateway_settings" "%[1]s" {
       non_identity_enabled = false
     }
     block_page = {
-      name = "%[1]s"
       enabled = true
-      footer_text = "hello"
-      header_text = "hello"
-      logo_path = "https://example.com"
       background_color = "#000000"
-      mailto_subject = "hello"
+      footer_text = "footer"
+      header_text = "header"
+      logo_path = "https://example.com"
+      name = "%[1]s"
+      include_context = true
       mailto_address = "test@cloudflare.com"
+      mailto_subject = "hello"
+      target_uri = ""
+      suppress_footer = false
+      mode = "customized_block_page"
     }
     body_scanning = {
       inspection_mode = "deep"
@@ -42,9 +46,6 @@ resource "cloudflare_zero_trust_gateway_settings" "%[1]s" {
     }
     extended_email_matching = {
       enabled = true
-    }
-    custom_certificate = {
-      enabled = false
     }
   }
 }

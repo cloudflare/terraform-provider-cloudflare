@@ -35,7 +35,7 @@ resource "cloudflare_workers_kv" "example_workers_kv" {
 
 ### Optional
 
-- `metadata` (String)
+- `metadata` (String) Associates arbitrary JSON data with a key/value pair.
 
 ### Read-Only
 

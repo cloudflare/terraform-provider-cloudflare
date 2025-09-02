@@ -47,7 +47,7 @@ Available values: "A", "AAAA", "CNAME", "MX", "NS", "OPENPGPKEY", "PTR", "TXT", 
 - `priority` (Number) Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `settings` (Attributes) Settings for the DNS record. (see [below for nested schema](#nestedatt--settings))
-- `tags` (List of String) Custom tags for the DNS record. This field has no effect on DNS responses.
+- `tags` (Set of String) Custom tags for the DNS record. This field has no effect on DNS responses.
 
 ### Read-Only
 
@@ -69,8 +69,8 @@ Optional:
 - `certificate` (String) Certificate.
 - `digest` (String) Digest.
 - `digest_type` (Number) Digest Type.
-- `fingerprint` (String) fingerprint.
-- `flags` (Number) Flags for the CAA record.
+- `fingerprint` (String) Fingerprint.
+- `flags` (Dynamic) Flags for the CAA record.
 - `key_tag` (Number) Key Tag.
 - `lat_degrees` (Number) Degrees of latitude.
 - `lat_direction` (String) Latitude direction.
@@ -88,7 +88,7 @@ Available values: "E", "W".
 - `precision_horz` (Number) Horizontal precision of location.
 - `precision_vert` (Number) Vertical precision of location.
 - `preference` (Number) Preference.
-- `priority` (Number) priority.
+- `priority` (Number) Priority.
 - `protocol` (Number) Protocol.
 - `public_key` (String) Public Key.
 - `regex` (String) Regex.
@@ -97,7 +97,7 @@ Available values: "E", "W".
 - `service` (String) Service.
 - `size` (Number) Size of location in meters.
 - `tag` (String) Name of the property controlled by this record (e.g.: issue, issuewild, iodef).
-- `target` (String) target.
+- `target` (String) Target.
 - `type` (Number) Type.
 - `usage` (Number) Usage.
 - `value` (String) Value of the record. This field's semantics depend on the chosen tag.

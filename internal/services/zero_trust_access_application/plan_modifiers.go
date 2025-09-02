@@ -2,23 +2,26 @@ package zero_trust_access_application
 
 import (
 	"context"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"regexp"
+	"slices"
+
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"regexp"
-	"slices"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 var (
-	selfHostedAppTypes                = []string{"self_hosted", "ssh", "vnc", "rdp"}
-	saasAppTypes                      = []string{"saas", "dash_sso"}
-	appLauncherVisibleAppTypes        = []string{"self_hosted", "ssh", "vnc", "rdp", "saas", "bookmark"}
-	targetCompatibleAppTypes          = []string{"rdp", "infrastructure"}
-	sessionDurationCompatibleAppTypes = []string{"saas", "dash_sso", "self_hosted", "ssh", "vnc", "rdp", "app_launcher"}
-	durationRegex                     = regexp.MustCompile(`^(?:0|[-+]?(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h)(?:(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h))*)$`)
+	selfHostedAppTypes                    = []string{"self_hosted", "ssh", "vnc", "rdp"}
+	saasAppTypes                          = []string{"saas", "dash_sso"}
+	appLauncherVisibleAppTypes            = []string{"self_hosted", "ssh", "vnc", "rdp", "saas", "bookmark"}
+	targetCompatibleAppTypes              = []string{"rdp", "infrastructure"}
+	sessionDurationCompatibleAppTypes     = []string{"saas", "dash_sso", "self_hosted", "ssh", "vnc", "rdp", "app_launcher", "warp"}
+	authenticateViaWarpCompatibleAppTypes = []string{"self_hosted", "ssh", "vnc", "rdp", "saas", "dash_sso"}
+	durationRegex                         = regexp.MustCompile(`^(?:0|[-+]?(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h)(?:(\d+(?:\.\d*)?|\.\d+)(?:ns|us|µs|ms|s|m|h))*)$`)
 )
 
 // Sets a specific default value for a computed attribute specific to a set of app types, in case the attribute is unknown.
@@ -110,11 +113,17 @@ func modifyNestedPoliciesPlan(_ context.Context, planApp *ZeroTrustAccessApplica
 }
 
 func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resource.ModifyPlanResponse) {
-	var planApp, stateApp *ZeroTrustAccessApplicationModel
+	var planApp, stateApp, configApp *ZeroTrustAccessApplicationModel
 	res.Diagnostics.Append(req.Plan.Get(ctx, &planApp)...)
 	res.Diagnostics.Append(req.State.Get(ctx, &stateApp)...)
+	res.Diagnostics.Append(req.Config.Get(ctx, &configApp)...)
 	if res.Diagnostics.HasError() || planApp == nil {
 		return
+	}
+
+	// If tags are not configured, ensure they stay null in the plan
+	if configApp != nil && configApp.Tags.IsNull() {
+		planApp.Tags = customfield.NullSet[types.String](ctx)
 	}
 
 	modifyPlanForDomains(ctx, planApp, stateApp)
@@ -135,5 +144,42 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 		modifyNestedPoliciesPlan(ctx, planApp)
 	}
 
+	// Handle tags order normalization - API returns alphabetically sorted tags
+	// but we want to preserve the user's configuration order
+	if !planApp.Tags.IsNull() && !planApp.Tags.IsUnknown() && configApp != nil && !configApp.Tags.IsNull() {
+		if stateApp != nil && !stateApp.Tags.IsNull() {
+			// Update scenario: preserve state order if same elements
+			normalizeTagsOrder(ctx, &planApp.Tags, stateApp.Tags)
+		} else {
+			// Create scenario: preserve config order
+			normalizeTagsOrder(ctx, &planApp.Tags, configApp.Tags)
+		}
+	}
+
 	res.Plan.Set(ctx, &planApp)
+}
+
+func normalizeTagsOrder(ctx context.Context, planTags *customfield.Set[types.String], stateTags customfield.Set[types.String]) {
+	var stateStrings, planStrings []string
+
+	for _, elem := range stateTags.Elements() {
+		if str, ok := elem.(types.String); ok && !str.IsNull() && !str.IsUnknown() {
+			stateStrings = append(stateStrings, str.ValueString())
+		}
+	}
+
+	for _, elem := range planTags.Elements() {
+		if str, ok := elem.(types.String); ok && !str.IsNull() && !str.IsUnknown() {
+			planStrings = append(planStrings, str.ValueString())
+		}
+	}
+
+	// For Sets, order doesn't matter, so we just check if they contain the same elements
+	if len(stateStrings) == len(planStrings) {
+		slices.Sort(stateStrings)
+		slices.Sort(planStrings)
+		if slices.Equal(stateStrings, planStrings) {
+			*planTags = stateTags
+		}
+	}
 }

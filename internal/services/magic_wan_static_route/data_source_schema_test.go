@@ -9,7 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_static_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
-
+ 
 func TestMagicWANStaticRouteDataSourceModelSchemaParity(t *testing.T) {
 	t.Parallel()
 	model := (*magic_wan_static_route.MagicWANStaticRouteDataSourceModel)(nil)

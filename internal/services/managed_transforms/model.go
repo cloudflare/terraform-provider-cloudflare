@@ -4,7 +4,6 @@ package managed_transforms
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -28,15 +27,11 @@ func (m ManagedTransformsModel) MarshalJSONForUpdate(state ManagedTransformsMode
 }
 
 type ManagedTransformsManagedRequestHeadersModel struct {
-	ID            types.String                   `tfsdk:"id" json:"id,required"`
-	Enabled       types.Bool                     `tfsdk:"enabled" json:"enabled,required"`
-	HasConflict   types.Bool                     `tfsdk:"has_conflict" json:"has_conflict,computed"`
-	ConflictsWith customfield.List[types.String] `tfsdk:"conflicts_with" json:"conflicts_with,computed"`
+	ID      types.String `tfsdk:"id" json:"id,required"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,required"`
 }
 
 type ManagedTransformsManagedResponseHeadersModel struct {
-	ID            types.String                   `tfsdk:"id" json:"id,required"`
-	Enabled       types.Bool                     `tfsdk:"enabled" json:"enabled,required"`
-	HasConflict   types.Bool                     `tfsdk:"has_conflict" json:"has_conflict,computed"`
-	ConflictsWith customfield.List[types.String] `tfsdk:"conflicts_with" json:"conflicts_with,computed"`
+	ID      types.String `tfsdk:"id" json:"id,required"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,required"`
 }

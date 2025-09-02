@@ -5,8 +5,8 @@ package workers_for_platforms_dispatch_namespace
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/workers_for_platforms"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/workers_for_platforms"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -27,6 +27,7 @@ type WorkersForPlatformsDispatchNamespaceDataSourceModel struct {
 	NamespaceID       types.String      `tfsdk:"namespace_id" json:"namespace_id,computed"`
 	NamespaceName     types.String      `tfsdk:"namespace_name" json:"namespace_name,computed"`
 	ScriptCount       types.Int64       `tfsdk:"script_count" json:"script_count,computed"`
+	TrustedWorkers    types.Bool        `tfsdk:"trusted_workers" json:"trusted_workers,computed"`
 }
 
 func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toReadParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceGetParams, diags diag.Diagnostics) {

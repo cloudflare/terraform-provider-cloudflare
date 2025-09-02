@@ -218,7 +218,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
-							Description: "DNS record name (or @ for the zone apex) in Punycode.",
+							Description: "Complete DNS record name, including the zone name, in Punycode.",
 							Computed:    true,
 						},
 						"ttl": schema.Float64Attribute{
@@ -285,10 +285,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"tags": schema.ListAttribute{
+						"tags": schema.SetAttribute{
 							Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
 							Computed:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
+							CustomType:  customfield.NewSetType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"id": schema.StringAttribute{
@@ -342,6 +342,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Validators: []validator.Dynamic{
 										customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
 									},
+									CustomType: customfield.NormalizedDynamicType{},
 								},
 								"tag": schema.StringAttribute{
 									Description: "Name of the property controlled by this record (e.g.: issue, issuewild, iodef).",
@@ -399,14 +400,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"priority": schema.Float64Attribute{
-									Description: "priority.",
+									Description: "Priority.",
 									Computed:    true,
 									Validators: []validator.Float64{
 										float64validator.Between(0, 65535),
 									},
 								},
 								"target": schema.StringAttribute{
-									Description: "target.",
+									Description: "Target.",
 									Computed:    true,
 								},
 								"altitude": schema.Float64Attribute{
@@ -555,7 +556,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"fingerprint": schema.StringAttribute{
-									Description: "fingerprint.",
+									Description: "Fingerprint.",
 									Computed:    true,
 								},
 							},

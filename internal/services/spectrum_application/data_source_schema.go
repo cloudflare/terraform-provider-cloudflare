@@ -182,6 +182,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.Dynamic{
 					customvalidator.AllowedSubtypes(basetypes.Int64Type{}, basetypes.StringType{}),
 				},
+				CustomType: customfield.NormalizedDynamicType{},
 			},
 		},
 	}

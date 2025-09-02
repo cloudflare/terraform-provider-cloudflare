@@ -58,6 +58,7 @@ type TerraformTypes struct {
 	P customfield.NestedObjectMap[NestedTerraformType]  `tfsdk:"p" json:"p"`
 	Q customfield.NestedObjectSet[NestedTerraformType]  `tfsdk:"q" json:"q"`
 	R jsontypes.Normalized                              `tfsdk:"r" json:"r"`
+	S customfield.NormalizedDynamicValue                `tfsdk:"s" json:"s"`
 }
 
 type NestedTerraformType struct {
@@ -314,6 +315,11 @@ Content-Disposition: form-data; name="r"
 Content-Type: application/json
 
 {"hello": "world"}
+--xxx
+Content-Disposition: form-data; name="s"
+Content-Type: application/json
+
+{"dynamic_hello":"dynamic_world"}
 --xxx--
 `,
 		TerraformTypes{
@@ -358,6 +364,7 @@ Content-Type: application/json
 				},
 			}),
 			R: jsontypes.NewNormalizedValue(`{"hello": "world"}`),
+			S: customfield.RawNormalizedDynamicValue(types.DynamicValue(types.ObjectValueMust(map[string]attr.Type{"dynamic_hello": basetypes.StringType{}}, map[string]attr.Value{"dynamic_hello": basetypes.NewStringValue("dynamic_world")}))),
 		},
 	},
 

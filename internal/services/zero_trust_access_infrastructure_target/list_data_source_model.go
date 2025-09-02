@@ -5,8 +5,8 @@ package zero_trust_access_infrastructure_target
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -43,12 +43,16 @@ type ZeroTrustAccessInfrastructureTargetsDataSourceModel struct {
 
 func (m *ZeroTrustAccessInfrastructureTargetsDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessInfrastructureTargetListParams, diags diag.Diagnostics) {
 	mIPs := []string{}
-	for _, item := range *m.IPs {
-		mIPs = append(mIPs, item.ValueString())
+	if m.IPs != nil {
+		for _, item := range *m.IPs {
+			mIPs = append(mIPs, item.ValueString())
+		}
 	}
 	mTargetIDs := []string{}
-	for _, item := range *m.TargetIDs {
-		mTargetIDs = append(mTargetIDs, item.ValueString())
+	if m.TargetIDs != nil {
+		for _, item := range *m.TargetIDs {
+			mTargetIDs = append(mTargetIDs, item.ValueString())
+		}
 	}
 	mCreatedAfter, errs := m.CreatedAfter.ValueRFC3339Time()
 	diags.Append(errs...)

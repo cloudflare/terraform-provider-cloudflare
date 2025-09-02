@@ -5,8 +5,8 @@ package zero_trust_tunnel_warp_connector
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -23,6 +23,7 @@ type ZeroTrustTunnelWARPConnectorDataSourceModel struct {
 	TunnelID        types.String                                                                         `tfsdk:"tunnel_id" path:"tunnel_id,optional"`
 	AccountID       types.String                                                                         `tfsdk:"account_id" path:"account_id,required"`
 	AccountTag      types.String                                                                         `tfsdk:"account_tag" json:"account_tag,computed"`
+	ConfigSrc       types.String                                                                         `tfsdk:"config_src" json:"config_src,computed"`
 	ConnsActiveAt   timetypes.RFC3339                                                                    `tfsdk:"conns_active_at" json:"conns_active_at,computed" format:"date-time"`
 	ConnsInactiveAt timetypes.RFC3339                                                                    `tfsdk:"conns_inactive_at" json:"conns_inactive_at,computed" format:"date-time"`
 	CreatedAt       timetypes.RFC3339                                                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

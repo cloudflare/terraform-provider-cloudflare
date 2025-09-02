@@ -33,7 +33,7 @@ Not applicable for primary zones.
 - `id` (String) The ID of this resource.
 - `modified_time` (String) The time for a specific event.
 - `name` (String) Zone name.
-- `peers` (List of String) A list of peer tags.
+- `peers` (Set of String) A list of peer tags.
 - `soa_serial` (Number) The serial number of the SOA for the given zone.
 
 

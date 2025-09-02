@@ -39,5 +39,6 @@ data "cloudflare_workers_for_platforms_dispatch_namespace" "example_workers_for_
 - `namespace_id` (String) API Resource UUID tag.
 - `namespace_name` (String) Name of the Workers for Platforms dispatch namespace.
 - `script_count` (Number) The current number of scripts in this Dispatch Namespace.
+- `trusted_workers` (Boolean) Whether the Workers in the namespace are executed in a "trusted" manner. When a Worker is trusted, it has access to the shared caches for the zone in the Cache API, and has access to the `request.cf` object on incoming Requests. When a Worker is untrusted, caches are not shared across the zone, and `request.cf` is undefined. By default, Workers in a namespace are "untrusted".
 
 

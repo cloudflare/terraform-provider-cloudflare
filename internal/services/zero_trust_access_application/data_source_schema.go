@@ -181,10 +181,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:         customfield.NewListType[types.String](ctx),
 				ElementType:        types.StringType,
 			},
-			"tags": schema.ListAttribute{
+			"tags": schema.SetAttribute{
 				Description: "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"cors_headers": schema.SingleNestedAttribute{
@@ -345,10 +345,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The UUID of the policy",
 							Computed:    true,
 						},
-						"approval_groups": schema.ListNestedAttribute{
+						"approval_groups": schema.SetNestedAttribute{
 							Description: "Administrators who can approve a temporary authentication request.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesApprovalGroupsDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesApprovalGroupsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"approvals_needed": schema.Float64Attribute{
@@ -391,10 +391,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"exclude": schema.ListNestedAttribute{
+						"exclude": schema.SetNestedAttribute{
 							Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesExcludeDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesExcludeDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -662,13 +662,23 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeLinkedAppTokenDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
+												Computed:    true,
+											},
+										},
+									},
 								},
 							},
 						},
-						"include": schema.ListNestedAttribute{
+						"include": schema.SetNestedAttribute{
 							Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesIncludeDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesIncludeDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -936,6 +946,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeLinkedAppTokenDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
+												Computed:    true,
+											},
+										},
+									},
 								},
 							},
 						},
@@ -959,10 +979,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Require users to enter a justification when they log in to the application.",
 							Computed:    true,
 						},
-						"require": schema.ListNestedAttribute{
+						"require": schema.SetNestedAttribute{
 							Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesRequireDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesRequireDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -1226,6 +1246,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
+												Computed:    true,
+											},
+										},
+									},
+									"linked_app_token": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireLinkedAppTokenDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"app_uid": schema.StringAttribute{
+												Description: "The ID of an Access OIDC SaaS application",
 												Computed:    true,
 											},
 										},
@@ -1657,10 +1687,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"protocol": schema.StringAttribute{
-							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\".",
+							Description: "The communication protocol your application secures.\nAvailable values: \"SSH\", \"RDP\".",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("SSH"),
+								stringvalidator.OneOfCaseInsensitive("SSH", "RDP"),
 							},
 						},
 						"target_attributes": schema.MapAttribute{

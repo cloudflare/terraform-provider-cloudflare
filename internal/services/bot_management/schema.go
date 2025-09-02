@@ -47,6 +47,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 			},
+			"bm_cookie_enabled": schema.BoolAttribute{
+				Description: "Indicates that the bot management cookie can be placed on end user devices accessing the site. Defaults to true",
+				Computed:    true,
+				Optional:    true,
+			},
 			"crawler_protection": schema.StringAttribute{
 				Description: "Enable rule to punish AI Scrapers and Crawlers via a link maze.\nAvailable values: \"enabled\", \"disabled\".",
 				Computed:    true,
@@ -64,6 +69,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether to enable Bot Fight Mode.",
 				Computed:    true,
 				Optional:    true,
+			},
+			"is_robots_txt_managed": schema.BoolAttribute{
+				Description: "Enable cloudflare managed robots.txt. If an existing robots.txt is detected, then managed robots.txt will be prepended to the existing robots.txt.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"optimize_wordpress": schema.BoolAttribute{
 				Description: "Whether to optimize Super Bot Fight Mode protections for Wordpress.",

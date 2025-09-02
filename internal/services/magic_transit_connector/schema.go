@@ -30,27 +30,34 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 					},
 					"serial_number": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"activated": schema.BoolAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"interrupt_window_duration_hours": schema.Float64Attribute{
+				Computed: true,
 				Optional: true,
 			},
 			"interrupt_window_hour_of_day": schema.Float64Attribute{
+				Computed: true,
 				Optional: true,
 			},
 			"notes": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"timezone": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"last_heartbeat": schema.StringAttribute{
@@ -67,7 +74,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *MagicTransitConnectorResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = ResourceSchema(ctx)
+	resp.Schema = CustomResourceSchema(ctx)
 }
 
 func (r *MagicTransitConnectorResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

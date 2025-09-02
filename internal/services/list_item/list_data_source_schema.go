@@ -18,12 +18,19 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Defines an identifier.",
+				Description: "The Account ID for this resource.",
 				Required:    true,
 			},
 			"list_id": schema.StringAttribute{
 				Description: "The unique ID of the list.",
 				Required:    true,
+			},
+			"per_page": schema.Int64Attribute{
+				Description: "Amount of results to include in each paginated response. A non-negative 32 bit integer.",
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 500),
+				},
 			},
 			"search": schema.StringAttribute{
 				Description: "A search query to filter returned items. Its meaning depends on the list type: IP addresses must start with the provided string, hostnames and bulk redirects must contain the string, and ASNs must match the string exactly.",
@@ -43,19 +50,23 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "The unique ID of the list.",
-							Computed:    true,
-						},
-						"asn": schema.Int64Attribute{
-							Description: "Defines a non-negative 32 bit integer.",
-							Computed:    true,
-						},
-						"comment": schema.StringAttribute{
-							Description: "Defines an informative summary of the list item.",
+							Description: "Defines the unique ID of the item in the List.",
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{
 							Description: "The RFC 3339 timestamp of when the item was created.",
+							Computed:    true,
+						},
+						"ip": schema.StringAttribute{
+							Description: "An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.",
+							Computed:    true,
+						},
+						"modified_on": schema.StringAttribute{
+							Description: "The RFC 3339 timestamp of when the item was last modified.",
+							Computed:    true,
+						},
+						"comment": schema.StringAttribute{
+							Description: "Defines	an informative summary of the list item.",
 							Computed:    true,
 						},
 						"hostname": schema.SingleNestedAttribute{
@@ -66,15 +77,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"url_hostname": schema.StringAttribute{
 									Computed: true,
 								},
+								"exclude_exact_hostname": schema.BoolAttribute{
+									Description: "Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.",
+									Computed:    true,
+								},
 							},
-						},
-						"ip": schema.StringAttribute{
-							Description: "An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.",
-							Computed:    true,
-						},
-						"modified_on": schema.StringAttribute{
-							Description: "The RFC 3339 timestamp of when the item was last modified.",
-							Computed:    true,
 						},
 						"redirect": schema.SingleNestedAttribute{
 							Description: "The definition of the redirect.",
@@ -112,6 +119,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed: true,
 								},
 							},
+						},
+						"asn": schema.Int64Attribute{
+							Description: "Defines a non-negative 32 bit integer.",
+							Computed:    true,
 						},
 					},
 				},

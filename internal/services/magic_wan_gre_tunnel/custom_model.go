@@ -20,6 +20,7 @@ type CustomMagicWANGRETunnelModel struct {
 	InterfaceAddress      types.String                                                `tfsdk:"interface_address" json:"interface_address,required"`
 	Name                  types.String                                                `tfsdk:"name" json:"name,required"`
 	Description           types.String                                                `tfsdk:"description" json:"description,optional"`
+	InterfaceAddress6     types.String                                                `tfsdk:"interface_address6" json:"interface_address6,optional"`
 	Mtu                   types.Int64                                                 `tfsdk:"mtu" json:"mtu,computed_optional"`
 	TTL                   types.Int64                                                 `tfsdk:"ttl" json:"ttl,computed_optional"`
 	HealthCheck           customfield.NestedObject[MagicWANGRETunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed_optional"`

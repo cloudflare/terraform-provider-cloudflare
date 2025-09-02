@@ -5,14 +5,8 @@ package snippets
 import (
 	"context"
 	"fmt"
-	"io"
-	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/snippets"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
@@ -52,159 +46,22 @@ func (r *SnippetsResource) Configure(ctx context.Context, req resource.Configure
 	r.client = client
 }
 
+var ErrNonfunctionalResource = fmt.Errorf("use 'cloudflare_snippet' instead of 'cloudflare_snippets'")
+
 func (r *SnippetsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *SnippetsModel
-
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	dataBytes, contentType, err := data.MarshalMultipart()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := SnippetsResultEnvelope{*data}
-	_, err = r.client.Snippets.Update(
-		ctx,
-		data.SnippetName.ValueString(),
-		snippets.SnippetUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithRequestBody(contentType, dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.AddError("resource is non-functional", ErrNonfunctionalResource.Error())
 }
 
 func (r *SnippetsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *SnippetsModel
-
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	var state *SnippetsModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	dataBytes, contentType, err := data.MarshalMultipart()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := SnippetsResultEnvelope{*data}
-	_, err = r.client.Snippets.Update(
-		ctx,
-		data.SnippetName.ValueString(),
-		snippets.SnippetUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithRequestBody(contentType, dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.AddError("resource is non-functional", ErrNonfunctionalResource.Error())
 }
 
 func (r *SnippetsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *SnippetsModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := SnippetsResultEnvelope{*data}
-	_, err := r.client.Snippets.Get(
-		ctx,
-		data.SnippetName.ValueString(),
-		snippets.SnippetGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if res != nil && res.StatusCode == 404 {
-		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
-		resp.State.RemoveResource(ctx)
-		return
-	}
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.AddError("resource is non-functional", ErrNonfunctionalResource.Error())
 }
 
 func (r *SnippetsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *SnippetsModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	_, err := r.client.Snippets.Delete(
-		ctx,
-		data.SnippetName.ValueString(),
-		snippets.SnippetDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.AddError("resource is non-functional", ErrNonfunctionalResource.Error())
 }
 
 func (r *SnippetsResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {

@@ -1,20 +1,30 @@
 package acctest
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"reflect"
+	"sort"
 	"strings"
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/hashicorp/terraform-plugin-testing/config"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 )
 
 var (
@@ -287,7 +297,14 @@ func LoadTestCase(filename string, parameters ...interface{}) string {
 func DumpState(s *terraform.State) error {
 	fmt.Println()
 	for name, rs := range s.RootModule().Resources {
-		for attr, key := range rs.Primary.Attributes {
+		// sort the keys
+		keys := make([]string, 0, len(rs.Primary.Attributes))
+		for attr := range rs.Primary.Attributes {
+			keys = append(keys, attr)
+		}
+		sort.Strings(keys)
+		for _, attr := range keys {
+			key := rs.Primary.Attributes[attr]
 			fmt.Println(strings.Join([]string{name, attr}, "."), "=", key)
 		}
 	}
@@ -296,7 +313,421 @@ func DumpState(s *terraform.State) error {
 	return nil
 }
 
+type debugNonEmptyRefreshPlan struct{}
+
+func (pc debugNonEmptyRefreshPlan) CheckPlan(ctx context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
+	if os.Getenv("TF_LOG") == "DEBUG" {
+		fmt.Println("\n---------\n\nRESOURCE DRIFT:")
+		for _, d := range req.Plan.ResourceDrift {
+			bytes, _ := json.MarshalIndent(d, "  ", "  ")
+			fmt.Printf("%s\n\n", string(bytes))
+		}
+		fmt.Println("---------")
+	}
+}
+
+var pc plancheck.PlanCheck = debugNonEmptyRefreshPlan{}
+var LogResourceDrift = []plancheck.PlanCheck{pc}
+
+type debugNonEmptyPlan struct{}
+
+func (pc debugNonEmptyPlan) CheckPlan(ctx context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
+	if os.Getenv("TF_LOG") == "DEBUG" {
+		fmt.Println("\n---------\n\nRESOURCE Changes:")
+		for _, d := range req.Plan.ResourceChanges {
+			bytes, _ := json.MarshalIndent(d, "  ", "  ")
+			fmt.Printf("%s\n\n", string(bytes))
+		}
+		fmt.Println("---------")
+	}
+}
+
+var DebugNonEmptyPlan = debugNonEmptyPlan{}
+
+// ExpectEmptyPlanExceptFalseyToNull is a plan check that expects an empty plan,
+// except for changes from falsey values (false, empty string, empty arrays) to null.
+// This is useful for migration tests where v4 had defaults that v5 doesn't have.
+type expectEmptyPlanExceptFalseyToNull struct{}
+
+func (e expectEmptyPlanExceptFalseyToNull) CheckPlan(ctx context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
+	for _, rc := range req.Plan.ResourceChanges {
+		if rc.Change.Actions[0] == "no-op" || rc.Change.Actions[0] == "read" {
+			continue
+		}
+
+		// Check if this is an update action
+		if rc.Change.Actions[0] != "update" {
+			resp.Error = fmt.Errorf("expected empty plan, but %s has planned action(s): %v", rc.Address, rc.Change.Actions)
+			return
+		}
+
+		// For updates, check each attribute change
+		beforeMap, beforeOk := rc.Change.Before.(map[string]interface{})
+		afterMap, afterOk := rc.Change.After.(map[string]interface{})
+
+		if !beforeOk || !afterOk {
+			resp.Error = fmt.Errorf("expected empty plan, but %s has non-map changes", rc.Address)
+			return
+		}
+
+		// Check each attribute that's different
+		for key, afterValue := range afterMap {
+			beforeValue, _ := beforeMap[key]
+
+			// Skip if values are the same
+			if reflect.DeepEqual(beforeValue, afterValue) {
+				continue
+			}
+
+			// Special handling for SetNestedAttribute fields (like include, exclude, require)
+			if isSetNestedAttributeField(rc.Address, key) {
+				if areSetNestedAttributesEquivalent(beforeValue, afterValue) {
+					continue // Sets are equivalent despite ordering differences
+				}
+			}
+
+			// Allow changes from falsey to null
+			if afterValue == nil {
+				if isFalseyValue(beforeValue) {
+					continue // This change is allowed
+				}
+			}
+
+			// Allow session_duration changes from nil to a default value (API sets defaults)
+			if key == "session_duration" && beforeValue == nil && afterValue != nil {
+				continue // This change is allowed - API sets default session duration
+			}
+
+			// If we get here, it's a disallowed change
+			resp.Error = fmt.Errorf("expected empty plan except for falsey-to-null changes, but %s.%s has change from %v to %v",
+				rc.Address, key, beforeValue, afterValue)
+			return
+		}
+	}
+}
+
+// isSetNestedAttributeField checks if a field name corresponds to a SetNestedAttribute
+// for a specific resource type. These fields should be compared as sets (order-independent) rather than arrays
+func isSetNestedAttributeField(resourceAddress, fieldName string) bool {
+	// Extract resource type from address (e.g., "cloudflare_zero_trust_access_policy.example" -> "cloudflare_zero_trust_access_policy")
+	resourceType := extractResourceTypeFromAddress(resourceAddress)
+
+	// Map of resource types to their SetNestedAttribute field names
+	// SetNestedAttribute fields are compared as sets (order-independent) rather than arrays
+	// This prevents ambiguity when multiple resources have fields with the same name
+	setFieldsByResource := map[string][]string{
+		"cloudflare_zero_trust_access_policy": {"include", "exclude", "require", "approval_groups"},
+		"cloudflare_access_policy":            {"include", "exclude", "require", "approval_group"}, // v4 resource name
+		"cloudflare_ruleset":                  {"rules"},
+		"cloudflare_load_balancer_pool":       {"origins"},
+		// Add other resources with SetNestedAttribute fields as needed
+	}
+
+	fields, exists := setFieldsByResource[resourceType]
+	if !exists {
+		return false
+	}
+
+	for _, setField := range fields {
+		if fieldName == setField {
+			return true
+		}
+	}
+	return false
+}
+
+// extractResourceTypeFromAddress extracts the resource type from a resource address
+// e.g., "cloudflare_zero_trust_access_policy.example" -> "cloudflare_zero_trust_access_policy"
+func extractResourceTypeFromAddress(address string) string {
+	parts := strings.Split(address, ".")
+	if len(parts) < 2 {
+		return address // fallback to full address if parsing fails
+	}
+	return parts[0]
+}
+
+// areSetNestedAttributesEquivalent compares two sets of nested attributes
+// Returns true if they contain the same elements (ignoring order)
+func areSetNestedAttributesEquivalent(before, after interface{}) bool {
+	beforeSlice, beforeOk := before.([]interface{})
+	afterSlice, afterOk := after.([]interface{})
+
+	// If either is not a slice, fall back to regular comparison
+	if !beforeOk || !afterOk {
+		return reflect.DeepEqual(before, after)
+	}
+
+	// Different lengths means different sets
+	if len(beforeSlice) != len(afterSlice) {
+		return false
+	}
+
+	// For each element in before, find a matching element in after
+	for _, beforeElement := range beforeSlice {
+		found := false
+		for _, afterElement := range afterSlice {
+			if areNestedAttributeElementsEquivalent(beforeElement, afterElement) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+
+	return true
+}
+
+// areNestedAttributeElementsEquivalent compares two nested attribute elements
+// with special handling for falsey-to-null transitions
+func areNestedAttributeElementsEquivalent(before, after interface{}) bool {
+	beforeMap, beforeOk := before.(map[string]interface{})
+	afterMap, afterOk := after.(map[string]interface{})
+
+	// If either is not a map, use regular comparison
+	if !beforeOk || !afterOk {
+		return reflect.DeepEqual(before, after)
+	}
+
+	// Get all unique keys from both maps
+	allKeys := make(map[string]bool)
+	for key := range beforeMap {
+		allKeys[key] = true
+	}
+	for key := range afterMap {
+		allKeys[key] = true
+	}
+
+	// Compare each key's value
+	for key := range allKeys {
+		beforeValue, beforeHasKey := beforeMap[key]
+		afterValue, afterHasKey := afterMap[key]
+
+		// If key missing from one side, treat as nil
+		if !beforeHasKey {
+			beforeValue = nil
+		}
+		if !afterHasKey {
+			afterValue = nil
+		}
+
+		// Skip if values are identical
+		if reflect.DeepEqual(beforeValue, afterValue) {
+			continue
+		}
+
+		// Allow falsey-to-null transitions
+		if afterValue == nil && isFalseyValue(beforeValue) {
+			continue
+		}
+		if beforeValue == nil && isFalseyValue(afterValue) {
+			continue
+		}
+
+		// Values are different and not a valid transition
+		return false
+	}
+
+	return true
+}
+
+// isFalseyValue returns true if the value is considered "falsey"
+// (false, empty string, empty slice/array, zero value, or map with all nil values)
+func isFalseyValue(v interface{}) bool {
+	if v == nil {
+		return true
+	}
+
+	switch val := v.(type) {
+	case bool:
+		return !val
+	case string:
+		return val == ""
+	case []interface{}:
+		return len(val) == 0
+	case map[string]interface{}:
+		if len(val) == 0 {
+			return true
+		}
+		// Check if all values in the map are nil or falsey
+		for _, mapValue := range val {
+			if !isFalseyValue(mapValue) {
+				return false
+			}
+		}
+		return true
+	case int, int64, float64:
+		// Handle numeric zero values
+		return reflect.ValueOf(val).IsZero()
+	default:
+		// For other types, check if it's the zero value
+		rv := reflect.ValueOf(val)
+		if rv.IsValid() {
+			return rv.IsZero()
+		}
+		return true
+	}
+}
+
+var ExpectEmptyPlanExceptFalseyToNull = expectEmptyPlanExceptFalseyToNull{}
+
+// debugLogf logs a message only when TF_LOG=DEBUG is set
+func debugLogf(t *testing.T, format string, args ...interface{}) {
+	t.Helper()
+	if os.Getenv("TF_LOG") == "DEBUG" {
+		t.Logf(format, args...)
+	}
+}
+
 // / PtrTo is a small helper to get a pointer to a particular value
 func PtrTo[T any](v T) *T {
 	return &v
+}
+
+// WriteOutConfig writes the config to tmpDir
+func WriteOutConfig(t *testing.T, v4Config string, tmpDir string) {
+	t.Helper()
+
+	// Write the v4 config to tmpDir/test_migration.tf
+	testConfigPath := filepath.Join(tmpDir, "test_migration.tf")
+	debugLogf(t, "Writing v4 config to: %s", testConfigPath)
+
+	err := os.WriteFile(testConfigPath, []byte(v4Config), 0644)
+	if err != nil {
+		t.Fatalf("Failed to write test config file: %v", err)
+	}
+	debugLogf(t, "Successfully wrote v4 config (%d bytes)", len(v4Config))
+
+}
+
+// RunMigrationCommand runs the migration script to transform config and state
+// NOTE: assumes config and state are already in tmpDir
+func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
+	t.Helper()
+
+	// Get the current working directory to find the migration binary
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get current working directory: %v", err)
+	}
+
+	// Build the path to the migration binary
+	// The test runs from internal/services/zone, so we need to go up to the root
+	projectRoot := filepath.Join(cwd, "..", "..", "..")
+	migratePath := filepath.Join(projectRoot, "cmd", "migrate")
+	debugLogf(t, "Migrate path: %s", migratePath)
+
+	// specify patternsDir so we use local patterns instead of the ones from Github
+	patternsDir := filepath.Join(projectRoot, ".grit")
+
+	// Find state file in tmpDir
+	entries, err := os.ReadDir(tmpDir)
+	var stateDir string
+	if err != nil {
+		t.Logf("Failed to read test directory: %v", err)
+	} else {
+		for _, entry := range entries {
+			if entry.IsDir() {
+				inner_entries, _ := os.ReadDir(filepath.Join(tmpDir, entry.Name()))
+				for _, inner_entry := range inner_entries {
+					if inner_entry.Name() == "terraform.tfstate" {
+						stateDir = filepath.Join(tmpDir, entry.Name())
+					}
+				}
+			}
+
+		}
+	}
+
+	// Run the migration command on tmpDir (for config) and terraform.tfstate (for state)
+	debugLogf(t, "StateDir: %s", stateDir)
+	state, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
+	if err != nil {
+		t.Fatalf("Failed to read state file: %v", err)
+	}
+	debugLogf(t, "State is: %s", string(state))
+	cmd := exec.Command("go", "run", "-C", migratePath, ".", "-config", tmpDir, "-patterns-dir", patternsDir, "-state", filepath.Join(stateDir, "terraform.tfstate"))
+	cmd.Dir = tmpDir
+	// Capture output for debugging
+	output, err := cmd.CombinedOutput()
+
+	debugLogf(t, "Migration output:\n%s", string(output))
+
+	if err != nil {
+		t.Fatalf("Migration command failed: %v", err)
+	}
+	newState, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
+	if err != nil {
+		t.Fatalf("Failed to read state file: %v", err)
+	}
+	debugLogf(t, "New State is: %s", string(newState))
+}
+
+// MigrationTestStepWithPlan creates test steps for migrations that need plan processing after migration
+// This handles resources that can't use state upgraders and need plan/refresh to correct state
+// Returns multiple steps: migration step, plan step to process changes, then validation step
+func MigrationTestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exactVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
+	// First step: run migration
+	migrationStep := MigrationTestStep(t, v4Config, tmpDir, exactVersion, nil) // No state checks yet
+
+	// Second step: run plan to process import blocks and state corrections
+	planStep := resource.TestStep{
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		PlanOnly:                 true, // Just run plan to process imports/corrections
+	}
+
+	// Third step: verify final plan is clean and state is correct
+	validationStep := resource.TestStep{
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: []plancheck.PlanCheck{
+				DebugNonEmptyPlan,
+				ExpectEmptyPlanExceptFalseyToNull, // Should be clean after processing
+			},
+		},
+		ConfigStateChecks: stateChecks,
+	}
+
+	return []resource.TestStep{migrationStep, planStep, validationStep}
+}
+
+// MigrationTestStep creates a test step that runs the migration command and validates with v5 provider
+func MigrationTestStep(t *testing.T, v4Config string, tmpDir string, exactVersion string, stateChecks []statecheck.StateCheck) resource.TestStep {
+	// Choose the appropriate plan check based on the version
+	var planChecks []plancheck.PlanCheck
+	if strings.HasPrefix(exactVersion, "4.") {
+		// When upgrading from v4, allow falsey-to-null changes due to removed defaults
+		planChecks = []plancheck.PlanCheck{
+			DebugNonEmptyPlan,
+			ExpectEmptyPlanExceptFalseyToNull,
+		}
+	} else {
+		// When upgrading from v5, expect a completely empty plan
+		planChecks = []plancheck.PlanCheck{
+			DebugNonEmptyPlan,
+			plancheck.ExpectEmptyPlan(),
+		}
+	}
+
+	return resource.TestStep{
+		PreConfig: func() {
+			WriteOutConfig(t, v4Config, tmpDir)
+			// we only run the migration command if the version is 4.x.x, because users will not expect to run it within v5 versions.
+			if strings.HasPrefix(exactVersion, "4.") {
+				debugLogf(t, "Running migration command for version: %s", exactVersion)
+				RunMigrationCommand(t, v4Config, tmpDir)
+			} else {
+				debugLogf(t, "Skipping migration command for version: %s", exactVersion)
+			}
+		},
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: planChecks,
+		},
+		ConfigStateChecks: stateChecks,
+	}
 }
