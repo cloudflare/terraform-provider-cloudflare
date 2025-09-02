@@ -84,6 +84,12 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			resourceType = "cloudflare_zero_trust_access_identity_provider"
     }
 
+		if resourceType == "cloudflare_access_mutual_tls_certificate" {
+			// Rename to cloudflare_zero_trust_access_mtls_certificate
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_mtls_certificate")
+			resourceType = "cloudflare_zero_trust_access_mtls_certificate"
+		}
+
 		if resourceType == "cloudflare_access_application" {
 			// Rename cloudflare_access_application to cloudflare_zero_trust_access_application
 			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_application")
