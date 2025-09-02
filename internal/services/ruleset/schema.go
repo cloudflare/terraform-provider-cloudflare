@@ -7,6 +7,7 @@ import (
 	"regexp"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -183,7 +184,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"response": schema.SingleNestedAttribute{
 									Description: "The response to show when the block is applied.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersResponseModel](ctx),
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"block",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersResponseModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"content": schema.StringAttribute{
 											Description: "The content to return.",
@@ -212,6 +219,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "Custom order for compression algorithms.",
 									Optional:    true,
 									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"compress_response",
+										),
 										listvalidator.SizeAtLeast(1),
 									},
 									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersAlgorithmsModel](ctx),
@@ -238,6 +249,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The ID of the ruleset to execute.",
 									Optional:    true,
 									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"execute",
+										),
 										stringvalidator.RegexMatches(
 											regexp.MustCompile("^[0-9a-f]{32}$"),
 											"value must be a 32-character hexadecimal string",
@@ -247,7 +262,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"matched_data": schema.SingleNestedAttribute{
 									Description: "The configuration to use for matched data logging.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersMatchedDataModel](ctx),
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"execute",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersMatchedDataModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"public_key": schema.StringAttribute{
 											Description: "The public key to encrypt matched data logs with.",
@@ -261,7 +282,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"overrides": schema.SingleNestedAttribute{
 									Description: "A set of overrides to apply to the target ruleset.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersOverridesModel](ctx),
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"execute",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersOverridesModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"action": schema.StringAttribute{
 											Description: "An action to override all rules with. This option has lower precedence than rule and category overrides.",
@@ -407,6 +434,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "A redirect based on a bulk list lookup.",
 									Optional:    true,
 									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"redirect",
+										),
 										objectvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("from_value")),
 									},
 									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersFromListModel](ctx),
@@ -434,6 +465,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "A redirect based on the request properties.",
 									Optional:    true,
 									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"redirect",
+										),
 										objectvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("from_list")),
 									},
 									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersFromValueModel](ctx),
@@ -485,6 +520,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "A map of headers to rewrite.",
 									Optional:    true,
 									Validators: []validator.Map{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"rewrite",
+										),
 										mapvalidator.SizeAtLeast(1),
 									},
 									CustomType: customfield.NewNestedObjectMapType[RulesetRulesActionParametersHeadersModel](ctx),
@@ -523,7 +562,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"uri": schema.SingleNestedAttribute{
 									Description: "A URI rewrite.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersURIModel](ctx),
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"rewrite",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersURIModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"path": schema.SingleNestedAttribute{
 											Description: "A URI path rewrite.",
@@ -578,13 +623,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "A value to rewrite the HTTP host header to.",
 									Optional:    true,
 									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"route",
+										),
 										stringvalidator.LengthAtLeast(1),
 									},
 								},
 								"origin": schema.SingleNestedAttribute{
 									Description: "An origin to route to.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersOriginModel](ctx),
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"route",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersOriginModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"host": schema.StringAttribute{
 											Description: "A resolved host to route to.",
@@ -606,7 +661,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"sni": schema.SingleNestedAttribute{
 									Description: "A Server Name Indication (SNI) override.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersSNIModel](ctx),
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"route",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersSNIModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"value": schema.StringAttribute{
 											Description: "A value to override the SNI to.",
@@ -620,11 +681,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"increment": schema.Int64Attribute{
 									Description: "A delta to change the score by, which can be either positive or negative.",
 									Optional:    true,
+									Validators: []validator.Int64{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"score",
+										),
+									},
 								},
 								"asset_name": schema.StringAttribute{
 									Description: "The name of a custom asset to serve as the response.",
 									Optional:    true,
 									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"serve_error",
+										),
 										stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("content")),
 										stringvalidator.LengthAtLeast(1),
 									},
@@ -633,6 +704,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The response content.",
 									Optional:    true,
 									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"serve_error",
+										),
 										stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("asset_name")),
 										stringvalidator.LengthAtLeast(1),
 									},
@@ -641,6 +716,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The content type header to set with the error response.\nAvailable values: \"application/json\", \"text/html\", \"text/plain\", \"text/xml\".",
 									Optional:    true,
 									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"serve_error",
+										),
 										stringvalidator.OneOfCaseInsensitive(
 											"application/json",
 											"text/html",
@@ -653,17 +732,33 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The status code to use for the error.",
 									Optional:    true,
 									Validators: []validator.Int64{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"serve_error",
+										),
 										int64validator.Between(400, 999),
 									},
 								},
 								"automatic_https_rewrites": schema.BoolAttribute{
 									Description: "Whether to enable Automatic HTTPS Rewrites.",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
 								},
 								"autominify": schema.SingleNestedAttribute{
 									Description: "Which file extensions to minify automatically.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersAutominifyModel](ctx),
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersAutominifyModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"css": schema.BoolAttribute{
 											Description: "Whether to minify CSS files.",
@@ -688,11 +783,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"bic": schema.BoolAttribute{
 									Description: "Whether to enable Browser Integrity Check (BIC).",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
 								},
 								"disable_apps": schema.BoolAttribute{
 									Description: "Whether to disable Cloudflare Apps.",
 									Optional:    true,
 									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
 										boolvalidator.Equals(true),
 									},
 								},
@@ -700,6 +805,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "Whether to disable Real User Monitoring (RUM).",
 									Optional:    true,
 									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
 										boolvalidator.Equals(true),
 									},
 								},
@@ -707,33 +816,71 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "Whether to disable Zaraz.",
 									Optional:    true,
 									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
 										boolvalidator.Equals(true),
 									},
 								},
 								"email_obfuscation": schema.BoolAttribute{
 									Description: "Whether to enable Email Obfuscation.",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
 								},
 								"fonts": schema.BoolAttribute{
 									Description: "Whether to enable Cloudflare Fonts.",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
 								},
 								"hotlink_protection": schema.BoolAttribute{
 									Description: "Whether to enable Hotlink Protection.",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
 								},
 								"mirage": schema.BoolAttribute{
 									Description: "Whether to enable Mirage.",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
 								},
 								"opportunistic_encryption": schema.BoolAttribute{
 									Description: "Whether to enable Opportunistic Encryption.",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
 								},
 								"polish": schema.StringAttribute{
 									Description: "The Polish level to configure.\nAvailable values: \"off\", \"lossless\", \"lossy\", \"webp\".",
 									Optional:    true,
 									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
 										stringvalidator.OneOfCaseInsensitive(
 											"off",
 											"lossless",
@@ -745,11 +892,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"rocket_loader": schema.BoolAttribute{
 									Description: "Whether to enable Rocket Loader.",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
 								},
 								"security_level": schema.StringAttribute{
 									Description: "The Security Level to configure.\nAvailable values: \"off\", \"essentially_off\", \"low\", \"medium\", \"high\", \"under_attack\".",
 									Optional:    true,
 									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
 										stringvalidator.OneOfCaseInsensitive(
 											"off",
 											"essentially_off",
@@ -763,11 +920,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"server_side_excludes": schema.BoolAttribute{
 									Description: "Whether to enable Server-Side Excludes.",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
 								},
 								"ssl": schema.StringAttribute{
 									Description: "The SSL level to configure.\nAvailable values: \"off\", \"flexible\", \"full\", \"strict\", \"origin_pull\".",
 									Optional:    true,
 									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
 										stringvalidator.OneOfCaseInsensitive(
 											"off",
 											"flexible",
@@ -780,11 +947,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"sxg": schema.BoolAttribute{
 									Description: "Whether to enable Signed Exchanges (SXG).",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
 								},
 								// "phase": schema.StringAttribute{
 								// 	Description: "A phase to skip the execution of. This option is only compatible with the products option.\nAvailable values: \"current\".",
 								// 	Optional:    true,
 								// 	Validators: []validator.String{
+								// 		customvalidator.RequiresOtherStringAttributeToBe(
+								// 			path.MatchRelative().AtParent().AtParent().AtName("action"),
+								// 			"skip",
+								// 		),
 								// 		stringvalidator.OneOfCaseInsensitive("current"),
 								// 	},
 								// },
@@ -792,6 +969,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "A list of phases to skip the execution of. This option is incompatible with the rulesets option.\nAvailable values: \"ddos_l4\", \"ddos_l7\", \"http_config_settings\", \"http_custom_errors\", \"http_log_custom_fields\", \"http_ratelimit\", \"http_request_cache_settings\", \"http_request_dynamic_redirect\", \"http_request_firewall_custom\", \"http_request_firewall_managed\", \"http_request_late_transform\", \"http_request_origin\", \"http_request_redirect\", \"http_request_sanitize\", \"http_request_sbfm\", \"http_request_transform\", \"http_response_compression\", \"http_response_firewall_managed\", \"http_response_headers_transform\", \"magic_transit\", \"magic_transit_ids_managed\", \"magic_transit_managed\", \"magic_transit_ratelimit\".",
 									Optional:    true,
 									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"skip",
+										),
 										listvalidator.SizeAtLeast(1),
 										listvalidator.ValueStringsAre(
 											stringvalidator.OneOfCaseInsensitive(
@@ -828,6 +1009,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "A list of legacy security products to skip the execution of.\nAvailable values: \"bic\", \"hot\", \"rateLimit\", \"securityLevel\", \"uaBlock\", \"waf\", \"zoneLockdown\".",
 									Optional:    true,
 									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"skip",
+										),
 										listvalidator.SizeAtLeast(1),
 										listvalidator.ValueStringsAre(
 											stringvalidator.OneOfCaseInsensitive(
@@ -848,6 +1033,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "A mapping of ruleset IDs to a list of rule IDs in that ruleset to skip the execution of. This option is incompatible with the ruleset option.",
 									Optional:    true,
 									Validators: []validator.Map{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"skip",
+										),
 										mapvalidator.SizeAtLeast(1),
 										mapvalidator.ValueListsAre(
 											listvalidator.SizeAtLeast(1),
@@ -868,6 +1057,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "A ruleset to skip the execution of. This option is incompatible with the rulesets option.\nAvailable values: \"current\".",
 									Optional:    true,
 									Validators: []validator.String{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"skip",
+										),
 										stringvalidator.OneOfCaseInsensitive("current"),
 									},
 								},
@@ -875,6 +1068,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "A list of ruleset IDs to skip the execution of. This option is incompatible with the ruleset and phases options.",
 									Optional:    true,
 									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"skip",
+										),
 										listvalidator.SizeAtLeast(1),
 										listvalidator.ValueStringsAre(
 											stringvalidator.RegexMatches(
@@ -890,6 +1087,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "A list of additional ports that caching should be enabled on.",
 									Optional:    true,
 									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
 										listvalidator.SizeAtLeast(1),
 										listvalidator.ValueInt64sAre(int64validator.Between(1, 65535)),
 									},
@@ -899,7 +1100,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"browser_ttl": schema.SingleNestedAttribute{
 									Description: "How long client browsers should cache the response. Cloudflare cache purge will not purge content cached on client browsers, so high browser TTLs may lead to stale content.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersBrowserTTLModel](ctx),
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersBrowserTTLModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"mode": schema.StringAttribute{
 											Description: "The browser TTL mode.\nAvailable values: \"respect_origin\", \"bypass_by_default\", \"override_origin\", \"bypass\".",
@@ -925,11 +1132,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"cache": schema.BoolAttribute{
 									Description: "Whether the request's response from the origin is eligible for caching. Caching itself will still depend on the cache control header and your other caching configurations.",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
 								},
 								"cache_key": schema.SingleNestedAttribute{
 									Description: "Which components of the request are included in or excluded from the cache key Cloudflare uses to store the response in cache.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyModel](ctx),
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"cache_by_device_type": schema.BoolAttribute{
 											Description: "Whether to separate cached content based on the visitor's device type.",
@@ -1112,7 +1331,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"cache_reserve": schema.SingleNestedAttribute{
 									Description: "Settings to determine whether the request's response from origin is eligible for Cache Reserve (requires a Cache Reserve add-on plan).",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheReserveModel](ctx),
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersCacheReserveModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"eligible": schema.BoolAttribute{
 											Description: "Whether Cache Reserve is enabled. If this is true and a request meets eligibility criteria, Cloudflare will write the resource to Cache Reserve.",
@@ -1130,7 +1355,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"edge_ttl": schema.SingleNestedAttribute{
 									Description: "How long the Cloudflare edge network should cache the response.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersEdgeTTLModel](ctx),
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersEdgeTTLModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"default": schema.Int64Attribute{
 											Description: "The edge TTL (in seconds) if you choose the \"override_origin\" mode.",
@@ -1203,26 +1434,54 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"origin_cache_control": schema.BoolAttribute{
 									Description: "Whether Cloudflare will aim to strictly adhere to RFC 7234.",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
 								},
 								"origin_error_page_passthru": schema.BoolAttribute{
 									Description: "Whether to generate Cloudflare error pages for issues from the origin server.",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
 								},
 								"read_timeout": schema.Int64Attribute{
 									Description: "A timeout value between two successive read operations to use for your origin server. Historically, the timeout value between two read options from Cloudflare to an origin server is 100 seconds. If you are attempting to reduce HTTP 524 errors because of timeouts from an origin server, try increasing this timeout value.",
 									Optional:    true,
 									Validators: []validator.Int64{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
 										int64validator.Between(100, 6000),
 									},
 								},
 								"respect_strong_etags": schema.BoolAttribute{
 									Description: "Whether Cloudflare should respect strong ETag (entity tag) headers. If false, Cloudflare converts strong ETag headers to weak ETag headers.",
 									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
 								},
 								"serve_stale": schema.SingleNestedAttribute{
 									Description: "When to serve stale content from cache.",
 									Optional:    true,
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersServeStaleModel](ctx),
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersServeStaleModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"disable_stale_while_updating": schema.BoolAttribute{
 											Description: "Whether Cloudflare should disable serving stale content while getting the latest content from the origin.",
@@ -1234,6 +1493,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The cookie fields to log.",
 									Optional:    true,
 									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"log_custom_field",
+										),
 										listvalidator.SizeAtLeast(1),
 									},
 									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersCookieFieldsModel](ctx),
@@ -1253,6 +1516,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The raw response fields to log.",
 									Optional:    true,
 									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"log_custom_field",
+										),
 										listvalidator.SizeAtLeast(1),
 									},
 									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersRawResponseFieldsModel](ctx),
@@ -1278,6 +1545,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The raw request fields to log.",
 									Optional:    true,
 									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"log_custom_field",
+										),
 										listvalidator.SizeAtLeast(1),
 									},
 									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersRequestFieldsModel](ctx),
@@ -1297,6 +1568,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The transformed response fields to log.",
 									Optional:    true,
 									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"log_custom_field",
+										),
 										listvalidator.SizeAtLeast(1),
 									},
 									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersResponseFieldsModel](ctx),
@@ -1322,6 +1597,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The transformed request fields to log.",
 									Optional:    true,
 									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"log_custom_field",
+										),
 										listvalidator.SizeAtLeast(1),
 									},
 									CustomType: customfield.NewNestedObjectListType[RulesetRulesActionParametersTransformedRequestFieldsModel](ctx),
