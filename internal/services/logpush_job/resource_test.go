@@ -14,6 +14,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"github.com/pkg/errors"
 )
 
@@ -148,17 +152,29 @@ func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareLogpushJobBasic(rnd, logpushJobConfigCreate),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "dataset", toString(logpushJobConfigCreate.dataset)),
-					resource.TestCheckResourceAttr(resourceName, "destination_conf", toString(logpushJobConfigCreate.destinationConf)),
-				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionCreate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigCreate.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+				},
 			},
 			{
 				Config: testCloudflareLogpushJobBasic(rnd, logpushJobConfigUpdate),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "dataset", toString(logpushJobConfigUpdate.dataset)),
-					resource.TestCheckResourceAttr(resourceName, "destination_conf", toString(logpushJobConfigUpdate.destinationConf)),
-				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigUpdate.destinationConf))),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigUpdate.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigUpdate.destinationConf))),
+				},
 			},
 		},
 	})
@@ -211,23 +227,35 @@ func TestAccCloudflareLogpushJob_BasicOutputOptions(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareLogpushJobBasicOutputOptions(rnd, logpushJobConfigCreate),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "dataset", toString(logpushJobConfigCreate.dataset)),
-					resource.TestCheckResourceAttr(resourceName, "destination_conf", toString(logpushJobConfigCreate.destinationConf)),
-					resource.TestCheckResourceAttr(resourceName, "output_options.output_type", toString(logpushJobConfigCreate.outputOptions.outputType)),
-					resource.TestCheckResourceAttr(resourceName, "output_options.sample_rate", toString(logpushJobConfigCreate.outputOptions.sampleRate)),
-					resource.TestCheckResourceAttr(resourceName, "output_options.timestamp_format", toString(logpushJobConfigCreate.outputOptions.timestampFormat)),
-				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionCreate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigCreate.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("output_type"), knownvalue.StringExact(toString(logpushJobConfigCreate.outputOptions.outputType))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("sample_rate"), knownvalue.Float64Exact(logpushJobConfigCreate.outputOptions.sampleRate)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("timestamp_format"), knownvalue.StringExact(toString(logpushJobConfigCreate.outputOptions.timestampFormat))),
+				},
 			},
 			{
 				Config: testCloudflareLogpushJobBasicOutputOptions(rnd, logpushJobConfigUpdate),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "dataset", toString(logpushJobConfigUpdate.dataset)),
-					resource.TestCheckResourceAttr(resourceName, "destination_conf", toString(logpushJobConfigUpdate.destinationConf)),
-					resource.TestCheckResourceAttr(resourceName, "output_options.output_type", toString(logpushJobConfigUpdate.outputOptions.outputType)),
-					resource.TestCheckResourceAttr(resourceName, "output_options.sample_rate", toString(logpushJobConfigUpdate.outputOptions.sampleRate)),
-					resource.TestCheckResourceAttr(resourceName, "output_options.timestamp_format", toString(logpushJobConfigUpdate.outputOptions.timestampFormat)),
-				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigUpdate.destinationConf))),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigUpdate.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigUpdate.destinationConf))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("output_type"), knownvalue.StringExact(toString(logpushJobConfigUpdate.outputOptions.outputType))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("sample_rate"), knownvalue.Float64Exact(logpushJobConfigUpdate.outputOptions.sampleRate)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("timestamp_format"), knownvalue.StringExact(toString(logpushJobConfigUpdate.outputOptions.timestampFormat))),
+				},
 			},
 		},
 	})
@@ -305,47 +333,65 @@ func TestAccCloudflareLogpushJob_Full(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareLogpushJobFull(rnd, logpushJobConfigCreate),
-				Check:  resource.ComposeTestCheckFunc(getTestCheckResourceAttrs(resourceName, logpushJobConfigCreate)...),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionCreate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					},
+				},
+				ConfigStateChecks: getStateChecks(resourceName, logpushJobConfigCreate),
 			},
 			{
 				Config: testCloudflareLogpushJobFull(rnd, logpushJobConfigUpdate),
-				Check:  resource.ComposeTestCheckFunc(getTestCheckResourceAttrs(resourceName, logpushJobConfigUpdate)...),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigUpdate.destinationConf))),
+					},
+				},
+				ConfigStateChecks: getStateChecks(resourceName, logpushJobConfigUpdate),
 			},
 		},
 	})
 }
 
-func getTestCheckResourceAttrs(resourceName string, logpushJobConfig *logpushJobConfig) []resource.TestCheckFunc {
-	testCheckFuncs := []resource.TestCheckFunc{
-		resource.TestCheckResourceAttr(resourceName, "dataset", toString(logpushJobConfig.dataset)),
-		resource.TestCheckResourceAttr(resourceName, "destination_conf", toString(logpushJobConfig.destinationConf)),
-		resource.TestCheckResourceAttr(resourceName, "enabled", toString(logpushJobConfig.enabled)),
-		resource.TestCheckResourceAttr(resourceName, "name", toString(logpushJobConfig.name)),
-		resource.TestCheckResourceAttr(resourceName, "filter", toString(logpushJobConfig.filter)),
-		resource.TestCheckResourceAttr(resourceName, "kind", toString(logpushJobConfig.kind)),
-		resource.TestCheckResourceAttr(resourceName, "max_upload_bytes", toString(logpushJobConfig.maxUploadBytes)),
-		resource.TestCheckResourceAttr(resourceName, "max_upload_records", toString(logpushJobConfig.maxUploadRecords)),
-		resource.TestCheckResourceAttr(resourceName, "max_upload_interval_seconds", toString(logpushJobConfig.maxUploadIntervalSeconds)),
-		resource.TestCheckResourceAttr(resourceName, "frequency", toString(logpushJobConfig.frequency)),
-		resource.TestCheckResourceAttr(resourceName, "logpull_options", toString(logpushJobConfig.logpullOptions)),
-		resource.TestCheckResourceAttr(resourceName, "output_options.batch_prefix", unquote(toString(logpushJobConfig.outputOptions.batchPrefix))),
-		resource.TestCheckResourceAttr(resourceName, "output_options.batch_suffix", unquote(toString(logpushJobConfig.outputOptions.batchSuffix))),
-		resource.TestCheckResourceAttr(resourceName, "output_options.cve_2021_44228", toString(logpushJobConfig.outputOptions.cve2021_44228)),
-		resource.TestCheckResourceAttr(resourceName, "output_options.field_delimiter", unquote(toString(logpushJobConfig.outputOptions.fieldDelimiter))),
-		resource.TestCheckResourceAttr(resourceName, "output_options.field_names.#", toString(len(logpushJobConfig.outputOptions.fieldNames))),
-		resource.TestCheckResourceAttr(resourceName, "output_options.output_type", toString(logpushJobConfig.outputOptions.outputType)),
-		resource.TestCheckResourceAttr(resourceName, "output_options.record_delimiter", unquote(toString(logpushJobConfig.outputOptions.recordDelimiter))),
-		resource.TestCheckResourceAttr(resourceName, "output_options.record_prefix", unquote(toString(logpushJobConfig.outputOptions.recordPrefix))),
-		resource.TestCheckResourceAttr(resourceName, "output_options.record_suffix", unquote(toString(logpushJobConfig.outputOptions.recordSuffix))),
-		resource.TestCheckResourceAttr(resourceName, "output_options.record_template", unquote(toString(logpushJobConfig.outputOptions.recordTemplate))),
-		resource.TestCheckResourceAttr(resourceName, "output_options.sample_rate", toString(logpushJobConfig.outputOptions.sampleRate)),
-		resource.TestCheckResourceAttr(resourceName, "output_options.timestamp_format", toString(logpushJobConfig.outputOptions.timestampFormat)),
-	}
-	for i, fieldName := range logpushJobConfig.outputOptions.fieldNames {
-		testCheckFuncs = append(testCheckFuncs, resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("output_options.field_names.%d", i), fieldName))
+func getStateChecks(resourceName string, logpushJobConfig *logpushJobConfig) []statecheck.StateCheck {
+	stateChecks := []statecheck.StateCheck{
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfig.dataset))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfig.destinationConf))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(logpushJobConfig.enabled)),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(toString(logpushJobConfig.name))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("filter"), knownvalue.StringExact(toString(logpushJobConfig.filter))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("kind"), knownvalue.StringExact(toString(logpushJobConfig.kind))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("max_upload_bytes"), knownvalue.Int64Exact(int64(logpushJobConfig.maxUploadBytes))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("max_upload_records"), knownvalue.Int64Exact(int64(logpushJobConfig.maxUploadRecords))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("max_upload_interval_seconds"), knownvalue.Int64Exact(int64(logpushJobConfig.maxUploadIntervalSeconds))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("frequency"), knownvalue.StringExact(toString(logpushJobConfig.frequency))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("logpull_options"), knownvalue.StringExact(toString(logpushJobConfig.logpullOptions))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("batch_prefix"), knownvalue.StringExact(unquote(toString(logpushJobConfig.outputOptions.batchPrefix)))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("batch_suffix"), knownvalue.StringExact(unquote(toString(logpushJobConfig.outputOptions.batchSuffix)))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("cve_2021_44228"), knownvalue.Bool(logpushJobConfig.outputOptions.cve2021_44228)),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("field_delimiter"), knownvalue.StringExact(unquote(toString(logpushJobConfig.outputOptions.fieldDelimiter)))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("output_type"), knownvalue.StringExact(toString(logpushJobConfig.outputOptions.outputType))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("record_delimiter"), knownvalue.StringExact(unquote(toString(logpushJobConfig.outputOptions.recordDelimiter)))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("record_prefix"), knownvalue.StringExact(unquote(toString(logpushJobConfig.outputOptions.recordPrefix)))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("record_suffix"), knownvalue.StringExact(unquote(toString(logpushJobConfig.outputOptions.recordSuffix)))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("record_template"), knownvalue.StringExact(unquote(toString(logpushJobConfig.outputOptions.recordTemplate)))),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("sample_rate"), knownvalue.Float64Exact(logpushJobConfig.outputOptions.sampleRate)),
+		statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("timestamp_format"), knownvalue.StringExact(toString(logpushJobConfig.outputOptions.timestampFormat))),
 	}
 
-	return testCheckFuncs
+	if len(logpushJobConfig.outputOptions.fieldNames) == 0 {
+		stateChecks = append(stateChecks, statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("field_names"), knownvalue.Null()))
+	} else {
+		list := []knownvalue.Check{}
+		for _, fieldName := range logpushJobConfig.outputOptions.fieldNames {
+			list = append(list, knownvalue.StringExact(fieldName))
+		}
+		stateChecks = append(stateChecks, statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("output_options").AtMapKey("field_names"), knownvalue.ListExact(list)))
+	}
+
+	return stateChecks
 }
 
 func testCloudflareLogpushJobFull(resourceID string, logpushJobConfig *logpushJobConfig) string {
@@ -410,11 +456,17 @@ func TestAccCloudflareLogpushJob_ImmutableFields(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareLogpushJobImmutableFields(rnd, logpushJobConfigCreate),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "dataset", toString(logpushJobConfigCreate.dataset)),
-					resource.TestCheckResourceAttr(resourceName, "destination_conf", toString(logpushJobConfigCreate.destinationConf)),
-					resource.TestCheckResourceAttr(resourceName, "kind", toString(logpushJobConfigCreate.kind)),
-				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionCreate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dataset"), knownvalue.StringExact(toString(logpushJobConfigCreate.dataset))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destination_conf"), knownvalue.StringExact(toString(logpushJobConfigCreate.destinationConf))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("kind"), knownvalue.StringExact(toString(logpushJobConfigCreate.kind))),
+				},
 			},
 			{
 				Config:      testCloudflareLogpushJobImmutableFields(rnd, logpushJobConfigUpdate),
