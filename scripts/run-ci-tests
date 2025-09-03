@@ -92,6 +92,8 @@ declare -a SERVICES=(
     "resource=./internal/services/zero_trust_device_custom_profile_local_domain_fallback parallel=0"
     "resource=./internal/services/zero_trust_device_default_profile_certificates parallel=0"
     "resource=./internal/services/zero_trust_device_managed_networks parallel=0"
+    "resource=./internal/services/zero_trust_dlp_custom_profile parallel=0"
+    "resource=./internal/services/zero_trust_dlp_entry parallel=0"
     "resource=./internal/services/zero_trust_gateway_proxy_endpoint parallel=0"
     "resource=./internal/services/zero_trust_gateway_settings parallel=0"
     "resource=./internal/services/zero_trust_list parallel=0"
