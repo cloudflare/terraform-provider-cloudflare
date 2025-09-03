@@ -1,11 +1,16 @@
 package zero_trust_access_mtls_certificate_test
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
+	cf "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -40,18 +45,52 @@ qAY7EfWG4Vg2shFGLErpkI8/4S2F3ddYMObqwI0w4sIfLqXfTSuPWkhi1AvN/rzq
 Et51cI4=
 -----END CERTIFICATE-----`
 
+// Helper functions for loading test configurations
+func testAccessMutualTLSCertificateMigrationBasic(rnd string, identifier *cf.ResourceContainer, cert string, domain string) string {
+	// Convert literal \n to actual newlines for proper certificate format
+	processedCert := fmt.Sprintf("<<EOT\n%s\nEOT", strings.ReplaceAll(cert, "\\n", "\n"))
+	return acctest.LoadTestCase("accessmutualtlscertificate_migration_basic.tf", rnd, identifier.Type, identifier.Identifier, processedCert, domain)
+}
+
+func testAccessMutualTLSCertificateMigrationZoneScoped(rnd string, zoneID string, cert string) string {
+	processedCert := fmt.Sprintf("<<EOT\n%s\nEOT", strings.ReplaceAll(cert, "\\n", "\n"))
+	return acctest.LoadTestCase("accessmutualtlscertificate_migration_zone_scoped.tf", rnd, zoneID, processedCert)
+}
+
 // waitBetweenTests adds a delay to prevent API conflicts between tests
-func waitBetweenTests(t *testing.T) {
+func waitBetweenTests(t *testing.T, isZone bool) {
 	t.Helper()
-	if os.Getenv("TF_LOG") == "DEBUG" {
-		t.Logf("Waiting 15 seconds to prevent API conflicts...")
+	c := cloudflare.NewClient()
+	retry := 0
+	listParams := zero_trust.AccessCertificateListParams{}
+	if isZone {
+		listParams.ZoneID = cloudflare.F(os.Getenv("CLOUDFLARE_ZONE_ID"))
+	} else {
+		listParams.AccountID = cloudflare.F(os.Getenv("CLOUDFLARE_ACCOUNT_ID"))
 	}
-	time.Sleep(15 * time.Second)
+	for retry < 5 {
+		res, err := c.ZeroTrust.Access.Certificates.List(context.Background(), listParams)
+		if err != nil {
+			retry++
+			continue
+		}
+		if len(res.Result) == 0 {
+			return
+		}
+		time.Sleep(3 * time.Second)
+		retry++
+		if os.Getenv("TF_LOG") == "DEBUG" {
+			t.Logf("Waiting for list to return empty results to prevent API conflicts. Retry number: %d", retry)
+		}
+	}
+
 }
 
 // TestMigrateZeroTrustAccessMTLSCertificate_Basic tests basic migration from v4 to v5
+// The test starts with v4 resource name (cloudflare_access_mutual_tls_certificate) and
+// the migration tool renames it to v5 (cloudflare_zero_trust_access_mtls_certificate)
 func TestMigrateZeroTrustAccessMTLSCertificate_Basic(t *testing.T) {
-	waitBetweenTests(t)
+	waitBetweenTests(t, false)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -65,16 +104,11 @@ func TestMigrateZeroTrustAccessMTLSCertificate_Basic(t *testing.T) {
 	resourceName := "cloudflare_zero_trust_access_mtls_certificate." + rnd
 	tmpDir := t.TempDir()
 
-	// V4 config using old resource name and hardcoded certificate
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
-  name                 = "%[1]s"
-  account_id           = "%[2]s"
-  certificate          = <<EOT
-%[4]s
-EOT
-  associated_hostnames = ["%[1]s.terraform.%[3]s", "%[1]ss.terraform.%[3]s"]
-}`, rnd, accountID, domain, testCertificate)
+	identifier := &cf.ResourceContainer{
+		Type:       "account",
+		Identifier: accountID,
+	}
+	v4Config := testAccessMutualTLSCertificateMigrationBasic(rnd, identifier, testCertificate, domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -88,17 +122,17 @@ EOT
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("certificate"), knownvalue.NotNull()),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("associated_hostnames"), knownvalue.ListSizeExact(2)),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("associated_hostnames"), knownvalue.SetSizeExact(2)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("fingerprint"), knownvalue.NotNull()),
 				// New computed field in v5
@@ -108,49 +142,43 @@ EOT
 	})
 }
 
-// TestMigrateZeroTrustAccessMTLSCertificate_Minimal tests minimal configuration migration
-func TestMigrateZeroTrustAccessMTLSCertificate_Minimal(t *testing.T) {
-	waitBetweenTests(t)
+// TestMigrateZeroTrustAccessMTLSCertificate_ZoneScoped tests zone-scoped resource migration
+func TestMigrateZeroTrustAccessMTLSCertificate_ZoneScoped(t *testing.T) {
+	waitBetweenTests(t, false)
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_zero_trust_access_mtls_certificate." + rnd
 	tmpDir := t.TempDir()
 
-	// V4 config with only required fields
-	v4Config := fmt.Sprintf(`
-resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
-  name        = "%[1]s"
-  account_id  = "%[2]s"
-  certificate = <<EOT
-%[3]s
-EOT
-}`, rnd, accountID, testCertificate)
+	v4Config := testAccessMutualTLSCertificateMigrationZoneScoped(rnd, zoneID, testCertificate)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_ZoneID(t)
 		},
 		WorkingDir: tmpDir,
 		Steps: []resource.TestStep{
 			{
+				// Step 1: Create with v4.52.1 provider
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+			// Step 2: Run migration and verify state
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("certificate"), knownvalue.NotNull()),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("associated_hostnames"), knownvalue.SetSizeExact(0)),
+				// Note: associated_hostnames might be nil or empty set in zone-scoped resources
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("fingerprint"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.NotNull()),

@@ -150,6 +150,7 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 }
 
 func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
+	waitBetweenTests(t, false)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -239,6 +240,7 @@ jzhIPJ0iyPgZhFlsHjGxWghkaLqdCdtDOSdb6SepEZHaq32j/A==
 }
 
 func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
+	waitBetweenTests(t, true)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -327,6 +329,7 @@ Ujl4YD+WK1PhWs9G3UVUeGG+93ZVJRC6Em6ZMMMFxQyL
 }
 
 func TestAccCloudflareAccessMutualTLSMinimal(t *testing.T) {
+	waitBetweenTests(t, false)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
