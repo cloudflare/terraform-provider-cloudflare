@@ -4,16 +4,14 @@ resource "cloudflare_spectrum_application" "example_spectrum_application" {
     name = "ssh.example.com"
     type = "CNAME"
   }
-  ip_firewall = true
   protocol = "tcp/22"
-  proxy_protocol = "off"
-  tls = "full"
   traffic_type = "direct"
   argo_smart_routing = true
   edge_ips = {
     connectivity = "all"
     type = "dynamic"
   }
+  ip_firewall = false
   origin_direct = ["tcp://127.0.0.1:8080"]
   origin_dns = {
     name = "origin.example.com"
@@ -21,4 +19,6 @@ resource "cloudflare_spectrum_application" "example_spectrum_application" {
     type = ""
   }
   origin_port = 22
+  proxy_protocol = "off"
+  tls = "off"
 }

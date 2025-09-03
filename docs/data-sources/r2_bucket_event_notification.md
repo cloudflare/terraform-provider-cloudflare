@@ -30,71 +30,19 @@ data "cloudflare_r2_bucket_event_notification" "example_r2_bucket_event_notifica
 
 ### Read-Only
 
-- `abort_multipart_uploads_transition` (Attributes) Transition to abort ongoing multipart uploads. (see [below for nested schema](#nestedatt--abort_multipart_uploads_transition))
-- `conditions` (Attributes) Conditions that apply to all transitions of this rule. (see [below for nested schema](#nestedatt--conditions))
-- `delete_objects_transition` (Attributes) Transition to delete objects. (see [below for nested schema](#nestedatt--delete_objects_transition))
-- `enabled` (Boolean) Whether or not this rule is in effect.
-- `id` (String) Unique identifier for this rule.
-- `storage_class_transitions` (Attributes List) Transitions to change the storage class of objects. (see [below for nested schema](#nestedatt--storage_class_transitions))
+- `queue_name` (String) Name of the queue.
+- `rules` (Attributes List) (see [below for nested schema](#nestedatt--rules))
 
-<a id="nestedatt--abort_multipart_uploads_transition"></a>
-### Nested Schema for `abort_multipart_uploads_transition`
+<a id="nestedatt--rules"></a>
+### Nested Schema for `rules`
 
 Read-Only:
 
-- `condition` (Attributes) Condition for lifecycle transitions to apply after an object reaches an age in seconds. (see [below for nested schema](#nestedatt--abort_multipart_uploads_transition--condition))
-
-<a id="nestedatt--abort_multipart_uploads_transition--condition"></a>
-### Nested Schema for `abort_multipart_uploads_transition.condition`
-
-Read-Only:
-
-- `max_age` (Number)
-- `type` (String) Available values: "Age".
-
-
-
-<a id="nestedatt--conditions"></a>
-### Nested Schema for `conditions`
-
-Read-Only:
-
-- `prefix` (String) Transitions will only apply to objects/uploads in the bucket that start with the given prefix, an empty prefix can be provided to scope rule to all objects/uploads.
-
-
-<a id="nestedatt--delete_objects_transition"></a>
-### Nested Schema for `delete_objects_transition`
-
-Read-Only:
-
-- `condition` (Attributes) Condition for lifecycle transitions to apply after an object reaches an age in seconds. (see [below for nested schema](#nestedatt--delete_objects_transition--condition))
-
-<a id="nestedatt--delete_objects_transition--condition"></a>
-### Nested Schema for `delete_objects_transition.condition`
-
-Read-Only:
-
-- `date` (String)
-- `max_age` (Number)
-- `type` (String) Available values: "Age", "Date".
-
-
-
-<a id="nestedatt--storage_class_transitions"></a>
-### Nested Schema for `storage_class_transitions`
-
-Read-Only:
-
-- `condition` (Attributes) Condition for lifecycle transitions to apply after an object reaches an age in seconds. (see [below for nested schema](#nestedatt--storage_class_transitions--condition))
-- `storage_class` (String) Available values: "InfrequentAccess".
-
-<a id="nestedatt--storage_class_transitions--condition"></a>
-### Nested Schema for `storage_class_transitions.condition`
-
-Read-Only:
-
-- `date` (String)
-- `max_age` (Number)
-- `type` (String) Available values: "Age", "Date".
+- `actions` (List of String) Array of R2 object actions that will trigger notifications.
+- `created_at` (String) Timestamp when the rule was created.
+- `description` (String) A description that can be used to identify the event notification rule after creation.
+- `prefix` (String) Notifications will be sent only for objects with this prefix.
+- `rule_id` (String) Rule ID.
+- `suffix` (String) Notifications will be sent only for objects with this suffix.
 
 

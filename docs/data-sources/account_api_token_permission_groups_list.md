@@ -13,7 +13,9 @@ description: |-
 
 ```terraform
 data "cloudflare_account_api_token_permission_groups_list" "example_account_api_token_permission_groups_list" {
-  account_id = "eb78d65290b24279ba6f44721b3ea3c4"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  name = "Account%20Settings%20Write"
+  scope = "com.cloudflare.api.account.zone"
 }
 ```
 
@@ -27,6 +29,10 @@ data "cloudflare_account_api_token_permission_groups_list" "example_account_api_
 ### Optional
 
 - `max_items` (Number) Max items to fetch, default: 1000
+- `name` (String) Filter by the name of the permission group.
+The value must be URL-encoded.
+- `scope` (String) Filter by the scope of the permission group.
+The value must be URL-encoded.
 
 ### Read-Only
 

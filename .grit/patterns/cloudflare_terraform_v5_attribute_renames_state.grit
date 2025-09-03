@@ -56,7 +56,18 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
     `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
         $resource_type <: contains `cloudflare_queue`,
         $instances <: any {
-          contains `"name": $q` => `"queue_name": $q`
+          contains `"name": $q` => `"queue_name": $q`,
+          contains `"id": $id` => `"id": $id, 
+            "queue_id": $id`
+        }
+    },
+
+    // cloudflare_turnstile_widget
+    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_turnstile_widget`,
+        $instances <: any {
+          contains `"id": $id` => `"id": $id, 
+            "sitekey": $id`
         }
     },
 
@@ -144,7 +155,6 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
             contains `"plan": $_` => .
         }
     },
-
     // cloudflare_access_policy & cloudflare_zero_trust_access_group
     `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
         $resource_type <: contains `cloudflare_access_policy`,
@@ -191,18 +201,6 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
         }
     },
 
-    // cloudflare_record
-    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
-        $resource_type <: contains `cloudflare_record`,
-        $instances <: any {
-          contains `"data": [{$obj}]` => `"data": {
-              $obj
-          }`,
-          contains `"data": []` => `"data": {}`,
-          contains `"hostname": $_` => .,
-          contains `"allow_overwrite": $_` => .,
-        }
-    },
 
     // cloudflare_origin_ca_certificate
     `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
@@ -211,5 +209,20 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
           contains `"min_days_for_renewal": $_` => .
         }
     },
+    // cloudflare_page_rule
+    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
+        $resource_type <: contains `cloudflare_page_rule`,
+        $instances <: any {
+            contains `""` => `null`,
+            contains `[]` => `null`,
+            contains `false` => `null`,
+            contains `0` => `null`,
+            contains `"forwarding_url": []` => `"forwarding_url": null`,
+            contains `"forwarding_url": [{"status_code": $status_code, "url": $url}]` => `"forwarding_url": {"status_code": $status_code, "url": $url}`,
+            contains `"actions": [$action]` => `"actions": $action`
+        }
+    }
   }
 }
+
+cloudflare_terraform_v5_attribute_renames_state()

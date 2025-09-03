@@ -22,17 +22,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"title": schema.StringAttribute{
 				Description: "A human-readable string name for a Namespace.",
 				Required:    true,
-			},
-			"beta": schema.BoolAttribute{
-				Description: "True if new beta namespace, with additional preview features.",
-				Computed:    true,
 			},
 			"supports_url_encoding": schema.BoolAttribute{
 				Description: `True if keys written on the URL will be URL-decoded before storing. For example, if set to "true", a key written on the URL as "%3F" will be stored as "?".`,

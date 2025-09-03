@@ -64,10 +64,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
-			"items": schema.ListNestedAttribute{
+			"items": schema.SetNestedAttribute{
 				Description: "The items in the list.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustListItemsDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustListItemsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"created_at": schema.StringAttribute{
@@ -75,7 +75,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
-							Description: "The description of the list item, if present",
+							Description: "The description of the list item, if present.",
 							Computed:    true,
 						},
 						"value": schema.StringAttribute{

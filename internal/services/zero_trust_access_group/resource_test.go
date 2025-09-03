@@ -13,8 +13,16 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
 
 func init() {
 	resource.AddTestSweepers("cloudflare_zero_trust_access_group", &resource.Sweeper{
@@ -91,33 +99,40 @@ func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(2).AtMapKey("email_domain").AtMapKey("domain"), knownvalue.StringExact("example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(3).AtMapKey("ip").AtMapKey("ip"), knownvalue.StringExact("192.0.2.1/32")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(4).AtMapKey("ip_list").AtMapKey("id"), knownvalue.StringExact("e3a0f205-c525-4e48-a293-ba5d1f00e638")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(5).AtMapKey("saml").AtMapKey("attribute_name"), knownvalue.StringExact("Name1")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(5).AtMapKey("saml").AtMapKey("attribute_value"), knownvalue.StringExact("Value1")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(5).AtMapKey("saml").AtMapKey("identity_provider_id"), knownvalue.StringExact("1234")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(6).AtMapKey("azure_ad").AtMapKey("id"), knownvalue.StringExact("group1")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(6).AtMapKey("azure_ad").AtMapKey("identity_provider_id"), knownvalue.StringExact("1234")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(7).AtMapKey("ip").AtMapKey("ip"), knownvalue.StringExact("192.0.2.2/32")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(8).AtMapKey("ip_list").AtMapKey("id"), knownvalue.StringExact("5d54cd30-ce52-46e4-9a46-a47887e1a167")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(9).AtMapKey("saml").AtMapKey("attribute_name"), knownvalue.StringExact("Name2")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(9).AtMapKey("saml").AtMapKey("attribute_value"), knownvalue.StringExact("Value2")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(9).AtMapKey("saml").AtMapKey("identity_provider_id"), knownvalue.StringExact("1234")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(10).AtMapKey("azure_ad").AtMapKey("id"), knownvalue.StringExact("group2")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(10).AtMapKey("azure_ad").AtMapKey("identity_provider_id"), knownvalue.StringExact("5678")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("is_default"), knownvalue.Null()),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
-					resource.TestCheckResourceAttrSet(name, "include.0.any_valid_service_token.%"),
-					resource.TestCheckResourceAttr(name, "include.0.ip.ip", "192.0.2.1/32"),
-					resource.TestCheckResourceAttr(name, "include.1.ip.ip", "192.0.2.2/32"),
-					resource.TestCheckResourceAttr(name, "include.0.ip_list.id", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
-					resource.TestCheckResourceAttr(name, "include.1.ip_list.id", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
 				),
 			},
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
-					resource.TestCheckResourceAttrSet(name, "include.0.any_valid_service_token.%"),
-					resource.TestCheckResourceAttr(name, "include.0.ip.ip", "192.0.2.1/32"),
-					resource.TestCheckResourceAttr(name, "include.1.ip.ip", "192.0.2.2/32"),
-					resource.TestCheckResourceAttr(name, "include.0.ip_list.id", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
-					resource.TestCheckResourceAttr(name, "include.1.ip_list.id", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
-				),
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
 			},
 		},
 	})
@@ -136,49 +151,40 @@ func TestAccCloudflareAccessGroup_ConfigBasicZone(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.ZoneIdentifier(zoneID)),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(2).AtMapKey("email_domain").AtMapKey("domain"), knownvalue.StringExact("example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(3).AtMapKey("ip").AtMapKey("ip"), knownvalue.StringExact("192.0.2.1/32")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(4).AtMapKey("ip_list").AtMapKey("id"), knownvalue.StringExact("e3a0f205-c525-4e48-a293-ba5d1f00e638")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(5).AtMapKey("saml").AtMapKey("attribute_name"), knownvalue.StringExact("Name1")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(5).AtMapKey("saml").AtMapKey("attribute_value"), knownvalue.StringExact("Value1")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(5).AtMapKey("saml").AtMapKey("identity_provider_id"), knownvalue.StringExact("1234")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(6).AtMapKey("azure_ad").AtMapKey("id"), knownvalue.StringExact("group1")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(6).AtMapKey("azure_ad").AtMapKey("identity_provider_id"), knownvalue.StringExact("1234")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(7).AtMapKey("ip").AtMapKey("ip"), knownvalue.StringExact("192.0.2.2/32")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(8).AtMapKey("ip_list").AtMapKey("id"), knownvalue.StringExact("5d54cd30-ce52-46e4-9a46-a47887e1a167")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(9).AtMapKey("saml").AtMapKey("attribute_name"), knownvalue.StringExact("Name2")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(9).AtMapKey("saml").AtMapKey("attribute_value"), knownvalue.StringExact("Value2")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(9).AtMapKey("saml").AtMapKey("identity_provider_id"), knownvalue.StringExact("1234")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(10).AtMapKey("azure_ad").AtMapKey("id"), knownvalue.StringExact("group2")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(10).AtMapKey("azure_ad").AtMapKey("identity_provider_id"), knownvalue.StringExact("5678")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("is_default"), knownvalue.Null()),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.ZoneIdentifier(zoneID), &accessGroup),
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
-					resource.TestCheckResourceAttrSet(name, "include.0.any_valid_service_token.%"),
-					resource.TestCheckResourceAttr(name, "include.0.ip.ip", "192.0.2.1/32"),
-					resource.TestCheckResourceAttr(name, "include.1.ip.ip", "192.0.2.2/32"),
-					resource.TestCheckResourceAttr(name, "include.0.ip_list.id", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
-					resource.TestCheckResourceAttr(name, "include.1.ip_list.id", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
-					resource.TestCheckResourceAttr(name, "include.0.saml.attribute_name", "Name1"),
-					resource.TestCheckResourceAttr(name, "include.0.saml.attribute_value", "Value1"),
-					resource.TestCheckResourceAttr(name, "include.1.saml.attribute_name", "Name2"),
-					resource.TestCheckResourceAttr(name, "include.1.saml.attribute_value", "Value2"),
-					resource.TestCheckResourceAttr(name, "include.0.azure_ad.id", "group1"),
-					resource.TestCheckResourceAttr(name, "include.0.azure_ad.identity_provider_id", "1234"),
-					resource.TestCheckResourceAttr(name, "include.1.azure_ad.id", "group2"),
-					resource.TestCheckResourceAttr(name, "include.1.azure_ad.identity_provider_id", "5678"),
 				),
 			},
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.ZoneIdentifier(zoneID)),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, cloudflare.ZoneIdentifier(zoneID), &accessGroup),
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
-					resource.TestCheckResourceAttrSet(name, "include.0.any_valid_service_token.%"),
-					resource.TestCheckResourceAttr(name, "include.0.ip.ip", "192.0.2.1/32"),
-					resource.TestCheckResourceAttr(name, "include.1.ip.ip", "192.0.2.2/32"),
-					resource.TestCheckResourceAttr(name, "include.0.ip_list.id", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
-					resource.TestCheckResourceAttr(name, "include.1.ip_list.id", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
-					resource.TestCheckResourceAttr(name, "include.0.saml.attribute_name", "Name1"),
-					resource.TestCheckResourceAttr(name, "include.0.saml.attribute_value", "Value1"),
-					resource.TestCheckResourceAttr(name, "include.1.saml.attribute_name", "Name2"),
-					resource.TestCheckResourceAttr(name, "include.1.saml.attribute_value", "Value2"),
-					resource.TestCheckResourceAttr(name, "include.0.azure_ad.id", "group1"),
-					resource.TestCheckResourceAttr(name, "include.0.azure_ad.identity_provider_id", "1234"),
-					resource.TestCheckResourceAttr(name, "include.1.azure_ad.id", "group2"),
-					resource.TestCheckResourceAttr(name, "include.1.azure_ad.identity_provider_id", "5678"),
-				),
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("zones/%s/", zoneID),
 			},
 		},
 	})
@@ -200,16 +206,22 @@ func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigEmailList(rnd, rnd2, cloudflare.AccountIdentifier(accountID)),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(emailListName, tfjsonpath.New("name"), knownvalue.StringExact(rnd2)),
+					statecheck.ExpectKnownValue(emailListName, tfjsonpath.New("type"), knownvalue.StringExact("EMAIL")),
+					statecheck.ExpectKnownValue(emailListName, tfjsonpath.New("items").AtSliceIndex(0).AtMapKey("value"), knownvalue.StringExact("test@example.com")),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttrSet(name, "include.0.email_list.id"),
-
-					// Check that the email list is destroyed
-					resource.TestCheckResourceAttr(emailListName, "name", rnd2),
-					resource.TestCheckResourceAttr(emailListName, "type", "EMAIL"),
-					resource.TestCheckResourceAttr(emailListName, "items.0.value", "test@example.com"),
 				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
 			},
 		},
 	})
@@ -229,14 +241,26 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessGroupConfigExclude(rnd, accountID, email),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("email_domain").AtMapKey("domain"), knownvalue.StringExact("example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("is_default"), knownvalue.Null()),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
-					resource.TestCheckResourceAttr(name, "exclude.0.email.email", email),
 				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
 			},
 		},
 	})
@@ -256,14 +280,26 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessGroupConfigRequire(rnd, accountID, email),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("email_domain").AtMapKey("domain"), knownvalue.StringExact("example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("is_default"), knownvalue.Null()),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
-					resource.TestCheckResourceAttr(name, "require.0.email.email", email),
 				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
 			},
 		},
 	})
@@ -283,17 +319,28 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessGroupConfigFullConfig(rnd, accountID, email),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("email_domain").AtMapKey("domain"), knownvalue.StringExact("example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(2).AtMapKey("common_name").AtMapKey("common_name"), knownvalue.StringExact("common")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(3).AtMapKey("common_name").AtMapKey("common_name"), knownvalue.StringExact("name")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact(email)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("is_default"), knownvalue.Null()),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.email_domain.domain", "example.com"),
-					resource.TestCheckResourceAttr(name, "exclude.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "require.0.email.email", email),
-					resource.TestCheckResourceAttr(name, "include.0.common_name.common_name", "common"),
-					resource.TestCheckResourceAttr(name, "include.1.common_name.common_name", "name"),
 				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
 			},
 		},
 	})
@@ -315,14 +362,26 @@ func TestAccCloudflareAccessGroup_WithIDP(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupWithIDP(accountID, rnd, githubOrg, team),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("github_organization").AtMapKey("name"), knownvalue.StringExact(githubOrg)),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("github_organization").AtMapKey("team"), knownvalue.StringExact(team)),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("exclude"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("require"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("is_default"), knownvalue.Null()),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(groupName, cloudflare.AccountIdentifier(accountID), &accessGroup),
-					resource.TestCheckResourceAttr(groupName, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(groupName, "name", rnd),
-					resource.TestCheckResourceAttrSet(groupName, "include.0.github_organization.identity_provider_id"),
-					resource.TestCheckResourceAttr(groupName, "include.0.github_organization.name", githubOrg),
-					resource.TestCheckResourceAttr(groupName, "include.0.github_organization.team", team),
 				),
+			},
+			{
+				ResourceName:            groupName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
 			},
 		},
 	})
@@ -344,14 +403,25 @@ func TestAccCloudflareAccessGroup_WithIDPAuthContext(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupWithIDPAuthContext(accountID, rnd, ctxID, ctxACID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("require").AtSliceIndex(0).AtMapKey("auth_context").AtMapKey("id"), knownvalue.StringExact(ctxID)),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("require").AtSliceIndex(0).AtMapKey("auth_context").AtMapKey("ac_id"), knownvalue.StringExact(ctxACID)),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("exclude"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(groupName, tfjsonpath.New("is_default"), knownvalue.Null()),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(groupName, cloudflare.AccountIdentifier(accountID), &accessGroup),
-					resource.TestCheckResourceAttr(groupName, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(groupName, "name", rnd),
-					resource.TestCheckResourceAttrSet(groupName, "require.0.auth_context.identity_provider_id"),
-					resource.TestCheckResourceAttr(groupName, "require.0.auth_context.id", ctxID),
-					resource.TestCheckResourceAttr(groupName, "require.0.auth_context.ac_id", ctxACID),
 				),
+			},
+			{
+				ResourceName:            groupName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
 			},
 		},
 	})
@@ -378,11 +448,20 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 			},
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, "test-changed@example.com", cloudflare.AccountIdentifier(accountID)),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact("test-changed@example.com")),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &after),
 					testAccCheckCloudflareAccessGroupIDUnchanged(&before, &after),
-					resource.TestCheckResourceAttr(name, "include.0.email.email", "test-changed@example.com"),
 				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
 			},
 		},
 	})
@@ -409,12 +488,21 @@ func TestAccCloudflareAccessGroup_UpdatedFromCommonNameToCommonNames(t *testing.
 			},
 			{
 				Config: testAccCloudflareAccessGroupConfigBasicWithCommonNames(rnd, cloudflare.AccountIdentifier(accountID)),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("common_name").AtMapKey("common_name"), knownvalue.StringExact("common")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("common_name").AtMapKey("common_name"), knownvalue.StringExact("name")),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &after),
 					testAccCheckCloudflareAccessGroupIDUnchanged(&before, &after),
-					resource.TestCheckResourceAttr(name, "include.0.common_name.common_name", "common"),
-					resource.TestCheckResourceAttr(name, "include.1.common_name.common_name", "name"),
 				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
 			},
 		},
 	})
@@ -459,6 +547,35 @@ func testAccCloudflareAccessGroupConfigBasicWithCommonNames(resourceName string,
 func testAccCloudflareAccessGroupConfigEmailList(resourceName string, emailListName string, identifier *cloudflare.ResourceContainer) string {
 	return acctest.LoadTestCase("accessgroupconfigemaillist.tf", resourceName, emailListName, identifier.Type, identifier.Identifier)
 }
+
+func testAccCloudflareAccessGroupConfigMinimal(resourceName, accountID string) string {
+	return acctest.LoadTestCase("accessgroupconfigminimal.tf", resourceName, accountID)
+}
+
+func testAccCloudflareAccessGroupConfigUpdateRuleTypes(resourceName, accountID string) string {
+	return acctest.LoadTestCase("accessgroupconfigupdateruletypes.tf", resourceName, accountID)
+}
+
+func testAccCloudflareAccessGroupConfigWithIsDefault(resourceName, accountID string, isDefault bool) string {
+	return acctest.LoadTestCase("accessgroupconfigwithisdefault.tf", resourceName, accountID, isDefault)
+}
+
+func testAccCloudflareAccessGroupConfigComplexRules(resourceName, accountID string) string {
+	return acctest.LoadTestCase("accessgroupconfigcomplexrules.tf", resourceName, accountID)
+}
+
+func testAccCloudflareAccessGroupConfigAllRuleTypes(resourceName, accountID string) string {
+	return acctest.LoadTestCase("accessgroupconfigallruletypes.tf", resourceName, accountID)
+}
+
+func testAccCloudflareAccessGroupConfigServiceTokens(resourceName, accountID string) string {
+	return acctest.LoadTestCase("accessgroupconfigservicetokens.tf", resourceName, accountID)
+}
+
+func testAccCloudflareAccessGroupConfigLoginMethod(resourceName, accountID string) string {
+	return acctest.LoadTestCase("accessgroupconfigloginmethod.tf", resourceName, accountID)
+}
+
 
 func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier *cloudflare.ResourceContainer, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
@@ -561,4 +678,370 @@ func testAccCheckCloudflareAccessGroupRecreated(before, after *cloudflare.Access
 		}
 		return nil
 	}
+}
+
+func TestAccCloudflareAccessGroup_MinimalConfiguration(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigMinimal(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("everyone"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("is_default"), knownvalue.Null()),
+				},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
+				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessGroup_MultipleIncludeRuleTypes(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigUpdateRuleTypes(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact("test@example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("everyone"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require"), knownvalue.Null()),
+				},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
+				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessGroup_IsDefaultAttribute(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigWithIsDefault(rnd, accountID, true),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("is_default"), knownvalue.Bool(true)),
+				},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
+				),
+			},
+			{
+				Config: testAccCloudflareAccessGroupConfigWithIsDefault(rnd, accountID, false),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("is_default"), knownvalue.Bool(false)),
+				},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
+				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessGroup_ComplexRuleCombinations(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigComplexRules(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact("include@example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("ip").AtMapKey("ip"), knownvalue.StringExact("10.0.0.0/8")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact("exclude@example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require").AtSliceIndex(0).AtMapKey("email_domain").AtMapKey("domain"), knownvalue.StringExact("company.com")),
+				},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
+				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+			},
+		},
+	})
+}
+
+
+func TestAccCloudflareAccessGroup_UpdateOptionalAttributes(t *testing.T) {
+	var before, after cloudflare.AccessGroup
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigMinimal(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("is_default"), knownvalue.Null()),
+				},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &before),
+				),
+			},
+			{
+				Config: testAccCloudflareAccessGroupConfigComplexRules(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact("exclude@example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require").AtSliceIndex(0).AtMapKey("email_domain").AtMapKey("domain"), knownvalue.StringExact("company.com")),
+				},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &after),
+					testAccCheckCloudflareAccessGroupIDUnchanged(&before, &after),
+				),
+			},
+			{
+				Config: testAccCloudflareAccessGroupConfigMinimal(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require"), knownvalue.Null()),
+				},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &after),
+				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessGroup_AllRuleTypes(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigAllRuleTypes(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact("test@example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude").AtSliceIndex(0).AtMapKey("geo").AtMapKey("country_code"), knownvalue.StringExact("CN")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude").AtSliceIndex(1).AtMapKey("device_posture").AtMapKey("integration_uid"), knownvalue.StringExact("test-device-posture-uid")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude").AtSliceIndex(2).AtMapKey("external_evaluation").AtMapKey("evaluate_url"), knownvalue.StringExact("https://example.com/evaluate")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude").AtSliceIndex(2).AtMapKey("external_evaluation").AtMapKey("keys_url"), knownvalue.StringExact("https://example.com/keys")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require").AtSliceIndex(0).AtMapKey("auth_method").AtMapKey("auth_method"), knownvalue.StringExact("hwk")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require").AtSliceIndex(1).AtMapKey("certificate"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require").AtSliceIndex(2).AtMapKey("any_valid_service_token"), knownvalue.NotNull()),
+				},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
+				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessGroup_MultipleRuleTypesWithGeo(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigServiceTokens(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact("test@example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("everyone"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude").AtSliceIndex(0).AtMapKey("geo").AtMapKey("country_code"), knownvalue.StringExact("RU")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require").AtSliceIndex(0).AtMapKey("auth_method").AtMapKey("auth_method"), knownvalue.StringExact("swk")),
+				},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
+				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessGroup_IPRangeRules(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigLoginMethod(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("email").AtMapKey("email"), knownvalue.StringExact("test@example.com")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("ip").AtMapKey("ip"), knownvalue.StringExact("192.0.2.0/24")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude").AtSliceIndex(0).AtMapKey("ip").AtMapKey("ip"), knownvalue.StringExact("192.0.2.100/32")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require").AtSliceIndex(0).AtMapKey("email_domain").AtMapKey("domain"), knownvalue.StringExact("company.com")),
+				},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
+				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessGroup_ImportEmptyArrayToNull(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigMinimal(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
+				),
+			},
+			{
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"is_default"},
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+			},
+			{
+				Config: testAccCloudflareAccessGroupConfigMinimal(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("require"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("exclude"), knownvalue.Null()),
+				},
+			},
+			{
+				Config:   testAccCloudflareAccessGroupConfigMinimal(rnd, accountID),
+				PlanOnly: true,
+			},
+		},
+	})
 }

@@ -49,7 +49,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "custom", "predefined", "integration", "exact_data", "word_list".`,
+				Description: `Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -57,6 +57,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"predefined",
 						"integration",
 						"exact_data",
+						"document_fingerprint",
 						"word_list",
 					),
 				},
@@ -93,6 +94,29 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("luhn"),
 						},
+					},
+				},
+			},
+			"variant": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[ZeroTrustDLPEntryVariantDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"topic_type": schema.StringAttribute{
+						Description: `Available values: "Intent", "Content".`,
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("Intent", "Content"),
+						},
+					},
+					"type": schema.StringAttribute{
+						Description: `Available values: "PromptTopic".`,
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("PromptTopic"),
+						},
+					},
+					"description": schema.StringAttribute{
+						Computed: true,
 					},
 				},
 			},

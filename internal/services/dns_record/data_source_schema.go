@@ -61,7 +61,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
-				Description: "DNS record name (or @ for the zone apex) in Punycode.",
+				Description: "Complete DNS record name, including the zone name, in Punycode.",
 				Computed:    true,
 			},
 			"priority": schema.Float64Attribute{
@@ -89,38 +89,38 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Record type.\nAvailable values: \"A\", \"AAAA\", \"CAA\", \"CERT\", \"CNAME\", \"DNSKEY\", \"DS\", \"HTTPS\", \"LOC\", \"MX\", \"NAPTR\", \"NS\", \"OPENPGPKEY\", \"PTR\", \"SMIMEA\", \"SRV\", \"SSHFP\", \"SVCB\", \"TLSA\", \"TXT\", \"URI\".",
+				Description: "Record type.\nAvailable values: \"A\", \"AAAA\", \"CNAME\", \"MX\", \"NS\", \"OPENPGPKEY\", \"PTR\", \"TXT\", \"CAA\", \"CERT\", \"DNSKEY\", \"DS\", \"HTTPS\", \"LOC\", \"NAPTR\", \"SMIMEA\", \"SRV\", \"SSHFP\", \"SVCB\", \"TLSA\", \"URI\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"A",
 						"AAAA",
+						"CNAME",
+						"MX",
+						"NS",
+						"OPENPGPKEY",
+						"PTR",
+						"TXT",
 						"CAA",
 						"CERT",
-						"CNAME",
 						"DNSKEY",
 						"DS",
 						"HTTPS",
 						"LOC",
-						"MX",
 						"NAPTR",
-						"NS",
-						"OPENPGPKEY",
-						"PTR",
 						"SMIMEA",
 						"SRV",
 						"SSHFP",
 						"SVCB",
 						"TLSA",
-						"TXT",
 						"URI",
 					),
 				},
 			},
-			"tags": schema.ListAttribute{
+			"tags": schema.SetAttribute{
 				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"data": schema.SingleNestedAttribute{
@@ -134,6 +134,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.Dynamic{
 							customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
 						},
+						CustomType: customfield.NormalizedDynamicType{},
 					},
 					"tag": schema.StringAttribute{
 						Description: "Name of the property controlled by this record (e.g.: issue, issuewild, iodef).",
@@ -191,14 +192,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"priority": schema.Float64Attribute{
-						Description: "priority.",
+						Description: "Priority.",
 						Computed:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 65535),
 						},
 					},
 					"target": schema.StringAttribute{
-						Description: "target.",
+						Description: "Target.",
 						Computed:    true,
 					},
 					"altitude": schema.Float64Attribute{
@@ -347,7 +348,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"fingerprint": schema.StringAttribute{
-						Description: "fingerprint.",
+						Description: "Fingerprint.",
 						Computed:    true,
 					},
 				},

@@ -14,7 +14,10 @@ description: |-
 ```terraform
 resource "cloudflare_magic_transit_connector" "example_magic_transit_connector" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  connector_id = "connector_id"
+  device = {
+    id = "id"
+    serial_number = "serial_number"
+  }
   activated = true
   interrupt_window_duration_hours = 0
   interrupt_window_hour_of_day = 0
@@ -28,8 +31,8 @@ resource "cloudflare_magic_transit_connector" "example_magic_transit_connector" 
 
 ### Required
 
-- `account_id` (String)
-- `connector_id` (String)
+- `account_id` (String) Account identifier
+- `device` (Attributes) (see [below for nested schema](#nestedatt--device))
 
 ### Optional
 
@@ -41,16 +44,12 @@ resource "cloudflare_magic_transit_connector" "example_magic_transit_connector" 
 
 ### Read-Only
 
-- `device` (Attributes) (see [below for nested schema](#nestedatt--device))
 - `id` (String) The ID of this resource.
-- `last_heartbeat` (String)
-- `last_seen_version` (String)
-- `last_updated` (String)
 
 <a id="nestedatt--device"></a>
 ### Nested Schema for `device`
 
-Read-Only:
+Optional:
 
 - `id` (String)
 - `serial_number` (String)

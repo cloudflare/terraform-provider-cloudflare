@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_account" "example_account" {
-  account_id = "eb78d65290b24279ba6f44721b3ea3c4"
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }
 ```
 
@@ -31,6 +31,7 @@ data "cloudflare_account" "example_account" {
 - `id` (String) Account identifier tag.
 - `name` (String) Account name
 - `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--settings))
+- `type` (String) Available values: "standard", "enterprise".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

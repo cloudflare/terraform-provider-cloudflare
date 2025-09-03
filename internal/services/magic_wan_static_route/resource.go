@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/magic_transit"
-	"github.com/cloudflare/cloudflare-go/v4/option"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -56,7 +56,7 @@ func (r *MagicWANStaticRouteResource) Configure(ctx context.Context, req resourc
 }
 
 func (r *MagicWANStaticRouteResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *MagicWANStaticRouteModel
+	var data *CustomMagicWANStaticRouteModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -65,17 +65,12 @@ func (r *MagicWANStaticRouteResource) Create(ctx context.Context, req resource.C
 	}
 
 	dataBytes, err := data.MarshalJSON()
-
-	// Workaround to wrap the route into an array, which is what the API expects.
-	dataBytes = append([]byte("["), dataBytes...)
-	dataBytes = append(dataBytes, byte(']'))
-
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
-	env := MagicWANStaticRouteResultEnvelope{*data}
+	env := CustomMagicWANStaticRouteResultEnvelope{*data}
 	_, err = r.client.MagicTransit.Routes.New(
 		ctx,
 		magic_transit.RouteNewParams{
@@ -101,7 +96,7 @@ func (r *MagicWANStaticRouteResource) Create(ctx context.Context, req resource.C
 }
 
 func (r *MagicWANStaticRouteResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *MagicWANStaticRouteModel
+	var data *CustomMagicWANStaticRouteModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -109,7 +104,7 @@ func (r *MagicWANStaticRouteResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	var state *MagicWANStaticRouteModel
+	var state *CustomMagicWANStaticRouteModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -123,7 +118,7 @@ func (r *MagicWANStaticRouteResource) Update(ctx context.Context, req resource.U
 		return
 	}
 	res := new(http.Response)
-	env := MagicWANStaticRouteResultEnvelope{*data}
+	env := CustomMagicWANStaticRouteResultEnvelope{*data}
 	_, err = r.client.MagicTransit.Routes.Update(
 		ctx,
 		data.ID.ValueString(),
@@ -139,7 +134,7 @@ func (r *MagicWANStaticRouteResource) Update(ctx context.Context, req resource.U
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = unmarshalStaticRouteModel(bytes, &env, "modified_route", true)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -150,7 +145,7 @@ func (r *MagicWANStaticRouteResource) Update(ctx context.Context, req resource.U
 }
 
 func (r *MagicWANStaticRouteResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *MagicWANStaticRouteModel
+	var data *CustomMagicWANStaticRouteModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -159,7 +154,7 @@ func (r *MagicWANStaticRouteResource) Read(ctx context.Context, req resource.Rea
 	}
 
 	res := new(http.Response)
-	env := MagicWANStaticRouteResultEnvelope{*data}
+	env := CustomMagicWANStaticRouteResultEnvelope{*data}
 	_, err := r.client.MagicTransit.Routes.Get(
 		ctx,
 		data.ID.ValueString(),
@@ -179,7 +174,7 @@ func (r *MagicWANStaticRouteResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = unmarshalStaticRouteModel(bytes, &env, "route", false)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -190,7 +185,7 @@ func (r *MagicWANStaticRouteResource) Read(ctx context.Context, req resource.Rea
 }
 
 func (r *MagicWANStaticRouteResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *MagicWANStaticRouteModel
+	var data *CustomMagicWANStaticRouteModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -215,7 +210,7 @@ func (r *MagicWANStaticRouteResource) Delete(ctx context.Context, req resource.D
 }
 
 func (r *MagicWANStaticRouteResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *MagicWANStaticRouteModel = new(MagicWANStaticRouteModel)
+	var data *CustomMagicWANStaticRouteModel = new(CustomMagicWANStaticRouteModel)
 
 	path_account_id := ""
 	path_route_id := ""
@@ -234,7 +229,7 @@ func (r *MagicWANStaticRouteResource) ImportState(ctx context.Context, req resou
 	data.ID = types.StringValue(path_route_id)
 
 	res := new(http.Response)
-	env := MagicWANStaticRouteResultEnvelope{*data}
+	env := CustomMagicWANStaticRouteResultEnvelope{*data}
 	_, err := r.client.MagicTransit.Routes.Get(
 		ctx,
 		path_route_id,
@@ -249,7 +244,7 @@ func (r *MagicWANStaticRouteResource) ImportState(ctx context.Context, req resou
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = unmarshalStaticRouteModel(bytes, &env, "route", false)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

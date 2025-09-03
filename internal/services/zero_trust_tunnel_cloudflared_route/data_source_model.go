@@ -5,8 +5,8 @@ package zero_trust_tunnel_cloudflared_route
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -39,8 +39,10 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toReadParams(_ context.
 
 func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkRouteListParams, diags diag.Diagnostics) {
 	mFilterTunTypes := []zero_trust.NetworkRouteListParamsTunType{}
-	for _, item := range *m.Filter.TunTypes {
-		mFilterTunTypes = append(mFilterTunTypes, zero_trust.NetworkRouteListParamsTunType(item.ValueString()))
+	if m.Filter.TunTypes != nil {
+		for _, item := range *m.Filter.TunTypes {
+			mFilterTunTypes = append(mFilterTunTypes, zero_trust.NetworkRouteListParamsTunType(item.ValueString()))
+		}
 	}
 
 	params = zero_trust.NetworkRouteListParams{
@@ -77,7 +79,7 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.
 }
 
 type ZeroTrustTunnelCloudflaredRouteFindOneByDataSourceModel struct {
-	Comment          types.String    `tfsdk:"comment" query:"comment,optional"`
+	Comment          types.String    `tfsdk:"comment" query:"comment,computed_optional"`
 	ExistedAt        types.String    `tfsdk:"existed_at" query:"existed_at,optional"`
 	IsDeleted        types.Bool      `tfsdk:"is_deleted" query:"is_deleted,optional"`
 	NetworkSubset    types.String    `tfsdk:"network_subset" query:"network_subset,optional"`

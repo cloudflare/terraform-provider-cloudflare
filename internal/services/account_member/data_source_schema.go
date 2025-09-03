@@ -31,6 +31,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Account identifier tag.",
 				Required:    true,
 			},
+			"email": schema.StringAttribute{
+				Description: "The contact email address of the user.",
+				Computed:    true,
+			},
 			"status": schema.StringAttribute{
 				Description: "A member's status in the account.\nAvailable values: \"accepted\", \"pending\".",
 				Computed:    true,
@@ -62,7 +66,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
-										Description: "Identifier of the group.",
+										Description: "Identifier of the permission group.",
 										Computed:    true,
 									},
 									"meta": schema.SingleNestedAttribute{
@@ -79,7 +83,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"name": schema.StringAttribute{
-										Description: "Name of the group.",
+										Description: "Name of the permission group.",
 										Computed:    true,
 									},
 								},
@@ -92,7 +96,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
-										Description: "Identifier of the group.",
+										Description: "Identifier of the resource group.",
 										Computed:    true,
 									},
 									"scope": schema.ListNestedAttribute{

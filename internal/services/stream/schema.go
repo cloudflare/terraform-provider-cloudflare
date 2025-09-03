@@ -45,7 +45,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The maximum duration in seconds for a video upload. Can be set for a video that is not yet uploaded to limit its duration. Uploads that exceed the specified duration will fail during processing. A value of `-1` means the value is unknown.",
 				Optional:    true,
 				Validators: []validator.Int64{
-					int64validator.Between(1, 21600),
+					int64validator.Between(1, 36000),
 				},
 			},
 			"scheduled_deletion": schema.StringAttribute{
@@ -177,7 +177,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"state": schema.StringAttribute{
-						Description: "Specifies the processing status for all quality levels for a video.\nAvailable values: \"pendingupload\", \"downloading\", \"queued\", \"inprogress\", \"ready\", \"error\".",
+						Description: "Specifies the processing status for all quality levels for a video.\nAvailable values: \"pendingupload\", \"downloading\", \"queued\", \"inprogress\", \"ready\", \"error\", \"live-inprogress\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -187,6 +187,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"inprogress",
 								"ready",
 								"error",
+								"live-inprogress",
 							),
 						},
 					},

@@ -1,206 +1,354 @@
 package api_token_test
 
 import (
-	"os"
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 )
 
 func TestAccAPIToken_Basic(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := utils.GenerateRandomResourceName()
-	resourceID := "cloudflare_api_token." + rnd
-	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
+
+	var policyId string
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAPITokenWithoutCondition(rnd, rnd, permissionID),
+				Config: acctest.LoadTestCase("api_token-without-condition.tf", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceID, "name", rnd),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.#", "1"),
+					resource.TestCheckResourceAttrSet("cloudflare_api_token.test_account_token", "policies.0.id"),
+					resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.id", func(value string) error {
+						policyId = value
+						return nil
+					}),
+					// conditions by default should not be set
+					resource.TestCheckNoResourceAttr("cloudflare_api_token.test_account_token", "condition.request_ip.0.in"),
+					resource.TestCheckNoResourceAttr("cloudflare_api_token.test_account_token", "condition.request_ip.0.not_in"),
 				),
 			},
 			{
-				Config: testAccCloudflareAPITokenWithoutCondition(rnd, rnd+"-updated", permissionID),
+				Config: acctest.LoadTestCase("api_token-without-condition.tf", rnd),
+				// re-plan should not detect drift
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-without-condition.tf", rnd+"-updated"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceID, "name", rnd+"-updated"),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd+"-updated"),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.#", "1"),
+					resource.TestCheckResourceAttrSet("cloudflare_api_token.test_account_token", "policies.0.id"),
+					resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.id", func(value string) error {
+						if value != policyId {
+							return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
+						}
+						return nil
+					}),
+					// conditions still not set
+					resource.TestCheckNoResourceAttr("cloudflare_api_token.test_account_token", "condition.request_ip.0.in"),
+					resource.TestCheckNoResourceAttr("cloudflare_api_token.test_account_token", "condition.request_ip.0.not_in"),
 				),
 			},
-		},
-	})
-}
-
-func TestAccAPIToken_AllowDeny(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := utils.GenerateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
 			{
-				Config: testAPITokenConfigAllowDeny(rnd, permissionID, zoneID, false),
-			},
-			{
-				Config: testAPITokenConfigAllowDeny(rnd, permissionID, zoneID, true),
-			},
-			{
-				Config: testAPITokenConfigAllowDeny(rnd, permissionID, zoneID, false),
+				Config: acctest.LoadTestCase("api_token-without-condition.tf", rnd+"-updated"),
+				// re-plan should not detect drift
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 		},
 	})
-}
-
-func TestAccAPIToken_DoesNotSetConditions(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_api_token." + rnd
-	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCloudflareAPITokenWithoutCondition(rnd, rnd, permissionID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckNoResourceAttr(name, "condition.0.request_ip.0.in"),
-					resource.TestCheckNoResourceAttr(name, "condition.0.request_ip.0.not_in"),
-				),
-			},
-		},
-	})
-}
-
-func testAccCloudflareAPITokenWithoutCondition(resourceName, rnd, permissionID string) string {
-	return acctest.LoadTestCase("apitokenwithoutcondition.tf", resourceName, rnd, permissionID)
 }
 
 func TestAccAPIToken_SetIndividualCondition(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Pending service fix to address nested object syntax as strings for `conditions`.")
-
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_api_token." + rnd
-	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAPITokenWithIndividualCondition(rnd, permissionID),
+				Config: acctest.LoadTestCase("api_token-with-individual-condition.tf", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "condition.0.request_ip.0.in.0", "192.0.2.1/32"),
-					resource.TestCheckNoResourceAttr(name, "condition.0.request_ip.0.not_in"),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "condition.request_ip.in.0", "192.0.2.1/32"),
+					resource.TestCheckNoResourceAttr("cloudflare_api_token.test_account_token", "condition.request_ip.not_in"),
 				),
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-with-individual-condition.tf", rnd),
+				// re-plan should not detect drift
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 		},
 	})
-}
-
-func testAccCloudflareAPITokenWithIndividualCondition(rnd string, permissionID string) string {
-	return acctest.LoadTestCase("apitokenwithindividualcondition.tf", rnd, permissionID)
 }
 
 func TestAccAPIToken_SetAllCondition(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Pending service fix to address nested object syntax as strings for `conditions`.")
-
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_api_token." + rnd
-	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAPITokenWithAllCondition(rnd, permissionID),
+				Config: acctest.LoadTestCase("api_token-with-all-condition.tf", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "condition.0.request_ip.0.in.0", "192.0.2.1/32"),
-					resource.TestCheckResourceAttr(name, "condition.0.request_ip.0.not_in.0", "198.51.100.1/32"),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "condition.request_ip.in.0", "192.0.2.1/32"),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "condition.request_ip.not_in.0", "198.51.100.1/32"),
 				),
 			},
 		},
 	})
-}
-
-func testAccCloudflareAPITokenWithAllCondition(rnd string, permissionID string) string {
-	return acctest.LoadTestCase("apitokenwithallcondition.tf", rnd, permissionID)
-}
-
-func testAPITokenConfigAllowDeny(resourceID, permissionID, zoneID string, allowAllZonesExceptOne bool) string {
-	var add string
-	if allowAllZonesExceptOne {
-		add = acctest.LoadTestCase("apitokenconfigallowdeny.tf", permissionID, zoneID)
-	}
-
-	return acctest.LoadTestCase("apitokenconfigallowdeny.tf", resourceID, permissionID, add)
 }
 
 func TestAccAPIToken_TokenTTL(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_api_token." + rnd
-	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
+
+	oneDaysFromNow := time.Now().UTC().AddDate(0, 0, 1)
+	expireTime := oneDaysFromNow.Format(time.RFC3339)
+	twoDaysFromNow := time.Now().UTC().AddDate(0, 0, 2)
+	updatedExpireTime := twoDaysFromNow.Format(time.RFC3339)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAPITokenWithTTL(rnd, permissionID),
+				Config: acctest.LoadTestCase("api_token-with-ttl.tf", rnd, expireTime),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "not_before", "2018-07-01T05:20:00Z"),
-					resource.TestCheckResourceAttr(name, "expires_on", "2032-01-01T00:00:00Z"),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "not_before", "2018-07-01T05:20:00Z"),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "expires_on", expireTime),
+				),
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-with-ttl.tf", rnd, expireTime),
+				// re-plan should not detect drift
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-with-ttl.tf", rnd, updatedExpireTime),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectNonEmptyPlan(),
+					},
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "not_before", "2018-07-01T05:20:00Z"),
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "expires_on", updatedExpireTime),
 				),
 			},
 		},
 	})
 }
 
-func testAccCloudflareAPITokenWithTTL(rnd string, permissionID string) string {
-	return acctest.LoadTestCase("apitokenwithttl.tf", rnd, permissionID)
+func TestAccAPIToken_PermissionGroupOrder(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_api_token." + rnd
+	permissionID1 := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
+	permissionID2 := "e199d584e69344eba202452019deafe3" // Disable ESC read
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID1, permissionID2),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.0.id", permissionID1),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.1.id", permissionID2),
+				),
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID2, permissionID1),
+				// changing the order of permission groups should not affect plan
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID2, permissionID1),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.0.id", permissionID1),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.1.id", permissionID2),
+				),
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID2, permissionID1),
+				// re-applying same change does not produce drift
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID1, permissionID2),
+				// changing the order of permission groups should not affect plan
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+
+	// rnd := utils.GenerateRandomResourceName()
+	// permissionID0 := ""
+	// permissionID1 := ""
+
+	// var policyId string
+
+	// resource.Test(t, resource.TestCase{
+	// 	PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+	// 	ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+	// 	Steps: []resource.TestStep{
+	// 		{
+	// 			// not seting permission IDs first, retrieving them from API by name
+	// 			Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, "", ""),
+	// 			Check: resource.ComposeTestCheckFunc(
+	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd),
+	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.#", "1"),
+	// 				resource.TestCheckResourceAttrSet("cloudflare_api_token.test_account_token", "policies.0.id"),
+	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.id", func(value string) error {
+	// 					policyId = value
+	// 					return nil
+	// 				}),
+	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.0.permission_groups.#", "2"),
+	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.permission_groups.0.id", func(value string) error {
+	// 					permissionID0 = value
+	// 					return nil
+	// 				}),
+	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.permission_groups.1.id", func(value string) error {
+	// 					permissionID1 = value
+	// 					return nil
+	// 				}),
+	// 			),
+	// 		},
+	// 		// below we try changing the order of the permission group IDs and
+	// 		// verify there are no plan changes
+	// 		{
+	// 			Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID0, permissionID1),
+	// 			ConfigPlanChecks: resource.ConfigPlanChecks{
+	// 				PreApply: []plancheck.PlanCheck{
+	// 					plancheck.ExpectEmptyPlan(),
+	// 				},
+	// 			},
+	// 		},
+	// 		{
+	// 			Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd, permissionID1, permissionID0),
+	// 			ConfigPlanChecks: resource.ConfigPlanChecks{
+	// 				PreApply: []plancheck.PlanCheck{
+	// 					plancheck.ExpectEmptyPlan(),
+	// 				},
+	// 			},
+	// 		},
+	// 		// try updating the token and ensure policy information hasn't
+	// 		// changed
+	// 		{
+	// 			Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd+"updated", permissionID1, permissionID0),
+	// 			ConfigPlanChecks: resource.ConfigPlanChecks{
+	// 				PreApply: []plancheck.PlanCheck{
+	// 					plancheck.ExpectNonEmptyPlan(),
+	// 				},
+	// 			},
+	// 			Check: resource.ComposeTestCheckFunc(
+	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd+"updated"),
+	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.#", "1"),
+	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.id", func(value string) error {
+	// 					if value != policyId {
+	// 						return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
+	// 					}
+	// 					return nil
+	// 				}),
+	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.0.permission_groups.#", "2"),
+	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.permission_groups.0.id", func(value string) error {
+	// 					if value != permissionID0 {
+	// 						return fmt.Errorf("permission ID 0 changed from %s to %s", permissionID0, value)
+	// 					}
+	// 					return nil
+	// 				}),
+	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.permission_groups.1.id", func(value string) error {
+	// 					if value != permissionID1 {
+	// 						return fmt.Errorf("permission ID 1 changed from %s to %s", permissionID1, value)
+	// 					}
+	// 					return nil
+	// 				}),
+	// 			),
+	// 		},
+	// 		{
+	// 			Config: acctest.LoadTestCase("api_token-permissiongroup-order.tf", rnd+"updated2", permissionID0, permissionID1),
+	// 			ConfigPlanChecks: resource.ConfigPlanChecks{
+	// 				PreApply: []plancheck.PlanCheck{
+	// 					plancheck.ExpectNonEmptyPlan(),
+	// 				},
+	// 			},
+	// 			Check: resource.ComposeTestCheckFunc(
+	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd+"updated2"),
+	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.#", "1"),
+	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.id", func(value string) error {
+	// 					if value != policyId {
+	// 						return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
+	// 					}
+	// 					return nil
+	// 				}),
+	// 				resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "policies.0.permission_groups.#", "2"),
+	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.permission_groups.0.id", func(value string) error {
+	// 					if value != permissionID0 {
+	// 						return fmt.Errorf("permission ID 0 changed from %s to %s", permissionID0, value)
+	// 					}
+	// 					return nil
+	// 				}),
+	// 				resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "policies.0.permission_groups.1.id", func(value string) error {
+	// 					if value != permissionID1 {
+	// 						return fmt.Errorf("permission ID 1 changed from %s to %s", permissionID1, value)
+	// 					}
+	// 					return nil
+	// 				}),
+	// 			),
+	// 		},
+	// 	},
+	// })
 }

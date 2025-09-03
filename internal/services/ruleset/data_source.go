@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijsoncustom"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -57,6 +57,10 @@ func (d *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 
+	if data.ID.IsNull() {
+		data.ID = data.RulesetID
+	}
+
 	params, diags := data.toReadParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -67,7 +71,7 @@ func (d *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	env := RulesetResultDataSourceEnvelope{*data}
 	_, err := d.client.Rulesets.Get(
 		ctx,
-		data.RulesetID.ValueString(),
+		data.ID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -77,7 +81,7 @@ func (d *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijsoncustom.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

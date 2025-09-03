@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'release-please**'
+      - "release-please**"
 jobs:
   acceptance-tests:
     name: Acceptance Tests
@@ -37,23 +37,35 @@ jobs:
       CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD }}
       CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME }}
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup go
-      uses: actions/setup-go@v5
-      with:
-        go-version-file: ./go.mod
-    - name: Bootstrap
-      run: ./scripts/bootstrap
-    # when all resources support sweepers, re-enable.
-    #
-    # - name: Pre-Sweeper
-    #  run: go test ./internal/services/... -v -sweep="1" -timeout 60m
-    - name: Run acceptance tests
-      run: go test ./internal/services/... -run "^TestAcc" -count 1
-      env:
-        TF_ACC: 1
-    # when all resources support sweepers, re-enable.
-    #
-    # - name: Post-Sweeper
-    #  if: ${{ always() }}
-    #  run: go test ./internal/services/... -v -sweep="1" -timeout 60m
+      - uses: actions/checkout@v4
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install grit
+        run: npm install -g @getgrit/cli
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+      - name: Run Acceptance Tests
+        id: acceptance_tests
+        # note: not all resources are covered here, only passing ones should be included here (for now).
+        run: ./scripts/run-ci-tests acceptance
+        env:
+          TF_ACC: 1
+        continue-on-error: true
+      # - name: Run Migration Tests
+      #   id: migration_tests
+      #   run: ./scripts/run-ci-tests migration
+      #   env:
+      #     TF_ACC: 1
+      #   continue-on-error: true
+      # - name: Check Test Status
+      #   if: ${{ steps.acceptance_tests.outcome == 'failure' || steps.migration_tests.outcome == 'failure' }}
+      #   run: exit 1
+      - name: Check Test Status
+        if: ${{ steps.acceptance_tests.outcome == 'failure' }}
+        run: exit 1

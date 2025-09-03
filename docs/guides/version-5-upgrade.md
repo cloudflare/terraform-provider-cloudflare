@@ -67,33 +67,37 @@ We recommend ensuring you are using version control for these changes or make a
 backup prior to initiating the change to enable reverting if needed.
 
 1. Update the resource attributes in your configuration. _Note: this will not update
-  your state file. The next step will determine how your state file is updated._
-  ```bash
-  $ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5
-  ```
+   your state file. The next step will determine how your state file is updated._
+
+```bash
+$ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5
+```
+
 2. Choose the appropriate method from [migrating renamed resources] that best suits
-  your situation and use case to migrate the attribute changes. If you are choosing to
-  use the provided GritQL patterns, the pattern name is
-  `cloudflare_terraform_v5_attribute_renames_state`. Otherwise, you can reimport the
-  resources without manually managing the state file.
+   your situation and use case to migrate the attribute changes. If you are choosing to
+   use the provided GritQL patterns, the pattern name is
+   `cloudflare_terraform_v5_attribute_renames_state`. Otherwise, you can reimport the
+   resources without manually managing the state file.
 3. Perform the resource renames. _Note: this will not update your state file.
-  The next step will determine how your state file is updated._
-  ```bash
-  $ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5_resource_renames_configuration
-  ```
+   The next step will determine how your state file is updated._
+
+```bash
+$ grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_terraform_v5_resource_renames_configuration
+```
+
 4. Choose the appropriate method from [migrating renamed resources] that best suits
-  your situation and use case to migrate the resource renames. If you are choosing to
-  use the provided GritQL patterns, the pattern name is
-  `cloudflare_terraform_v5_resource_renames_state`.
+   your situation and use case to migrate the resource renames. If you are choosing to
+   use the provided GritQL patterns, the pattern name is
+   `cloudflare_terraform_v5_resource_renames_state`.
 
 ### Manual
 
 1. Update the resource attributes in your configuration using the migration notes.
 2. Choose the appropriate method from [migrating renamed resources] that best suits
-  your situation and use case to migrate the attribute changes.
+   your situation and use case to migrate the attribute changes.
 3. Perform the resource renames using the migration notes.
 4. Choose the appropriate method from [migrating renamed resources] that best suits
-  your situation and use case to migrate the resource renames.
+   your situation and use case to migrate the resource renames.
 
 <!-- This code block is only used for confirming grit patterns -->
 
@@ -267,6 +271,8 @@ cloudflare_terraform_v5()
 
 ## cloudflare_worker_script
 
+!> While this resource is the direct migration path, it is no longer recommended. Please use the `cloudflare_worker`, `cloudflare_worker_version`, and `cloudflare_workers_deployment` resources instead. See how to use them in the [developer documentation](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/).
+
 - Renamed to `cloudflare_workers_script`
 
 ## cloudflare_worker_secret
@@ -395,6 +401,7 @@ This has been removed. Users should instead use the:
 - `policy` is now `policies`.
 
 Before
+
 ```hcl
 resource "cloudflare_api_token" "example" {
   name = "example"
@@ -413,6 +420,7 @@ resource "cloudflare_api_token" "example" {
 ```
 
 After
+
 ```hcl
 resource "cloudflare_api_token" "example" {
   name = "example"
@@ -996,6 +1004,7 @@ This has been removed. Users should instead use the:
 
 ## cloudflare_zero_trust_access_policy
 
+- `application_id` has been removed. Applications should be provided the policy ids instead
 - `approval_group` is now a list of objects (`approval_group = [{ ... }]`) instead of multiple block attribute (`approval_group { ... }`).
 - `auth_context` is now a list of objects (`auth_context = [{ ... }]`) instead of multiple block attribute (`auth_context { ... }`).
 - `azure` is now a single nested attribute (`azure = { ... }`) instead of a block (`azure { ... }`).
@@ -1155,9 +1164,10 @@ resource "cloudflare_list_item" "example" {
 
 ## cloudflare_dns_record
 
+- `name` now requires the full FQDN to match the API response instead of allowing a subdomain or `@` alias.
 - `data` is now a single nested attribute (`data = { ... }`) instead of a block (`data { ... }`).
 - `data.flag` is now a number (`flag = 0`) instead of a string (`flag = "0"`).
-- `hostname` has been removed. Instead, you should use a combination of data source and resource attributes to get the same value.
+- `hostname` has been removed.
 - `allow_overwrite` has been removed.
 
 ## cloudflare_zero_trust_risk_behavior
@@ -1267,6 +1277,8 @@ resource "cloudflare_list_item" "example" {
 - `rules` is now a list of objects (`rules = [{ ... }]`) instead of multiple block attribute (`rules { ... }`).
 
 ## cloudflare_workers_script
+
+!> While this resource is the direct migration path, it is no longer recommended. Please use the `cloudflare_worker`, `cloudflare_worker_version`, and `cloudflare_workers_deployment` resources instead. See how to use them in the [developer documentation](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/).
 
 - `name` is now `script_name`.
 - `analytics_engine_binding` is now a list of objects (`analytics_engine_binding = [{ ... }]`) instead of multiple block attribute (`analytics_engine_binding { ... }`).

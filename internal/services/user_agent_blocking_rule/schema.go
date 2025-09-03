@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -18,14 +19,14 @@ var _ resource.ResourceWithConfigValidators = (*UserAgentBlockingRuleResource)(n
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "The unique identifier of the User Agent Blocking rule.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Defines an identifier.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"ua_rule_id": schema.StringAttribute{
-				Description:   "The unique identifier of the User Agent Blocking rule.",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"mode": schema.StringAttribute{
@@ -42,27 +43,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"configuration": schema.SingleNestedAttribute{
-				Description: "The rule configuration.",
-				Required:    true,
+				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"target": schema.StringAttribute{
-						Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the rule.\nAvailable values: \"ip\", \"ip6\", \"ip_range\", \"asn\", \"country\".",
+						Description: "The configuration target. You must set the target to `ua` when specifying a user agent in the rule.\nAvailable values: \"ua\".",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"ip",
-								"ip6",
-								"ip_range",
-								"asn",
-								"country",
-							),
+							stringvalidator.OneOfCaseInsensitive("ua"),
 						},
 					},
 					"value": schema.StringAttribute{
-						Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
+						Description: "the user agent to exactly match",
 						Optional:    true,
 					},
 				},
+			},
+			"description": schema.StringAttribute{
+				Description: "An informative summary of the rule. This value is sanitized and any tags will be removed.",
+				Optional:    true,
+			},
+			"paused": schema.BoolAttribute{
+				Description: "When true, indicates that the rule is currently paused.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 		},
 	}

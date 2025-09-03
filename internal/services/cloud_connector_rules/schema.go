@@ -55,12 +55,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"provider": schema.StringAttribute{
-							Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"r2\", \"gcp_storage\", \"azure_storage\".",
+							Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"cloudflare_r2\", \"gcp_storage\", \"azure_storage\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"aws_s3",
-									"r2",
+									"cloudflare_r2",
 									"gcp_storage",
 									"azure_storage",
 								),

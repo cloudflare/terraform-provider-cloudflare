@@ -80,9 +80,9 @@ Available values: "allow", "deny".
 
 Read-Only:
 
-- `id` (String) Identifier of the group.
+- `id` (String) Identifier of the permission group.
 - `meta` (Attributes) Attributes associated to the permission group. (see [below for nested schema](#nestedatt--result--policies--permission_groups--meta))
-- `name` (String) Name of the group.
+- `name` (String) Name of the permission group.
 
 <a id="nestedatt--result--policies--permission_groups--meta"></a>
 ### Nested Schema for `result.policies.permission_groups.meta`

@@ -5,8 +5,8 @@ package dns_firewall
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/dns_firewall"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/dns_firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -30,8 +30,8 @@ type DNSFirewallDataSourceModel struct {
 	NegativeCacheTTL     types.Float64                                                        `tfsdk:"negative_cache_ttl" json:"negative_cache_ttl,computed"`
 	Ratelimit            types.Float64                                                        `tfsdk:"ratelimit" json:"ratelimit,computed"`
 	Retries              types.Float64                                                        `tfsdk:"retries" json:"retries,computed"`
-	DNSFirewallIPs       customfield.List[types.String]                                       `tfsdk:"dns_firewall_ips" json:"dns_firewall_ips,computed"`
-	UpstreamIPs          customfield.List[types.String]                                       `tfsdk:"upstream_ips" json:"upstream_ips,computed"`
+	DNSFirewallIPs       customfield.Set[types.String]                                        `tfsdk:"dns_firewall_ips" json:"dns_firewall_ips,computed"`
+	UpstreamIPs          customfield.Set[types.String]                                        `tfsdk:"upstream_ips" json:"upstream_ips,computed"`
 	AttackMitigation     customfield.NestedObject[DNSFirewallAttackMitigationDataSourceModel] `tfsdk:"attack_mitigation" json:"attack_mitigation,computed"`
 }
 

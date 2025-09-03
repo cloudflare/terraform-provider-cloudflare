@@ -5,8 +5,8 @@ package account_member
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/accounts"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -45,6 +45,7 @@ func (m *AccountMembersDataSourceModel) toListParams(_ context.Context) (params 
 
 type AccountMembersResultDataSourceModel struct {
 	ID       types.String                                                        `tfsdk:"id" json:"id,computed"`
+	Email    types.String                                                        `tfsdk:"email" json:"email,computed"`
 	Policies customfield.NestedObjectList[AccountMembersPoliciesDataSourceModel] `tfsdk:"policies" json:"policies,computed"`
 	Roles    customfield.NestedObjectList[AccountMembersRolesDataSourceModel]    `tfsdk:"roles" json:"roles,computed"`
 	Status   types.String                                                        `tfsdk:"status" json:"status,computed"`
@@ -52,7 +53,7 @@ type AccountMembersResultDataSourceModel struct {
 }
 
 type AccountMembersPoliciesDataSourceModel struct {
-	ID               types.String                                                                        `tfsdk:"id" json:"id,computed"`
+	ID               types.String                                                                        `tfsdk:"id" json:"id,computed,force_encode,encode_state_for_unknown"`
 	Access           types.String                                                                        `tfsdk:"access" json:"access,computed"`
 	PermissionGroups customfield.NestedObjectList[AccountMembersPoliciesPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
 	ResourceGroups   customfield.NestedObjectList[AccountMembersPoliciesResourceGroupsDataSourceModel]   `tfsdk:"resource_groups" json:"resource_groups,computed"`

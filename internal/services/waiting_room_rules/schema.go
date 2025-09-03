@@ -5,7 +5,6 @@ package waiting_room_rules
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -64,35 +63,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"action": schema.StringAttribute{
-				Description: "The action to take when the expression matches.\nAvailable values: \"bypass_waiting_room\".",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("bypass_waiting_room"),
-				},
-			},
-			"description": schema.StringAttribute{
-				Description: "The description of the rule.",
-				Computed:    true,
-				Default:     stringdefault.StaticString(""),
-			},
-			"enabled": schema.BoolAttribute{
-				Description: "When set to true, the rule is enabled.",
-				Computed:    true,
-				Default:     booldefault.StaticBool(true),
-			},
-			"expression": schema.StringAttribute{
-				Description: "Criteria defining when there is a match for the current rule.",
-				Computed:    true,
-			},
-			"last_updated": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"version": schema.StringAttribute{
-				Description: "The version of the rule.",
-				Computed:    true,
 			},
 		},
 	}

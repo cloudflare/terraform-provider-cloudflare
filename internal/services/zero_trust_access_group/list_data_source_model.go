@@ -5,8 +5,8 @@ package zero_trust_access_group
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -78,7 +78,9 @@ type ZeroTrustAccessGroupsExcludeDataSourceModel struct {
 	IP                   customfield.NestedObject[ZeroTrustAccessGroupsExcludeIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	Okta                 customfield.NestedObject[ZeroTrustAccessGroupsExcludeOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
 	SAML                 customfield.NestedObject[ZeroTrustAccessGroupsExcludeSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
+	OIDC                 customfield.NestedObject[ZeroTrustAccessGroupsExcludeOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessGroupsExcludeServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
+	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessGroupsExcludeLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 }
 
 type ZeroTrustAccessGroupsExcludeGroupDataSourceModel struct {
@@ -172,8 +174,18 @@ type ZeroTrustAccessGroupsExcludeSAMLDataSourceModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
 }
 
+type ZeroTrustAccessGroupsExcludeOIDCDataSourceModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,computed"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,computed"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+}
+
 type ZeroTrustAccessGroupsExcludeServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
+}
+
+type ZeroTrustAccessGroupsExcludeLinkedAppTokenDataSourceModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
 }
 
 type ZeroTrustAccessGroupsIncludeDataSourceModel struct {
@@ -198,7 +210,9 @@ type ZeroTrustAccessGroupsIncludeDataSourceModel struct {
 	IP                   customfield.NestedObject[ZeroTrustAccessGroupsIncludeIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	Okta                 customfield.NestedObject[ZeroTrustAccessGroupsIncludeOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
 	SAML                 customfield.NestedObject[ZeroTrustAccessGroupsIncludeSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
+	OIDC                 customfield.NestedObject[ZeroTrustAccessGroupsIncludeOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessGroupsIncludeServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
+	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessGroupsIncludeLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 }
 
 type ZeroTrustAccessGroupsIncludeGroupDataSourceModel struct {
@@ -292,8 +306,18 @@ type ZeroTrustAccessGroupsIncludeSAMLDataSourceModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
 }
 
+type ZeroTrustAccessGroupsIncludeOIDCDataSourceModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,computed"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,computed"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+}
+
 type ZeroTrustAccessGroupsIncludeServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
+}
+
+type ZeroTrustAccessGroupsIncludeLinkedAppTokenDataSourceModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
 }
 
 type ZeroTrustAccessGroupsIsDefaultDataSourceModel struct {
@@ -318,7 +342,9 @@ type ZeroTrustAccessGroupsIsDefaultDataSourceModel struct {
 	IP                   customfield.NestedObject[ZeroTrustAccessGroupsIsDefaultIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	Okta                 customfield.NestedObject[ZeroTrustAccessGroupsIsDefaultOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
 	SAML                 customfield.NestedObject[ZeroTrustAccessGroupsIsDefaultSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
+	OIDC                 customfield.NestedObject[ZeroTrustAccessGroupsIsDefaultOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessGroupsIsDefaultServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
+	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessGroupsIsDefaultLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 }
 
 type ZeroTrustAccessGroupsIsDefaultGroupDataSourceModel struct {
@@ -412,8 +438,18 @@ type ZeroTrustAccessGroupsIsDefaultSAMLDataSourceModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
 }
 
+type ZeroTrustAccessGroupsIsDefaultOIDCDataSourceModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,computed"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,computed"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+}
+
 type ZeroTrustAccessGroupsIsDefaultServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
+}
+
+type ZeroTrustAccessGroupsIsDefaultLinkedAppTokenDataSourceModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
 }
 
 type ZeroTrustAccessGroupsRequireDataSourceModel struct {
@@ -438,7 +474,9 @@ type ZeroTrustAccessGroupsRequireDataSourceModel struct {
 	IP                   customfield.NestedObject[ZeroTrustAccessGroupsRequireIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	Okta                 customfield.NestedObject[ZeroTrustAccessGroupsRequireOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
 	SAML                 customfield.NestedObject[ZeroTrustAccessGroupsRequireSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
+	OIDC                 customfield.NestedObject[ZeroTrustAccessGroupsRequireOIDCDataSourceModel]                 `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken         customfield.NestedObject[ZeroTrustAccessGroupsRequireServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
+	LinkedAppToken       customfield.NestedObject[ZeroTrustAccessGroupsRequireLinkedAppTokenDataSourceModel]       `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 }
 
 type ZeroTrustAccessGroupsRequireGroupDataSourceModel struct {
@@ -532,6 +570,16 @@ type ZeroTrustAccessGroupsRequireSAMLDataSourceModel struct {
 	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
 }
 
+type ZeroTrustAccessGroupsRequireOIDCDataSourceModel struct {
+	ClaimName          types.String `tfsdk:"claim_name" json:"claim_name,computed"`
+	ClaimValue         types.String `tfsdk:"claim_value" json:"claim_value,computed"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+}
+
 type ZeroTrustAccessGroupsRequireServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
+}
+
+type ZeroTrustAccessGroupsRequireLinkedAppTokenDataSourceModel struct {
+	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
 }

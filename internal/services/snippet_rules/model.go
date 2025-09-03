@@ -4,6 +4,7 @@ package snippet_rules
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -12,12 +13,8 @@ type SnippetRulesResultEnvelope struct {
 }
 
 type SnippetRulesModel struct {
-	ZoneID      types.String               `tfsdk:"zone_id" path:"zone_id,required"`
-	Rules       *[]*SnippetRulesRulesModel `tfsdk:"rules" json:"rules,optional"`
-	Description types.String               `tfsdk:"description" json:"description,computed"`
-	Enabled     types.Bool                 `tfsdk:"enabled" json:"enabled,computed"`
-	Expression  types.String               `tfsdk:"expression" json:"expression,computed"`
-	SnippetName types.String               `tfsdk:"snippet_name" json:"snippet_name,computed"`
+	ZoneID types.String               `tfsdk:"zone_id" path:"zone_id,required"`
+	Rules  *[]*SnippetRulesRulesModel `tfsdk:"rules" json:"rules,required"`
 }
 
 func (m SnippetRulesModel) MarshalJSON() (data []byte, err error) {
@@ -29,8 +26,10 @@ func (m SnippetRulesModel) MarshalJSONForUpdate(state SnippetRulesModel) (data [
 }
 
 type SnippetRulesRulesModel struct {
-	Description types.String `tfsdk:"description" json:"description,optional"`
-	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
-	Expression  types.String `tfsdk:"expression" json:"expression,optional"`
-	SnippetName types.String `tfsdk:"snippet_name" json:"snippet_name,optional"`
+	ID          types.String      `tfsdk:"id" json:"id,computed"`
+	Expression  types.String      `tfsdk:"expression" json:"expression,required"`
+	LastUpdated timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	SnippetName types.String      `tfsdk:"snippet_name" json:"snippet_name,required"`
+	Description types.String      `tfsdk:"description" json:"description,computed_optional"`
+	Enabled     types.Bool        `tfsdk:"enabled" json:"enabled,computed_optional"`
 }

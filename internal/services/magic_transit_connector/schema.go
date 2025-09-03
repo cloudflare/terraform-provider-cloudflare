@@ -5,9 +5,9 @@ package magic_transit_connector
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -22,26 +22,42 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
+				Description:   "Account identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"connector_id": schema.StringAttribute{
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			"device": schema.SingleNestedAttribute{
+				Required: true,
+				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Computed: true,
+						Optional: true,
+					},
+					"serial_number": schema.StringAttribute{
+						Computed: true,
+						Optional: true,
+					},
+				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"activated": schema.BoolAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"interrupt_window_duration_hours": schema.Float64Attribute{
+				Computed: true,
 				Optional: true,
 			},
 			"interrupt_window_hour_of_day": schema.Float64Attribute{
+				Computed: true,
 				Optional: true,
 			},
 			"notes": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"timezone": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"last_heartbeat": schema.StringAttribute{
@@ -53,24 +69,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"last_updated": schema.StringAttribute{
 				Computed: true,
 			},
-			"device": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[MagicTransitConnectorDeviceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"id": schema.StringAttribute{
-						Computed: true,
-					},
-					"serial_number": schema.StringAttribute{
-						Computed: true,
-					},
-				},
-			},
 		},
 	}
 }
 
 func (r *MagicTransitConnectorResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = ResourceSchema(ctx)
+	resp.Schema = CustomResourceSchema(ctx)
 }
 
 func (r *MagicTransitConnectorResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

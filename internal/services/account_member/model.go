@@ -15,7 +15,7 @@ type AccountMemberResultEnvelope struct {
 type AccountMemberModel struct {
 	ID        types.String                                             `tfsdk:"id" json:"id,computed"`
 	AccountID types.String                                             `tfsdk:"account_id" path:"account_id,required"`
-	Email     types.String                                             `tfsdk:"email" json:"email,required,no_refresh"`
+	Email     types.String                                             `tfsdk:"email" json:"email,required"`
 	Status    types.String                                             `tfsdk:"status" json:"status,computed_optional"`
 	Roles     *[]types.String                                          `tfsdk:"roles" json:"roles,optional,no_refresh"`
 	Policies  customfield.NestedObjectList[AccountMemberPoliciesModel] `tfsdk:"policies" json:"policies,computed_optional"`
@@ -31,7 +31,7 @@ func (m AccountMemberModel) MarshalJSONForUpdate(state AccountMemberModel) (data
 }
 
 type AccountMemberPoliciesModel struct {
-	ID               types.String                                   `tfsdk:"id" json:"id,computed"`
+	ID               types.String                                   `tfsdk:"id" json:"id,computed,force_encode,encode_state_for_unknown"`
 	Access           types.String                                   `tfsdk:"access" json:"access,required"`
 	PermissionGroups *[]*AccountMemberPoliciesPermissionGroupsModel `tfsdk:"permission_groups" json:"permission_groups,required"`
 	ResourceGroups   *[]*AccountMemberPoliciesResourceGroupsModel   `tfsdk:"resource_groups" json:"resource_groups,required"`

@@ -5,8 +5,8 @@ package zero_trust_tunnel_cloudflared
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -23,6 +23,7 @@ type ZeroTrustTunnelCloudflaredDataSourceModel struct {
 	TunnelID        types.String                                                                       `tfsdk:"tunnel_id" path:"tunnel_id,optional"`
 	AccountID       types.String                                                                       `tfsdk:"account_id" path:"account_id,required"`
 	AccountTag      types.String                                                                       `tfsdk:"account_tag" json:"account_tag,computed"`
+	ConfigSrc       types.String                                                                       `tfsdk:"config_src" json:"config_src,computed"`
 	ConnsActiveAt   timetypes.RFC3339                                                                  `tfsdk:"conns_active_at" json:"conns_active_at,computed" format:"date-time"`
 	ConnsInactiveAt timetypes.RFC3339                                                                  `tfsdk:"conns_inactive_at" json:"conns_inactive_at,computed" format:"date-time"`
 	CreatedAt       timetypes.RFC3339                                                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -45,11 +46,6 @@ func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toReadParams(_ context.Conte
 }
 
 func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelCloudflaredListParams, diags diag.Diagnostics) {
-	mFilterWasActiveAt, errs := m.Filter.WasActiveAt.ValueRFC3339Time()
-	diags.Append(errs...)
-	mFilterWasInactiveAt, errs := m.Filter.WasInactiveAt.ValueRFC3339Time()
-	diags.Append(errs...)
-
 	params = zero_trust.TunnelCloudflaredListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -76,10 +72,18 @@ func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Conte
 		params.UUID = cloudflare.F(m.Filter.UUID.ValueString())
 	}
 	if !m.Filter.WasActiveAt.IsNull() {
-		params.WasActiveAt = cloudflare.F(mFilterWasActiveAt)
+		mFilterWasActiveAt, errs := m.Filter.WasActiveAt.ValueRFC3339Time()
+		diags.Append(errs...)
+		if errs == nil {
+			params.WasActiveAt = cloudflare.F(mFilterWasActiveAt)
+		}
 	}
 	if !m.Filter.WasInactiveAt.IsNull() {
-		params.WasInactiveAt = cloudflare.F(mFilterWasInactiveAt)
+		mFilterWasInactiveAt, errs := m.Filter.WasInactiveAt.ValueRFC3339Time()
+		diags.Append(errs...)
+		if errs == nil {
+			params.WasInactiveAt = cloudflare.F(mFilterWasInactiveAt)
+		}
 	}
 
 	return

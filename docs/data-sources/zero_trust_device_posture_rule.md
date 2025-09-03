@@ -91,6 +91,7 @@ Available values: "<", "<=", ">", ">=", "==".
 - `sha256` (String) SHA-256.
 - `state` (String) For more details on state, please refer to the Crowdstrike documentation.
 Available values: "online", "offline", "unknown".
+- `subject_alternative_names` (List of String) List of certificate Subject Alternative Names.
 - `thumbprint` (String) Signing certificate thumbprint.
 - `total_score` (Number) For more details on total score, refer to the Tanium documentation.
 - `version` (String) Version of OS.

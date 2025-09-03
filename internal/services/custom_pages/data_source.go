@@ -8,8 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/custom_pages"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -67,7 +68,7 @@ func (d *CustomPagesDataSource) Read(ctx context.Context, req datasource.ReadReq
 	env := CustomPagesResultDataSourceEnvelope{*data}
 	_, err := d.client.CustomPages.Get(
 		ctx,
-		data.Identifier.ValueString(),
+		custom_pages.CustomPageGetParamsIdentifier(data.Identifier.ValueString()),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

@@ -44,5 +44,5 @@ resource "cloudflare_cloudforce_one_request_message" "example_cloudforce_one_req
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_cloudforce_one_request_message.example '<account_id>/<request_id>'
+$ terraform import cloudflare_cloudforce_one_request_message.example '<account_id>/<request_id>/<page>/<per_page>'
 ```

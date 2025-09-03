@@ -39,7 +39,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("local", "cloudflare"),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 				Default:       stringdefault.StaticString("local"),
 			},
 			"name": schema.StringAttribute{
@@ -76,8 +76,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"remote_config": schema.BoolAttribute{
-				Description: "If `true`, the tunnel can be configured remotely from the Zero Trust dashboard. If `false`, the tunnel must be configured locally on the origin machine.",
-				Computed:    true,
+				Description:        "If `true`, the tunnel can be configured remotely from the Zero Trust dashboard. If `false`, the tunnel must be configured locally on the origin machine.",
+				Computed:           true,
+				DeprecationMessage: "Use the config_src field instead.",
 			},
 			"status": schema.StringAttribute{
 				Description: "The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).\nAvailable values: \"inactive\", \"degraded\", \"healthy\", \"down\".",
@@ -107,9 +108,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"connections": schema.ListNestedAttribute{
-				Description: "The Cloudflare Tunnel connections between your origin and Cloudflare's edge.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustTunnelCloudflaredConnectionsModel](ctx),
+				Description:        "The Cloudflare Tunnel connections between your origin and Cloudflare's edge.",
+				Computed:           true,
+				DeprecationMessage: "This field will start returning an empty array. To fetch the connections of a given tunnel, please use the dedicated endpoint `/accounts/{account_id}/{tunnel_type}/{tunnel_id}/connections`",
+				CustomType:         customfield.NewNestedObjectListType[ZeroTrustTunnelCloudflaredConnectionsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

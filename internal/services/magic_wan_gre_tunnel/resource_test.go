@@ -16,12 +16,74 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareGRETunnelExists(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit.")
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
 
+func init() {
+	resource.AddTestSweepers("cloudflare_magic_wan_gre_tunnel", &resource.Sweeper{
+		Name: "cloudflare_magic_wan_gre_tunnel",
+		F:    testSweepCloudflareMagicWanGRETunnel,
+	})
+}
+
+func testSweepCloudflareMagicWanGRETunnel(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return fmt.Errorf("failed to create Cloudflare client: %w", clientErr)
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		return fmt.Errorf("CLOUDFLARE_ACCOUNT_ID must be set")
+	}
+
+	tflog.Info(ctx, "Starting to list GRE tunnels for sweeping")
+	tunnels, err := client.ListMagicTransitGRETunnels(ctx, accountID)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch GRE tunnels: %s", err))
+		return fmt.Errorf("failed to fetch GRE tunnels: %w", err)
+	}
+
+	if len(tunnels) == 0 {
+		tflog.Info(ctx, "No GRE tunnels to sweep")
+		return nil
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Found %d GRE tunnels to sweep", len(tunnels)))
+
+	deletedCount := 0
+	failedCount := 0
+
+	for _, tunnel := range tunnels {
+		tflog.Info(ctx, fmt.Sprintf("Deleting GRE tunnel: %s (%s)", tunnel.Name, tunnel.ID))
+		
+		_, err := client.DeleteMagicTransitGRETunnel(ctx, accountID, tunnel.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete GRE tunnel %s: %s", tunnel.ID, err))
+			failedCount++
+			continue
+		}
+		
+		deletedCount++
+		tflog.Info(ctx, fmt.Sprintf("Successfully deleted GRE tunnel: %s", tunnel.ID))
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Completed sweeping GRE tunnels: deleted %d, failed %d", deletedCount, failedCount))
+	return nil
+}
+
+func TestAccCloudflareGRETunnelExists(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	cfIP := utils.LookupMagicWanCfIP(t, accountID)
+	// Use unique endpoints and interface address per test to avoid conflicts
+	customerEndpoint := "203.0.113.10"
+	interfaceAddr := "10.213.0.20/31"
+	config := testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID, cfIP, customerEndpoint, interfaceAddr)
 
 	var Tunnel cloudflare.MagicTransitGRETunnel
 
@@ -30,20 +92,33 @@ func TestAccCloudflareGRETunnelExists(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID),
+				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareGRETunnelExists(name, &Tunnel),
 					resource.TestCheckResourceAttr(name, "description", rnd),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "customer_gre_endpoint", "203.0.113.1"),
-					resource.TestCheckResourceAttr(name, "cloudflare_gre_endpoint", "162.159.64.41"),
-					resource.TestCheckResourceAttr(name, "interface_address", "10.212.0.9/31"),
-					resource.TestCheckResourceAttr(name, "ttl", "64"),
-					resource.TestCheckResourceAttr(name, "mtu", "1476"),
-					resource.TestCheckResourceAttr(name, "health_check_enabled", "true"),
-					resource.TestCheckResourceAttr(name, "health_check_target", "203.0.113.1"),
-					resource.TestCheckResourceAttr(name, "health_check_type", "request"),
+					resource.TestCheckResourceAttr(name, "customer_gre_endpoint", "203.0.113.10"),
+					resource.TestCheckResourceAttr(name, "cloudflare_gre_endpoint", cfIP),
+					resource.TestCheckResourceAttr(name, "interface_address", "10.213.0.20/31"),
+					resource.TestCheckResourceAttr(name, "health_check.target.effective", "203.0.113.10"),
 				),
+			},
+			{
+				Config:             config,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false, // expect no change
+			},
+			{
+				ResourceName: name,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					rs, ok := state.RootModule().Resources[name]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", name)
+					}
+					return fmt.Sprintf("%s/%s", accountID, rs.Primary.ID), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -76,11 +151,13 @@ func testAccCheckCloudflareGRETunnelExists(n string, tunnel *cloudflare.MagicTra
 }
 
 func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	cfIP := utils.LookupMagicWanCfIP(t, accountID)
+	// Use unique endpoints and interface address per test to avoid conflicts
+	customerEndpoint := "203.0.113.11"
+	interfaceAddr := "10.213.0.22/31"
 
 	var Tunnel cloudflare.MagicTransitGRETunnel
 
@@ -89,14 +166,14 @@ func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID),
+				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID, cfIP, customerEndpoint, interfaceAddr),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareGRETunnelExists(name, &Tunnel),
 					resource.TestCheckResourceAttr(name, "description", rnd),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd+"-updated", accountID),
+				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd+"-updated", accountID, cfIP, customerEndpoint, interfaceAddr),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareGRETunnelExists(name, &Tunnel),
 					resource.TestCheckResourceAttr(name, "description", rnd+"-updated"),
@@ -107,11 +184,15 @@ func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
 }
 
 func TestAccCloudflareGRETunnelUpdateMulti(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
-
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_wan_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	cfIP := utils.LookupMagicWanCfIP(t, accountID)
+	// Use unique endpoints and interface address per test to avoid conflicts
+	customerEndpoint1 := "203.0.113.12"
+	interfaceAddr1 := "10.213.0.24/31"
+	customerEndpoint2 := "203.0.113.13"
+	interfaceAddr2 := "10.213.0.26/31"
 
 	var Tunnel cloudflare.MagicTransitGRETunnel
 
@@ -120,45 +201,41 @@ func TestAccCloudflareGRETunnelUpdateMulti(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID),
+				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID, cfIP, customerEndpoint1, interfaceAddr1),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareGRETunnelExists(name, &Tunnel),
 					resource.TestCheckResourceAttr(name, "description", rnd),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "customer_gre_endpoint", "203.0.113.1"),
-					resource.TestCheckResourceAttr(name, "cloudflare_gre_endpoint", "162.159.64.41"),
-					resource.TestCheckResourceAttr(name, "interface_address", "10.212.0.9/31"),
+					resource.TestCheckResourceAttr(name, "customer_gre_endpoint", "203.0.113.12"),
+					resource.TestCheckResourceAttr(name, "cloudflare_gre_endpoint", cfIP),
+					resource.TestCheckResourceAttr(name, "interface_address", "10.213.0.24/31"),
 					resource.TestCheckResourceAttr(name, "ttl", "64"),
 					resource.TestCheckResourceAttr(name, "mtu", "1476"),
-					resource.TestCheckResourceAttr(name, "health_check_enabled", "true"),
-					resource.TestCheckResourceAttr(name, "health_check_target", "203.0.113.1"),
-					resource.TestCheckResourceAttr(name, "health_check_type", "request"),
+					resource.TestCheckResourceAttr(name, "health_check.enabled", "true"),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareGRETunnelMultiUpdate(rnd, rnd, rnd+"-updated", accountID),
+				Config: testAccCheckCloudflareGRETunnelMultiUpdate(rnd, rnd, rnd+"-updated", accountID, cfIP, customerEndpoint2, interfaceAddr2),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareGRETunnelExists(name, &Tunnel),
 					resource.TestCheckResourceAttr(name, "description", rnd+"-updated"),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "customer_gre_endpoint", "203.0.113.2"),
-					resource.TestCheckResourceAttr(name, "cloudflare_gre_endpoint", "162.159.64.41"),
-					resource.TestCheckResourceAttr(name, "interface_address", "10.212.0.11/31"),
+					resource.TestCheckResourceAttr(name, "customer_gre_endpoint", "203.0.113.13"),
+					resource.TestCheckResourceAttr(name, "cloudflare_gre_endpoint", cfIP),
+					resource.TestCheckResourceAttr(name, "interface_address", "10.213.0.26/31"),
 					resource.TestCheckResourceAttr(name, "ttl", "65"),
 					resource.TestCheckResourceAttr(name, "mtu", "1475"),
-					resource.TestCheckResourceAttr(name, "health_check_enabled", "true"),
-					resource.TestCheckResourceAttr(name, "health_check_target", "203.0.113.2"),
-					resource.TestCheckResourceAttr(name, "health_check_type", "reply"),
+					resource.TestCheckResourceAttr(name, "health_check.enabled", "false"),
 				),
 			},
 		},
 	})
 }
 
-func testAccCheckCloudflareGRETunnelSimple(ID, name, description, accountID string) string {
-	return acctest.LoadTestCase("gretunnelsimple.tf", ID, name, description, accountID)
+func testAccCheckCloudflareGRETunnelSimple(ID, name, description, accountID, cfIP, customerEndpoint, interfaceAddr string) string {
+	return acctest.LoadTestCase("gretunnelsimple.tf", ID, name, description, accountID, cfIP, customerEndpoint, interfaceAddr)
 }
 
-func testAccCheckCloudflareGRETunnelMultiUpdate(ID, name, description, accountID string) string {
-	return acctest.LoadTestCase("gretunnelmultiupdate.tf", ID, name, description, accountID)
+func testAccCheckCloudflareGRETunnelMultiUpdate(ID, name, description, accountID, cfIP, customerEndpoint, interfaceAddr string) string {
+	return acctest.LoadTestCase("gretunnelmultiupdate.tf", ID, name, description, accountID, cfIP, customerEndpoint, interfaceAddr)
 }

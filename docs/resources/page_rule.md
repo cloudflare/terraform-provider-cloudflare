@@ -66,7 +66,7 @@ Optional:
 - `cache_key_fields` (Attributes) (see [below for nested schema](#nestedatt--actions--cache_key_fields))
 - `cache_level` (String)
 - `cache_on_cookie` (String)
-- `cache_ttl_by_status` (Dynamic)
+- `cache_ttl_by_status` (Map of String)
 - `disable_apps` (Boolean)
 - `disable_performance` (Boolean)
 - `disable_security` (Boolean)

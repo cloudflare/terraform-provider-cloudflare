@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -112,8 +112,8 @@ func (r *ZeroTrustTunnelCloudflaredResource) Update(ctx context.Context, req res
 		return
 	}
 
-	configurationSource := state.ConfigSrc
-	tunnelSecret := state.TunnelSecret
+	configurationSource := data.ConfigSrc
+	tunnelSecret := data.TunnelSecret
 
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {

@@ -5,8 +5,8 @@ package account_member
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/accounts"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -20,6 +20,7 @@ type AccountMemberDataSourceModel struct {
 	ID        types.String                                                       `tfsdk:"id" path:"member_id,computed"`
 	MemberID  types.String                                                       `tfsdk:"member_id" path:"member_id,optional"`
 	AccountID types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
+	Email     types.String                                                       `tfsdk:"email" json:"email,computed"`
 	Status    types.String                                                       `tfsdk:"status" json:"status,computed"`
 	Policies  customfield.NestedObjectList[AccountMemberPoliciesDataSourceModel] `tfsdk:"policies" json:"policies,computed"`
 	Roles     customfield.NestedObjectList[AccountMemberRolesDataSourceModel]    `tfsdk:"roles" json:"roles,computed"`
@@ -54,7 +55,7 @@ func (m *AccountMemberDataSourceModel) toListParams(_ context.Context) (params a
 }
 
 type AccountMemberPoliciesDataSourceModel struct {
-	ID               types.String                                                                       `tfsdk:"id" json:"id,computed"`
+	ID               types.String                                                                       `tfsdk:"id" json:"id,computed,force_encode,encode_state_for_unknown"`
 	Access           types.String                                                                       `tfsdk:"access" json:"access,computed"`
 	PermissionGroups customfield.NestedObjectList[AccountMemberPoliciesPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
 	ResourceGroups   customfield.NestedObjectList[AccountMemberPoliciesResourceGroupsDataSourceModel]   `tfsdk:"resource_groups" json:"resource_groups,computed"`

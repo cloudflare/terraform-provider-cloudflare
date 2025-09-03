@@ -14,17 +14,17 @@ description: |-
 ```terraform
 resource "cloudflare_dns_record" "example_dns_record" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  name = "example.com"
+  ttl = 3600
+  type = "A"
   comment = "Domain verification record"
   content = "198.51.100.4"
-  name = "example.com"
   proxied = true
   settings = {
     ipv4_only = true
     ipv6_only = true
   }
   tags = ["owner:dns-team"]
-  ttl = 3600
-  type = "A"
 }
 ```
 
@@ -36,7 +36,7 @@ resource "cloudflare_dns_record" "example_dns_record" {
 - `name` (String) DNS record name (or @ for the zone apex) in Punycode.
 - `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
 - `type` (String) Record type.
-Available values: "A", "AAAA", "CAA", "CERT", "CNAME", "DNSKEY", "DS", "HTTPS", "LOC", "MX", "NAPTR", "NS", "OPENPGPKEY", "PTR", "SMIMEA", "SRV", "SSHFP", "SVCB", "TLSA", "TXT", "URI".
+Available values: "A", "AAAA", "CNAME", "MX", "NS", "OPENPGPKEY", "PTR", "TXT", "CAA", "CERT", "DNSKEY", "DS", "HTTPS", "LOC", "NAPTR", "SMIMEA", "SRV", "SSHFP", "SVCB", "TLSA", "URI".
 - `zone_id` (String) Identifier.
 
 ### Optional
@@ -47,7 +47,7 @@ Available values: "A", "AAAA", "CAA", "CERT", "CNAME", "DNSKEY", "DS", "HTTPS", 
 - `priority` (Number) Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `settings` (Attributes) Settings for the DNS record. (see [below for nested schema](#nestedatt--settings))
-- `tags` (List of String) Custom tags for the DNS record. This field has no effect on DNS responses.
+- `tags` (Set of String) Custom tags for the DNS record. This field has no effect on DNS responses.
 
 ### Read-Only
 
@@ -69,8 +69,8 @@ Optional:
 - `certificate` (String) Certificate.
 - `digest` (String) Digest.
 - `digest_type` (Number) Digest Type.
-- `fingerprint` (String) fingerprint.
-- `flags` (Number) Flags for the CAA record.
+- `fingerprint` (String) Fingerprint.
+- `flags` (Dynamic) Flags for the CAA record.
 - `key_tag` (Number) Key Tag.
 - `lat_degrees` (Number) Degrees of latitude.
 - `lat_direction` (String) Latitude direction.
@@ -88,7 +88,7 @@ Available values: "E", "W".
 - `precision_horz` (Number) Horizontal precision of location.
 - `precision_vert` (Number) Vertical precision of location.
 - `preference` (Number) Preference.
-- `priority` (Number) priority.
+- `priority` (Number) Priority.
 - `protocol` (Number) Protocol.
 - `public_key` (String) Public Key.
 - `regex` (String) Regex.
@@ -97,7 +97,7 @@ Available values: "E", "W".
 - `service` (String) Service.
 - `size` (Number) Size of location in meters.
 - `tag` (String) Name of the property controlled by this record (e.g.: issue, issuewild, iodef).
-- `target` (String) target.
+- `target` (String) Target.
 - `type` (Number) Type.
 - `usage` (Number) Usage.
 - `value` (String) Value of the record. This field's semantics depend on the chosen tag.

@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/filters"
-	"github.com/cloudflare/cloudflare-go/v4/option"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/filters"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -70,7 +70,7 @@ func (r *FilterResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 	res := new(http.Response)
-	env := FilterResultEnvelope{*data}
+	env := FilterResultEnvelope{data.Body}
 	_, err = r.client.Filters.New(
 		ctx,
 		filters.FilterNewParams{
@@ -90,7 +90,7 @@ func (r *FilterResource) Create(ctx context.Context, req resource.CreateRequest,
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -118,7 +118,7 @@ func (r *FilterResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 	res := new(http.Response)
-	env := FilterResultEnvelope{*data}
+	env := FilterResultEnvelope{data.Body}
 	_, err = r.client.Filters.Update(
 		ctx,
 		data.ID.ValueString(),
@@ -139,7 +139,7 @@ func (r *FilterResource) Update(ctx context.Context, req resource.UpdateRequest,
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -154,7 +154,7 @@ func (r *FilterResource) Read(ctx context.Context, req resource.ReadRequest, res
 	}
 
 	res := new(http.Response)
-	env := FilterResultEnvelope{*data}
+	env := FilterResultEnvelope{data.Body}
 	_, err := r.client.Filters.Get(
 		ctx,
 		data.ID.ValueString(),
@@ -179,7 +179,7 @@ func (r *FilterResource) Read(ctx context.Context, req resource.ReadRequest, res
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -229,7 +229,7 @@ func (r *FilterResource) ImportState(ctx context.Context, req resource.ImportSta
 	data.ID = types.StringValue(path_filter_id)
 
 	res := new(http.Response)
-	env := FilterResultEnvelope{*data}
+	env := FilterResultEnvelope{data.Body}
 	_, err := r.client.Filters.Get(
 		ctx,
 		path_filter_id,
@@ -249,7 +249,7 @@ func (r *FilterResource) ImportState(ctx context.Context, req resource.ImportSta
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

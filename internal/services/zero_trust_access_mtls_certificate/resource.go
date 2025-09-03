@@ -7,10 +7,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/option"
-	"github.com/cloudflare/cloudflare-go/v4/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -153,6 +154,13 @@ func (r *ZeroTrustAccessMTLSCertificateResource) Update(ctx context.Context, req
 	}
 	data = &env.Result
 
+	var planData *ZeroTrustAccessMTLSCertificateModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &planData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	resp.Diagnostics.Append(normalizeReadZeroTrustAccessMtlsCertificateAPIData(ctx, data, planData)...)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -199,6 +207,14 @@ func (r *ZeroTrustAccessMTLSCertificateResource) Read(ctx context.Context, req r
 	}
 	data = &env.Result
 
+	var stateData *ZeroTrustAccessMTLSCertificateModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &stateData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(normalizeReadZeroTrustAccessMtlsCertificateAPIData(ctx, data, stateData)...)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -212,22 +228,84 @@ func (r *ZeroTrustAccessMTLSCertificateResource) Delete(ctx context.Context, req
 	}
 
 	params := zero_trust.AccessCertificateDeleteParams{}
+	updateParams := zero_trust.AccessCertificateUpdateParams{}
 
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+		updateParams.AccountID = cloudflare.F(data.AccountID.ValueString())
 	} else {
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+		updateParams.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	_, err := r.client.ZeroTrust.Access.Certificates.Delete(
+	cert, err := r.client.ZeroTrust.Access.Certificates.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		zero_trust.AccessCertificateGetParams(params),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
+	}
+
+	if cert != nil && len(cert.AssociatedHostnames) > 0 {
+		// We need to make an update to remove associated hostnames before we can delete
+		_, err = r.client.ZeroTrust.Access.Certificates.Update(
+			ctx,
+			data.ID.ValueString(),
+			updateParams,
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+
+		// Wait for the update to propagate with exponential backoff
+		maxRetries := 5
+		backoff := time.Second * 2
+		for range maxRetries {
+			time.Sleep(backoff)
+			updatedCert, checkErr := r.client.ZeroTrust.Access.Certificates.Get(
+				ctx,
+				data.ID.ValueString(),
+				zero_trust.AccessCertificateGetParams(params),
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+			if checkErr == nil && updatedCert != nil && len(updatedCert.AssociatedHostnames) == 0 {
+				break
+			}
+			backoff *= 2
+		}
+	}
+
+	if cert != nil {
+		// Retry deletion with exponential backoff to handle race conditions
+		maxRetries := 5
+		backoff := time.Second * 2
+		var lastErr error
+
+		for range maxRetries {
+			_, err = r.client.ZeroTrust.Access.Certificates.Delete(
+				ctx,
+				data.ID.ValueString(),
+				params,
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+			if err == nil {
+				lastErr = nil
+				break
+			}
+			lastErr = err
+			time.Sleep(backoff)
+			backoff *= 2
+		}
+
+		if lastErr != nil {
+			resp.Diagnostics.AddError("failed to delete certificate after retries", lastErr.Error())
+			return
+		}
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -284,6 +362,7 @@ func (r *ZeroTrustAccessMTLSCertificateResource) ImportState(ctx context.Context
 	}
 	data = &env.Result
 
+	resp.Diagnostics.AddWarning("MTLS certificate not imported", "The \"certificate\" field cannot be imported by this module and must be manually added to state.")
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

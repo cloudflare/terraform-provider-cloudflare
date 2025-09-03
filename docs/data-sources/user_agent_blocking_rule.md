@@ -23,7 +23,38 @@ data "cloudflare_user_agent_blocking_rule" "example_user_agent_blocking_rule" {
 
 ### Required
 
-- `ua_rule_id` (String) The unique identifier of the User Agent Blocking rule.
 - `zone_id` (String) Defines an identifier.
+
+### Optional
+
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+- `ua_rule_id` (String) The unique identifier of the User Agent Blocking rule.
+
+### Read-Only
+
+- `configuration` (Attributes) The configuration object for the current rule. (see [below for nested schema](#nestedatt--configuration))
+- `description` (String) An informative summary of the rule.
+- `id` (String) The unique identifier of the User Agent Blocking rule.
+- `mode` (String) The action to apply to a matched request.
+Available values: "block", "challenge", "js_challenge", "managed_challenge".
+- `paused` (Boolean) When true, indicates that the rule is currently paused.
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Optional:
+
+- `description` (String) A string to search for in the description of existing rules.
+- `paused` (Boolean) When true, indicates that the rule is currently paused.
+- `user_agent` (String) A string to search for in the user agent values of existing rules.
+
+
+<a id="nestedatt--configuration"></a>
+### Nested Schema for `configuration`
+
+Read-Only:
+
+- `target` (String) The configuration target for this rule. You must set the target to `ua` for User Agent Blocking rules.
+- `value` (String) The exact user agent string to match. This value will be compared to the received `User-Agent` HTTP header value.
 
 

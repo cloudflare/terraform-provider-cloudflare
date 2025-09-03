@@ -56,7 +56,7 @@ type ZeroTrustAccessIdentityProviderConfigModel struct {
 	HeaderAttributes         *[]*ZeroTrustAccessIdentityProviderConfigHeaderAttributesModel `tfsdk:"header_attributes" json:"header_attributes,optional"`
 	IdPPublicCERTs           *[]types.String                                                `tfsdk:"idp_public_certs" json:"idp_public_certs,optional"`
 	IssuerURL                types.String                                                   `tfsdk:"issuer_url" json:"issuer_url,optional"`
-	SignRequest              types.Bool                                                     `tfsdk:"sign_request" json:"sign_request,computed_optional"`
+	SignRequest              types.Bool                                                     `tfsdk:"sign_request" json:"sign_request,optional"`
 	SSOTargetURL             types.String                                                   `tfsdk:"sso_target_url" json:"sso_target_url,optional"`
 	RedirectURL              types.String                                                   `tfsdk:"redirect_url" json:"redirect_url,computed"`
 }
@@ -67,10 +67,10 @@ type ZeroTrustAccessIdentityProviderConfigHeaderAttributesModel struct {
 }
 
 type ZeroTrustAccessIdentityProviderSCIMConfigModel struct {
-	Enabled                types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
-	IdentityUpdateBehavior types.String `tfsdk:"identity_update_behavior" json:"identity_update_behavior,optional"`
+	Enabled                types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	IdentityUpdateBehavior types.String `tfsdk:"identity_update_behavior" json:"identity_update_behavior,computed_optional"`
 	SCIMBaseURL            types.String `tfsdk:"scim_base_url" json:"scim_base_url,computed"`
-	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision,optional"`
+	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision,computed_optional"`
 	Secret                 types.String `tfsdk:"secret" json:"secret,computed"`
-	UserDeprovision        types.Bool   `tfsdk:"user_deprovision" json:"user_deprovision,optional"`
+	UserDeprovision        types.Bool   `tfsdk:"user_deprovision" json:"user_deprovision,computed_optional"`
 }

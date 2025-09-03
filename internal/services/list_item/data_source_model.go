@@ -3,7 +3,12 @@
 package list_item
 
 import (
+	"context"
+
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,28 +18,29 @@ type ListItemResultDataSourceEnvelope struct {
 
 type ListItemDataSourceModel struct {
 	AccountID  types.String                                              `tfsdk:"account_id" path:"account_id,required"`
-	ItemID     types.String                                              `tfsdk:"item_id" path:"item_id,required"`
 	ListID     types.String                                              `tfsdk:"list_id" path:"list_id,required"`
+	ItemID     types.String                                              `tfsdk:"item_id" path:"item_id,required"`
+	ID         types.String                                              `tfsdk:"id" json:"id,computed" path:"item_id,computed"`
 	ASN        types.Int64                                               `tfsdk:"asn" json:"asn,computed"`
 	Comment    types.String                                              `tfsdk:"comment" json:"comment,computed"`
 	CreatedOn  types.String                                              `tfsdk:"created_on" json:"created_on,computed"`
-	ID         types.String                                              `tfsdk:"id" json:"id,computed"`
 	IP         types.String                                              `tfsdk:"ip" json:"ip,computed"`
 	ModifiedOn types.String                                              `tfsdk:"modified_on" json:"modified_on,computed"`
 	Hostname   customfield.NestedObject[ListItemHostnameDataSourceModel] `tfsdk:"hostname" json:"hostname,computed"`
 	Redirect   customfield.NestedObject[ListItemRedirectDataSourceModel] `tfsdk:"redirect" json:"redirect,computed"`
 }
 
-// func (m *ListItemDataSourceModel) toReadParams(_ context.Context) (params rules.ListItemGetParams, diags diag.Diagnostics) {
-// 	params = rules.ListItemGetParams{
-// 		AccountID: cloudflare.F(m.AccountID.ValueString()),
-// 	}
+func (m *ListItemDataSourceModel) toReadParams(_ context.Context) (params rules.ListItemGetParams, diags diag.Diagnostics) {
+	params = rules.ListItemGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
 
-// 	return
-// }
+	return
+}
 
 type ListItemHostnameDataSourceModel struct {
-	URLHostname types.String `tfsdk:"url_hostname" json:"url_hostname,computed"`
+	URLHostname          types.String `tfsdk:"url_hostname" json:"url_hostname,computed"`
+	ExcludeExactHostname types.Bool   `tfsdk:"exclude_exact_hostname" json:"exclude_exact_hostname,computed"`
 }
 
 type ListItemRedirectDataSourceModel struct {

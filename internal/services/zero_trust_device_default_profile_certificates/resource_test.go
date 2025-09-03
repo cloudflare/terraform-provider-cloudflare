@@ -32,7 +32,6 @@ func TestAccCloudflareDeviceDefaultProfileCertificates_Create(t *testing.T) {
 			{
 				Config: testCloudflareDevicePolicyCertificates(rnd, zoneID, true),
 				Check: resource.ComposeTestCheckFunc(
-					acctest.DumpState,
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
 				),

@@ -22,7 +22,7 @@ data "cloudflare_load_balancer_monitors" "example_load_balancer_monitors" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 

@@ -13,12 +13,12 @@ description: |-
 
 ```terraform
 resource "cloudflare_snippet_rules" "example_snippet_rules" {
-  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  zone_id = "9f1839b6152d298aca64c4e906b6d074"
   rules = [{
-    description = "Rule description"
+    expression = "ip.src eq 1.1.1.1"
+    snippet_name = "my_snippet"
+    description = "Execute my_snippet when IP address is 1.1.1.1."
     enabled = true
-    expression = "http.cookie eq \"a=b\""
-    snippet_name = "snippet_name_01"
   }]
 }
 ```
@@ -28,27 +28,25 @@ resource "cloudflare_snippet_rules" "example_snippet_rules" {
 
 ### Required
 
-- `zone_id` (String) Identifier
-
-### Optional
-
-- `rules` (Attributes List) List of snippet rules (see [below for nested schema](#nestedatt--rules))
-
-### Read-Only
-
-- `description` (String)
-- `enabled` (Boolean)
-- `expression` (String)
-- `snippet_name` (String) Snippet identifying name
+- `rules` (Attributes List) A list of snippet rules. (see [below for nested schema](#nestedatt--rules))
+- `zone_id` (String) The unique ID of the zone.
 
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`
 
+Required:
+
+- `expression` (String) The expression defining which traffic will match the rule.
+- `snippet_name` (String) The identifying name of the snippet.
+
 Optional:
 
-- `description` (String)
-- `enabled` (Boolean)
-- `expression` (String)
-- `snippet_name` (String) Snippet identifying name
+- `description` (String) An informative description of the rule.
+- `enabled` (Boolean) Whether the rule should be executed.
+
+Read-Only:
+
+- `id` (String) The unique ID of the rule.
+- `last_updated` (String) The timestamp of when the rule was last modified.
 
 

@@ -32,19 +32,19 @@ data "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy" {
 ### Read-Only
 
 - `app_count` (Number) Number of access applications currently using this policy.
-- `approval_groups` (Attributes List) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--approval_groups))
+- `approval_groups` (Attributes Set) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--approval_groups))
 - `approval_required` (Boolean) Requires the user to request access from an administrator at the start of each session.
 - `created_at` (String)
 - `decision` (String) The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.
 Available values: "allow", "deny", "non_identity", "bypass".
-- `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--exclude))
+- `exclude` (Attributes Set) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--exclude))
 - `id` (String) The UUID of the policy
-- `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--include))
+- `include` (Attributes Set) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--include))
 - `isolation_required` (Boolean) Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.
 - `name` (String) The name of the Access policy.
 - `purpose_justification_prompt` (String) A custom message that will appear on the purpose justification screen.
 - `purpose_justification_required` (Boolean) Require users to enter a justification when they log in to the application.
-- `require` (Attributes List) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--require))
+- `require` (Attributes Set) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--require))
 - `reusable` (Boolean)
 - `session_duration` (String) The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
 - `updated_at` (String)
@@ -82,7 +82,9 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--exclude--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--exclude--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--exclude--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--exclude--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--exclude--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--exclude--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--exclude--service_token))
@@ -226,12 +228,30 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--exclude--linked_app_token"></a>
+### Nested Schema for `exclude.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--exclude--login_method"></a>
 ### Nested Schema for `exclude.login_method`
 
 Read-Only:
 
 - `id` (String) The ID of an identity provider.
+
+
+<a id="nestedatt--exclude--oidc"></a>
+### Nested Schema for `exclude.oidc`
+
+Read-Only:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
 
 
 <a id="nestedatt--exclude--okta"></a>
@@ -285,7 +305,9 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--include--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--include--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--include--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--include--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--include--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--include--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--include--service_token))
@@ -429,12 +451,30 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--include--linked_app_token"></a>
+### Nested Schema for `include.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--include--login_method"></a>
 ### Nested Schema for `include.login_method`
 
 Read-Only:
 
 - `id` (String) The ID of an identity provider.
+
+
+<a id="nestedatt--include--oidc"></a>
+### Nested Schema for `include.oidc`
+
+Read-Only:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
 
 
 <a id="nestedatt--include--okta"></a>
@@ -488,7 +528,9 @@ Read-Only:
 - `gsuite` (Attributes) (see [below for nested schema](#nestedatt--require--gsuite))
 - `ip` (Attributes) (see [below for nested schema](#nestedatt--require--ip))
 - `ip_list` (Attributes) (see [below for nested schema](#nestedatt--require--ip_list))
+- `linked_app_token` (Attributes) (see [below for nested schema](#nestedatt--require--linked_app_token))
 - `login_method` (Attributes) (see [below for nested schema](#nestedatt--require--login_method))
+- `oidc` (Attributes) (see [below for nested schema](#nestedatt--require--oidc))
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--require--service_token))
@@ -632,12 +674,30 @@ Read-Only:
 - `id` (String) The ID of a previously created IP list.
 
 
+<a id="nestedatt--require--linked_app_token"></a>
+### Nested Schema for `require.linked_app_token`
+
+Read-Only:
+
+- `app_uid` (String) The ID of an Access OIDC SaaS application
+
+
 <a id="nestedatt--require--login_method"></a>
 ### Nested Schema for `require.login_method`
 
 Read-Only:
 
 - `id` (String) The ID of an identity provider.
+
+
+<a id="nestedatt--require--oidc"></a>
+### Nested Schema for `require.oidc`
+
+Read-Only:
+
+- `claim_name` (String) The name of the OIDC claim.
+- `claim_value` (String) The OIDC claim value to look for.
+- `identity_provider_id` (String) The ID of your OIDC identity provider.
 
 
 <a id="nestedatt--require--okta"></a>

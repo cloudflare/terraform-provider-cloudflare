@@ -5,8 +5,8 @@ package image
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/images"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/images"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -21,6 +21,7 @@ type ImageResultDataSourceEnvelope struct {
 type ImageDataSourceModel struct {
 	AccountID         types.String                   `tfsdk:"account_id" path:"account_id,required"`
 	ImageID           types.String                   `tfsdk:"image_id" path:"image_id,required"`
+	Creator           types.String                   `tfsdk:"creator" json:"creator,computed"`
 	Filename          types.String                   `tfsdk:"filename" json:"filename,computed"`
 	ID                types.String                   `tfsdk:"id" json:"id,computed"`
 	RequireSignedURLs types.Bool                     `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed"`

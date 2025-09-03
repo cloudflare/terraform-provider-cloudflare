@@ -18,6 +18,7 @@ data "cloudflare_email_security_trusted_domains_list" "example_email_security_tr
   is_recent = true
   is_similarity = true
   order = "pattern"
+  pattern = "pattern"
   search = "search"
 }
 ```
@@ -38,6 +39,7 @@ Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) The field to sort by.
 Available values: "pattern", "created_at".
+- `pattern` (String)
 - `search` (String) Allows searching in multiple properties of a record simultaneously.
 This parameter is intended for human users, not automation. Its exact
 behavior is intentionally left unspecified and is subject to change

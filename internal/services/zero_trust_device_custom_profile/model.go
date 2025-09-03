@@ -19,25 +19,25 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	Match                      types.String                                                                   `tfsdk:"match" json:"match,required"`
 	Name                       types.String                                                                   `tfsdk:"name" json:"name,required"`
 	Precedence                 types.Float64                                                                  `tfsdk:"precedence" json:"precedence,required"`
-	AllowModeSwitch            types.Bool                                                                     `tfsdk:"allow_mode_switch" json:"allow_mode_switch,optional"`
-	AllowUpdates               types.Bool                                                                     `tfsdk:"allow_updates" json:"allow_updates,optional"`
-	AllowedToLeave             types.Bool                                                                     `tfsdk:"allowed_to_leave" json:"allowed_to_leave,optional"`
-	AutoConnect                types.Float64                                                                  `tfsdk:"auto_connect" json:"auto_connect,optional"`
-	CaptivePortal              types.Float64                                                                  `tfsdk:"captive_portal" json:"captive_portal,optional"`
 	Description                types.String                                                                   `tfsdk:"description" json:"description,optional"`
-	DisableAutoFallback        types.Bool                                                                     `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,optional"`
 	Enabled                    types.Bool                                                                     `tfsdk:"enabled" json:"enabled,optional"`
-	ExcludeOfficeIPs           types.Bool                                                                     `tfsdk:"exclude_office_ips" json:"exclude_office_ips,optional"`
 	LANAllowMinutes            types.Float64                                                                  `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional"`
 	LANAllowSubnetSize         types.Float64                                                                  `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional"`
-	RegisterInterfaceIPWithDNS types.Bool                                                                     `tfsdk:"register_interface_ip_with_dns" json:"register_interface_ip_with_dns,optional"`
-	SccmVpnBoundarySupport     types.Bool                                                                     `tfsdk:"sccm_vpn_boundary_support" json:"sccm_vpn_boundary_support,optional"`
-	SupportURL                 types.String                                                                   `tfsdk:"support_url" json:"support_url,optional"`
-	SwitchLocked               types.Bool                                                                     `tfsdk:"switch_locked" json:"switch_locked,optional"`
-	TunnelProtocol             types.String                                                                   `tfsdk:"tunnel_protocol" json:"tunnel_protocol,optional"`
-	Exclude                    *[]*ZeroTrustDeviceCustomProfileExcludeModel                                   `tfsdk:"exclude" json:"exclude,optional"`
-	Include                    *[]*ZeroTrustDeviceCustomProfileIncludeModel                                   `tfsdk:"include" json:"include,optional"`
-	ServiceModeV2              *ZeroTrustDeviceCustomProfileServiceModeV2Model                                `tfsdk:"service_mode_v2" json:"service_mode_v2,optional"`
+	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileExcludeModel]         `tfsdk:"exclude" json:"exclude,computed_optional"`
+	Include                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileIncludeModel]         `tfsdk:"include" json:"include,computed_optional"`
+	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceCustomProfileServiceModeV2Model]       `tfsdk:"service_mode_v2" json:"service_mode_v2,computed_optional"`
+	AllowModeSwitch            types.Bool                                                                     `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed_optional"`
+	AllowUpdates               types.Bool                                                                     `tfsdk:"allow_updates" json:"allow_updates,computed_optional"`
+	AllowedToLeave             types.Bool                                                                     `tfsdk:"allowed_to_leave" json:"allowed_to_leave,computed_optional"`
+	AutoConnect                types.Float64                                                                  `tfsdk:"auto_connect" json:"auto_connect,computed_optional"`
+	CaptivePortal              types.Float64                                                                  `tfsdk:"captive_portal" json:"captive_portal,computed_optional"`
+	DisableAutoFallback        types.Bool                                                                     `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,computed_optional"`
+	ExcludeOfficeIPs           types.Bool                                                                     `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed_optional"`
+	RegisterInterfaceIPWithDNS types.Bool                                                                     `tfsdk:"register_interface_ip_with_dns" json:"register_interface_ip_with_dns,computed_optional"`
+	SccmVpnBoundarySupport     types.Bool                                                                     `tfsdk:"sccm_vpn_boundary_support" json:"sccm_vpn_boundary_support,computed_optional"`
+	SupportURL                 types.String                                                                   `tfsdk:"support_url" json:"support_url,computed_optional"`
+	SwitchLocked               types.Bool                                                                     `tfsdk:"switch_locked" json:"switch_locked,computed_optional"`
+	TunnelProtocol             types.String                                                                   `tfsdk:"tunnel_protocol" json:"tunnel_protocol,computed_optional"`
 	Default                    types.Bool                                                                     `tfsdk:"default" json:"default,computed"`
 	GatewayUniqueID            types.String                                                                   `tfsdk:"gateway_unique_id" json:"gateway_unique_id,computed"`
 	FallbackDomains            customfield.NestedObjectList[ZeroTrustDeviceCustomProfileFallbackDomainsModel] `tfsdk:"fallback_domains" json:"fallback_domains,computed"`
@@ -53,20 +53,20 @@ func (m ZeroTrustDeviceCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustD
 }
 
 type ZeroTrustDeviceCustomProfileExcludeModel struct {
-	Address     types.String `tfsdk:"address" json:"address,optional"`
-	Description types.String `tfsdk:"description" json:"description,optional"`
-	Host        types.String `tfsdk:"host" json:"host,optional"`
+	Address     types.String `tfsdk:"address" json:"address,computed_optional"`
+	Description types.String `tfsdk:"description" json:"description,computed_optional"`
+	Host        types.String `tfsdk:"host" json:"host,computed_optional"`
 }
 
 type ZeroTrustDeviceCustomProfileIncludeModel struct {
-	Address     types.String `tfsdk:"address" json:"address,optional"`
-	Description types.String `tfsdk:"description" json:"description,optional"`
-	Host        types.String `tfsdk:"host" json:"host,optional"`
+	Address     types.String `tfsdk:"address" json:"address,computed_optional"`
+	Description types.String `tfsdk:"description" json:"description,computed_optional"`
+	Host        types.String `tfsdk:"host" json:"host,computed_optional"`
 }
 
 type ZeroTrustDeviceCustomProfileServiceModeV2Model struct {
-	Mode types.String  `tfsdk:"mode" json:"mode,optional"`
-	Port types.Float64 `tfsdk:"port" json:"port,optional"`
+	Mode types.String  `tfsdk:"mode" json:"mode,computed_optional"`
+	Port types.Float64 `tfsdk:"port" json:"port,computed_optional"`
 }
 
 type ZeroTrustDeviceCustomProfileFallbackDomainsModel struct {

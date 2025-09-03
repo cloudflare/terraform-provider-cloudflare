@@ -13,16 +13,17 @@ type WorkersForPlatformsDispatchNamespaceResultEnvelope struct {
 }
 
 type WorkersForPlatformsDispatchNamespaceModel struct {
-	ID            types.String      `tfsdk:"id" json:"-,computed"`
-	NamespaceName types.String      `tfsdk:"namespace_name" json:"namespace_name,computed"`
-	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
-	Name          types.String      `tfsdk:"name" json:"name,optional,no_refresh"`
-	CreatedBy     types.String      `tfsdk:"created_by" json:"created_by,computed"`
-	CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedBy    types.String      `tfsdk:"modified_by" json:"modified_by,computed"`
-	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	NamespaceID   types.String      `tfsdk:"namespace_id" json:"namespace_id,computed"`
-	ScriptCount   types.Int64       `tfsdk:"script_count" json:"script_count,computed"`
+	ID             types.String      `tfsdk:"id" json:"-,computed"`
+	NamespaceName  types.String      `tfsdk:"namespace_name" json:"namespace_name,computed"`
+	AccountID      types.String      `tfsdk:"account_id" path:"account_id,required"`
+	Name           types.String      `tfsdk:"name" json:"name,optional,no_refresh"`
+	CreatedBy      types.String      `tfsdk:"created_by" json:"created_by,computed"`
+	CreatedOn      timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedBy     types.String      `tfsdk:"modified_by" json:"modified_by,computed"`
+	ModifiedOn     timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	NamespaceID    types.String      `tfsdk:"namespace_id" json:"namespace_id,computed"`
+	ScriptCount    types.Int64       `tfsdk:"script_count" json:"script_count,computed"`
+	TrustedWorkers types.Bool        `tfsdk:"trusted_workers" json:"trusted_workers,computed"`
 }
 
 func (m WorkersForPlatformsDispatchNamespaceModel) MarshalJSON() (data []byte, err error) {

@@ -5,8 +5,8 @@ package workers_for_platforms_dispatch_namespace
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/workers_for_platforms"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -32,11 +32,12 @@ func (m *WorkersForPlatformsDispatchNamespacesDataSourceModel) toListParams(_ co
 }
 
 type WorkersForPlatformsDispatchNamespacesResultDataSourceModel struct {
-	CreatedBy     types.String      `tfsdk:"created_by" json:"created_by,computed"`
-	CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedBy    types.String      `tfsdk:"modified_by" json:"modified_by,computed"`
-	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	NamespaceID   types.String      `tfsdk:"namespace_id" json:"namespace_id,computed"`
-	NamespaceName types.String      `tfsdk:"namespace_name" json:"namespace_name,computed"`
-	ScriptCount   types.Int64       `tfsdk:"script_count" json:"script_count,computed"`
+	CreatedBy      types.String      `tfsdk:"created_by" json:"created_by,computed"`
+	CreatedOn      timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedBy     types.String      `tfsdk:"modified_by" json:"modified_by,computed"`
+	ModifiedOn     timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	NamespaceID    types.String      `tfsdk:"namespace_id" json:"namespace_id,computed"`
+	NamespaceName  types.String      `tfsdk:"namespace_name" json:"namespace_name,computed"`
+	ScriptCount    types.Int64       `tfsdk:"script_count" json:"script_count,computed"`
+	TrustedWorkers types.Bool        `tfsdk:"trusted_workers" json:"trusted_workers,computed"`
 }

@@ -32,13 +32,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"dataset_id": schema.StringAttribute{
-				Description: "Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).\nAvailable values: \"access_requests\", \"audit_logs\", \"biso_user_actions\", \"casb_findings\", \"device_posture_results\", \"dlp_forensic_copies\", \"dns_firewall_logs\", \"dns_logs\", \"email_security_alerts\", \"firewall_events\", \"gateway_dns\", \"gateway_http\", \"gateway_network\", \"http_requests\", \"magic_ids_detections\", \"nel_reports\", \"network_analytics_logs\", \"page_shield_events\", \"sinkhole_http_logs\", \"spectrum_events\", \"ssh_logs\", \"workers_trace_events\", \"zaraz_events\", \"zero_trust_network_sessions\".",
+				Description: "Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).\nAvailable values: \"access_requests\", \"audit_logs\", \"audit_logs_v2\", \"biso_user_actions\", \"casb_findings\", \"device_posture_results\", \"dlp_forensic_copies\", \"dns_firewall_logs\", \"dns_logs\", \"email_security_alerts\", \"firewall_events\", \"gateway_dns\", \"gateway_http\", \"gateway_network\", \"http_requests\", \"magic_ids_detections\", \"nel_reports\", \"network_analytics_logs\", \"page_shield_events\", \"sinkhole_http_logs\", \"spectrum_events\", \"ssh_logs\", \"workers_trace_events\", \"zaraz_events\", \"zero_trust_network_sessions\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"access_requests",
 						"audit_logs",
+						"audit_logs_v2",
 						"biso_user_actions",
 						"casb_findings",
 						"device_posture_results",
@@ -65,12 +66,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"dataset": schema.StringAttribute{
-				Description: "Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).\nAvailable values: \"access_requests\", \"audit_logs\", \"biso_user_actions\", \"casb_findings\", \"device_posture_results\", \"dlp_forensic_copies\", \"dns_firewall_logs\", \"dns_logs\", \"email_security_alerts\", \"firewall_events\", \"gateway_dns\", \"gateway_http\", \"gateway_network\", \"http_requests\", \"magic_ids_detections\", \"nel_reports\", \"network_analytics_logs\", \"page_shield_events\", \"sinkhole_http_logs\", \"spectrum_events\", \"ssh_logs\", \"workers_trace_events\", \"zaraz_events\", \"zero_trust_network_sessions\".",
+				Description: "Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).\nAvailable values: \"access_requests\", \"audit_logs\", \"audit_logs_v2\", \"biso_user_actions\", \"casb_findings\", \"device_posture_results\", \"dlp_forensic_copies\", \"dns_firewall_logs\", \"dns_logs\", \"email_security_alerts\", \"firewall_events\", \"gateway_dns\", \"gateway_http\", \"gateway_network\", \"http_requests\", \"magic_ids_detections\", \"nel_reports\", \"network_analytics_logs\", \"page_shield_events\", \"sinkhole_http_logs\", \"spectrum_events\", \"ssh_logs\", \"workers_trace_events\", \"zaraz_events\", \"zero_trust_network_sessions\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"access_requests",
 						"audit_logs",
+						"audit_logs_v2",
 						"biso_user_actions",
 						"casb_findings",
 						"device_posture_results",
@@ -97,7 +99,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"destination_conf": schema.StringAttribute{
-				Description: "Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included.",
+				Description: "Uniquely identifies a resource (such as an s3 bucket) where data. will be pushed. Additional configuration parameters supported by the destination may be included.",
 				Computed:    true,
 			},
 			"enabled": schema.BoolAttribute{
@@ -105,11 +107,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"error_message": schema.StringAttribute{
-				Description: "If not null, the job is currently failing. Failures are usually repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.",
+				Description: "If not null, the job is currently failing. Failures are usually. repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.",
 				Computed:    true,
 			},
 			"frequency": schema.StringAttribute{
-				Description:        "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.\nAvailable values: \"high\", \"low\".",
+				Description:        "This field is deprecated. Please use `max_upload_*` parameters instead. . The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.\nAvailable values: \"high\", \"low\".",
 				Computed:           true,
 				DeprecationMessage: "This attribute is deprecated.",
 				Validators: []validator.String{
@@ -124,10 +126,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"kind": schema.StringAttribute{
-				Description: "The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs. Currently, Edge Log Delivery is only supported for the `http_requests` dataset.\nAvailable values: \"edge\".",
+				Description: "The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs (when supported by the dataset).\nAvailable values: \"\", \"edge\".",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("edge"),
+					stringvalidator.OneOfCaseInsensitive("", "edge"),
 				},
 			},
 			"last_complete": schema.StringAttribute{
@@ -136,7 +138,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"last_error": schema.StringAttribute{
-				Description: "Records the last time the job failed. If not null, the job is currently failing. If null, the job has either never failed or has run successfully at least once since last failure. See also the error_message field.",
+				Description: "Records the last time the job failed. If not null, the job is currently. failing. If null, the job has either never failed or has run successfully at least once since last failure. See also the error_message field.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
@@ -146,28 +148,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				DeprecationMessage: "This attribute is deprecated.",
 			},
 			"max_upload_bytes": schema.Int64Attribute{
-				Description: "The maximum uncompressed file size of a batch of logs. This setting value must be between `5 MB` and `1 GB`, or `0` to disable it. Note that you cannot set a minimum file size; this means that log files may be much smaller than this batch size. This parameter is not available for jobs with `edge` as its kind.",
+				Description: "The maximum uncompressed file size of a batch of logs. This setting value must be between `5 MB` and `1 GB`, or `0` to disable it. Note that you cannot set a minimum file size; this means that log files may be much smaller than this batch size.",
 				Computed:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(5000000, 1000000000),
-				},
 			},
 			"max_upload_interval_seconds": schema.Int64Attribute{
-				Description: "The maximum interval in seconds for log batches. This setting must be between 30 and 300 seconds (5 minutes), or `0` to disable it. Note that you cannot specify a minimum interval for log batches; this means that log files may be sent in shorter intervals than this. This parameter is only used for jobs with `edge` as its kind.",
+				Description: "The maximum interval in seconds for log batches. This setting must be between 30 and 300 seconds (5 minutes), or `0` to disable it. Note that you cannot specify a minimum interval for log batches; this means that log files may be sent in shorter intervals than this.",
 				Computed:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(30, 300),
-				},
 			},
 			"max_upload_records": schema.Int64Attribute{
-				Description: "The maximum number of log lines per batch. This setting must be between 1000 and 1,000,000 lines, or `0` to disable it. Note that you cannot specify a minimum number of log lines per batch; this means that log files may contain many fewer lines than this. This parameter is not available for jobs with `edge` as its kind.",
+				Description: "The maximum number of log lines per batch. This setting must be between 1000 and 1,000,000 lines, or `0` to disable it. Note that you cannot specify a minimum number of log lines per batch; this means that log files may contain many fewer lines than this.",
 				Computed:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(1000, 1000000),
-				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Optional human readable job name. Not unique. Cloudflare suggests that you set this to a meaningful string, like the domain name, to make it easier to identify your job.",
+				Description: "Optional human readable job name. Not unique. Cloudflare suggests. that you set this to a meaningful string, like the domain name, to make it easier to identify your job.",
 				Computed:    true,
 			},
 			"output_options": schema.SingleNestedAttribute{

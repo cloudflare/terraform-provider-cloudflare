@@ -5,8 +5,8 @@ package r2_custom_domain
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/r2"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/r2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -24,6 +24,7 @@ type R2CustomDomainDataSourceModel struct {
 	MinTLS     types.String                                                  `tfsdk:"min_tls" json:"minTLS,computed"`
 	ZoneID     types.String                                                  `tfsdk:"zone_id" json:"zoneId,computed"`
 	ZoneName   types.String                                                  `tfsdk:"zone_name" json:"zoneName,computed"`
+	Ciphers    customfield.List[types.String]                                `tfsdk:"ciphers" json:"ciphers,computed"`
 	Status     customfield.NestedObject[R2CustomDomainStatusDataSourceModel] `tfsdk:"status" json:"status,computed"`
 }
 

@@ -5,8 +5,8 @@ package list
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v4"
-	"github.com/cloudflare/cloudflare-go/v4/rules"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/rules"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,9 +18,9 @@ type ListResultDataSourceEnvelope struct {
 type ListDataSourceModel struct {
 	AccountID             types.String  `tfsdk:"account_id" path:"account_id,required"`
 	ListID                types.String  `tfsdk:"list_id" path:"list_id,required"`
+	ID                    types.String  `tfsdk:"id" path:"list_id,computed"`
 	CreatedOn             types.String  `tfsdk:"created_on" json:"created_on,computed"`
 	Description           types.String  `tfsdk:"description" json:"description,computed"`
-	ID                    types.String  `tfsdk:"id" json:"id,computed"`
 	Kind                  types.String  `tfsdk:"kind" json:"kind,computed"`
 	ModifiedOn            types.String  `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name                  types.String  `tfsdk:"name" json:"name,computed"`

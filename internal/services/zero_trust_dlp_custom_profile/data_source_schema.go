@@ -85,9 +85,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"context_awareness": schema.SingleNestedAttribute{
-				Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileContextAwarenessDataSourceModel](ctx),
+				Description:        "Scan the context of predefined entries to only return matches surrounded by keywords.",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				CustomType:         customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileContextAwarenessDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "If true, scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -142,7 +143,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: `Available values: "custom", "predefined", "integration", "exact_data", "word_list".`,
+							Description: `Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".`,
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -150,6 +151,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"predefined",
 									"integration",
 									"exact_data",
+									"document_fingerprint",
 									"word_list",
 								),
 							},
@@ -172,6 +174,29 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								"available": schema.BoolAttribute{
 									Description: "Indicates whether this entry has any form of validation that is not an AI remote service.",
 									Computed:    true,
+								},
+							},
+						},
+						"variant": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileEntriesVariantDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"topic_type": schema.StringAttribute{
+									Description: `Available values: "Intent", "Content".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("Intent", "Content"),
+									},
+								},
+								"type": schema.StringAttribute{
+									Description: `Available values: "PromptTopic".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("PromptTopic"),
+									},
+								},
+								"description": schema.StringAttribute{
+									Computed: true,
 								},
 							},
 						},

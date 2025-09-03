@@ -67,7 +67,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: `Available values: "custom", "predefined", "integration", "exact_data", "word_list".`,
+							Description: `Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".`,
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -75,6 +75,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"predefined",
 									"integration",
 									"exact_data",
+									"document_fingerprint",
 									"word_list",
 								),
 							},
@@ -97,6 +98,29 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"available": schema.BoolAttribute{
 									Description: "Indicates whether this entry has any form of validation that is not an AI remote service.",
 									Computed:    true,
+								},
+							},
+						},
+						"variant": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustDLPEntriesVariantDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"topic_type": schema.StringAttribute{
+									Description: `Available values: "Intent", "Content".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("Intent", "Content"),
+									},
+								},
+								"type": schema.StringAttribute{
+									Description: `Available values: "PromptTopic".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("PromptTopic"),
+									},
+								},
+								"description": schema.StringAttribute{
+									Computed: true,
 								},
 							},
 						},

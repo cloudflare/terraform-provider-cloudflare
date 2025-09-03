@@ -5,4 +5,7 @@ resource "cloudflare_zone_lockdown" "example_zone_lockdown" {
     value = "198.51.100.4"
   }]
   urls = ["shop.example.com/*"]
+  description = "Prevent multiple login failures to mitigate brute force attacks"
+  paused = false
+  priority = 5
 }
