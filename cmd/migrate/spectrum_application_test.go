@@ -126,7 +126,7 @@ func TestSpectrumApplicationTransformation(t *testing.T) {
 			Name: "convert origin_port_range to origin_port string format",
 			Config: `resource "cloudflare_spectrum_application" "example" {
   zone_id      = "example.com"
-  protocol     = "tcp/3306"
+  protocol     = "tcp/3306-3310"
   dns {
     type = "ADDRESS"
     name = "db.example.com"
@@ -140,7 +140,7 @@ func TestSpectrumApplicationTransformation(t *testing.T) {
 }`,
 			Expected: []string{`resource "cloudflare_spectrum_application" "example" {
   zone_id      = "example.com"
-  protocol     = "tcp/3306"
+  protocol     = "tcp/3306-3310"
   dns {
     type = "ADDRESS"
     name = "db.example.com"
