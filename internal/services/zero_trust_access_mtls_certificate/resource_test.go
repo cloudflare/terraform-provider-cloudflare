@@ -2,7 +2,13 @@ package zero_trust_access_mtls_certificate_test
 
 import (
 	"context"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/pem"
 	"fmt"
+	"math/big"
 	"os"
 	"strings"
 	"testing"
@@ -20,6 +26,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
+
+var EnvTfAcc = "TF_ACC"
 
 func init() {
 	resource.AddTestSweepers("cloudflare_zero_trust_access_mtls_certificate", &resource.Sweeper{
@@ -50,10 +58,7 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		return err
 	}
 
-	tflog.Info(ctx, fmt.Sprintf("Found %d certificates in account, cleaning all to prevent test conflicts", len(accountCerts)))
-
 	for _, cert := range accountCerts {
-		tflog.Info(ctx, fmt.Sprintf("Deleting certificate: Name=%s, ID=%s, Hostnames=%v", cert.Name, cert.ID, cert.AssociatedHostnames))
 
 		// to delete we need to update first with empty hostnames
 		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.UpdateAccessMutualTLSCertificateParams{
@@ -101,10 +106,7 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		return err
 	}
 
-	tflog.Info(ctx, fmt.Sprintf("Found %d certificates in zone, cleaning all to prevent test conflicts", len(zoneCerts)))
-
 	for _, cert := range zoneCerts {
-		tflog.Info(ctx, fmt.Sprintf("Deleting zone certificate: Name=%s, ID=%s, Hostnames=%v", cert.Name, cert.ID, cert.AssociatedHostnames))
 
 		// to delete we need to update first with empty hostnames
 		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateAccessMutualTLSCertificateParams{
@@ -149,8 +151,82 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 	return nil
 }
 
+func generateUniqueTestCertificate(testName string) (string, error) {
+	privKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		return "", err
+	}
+
+	template := x509.Certificate{
+		SerialNumber: big.NewInt(time.Now().Unix()),
+		Subject: pkix.Name{
+			Country:      []string{"US"},
+			Province:     []string{"CA"},
+			Locality:     []string{"San Francisco"},
+			Organization: []string{fmt.Sprintf("Test-%s", testName)},
+			CommonName:   fmt.Sprintf("%s-test.example.com", testName),
+		},
+		NotBefore:             time.Now(),
+		NotAfter:              time.Now().Add(365 * 24 * time.Hour),
+		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		BasicConstraintsValid: true,
+		IsCA:                  true,
+	}
+
+	certDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &privKey.PublicKey, privKey)
+	if err != nil {
+		return "", err
+	}
+
+	certPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: certDER})
+	return string(certPEM), nil
+}
+
+func waitForCertificateCleanup(t *testing.T, isZone bool) {
+	t.Helper()
+
+	if os.Getenv(EnvTfAcc) == "" {
+		t.Skip(fmt.Sprintf(
+			"Acceptance tests skipped unless env '%s' set",
+			EnvTfAcc))
+		return
+	}
+
+	client, err := acctest.SharedV1Client()
+	if err != nil {
+		t.Fatalf("Failed to create Cloudflare client: %s", err)
+	}
+
+	maxWait := 30 * time.Second
+	pollInterval := 2 * time.Second
+	deadline := time.Now().Add(maxWait)
+
+	for time.Now().Before(deadline) {
+		var certs []cloudflare.AccessMutualTLSCertificate
+		var listErr error
+
+		if isZone {
+			certs, _, listErr = client.ListAccessMutualTLSCertificates(context.Background(), cloudflare.ZoneIdentifier(os.Getenv("CLOUDFLARE_ZONE_ID")), cloudflare.ListAccessMutualTLSCertificatesParams{})
+		} else {
+			certs, _, listErr = client.ListAccessMutualTLSCertificates(context.Background(), cloudflare.AccountIdentifier(os.Getenv("CLOUDFLARE_ACCOUNT_ID")), cloudflare.ListAccessMutualTLSCertificatesParams{})
+		}
+
+		if listErr != nil {
+			time.Sleep(pollInterval)
+			continue
+		}
+
+		if len(certs) == 0 {
+			return
+		}
+
+		time.Sleep(pollInterval)
+	}
+}
+
 func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
-	waitBetweenTests(t, false)
+	waitForCertificateCleanup(t, false)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -160,29 +236,11 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
-	// Use unique certificate for basic test to avoid conflicts
-	cert := `-----BEGIN CERTIFICATE-----
-MIIDsTCCApmgAwIBAgIUTaqzZvhPgvlEKYHsKdHKvshta/YwDQYJKoZIhvcNAQEL
-BQAwaDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJh
-bmNpc2NvMRMwEQYDVQQKDApCYXNpYyBUZXN0MR8wHQYDVQQDDBZiYXNpYy10ZXN0
-LmV4YW1wbGUuY29tMB4XDTI1MDgyNTEyNDUzMFoXDTI2MDgyNTEyNDUzMFowaDEL
-MAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2Nv
-MRMwEQYDVQQKDApCYXNpYyBUZXN0MR8wHQYDVQQDDBZiYXNpYy10ZXN0LmV4YW1w
-bGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkmzUoLpL0Upy
-luplSqgz0ec44trHhr7dhh0Omam2BI9fZziRWqFmF8sodieIvL51Wzko36WYttqY
-6dv8q3+GLoVN2X0BaF2As0hCphFiFC1I3k4AlHwUx96SUlK4cvyS46bP+nlO6zWG
-JzH4i80Cp6LkFXI5j84yQcAqCwxyoEVlgQLz+e5bgs+VufMDyo9TQ9GXy9EZ1Ysi
-bG6DvxNnTDAf0P5c1t5BXe1EeB0413lRN7mrpgH0kxM43SwcMWx6dx3IDLEv82oo
-wpc98FPqeLK2ZN62luO0ZwBhmECBhl1ABCmOF/n6Yavx8rjLdN/MBO7/AODsyjKl
-eE2HKhYrAQIDAQABo1MwUTAdBgNVHQ4EFgQUgqmZSicLOQY9zOKORrF2XACXzpMw
-HwYDVR0jBBgwFoAUgqmZSicLOQY9zOKORrF2XACXzpMwDwYDVR0TAQH/BAUwAwEB
-/zANBgkqhkiG9w0BAQsFAAOCAQEAJfFylVu/lVDAqUpgWOe0ZWF0djEiw+wphgC6
-2EshvccoW3YLku0XPPc1+DZEjMtCMh06woaH1R8koWXnOjs2com2UA2ccDB3mkZG
-Wl0sBxQLPu/Gj6jKbXnWm24morGzYWyZlLNP9178tVdhMgNMOR50qB6QsQLcDRHu
-Tj/DLAsk96PEw3AZ/Lad3oJs5me0uVxPxrAcqKtrAOx2CpMxmvFNZ5ZiKr8b8uJQ
-0X2o8qiA8Qd4qMTnI8lHpuuGsun/RIiBBxkzHDrc0qZVEm2sqE97tA0vBczcn7fN
-jzhIPJ0iyPgZhFlsHjGxWghkaLqdCdtDOSdb6SepEZHaq32j/A==
------END CERTIFICATE-----`
+
+	cert, err := generateUniqueTestCertificate(fmt.Sprintf("basic-%s", rnd))
+	if err != nil {
+		t.Fatalf("Failed to generate test certificate: %v", err)
+	}
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -240,7 +298,7 @@ jzhIPJ0iyPgZhFlsHjGxWghkaLqdCdtDOSdb6SepEZHaq32j/A==
 }
 
 func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
-	waitBetweenTests(t, true)
+	waitForCertificateCleanup(t, true)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -250,29 +308,11 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
-	// Use unique certificate for zone test to avoid conflicts
-	cert := `-----BEGIN CERTIFICATE-----
-MIIDrTCCApWgAwIBAgIUU3Ss5iR+GdD6EeSfS+12wbzTvK4wDQYJKoZIhvcNAQEL
-BQAwZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJh
-bmNpc2NvMRIwEAYDVQQKDAlab25lIFRlc3QxHjAcBgNVBAMMFXpvbmUtdGVzdC5l
-eGFtcGxlLmNvbTAeFw0yNTA4MjUxMjQ1MjRaFw0yNjA4MjUxMjQ1MjRaMGYxCzAJ
-BgNVBAYTAlVTMQswCQYDVQQIDAJDQTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzES
-MBAGA1UECgwJWm9uZSBUZXN0MR4wHAYDVQQDDBV6b25lLXRlc3QuZXhhbXBsZS5j
-b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC3uxA57+zYxNQzRo9B
-O3TR2z82DJjEfkMjZm5OlutG7Mi5J5HIa5rexBkn+aOYtTpu1idfV3RESsPXclYg
-kGI5Ywo8PR4DjFD7Tu/0ZgdeftaThuc1PQnxqP+KZ3Azjke3o6KfhqtNiRO/qLWL
-sEaIKpHlA7RFWytqONTwG+FGYbvX3h+ox/DQA4vdzi3xHCyf1XsWr1uoPasIZn1L
-1sHI5+wD2JHpOxWli9VplPXVIKGMPnUmysawn2H5kcTJAEJJoRHDTBIlfR5MnLG2
-vnaUE9cKZ96pUIrl+4El1IjxGd30tbld3YQYgCrhbVt/pcQXyUmhKgrZv/QrV9o2
-v2T7AgMBAAGjUzBRMB0GA1UdDgQWBBR4RNyAV3GbgaAi75iRWmJbM5mbMDAfBgNV
-HSMEGDAWgBR4RNyAV3GbgaAi75iRWmJbM5mbMDAPBgNVHRMBAf8EBTADAQH/MA0G
-CSqGSIb3DQEBCwUAA4IBAQB6ewMW4W0znrb7AcqVCnc6nz7mFY+uwVldJN3nywW4
-iO1TAqUczEhzhEnz3Ly+27o3gkjVPmqAPSge8kLNAKFDJ43xn2G28u7UhSo4b6IN
-EPV7b3GIFSBfVd0S8D7dYnlKbE4YAjx+A84+SrqwXg3NfD5ES/XogGE9VWxbN8To
-LwvNJwCB23tldWpGiGXwmQVfA0ptA4ys4GoU/ss0BEg9h4BlPjnlwcw5O9cLdZTs
-6Dv+537EyG/WsdyNAs/TLeHgM+I9yw4SePhaVq2Zhv/Tz4JryIuDgpp2iwVEnSB/
-Ujl4YD+WK1PhWs9G3UVUeGG+93ZVJRC6Em6ZMMMFxQyL
------END CERTIFICATE-----`
+
+	cert, err := generateUniqueTestCertificate(fmt.Sprintf("zone-%s", rnd))
+	if err != nil {
+		t.Fatalf("Failed to generate test certificate: %v", err)
+	}
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -329,7 +369,7 @@ Ujl4YD+WK1PhWs9G3UVUeGG+93ZVJRC6Em6ZMMMFxQyL
 }
 
 func TestAccCloudflareAccessMutualTLSMinimal(t *testing.T) {
-	waitBetweenTests(t, false)
+	waitForCertificateCleanup(t, false)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -339,29 +379,11 @@ func TestAccCloudflareAccessMutualTLSMinimal(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
-	// Use unique certificate for minimal test to avoid conflicts
-	cert := `-----BEGIN CERTIFICATE-----
-MIIDuTCCAqGgAwIBAgIUOLxKkiemLStP0PSReIA36itjxpEwDQYJKoZIhvcNAQEL
-BQAwbDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRYwFAYDVQQHDA1TYW4gRnJh
-bmNpc2NvMRUwEwYDVQQKDAxNaW5pbWFsIFRlc3QxITAfBgNVBAMMGG1pbmltYWwt
-dGVzdC5leGFtcGxlLmNvbTAeFw0yNTA4MjUxMjQ1MTlaFw0yNjA4MjUxMjQ1MTla
-MGwxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJDQTEWMBQGA1UEBwwNU2FuIEZyYW5j
-aXNjbzEVMBMGA1UECgwMTWluaW1hbCBUZXN0MSEwHwYDVQQDDBhtaW5pbWFsLXRl
-c3QuZXhhbXBsZS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDJ
-RiCi73nTalZfCy1GKHU4Rj5RWCUDkMPavkIjSQDbdgYpNqQSyMLNZBH0NciavNHC
-QweQmAuDOmgxXwc8iDFx/n69UrkV5viu8siuYWnX9LLKmzDUrncUvguSLVl2iH/a
-H5ZJya/qnMlu84Ks2iKX2KINbY3A/Py3TvTWDO10W5Ocmi+WQBxzLIHBY4QE/bpV
-gtWJF5482v0nT8nQ6ITYOoC5csr4L/ukhrz5460j3pFdE3gRQu5LYhQlU1rygpWA
-SU6zCP/jkUxEIPiRRUhZxbM8IPebnRr8oD9TVqjiZpJnbf6LtoxdWRD6YDhqORJg
-CcKYO8xVKtzaOAzRbxUbAgMBAAGjUzBRMB0GA1UdDgQWBBSZU4SVPnjPhKQ5PqCV
-Va55bSHpxDAfBgNVHSMEGDAWgBSZU4SVPnjPhKQ5PqCVVa55bSHpxDAPBgNVHRMB
-Af8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBUG9H2YLQKkUmSe62h972mxL2Y
-5LXJBAB0Ys+UyJSGX1pouTZVBYf1h7JJGHgQJT3ITQmn04ipIGLvqYQ2fzvCsAdv
-DuQwvWnX70XFQGbZfb8Iu9Yq+6/zHW5iraDqUakDCHybLKgjxX+1+n3fP9xfHSFl
-3/wO0yvffxsTMnTFz+4ZVnPl9R948NaeDR+hePZKnabuGozUrRqy/Al7Bcigwy6X
-Gsj65OJaR1Y2l1B1gmQlULcbGYV4vQzYosy3mdpd6m8wsP1KZ9mGCPJ/SspW0tiY
-SZ0xvbqc2JanR3lB6r5+QAI8KZPjiUInAi/kO0+TAQzQzGLwEgR/cmYHpWsf
------END CERTIFICATE-----`
+
+	cert, err := generateUniqueTestCertificate(fmt.Sprintf("minimal-%s", rnd))
+	if err != nil {
+		t.Fatalf("Failed to generate test certificate: %v", err)
+	}
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
