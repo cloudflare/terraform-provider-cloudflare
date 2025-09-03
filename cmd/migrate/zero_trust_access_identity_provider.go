@@ -22,7 +22,8 @@ func isZeroTrustAccessIdentityProviderResource(block *hclwrite.Block) bool {
 // 3. scim_config block -> scim_config object conversion (done by grit) 
 // 4. idp_public_cert -> idp_public_certs field rename and type conversion (string -> list)
 // 5. Remove deprecated fields: api_token, group_member_deprovision
-// 6. Ensure config object exists even for OneTimePin providers
+// 6. Remove invalid attributes based on provider type validation rules
+// 7. Ensure config object exists even for OneTimePin providers
 func transformZeroTrustAccessIdentityProviderBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 	// Handle resource renaming from v4 to v5
 	if block.Labels()[0] == "cloudflare_access_identity_provider" {
@@ -35,9 +36,14 @@ func transformZeroTrustAccessIdentityProviderBlock(block *hclwrite.Block, diags 
 	// Ensure config object exists (required in v5, even if empty for OneTimePin)
 	ensureConfigObjectExists(block)
 
+	// Get the provider type for validation rules
+	providerType := getProviderType(block)
+	// Debug: temporary logging to see what provider type is being detected
+	// fmt.Printf("DEBUG: transformZeroTrustAccessIdentityProviderBlock called with provider type: '%s'\n", providerType)
+	
 	// Apply config-specific transformations
 	transforms := map[string]ast.ExprTransformer{
-		"config":      transformConfigObject,
+		"config":      func(expr *hclsyntax.Expression, diags ast.Diagnostics) { transformConfigObject(expr, diags, providerType) },
 		"scim_config": transformScimConfigObject,
 	}
 	ast.ApplyTransformToAttributes(ast.Block{Block: block}, transforms, diags)
@@ -68,10 +74,37 @@ func ensureConfigObjectExists(block *hclwrite.Block) {
 	}
 }
 
+// getProviderType extracts the provider type from the block
+func getProviderType(block *hclwrite.Block) string {
+	if block == nil || block.Body() == nil {
+		return ""
+	}
+	
+	if typeAttr := block.Body().GetAttribute("type"); typeAttr != nil && typeAttr.Expr() != nil {
+		tokens := typeAttr.Expr().BuildTokens(nil)
+		if len(tokens) >= 3 {
+			// For quoted strings, tokens are: [quote, content, quote]
+			// Take the middle token which contains the actual content
+			typeValue := string(tokens[1].Bytes)
+			return typeValue
+		} else if len(tokens) == 1 {
+			// For unquoted identifiers
+			typeValue := string(tokens[0].Bytes)
+			// Remove quotes if they're part of the value
+			if len(typeValue) >= 2 && typeValue[0] == '"' && typeValue[len(typeValue)-1] == '"' {
+				return typeValue[1 : len(typeValue)-1]
+			}
+			return typeValue
+		}
+	}
+	return ""
+}
+
 // transformConfigObject handles transformations within the config object
 // 1. idp_public_cert -> idp_public_certs (string -> list[string])
 // 2. Remove deprecated api_token field
-func transformConfigObject(expr *hclsyntax.Expression, diags ast.Diagnostics) {
+// 3. Remove invalid attributes based on provider type validation rules
+func transformConfigObject(expr *hclsyntax.Expression, diags ast.Diagnostics, providerType string) {
 	if *expr == nil {
 		return
 	}
@@ -82,11 +115,25 @@ func transformConfigObject(expr *hclsyntax.Expression, diags ast.Diagnostics) {
 		return
 	}
 
-	// Apply config-specific transforms
+	// Apply config-specific transforms including type-based validation
 	configTransforms := map[string]ast.ExprTransformer{
 		"idp_public_cert": transformIdpPublicCertToList,
 		"api_token":       removeDeprecatedField,
 	}
+	
+	// Add type-specific validation rules
+	// sign_request is only valid for type saml
+	if providerType != "saml" {
+		configTransforms["sign_request"] = removeDeprecatedField
+	}
+	
+	// conditional_access_enabled, directory_id, support_groups are only valid for azureAD
+	if providerType != "azureAD" {
+		configTransforms["conditional_access_enabled"] = removeDeprecatedField
+		configTransforms["directory_id"] = removeDeprecatedField
+		configTransforms["support_groups"] = removeDeprecatedField
+	}
+	
 	ast.ApplyTransformToAttributes(ast.NewObject(obj, diags), configTransforms, diags)
 
 	// Handle field rename: idp_public_cert -> idp_public_certs

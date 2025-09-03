@@ -106,6 +106,84 @@ func TestTransformZeroTrustAccessIdentityProvider(t *testing.T) {
 				"group_member_deprovision = true",
 			},
 		},
+		{
+			name: "Type validation - remove sign_request for azureAD",
+			input: `resource "cloudflare_access_identity_provider" "test" {
+  account_id = "test"
+  name = "test"
+  type = "azureAD"
+  config {
+    client_id = "test"
+    sign_request = false
+    conditional_access_enabled = true
+    directory_id = "abc123"
+    support_groups = false
+  }
+}`,
+			contains: []string{
+				`client_id`,
+				`"test"`,
+				"conditional_access_enabled",
+				"true",
+				`directory_id`,
+				`"abc123"`,
+				"support_groups",
+				"false",
+			},
+			notContains: []string{
+				"sign_request = false",
+			},
+		},
+		{
+			name: "Type validation - remove azureAD-specific fields for saml",
+			input: `resource "cloudflare_access_identity_provider" "test" {
+  account_id = "test"
+  name = "test"
+  type = "saml"
+  config {
+    client_id = "test"
+    sign_request = true
+    conditional_access_enabled = true
+    directory_id = "abc123"
+    support_groups = false
+  }
+}`,
+			contains: []string{
+				`client_id`,
+				`"test"`,
+				"sign_request",
+				"true",
+			},
+			notContains: []string{
+				"conditional_access_enabled",
+				`directory_id`,
+				"support_groups",
+			},
+		},
+		{
+			name: "Type validation - remove both for onetimepin",
+			input: `resource "cloudflare_access_identity_provider" "test" {
+  account_id = "test"
+  name = "test"
+  type = "onetimepin"
+  config {
+    sign_request = false
+    conditional_access_enabled = true
+    directory_id = "abc123"
+    support_groups = false
+  }
+}`,
+			contains: []string{
+				"config",
+				"{}",
+			},
+			notContains: []string{
+				"sign_request",
+				"conditional_access_enabled", 
+				`directory_id`,
+				"support_groups",
+			},
+		},
 	}
 
 	for _, test := range tests {

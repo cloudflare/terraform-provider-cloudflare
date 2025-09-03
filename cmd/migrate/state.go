@@ -1058,9 +1058,122 @@ func transformZeroTrustAccessGroupStateJSON(json, path string) string {
 						}
 					}
 
-					// Note: More complex transformations like azure->azure_ad, github->github_organization, etc.
-					// are not needed here since those are handled by the config transformation
-					// and the state will already have the correct structure from the API
+				// Complex transformations for nested objects
+				case "azure":
+					// Transform azure blocks -> azure_ad objects
+					if value.IsArray() {
+						for _, azureBlock := range value.Array() {
+							idArray := gjson.Get(azureBlock.Raw, "id")
+							identityProviderID := gjson.Get(azureBlock.Raw, "identity_provider_id")
+							
+							if idArray.IsArray() {
+								for _, id := range idArray.Array() {
+									rule := map[string]interface{}{
+										"azure_ad": map[string]interface{}{
+											"id": id.String(),
+										},
+									}
+									if identityProviderID.Exists() {
+										rule["azure_ad"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "github":
+					// Transform github blocks -> github_organization objects
+					if value.IsArray() {
+						for _, githubBlock := range value.Array() {
+							name := gjson.Get(githubBlock.Raw, "name")
+							teamsArray := gjson.Get(githubBlock.Raw, "teams")
+							identityProviderID := gjson.Get(githubBlock.Raw, "identity_provider_id")
+							
+							if teamsArray.IsArray() {
+								for _, team := range teamsArray.Array() {
+									rule := map[string]interface{}{
+										"github_organization": map[string]interface{}{
+											"team": team.String(),
+										},
+									}
+									if name.Exists() {
+										rule["github_organization"].(map[string]interface{})["name"] = name.String()
+									}
+									if identityProviderID.Exists() {
+										rule["github_organization"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "gsuite":
+					// Transform gsuite blocks
+					if value.IsArray() {
+						for _, gsuiteBlock := range value.Array() {
+							emailArray := gjson.Get(gsuiteBlock.Raw, "email")
+							identityProviderID := gjson.Get(gsuiteBlock.Raw, "identity_provider_id")
+							
+							if emailArray.IsArray() {
+								for _, email := range emailArray.Array() {
+									rule := map[string]interface{}{
+										"gsuite": map[string]interface{}{
+											"email": email.String(),
+										},
+									}
+									if identityProviderID.Exists() {
+										rule["gsuite"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "okta":
+					// Transform okta blocks
+					if value.IsArray() {
+						for _, oktaBlock := range value.Array() {
+							nameArray := gjson.Get(oktaBlock.Raw, "name")
+							identityProviderID := gjson.Get(oktaBlock.Raw, "identity_provider_id")
+							
+							if nameArray.IsArray() {
+								for _, name := range nameArray.Array() {
+									rule := map[string]interface{}{
+										"okta": map[string]interface{}{
+											"name": name.String(),
+										},
+									}
+									if identityProviderID.Exists() {
+										rule["okta"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "saml":
+					// Transform saml blocks (keep as-is but wrap properly)
+					if value.IsArray() {
+						for _, samlBlock := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"saml": samlBlock.Value(),
+							})
+						}
+					}
+
+				case "external_evaluation":
+					// Transform external_evaluation blocks (keep as-is but wrap properly)
+					if value.IsArray() {
+						for _, evalBlock := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"external_evaluation": evalBlock.Value(),
+							})
+						}
+					}
 				}
 
 				return true // continue iteration
@@ -1070,6 +1183,22 @@ func transformZeroTrustAccessGroupStateJSON(json, path string) string {
 		// Replace with new rules
 		if len(newRules) > 0 {
 			json, _ = sjson.Set(json, rulesPath, newRules)
+		}
+	}
+
+	// Apply boolean field transformations to handle false values that need to be removed
+	// This handles the case where any_valid_service_token = false in state needs to be removed
+	ruleFields := []string{"include", "exclude", "require"}
+	for _, field := range ruleFields {
+		rules := gjson.Get(json, attrPath+"."+field)
+		if rules.IsArray() {
+			rules.ForEach(func(idx, rule gjson.Result) bool {
+				if rule.IsObject() {
+					rulePath := fmt.Sprintf("%s.%s.%d", attrPath, field, idx.Int())
+					json = transformRuleBooleans(json, rulePath)
+				}
+				return true
+			})
 		}
 	}
 
