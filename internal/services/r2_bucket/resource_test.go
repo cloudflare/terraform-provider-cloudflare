@@ -13,11 +13,17 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	cfv1 "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
-
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/r2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestMain(m *testing.M) {
@@ -111,40 +117,49 @@ func TestAccCloudflareR2Bucket_Basic(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_r2_bucket." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareR2BucketDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareR2BucketBasic(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "id", rnd),
-					resource.TestCheckResourceAttr(resourceName, "location", "ENAM"),
-					resource.TestCheckResourceAttr(resourceName, "storage_class", "Standard"),
-					resource.TestCheckResourceAttr(resourceName, "jurisdiction", "default"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("location"), knownvalue.StringExact("ENAM")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("Standard")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("default")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				},
 			},
 			{
 				Config: testAccCheckCloudflareR2BucketUpdate(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "id", rnd),
-					resource.TestCheckResourceAttr(resourceName, "location", "ENAM"),
-					resource.TestCheckResourceAttr(resourceName, "storage_class", "InfrequentAccess"),
-					resource.TestCheckResourceAttr(resourceName, "jurisdiction", "default"),
-				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("InfrequentAccess")),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("location"), knownvalue.StringExact("ENAM")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("InfrequentAccess")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("default")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				},
 			},
 			{
-				ResourceName: resourceName,
+				ResourceName:        resourceName,
 				ImportStateIdFunc: func(*terraform.State) (string, error) {
 					return strings.Join([]string{accountID, rnd, "default"}, "/"), nil
 				},
-				ImportState:       true,
-				ImportStateVerify: true,
+				ImportState:         true,
+				ImportStateVerify:   true,
 			},
 		},
 	})
@@ -155,19 +170,29 @@ func TestAccCloudflareR2Bucket_Minimum(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_r2_bucket." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareR2BucketDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareR2BucketMinimum(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "id", rnd),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+				},
+			},
+			{
+				ResourceName:        resourceName,
+				ImportStateIdFunc: func(*terraform.State) (string, error) {
+					return strings.Join([]string{accountID, rnd, "default"}, "/"), nil
+				},
+				ImportState:         true,
+				ImportStateVerify:   true,
 			},
 		},
 	})
@@ -178,19 +203,22 @@ func TestAccCloudflareR2Bucket_Jurisdiction(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_r2_bucket." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareR2BucketDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareR2BucketJurisdiction(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "id", rnd),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("eu")),
+				},
 			},
 			{
 				ResourceName: resourceName,
@@ -199,6 +227,183 @@ func TestAccCloudflareR2Bucket_Jurisdiction(t *testing.T) {
 				},
 				ImportState:       true,
 				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareR2Bucket_AllLocations(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	locations := []string{"apac", "eeur", "enam", "weur", "wnam", "oc"}
+	
+	for _, location := range locations {
+		t.Run(location, func(t *testing.T) {
+			testRnd := rnd + location
+			testResourceName := "cloudflare_r2_bucket." + testRnd
+			
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				CheckDestroy:             testAccCheckCloudflareR2BucketDestroy,
+				Steps: []resource.TestStep{
+					{
+						Config: testAccCheckCloudflareR2BucketLocation(testRnd, accountID, location),
+						ConfigStateChecks: []statecheck.StateCheck{
+							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("name"), knownvalue.StringExact(testRnd)),
+							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("location"), knownvalue.StringExact(location)),
+							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("default")),
+							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("Standard")),
+						},
+						ExpectNonEmptyPlan: true,
+					},
+				},
+			})
+		})
+	}
+}
+
+func TestAccCloudflareR2Bucket_AllJurisdictions(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	jurisdictions := []string{"default", "fedramp"}
+	
+	for _, jurisdiction := range jurisdictions {
+		t.Run(jurisdiction, func(t *testing.T) {
+			testRnd := rnd + jurisdiction
+			testResourceName := "cloudflare_r2_bucket." + testRnd
+			
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+				},
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				CheckDestroy:             testAccCheckCloudflareR2BucketDestroy,
+				Steps: []resource.TestStep{
+					{
+						Config: testAccCheckCloudflareR2BucketJurisdictionSpecific(testRnd, accountID, jurisdiction),
+						ConfigStateChecks: []statecheck.StateCheck{
+							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("name"), knownvalue.StringExact(testRnd)),
+							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact(jurisdiction)),
+							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("Standard")),
+						},
+					},
+				},
+			})
+		})
+	}
+}
+
+func TestAccCloudflareR2Bucket_ComprehensiveConfiguration(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_r2_bucket." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareR2BucketDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareR2BucketComprehensive(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("location"), knownvalue.StringExact("weur")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("eu")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("InfrequentAccess")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("creation_date"), knownvalue.NotNull()),
+				},
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(*terraform.State) (string, error) {
+					return strings.Join([]string{accountID, rnd, "eu"}, "/"), nil
+				},
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location"},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareR2Bucket_DefaultValues(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_r2_bucket." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareR2BucketDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareR2BucketMinimum(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("default")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("Standard")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("location"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("creation_date"), knownvalue.NotNull()),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareR2Bucket_StorageClassUpdate(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_r2_bucket." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareR2BucketDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareR2BucketStorageClass(rnd, accountID, "Standard"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("Standard")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("default")),
+				},
+			},
+			{
+				Config: testAccCheckCloudflareR2BucketStorageClass(rnd, accountID, "InfrequentAccess"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("InfrequentAccess")),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("InfrequentAccess")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("default")),
+				},
 			},
 		},
 	})
@@ -218,4 +423,46 @@ func testAccCheckCloudflareR2BucketUpdate(rnd, accountID string) string {
 
 func testAccCheckCloudflareR2BucketJurisdiction(rnd, accountID string) string {
 	return acctest.LoadTestCase("jurisdiction.tf", rnd, accountID)
+}
+
+func testAccCheckCloudflareR2BucketLocation(rnd, accountID, location string) string {
+	return acctest.LoadTestCase("location.tf", rnd, accountID, location)
+}
+
+func testAccCheckCloudflareR2BucketJurisdictionSpecific(rnd, accountID, jurisdiction string) string {
+	return acctest.LoadTestCase("jurisdiction_specific.tf", rnd, accountID, jurisdiction)
+}
+
+func testAccCheckCloudflareR2BucketComprehensive(rnd, accountID string) string {
+	return acctest.LoadTestCase("comprehensive.tf", rnd, accountID)
+}
+
+func testAccCheckCloudflareR2BucketStorageClass(rnd, accountID, storageClass string) string {
+	return acctest.LoadTestCase("storage_class.tf", rnd, accountID, storageClass)
+}
+
+func testAccCheckCloudflareR2BucketDestroy(s *terraform.State) error {
+	client := acctest.SharedClient()
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "cloudflare_r2_bucket" {
+			continue
+		}
+
+		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
+		jurisdiction := rs.Primary.Attributes["jurisdiction"]
+		_, err := client.R2.Buckets.Get(
+			context.Background(),
+			rs.Primary.ID,
+			r2.BucketGetParams{
+				AccountID:    cloudflare.F(accountID),
+				Jurisdiction: cloudflare.F(r2.BucketGetParamsCfR2Jurisdiction(jurisdiction)),
+			},
+		)
+		if err == nil {
+			return fmt.Errorf("r2 bucket still exists")
+		}
+	}
+
+	return nil
 }
