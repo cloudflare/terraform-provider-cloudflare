@@ -9,12 +9,16 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestAccAccountToken_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_account_token.test_account_token"
 
 	var policyId string
 
@@ -24,6 +28,11 @@ func TestAccAccountToken_Basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: acctest.LoadTestCase("account_token-without-condition.tf", rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "name", rnd),
 					resource.TestCheckResourceAttrSet("cloudflare_account_token.test_account_token", "policies.0.id"),
@@ -75,6 +84,14 @@ func TestAccAccountToken_Basic(t *testing.T) {
 					},
 				},
 			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+			},
 		},
 	})
 }
@@ -82,6 +99,7 @@ func TestAccAccountToken_Basic(t *testing.T) {
 func TestAccAccountToken_SetIndividualCondition(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_account_token.test_account_token"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -89,6 +107,10 @@ func TestAccAccountToken_SetIndividualCondition(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: acctest.LoadTestCase("account_token-with-individual-condition.tf", rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("condition").AtMapKey("request_ip").AtMapKey("in").AtSliceIndex(0), knownvalue.StringExact("192.0.2.1/32")),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "name", rnd),
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "condition.request_ip.in.0", "192.0.2.1/32"),
@@ -104,6 +126,14 @@ func TestAccAccountToken_SetIndividualCondition(t *testing.T) {
 					},
 				},
 			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+			},
 		},
 	})
 }
@@ -111,6 +141,7 @@ func TestAccAccountToken_SetIndividualCondition(t *testing.T) {
 func TestAccAccountToken_SetAllCondition(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_account_token.test_account_token"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -118,6 +149,11 @@ func TestAccAccountToken_SetAllCondition(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: acctest.LoadTestCase("account_token-with-all-condition.tf", rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("condition").AtMapKey("request_ip").AtMapKey("in").AtSliceIndex(0), knownvalue.StringExact("192.0.2.1/32")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("condition").AtMapKey("request_ip").AtMapKey("not_in").AtSliceIndex(0), knownvalue.StringExact("198.51.100.1/32")),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "name", rnd),
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "condition.request_ip.in.0", "192.0.2.1/32"),
@@ -133,6 +169,14 @@ func TestAccAccountToken_SetAllCondition(t *testing.T) {
 					},
 				},
 			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+			},
 		},
 	})
 }
@@ -140,6 +184,7 @@ func TestAccAccountToken_SetAllCondition(t *testing.T) {
 func TestAccAccountToken_TokenTTL(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_account_token.test_account_token"
 
 	oneDaysFromNow := time.Now().UTC().AddDate(0, 0, 1)
 	expireTime := oneDaysFromNow.Format(time.RFC3339)
@@ -152,6 +197,11 @@ func TestAccAccountToken_TokenTTL(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: acctest.LoadTestCase("account_token-with-ttl.tf", rnd, accountID, expireTime),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("not_before"), knownvalue.StringExact("2018-07-01T05:20:00Z")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.StringExact(expireTime)),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "name", rnd),
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "not_before", "2018-07-01T05:20:00Z"),
@@ -174,11 +224,22 @@ func TestAccAccountToken_TokenTTL(t *testing.T) {
 						plancheck.ExpectNonEmptyPlan(),
 					},
 				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.StringExact(updatedExpireTime)),
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "name", rnd),
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "not_before", "2018-07-01T05:20:00Z"),
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "expires_on", updatedExpireTime),
 				),
+			},
+			// Import step
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
 			},
 		},
 	})
