@@ -38,6 +38,7 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+					resource.TestCheckResourceAttrSet(name, "client_secret_version"),
 				),
 			},
 			{
@@ -49,6 +50,7 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+					resource.TestCheckResourceAttrSet(name, "client_secret_version"),
 				),
 			},
 		},
@@ -67,6 +69,7 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+					resource.TestCheckResourceAttrSet(name, "client_secret_version"),
 				),
 			},
 			{
@@ -78,6 +81,7 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+					resource.TestCheckResourceAttrSet(name, "client_secret_version"),
 				),
 			},
 		},
@@ -194,6 +198,7 @@ func TestAccCloudflareAccessServiceToken_Delete(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+					resource.TestCheckResourceAttrSet(name, "client_secret_version"),
 				),
 			},
 		},
@@ -213,6 +218,7 @@ func TestAccCloudflareAccessServiceToken_Delete(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+					resource.TestCheckResourceAttrSet(name, "client_secret_version"),
 				),
 			},
 		},
@@ -248,6 +254,7 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "duration", "forever"),
+					resource.TestCheckResourceAttrSet(name, "client_secret_version"),
 				),
 			},
 			{
@@ -259,6 +266,7 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+					resource.TestCheckResourceAttrSet(name, "client_secret_version"),
 				),
 			},
 		},
@@ -278,6 +286,7 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "duration", "forever"),
+					resource.TestCheckResourceAttrSet(name, "client_secret_version"),
 				),
 			},
 			{
@@ -289,6 +298,129 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+					resource.TestCheckResourceAttrSet(name, "client_secret_version"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessServiceToken_CreateWithClientSecretFields(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// Service Tokens endpoint does not yet support the API tokens and it
+	// results in misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_service_token.%s", rnd)
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareAccessServiceTokenConfigWithClientSecretVersion(resourceName, resourceName, cloudflare.AccountIdentifier(accountID), 3, "2024-11-15T10:30:00.000Z"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "client_secret_version", "3"),
+					resource.TestCheckResourceAttr(name, "previous_client_secret_expires_at", "2024-11-15T10:30:00.000Z"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessServiceToken_DefaultClientSecretVersion(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// Service Tokens endpoint does not yet support the API tokens and it
+	// results in misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_service_token.%s", rnd)
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+					// Verify client_secret_version defaults to 1 when not specified
+					resource.TestCheckResourceAttr(name, "client_secret_version", "1"),
+					// Verify previous_client_secret_expires_at is not set when not specified
+					resource.TestCheckNoResourceAttr(name, "previous_client_secret_expires_at"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessServiceToken_WithClientSecretVersion(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// Service Tokens endpoint does not yet support the API tokens and it
+	// results in misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_service_token.%s", rnd)
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareAccessServiceTokenConfigWithClientSecretVersion(resourceName, resourceName, cloudflare.AccountIdentifier(accountID), 1, ""),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "client_secret_version", "1"),
+				),
+			},
+			{
+				Config: testCloudflareAccessServiceTokenConfigWithClientSecretVersion(resourceName, resourceName+"-updated", cloudflare.AccountIdentifier(accountID), 2, "2024-12-01T05:20:00.123Z"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "client_secret_version", "2"),
+					resource.TestCheckResourceAttr(name, "previous_client_secret_expires_at", "2024-12-01T05:20:00.123Z"),
 				),
 			},
 		},
@@ -312,6 +444,23 @@ resource "cloudflare_zero_trust_access_service_token" "%[1]s" {
   min_days_for_renewal = "0"
   duration = "%[5]s"
 }`, resourceName, tokenName, identifier.Type, identifier.Identifier, duration)
+}
+
+func testCloudflareAccessServiceTokenConfigWithClientSecretVersion(resourceName string, tokenName string, identifier *cloudflare.ResourceContainer, version int, previousExpiresAt string) string {
+	config := fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_service_token" "%[1]s" {
+	%[3]s_id = "%[4]s"
+	name = "%[2]s"
+	client_secret_version = %[5]d`, resourceName, tokenName, identifier.Type, identifier.Identifier, version)
+
+	if previousExpiresAt != "" {
+		config += fmt.Sprintf(`
+	previous_client_secret_expires_at = "%s"`, previousExpiresAt)
+	}
+
+	config += `
+}`
+	return config
 }
 
 func testAccCheckCloudflareAccessServiceTokenDestroy(s *terraform.State) error {
