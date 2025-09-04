@@ -115,26 +115,32 @@ func transformConfigObject(expr *hclsyntax.Expression, diags ast.Diagnostics, pr
 		return
 	}
 
-	// Apply config-specific transforms including type-based validation
+	objWrapper := ast.NewObject(obj, diags)
+	
+	// Apply positive transforms first (idp_public_cert transformation)
 	configTransforms := map[string]ast.ExprTransformer{
 		"idp_public_cert": transformIdpPublicCertToList,
-		"api_token":       removeDeprecatedField,
 	}
+	ast.ApplyTransformToAttributes(objWrapper, configTransforms, diags)
 	
-	// Add type-specific validation rules
+	// Remove deprecated fields directly to avoid nil expression issues
+	deprecatedFields := []string{"api_token"}
+	
+	// Add type-specific validation rules for fields to remove
 	// sign_request is only valid for type saml
 	if providerType != "saml" {
-		configTransforms["sign_request"] = removeDeprecatedField
+		deprecatedFields = append(deprecatedFields, "sign_request")
 	}
 	
 	// conditional_access_enabled, directory_id, support_groups are only valid for azureAD
 	if providerType != "azureAD" {
-		configTransforms["conditional_access_enabled"] = removeDeprecatedField
-		configTransforms["directory_id"] = removeDeprecatedField
-		configTransforms["support_groups"] = removeDeprecatedField
+		deprecatedFields = append(deprecatedFields, "conditional_access_enabled", "directory_id", "support_groups")
 	}
 	
-	ast.ApplyTransformToAttributes(ast.NewObject(obj, diags), configTransforms, diags)
+	// Remove deprecated fields directly
+	for _, field := range deprecatedFields {
+		objWrapper.RemoveAttribute(field, diags)
+	}
 
 	// Handle field rename: idp_public_cert -> idp_public_certs
 	// This needs to be done after transformation since we're changing the key name
@@ -154,11 +160,9 @@ func transformScimConfigObject(expr *hclsyntax.Expression, diags ast.Diagnostics
 		return
 	}
 
-	// Apply scim_config-specific transforms
-	scimTransforms := map[string]ast.ExprTransformer{
-		"group_member_deprovision": removeDeprecatedField,
-	}
-	ast.ApplyTransformToAttributes(ast.NewObject(obj, diags), scimTransforms, diags)
+	// Remove deprecated fields directly
+	objWrapper := ast.NewObject(obj, diags)
+	objWrapper.RemoveAttribute("group_member_deprovision", diags)
 }
 
 // transformIdpPublicCertToList converts idp_public_cert (string) to idp_public_certs (list[string])
@@ -175,10 +179,6 @@ func transformIdpPublicCertToList(expr *hclsyntax.Expression, diags ast.Diagnost
 	}
 }
 
-// removeDeprecatedField removes deprecated fields by setting them to nil
-func removeDeprecatedField(expr *hclsyntax.Expression, diags ast.Diagnostics) {
-	*expr = nil
-}
 
 // convertConfigBlocksToObjects converts config and scim_config blocks to objects
 // This handles the v4 -> v5 block-to-object conversion
