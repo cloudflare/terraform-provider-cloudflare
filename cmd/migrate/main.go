@@ -291,6 +291,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			// Process DNS record to fix CAA flags
 			ProcessDNSRecordConfig(file)
 		}
+
+		if isSnippetResource(block) {
+			transformSnippetBlock(block, diags)
+		}
 	}
 
 	// Remove old blocks
