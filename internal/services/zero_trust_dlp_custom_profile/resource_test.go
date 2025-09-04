@@ -35,7 +35,7 @@ func setupDLPCustomProfileTest(t *testing.T) (string, string) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	
+
 	return rnd, accountID
 }
 
@@ -58,7 +58,7 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ocr_enabled"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ai_context_enabled"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("custom")),
-					},
+				},
 			},
 			{
 				Config: acctest.LoadTestCase("update.tf", rnd, accountID),
@@ -80,14 +80,14 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ocr_enabled"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ai_context_enabled"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("custom")),
-					},
+				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
 			},
 		},
 	})
@@ -114,7 +114,7 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_MinimalRequired(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("confidence_threshold"), knownvalue.StringExact("low")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ocr_enabled"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("custom")),
-						// Test computed attributes are not null
+					// Test computed attributes are not null
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_at"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("updated_at"), knownvalue.NotNull()),
@@ -142,14 +142,14 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_MinimalRequired(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ocr_enabled"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ai_context_enabled"), knownvalue.Bool(true)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("custom")),
-					},
+				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
 			},
 		},
 	})
@@ -177,11 +177,11 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_AllSharedEntryTypes(t *testing.T
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
 			},
 		},
 	})
@@ -233,11 +233,11 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_DeprecatedAttributes(t *testing.
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
 			},
 		},
 	})
@@ -281,11 +281,11 @@ func TestAccCloudflareZeroTrustDlpCustomProfile_BoundaryValues(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerifyIgnore: []string{"open_access", "created_at", "updated_at", "type", "context_awareness", "entries"},
 			},
 		},
 	})
