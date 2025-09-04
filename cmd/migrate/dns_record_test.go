@@ -140,7 +140,46 @@ resource "cloudflare_record" "caa_legacy" {
 }`},
 		},
 		{
-			Name: "Multiple CAA records in same file - content renamed to value",
+			Name: "DNS record without TTL - should add TTL with default value",
+			Config: `
+resource "cloudflare_dns_record" "mx_test" {
+  zone_id  = "0da42c8d2132a9ddaf714f9e7c920711"
+  name     = "test.example.com"
+  type     = "MX"
+  content  = "mx.sendgrid.net"
+  priority = 10
+}`,
+			Expected: []string{`
+resource "cloudflare_dns_record" "mx_test" {
+  zone_id  = "0da42c8d2132a9ddaf714f9e7c920711"
+  name     = "test.example.com"
+  type     = "MX"
+  content  = "mx.sendgrid.net"
+  priority = 10
+  ttl      = 1
+}`},
+		},
+		{
+			Name: "DNS record with existing TTL - should keep existing value",
+			Config: `
+resource "cloudflare_dns_record" "a_test_ttl" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  name    = "test.example.com"
+  type    = "A"
+  ttl     = 3600
+  content = "192.168.1.1"
+}`,
+			Expected: []string{`
+resource "cloudflare_dns_record" "a_test_ttl" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  name    = "test.example.com"
+  type    = "A"
+  ttl     = 3600
+  content = "192.168.1.1"
+}`},
+		},
+		{
+			Name: "Multiple CAA records in same file - content renamed to value and TTL added",
 			Config: `
 resource "cloudflare_dns_record" "caa_test1" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
@@ -173,6 +212,7 @@ resource "cloudflare_dns_record" "caa_test1" {
     tag   = "issue"
     value = "letsencrypt.org"
   }
+  ttl = 1
 }
 
 resource "cloudflare_dns_record" "caa_test2" {
@@ -184,6 +224,7 @@ resource "cloudflare_dns_record" "caa_test2" {
     tag   = "issuewild"
     value = "pki.goog"
   }
+  ttl = 1
 }`},
 		},
 	}
