@@ -268,6 +268,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "test.example.com",
 							"type": "CAA",
+							"ttl": 1,
 							"content": "0 issue letsencrypt.org",
 							"data": {
 								"flags": {
@@ -314,6 +315,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "test.example.com",
 							"type": "CAA",
+							"ttl": 1,
 							"content": "128 issuewild pki.goog",
 							"data": {
 								"flags": {
@@ -359,6 +361,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "test.example.com",
 							"type": "CAA",
+							"ttl": 1,
 							"data": {
 								"flags": {
 									"value": 0,
@@ -400,6 +403,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "test.example.com",
 							"type": "A",
+							"ttl": 1,
 							"content": "192.168.1.1",
 							"data": null
 						}
@@ -439,6 +443,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "test.example.com",
 							"type": "CAA",
+							"ttl": 1,
 							"content": "0 issue letsencrypt.org",
 							"data": {
 								"flags": {
@@ -485,6 +490,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "_sip._tcp.example.com",
 							"type": "SRV",
+							"ttl": 1,
 							"data": {
 								"priority": 10,
 								"weight": 60,
@@ -525,6 +531,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "test.example.com",
 							"type": "A",
+							"ttl": 1,
 							"content": "192.168.1.1",
 							"data": null
 						}
