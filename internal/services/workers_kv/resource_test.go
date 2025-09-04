@@ -35,7 +35,7 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 		CheckDestroy:             testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
+				Config: testAccCheckCloudflareWorkersKV(name, key, value, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkersKVExists(key),
 					resource.TestCheckResourceAttr(
@@ -43,6 +43,15 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 					),
 					getNamespaceID(resourceName, &namespaceID),
 				),
+			},
+			{
+				ImportState:       true,
+				ImportStateVerify: true,
+				ResourceName:      resourceName,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					namespaceResourceName := fmt.Sprintf("cloudflare_workers_kv_namespace.%s", name)
+					return fmt.Sprintf("%s/%s/%s", accountID, s.RootModule().Resources[namespaceResourceName].Primary.ID, key), nil
+				},
 			},
 			// test refresh behavior
 			{
@@ -85,7 +94,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 		CheckDestroy:             testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
+				Config: testAccCheckCloudflareWorkersKV(name, key, value, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkersKVExists(key),
 					resource.TestCheckResourceAttr(
@@ -94,7 +103,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key+"-updated", value, accountID),
+				Config: testAccCheckCloudflareWorkersKV(name, key+"-updated", value, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkersKVExists(key+"-updated"),
 					resource.TestCheckResourceAttr(
