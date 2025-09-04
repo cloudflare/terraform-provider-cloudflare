@@ -1,0 +1,5 @@
+```release-note:enhancement
+internal/sdkv2provider/schema_cloudflare_access_service_tokens.go: Add graceful rotation support for client secrets
+internal/sdkv2provider/resource_cloudflare_access_service_tokens_test.go: Add graceful rotation support for client secrets
+internal/sdkv2provider/resource_cloudflare_access_service_tokens.go: Add graceful rotation support for client secrets
+```

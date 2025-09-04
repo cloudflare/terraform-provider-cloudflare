@@ -98,6 +98,10 @@ func resourceCloudflareAccessServiceTokenRead(ctx context.Context, d *schema.Res
 			d.Set("client_id", token.ClientID)
 			d.Set("expires_at", token.ExpiresAt.Format(time.RFC3339))
 			d.Set("duration", token.Duration)
+			d.Set("client_secret_version", token.ClientSecretVersion)
+			if token.PreviousClientSecretExpiresAt != nil {
+				d.Set("previous_client_secret_expires_at", token.PreviousClientSecretExpiresAt.Format(time.RFC3339))
+			}
 		}
 	}
 
@@ -116,6 +120,16 @@ func resourceCloudflareAccessServiceTokenCreate(ctx context.Context, d *schema.R
 	if value, ok := d.GetOk("duration"); ok {
 		params.Duration = value.(string)
 	}
+	if value, ok := d.GetOk("client_secret_version"); ok {
+		params.ClientSecretVersion = int64(value.(int))
+	} else {
+		params.ClientSecretVersion = 1
+	}
+	if value, ok := d.GetOk("previous_client_secret_expires_at"); ok {
+		if timeVal, err := time.Parse(time.RFC3339, value.(string)); err == nil {
+			params.PreviousClientSecretExpiresAt = &timeVal
+		}
+	}
 
 	serviceToken, err := client.CreateAccessServiceToken(ctx, identifier, params)
 
@@ -129,6 +143,10 @@ func resourceCloudflareAccessServiceTokenCreate(ctx context.Context, d *schema.R
 	d.Set("client_secret", serviceToken.ClientSecret)
 	d.Set("expires_at", serviceToken.ExpiresAt.Format(time.RFC3339))
 	d.Set("duration", serviceToken.Duration)
+	d.Set("client_secret_version", serviceToken.ClientSecretVersion)
+	if serviceToken.PreviousClientSecretExpiresAt != nil {
+		d.Set("previous_client_secret_expires_at", serviceToken.PreviousClientSecretExpiresAt.Format(time.RFC3339))
+	}
 
 	resourceCloudflareAccessServiceTokenRead(ctx, d, meta)
 
@@ -152,6 +170,17 @@ func resourceCloudflareAccessServiceTokenUpdate(ctx context.Context, d *schema.R
 		params.Duration = d.Get("duration").(string)
 	}
 
+	if value, ok := d.GetOk("client_secret_version"); ok {
+		params.ClientSecretVersion = int64(value.(int))
+	} else {
+		params.ClientSecretVersion = 1
+	}
+	if value, ok := d.GetOk("previous_client_secret_expires_at"); ok {
+		if timeVal, err := time.Parse(time.RFC3339, value.(string)); err == nil {
+			params.PreviousClientSecretExpiresAt = &timeVal
+		}
+	}
+
 	serviceToken, err := client.UpdateAccessServiceToken(ctx, identifier, params)
 
 	if err != nil {
@@ -159,6 +188,9 @@ func resourceCloudflareAccessServiceTokenUpdate(ctx context.Context, d *schema.R
 	}
 
 	d.Set("name", serviceToken.Name)
+	if serviceToken.ClientSecret != "" {
+		d.Set("client_secret", serviceToken.ClientSecret)
+	}
 
 	return resourceCloudflareAccessServiceTokenRead(ctx, d, meta)
 }
