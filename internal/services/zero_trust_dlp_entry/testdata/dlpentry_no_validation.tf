@@ -6,6 +6,6 @@ resource "cloudflare_zero_trust_dlp_entry" "%[1]s" {
   type       = "custom"
   
   pattern = {
-    regex = "\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\b"
+    regex = "\\b[a-z]{1,10}@[a-z]{1,10}\\.[a-z]{2,4}\\b"
   }
 }
