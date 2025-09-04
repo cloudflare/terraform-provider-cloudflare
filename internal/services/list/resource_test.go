@@ -362,7 +362,7 @@ func TestAccCloudflareListWithItems_IP(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareListWithIPItems(rndIP, listNameIP, descriptionIP, accountID, "ip"),
+				Config: testAccCheckCloudflareListWithIPItems(rndIP, listNameIP, descriptionIP, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameIP, "name", listNameIP),
 					resource.TestCheckResourceAttr(resourceNameIP, "account_id", accountID),
@@ -381,7 +381,7 @@ func TestAccCloudflareListWithItems_IP(t *testing.T) {
 				PreConfig: func() {
 					initialID = list.ID
 				},
-				Config: testAccCheckCloudflareListWithIPItems(rndIP, listNameIP, descriptionIPNew, accountID, "ip"),
+				Config: testAccCheckCloudflareListWithIPItems(rndIP, listNameIP, descriptionIPNew, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameIP, "description", descriptionIPNew),
 					checkListAndPopulate(resourceNameIP, &list),
@@ -407,6 +407,24 @@ func TestAccCloudflareListWithItems_IP(t *testing.T) {
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
 					return fmt.Sprintf("%s/%s", accountID, s.RootModule().Resources[resourceNameIP].Primary.ID), nil
 				},
+				ImportStateKind: resource.ImportBlockWithID,
+			},
+			// unset items to clear list
+			{
+				Config: testAccCheckCloudflareListWithNullIPItems(rndIP, listNameIP, descriptionIP, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckNoResourceAttr(resourceNameIP, "items"),
+				),
+			},
+			{
+				ImportState:  true,
+				ResourceName: resourceNameIP,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("%s/%s", accountID, s.RootModule().Resources[resourceNameIP].Primary.ID), nil
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckNoResourceAttr(resourceNameIP, "items"),
+				),
 				ImportStateKind: resource.ImportBlockWithID,
 			},
 		},
@@ -438,7 +456,7 @@ func TestAccCloudflareListWithItems_Hostname(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareListWithHostnameItems(rndIP, listNameIP, descriptionIP, accountID, "ip"),
+				Config: testAccCheckCloudflareListWithHostnameItems(rndIP, listNameIP, descriptionIP, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameIP, "name", listNameIP),
 					resource.TestCheckResourceAttr(resourceNameIP, "account_id", accountID),
@@ -457,7 +475,7 @@ func TestAccCloudflareListWithItems_Hostname(t *testing.T) {
 				PreConfig: func() {
 					initialID = list.ID
 				},
-				Config: testAccCheckCloudflareListWithHostnameItems(rndIP, listNameIP, descriptionIPNew, accountID, "ip"),
+				Config: testAccCheckCloudflareListWithHostnameItems(rndIP, listNameIP, descriptionIPNew, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameIP, "description", descriptionIPNew),
 					checkListAndPopulate(resourceNameIP, &list),
@@ -514,7 +532,7 @@ func TestAccCloudflareListWithItems_Redirect(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareListWithRedirectItems(rndIP, listNameIP, descriptionIP, accountID, "ip"),
+				Config: testAccCheckCloudflareListWithRedirectItems(rndIP, listNameIP, descriptionIP, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameIP, "name", listNameIP),
 					resource.TestCheckResourceAttr(resourceNameIP, "account_id", accountID),
@@ -533,7 +551,7 @@ func TestAccCloudflareListWithItems_Redirect(t *testing.T) {
 				PreConfig: func() {
 					initialID = list.ID
 				},
-				Config: testAccCheckCloudflareListWithRedirectItems(rndIP, listNameIP, descriptionIPNew, accountID, "ip"),
+				Config: testAccCheckCloudflareListWithRedirectItems(rndIP, listNameIP, descriptionIPNew, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameIP, "description", descriptionIPNew),
 					checkListAndPopulate(resourceNameIP, &list),
@@ -569,16 +587,20 @@ func testAccCheckCloudflareList(resourceName, listName, description, accountID, 
 	return acctest.LoadTestCase("list.tf", resourceName, listName, description, accountID, kind)
 }
 
-func testAccCheckCloudflareListWithIPItems(resourceName, listName, description, accountID, kind string) string {
-	return acctest.LoadTestCase("listwithipitems.tf", resourceName, listName, description, accountID, kind)
+func testAccCheckCloudflareListWithIPItems(resourceName, listName, description, accountID string) string {
+	return acctest.LoadTestCase("listwithipitems.tf", resourceName, listName, description, accountID)
 }
 
-func testAccCheckCloudflareListWithHostnameItems(resourceName, listName, description, accountID, kind string) string {
-	return acctest.LoadTestCase("listwithhostnameitems.tf", resourceName, listName, description, accountID, kind)
+func testAccCheckCloudflareListWithNullIPItems(resourceName, listName, description, accountID string) string {
+	return acctest.LoadTestCase("listwithnullipitems.tf", resourceName, listName, description, accountID)
 }
 
-func testAccCheckCloudflareListWithRedirectItems(resourceName, listName, description, accountID, kind string) string {
-	return acctest.LoadTestCase("listwithredirectitems.tf", resourceName, listName, description, accountID, kind)
+func testAccCheckCloudflareListWithHostnameItems(resourceName, listName, description, accountID string) string {
+	return acctest.LoadTestCase("listwithhostnameitems.tf", resourceName, listName, description, accountID)
+}
+
+func testAccCheckCloudflareListWithRedirectItems(resourceName, listName, description, accountID string) string {
+	return acctest.LoadTestCase("listwithredirectitems.tf", resourceName, listName, description, accountID)
 }
 
 func testAccCheckCloudflareListDataSource(resourceName, accountID, listName, description, kind string) string {
