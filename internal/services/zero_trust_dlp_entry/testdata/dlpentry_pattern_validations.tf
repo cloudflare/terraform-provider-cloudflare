@@ -6,7 +6,7 @@ resource "cloudflare_zero_trust_dlp_entry" "%[1]s" {
   type       = "custom"
   
   pattern = {
-    regex      = "[0-9]{4}[[:space:]]?-?[0-9]{4}[[:space:]]?-?[0-9]{4}[[:space:]]?-?[0-9]{4}"
-    validation = "credit_card"
+    regex      = "4[0-9]{3}-[0-9]{4}-[0-9]{4}-[0-9]{4}"
+    validation = "luhn"
   }
 }
