@@ -12,7 +12,7 @@ export default {
     const newRequest = new Request(request);
     
     // Add custom headers
-    newRequest.headers.set("X-Custom-Header", "OpenAI");
+    newRequest.headers.set("X-Custom-Header", "Open");
     newRequest.headers.set("X-Request-ID", crypto.randomUUID());
     
     // Remove sensitive headers

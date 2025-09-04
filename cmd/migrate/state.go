@@ -134,6 +134,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_snippet":
 				result = transformSnippetStateJSON(result, path)
+			
+			case "cloudflare_snippet_rules":
+				result = transformSnippetRulesStateJSON(result, path)
 			}
 
 			return true
@@ -267,6 +270,154 @@ func transformSnippetStateJSON(json string, instancePath string) string {
 		result, _ = sjson.Delete(result, attrPath+".id")
 	}
 
+	return result
+}
+
+// transformSnippetRulesStateJSON handles v4 to v5 state migration for cloudflare_snippet_rules
+func transformSnippetRulesStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+	result := json
+
+	// Set schema_version to 0 (v5 doesn't have explicit version, but we set to 0 for consistency)
+	result, _ = sjson.Set(result, instancePath+".schema_version", 0)
+
+	// Handle rules transformation from blocks to list attribute
+	// In v4, rules are stored as indexed attributes like blocks
+	// Check for rules.# to determine if rules exist
+	rulesCount := gjson.Get(json, attrPath+`.rules\.#`)
+	
+	if rulesCount.Exists() {
+		count := rulesCount.Int()
+		if count > 0 {
+			// v4 stores rules as indexed attributes
+			var rulesList []map[string]interface{}
+			
+			for i := int64(0); i < count; i++ {
+				ruleMap := make(map[string]interface{})
+				
+				// Get enabled field (handle default change from true to false)
+				enabledKey := fmt.Sprintf(`%s.rules\.%d\.enabled`, attrPath, i)
+				if enabledVal := gjson.Get(json, enabledKey); enabledVal.Exists() {
+					// Explicit value, keep as-is
+					ruleMap["enabled"] = enabledVal.Bool()
+				} else {
+					// In v4, missing enabled defaults to true
+					// We need to make this explicit for v5 where it defaults to false
+					ruleMap["enabled"] = true
+				}
+				
+				// Get expression field
+				expressionKey := fmt.Sprintf(`%s.rules\.%d\.expression`, attrPath, i)
+				if expressionVal := gjson.Get(json, expressionKey); expressionVal.Exists() {
+					ruleMap["expression"] = expressionVal.String()
+				}
+				
+				// Get snippet_name field
+				snippetNameKey := fmt.Sprintf(`%s.rules\.%d\.snippet_name`, attrPath, i)
+				if snippetNameVal := gjson.Get(json, snippetNameKey); snippetNameVal.Exists() {
+					ruleMap["snippet_name"] = snippetNameVal.String()
+				}
+				
+				// Get description field
+				descriptionKey := fmt.Sprintf(`%s.rules\.%d\.description`, attrPath, i)
+				if descriptionVal := gjson.Get(json, descriptionKey); descriptionVal.Exists() {
+					ruleMap["description"] = descriptionVal.String()
+				} else {
+					// v5 defaults to empty string for missing description
+					ruleMap["description"] = ""
+				}
+				
+				// Note: id and last_updated are computed fields that will be set by the provider
+				
+				rulesList = append(rulesList, ruleMap)
+			}
+			
+			// Set rules as an actual array
+			result, _ = sjson.Set(result, attrPath+".rules", rulesList)
+			
+			// Clean up the indexed format
+			result = cleanupIndexedRulesKeys(result, attrPath, count)
+		} else {
+			// rules.# exists but is 0, set empty array
+			result, _ = sjson.Set(result, attrPath+".rules", []interface{}{})
+			// Clean up the indexed keys
+			result = cleanupIndexedRulesKeys(result, attrPath, 0)
+		}
+	} else {
+		// Check if rules already exists as an array (v5 format or already migrated)
+		rules := gjson.Get(json, attrPath+".rules")
+		if rules.Exists() && rules.IsArray() {
+			// Already in v5 format, ensure enabled defaults are handled
+			var rulesList []map[string]interface{}
+			rules.ForEach(func(_, rule gjson.Result) bool {
+				ruleMap := make(map[string]interface{})
+				
+				// Copy all fields
+				rule.ForEach(func(key, value gjson.Result) bool {
+					ruleMap[key.String()] = value.Value()
+					return true
+				})
+				
+				// Ensure enabled field has explicit value
+				if _, hasEnabled := ruleMap["enabled"]; !hasEnabled {
+					// In v4, missing enabled defaults to true
+					ruleMap["enabled"] = true
+				}
+				
+				// Ensure description has value
+				if _, hasDescription := ruleMap["description"]; !hasDescription {
+					ruleMap["description"] = ""
+				}
+				
+				rulesList = append(rulesList, ruleMap)
+				return true
+			})
+			
+			if len(rulesList) > 0 {
+				result, _ = sjson.Set(result, attrPath+".rules", rulesList)
+			}
+		}
+	}
+
+	return result
+}
+
+// cleanupIndexedRulesKeys removes the indexed rules attributes from the state
+func cleanupIndexedRulesKeys(json string, attrPath string, ruleCount int64) string {
+	// Get the entire attributes object
+	attrs := gjson.Get(json, attrPath)
+	if !attrs.Exists() || !attrs.IsObject() {
+		return json
+	}
+	
+	// Convert to a map for manipulation
+	attrsMap := make(map[string]interface{})
+	attrs.ForEach(func(key, value gjson.Result) bool {
+		keyStr := key.String()
+		
+		// Skip indexed rules keys
+		if keyStr == "rules.#" || keyStr == "rules.%" {
+			return true // skip
+		}
+		
+		// Skip individual rule fields
+		for i := int64(0); i < ruleCount; i++ {
+			if keyStr == fmt.Sprintf("rules.%d.enabled", i) ||
+			   keyStr == fmt.Sprintf("rules.%d.expression", i) ||
+			   keyStr == fmt.Sprintf("rules.%d.snippet_name", i) ||
+			   keyStr == fmt.Sprintf("rules.%d.description", i) ||
+			   keyStr == fmt.Sprintf("rules.%d", i) {
+				return true // skip
+			}
+		}
+		
+		// Keep everything else
+		attrsMap[keyStr] = value.Value()
+		return true
+	})
+	
+	// Set the cleaned attributes back
+	result, _ := sjson.Set(json, attrPath, attrsMap)
 	return result
 }
 

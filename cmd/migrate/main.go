@@ -295,6 +295,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		if isSnippetResource(block) {
 			transformSnippetBlock(block, diags)
 		}
+
+		if isSnippetRulesResource(block) {
+			transformSnippetRulesBlock(block, diags)
+		}
 	}
 
 	// Remove old blocks
