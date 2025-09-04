@@ -94,6 +94,13 @@ func transformWorkersScriptStateJSON(jsonStr string, path string) string {
 		}
 	}
 
+	// Remove tags attribute - not supported in v5
+	tagsPath := path + ".attributes.tags"
+	tagsValue := gjson.Get(result, tagsPath)
+	if tagsValue.Exists() {
+		result, _ = sjson.Delete(result, tagsPath)
+	}
+
 	return result
 }
 
@@ -188,7 +195,8 @@ func renameBindingAttributes(bindingMap map[string]interface{}, bindingType stri
 	}
 }
 
-// transformDispatchNamespaceInState transforms v4 dispatch_namespace attribute to v5 dispatch_namespace binding in state
+// transformDispatchNamespaceInState removes v4 dispatch_namespace attribute from state
+// dispatch_namespace is not supported in v5 and has no migration path
 func transformDispatchNamespaceInState(jsonStr string, path string) string {
 	result := jsonStr
 
@@ -197,38 +205,14 @@ func transformDispatchNamespaceInState(jsonStr string, path string) string {
 	dispatchValue := gjson.Get(jsonStr, dispatchNamespacePath)
 
 	if !dispatchValue.Exists() {
-		return result // No dispatch_namespace to transform
+		return result // No dispatch_namespace to remove
 	}
 
-	// Extract the dispatch namespace value
-	namespaceID := dispatchValue.String()
+	// TODO: dispatch_namespace is not supported in v5
+	// Users will need to manually migrate to Workers for Platforms
+	// For now, we remove it from state to allow the migration to complete
 
-	// Create dispatch_namespace binding
-	dispatchBinding := map[string]interface{}{
-		"type":         "dispatch_namespace",
-		"namespace_id": namespaceID,
-	}
-
-	// Get existing bindings
-	bindingsPath := path + ".attributes.bindings"
-	existingBindings := gjson.Get(result, bindingsPath)
-
-	var allBindings []interface{}
-
-	// Parse existing bindings if they exist
-	if existingBindings.Exists() && existingBindings.IsArray() {
-		for _, binding := range existingBindings.Array() {
-			allBindings = append(allBindings, binding.Value())
-		}
-	}
-
-	// Add the dispatch_namespace binding
-	allBindings = append(allBindings, dispatchBinding)
-
-	// Update state with new bindings
-	result, _ = sjson.Set(result, bindingsPath, allBindings)
-
-	// Remove the original dispatch_namespace attribute
+	// Remove the dispatch_namespace attribute
 	result, _ = sjson.Delete(result, dispatchNamespacePath)
 
 	return result
@@ -246,18 +230,11 @@ func transformModuleInState(jsonStr string, path string) string {
 		return result // No module attribute to transform
 	}
 
-	// Extract the boolean value
-	isModule := moduleValue.Bool()
-
-	if isModule {
-		// module = true → main_module = "worker.js" (ES Module syntax)
-		mainModulePath := path + ".attributes.main_module"
-		result, _ = sjson.Set(result, mainModulePath, "worker.js")
-	} else {
-		// module = false → body_part = "worker.js" (Service Worker syntax)
-		bodyPartPath := path + ".attributes.body_part"
-		result, _ = sjson.Set(result, bodyPartPath, "worker.js")
-	}
+	// Note: In v5, main_module and body_part are optional and have intelligent defaults
+	// We don't need to set them explicitly unless the user had specific multipart requirements in v4
+	// The v5 provider will determine the appropriate syntax based on the content
+	// 
+	// For now, we just remove the module attribute and let v5 provider handle defaults
 
 	// Remove the original module attribute
 	result, _ = sjson.Delete(result, modulePath)
@@ -379,82 +356,26 @@ func renameBindingAttribute(attrName, bindingType string) string {
 	return attrName
 }
 
-// transformDispatchNamespace transforms v4 dispatch_namespace attribute to v5 dispatch_namespace binding
+// transformDispatchNamespace removes v4 dispatch_namespace attribute from config
+// dispatch_namespace is not supported in v5 and has no migration path
 func transformDispatchNamespace(block *hclwrite.Block, diags ast.Diagnostics) {
 	// Check if block has dispatch_namespace attribute
 	dispatchAttr := block.Body().GetAttribute("dispatch_namespace")
 	if dispatchAttr == nil {
-		return // No dispatch_namespace to transform
+		return // No dispatch_namespace to remove
 	}
 
-	// Extract the dispatch namespace value
-	dispatchExpr := ast.WriteExpr2Expr(dispatchAttr.Expr(), diags)
-	dispatchValue := ast.Expr2S(dispatchExpr, diags)
-
-	// Handle quoted strings by removing quotes
-	if strings.HasPrefix(dispatchValue, `"`) && strings.HasSuffix(dispatchValue, `"`) {
-		dispatchValue = strings.Trim(dispatchValue, `"`)
+	// Add warning about dispatch_namespace removal
+	warningTokens := []*hclwrite.Token{
+		{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+		{Type: hclsyntax.TokenComment, Bytes: []byte(`  # TODO: dispatch_namespace is not supported in v5 and has been removed`)},
+		{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+		{Type: hclsyntax.TokenComment, Bytes: []byte(`  # Please migrate to Workers for Platforms for similar functionality`)},
+		{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
 	}
+	block.Body().AppendUnstructuredTokens(warningTokens)
 
-	// If we can't parse the value, add a manual migration warning
-	if dispatchValue == "" || strings.Contains(dispatchValue, "var.") || strings.Contains(dispatchValue, "local.") {
-		warningTokens := []*hclwrite.Token{
-			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
-			{Type: hclsyntax.TokenComment, Bytes: []byte(`  # MIGRATION WARNING: dispatch_namespace attribute needs manual migration to dispatch_namespace binding`)},
-			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
-			{Type: hclsyntax.TokenComment, Bytes: []byte(`  # Convert: dispatch_namespace = "value" → bindings = [{type = "dispatch_namespace", namespace_id = "value"}]`)},
-			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
-		}
-		block.Body().AppendUnstructuredTokens(warningTokens)
-		return
-	}
-
-	// Create dispatch_namespace binding
-	dispatchBinding := &hclsyntax.ObjectConsExpr{
-		Items: []hclsyntax.ObjectConsItem{
-			{
-				KeyExpr:   ast.NewKeyExpr("type"),
-				ValueExpr: &hclsyntax.LiteralValueExpr{Val: cty.StringVal("dispatch_namespace")},
-			},
-			{
-				KeyExpr:   ast.NewKeyExpr("namespace_id"),
-				ValueExpr: &hclsyntax.LiteralValueExpr{Val: cty.StringVal(dispatchValue)},
-			},
-		},
-	}
-
-	// Add this binding to the existing bindings or create new bindings attribute
-	existingBindingsAttr := block.Body().GetAttribute("bindings")
-	var allBindings []hclsyntax.Expression
-
-	if existingBindingsAttr != nil {
-		// Parse existing bindings
-		existingExpr := ast.WriteExpr2Expr(existingBindingsAttr.Expr(), diags)
-		if tuple, ok := existingExpr.(*hclsyntax.TupleConsExpr); ok {
-			allBindings = append(allBindings, tuple.Exprs...)
-		} else {
-			// Single binding or other format - preserve it
-			allBindings = append(allBindings, existingExpr)
-		}
-	}
-
-	// Add the dispatch_namespace binding
-	allBindings = append(allBindings, dispatchBinding)
-
-	// Create the new bindings expression
-	bindingsExpr := &hclsyntax.TupleConsExpr{
-		Exprs: allBindings,
-	}
-
-	// Set the bindings attribute
-	transforms := map[string]ast.ExprTransformer{
-		"bindings": func(expr *hclsyntax.Expression, diags ast.Diagnostics) {
-			*expr = bindingsExpr
-		},
-	}
-	ast.ApplyTransformToAttributes(ast.Block{Block: block}, transforms, diags)
-
-	// Remove the original dispatch_namespace attribute
+	// Remove the dispatch_namespace attribute
 	block.Body().RemoveAttribute("dispatch_namespace")
 }
 
@@ -470,40 +391,27 @@ func transformModule(block *hclwrite.Block, diags ast.Diagnostics) {
 	moduleExpr := ast.WriteExpr2Expr(moduleAttr.Expr(), diags)
 	moduleValue := ast.Expr2S(moduleExpr, diags)
 
-	// Handle different boolean representations
-	var isModule bool
-	var parseError bool
-
+	// Check if we can parse the module value for complex cases
 	switch strings.ToLower(strings.TrimSpace(moduleValue)) {
-	case "true":
-		isModule = true
-	case "false":
-		isModule = false
+	case "true", "false":
+		// Simple boolean values - can be handled by removing the attribute
 	default:
-		// If we can't parse the value, add a manual migration warning
+		// Complex expressions (variables, etc.) - add a manual migration warning
 		warningTokens := []*hclwrite.Token{
 			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
-			{Type: hclsyntax.TokenComment, Bytes: []byte(`  # MIGRATION WARNING: module attribute needs manual migration`)},
+			{Type: hclsyntax.TokenComment, Bytes: []byte(`  # MIGRATION WARNING: module attribute with complex expression needs manual migration`)},
 			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
-			{Type: hclsyntax.TokenComment, Bytes: []byte(`  # Convert: module = true → main_module = "worker.js"`)},
-			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
-			{Type: hclsyntax.TokenComment, Bytes: []byte(`  # Convert: module = false → body_part = "worker.js"`)},
+			{Type: hclsyntax.TokenComment, Bytes: []byte(`  # In v5, use main_module for ES modules or body_part for service workers`)},
 			{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
 		}
 		block.Body().AppendUnstructuredTokens(warningTokens)
-		parseError = true
 	}
 
-	if !parseError {
-		// Create the appropriate attribute based on module value
-		if isModule {
-			// module = true → main_module = "worker.js" (ES Module syntax)
-			block.Body().SetAttributeValue("main_module", cty.StringVal("worker.js"))
-		} else {
-			// module = false → body_part = "worker.js" (Service Worker syntax)
-			block.Body().SetAttributeValue("body_part", cty.StringVal("worker.js"))
-		}
-	}
+	// Note: In v5, main_module and body_part are optional and have intelligent defaults
+	// We don't need to set them explicitly unless the user had specific multipart requirements in v4
+	// The v5 provider will determine the appropriate syntax based on the content
+	// 
+	// For now, we just remove the module attribute and let v5 provider handle defaults
 
 	// Remove the original module attribute
 	block.Body().RemoveAttribute("module")

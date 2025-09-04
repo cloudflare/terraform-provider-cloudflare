@@ -96,6 +96,18 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			resourceType = "cloudflare_zero_trust_access_application"
 		}
 
+		if resourceType == "cloudflare_worker_script" {
+			// Rename cloudflare_worker_script to cloudflare_workers_script
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_workers_script")
+			resourceType = "cloudflare_workers_script"
+		}
+
+		if resourceType == "cloudflare_worker_route" {
+			// Rename cloudflare_worker_route to cloudflare_workers_route
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_workers_route")
+			resourceType = "cloudflare_workers_route"
+		}
+
 		// Process each instance
 		instances := resource.Get("instances")
 		instances.ForEach(func(iidx, instance gjson.Result) bool {
