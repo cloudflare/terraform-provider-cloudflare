@@ -160,6 +160,8 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_managed_transforms":
 				result = transformManagedTransformsStateJSON(result, path)
+			case "cloudflare_ruleset":
+				result = transformCloudflareRulesetStateJSON(result, path)
 
 			case "cloudflare_argo":
 				// cloudflare_argo needs special handling as it may split into multiple resources
