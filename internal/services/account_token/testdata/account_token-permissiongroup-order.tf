@@ -4,11 +4,11 @@ resource "cloudflare_account_token" "%[1]s" {
 
   policies = [{
     effect = "allow"
-    permission_groups = [{
+    permission_groups = toset([{
       id = "%[3]s"
     },{
       id = "%[4]s"
-    }]
+    }])
     resources = {
       "com.cloudflare.api.account.%[2]s" = "*"
     }

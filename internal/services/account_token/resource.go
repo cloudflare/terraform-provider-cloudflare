@@ -142,6 +142,7 @@ func (r *AccountTokenResource) Update(ctx context.Context, req resource.UpdateRe
 	}
 	data = &env.Result
 	data.Value = tokenValue
+	
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -184,6 +185,7 @@ func (r *AccountTokenResource) Read(ctx context.Context, req resource.ReadReques
 	}
 	data = &env.Result
 	data.Value = tokenValue
+	
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
