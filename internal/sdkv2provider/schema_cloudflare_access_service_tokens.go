@@ -58,5 +58,17 @@ func resourceCloudflareAccessServiceTokenSchema() map[string]*schema.Schema {
 			ValidateFunc: validation.StringInSlice([]string{"8760h", "17520h", "43800h", "87600h", "forever"}, false),
 			Description:  fmt.Sprintf("Length of time the service token is valid for. %s", renderAvailableDocumentationValuesStringSlice([]string{"8760h", "17520h", "43800h", "87600h", "forever"})),
 		},
+		"client_secret_version": {
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Computed:    true,
+			Description: "Version of the client secret.",
+		},
+		"previous_client_secret_expires_at": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+			Description: "Date when the previous client secret expires.",
+		},
 	}
 }
