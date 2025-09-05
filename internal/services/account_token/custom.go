@@ -89,8 +89,8 @@ func convertDynamicPoliciesToJSON(ctx context.Context, policies types.Dynamic) (
 			policy["effect"] = effect.ValueString()
 		}
 		
-		// Handle permission_groups - sort for consistent ordering
-		if pgVal, ok := attrs["permission_groups"].(basetypes.ListValue); ok && !pgVal.IsNull() {
+		// Handle permission_groups - sort for consistent ordering (handles both lists and sets)
+		if pgVal, ok := attrs["permission_groups"]; ok && !pgVal.IsNull() && !pgVal.IsUnknown() {
 			pgs := extractAndSortPermissionGroups(pgVal)
 			if len(pgs) > 0 {
 				policy["permission_groups"] = pgs
@@ -115,40 +115,68 @@ func convertDynamicPoliciesToJSON(ctx context.Context, policies types.Dynamic) (
 	return result, nil
 }
 
-// extractAndSortPermissionGroups extracts permission groups and sorts them by ID
-func extractAndSortPermissionGroups(pgList basetypes.ListValue) []map[string]interface{} {
-	type pgItem struct {
-		id   string
-		data map[string]interface{}
+// extractAndSortPermissionGroups extracts permission groups and always treats them as a set
+// by sorting them consistently by ID, regardless of input type
+func extractAndSortPermissionGroups(pgVal attr.Value) []map[string]interface{} {
+	var elements []attr.Value
+	
+	// Extract elements from any collection type
+	switch v := pgVal.(type) {
+	case basetypes.ListValue:
+		if v.IsNull() {
+			return nil
+		}
+		elements = v.Elements()
+	case basetypes.SetValue:
+		if v.IsNull() {
+			return nil
+		}
+		elements = v.Elements()
+	case basetypes.TupleValue:
+		if v.IsNull() {
+			return nil
+		}
+		elements = v.Elements()
+	default:
+		return nil
 	}
 	
-	items := make([]pgItem, 0, len(pgList.Elements()))
-	for _, elem := range pgList.Elements() {
+	// Use a map to deduplicate by ID (set behavior)
+	uniqueItems := make(map[string]map[string]interface{})
+	
+	for _, elem := range elements {
 		if obj, ok := elem.(basetypes.ObjectValue); ok {
 			attrs := obj.Attributes()
-			item := pgItem{data: make(map[string]interface{})}
+			item := make(map[string]interface{})
 			
+			var id string
 			if idVal, ok := attrs["id"].(basetypes.StringValue); ok && !idVal.IsNull() {
-				item.id = idVal.ValueString()
-				item.data["id"] = item.id
+				id = idVal.ValueString()
+				item["id"] = id
 			}
 			
 			if nameVal, ok := attrs["name"].(basetypes.StringValue); ok && !nameVal.IsNull() {
-				item.data["name"] = nameVal.ValueString()
+				item["name"] = nameVal.ValueString()
 			}
 			
-			items = append(items, item)
+			// Only keep unique IDs (set behavior)
+			if id != "" {
+				uniqueItems[id] = item
+			}
 		}
 	}
 	
-	// Sort by ID for consistent ordering
-	sort.Slice(items, func(i, j int) bool {
-		return items[i].id < items[j].id
-	})
+	// Extract IDs and sort them for consistent ordering
+	ids := make([]string, 0, len(uniqueItems))
+	for id := range uniqueItems {
+		ids = append(ids, id)
+	}
+	sort.Strings(ids)
 	
-	result := make([]map[string]interface{}, len(items))
-	for i, item := range items {
-		result[i] = item.data
+	// Build result in sorted order
+	result := make([]map[string]interface{}, 0, len(ids))
+	for _, id := range ids {
+		result = append(result, uniqueItems[id])
 	}
 	
 	return result

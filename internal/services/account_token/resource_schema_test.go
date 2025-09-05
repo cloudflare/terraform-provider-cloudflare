@@ -16,6 +16,6 @@ func TestAccountTokenModelSchemaParity(t *testing.T) {
 	schema := account_token.ResourceSchema(context.TODO())
 	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
 	errs.Ignore(t, ".@AccountTokenModel.policies")
-	
+
 	errs.Report(t)
 }
