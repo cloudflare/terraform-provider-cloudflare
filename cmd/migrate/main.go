@@ -336,6 +336,11 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		}
 	}
 
+	// Merge cloudflare_list_item resources into their parent lists
+	// This must happen after processing all blocks to ensure we've seen all list and list_item resources
+	listItemBlocksToRemove := mergeListItemResources(blocks)
+	blocksToRemove = append(blocksToRemove, listItemBlocksToRemove...)
+
 	// Remove old blocks
 	for _, block := range blocksToRemove {
 		body.RemoveBlock(block)
