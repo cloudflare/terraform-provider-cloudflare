@@ -236,11 +236,20 @@ func transformModuleInState(jsonStr string, path string) string {
 		return result // No module attribute to transform
 	}
 
-	// Note: In v5, main_module and body_part are optional and have intelligent defaults
-	// We don't need to set them explicitly unless the user had specific multipart requirements in v4
-	// The v5 provider will determine the appropriate syntax based on the content
-	//
-	// For now, we just remove the module attribute and let v5 provider handle defaults
+	// Transform based on boolean value
+	switch moduleValue.Value() {
+	case true:
+		// module = true → main_module = "worker.js"
+		mainModulePath := path + ".attributes.main_module"
+		result, _ = sjson.Set(result, mainModulePath, "worker.js")
+	case false:
+		// module = false → body_part = "worker.js"
+		bodyPartPath := path + ".attributes.body_part"
+		result, _ = sjson.Set(result, bodyPartPath, "worker.js")
+	default:
+		// For complex values, we can't transform in state - they should have been caught in config transformation
+		// Just remove the module attribute
+	}
 
 	// Remove the original module attribute
 	result, _ = sjson.Delete(result, modulePath)
@@ -402,10 +411,14 @@ func transformModule(block *hclwrite.Block, diags ast.Diagnostics) {
 	moduleExpr := ast.WriteExpr2Expr(moduleAttr.Expr(), diags)
 	moduleValue := ast.Expr2S(moduleExpr, diags)
 
-	// Check if we can parse the module value for complex cases
+	// Check if we can parse the module value for transformation
 	switch strings.ToLower(strings.TrimSpace(moduleValue)) {
-	case "true", "false":
-		// Simple boolean values - can be handled by removing the attribute
+	case "true":
+		// module = true → main_module = "worker.js"
+		block.Body().SetAttributeValue("main_module", cty.StringVal("worker.js"))
+	case "false":
+		// module = false → body_part = "worker.js"
+		block.Body().SetAttributeValue("body_part", cty.StringVal("worker.js"))
 	default:
 		// Complex expressions (variables, etc.) - add a manual migration warning
 		warningTokens := []*hclwrite.Token{
@@ -417,12 +430,6 @@ func transformModule(block *hclwrite.Block, diags ast.Diagnostics) {
 		}
 		block.Body().AppendUnstructuredTokens(warningTokens)
 	}
-
-	// Note: In v5, main_module and body_part are optional and have intelligent defaults
-	// We don't need to set them explicitly unless the user had specific multipart requirements in v4
-	// The v5 provider will determine the appropriate syntax based on the content
-	//
-	// For now, we just remove the module attribute and let v5 provider handle defaults
 
 	// Remove the original module attribute
 	block.Body().RemoveAttribute("module")

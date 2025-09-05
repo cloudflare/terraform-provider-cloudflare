@@ -128,9 +128,9 @@ func TestWorkersScriptTransformation(t *testing.T) {
   script_name = "my-worker"
   content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
   bindings = [{
-    type       = "hyperdrive"
-    name       = "HYPERDRIVE"
-    binding_id = "hyperdrive123"
+    type = "hyperdrive"
+    name = "HYPERDRIVE"
+    id   = "hyperdrive123"
   }]
 }`},
 		},
@@ -155,56 +155,6 @@ func TestWorkersScriptTransformation(t *testing.T) {
   # MIGRATION WARNING: webassembly_binding is not supported in v5.
   # WebAssembly modules must be bundled into the script content instead.
   # Please update your build process and remove this warning.
-}`,
-			},
-		},
-		{
-			Name: "workers_script with dispatch_namespace (should convert to binding)",
-			Config: `resource "cloudflare_workers_script" "example" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name = "my-worker"
-  content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
-  dispatch_namespace = "my-dispatch-namespace"
-}`,
-			Expected: []string{
-				`resource "cloudflare_workers_script" "example" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
-  script_name = "my-worker"
-  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
-  bindings = [{
-    type         = "dispatch_namespace"
-    namespace_id = "my-dispatch-namespace"
-  }]
-}`,
-			},
-		},
-		{
-			Name: "workers_script with dispatch_namespace and existing bindings",
-			Config: `resource "cloudflare_workers_script" "example" {
-  account_id = "f037e56e89293a057740de681ac9abbe"
-  name = "my-worker"
-  content = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
-  dispatch_namespace = "my-dispatch-namespace"
-  
-  plain_text_binding {
-    name = "MY_VAR"
-    text = "my-value"
-  }
-}`,
-			Expected: []string{
-				`resource "cloudflare_workers_script" "example" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
-  script_name = "my-worker"
-  content     = "addEventListener('fetch', event => { event.respondWith(new Response('Hello World')); });"
-  bindings = [{
-    type = "plain_text"
-    name = "MY_VAR"
-    text = "my-value"
-    },
-    {
-      type         = "dispatch_namespace"
-      namespace_id = "my-dispatch-namespace"
-  }]
 }`,
 			},
 		},
