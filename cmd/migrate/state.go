@@ -218,6 +218,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_workers_secret", "cloudflare_worker_secret":
 				result = transformWorkersSecretStateJSON(result, path)
+
+			case "cloudflare_list":
+				result = transformCloudflareListStateJSON(result, path)
 			}
 
 			return true
@@ -1726,6 +1729,121 @@ func transformCustomPagesStateJSON(json string, instancePath string) string {
 	if typeValue.Exists() {
 		json, _ = sjson.Set(json, attrPath+".identifier", typeValue.Value())
 		json, _ = sjson.Delete(json, attrPath+".type")
+	}
+
+	return json
+}
+
+// transformCloudflareListStateJSON handles v4 to v5 state migration for cloudflare_list
+func transformCloudflareListStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// Get the kind to determine item structure
+	kind := gjson.Get(json, attrPath+".kind").String()
+	if kind == "" {
+		return json // Can't transform without knowing the kind
+	}
+
+	// Transform item blocks to items array
+	items := gjson.Get(json, attrPath+".item")
+	if !items.Exists() || !items.IsArray() {
+		return json // No items to transform
+	}
+
+	var transformedItems []map[string]interface{}
+
+	items.ForEach(func(idx, item gjson.Result) bool {
+		transformedItem := make(map[string]interface{})
+
+		// Copy comment if present
+		comment := item.Get("comment")
+		if comment.Exists() && comment.String() != "" {
+			transformedItem["comment"] = comment.Value()
+		}
+
+		// Extract value block (it's usually an array with one element in v4 state)
+		values := item.Get("value")
+		if values.IsArray() && len(values.Array()) > 0 {
+			value := values.Array()[0]
+
+			switch kind {
+			case "ip":
+				ip := value.Get("ip")
+				if ip.Exists() {
+					transformedItem["ip"] = ip.Value()
+				}
+
+			case "asn":
+				asn := value.Get("asn")
+				if asn.Exists() {
+					transformedItem["asn"] = asn.Value()
+				}
+
+			case "hostname":
+				// Hostname was a nested block in v4
+				hostname := value.Get("hostname")
+				if hostname.IsArray() && len(hostname.Array()) > 0 {
+					transformedItem["hostname"] = hostname.Array()[0].Value()
+				}
+
+			case "redirect":
+				// Redirect was a nested block in v4
+				redirect := value.Get("redirect")
+				if redirect.IsArray() && len(redirect.Array()) > 0 {
+					redirectObj := redirect.Array()[0]
+					redirectMap := make(map[string]interface{})
+
+					// Copy required fields
+					if sourceURL := redirectObj.Get("source_url"); sourceURL.Exists() {
+						redirectMap["source_url"] = sourceURL.Value()
+					}
+					if targetURL := redirectObj.Get("target_url"); targetURL.Exists() {
+						redirectMap["target_url"] = targetURL.Value()
+					}
+
+					// Transform string booleans to actual booleans
+					transformBoolField := func(fieldName string) {
+						field := redirectObj.Get(fieldName)
+						if field.Exists() {
+							if field.String() == "enabled" {
+								redirectMap[fieldName] = true
+							} else if field.String() == "disabled" {
+								redirectMap[fieldName] = false
+							}
+						}
+					}
+
+					transformBoolField("include_subdomains")
+					transformBoolField("subpath_matching")
+					transformBoolField("preserve_query_string")
+					transformBoolField("preserve_path_suffix")
+
+					// Copy status code if present
+					if statusCode := redirectObj.Get("status_code"); statusCode.Exists() {
+						redirectMap["status_code"] = statusCode.Value()
+					}
+
+					if len(redirectMap) > 0 {
+						transformedItem["redirect"] = redirectMap
+					}
+				}
+			}
+		}
+
+		if len(transformedItem) > 0 {
+			transformedItems = append(transformedItems, transformedItem)
+		}
+
+		return true
+	})
+
+	// Replace item with items
+	if len(transformedItems) > 0 {
+		json, _ = sjson.Delete(json, attrPath+".item")
+		json, _ = sjson.Set(json, attrPath+".items", transformedItems)
+	} else {
+		// Remove empty item array
+		json, _ = sjson.Delete(json, attrPath+".item")
 	}
 
 	return json

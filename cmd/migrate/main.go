@@ -328,6 +328,12 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		}
 
 		// Note: workers_secret resources are handled by cross-resource migration below
+
+		if isCloudflareListResource(block) {
+			// Transform cloudflare_list item blocks to items attribute
+			// Handles both static and dynamic blocks
+			transformCloudflareListBlock(block)
+		}
 	}
 
 	// Remove old blocks
