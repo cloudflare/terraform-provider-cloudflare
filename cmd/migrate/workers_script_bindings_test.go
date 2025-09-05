@@ -87,6 +87,138 @@ func TestBindingAttributeMappings(t *testing.T) {
 				`database_id = "db-123"`, // should be renamed to 'id'
 			},
 		},
+		{
+			name: "analytics_engine_binding (no attribute changes)",
+			v4Config: `resource "cloudflare_workers_script" "test" {
+  account_id = "test-account"
+  name       = "test-script"
+  content    = "export default { async fetch() { return new Response('ok'); } };"
+  
+  analytics_engine_binding {
+    name = "MY_ANALYTICS"
+    dataset = "analytics-dataset"
+  }
+}`,
+			expectedInV5: []string{
+				`type    = "analytics_engine"`,
+				`name    = "MY_ANALYTICS"`,
+				`dataset = "analytics-dataset"`,
+				`bindings = [`,
+			},
+			notExpectedInV5: []string{
+				"analytics_engine_binding",
+			},
+		},
+		{
+			name: "kv_namespace_binding (no attribute changes)",
+			v4Config: `resource "cloudflare_workers_script" "test" {
+  account_id = "test-account"
+  name       = "test-script"
+  content    = "export default { async fetch() { return new Response('ok'); } };"
+  
+  kv_namespace_binding {
+    name = "MY_KV"
+    namespace_id = "kv-namespace-123"
+  }
+}`,
+			expectedInV5: []string{
+				`type         = "kv_namespace"`,
+				`name         = "MY_KV"`,
+				`namespace_id = "kv-namespace-123"`,
+				`bindings = [`,
+			},
+			notExpectedInV5: []string{
+				"kv_namespace_binding",
+			},
+		},
+		{
+			name: "plain_text_binding (no attribute changes)",
+			v4Config: `resource "cloudflare_workers_script" "test" {
+  account_id = "test-account"
+  name       = "test-script"
+  content    = "export default { async fetch() { return new Response('ok'); } };"
+  
+  plain_text_binding {
+    name = "MY_TEXT"
+    text = "plain-text-value"
+  }
+}`,
+			expectedInV5: []string{
+				`type = "plain_text"`,
+				`name = "MY_TEXT"`,
+				`text = "plain-text-value"`,
+				`bindings = [`,
+			},
+			notExpectedInV5: []string{
+				"plain_text_binding",
+			},
+		},
+		{
+			name: "r2_bucket_binding (no attribute changes)",
+			v4Config: `resource "cloudflare_workers_script" "test" {
+  account_id = "test-account"
+  name       = "test-script"
+  content    = "export default { async fetch() { return new Response('ok'); } };"
+  
+  r2_bucket_binding {
+    name = "MY_BUCKET"
+    bucket_name = "test-bucket"
+  }
+}`,
+			expectedInV5: []string{
+				`type        = "r2_bucket"`,
+				`name        = "MY_BUCKET"`,
+				`bucket_name = "test-bucket"`,
+				`bindings = [`,
+			},
+			notExpectedInV5: []string{
+				"r2_bucket_binding",
+			},
+		},
+		{
+			name: "secret_text_binding (no attribute changes)",
+			v4Config: `resource "cloudflare_workers_script" "test" {
+  account_id = "test-account"
+  name       = "test-script"
+  content    = "export default { async fetch() { return new Response('ok'); } };"
+  
+  secret_text_binding {
+    name = "MY_SECRET"
+    text = "secret-value"
+  }
+}`,
+			expectedInV5: []string{
+				`type = "secret_text"`,
+				`name = "MY_SECRET"`,
+				`text = "secret-value"`,
+				`bindings = [`,
+			},
+			notExpectedInV5: []string{
+				"secret_text_binding",
+			},
+		},
+		{
+			name: "service_binding (no attribute changes)",
+			v4Config: `resource "cloudflare_workers_script" "test" {
+  account_id = "test-account"
+  name       = "test-script"
+  content    = "export default { async fetch() { return new Response('ok'); } };"
+  
+  service_binding {
+    name = "MY_SERVICE"
+    service = "my-service"
+  }
+}`,
+			expectedInV5: []string{
+				`type    = "service"`,
+				`name    = "MY_SERVICE"`,
+				`service = "my-service"`,
+				`bindings = [`,
+			},
+			notExpectedInV5: []string{
+				"service_binding",
+			},
+		},
 	}
 
 	for _, tt := range tests {

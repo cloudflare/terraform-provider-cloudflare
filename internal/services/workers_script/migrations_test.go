@@ -1,5 +1,9 @@
 package workers_script_test
 
+// TODO: Add provider migration tests for additional binding types in separate PR:
+// analytics_engine_binding, d1_database_binding, hyperdrive_config_binding,
+// kv_namespace_binding, queue_binding, r2_bucket_binding, service_binding
+
 import (
 	"fmt"
 	"os"
@@ -223,6 +227,19 @@ resource "cloudflare_workers_script" "%[1]s" {
 		},
 	})
 }
+
+// TODO: Add provider migration tests for additional binding types in separate PR
+// Missing coverage:
+// - analytics_engine_binding (no resource dependencies)
+// - d1_database_binding (requires real D1 database)
+// - hyperdrive_config_binding (requires real Hyperdrive config)  
+// - kv_namespace_binding (might work with test namespace)
+// - queue_binding (requires real Queue)
+// - r2_bucket_binding (might work with test bucket)
+// - service_binding (requires real Worker service)
+//
+// Note: Unit tests in cmd/migrate/workers_script_bindings_test.go provide comprehensive
+// coverage of the transformation logic for all binding types.
 
 // TestMigrateWorkersScriptMigrationFromV4ComplexBindings tests migration with complex binding attribute mappings
 func TestMigrateWorkersScriptMigrationFromV4ComplexBindings(t *testing.T) {
