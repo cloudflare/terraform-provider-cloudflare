@@ -21,7 +21,7 @@ func TestAccCloudflareZeroTrustDlpIntegrationEntry_Basic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		// PreCheck ensures necessary environment variables are set
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() { acctest.TestAccPreCheck(t) },
 		// ProtoV6ProviderFactories provides the provider instance for testing
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -51,11 +51,12 @@ func TestAccCloudflareZeroTrustDlpIntegrationEntry_Basic(t *testing.T) {
 
 // testAccZeroTrustDlpIntegrationEntryConfig generates the Terraform configuration string.
 // It assumes acctest.LoadTestCase loads a template like:
-// resource "cloudflare_zero_trust_dlp_integration_entry" "{{ .Rnd }}" {
-//   account_id = "{{ .AccountID }}"
-//   entry_id   = "{{ .EntryID }}"
-//   enabled    = {{ .Enabled }}
-// }
+//
+//	resource "cloudflare_zero_trust_dlp_integration_entry" "{{ .Rnd }}" {
+//	  account_id = "{{ .AccountID }}"
+//	  entry_id   = "{{ .EntryID }}"
+//	  enabled    = {{ .Enabled }}
+//	}
 func testAccZeroTrustDlpIntegrationEntryConfig(rnd, accountID, entryID string, enabled bool) string {
 	return acctest.LoadTestCase("basic.tf", rnd, accountID, entryID, enabled)
 }
