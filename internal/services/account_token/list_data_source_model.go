@@ -62,7 +62,7 @@ type AccountTokensPoliciesDataSourceModel struct {
 	ID               types.String                                                                       `tfsdk:"id" json:"id,computed,force_encode,encode_state_for_unknown"`
 	Effect           types.String                                                                       `tfsdk:"effect" json:"effect,computed"`
 	PermissionGroups customfield.NestedObjectList[AccountTokensPoliciesPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
-	Resources        customfield.Map[types.String]                                                      `tfsdk:"resources" json:"resources,computed"`
+	Resources        customfield.Map[customfield.Map[types.String]]                                     `tfsdk:"resources" json:"resources,computed"`
 }
 
 type AccountTokensPoliciesPermissionGroupsDataSourceModel struct {

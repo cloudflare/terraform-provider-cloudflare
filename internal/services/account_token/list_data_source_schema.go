@@ -152,8 +152,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"resources": schema.MapAttribute{
 										Description: "A list of resource names that the policy applies to.",
 										Computed:    true,
-										CustomType:  customfield.NewMapType[types.String](ctx),
-										ElementType: types.StringType,
+										CustomType:  customfield.NewMapType[customfield.Map[types.String]](ctx),
+										ElementType: types.MapType{
+											ElemType: types.StringType,
+										},
 									},
 								},
 							},
