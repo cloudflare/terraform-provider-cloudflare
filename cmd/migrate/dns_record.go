@@ -17,7 +17,7 @@ func isDNSRecordResource(block *hclwrite.Block) bool {
 		(block.Labels()[0] == "cloudflare_dns_record" || block.Labels()[0] == "cloudflare_record")
 }
 
-// ProcessDNSRecordConfig processes cloudflare_dns_record configurations to fix CAA record issues
+// ProcessDNSRecordConfig processes cloudflare_dns_record configurations to fix CAA record issues and ensure TTL is present
 func ProcessDNSRecordConfig(file *hclwrite.File) error {
 	body := file.Body()
 
@@ -34,6 +34,18 @@ func ProcessDNSRecordConfig(file *hclwrite.File) error {
 		resourceType := labels[0]
 		if resourceType != "cloudflare_dns_record" && resourceType != "cloudflare_record" {
 			continue
+		}
+
+		// Ensure TTL is present for v5 (required field)
+		ttlAttr := block.Body().GetAttribute("ttl")
+		if ttlAttr == nil {
+			// TTL is missing - add it with default value of 1 (automatic)
+			// Create the TTL token with value 1
+			ttlToken := &hclwrite.Token{
+				Type:  hclsyntax.TokenNumberLit,
+				Bytes: []byte("1"),
+			}
+			block.Body().SetAttributeRaw("ttl", hclwrite.Tokens{ttlToken})
 		}
 
 		// Check if this is a CAA record
@@ -170,6 +182,13 @@ func transformDNSRecordStateJSON(result string, path string, instance gjson.Resu
 	} else if value.Exists() && content.Exists() {
 		// If both exist, remove value since content takes precedence in v5
 		result, _ = sjson.Delete(result, path+".attributes.value")
+	}
+
+	// Ensure TTL is present (required in v5)
+	ttl := instance.Get("attributes.ttl")
+	if !ttl.Exists() {
+		// TTL is missing - add default value of 1 (automatic)
+		result, _ = sjson.Set(result, path+".attributes.ttl", 1.0)
 	}
 
 	// Rename metadata -> meta and ensure it's a JSON string

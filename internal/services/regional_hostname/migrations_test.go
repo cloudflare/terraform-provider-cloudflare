@@ -5,16 +5,17 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
-func TestAccCloudflareRegionalHostname_Migration_TimeoutsRemoval(t *testing.T) {
+func TestMigrateCloudflareRegionalHostname_Migration_TimeoutsRemoval(t *testing.T) {
 	// This test verifies that the migration tool properly removes the timeouts block
 	// when upgrading from v4 to v5, since v5 provider no longer supports timeouts
 	// configuration for regional_hostname resources.

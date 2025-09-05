@@ -3,6 +3,8 @@ package customvalidator
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/helpers/validatordiag"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -10,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"strings"
 )
 
 func RequiresOtherStringAttributeToNotBeOneOf(pathExpr path.Expression, wantStrValues ...string) requiresOtherAttributeToNotBeOneOfValidator {
@@ -92,7 +93,31 @@ func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateBool(ctx context.Co
 	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
 }
 
-func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateString(ctx context.Context, req validator.StringRequest, res *validator.StringResponse) {
+func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateFloat32(ctx context.Context, req validator.Float32Request, res *validator.Float32Response) {
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
+}
+
+func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateFloat64(ctx context.Context, req validator.Float64Request, res *validator.Float64Response) {
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
+}
+
+func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateInt32(ctx context.Context, req validator.Int32Request, res *validator.Int32Response) {
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
+}
+
+func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateInt64(ctx context.Context, req validator.Int64Request, res *validator.Int64Response) {
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
+}
+
+func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateList(ctx context.Context, req validator.ListRequest, res *validator.ListResponse) {
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
+}
+
+func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateMap(ctx context.Context, req validator.MapRequest, res *validator.MapResponse) {
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
+}
+
+func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateNumber(ctx context.Context, req validator.NumberRequest, res *validator.NumberResponse) {
 	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
 }
 
@@ -100,6 +125,14 @@ func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateObject(ctx context.
 	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
 }
 
-func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateList(ctx context.Context, req validator.ListRequest, res *validator.ListResponse) {
+func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateSet(ctx context.Context, req validator.SetRequest, res *validator.SetResponse) {
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
+}
+
+func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateString(ctx context.Context, req validator.StringRequest, res *validator.StringResponse) {
+	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
+}
+
+func (i requiresOtherAttributeToNotBeOneOfValidator) ValidateDynamic(ctx context.Context, req validator.DynamicRequest, res *validator.DynamicResponse) {
 	i.validateAny(ctx, &req.Config, req.PathExpression, req.Path, req.ConfigValue, &res.Diagnostics)
 }

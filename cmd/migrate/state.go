@@ -84,6 +84,12 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			resourceType = "cloudflare_zero_trust_access_identity_provider"
 		}
 
+		if resourceType == "cloudflare_access_mutual_tls_certificate" {
+			// Rename to cloudflare_zero_trust_access_mtls_certificate
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_mtls_certificate")
+			resourceType = "cloudflare_zero_trust_access_mtls_certificate"
+		}
+
 		if resourceType == "cloudflare_access_application" {
 			// Rename cloudflare_access_application to cloudflare_zero_trust_access_application
 			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_application")
@@ -134,9 +140,12 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_snippet":
 				result = transformSnippetStateJSON(result, path)
-			
+
 			case "cloudflare_snippet_rules":
 				result = transformSnippetRulesStateJSON(result, path)
+
+			case "cloudflare_custom_pages":
+				result = transformCustomPagesStateJSON(result, path)
 			}
 
 			return true
@@ -190,7 +199,7 @@ func transformSnippetStateJSON(json string, instancePath string) string {
 	// Handle files transformation
 	// First check if files exist as an array in the original JSON
 	files := gjson.Get(json, attrPath+".files")
-	
+
 	if files.Exists() && files.IsArray() {
 		// Already in v5 array format (from previous migration or native v5)
 		// Keep as-is, the StateUpgrader will handle final processing
@@ -200,16 +209,16 @@ func transformSnippetStateJSON(json string, instancePath string) string {
 		// Look in the original json, not result, since we haven't transformed it yet
 		// Note: # is a special character in gjson, so we need to escape it
 		filesCount := gjson.Get(json, attrPath+`.files\.#`)
-		
+
 		if filesCount.Exists() {
 			count := filesCount.Int()
 			if count > 0 {
 				// v4 stores files as indexed attributes
 				var filesList []map[string]interface{}
-				
+
 				for i := int64(0); i < count; i++ {
 					fileMap := make(map[string]interface{})
-					
+
 					// Get name from files.X.name (from original json)
 					// Need to escape dots in the path for gjson
 					nameKey := fmt.Sprintf(`%s.files\.%d\.name`, attrPath, i)
@@ -218,7 +227,7 @@ func transformSnippetStateJSON(json string, instancePath string) string {
 					} else {
 						fileMap["name"] = ""
 					}
-					
+
 					// Get content from files.X.content (from original json)
 					// Need to escape dots in the path for gjson
 					contentKey := fmt.Sprintf(`%s.files\.%d\.content`, attrPath, i)
@@ -227,13 +236,13 @@ func transformSnippetStateJSON(json string, instancePath string) string {
 					} else {
 						fileMap["content"] = ""
 					}
-					
+
 					filesList = append(filesList, fileMap)
 				}
-				
+
 				// Now set files as an actual array
 				result, _ = sjson.Set(result, attrPath+".files", filesList)
-				
+
 				// Clean up the indexed format by removing all the individual keys
 				// This ensures we don't have both array and indexed formats
 				// Since sjson.Delete doesn't handle keys with dots well, we need to
@@ -258,7 +267,7 @@ func transformSnippetStateJSON(json string, instancePath string) string {
 		// Keep existing timestamp
 		result, _ = sjson.Set(result, attrPath+".created_on", createdOn.String())
 	}
-	
+
 	modifiedOn := gjson.Get(json, attrPath+".modified_on")
 	if modifiedOn.Exists() && modifiedOn.String() != "" {
 		// Keep existing timestamp
@@ -285,16 +294,16 @@ func transformSnippetRulesStateJSON(json string, instancePath string) string {
 	// In v4, rules are stored as indexed attributes like blocks
 	// Check for rules.# to determine if rules exist
 	rulesCount := gjson.Get(json, attrPath+`.rules\.#`)
-	
+
 	if rulesCount.Exists() {
 		count := rulesCount.Int()
 		if count > 0 {
 			// v4 stores rules as indexed attributes
 			var rulesList []map[string]interface{}
-			
+
 			for i := int64(0); i < count; i++ {
 				ruleMap := make(map[string]interface{})
-				
+
 				// Get enabled field (handle default change from true to false)
 				enabledKey := fmt.Sprintf(`%s.rules\.%d\.enabled`, attrPath, i)
 				if enabledVal := gjson.Get(json, enabledKey); enabledVal.Exists() {
@@ -305,19 +314,19 @@ func transformSnippetRulesStateJSON(json string, instancePath string) string {
 					// We need to make this explicit for v5 where it defaults to false
 					ruleMap["enabled"] = true
 				}
-				
+
 				// Get expression field
 				expressionKey := fmt.Sprintf(`%s.rules\.%d\.expression`, attrPath, i)
 				if expressionVal := gjson.Get(json, expressionKey); expressionVal.Exists() {
 					ruleMap["expression"] = expressionVal.String()
 				}
-				
+
 				// Get snippet_name field
 				snippetNameKey := fmt.Sprintf(`%s.rules\.%d\.snippet_name`, attrPath, i)
 				if snippetNameVal := gjson.Get(json, snippetNameKey); snippetNameVal.Exists() {
 					ruleMap["snippet_name"] = snippetNameVal.String()
 				}
-				
+
 				// Get description field
 				descriptionKey := fmt.Sprintf(`%s.rules\.%d\.description`, attrPath, i)
 				if descriptionVal := gjson.Get(json, descriptionKey); descriptionVal.Exists() {
@@ -326,15 +335,15 @@ func transformSnippetRulesStateJSON(json string, instancePath string) string {
 					// v5 defaults to empty string for missing description
 					ruleMap["description"] = ""
 				}
-				
+
 				// Note: id and last_updated are computed fields that will be set by the provider
-				
+
 				rulesList = append(rulesList, ruleMap)
 			}
-			
+
 			// Set rules as an actual array
 			result, _ = sjson.Set(result, attrPath+".rules", rulesList)
-			
+
 			// Clean up the indexed format
 			result = cleanupIndexedRulesKeys(result, attrPath, count)
 		} else {
@@ -351,28 +360,28 @@ func transformSnippetRulesStateJSON(json string, instancePath string) string {
 			var rulesList []map[string]interface{}
 			rules.ForEach(func(_, rule gjson.Result) bool {
 				ruleMap := make(map[string]interface{})
-				
+
 				// Copy all fields
 				rule.ForEach(func(key, value gjson.Result) bool {
 					ruleMap[key.String()] = value.Value()
 					return true
 				})
-				
+
 				// Ensure enabled field has explicit value
 				if _, hasEnabled := ruleMap["enabled"]; !hasEnabled {
 					// In v4, missing enabled defaults to true
 					ruleMap["enabled"] = true
 				}
-				
+
 				// Ensure description has value
 				if _, hasDescription := ruleMap["description"]; !hasDescription {
 					ruleMap["description"] = ""
 				}
-				
+
 				rulesList = append(rulesList, ruleMap)
 				return true
 			})
-			
+
 			if len(rulesList) > 0 {
 				result, _ = sjson.Set(result, attrPath+".rules", rulesList)
 			}
@@ -389,33 +398,33 @@ func cleanupIndexedRulesKeys(json string, attrPath string, ruleCount int64) stri
 	if !attrs.Exists() || !attrs.IsObject() {
 		return json
 	}
-	
+
 	// Convert to a map for manipulation
 	attrsMap := make(map[string]interface{})
 	attrs.ForEach(func(key, value gjson.Result) bool {
 		keyStr := key.String()
-		
+
 		// Skip indexed rules keys
 		if keyStr == "rules.#" || keyStr == "rules.%" {
 			return true // skip
 		}
-		
+
 		// Skip individual rule fields
 		for i := int64(0); i < ruleCount; i++ {
 			if keyStr == fmt.Sprintf("rules.%d.enabled", i) ||
-			   keyStr == fmt.Sprintf("rules.%d.expression", i) ||
-			   keyStr == fmt.Sprintf("rules.%d.snippet_name", i) ||
-			   keyStr == fmt.Sprintf("rules.%d.description", i) ||
-			   keyStr == fmt.Sprintf("rules.%d", i) {
+				keyStr == fmt.Sprintf("rules.%d.expression", i) ||
+				keyStr == fmt.Sprintf("rules.%d.snippet_name", i) ||
+				keyStr == fmt.Sprintf("rules.%d.description", i) ||
+				keyStr == fmt.Sprintf("rules.%d", i) {
 				return true // skip
 			}
 		}
-		
+
 		// Keep everything else
 		attrsMap[keyStr] = value.Value()
 		return true
 	})
-	
+
 	// Set the cleaned attributes back
 	result, _ := sjson.Set(json, attrPath, attrsMap)
 	return result
@@ -429,31 +438,31 @@ func cleanupIndexedFileKeys(json string, attrPath string, fileCount int64) strin
 	if !attrs.Exists() || !attrs.IsObject() {
 		return json
 	}
-	
+
 	// Convert to a map for manipulation
 	attrsMap := make(map[string]interface{})
 	attrs.ForEach(func(key, value gjson.Result) bool {
 		keyStr := key.String()
-		
+
 		// Skip indexed file keys
 		if keyStr == "files.#" || keyStr == "files.%" {
 			return true // skip
 		}
-		
+
 		// Skip individual file fields (files.0.name, files.0.content, etc.)
 		for i := int64(0); i < fileCount; i++ {
 			if keyStr == fmt.Sprintf("files.%d.name", i) ||
-			   keyStr == fmt.Sprintf("files.%d.content", i) ||
-			   keyStr == fmt.Sprintf("files.%d", i) {
+				keyStr == fmt.Sprintf("files.%d.content", i) ||
+				keyStr == fmt.Sprintf("files.%d", i) {
 				return true // skip
 			}
 		}
-		
+
 		// Keep everything else
 		attrsMap[keyStr] = value.Value()
 		return true
 	})
-	
+
 	// Set the cleaned attributes back
 	result, _ := sjson.Set(json, attrPath, attrsMap)
 	return result
@@ -1365,9 +1374,122 @@ func transformZeroTrustAccessGroupStateJSON(json, path string) string {
 						}
 					}
 
-					// Note: More complex transformations like azure->azure_ad, github->github_organization, etc.
-					// are not needed here since those are handled by the config transformation
-					// and the state will already have the correct structure from the API
+				// Complex transformations for nested objects
+				case "azure":
+					// Transform azure blocks -> azure_ad objects
+					if value.IsArray() {
+						for _, azureBlock := range value.Array() {
+							idArray := gjson.Get(azureBlock.Raw, "id")
+							identityProviderID := gjson.Get(azureBlock.Raw, "identity_provider_id")
+
+							if idArray.IsArray() {
+								for _, id := range idArray.Array() {
+									rule := map[string]interface{}{
+										"azure_ad": map[string]interface{}{
+											"id": id.String(),
+										},
+									}
+									if identityProviderID.Exists() {
+										rule["azure_ad"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "github":
+					// Transform github blocks -> github_organization objects
+					if value.IsArray() {
+						for _, githubBlock := range value.Array() {
+							name := gjson.Get(githubBlock.Raw, "name")
+							teamsArray := gjson.Get(githubBlock.Raw, "teams")
+							identityProviderID := gjson.Get(githubBlock.Raw, "identity_provider_id")
+
+							if teamsArray.IsArray() {
+								for _, team := range teamsArray.Array() {
+									rule := map[string]interface{}{
+										"github_organization": map[string]interface{}{
+											"team": team.String(),
+										},
+									}
+									if name.Exists() {
+										rule["github_organization"].(map[string]interface{})["name"] = name.String()
+									}
+									if identityProviderID.Exists() {
+										rule["github_organization"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "gsuite":
+					// Transform gsuite blocks
+					if value.IsArray() {
+						for _, gsuiteBlock := range value.Array() {
+							emailArray := gjson.Get(gsuiteBlock.Raw, "email")
+							identityProviderID := gjson.Get(gsuiteBlock.Raw, "identity_provider_id")
+
+							if emailArray.IsArray() {
+								for _, email := range emailArray.Array() {
+									rule := map[string]interface{}{
+										"gsuite": map[string]interface{}{
+											"email": email.String(),
+										},
+									}
+									if identityProviderID.Exists() {
+										rule["gsuite"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "okta":
+					// Transform okta blocks
+					if value.IsArray() {
+						for _, oktaBlock := range value.Array() {
+							nameArray := gjson.Get(oktaBlock.Raw, "name")
+							identityProviderID := gjson.Get(oktaBlock.Raw, "identity_provider_id")
+
+							if nameArray.IsArray() {
+								for _, name := range nameArray.Array() {
+									rule := map[string]interface{}{
+										"okta": map[string]interface{}{
+											"name": name.String(),
+										},
+									}
+									if identityProviderID.Exists() {
+										rule["okta"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "saml":
+					// Transform saml blocks (keep as-is but wrap properly)
+					if value.IsArray() {
+						for _, samlBlock := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"saml": samlBlock.Value(),
+							})
+						}
+					}
+
+				case "external_evaluation":
+					// Transform external_evaluation blocks (keep as-is but wrap properly)
+					if value.IsArray() {
+						for _, evalBlock := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"external_evaluation": evalBlock.Value(),
+							})
+						}
+					}
 				}
 
 				return true // continue iteration
@@ -1378,6 +1500,36 @@ func transformZeroTrustAccessGroupStateJSON(json, path string) string {
 		if len(newRules) > 0 {
 			json, _ = sjson.Set(json, rulesPath, newRules)
 		}
+	}
+
+	// Apply boolean field transformations to handle false values that need to be removed
+	// This handles the case where any_valid_service_token = false in state needs to be removed
+	ruleFields := []string{"include", "exclude", "require"}
+	for _, field := range ruleFields {
+		rules := gjson.Get(json, attrPath+"."+field)
+		if rules.IsArray() {
+			rules.ForEach(func(idx, rule gjson.Result) bool {
+				if rule.IsObject() {
+					rulePath := fmt.Sprintf("%s.%s.%d", attrPath, field, idx.Int())
+					json = transformRuleBooleans(json, rulePath)
+				}
+				return true
+			})
+		}
+	}
+
+	return json
+}
+
+// transformCustomPagesStateJSON handles v4 to v5 state migration for cloudflare_custom_pages
+func transformCustomPagesStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// Transform type -> identifier attribute rename
+	typeValue := gjson.Get(json, attrPath+".type")
+	if typeValue.Exists() {
+		json, _ = sjson.Set(json, attrPath+".identifier", typeValue.Value())
+		json, _ = sjson.Delete(json, attrPath+".type")
 	}
 
 	return json

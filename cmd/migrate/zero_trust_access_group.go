@@ -229,17 +229,25 @@ func expandRuleObjectInAccessGroup(obj *hclsyntax.ObjectConsExpr, diags ast.Diag
 
 		case "azure":
 			// Handle azure blocks -> rename to azure_ad and expand ID arrays
-			azureBlocks, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr)
-			if !ok {
+			// Can be either a single object or an array of objects after grit transformation
+			var azureObjects []hclsyntax.Expression
+			
+			if azureBlocks, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr); ok {
+				// Array format: azure = [{ ... }, { ... }]
+				azureObjects = azureBlocks.Exprs
+			} else if azureObj, ok := item.ValueExpr.(*hclsyntax.ObjectConsExpr); ok {
+				// Single object format: azure = { ... }
+				azureObjects = []hclsyntax.Expression{azureObj}
+			} else {
 				diags.HclDiagnostics.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagWarning,
-					Summary:  "Expected list for azure blocks",
-					Detail:   fmt.Sprintf("Expected TupleConsExpr but got %T", item.ValueExpr),
+					Summary:  "Expected object or list for azure blocks",
+					Detail:   fmt.Sprintf("Expected TupleConsExpr or ObjectConsExpr but got %T", item.ValueExpr),
 				})
 				continue
 			}
 
-			for _, azureBlockExpr := range azureBlocks.Exprs {
+			for _, azureBlockExpr := range azureObjects {
 				azureObj, ok := azureBlockExpr.(*hclsyntax.ObjectConsExpr)
 				if !ok {
 					diags.HclDiagnostics.Append(&hcl.Diagnostic{
@@ -282,17 +290,22 @@ func expandRuleObjectInAccessGroup(obj *hclsyntax.ObjectConsExpr, diags ast.Diag
 
 		case "github":
 			// Handle github blocks -> rename to github_organization and expand teams
-			githubBlocks, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr)
-			if !ok {
+			var githubObjects []hclsyntax.Expression
+			
+			if githubBlocks, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr); ok {
+				githubObjects = githubBlocks.Exprs
+			} else if githubObj, ok := item.ValueExpr.(*hclsyntax.ObjectConsExpr); ok {
+				githubObjects = []hclsyntax.Expression{githubObj}
+			} else {
 				diags.HclDiagnostics.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagWarning,
-					Summary:  "Expected list for github blocks",
-					Detail:   fmt.Sprintf("Expected TupleConsExpr but got %T", item.ValueExpr),
+					Summary:  "Expected object or list for github blocks",
+					Detail:   fmt.Sprintf("Expected TupleConsExpr or ObjectConsExpr but got %T", item.ValueExpr),
 				})
 				continue
 			}
 
-			for _, githubBlockExpr := range githubBlocks.Exprs {
+			for _, githubBlockExpr := range githubObjects {
 				githubObj, ok := githubBlockExpr.(*hclsyntax.ObjectConsExpr)
 				if !ok {
 					diags.HclDiagnostics.Append(&hcl.Diagnostic{
@@ -341,17 +354,22 @@ func expandRuleObjectInAccessGroup(obj *hclsyntax.ObjectConsExpr, diags ast.Diag
 
 		case "gsuite":
 			// Handle gsuite blocks -> expand email arrays
-			gsuiteBlocks, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr)
-			if !ok {
+			var gsuiteObjects []hclsyntax.Expression
+			
+			if gsuiteBlocks, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr); ok {
+				gsuiteObjects = gsuiteBlocks.Exprs
+			} else if gsuiteObj, ok := item.ValueExpr.(*hclsyntax.ObjectConsExpr); ok {
+				gsuiteObjects = []hclsyntax.Expression{gsuiteObj}
+			} else {
 				diags.HclDiagnostics.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagWarning,
-					Summary:  "Expected list for gsuite blocks",
-					Detail:   fmt.Sprintf("Expected TupleConsExpr but got %T", item.ValueExpr),
+					Summary:  "Expected object or list for gsuite blocks",
+					Detail:   fmt.Sprintf("Expected TupleConsExpr or ObjectConsExpr but got %T", item.ValueExpr),
 				})
 				continue
 			}
 
-			for _, gsuiteBlockExpr := range gsuiteBlocks.Exprs {
+			for _, gsuiteBlockExpr := range gsuiteObjects {
 				gsuiteObj, ok := gsuiteBlockExpr.(*hclsyntax.ObjectConsExpr)
 				if !ok {
 					diags.HclDiagnostics.Append(&hcl.Diagnostic{
@@ -394,17 +412,22 @@ func expandRuleObjectInAccessGroup(obj *hclsyntax.ObjectConsExpr, diags ast.Diag
 
 		case "okta":
 			// Handle okta blocks -> expand name arrays
-			oktaBlocks, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr)
-			if !ok {
+			var oktaObjects []hclsyntax.Expression
+			
+			if oktaBlocks, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr); ok {
+				oktaObjects = oktaBlocks.Exprs
+			} else if oktaObj, ok := item.ValueExpr.(*hclsyntax.ObjectConsExpr); ok {
+				oktaObjects = []hclsyntax.Expression{oktaObj}
+			} else {
 				diags.HclDiagnostics.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagWarning,
-					Summary:  "Expected list for okta blocks",
-					Detail:   fmt.Sprintf("Expected TupleConsExpr but got %T", item.ValueExpr),
+					Summary:  "Expected object or list for okta blocks",
+					Detail:   fmt.Sprintf("Expected TupleConsExpr or ObjectConsExpr but got %T", item.ValueExpr),
 				})
 				continue
 			}
 
-			for _, oktaBlockExpr := range oktaBlocks.Exprs {
+			for _, oktaBlockExpr := range oktaObjects {
 				oktaObj, ok := oktaBlockExpr.(*hclsyntax.ObjectConsExpr)
 				if !ok {
 					diags.HclDiagnostics.Append(&hcl.Diagnostic{

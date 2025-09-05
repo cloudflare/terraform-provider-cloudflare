@@ -366,6 +366,34 @@ func (r *ZeroTrustAccessMTLSCertificateResource) ImportState(ctx context.Context
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustAccessMTLSCertificateResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *ZeroTrustAccessMTLSCertificateResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	// Handle migration from v5.x where associated_hostnames might be nil in state
+	// but the schema default wants to set it to empty list
+	if req.State.Raw.IsNull() {
+		// This is a create operation, let the default apply
+		return
+	}
 
+	var state, plan *ZeroTrustAccessMTLSCertificateModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// If state has nil associated_hostnames and plan wants to set it to empty list,
+	// and it's not explicitly set in config, keep it as nil to avoid drift
+	if state != nil && plan != nil {
+		if state.AssociatedHostnames == nil && plan.AssociatedHostnames != nil && len(*plan.AssociatedHostnames) == 0 {
+			// Check if associated_hostnames is in the config
+			var configData *ZeroTrustAccessMTLSCertificateModel
+			resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
+			if !resp.Diagnostics.HasError() && configData != nil && configData.AssociatedHostnames == nil {
+				// Not in config, so keep it as nil to avoid drift
+				plan.AssociatedHostnames = nil
+				resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
+			}
+		}
+	}
 }
