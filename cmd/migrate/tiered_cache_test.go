@@ -78,7 +78,7 @@ resource "cloudflare_tiered_cache" "example" {
 			Name: "multiple resources including tiered_cache",
 			Config: `
 resource "cloudflare_zone" "example" {
-  zone = "example.com"
+  name = "example.com"
 }
 
 resource "cloudflare_tiered_cache" "example" {
@@ -512,7 +512,7 @@ func TestTieredCacheStateTransformation(t *testing.T) {
 						"instances": [
 							{
 								"attributes": {
-									"zone": "example.com",
+									"name": "example.com",
 									"id": "test-id"
 								}
 							}
@@ -528,7 +528,7 @@ func TestTieredCacheStateTransformation(t *testing.T) {
 						"instances": [
 							{
 								"attributes": {
-									"zone": "example.com",
+									"name": "example.com",
 									"id": "test-id"
 								}
 							}

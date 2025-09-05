@@ -252,6 +252,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			transformAccessApplicationBlock(block, diags)
 		}
 
+		if isZoneResource(block) {
+			transformZoneBlock(block, diags)
+		}
+
 		if isZeroTrustAccessIdentityProviderResource(block) {
 			transformZeroTrustAccessIdentityProviderBlock(block, diags)
 		}
