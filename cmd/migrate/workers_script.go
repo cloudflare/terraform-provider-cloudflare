@@ -183,14 +183,20 @@ func renameBindingAttributes(bindingMap map[string]interface{}, bindingType stri
 			delete(bindingMap, "database_id")
 		}
 	case "hyperdrive_config_binding":
-		// hyperdrive_config_binding: binding → name, id → binding_id
+		// hyperdrive_config_binding: binding → name (id stays the same)
 		if binding, exists := bindingMap["binding"]; exists {
 			bindingMap["name"] = binding
 			delete(bindingMap, "binding")
 		}
-		if id, exists := bindingMap["id"]; exists {
-			bindingMap["binding_id"] = id
-			delete(bindingMap, "id")
+	case "queue_binding":
+		// queue_binding: binding → name, queue → queue_name
+		if binding, exists := bindingMap["binding"]; exists {
+			bindingMap["name"] = binding
+			delete(bindingMap, "binding")
+		}
+		if queue, exists := bindingMap["queue"]; exists {
+			bindingMap["queue_name"] = queue
+			delete(bindingMap, "queue")
 		}
 	}
 }
@@ -233,7 +239,7 @@ func transformModuleInState(jsonStr string, path string) string {
 	// Note: In v5, main_module and body_part are optional and have intelligent defaults
 	// We don't need to set them explicitly unless the user had specific multipart requirements in v4
 	// The v5 provider will determine the appropriate syntax based on the content
-	// 
+	//
 	// For now, we just remove the module attribute and let v5 provider handle defaults
 
 	// Remove the original module attribute
@@ -345,12 +351,17 @@ func renameBindingAttribute(attrName, bindingType string) string {
 			return "id"
 		}
 	case "hyperdrive":
-		// hyperdrive binding: binding → name, id → binding_id
+		// hyperdrive binding: binding → name (id stays the same)
 		if attrName == "binding" {
 			return "name"
 		}
-		if attrName == "id" {
-			return "binding_id"
+	case "queue":
+		// queue binding: binding → name, queue → queue_name
+		if attrName == "binding" {
+			return "name"
+		}
+		if attrName == "queue" {
+			return "queue_name"
 		}
 	}
 	return attrName
@@ -410,7 +421,7 @@ func transformModule(block *hclwrite.Block, diags ast.Diagnostics) {
 	// Note: In v5, main_module and body_part are optional and have intelligent defaults
 	// We don't need to set them explicitly unless the user had specific multipart requirements in v4
 	// The v5 provider will determine the appropriate syntax based on the content
-	// 
+	//
 	// For now, we just remove the module attribute and let v5 provider handle defaults
 
 	// Remove the original module attribute
