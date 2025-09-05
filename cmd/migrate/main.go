@@ -291,6 +291,9 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			// Process DNS record to fix CAA flags
 			ProcessDNSRecordConfig(file)
 		}
+		if isSpectrumApplicationResource(block) {
+			transformSpectrumApplicationBlock(block, diags)
+		}
 	}
 
 	// Remove old blocks
