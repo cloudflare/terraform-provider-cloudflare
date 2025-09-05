@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -83,6 +84,19 @@ func (d *ListDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 	data = &env.Result
+
+	itemsSet, diags := getAllListItems[ListItemDataSourceModel](ctx, d.client, data.AccountID.ValueString(), data.ListID.ValueString(), data.Search.ValueString())
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	var items customfield.NestedObjectSet[ListItemDataSourceModel]
+
+	items, diags = customfield.NewObjectSet[ListItemDataSourceModel](ctx, itemsSet)
+	resp.Diagnostics.Append(diags...)
+
+	data.Items = items
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
