@@ -131,6 +131,32 @@ func TestAccCloudflareSpectrumApplication_OriginDNS(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareSpectrumApplication_PortRange(t *testing.T) {
+	var spectrumApp cloudflare.SpectrumApplication
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_spectrum_application." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareSpectrumApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigOriginPortRange(zoneID, domain, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "protocol", "tcp/8080-8081"),
+					resource.TestCheckResourceAttr(name, "origin_dns.name", fmt.Sprintf("%s.origin.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "origin_port", "8080-8081"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	var initialID string

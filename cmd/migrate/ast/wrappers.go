@@ -44,6 +44,11 @@ func (b Block) Attributes(diags Diagnostics) map[string]*hclsyntax.Expression {
 }
 
 func (b Block) SetAttribute(key string, val hclsyntax.Expression, diags Diagnostics) {
+	if val == nil {
+		// If expression is nil, remove the attribute instead of setting it
+		b.RemoveAttribute(key, diags)
+		return
+	}
 	e := Expr2WriteExpr(val, diags)
 	eTokens := e.BuildTokens(nil)
 	b.Body().SetAttributeRaw(key, eTokens)
@@ -58,6 +63,11 @@ func (o Object) Attributes(diags Diagnostics) map[string]*hclsyntax.Expression {
 }
 
 func (o Object) SetAttribute(key string, val hclsyntax.Expression, diags Diagnostics) {
+	if val == nil {
+		// If expression is nil, remove the attribute instead of setting it
+		o.RemoveAttribute(key, diags)
+		return
+	}
 	if o.attrs[key] == nil {
 		// object doesn't have this attribute yet, create it & add to map
 		attr := hclsyntax.ObjectConsItem{

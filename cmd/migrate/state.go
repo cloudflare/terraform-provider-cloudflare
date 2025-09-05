@@ -82,7 +82,13 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			// Rename cloudflare_access_identity_provider to cloudflare_zero_trust_access_identity_provider
 			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_identity_provider")
 			resourceType = "cloudflare_zero_trust_access_identity_provider"
-    }
+		}
+
+		if resourceType == "cloudflare_access_mutual_tls_certificate" {
+			// Rename to cloudflare_zero_trust_access_mtls_certificate
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_zero_trust_access_mtls_certificate")
+			resourceType = "cloudflare_zero_trust_access_mtls_certificate"
+		}
 
 		if resourceType == "cloudflare_access_application" {
 			// Rename cloudflare_access_application to cloudflare_zero_trust_access_application
@@ -131,6 +137,12 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_zero_trust_access_group", "cloudflare_access_group":
 				result = transformZeroTrustAccessGroupStateJSON(result, path)
+
+			case "cloudflare_custom_pages":
+				result = transformCustomPagesStateJSON(result, path)
+
+			case "cloudflare_spectrum_application":
+				result = transformSpectrumApplicationStateJSON(result, path)
 			}
 
 			return true
@@ -144,6 +156,101 @@ func transformStateJSON(data []byte) ([]byte, error) {
 		Indent:   "  ",
 		SortKeys: false,
 	}), nil
+}
+
+// transformSpectrumApplicationStateJSON handles v4 to v5 state migration for cloudflare_spectrum_application
+func transformSpectrumApplicationStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// 1. Transform dns from array to object (v4: dns=[{...}], v5: dns={...})
+	dns := gjson.Get(json, attrPath+".dns")
+	if dns.IsArray() {
+		if len(dns.Array()) == 0 {
+			json, _ = sjson.Delete(json, attrPath+".dns")
+		} else {
+			// Take first item from array and make it the object
+			json, _ = sjson.Set(json, attrPath+".dns", dns.Array()[0].Value())
+		}
+	}
+
+	// 2. Transform edge_ips from array to object (v4: edge_ips=[{...}], v5: edge_ips={...})
+	edgeIps := gjson.Get(json, attrPath+".edge_ips")
+	if edgeIps.IsArray() {
+		if len(edgeIps.Array()) == 0 {
+			json, _ = sjson.Delete(json, attrPath+".edge_ips")
+		} else {
+			// Take first item from array and make it the object
+			json, _ = sjson.Set(json, attrPath+".edge_ips", edgeIps.Array()[0].Value())
+		}
+	}
+
+	// 3. Transform origin_dns from array to object (v4: origin_dns=[{...}], v5: origin_dns={...})
+	originDns := gjson.Get(json, attrPath+".origin_dns")
+	if originDns.IsArray() {
+		if len(originDns.Array()) == 0 {
+			json, _ = sjson.Delete(json, attrPath+".origin_dns")
+		} else {
+			// Take first item from array and make it the object
+			json, _ = sjson.Set(json, attrPath+".origin_dns", originDns.Array()[0].Value())
+		}
+	}
+
+	// 4. Handle origin_port_range conversion (v4: origin_port_range=[{start:X, end:Y}], v5: origin_port="X-Y")
+	originPortRange := gjson.Get(json, attrPath+".origin_port_range")
+	if originPortRange.IsArray() && len(originPortRange.Array()) > 0 {
+		firstRange := originPortRange.Array()[0]
+		start := firstRange.Get("start")
+		end := firstRange.Get("end")
+
+		if start.Exists() && end.Exists() {
+			// Convert to string format: "start-end" and wrap for NormalizedDynamicType
+			rangeStr := fmt.Sprintf("%d-%d", start.Int(), end.Int())
+			wrappedValue := map[string]interface{}{
+				"value": rangeStr,
+				"type":  "string",
+			}
+			json, _ = sjson.Set(json, attrPath+".origin_port", wrappedValue)
+		}
+
+		// Remove the origin_port_range attribute
+		json, _ = sjson.Delete(json, attrPath+".origin_port_range")
+	}
+
+	// 5. Handle origin_port conversion for NormalizedDynamicType
+	// V4 stored origin_port as raw values, V5 uses NormalizedDynamicType which requires
+	// wrapping in {"value": <val>, "type": <type>} format
+	originPort := gjson.Get(json, attrPath+".origin_port")
+	if originPort.Exists() {
+		// Check if it's already in the NormalizedDynamicType format
+		if !originPort.IsObject() || !gjson.Get(json, attrPath+".origin_port.value").Exists() {
+			var wrappedValue map[string]interface{}
+
+			switch originPort.Type {
+			case gjson.Number:
+				// Integer port value - wrap as number type
+				wrappedValue = map[string]interface{}{
+					"value": originPort.Int(),
+					"type":  "number",
+				}
+			case gjson.String:
+				// String port range - wrap as string type
+				wrappedValue = map[string]interface{}{
+					"value": originPort.String(),
+					"type":  "string",
+				}
+			default:
+				// Fallback - wrap as string
+				wrappedValue = map[string]interface{}{
+					"value": originPort.String(),
+					"type":  "string",
+				}
+			}
+
+			json, _ = sjson.Set(json, attrPath+".origin_port", wrappedValue)
+		}
+	}
+
+	return json
 }
 
 // transformLoadBalancerPoolStateJSON handles v4 to v5 state migration for cloudflare_load_balancer_pool
@@ -1052,9 +1159,122 @@ func transformZeroTrustAccessGroupStateJSON(json, path string) string {
 						}
 					}
 
-					// Note: More complex transformations like azure->azure_ad, github->github_organization, etc.
-					// are not needed here since those are handled by the config transformation
-					// and the state will already have the correct structure from the API
+				// Complex transformations for nested objects
+				case "azure":
+					// Transform azure blocks -> azure_ad objects
+					if value.IsArray() {
+						for _, azureBlock := range value.Array() {
+							idArray := gjson.Get(azureBlock.Raw, "id")
+							identityProviderID := gjson.Get(azureBlock.Raw, "identity_provider_id")
+
+							if idArray.IsArray() {
+								for _, id := range idArray.Array() {
+									rule := map[string]interface{}{
+										"azure_ad": map[string]interface{}{
+											"id": id.String(),
+										},
+									}
+									if identityProviderID.Exists() {
+										rule["azure_ad"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "github":
+					// Transform github blocks -> github_organization objects
+					if value.IsArray() {
+						for _, githubBlock := range value.Array() {
+							name := gjson.Get(githubBlock.Raw, "name")
+							teamsArray := gjson.Get(githubBlock.Raw, "teams")
+							identityProviderID := gjson.Get(githubBlock.Raw, "identity_provider_id")
+
+							if teamsArray.IsArray() {
+								for _, team := range teamsArray.Array() {
+									rule := map[string]interface{}{
+										"github_organization": map[string]interface{}{
+											"team": team.String(),
+										},
+									}
+									if name.Exists() {
+										rule["github_organization"].(map[string]interface{})["name"] = name.String()
+									}
+									if identityProviderID.Exists() {
+										rule["github_organization"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "gsuite":
+					// Transform gsuite blocks
+					if value.IsArray() {
+						for _, gsuiteBlock := range value.Array() {
+							emailArray := gjson.Get(gsuiteBlock.Raw, "email")
+							identityProviderID := gjson.Get(gsuiteBlock.Raw, "identity_provider_id")
+
+							if emailArray.IsArray() {
+								for _, email := range emailArray.Array() {
+									rule := map[string]interface{}{
+										"gsuite": map[string]interface{}{
+											"email": email.String(),
+										},
+									}
+									if identityProviderID.Exists() {
+										rule["gsuite"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "okta":
+					// Transform okta blocks
+					if value.IsArray() {
+						for _, oktaBlock := range value.Array() {
+							nameArray := gjson.Get(oktaBlock.Raw, "name")
+							identityProviderID := gjson.Get(oktaBlock.Raw, "identity_provider_id")
+
+							if nameArray.IsArray() {
+								for _, name := range nameArray.Array() {
+									rule := map[string]interface{}{
+										"okta": map[string]interface{}{
+											"name": name.String(),
+										},
+									}
+									if identityProviderID.Exists() {
+										rule["okta"].(map[string]interface{})["identity_provider_id"] = identityProviderID.String()
+									}
+									newRules = append(newRules, rule)
+								}
+							}
+						}
+					}
+
+				case "saml":
+					// Transform saml blocks (keep as-is but wrap properly)
+					if value.IsArray() {
+						for _, samlBlock := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"saml": samlBlock.Value(),
+							})
+						}
+					}
+
+				case "external_evaluation":
+					// Transform external_evaluation blocks (keep as-is but wrap properly)
+					if value.IsArray() {
+						for _, evalBlock := range value.Array() {
+							newRules = append(newRules, map[string]interface{}{
+								"external_evaluation": evalBlock.Value(),
+							})
+						}
+					}
 				}
 
 				return true // continue iteration
@@ -1065,6 +1285,36 @@ func transformZeroTrustAccessGroupStateJSON(json, path string) string {
 		if len(newRules) > 0 {
 			json, _ = sjson.Set(json, rulesPath, newRules)
 		}
+	}
+
+	// Apply boolean field transformations to handle false values that need to be removed
+	// This handles the case where any_valid_service_token = false in state needs to be removed
+	ruleFields := []string{"include", "exclude", "require"}
+	for _, field := range ruleFields {
+		rules := gjson.Get(json, attrPath+"."+field)
+		if rules.IsArray() {
+			rules.ForEach(func(idx, rule gjson.Result) bool {
+				if rule.IsObject() {
+					rulePath := fmt.Sprintf("%s.%s.%d", attrPath, field, idx.Int())
+					json = transformRuleBooleans(json, rulePath)
+				}
+				return true
+			})
+		}
+	}
+
+	return json
+}
+
+// transformCustomPagesStateJSON handles v4 to v5 state migration for cloudflare_custom_pages
+func transformCustomPagesStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// Transform type -> identifier attribute rename
+	typeValue := gjson.Get(json, attrPath+".type")
+	if typeValue.Exists() {
+		json, _ = sjson.Set(json, attrPath+".identifier", typeValue.Value())
+		json, _ = sjson.Delete(json, attrPath+".type")
 	}
 
 	return json

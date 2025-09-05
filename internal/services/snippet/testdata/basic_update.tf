@@ -5,12 +5,12 @@ resource "cloudflare_snippet" "%[1]s" {
     {
       name    = "main.js"
       content = <<-EOT
-      export default {
-        async fetch(request) {
-          return new Response('Hello, World!');
-        }
-      }
-      EOT
+export default {
+  async fetch(request) {
+    return new Response('Hello, World!');
+  }
+}
+EOT
     }
   ]
   metadata = {

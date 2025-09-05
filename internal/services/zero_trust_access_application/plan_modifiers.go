@@ -144,42 +144,5 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 		modifyNestedPoliciesPlan(ctx, planApp)
 	}
 
-	// Handle tags order normalization - API returns alphabetically sorted tags
-	// but we want to preserve the user's configuration order
-	if !planApp.Tags.IsNull() && !planApp.Tags.IsUnknown() && configApp != nil && !configApp.Tags.IsNull() {
-		if stateApp != nil && !stateApp.Tags.IsNull() {
-			// Update scenario: preserve state order if same elements
-			normalizeTagsOrder(ctx, &planApp.Tags, stateApp.Tags)
-		} else {
-			// Create scenario: preserve config order
-			normalizeTagsOrder(ctx, &planApp.Tags, configApp.Tags)
-		}
-	}
-
 	res.Plan.Set(ctx, &planApp)
-}
-
-func normalizeTagsOrder(ctx context.Context, planTags *customfield.Set[types.String], stateTags customfield.Set[types.String]) {
-	var stateStrings, planStrings []string
-
-	for _, elem := range stateTags.Elements() {
-		if str, ok := elem.(types.String); ok && !str.IsNull() && !str.IsUnknown() {
-			stateStrings = append(stateStrings, str.ValueString())
-		}
-	}
-
-	for _, elem := range planTags.Elements() {
-		if str, ok := elem.(types.String); ok && !str.IsNull() && !str.IsUnknown() {
-			planStrings = append(planStrings, str.ValueString())
-		}
-	}
-
-	// For Sets, order doesn't matter, so we just check if they contain the same elements
-	if len(stateStrings) == len(planStrings) {
-		slices.Sort(stateStrings)
-		slices.Sort(planStrings)
-		if slices.Equal(stateStrings, planStrings) {
-			*planTags = stateTags
-		}
-	}
 }
