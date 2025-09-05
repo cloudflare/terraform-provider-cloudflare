@@ -1,3 +1,11 @@
+## 4.52.2 (September 5th, 2025)
+
+ENHANCEMENTS:
+
+* internal/sdkv2provider/schema_cloudflare_access_service_tokens.go: Add graceful rotation support for client secrets
+* internal/sdkv2provider/resource_cloudflare_access_service_tokens_test.go: Add graceful rotation support for client secrets
+* internal/sdkv2provider/resource_cloudflare_access_service_tokens.go: Add graceful rotation support for client secrets
+
 ## 4.52.1 (July 22th, 2025)
 
 ENHANCEMENTS:
