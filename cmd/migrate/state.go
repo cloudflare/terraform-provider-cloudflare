@@ -131,6 +131,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			case "cloudflare_zero_trust_access_policy":
 				result = transformZeroTrustAccessPolicyStateJSON(result, path)
 
+			case "cloudflare_zone":
+				result = transformZoneInstanceStateJSON(result, path)
+
 			case "cloudflare_managed_transforms":
 				result = transformManagedTransformsStateJSON(result, path)
 
