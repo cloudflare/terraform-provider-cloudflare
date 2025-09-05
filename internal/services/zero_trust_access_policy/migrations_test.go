@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-// TestAccZeroTrustAccessPolicyMigrationFromV4Basic tests basic migration from v4 to v5
+// TestMigrateZeroTrustAccessPolicyMigrationFromV4Basic tests basic migration from v4 to v5
 func TestMigrateZeroTrustAccessPolicyMigrationFromV4Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
@@ -76,7 +76,7 @@ resource "cloudflare_access_policy" "%[1]s" {
 	})
 }
 
-// TestAccZeroTrustAccessPolicyMigrationFromV4Complex tests migration with complex conditions
+// TestMigrateZeroTrustAccessPolicyMigrationFromV4Complex tests migration with complex conditions
 func TestMigrateZeroTrustAccessPolicyMigrationFromV4Complex(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -157,7 +157,7 @@ resource "cloudflare_access_policy" "%[1]s" {
 	})
 }
 
-// TestAccZeroTrustAccessPolicyMigrationFromV4OAuthProviders tests array explosion and attribute transformations
+// TestMigrateZeroTrustAccessPolicyMigrationFromV4OAuthProviders tests array explosion and attribute transformations
 func TestMigrateZeroTrustAccessPolicyMigrationFromV4OAuthProviders(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -213,7 +213,7 @@ resource "cloudflare_access_policy" "%[1]s" {
 	})
 }
 
-// TestAccZeroTrustAccessPolicyMigrationFromV4DecisionTypes tests all decision types
+// TestMigrateZeroTrustAccessPolicyMigrationFromV4DecisionTypes tests all decision types
 func TestMigrateZeroTrustAccessPolicyMigrationFromV4DecisionTypes(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -276,7 +276,7 @@ resource "cloudflare_access_policy" "%[1]s" {
 	}
 }
 
-// TestAccZeroTrustAccessPolicyMigrationFromV4OptionalBooleans tests boolean to object transformations
+// TestMigrateZeroTrustAccessPolicyMigrationFromV4OptionalBooleans tests boolean to object transformations
 func TestMigrateZeroTrustAccessPolicyMigrationFromV4OptionalBooleans(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -339,7 +339,7 @@ resource "cloudflare_access_policy" "%[1]s" {
 	}
 }
 
-// TestAccZeroTrustAccessPolicyMigrationFromV4BasicMigration tests basic v4 to v5 migration functionality
+// TestMigrateZeroTrustAccessPolicyMigrationFromV4BasicMigration tests basic v4 to v5 migration functionality
 func TestMigrateZeroTrustAccessPolicyMigrationFromV4UnsupportedFeatures(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -397,7 +397,7 @@ resource "cloudflare_access_policy" "%[1]s" {
 	})
 }
 
-// TestAccZeroTrustAccessPolicyMigrationFromV4ServiceTokens tests service token transformations
+// TestMigrateZeroTrustAccessPolicyMigrationFromV4ServiceTokens tests service token transformations
 func TestMigrateZeroTrustAccessPolicyMigrationFromV4ServiceTokens(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
