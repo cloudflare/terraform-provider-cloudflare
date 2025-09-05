@@ -18,7 +18,7 @@ type ZeroTrustDLPIntegrationEntryModel struct {
 	ID            types.String                                                          `tfsdk:"id" json:"id,computed"`
 	AccountID     types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
 	EntryID       types.String                                                          `tfsdk:"entry_id" json:"entry_id,required,no_refresh"`
-	ProfileID     types.String                                                          `tfsdk:"profile_id" json:"profile_id,optional"`
+	ProfileID     types.String                                                          `tfsdk:"profile_id" json:"profile_id,computed_optional"`
 	Enabled       types.Bool                                                            `tfsdk:"enabled" json:"enabled,required"`
 	CaseSensitive types.Bool                                                            `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	CreatedAt     timetypes.RFC3339                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

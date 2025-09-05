@@ -1,4 +1,4 @@
-package zero_trust_dlp_custom_entry_test
+package zero_trust_dlp_predefined_profile_test
 
 import (
 	"os"
@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareZeroTrustDlpCustomEntry_Basic(t *testing.T) {
+func TestAccCloudflareZeroTrustDlpPredefinedProfile_Basic(t *testing.T) {
 	// Generate a random resource name to avoid conflicts during testing
 	rnd := utils.GenerateRandomResourceName()
 	// Define the full resource name for checks
-	resourceName := "cloudflare_zero_trust_dlp_custom_entry." + rnd
+	resourceName := "cloudflare_zero_trust_dlp_predefined_profile." + rnd
 
 	// Retrieve Cloudflare Account ID from environment variables
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -26,26 +26,26 @@ func TestAccCloudflareZeroTrustDlpCustomEntry_Basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				// Step 1: Create the resource with 'enabled' set to true
-				Config: testAccZeroTrustDlpCustomEntryConfig(rnd, accountID, "true"),
+				Config: testAccZeroTrustDlpPredefinedProfileConfig(rnd, accountID, "true"),
 				// Check function to verify the resource attributes after creation
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
-					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ocr_enabled", "true"),
 				),
 			},
 			{
 				// Step 2: Update the resource, changing 'enabled' to false
-				Config: testAccZeroTrustDlpCustomEntryConfig(rnd, accountID, "false"),
+				Config: testAccZeroTrustDlpPredefinedProfileConfig(rnd, accountID, "false"),
 				// Check function to verify the resource attributes after update
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
-					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ocr_enabled", "false"),
 				),
 			},
 		},
 	})
 }
 
-func testAccZeroTrustDlpCustomEntryConfig(rnd, accountID, enabled string) string {
+func testAccZeroTrustDlpPredefinedProfileConfig(rnd, accountID, enabled string) string {
 	return acctest.LoadTestCase("basic.tf", rnd, accountID, enabled)
 }
