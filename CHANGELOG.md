@@ -1,3 +1,9 @@
+## 4.52.3 (September 8th, 2025)
+
+BUG FIXES:
+
+* internal/sdkv2provider/schema_cloudflare_access_service_tokens.go: Mark access_service_token.client_secret as computed when client_secret_version changes
+
 ## 4.52.2 (September 5th, 2025)
 
 ENHANCEMENTS:
