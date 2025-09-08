@@ -1,0 +1,3 @@
+```release-note:bug
+internal/sdkv2provider/schema_cloudflare_access_service_tokens.go: Remove ForceNew from client_id and client_secret
+```

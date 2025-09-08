@@ -30,14 +30,12 @@ func resourceCloudflareAccessServiceTokenSchema() map[string]*schema.Schema {
 		"client_id": {
 			Type:        schema.TypeString,
 			Computed:    true,
-			ForceNew:    true,
 			Description: "Client ID associated with the Service Token.",
 		},
 		"client_secret": {
 			Type:        schema.TypeString,
 			Computed:    true,
 			Sensitive:   true,
-			ForceNew:    true,
 			Description: "A secret for interacting with Access protocols.",
 		},
 		"expires_at": {
