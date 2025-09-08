@@ -96,6 +96,18 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			resourceType = "cloudflare_zero_trust_access_application"
 		}
 
+		if resourceType == "cloudflare_worker_script" {
+			// Rename cloudflare_worker_script to cloudflare_workers_script
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_workers_script")
+			resourceType = "cloudflare_workers_script"
+		}
+
+		if resourceType == "cloudflare_worker_route" {
+			// Rename cloudflare_worker_route to cloudflare_workers_route
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_workers_route")
+			resourceType = "cloudflare_workers_route"
+		}
+
 		// Process each instance
 		instances := resource.Get("instances")
 		instances.ForEach(func(iidx, instance gjson.Result) bool {
@@ -118,6 +130,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_zero_trust_access_policy":
 				result = transformZeroTrustAccessPolicyStateJSON(result, path)
+
+			case "cloudflare_zone":
+				result = transformZoneInstanceStateJSON(result, path)
 
 			case "cloudflare_managed_transforms":
 				result = transformManagedTransformsStateJSON(result, path)
@@ -146,6 +161,24 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_custom_pages":
 				result = transformCustomPagesStateJSON(result, path)
+
+			case "cloudflare_spectrum_application":
+				result = transformSpectrumApplicationStateJSON(result, path)
+
+			case "cloudflare_workers_route", "cloudflare_worker_route":
+				result = transformWorkersRouteStateJSON(result, path)
+
+			case "cloudflare_workers_script", "cloudflare_worker_script":
+				result = transformWorkersScriptStateJSON(result, path)
+
+			case "cloudflare_workers_cron_trigger", "cloudflare_worker_cron_trigger":
+				result = transformWorkersCronTriggerStateJSON(result, path)
+
+			case "cloudflare_workers_custom_domain", "cloudflare_worker_domain":
+				result = transformWorkersDomainStateJSON(result, path)
+
+			case "cloudflare_workers_secret", "cloudflare_worker_secret":
+				result = transformWorkersSecretStateJSON(result, path)
 			}
 
 			return true
@@ -153,6 +186,10 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 		return true
 	})
+
+	// Perform cross-resource state migration for workers_secret -> workers_script bindings
+	// This must happen after all individual resource state transformations
+	result = migrateWorkersSecretsInState(result)
 
 	// Pretty format with proper indentation
 	return pretty.PrettyOptions([]byte(result), &pretty.Options{
@@ -466,6 +503,101 @@ func cleanupIndexedFileKeys(json string, attrPath string, fileCount int64) strin
 	// Set the cleaned attributes back
 	result, _ := sjson.Set(json, attrPath, attrsMap)
 	return result
+}
+
+// transformSpectrumApplicationStateJSON handles v4 to v5 state migration for cloudflare_spectrum_application
+func transformSpectrumApplicationStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+
+	// 1. Transform dns from array to object (v4: dns=[{...}], v5: dns={...})
+	dns := gjson.Get(json, attrPath+".dns")
+	if dns.IsArray() {
+		if len(dns.Array()) == 0 {
+			json, _ = sjson.Delete(json, attrPath+".dns")
+		} else {
+			// Take first item from array and make it the object
+			json, _ = sjson.Set(json, attrPath+".dns", dns.Array()[0].Value())
+		}
+	}
+
+	// 2. Transform edge_ips from array to object (v4: edge_ips=[{...}], v5: edge_ips={...})
+	edgeIps := gjson.Get(json, attrPath+".edge_ips")
+	if edgeIps.IsArray() {
+		if len(edgeIps.Array()) == 0 {
+			json, _ = sjson.Delete(json, attrPath+".edge_ips")
+		} else {
+			// Take first item from array and make it the object
+			json, _ = sjson.Set(json, attrPath+".edge_ips", edgeIps.Array()[0].Value())
+		}
+	}
+
+	// 3. Transform origin_dns from array to object (v4: origin_dns=[{...}], v5: origin_dns={...})
+	originDns := gjson.Get(json, attrPath+".origin_dns")
+	if originDns.IsArray() {
+		if len(originDns.Array()) == 0 {
+			json, _ = sjson.Delete(json, attrPath+".origin_dns")
+		} else {
+			// Take first item from array and make it the object
+			json, _ = sjson.Set(json, attrPath+".origin_dns", originDns.Array()[0].Value())
+		}
+	}
+
+	// 4. Handle origin_port_range conversion (v4: origin_port_range=[{start:X, end:Y}], v5: origin_port="X-Y")
+	originPortRange := gjson.Get(json, attrPath+".origin_port_range")
+	if originPortRange.IsArray() && len(originPortRange.Array()) > 0 {
+		firstRange := originPortRange.Array()[0]
+		start := firstRange.Get("start")
+		end := firstRange.Get("end")
+
+		if start.Exists() && end.Exists() {
+			// Convert to string format: "start-end" and wrap for NormalizedDynamicType
+			rangeStr := fmt.Sprintf("%d-%d", start.Int(), end.Int())
+			wrappedValue := map[string]interface{}{
+				"value": rangeStr,
+				"type":  "string",
+			}
+			json, _ = sjson.Set(json, attrPath+".origin_port", wrappedValue)
+		}
+
+		// Remove the origin_port_range attribute
+		json, _ = sjson.Delete(json, attrPath+".origin_port_range")
+	}
+
+	// 5. Handle origin_port conversion for NormalizedDynamicType
+	// V4 stored origin_port as raw values, V5 uses NormalizedDynamicType which requires
+	// wrapping in {"value": <val>, "type": <type>} format
+	originPort := gjson.Get(json, attrPath+".origin_port")
+	if originPort.Exists() {
+		// Check if it's already in the NormalizedDynamicType format
+		if !originPort.IsObject() || !gjson.Get(json, attrPath+".origin_port.value").Exists() {
+			var wrappedValue map[string]interface{}
+
+			switch originPort.Type {
+			case gjson.Number:
+				// Integer port value - wrap as number type
+				wrappedValue = map[string]interface{}{
+					"value": originPort.Int(),
+					"type":  "number",
+				}
+			case gjson.String:
+				// String port range - wrap as string type
+				wrappedValue = map[string]interface{}{
+					"value": originPort.String(),
+					"type":  "string",
+				}
+			default:
+				// Fallback - wrap as string
+				wrappedValue = map[string]interface{}{
+					"value": originPort.String(),
+					"type":  "string",
+				}
+			}
+
+			json, _ = sjson.Set(json, attrPath+".origin_port", wrappedValue)
+		}
+	}
+
+	return json
 }
 
 // transformLoadBalancerPoolStateJSON handles v4 to v5 state migration for cloudflare_load_balancer_pool
