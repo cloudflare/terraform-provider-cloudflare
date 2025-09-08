@@ -258,6 +258,10 @@ func transformStateJSON(data []byte) ([]byte, error) {
 	// This must happen after all individual resource state transformations
 	result = migrateWorkersSecretsInState(result)
 
+	// Perform cross-resource state migration for cloudflare_list_item -> cloudflare_list items
+	// This must happen after all individual resource state transformations
+	result = migrateListItemsInState(result)
+
 	// Pretty format with proper indentation
 	return pretty.PrettyOptions([]byte(result), &pretty.Options{
 		Indent:   "  ",
@@ -1841,9 +1845,13 @@ func transformCloudflareListStateJSON(json string, instancePath string) string {
 	if len(transformedItems) > 0 {
 		json, _ = sjson.Delete(json, attrPath+".item")
 		json, _ = sjson.Set(json, attrPath+".items", transformedItems)
+		// Set num_items to match the count of items
+		json, _ = sjson.Set(json, attrPath+".num_items", float64(len(transformedItems)))
 	} else {
 		// Remove empty item array
 		json, _ = sjson.Delete(json, attrPath+".item")
+		// Set num_items to 0 for empty lists
+		json, _ = sjson.Set(json, attrPath+".num_items", float64(0))
 	}
 
 	return json
