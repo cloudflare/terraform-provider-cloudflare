@@ -299,6 +299,14 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			ProcessDNSRecordConfig(file)
 		}
 
+		if isSnippetResource(block) {
+			transformSnippetBlock(block, diags)
+		}
+
+		if isSnippetRulesResource(block) {
+			transformSnippetRulesBlock(block, diags)
+		}
+
 		if isSpectrumApplicationResource(block) {
 			transformSpectrumApplicationBlock(block, diags)
 		}

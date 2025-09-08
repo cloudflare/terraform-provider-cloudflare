@@ -153,6 +153,12 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			case "cloudflare_zero_trust_access_group", "cloudflare_access_group":
 				result = transformZeroTrustAccessGroupStateJSON(result, path)
 
+			case "cloudflare_snippet":
+				result = transformSnippetStateJSON(result, path)
+
+			case "cloudflare_snippet_rules":
+				result = transformSnippetRulesStateJSON(result, path)
+
 			case "cloudflare_custom_pages":
 				result = transformCustomPagesStateJSON(result, path)
 
@@ -190,6 +196,313 @@ func transformStateJSON(data []byte) ([]byte, error) {
 		Indent:   "  ",
 		SortKeys: false,
 	}), nil
+}
+
+// transformSnippetStateJSON handles v4 to v5 state migration for cloudflare_snippet
+// This function replicates the logic from the StateUpgrader in migrations.go
+func transformSnippetStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+	result := json
+
+	// Set schema_version to 0 to trigger state upgrade in v5 provider
+	// The StateUpgrader will handle final processing but we do most transformation here
+	result, _ = sjson.Set(result, instancePath+".schema_version", 0)
+
+	// Handle name transformation (v4: name, v5: snippet_name)
+	snippetName := gjson.Get(json, attrPath+".snippet_name")
+	if snippetName.Exists() {
+		// Already in v5 format, keep as-is
+		result, _ = sjson.Set(result, attrPath+".snippet_name", snippetName.Value())
+	} else if name := gjson.Get(json, attrPath+".name"); name.Exists() {
+		// v4 format - rename to snippet_name
+		result, _ = sjson.Set(result, attrPath+".snippet_name", name.Value())
+		result, _ = sjson.Delete(result, attrPath+".name")
+	}
+
+	// Handle metadata transformation
+	metadata := gjson.Get(json, attrPath+".metadata")
+	if metadata.Exists() && metadata.IsObject() {
+		// v5 format - metadata is already an object, keep as-is
+		// The StateUpgrader will handle this properly
+	} else if mainModule := gjson.Get(json, attrPath+".main_module"); mainModule.Exists() {
+		// v4 format - main_module is top-level, move to metadata
+		metadataObj := map[string]interface{}{
+			"main_module": mainModule.String(),
+		}
+		result, _ = sjson.Set(result, attrPath+".metadata", metadataObj)
+		result, _ = sjson.Delete(result, attrPath+".main_module")
+	}
+
+	// Handle files transformation
+	// First check if files exist as an array in the original JSON
+	files := gjson.Get(json, attrPath+".files")
+
+	if files.Exists() && files.IsArray() {
+		// Already in v5 array format (from previous migration or native v5)
+		// Keep as-is, the StateUpgrader will handle final processing
+		result, _ = sjson.Set(result, attrPath+".files", files.Value())
+	} else {
+		// Check for v4 indexed format (files.#, files.0.name, files.0.content, etc.)
+		// Look in the original json, not result, since we haven't transformed it yet
+		// Note: # is a special character in gjson, so we need to escape it
+		filesCount := gjson.Get(json, attrPath+`.files\.#`)
+
+		if filesCount.Exists() {
+			count := filesCount.Int()
+			if count > 0 {
+				// v4 stores files as indexed attributes
+				var filesList []map[string]interface{}
+
+				for i := int64(0); i < count; i++ {
+					fileMap := make(map[string]interface{})
+
+					// Get name from files.X.name (from original json)
+					// Need to escape dots in the path for gjson
+					nameKey := fmt.Sprintf(`%s.files\.%d\.name`, attrPath, i)
+					if nameVal := gjson.Get(json, nameKey); nameVal.Exists() {
+						fileMap["name"] = nameVal.String()
+					} else {
+						fileMap["name"] = ""
+					}
+
+					// Get content from files.X.content (from original json)
+					// Need to escape dots in the path for gjson
+					contentKey := fmt.Sprintf(`%s.files\.%d\.content`, attrPath, i)
+					if contentVal := gjson.Get(json, contentKey); contentVal.Exists() {
+						fileMap["content"] = contentVal.String()
+					} else {
+						fileMap["content"] = ""
+					}
+
+					filesList = append(filesList, fileMap)
+				}
+
+				// Now set files as an actual array
+				result, _ = sjson.Set(result, attrPath+".files", filesList)
+
+				// Clean up the indexed format by removing all the individual keys
+				// This ensures we don't have both array and indexed formats
+				// Since sjson.Delete doesn't handle keys with dots well, we need to
+				// parse and rewrite the entire attributes object
+				result = cleanupIndexedFileKeys(result, attrPath, count)
+			} else {
+				// files.# exists but is 0, set empty array
+				result, _ = sjson.Set(result, attrPath+".files", []interface{}{})
+				// Use the cleanup function to remove the indexed keys
+				result = cleanupIndexedFileKeys(result, attrPath, 0)
+			}
+		} else {
+			// No files found in any format, set empty array to match v5 schema
+			result, _ = sjson.Set(result, attrPath+".files", []interface{}{})
+		}
+	}
+
+	// Handle computed timestamps (these may or may not exist in v4)
+	// The StateUpgrader expects these as strings or missing
+	createdOn := gjson.Get(json, attrPath+".created_on")
+	if createdOn.Exists() && createdOn.String() != "" {
+		// Keep existing timestamp
+		result, _ = sjson.Set(result, attrPath+".created_on", createdOn.String())
+	}
+
+	modifiedOn := gjson.Get(json, attrPath+".modified_on")
+	if modifiedOn.Exists() && modifiedOn.String() != "" {
+		// Keep existing timestamp
+		result, _ = sjson.Set(result, attrPath+".modified_on", modifiedOn.String())
+	}
+
+	// Remove the implicit "id" field if it exists (v4 had this, v5 doesn't)
+	if id := gjson.Get(json, attrPath+".id"); id.Exists() {
+		result, _ = sjson.Delete(result, attrPath+".id")
+	}
+
+	return result
+}
+
+// transformSnippetRulesStateJSON handles v4 to v5 state migration for cloudflare_snippet_rules
+func transformSnippetRulesStateJSON(json string, instancePath string) string {
+	attrPath := instancePath + ".attributes"
+	result := json
+
+	// Set schema_version to 0 (v5 doesn't have explicit version, but we set to 0 for consistency)
+	result, _ = sjson.Set(result, instancePath+".schema_version", 0)
+
+	// Handle rules transformation from blocks to list attribute
+	// In v4, rules are stored as indexed attributes like blocks
+	// Check for rules.# to determine if rules exist
+	rulesCount := gjson.Get(json, attrPath+`.rules\.#`)
+
+	if rulesCount.Exists() {
+		count := rulesCount.Int()
+		if count > 0 {
+			// v4 stores rules as indexed attributes
+			var rulesList []map[string]interface{}
+
+			for i := int64(0); i < count; i++ {
+				ruleMap := make(map[string]interface{})
+
+				// Get enabled field (handle default change from true to false)
+				enabledKey := fmt.Sprintf(`%s.rules\.%d\.enabled`, attrPath, i)
+				if enabledVal := gjson.Get(json, enabledKey); enabledVal.Exists() {
+					// Explicit value, keep as-is
+					ruleMap["enabled"] = enabledVal.Bool()
+				} else {
+					// In v4, missing enabled defaults to true
+					// We need to make this explicit for v5 where it defaults to false
+					ruleMap["enabled"] = true
+				}
+
+				// Get expression field
+				expressionKey := fmt.Sprintf(`%s.rules\.%d\.expression`, attrPath, i)
+				if expressionVal := gjson.Get(json, expressionKey); expressionVal.Exists() {
+					ruleMap["expression"] = expressionVal.String()
+				}
+
+				// Get snippet_name field
+				snippetNameKey := fmt.Sprintf(`%s.rules\.%d\.snippet_name`, attrPath, i)
+				if snippetNameVal := gjson.Get(json, snippetNameKey); snippetNameVal.Exists() {
+					ruleMap["snippet_name"] = snippetNameVal.String()
+				}
+
+				// Get description field
+				descriptionKey := fmt.Sprintf(`%s.rules\.%d\.description`, attrPath, i)
+				if descriptionVal := gjson.Get(json, descriptionKey); descriptionVal.Exists() {
+					ruleMap["description"] = descriptionVal.String()
+				} else {
+					// v5 defaults to empty string for missing description
+					ruleMap["description"] = ""
+				}
+
+				// Note: id and last_updated are computed fields that will be set by the provider
+
+				rulesList = append(rulesList, ruleMap)
+			}
+
+			// Set rules as an actual array
+			result, _ = sjson.Set(result, attrPath+".rules", rulesList)
+
+			// Clean up the indexed format
+			result = cleanupIndexedRulesKeys(result, attrPath, count)
+		} else {
+			// rules.# exists but is 0, set empty array
+			result, _ = sjson.Set(result, attrPath+".rules", []interface{}{})
+			// Clean up the indexed keys
+			result = cleanupIndexedRulesKeys(result, attrPath, 0)
+		}
+	} else {
+		// Check if rules already exists as an array (v5 format or already migrated)
+		rules := gjson.Get(json, attrPath+".rules")
+		if rules.Exists() && rules.IsArray() {
+			// Already in v5 format, ensure enabled defaults are handled
+			var rulesList []map[string]interface{}
+			rules.ForEach(func(_, rule gjson.Result) bool {
+				ruleMap := make(map[string]interface{})
+
+				// Copy all fields
+				rule.ForEach(func(key, value gjson.Result) bool {
+					ruleMap[key.String()] = value.Value()
+					return true
+				})
+
+				// Ensure enabled field has explicit value
+				if _, hasEnabled := ruleMap["enabled"]; !hasEnabled {
+					// In v4, missing enabled defaults to true
+					ruleMap["enabled"] = true
+				}
+
+				// Ensure description has value
+				if _, hasDescription := ruleMap["description"]; !hasDescription {
+					ruleMap["description"] = ""
+				}
+
+				rulesList = append(rulesList, ruleMap)
+				return true
+			})
+
+			if len(rulesList) > 0 {
+				result, _ = sjson.Set(result, attrPath+".rules", rulesList)
+			}
+		}
+	}
+
+	return result
+}
+
+// cleanupIndexedRulesKeys removes the indexed rules attributes from the state
+func cleanupIndexedRulesKeys(json string, attrPath string, ruleCount int64) string {
+	// Get the entire attributes object
+	attrs := gjson.Get(json, attrPath)
+	if !attrs.Exists() || !attrs.IsObject() {
+		return json
+	}
+
+	// Convert to a map for manipulation
+	attrsMap := make(map[string]interface{})
+	attrs.ForEach(func(key, value gjson.Result) bool {
+		keyStr := key.String()
+
+		// Skip indexed rules keys
+		if keyStr == "rules.#" || keyStr == "rules.%" {
+			return true // skip
+		}
+
+		// Skip individual rule fields
+		for i := int64(0); i < ruleCount; i++ {
+			if keyStr == fmt.Sprintf("rules.%d.enabled", i) ||
+				keyStr == fmt.Sprintf("rules.%d.expression", i) ||
+				keyStr == fmt.Sprintf("rules.%d.snippet_name", i) ||
+				keyStr == fmt.Sprintf("rules.%d.description", i) ||
+				keyStr == fmt.Sprintf("rules.%d", i) {
+				return true // skip
+			}
+		}
+
+		// Keep everything else
+		attrsMap[keyStr] = value.Value()
+		return true
+	})
+
+	// Set the cleaned attributes back
+	result, _ := sjson.Set(json, attrPath, attrsMap)
+	return result
+}
+
+// cleanupIndexedFileKeys removes the indexed file attributes from the state
+// This is needed because sjson.Delete doesn't handle keys with dots properly
+func cleanupIndexedFileKeys(json string, attrPath string, fileCount int64) string {
+	// Get the entire attributes object
+	attrs := gjson.Get(json, attrPath)
+	if !attrs.Exists() || !attrs.IsObject() {
+		return json
+	}
+
+	// Convert to a map for manipulation
+	attrsMap := make(map[string]interface{})
+	attrs.ForEach(func(key, value gjson.Result) bool {
+		keyStr := key.String()
+
+		// Skip indexed file keys
+		if keyStr == "files.#" || keyStr == "files.%" {
+			return true // skip
+		}
+
+		// Skip individual file fields (files.0.name, files.0.content, etc.)
+		for i := int64(0); i < fileCount; i++ {
+			if keyStr == fmt.Sprintf("files.%d.name", i) ||
+				keyStr == fmt.Sprintf("files.%d.content", i) ||
+				keyStr == fmt.Sprintf("files.%d", i) {
+				return true // skip
+			}
+		}
+
+		// Keep everything else
+		attrsMap[keyStr] = value.Value()
+		return true
+	})
+
+	// Set the cleaned attributes back
+	result, _ := sjson.Set(json, attrPath, attrsMap)
+	return result
 }
 
 // transformSpectrumApplicationStateJSON handles v4 to v5 state migration for cloudflare_spectrum_application
