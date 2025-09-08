@@ -10,12 +10,14 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessServiceToken() *schema.Resource {
 	return &schema.Resource{
 		Schema:        resourceCloudflareAccessServiceTokenSchema(),
+		CustomizeDiff: resourceCloudflareAccessServiceTokenCustomDiff(),
 		CreateContext: resourceCloudflareAccessServiceTokenCreate,
 		ReadContext:   resourceCloudflareAccessServiceTokenRead,
 		UpdateContext: resourceCloudflareAccessServiceTokenUpdate,
@@ -34,6 +36,7 @@ func resourceCloudflareAccessServiceToken() *schema.Resource {
 func resourceCloudflareZeroTrustAccessServiceToken() *schema.Resource {
 	return &schema.Resource{
 		Schema:        resourceCloudflareAccessServiceTokenSchema(),
+		CustomizeDiff: resourceCloudflareAccessServiceTokenCustomDiff(),
 		CreateContext: resourceCloudflareAccessServiceTokenCreate,
 		ReadContext:   resourceCloudflareAccessServiceTokenRead,
 		UpdateContext: resourceCloudflareAccessServiceTokenUpdate,
@@ -46,6 +49,14 @@ func resourceCloudflareZeroTrustAccessServiceToken() *schema.Resource {
 			when an application is behind Cloudflare Access.
 		`),
 	}
+}
+
+func resourceCloudflareAccessServiceTokenCustomDiff() schema.CustomizeDiffFunc {
+	return customdiff.All(
+		customdiff.ComputedIf("client_secret", func(_ context.Context, diff *schema.ResourceDiff, _ interface{}) bool {
+			return diff.HasChange("client_secret_version")
+		}),
+	)
 }
 
 func resourceCloudflareAccessServiceTokenRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

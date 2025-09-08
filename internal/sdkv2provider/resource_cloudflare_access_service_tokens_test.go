@@ -2,6 +2,7 @@ package sdkv2provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -10,7 +11,10 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
@@ -391,7 +395,7 @@ func TestAccCloudflareAccessServiceToken_WithClientSecretVersion(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
-
+	var clientSecretV1, clientSecretV2 string
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -406,18 +410,39 @@ func TestAccCloudflareAccessServiceToken_WithClientSecretVersion(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", resourceName),
 					resource.TestCheckResourceAttrSet(name, "client_id"),
-					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrWith(name, "client_secret", func(value string) error {
+						if value == "" {
+							return errors.New("client secret is empty")
+						}
+						clientSecretV1 = value
+						return nil
+					}),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "client_secret_version", "1"),
 				),
 			},
 			{
 				Config: testCloudflareAccessServiceTokenConfigWithClientSecretVersion(resourceName, resourceName+"-updated", cloudflare.AccountIdentifier(accountID), 2, "2024-12-01T05:20:03Z"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					// check that the client_secret is marked for update
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectUnknownValue(name, tfjsonpath.New("client_secret")),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
 					resource.TestCheckResourceAttrSet(name, "client_id"),
-					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrWith(name, "client_secret", func(value string) error {
+						if value == "" {
+							return errors.New("client secret is empty")
+						}
+						if clientSecretV1 == value {
+							return errors.New("client secret version 1 and version 2 are the same")
+						}
+						clientSecretV2 = value
+						return nil
+					}),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "client_secret_version", "2"),
 					resource.TestCheckResourceAttr(name, "previous_client_secret_expires_at", "2024-12-01T05:20:03Z"),
@@ -426,11 +451,25 @@ func TestAccCloudflareAccessServiceToken_WithClientSecretVersion(t *testing.T) {
 			// Bump previous_client_secret_expires_at
 			{
 				Config: testCloudflareAccessServiceTokenConfigWithClientSecretVersion(resourceName, resourceName+"-updated", cloudflare.AccountIdentifier(accountID), 2, "2026-12-01T05:20:03Z"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					// check that the client_secret is not marked for update
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectKnownValue(name, tfjsonpath.New("client_secret"), knownvalue.NotNull()),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
 					resource.TestCheckResourceAttrSet(name, "client_id"),
-					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrWith(name, "client_secret", func(value string) error {
+						if value == "" {
+							return errors.New("client secret is empty")
+						}
+						if clientSecretV2 != value {
+							return errors.New("client secret changed without a version bump")
+						}
+						return nil
+					}),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "client_secret_version", "2"),
 					resource.TestCheckResourceAttr(name, "previous_client_secret_expires_at", "2026-12-01T05:20:03Z"),
@@ -443,11 +482,30 @@ func TestAccCloudflareAccessServiceToken_WithClientSecretVersion(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
 					resource.TestCheckResourceAttrSet(name, "client_id"),
-					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrWith(name, "client_secret", func(value string) error {
+						if value == "" {
+							return errors.New("client secret is empty")
+						}
+						if clientSecretV1 == value {
+							return errors.New("client secret version 1 and version 3 are the same")
+						}
+						if clientSecretV2 == value {
+							return errors.New("client secret version 2 and version 3 are the same")
+						}
+						return nil
+					}),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
 					resource.TestCheckResourceAttr(name, "client_secret_version", "3"),
 					resource.TestCheckResourceAttr(name, "previous_client_secret_expires_at", "2023-12-01T05:20:03Z"),
 				),
+			},
+			{
+				RefreshState: true,
+				RefreshPlanChecks: resource.RefreshPlanChecks{
+					PostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
 			},
 		},
 	})
