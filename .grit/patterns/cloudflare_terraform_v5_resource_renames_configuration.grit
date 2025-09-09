@@ -30,7 +30,6 @@ pattern cloudflare_terraform_v5_resource_renames_configuration() {
     `"cloudflare_gateway_app_types"` => `"cloudflare_zero_trust_gateway_app_types"`,
     `"cloudflare_gre_tunnel"` => `"cloudflare_magic_wan_gre_tunnel"`,
     `"cloudflare_ipsec_tunnel"` => `"cloudflare_magic_wan_ipsec_tunnel"`,
-    `"cloudflare_record"` => `"cloudflare_dns_record"`,
     `"cloudflare_risk_behavior"` => `"cloudflare_zero_trust_risk_behavior"`,
     `"cloudflare_split_tunnel"` => `"cloudflare_zero_trust_split_tunnels"`,
     `"cloudflare_static_route"` => `"cloudflare_magic_wan_static_route"`,
