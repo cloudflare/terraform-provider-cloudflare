@@ -239,6 +239,7 @@ func TestAccCloudflareBotManagement_StateConsistency(t *testing.T) {
 					"ai_bots_protection",
 					"crawler_protection",
 					"stale_zone_configuration",
+					"fight_mode",
 				},
 			},
 		},
@@ -578,6 +579,50 @@ func TestAccCloudflareBotManagement_ComputedFields(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareBotManagement_AutoUpdateModelStateConsistency(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_bot_management." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareBotManagementAutoUpdateModelStateConsistency(rnd, zoneID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("auto_update_model"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("fight_mode"), knownvalue.Bool(false)),
+				},
+			},
+			{
+				Config: testCloudflareBotManagementAutoUpdateModelStateConsistency(rnd, zoneID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("auto_update_model"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("fight_mode"), knownvalue.Bool(false)),
+				},
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"ai_bots_protection",
+					"crawler_protection",
+					"stale_zone_configuration",
+					"fight_mode",
+				},
+			},
+		},
+	})
+}
+
 func TestAccCloudflareBotManagement_EnableJSAutoUpdateSuppression(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_bot_management." + rnd
@@ -637,6 +682,110 @@ func testCloudflareBotManagementAIBotsProtection(resourceName, zoneID string, ai
 
 func testCloudflareBotManagementStateConsistency(resourceName, zoneID string) string {
 	return acctest.LoadTestCase("cloudflarebotmanagementstateconsistency.tf", resourceName, zoneID)
+}
+
+func testCloudflareBotManagementAutoUpdateModelStateConsistency(resourceName, zoneID string) string {
+	return acctest.LoadTestCase("cloudflarebotmanagementautoupdatemodelstateconsistency.tf", resourceName, zoneID)
+}
+
+func TestAccCloudflareBotManagement_AutoUpdateModelStateConsistency_UserZone(t *testing.T) {
+	// Test against zones with different entitlement levels:
+	// - CLOUDFLARE_ZONE_ID: Entitled zone that returns all fields in API responses
+	// - CLOUDFLARE_ALT_ZONE_ID: Non-entitled zone that omits certain fields from API responses
+	testCases := []struct {
+		name   string
+		zoneID string
+	}{
+		{"StandardZone", os.Getenv("CLOUDFLARE_ZONE_ID")},
+		{"AltZone", os.Getenv("CLOUDFLARE_ALT_ZONE_ID")},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_bot_management." + rnd
+
+			resource.Test(t, resource.TestCase{
+				PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: testCloudflareBotManagementAutoUpdateModelStateConsistencyUserZone(rnd, tc.zoneID),
+						ConfigStateChecks: []statecheck.StateCheck{
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(tc.zoneID)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("auto_update_model"), knownvalue.Bool(true)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("fight_mode"), knownvalue.Bool(false)),
+						},
+					},
+					{
+						Config: testCloudflareBotManagementAutoUpdateModelStateConsistencyUserZone(rnd, tc.zoneID),
+						ConfigPlanChecks: resource.ConfigPlanChecks{
+							PreApply: []plancheck.PlanCheck{
+								plancheck.ExpectEmptyPlan(),
+							},
+						},
+						ConfigStateChecks: []statecheck.StateCheck{
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("auto_update_model"), knownvalue.Bool(true)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("fight_mode"), knownvalue.Bool(false)),
+						},
+					},
+				},
+			})
+		})
+	}
+}
+
+func testCloudflareBotManagementAutoUpdateModelStateConsistencyUserZone(resourceName, zoneID string) string {
+	return acctest.LoadTestCase("cloudflarebotmanagementautoupdatemodelstateconsistencyuserzone.tf", resourceName, zoneID)
+}
+
+func TestAccCloudflareBotManagement_FightModeStateConsistency(t *testing.T) {
+	// Test against zones with different entitlement levels:
+	// - CLOUDFLARE_ZONE_ID: Entitled zone that returns all fields in API responses
+	// - CLOUDFLARE_ALT_ZONE_ID: Non-entitled zone that omits certain fields from API responses
+	testCases := []struct {
+		name   string
+		zoneID string
+	}{
+		{"StandardZone", os.Getenv("CLOUDFLARE_ZONE_ID")},
+		{"AltZone", os.Getenv("CLOUDFLARE_ALT_ZONE_ID")},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := "cloudflare_bot_management." + rnd
+
+			resource.Test(t, resource.TestCase{
+				PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: testCloudflareBotManagementFightModeStateConsistency(rnd, tc.zoneID),
+						ConfigStateChecks: []statecheck.StateCheck{
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(tc.zoneID)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("fight_mode"), knownvalue.Bool(false)),
+						},
+					},
+					{
+						Config: testCloudflareBotManagementFightModeStateConsistency(rnd, tc.zoneID),
+						ConfigPlanChecks: resource.ConfigPlanChecks{
+							PreApply: []plancheck.PlanCheck{
+								plancheck.ExpectEmptyPlan(),
+							},
+						},
+						ConfigStateChecks: []statecheck.StateCheck{
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("fight_mode"), knownvalue.Bool(false)),
+						},
+					},
+				},
+			})
+		})
+	}
+}
+
+func testCloudflareBotManagementFightModeStateConsistency(resourceName, zoneID string) string {
+	return acctest.LoadTestCase("cloudflarebotmanagementfightmodeconsistency.tf", resourceName, zoneID)
 }
 
 func testCloudflareBotManagementBasicPermutation(resourceName, zoneID string) string {

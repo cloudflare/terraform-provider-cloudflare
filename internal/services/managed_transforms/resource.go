@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/managed_transforms"
-	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/managed_transforms"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -374,7 +374,7 @@ func normalizeResponse(response *ManagedTransformsModel, state *ManagedTransform
 	}
 	if response.ManagedResponseHeaders != nil {
 		stateManagedResponseHeaders := []*ManagedTransformsManagedResponseHeadersModel{}
-		if state != nil && state.ManagedRequestHeaders != nil {
+		if state != nil && state.ManagedResponseHeaders != nil {
 			stateManagedResponseHeaders = *state.ManagedResponseHeaders
 		}
 

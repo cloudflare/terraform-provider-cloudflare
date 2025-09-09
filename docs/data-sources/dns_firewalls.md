@@ -39,7 +39,7 @@ Read-Only:
 
 - `attack_mitigation` (Attributes) Attack mitigation settings (see [below for nested schema](#nestedatt--result--attack_mitigation))
 - `deprecate_any_requests` (Boolean) Whether to refuse to answer queries for the ANY type
-- `dns_firewall_ips` (List of String)
+- `dns_firewall_ips` (Set of String)
 - `ecs_fallback` (Boolean) Whether to forward client IP (resolver) subnet if no EDNS Client Subnet is sent
 - `id` (String) Identifier.
 - `maximum_cache_ttl` (Number) Maximum DNS cache TTL This setting sets an upper bound on DNS TTLs for purposes of caching between DNS Firewall and the upstream servers. Higher TTLs will be decreased to the maximum defined here for caching purposes.
@@ -49,7 +49,7 @@ Read-Only:
 - `negative_cache_ttl` (Number) Negative DNS cache TTL This setting controls how long DNS Firewall should cache negative responses (e.g., NXDOMAIN) from the upstream servers.
 - `ratelimit` (Number) Ratelimit in queries per second per datacenter (applies to DNS queries sent to the upstream nameservers configured on the cluster)
 - `retries` (Number) Number of retries for fetching DNS responses from upstream nameservers (not counting the initial attempt)
-- `upstream_ips` (List of String)
+- `upstream_ips` (Set of String)
 
 <a id="nestedatt--result--attack_mitigation"></a>
 ### Nested Schema for `result.attack_mitigation`

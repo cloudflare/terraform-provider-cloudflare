@@ -5,8 +5,8 @@ package workers_kv_namespace
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/kv"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/kv"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -42,6 +42,5 @@ func (m *WorkersKVNamespacesDataSourceModel) toListParams(_ context.Context) (pa
 type WorkersKVNamespacesResultDataSourceModel struct {
 	ID                  types.String `tfsdk:"id" json:"id,computed"`
 	Title               types.String `tfsdk:"title" json:"title,computed"`
-	Beta                types.Bool   `tfsdk:"beta" json:"beta,computed"`
 	SupportsURLEncoding types.Bool   `tfsdk:"supports_url_encoding" json:"supports_url_encoding,computed"`
 }

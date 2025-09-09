@@ -9,8 +9,8 @@ import (
 	"time"
 
 	cfold "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -19,6 +19,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
 
 func init() {
 	resource.AddTestSweepers("cloudflare_load_balancer_pool", &resource.Sweeper{
@@ -115,6 +119,13 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastOutstandingRequests(t 
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
 				),
+			},
+			// Import
+			{
+				ResourceName:        name,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
 			},
 		},
 	})

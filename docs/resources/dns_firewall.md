@@ -37,7 +37,7 @@ resource "cloudflare_dns_firewall" "example_dns_firewall" {
 
 - `account_id` (String) Identifier.
 - `name` (String) DNS Firewall cluster name
-- `upstream_ips` (List of String)
+- `upstream_ips` (Set of String)
 
 ### Optional
 
@@ -52,7 +52,7 @@ resource "cloudflare_dns_firewall" "example_dns_firewall" {
 
 ### Read-Only
 
-- `dns_firewall_ips` (List of String)
+- `dns_firewall_ips` (Set of String)
 - `id` (String) Identifier.
 - `modified_on` (String) Last modification of DNS Firewall cluster
 

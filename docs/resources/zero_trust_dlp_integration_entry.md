@@ -36,9 +36,51 @@ to a predefined profile
 
 ### Read-Only
 
+- `case_sensitive` (Boolean) Only applies to custom word lists.
+Determines if the words should be matched in a case-sensitive manner
+Cannot be set to false if secret is true
+- `confidence` (Attributes) (see [below for nested schema](#nestedatt--confidence))
 - `created_at` (String)
 - `id` (String) The ID of this resource.
 - `name` (String)
+- `pattern` (Attributes) (see [below for nested schema](#nestedatt--pattern))
+- `secret` (Boolean)
+- `type` (String) Available values: "custom", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
+- `variant` (Attributes) (see [below for nested schema](#nestedatt--variant))
+- `word_list` (String)
+
+<a id="nestedatt--confidence"></a>
+### Nested Schema for `confidence`
+
+Read-Only:
+
+- `ai_context_available` (Boolean) Indicates whether this entry has AI remote service validation.
+- `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service.
 
 
+<a id="nestedatt--pattern"></a>
+### Nested Schema for `pattern`
+
+Read-Only:
+
+- `regex` (String)
+- `validation` (String, Deprecated) Available values: "luhn".
+
+
+<a id="nestedatt--variant"></a>
+### Nested Schema for `variant`
+
+Read-Only:
+
+- `description` (String)
+- `topic_type` (String) Available values: "Intent", "Content".
+- `type` (String) Available values: "PromptTopic".
+
+## Import
+
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_zero_trust_dlp_integration_entry.example '<account_id>/<entry_id>'
+```

@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudflare/cloudflare-go/v5"
+	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -92,8 +92,9 @@ func (d *RulesetsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[RulesetsResultDataSourceModel](ctx, acc)
+	result, diags := customfield.NewObjectSetFromAttributes[RulesetsRulesetDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
+	data.Rulesets = result
 	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

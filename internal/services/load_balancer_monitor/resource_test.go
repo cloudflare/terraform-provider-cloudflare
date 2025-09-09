@@ -19,6 +19,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
 func init() {
 	resource.AddTestSweepers("cloudflare_load_balancer_monitor", &resource.Sweeper{
 		Name: "cloudflare_load_balancer_monitor",
@@ -79,9 +83,6 @@ func TestAccCloudflareLoadBalancerMonitor_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "header.%", "0"),
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerMonitorDates(name, &loadBalancerMonitor, testStartTime),
-					resource.TestCheckResourceAttr(name, "port", "0"),
-					resource.TestCheckResourceAttr(name, "consecutive_up", "0"),
-					resource.TestCheckResourceAttr(name, "consecutive_down", "0"),
 				),
 			},
 		},
@@ -344,16 +345,16 @@ func TestAccCloudflareLoadBalancerMonitor_ChangingHeadersCauseReplacement(t *tes
 				Config: testAccCheckCloudflareLoadBalancerMonitorConfigWithHeaders(rnd, domain, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "header.header.0", "Host"),
-					resource.TestCheckResourceAttr(name, "header.values.0", domain),
+					resource.TestCheckResourceAttr(name, "header.Header.0", "Host"),
+					resource.TestCheckResourceAttr(name, "header.Values.0", domain),
 				),
 			},
 			{
 				Config: testAccCheckCloudflareLoadBalancerMonitorConfigWithHeaders(rnd, fmt.Sprintf("%s.%s", rnd, domain), accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "header.header.0", "Host"),
-					resource.TestCheckResourceAttr(name, "header.values.0", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "header.Header.0", "Host"),
+					resource.TestCheckResourceAttr(name, "header.Values.0", fmt.Sprintf("%s.%s", rnd, domain)),
 				),
 			},
 		},

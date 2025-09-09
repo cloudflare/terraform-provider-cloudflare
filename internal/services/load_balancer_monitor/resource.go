@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/load_balancers"
-	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -153,6 +153,10 @@ func (r *LoadBalancerMonitorResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
+	consecutiveUp := data.ConsecutiveUp
+	consecutiveDown := data.ConsecutiveDown
+	port := data.Port
+
 	res := new(http.Response)
 	env := LoadBalancerMonitorResultEnvelope{*data}
 	_, err := r.client.LoadBalancers.Monitors.Get(
@@ -180,6 +184,9 @@ func (r *LoadBalancerMonitorResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	data = &env.Result
+	data.ConsecutiveUp = consecutiveUp
+	data.ConsecutiveDown = consecutiveDown
+	data.Port = port
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

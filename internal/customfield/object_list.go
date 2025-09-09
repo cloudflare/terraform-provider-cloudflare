@@ -109,6 +109,7 @@ type NestedObjectListLike interface {
 	UnknownValue(ctx context.Context) NestedObjectListLike
 	KnownValue(ctx context.Context, T any) NestedObjectListLike
 	IsNullOrUnknown() bool
+	attr.Value
 }
 
 var _ NestedObjectListLike = (*NestedObjectList[basetypes.StringValue])(nil)

@@ -49,6 +49,7 @@ Cannot be set to false if secret is true
 - `id` (String) The ID of this resource.
 - `secret` (Boolean)
 - `updated_at` (String)
+- `variant` (Attributes) (see [below for nested schema](#nestedatt--variant))
 - `word_list` (String)
 
 <a id="nestedatt--pattern"></a>
@@ -70,6 +71,16 @@ Read-Only:
 
 - `ai_context_available` (Boolean) Indicates whether this entry has AI remote service validation.
 - `available` (Boolean) Indicates whether this entry has any form of validation that is not an AI remote service.
+
+
+<a id="nestedatt--variant"></a>
+### Nested Schema for `variant`
+
+Read-Only:
+
+- `description` (String)
+- `topic_type` (String) Available values: "Intent", "Content".
+- `type` (String) Available values: "PromptTopic".
 
 ## Import
 

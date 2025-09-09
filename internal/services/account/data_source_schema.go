@@ -37,6 +37,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Account name",
 				Computed:    true,
 			},
+			"type": schema.StringAttribute{
+				Description: `Available values: "standard", "enterprise".`,
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("standard", "enterprise"),
+				},
+			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Account settings",
 				Computed:    true,

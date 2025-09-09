@@ -46,6 +46,7 @@ Optional:
 
 - `id` (String) UUID of the virtual network.
 - `is_default` (Boolean) If `true`, only include the default virtual network. If `false`, exclude the default virtual network. If empty, all virtual networks will be included.
+- `is_default_network` (Boolean) If `true`, only include the default virtual network. If `false`, exclude the default virtual network. If empty, all virtual networks will be included.
 - `is_deleted` (Boolean) If `true`, only include deleted virtual networks. If `false`, exclude deleted virtual networks. If empty, all virtual networks will be included.
 - `name` (String) A user-friendly name for the virtual network.
 

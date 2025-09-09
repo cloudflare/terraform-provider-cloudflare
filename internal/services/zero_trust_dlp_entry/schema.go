@@ -95,6 +95,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"variant": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[ZeroTrustDLPEntryVariantModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"topic_type": schema.StringAttribute{
+						Description: `Available values: "Intent", "Content".`,
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("Intent", "Content"),
+						},
+					},
+					"type": schema.StringAttribute{
+						Description: `Available values: "PromptTopic".`,
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("PromptTopic"),
+						},
+					},
+					"description": schema.StringAttribute{
+						Computed: true,
+					},
+				},
+			},
 			"word_list": schema.StringAttribute{
 				Computed:   true,
 				CustomType: jsontypes.NormalizedType{},

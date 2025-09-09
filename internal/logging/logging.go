@@ -9,7 +9,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go/v5/option"
+	"github.com/cloudflare/cloudflare-go/v6/option"
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )

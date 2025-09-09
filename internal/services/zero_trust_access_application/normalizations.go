@@ -125,6 +125,37 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 	normalizeEmptyAndNullSlice(&data.Policies, stateData.Policies)
 	// `tags` might not be in the configuration, so we need to normalize it here to avoid a diff
 	normalizeEmptyAndNullList(&data.Tags, stateData.Tags)
+	// Preserve tags order from state to prevent drift due to API returning alphabetical order
+	if !data.Tags.IsNull() && !stateData.Tags.IsNull() && len(data.Tags.Elements()) == len(stateData.Tags.Elements()) {
+		// Check if same elements (ignore order)
+		dataStrings := make(map[string]bool)
+		for _, elem := range data.Tags.Elements() {
+			if str, ok := elem.(types.String); ok && !str.IsNull() {
+				dataStrings[str.ValueString()] = true
+			}
+		}
+		
+		stateStrings := make(map[string]bool)
+		for _, elem := range stateData.Tags.Elements() {
+			if str, ok := elem.(types.String); ok && !str.IsNull() {
+				stateStrings[str.ValueString()] = true
+			}
+		}
+		
+		// If same elements, preserve state order
+		if len(dataStrings) == len(stateStrings) {
+			same := true
+			for k := range dataStrings {
+				if !stateStrings[k] {
+					same = false
+					break
+				}
+			}
+			if same {
+				data.Tags = stateData.Tags
+			}
+		}
+	}
 
 	normalizeFalseAndNullBool(&data.ServiceAuth401Redirect, stateData.ServiceAuth401Redirect)
 	normalizeFalseAndNullBool(&data.EnableBindingCookie, stateData.EnableBindingCookie)
@@ -228,18 +259,18 @@ func normalizeImportZeroTrustAccessApplicationAPIData(ctx context.Context, data 
 			if !policy.ID.IsNull() && !policy.ID.IsUnknown() {
 				policy.Decision = types.StringNull()
 				policy.Name = types.StringNull()
-				policy.Include = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
-				policy.Require = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesRequireModel](ctx)
-				policy.Exclude = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx)
+				policy.Include = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
+				policy.Require = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesRequireModel](ctx)
+				policy.Exclude = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx)
 			} else {
 				if !policy.Include.IsNull() && len(policy.Include.Elements()) == 0 {
-					policy.Include = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
+					policy.Include = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
 				}
 				if !policy.Require.IsNull() && len(policy.Require.Elements()) == 0 {
-					policy.Require = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesRequireModel](ctx)
+					policy.Require = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesRequireModel](ctx)
 				}
 				if !policy.Exclude.IsNull() && len(policy.Exclude.Elements()) == 0 {
-					policy.Exclude = customfield.NullObjectList[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx)
+					policy.Exclude = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx)
 				}
 			}
 		}
@@ -247,7 +278,7 @@ func normalizeImportZeroTrustAccessApplicationAPIData(ctx context.Context, data 
 
 	if !data.Tags.IsNull() && !data.Tags.IsUnknown() {
 		if len(data.Tags.Elements()) == 0 {
-			data.Tags = customfield.NullList[types.String](ctx)
+			data.Tags = customfield.NullSet[types.String](ctx)
 		}
 	}
 

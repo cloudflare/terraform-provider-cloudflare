@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/snippets"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -17,6 +17,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
 
 func init() {
 	resource.AddTestSweepers("cloudflare_snippet", &resource.Sweeper{
@@ -65,18 +69,18 @@ func testSweepCloudflareSnippets(r string) error {
 	return nil
 }
 
-func TestAccCloudflareSnippets_Basic(t *testing.T) {
+func TestAccCloudflareSnippet_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	resourceName := "cloudflare_snippets." + rnd
+	resourceName := "cloudflare_snippet." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareSnippetsDestroy,
+		CheckDestroy:             testAccCheckCloudflareSnippetDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareSnippetsConfig(rnd, zoneID),
+				Config: testAccCloudflareSnippetConfig(rnd, zoneID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("snippet_name"), knownvalue.StringExact(rnd)),
@@ -111,7 +115,7 @@ func TestAccCloudflareSnippets_Basic(t *testing.T) {
 				},
 			},
 			{
-				Config: testAccCloudflareSnippetsConfigUpdate(rnd, zoneID),
+				Config: testAccCloudflareSnippetConfigUpdate(rnd, zoneID),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("snippet_name"), knownvalue.StringExact(rnd)),
@@ -129,7 +133,6 @@ func TestAccCloudflareSnippets_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("metadata"), knownvalue.ObjectExact(map[string]knownvalue.Check{
 						"main_module": knownvalue.StringExact("main.js"),
 					})),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("metadata.main_module"), knownvalue.StringExact("main.js")),
 					// Verify computed attributes
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_on"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("modified_on"), knownvalue.NotNull()),
@@ -139,7 +142,7 @@ func TestAccCloudflareSnippets_Basic(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareSnippetsDestroy(s *terraform.State) error {
+func testAccCheckCloudflareSnippetDestroy(s *terraform.State) error {
 	client := acctest.SharedClient()
 
 	for _, rs := range s.RootModule().Resources {
@@ -161,10 +164,10 @@ func testAccCheckCloudflareSnippetsDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCloudflareSnippetsConfig(rnd, zoneID string) string {
+func testAccCloudflareSnippetConfig(rnd, zoneID string) string {
 	return acctest.LoadTestCase("basic.tf", rnd, zoneID)
 }
 
-func testAccCloudflareSnippetsConfigUpdate(rnd, zoneID string) string {
+func testAccCloudflareSnippetConfigUpdate(rnd, zoneID string) string {
 	return acctest.LoadTestCase("basic_update.tf", rnd, zoneID)
 }

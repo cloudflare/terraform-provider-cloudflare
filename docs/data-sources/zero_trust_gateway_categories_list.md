@@ -22,7 +22,7 @@ data "cloudflare_zero_trust_gateway_categories_list" "example_zero_trust_gateway
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 

@@ -42,19 +42,19 @@ Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch",
 precedence over the policy's `schedule` configuration, if any.
 
 This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--expiration))
-- `filters` (List of String) The protocol or layer to evaluate the traffic, identity, and device posture expressions.
+- `filters` (List of String) The protocol or layer to evaluate the traffic, identity, and device. posture expressions.
 - `id` (String) The API resource UUID.
 - `identity` (String) The wirefilter expression used for identity matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.
 - `name` (String) The name of the rule.
-- `not_sharable` (Boolean) The rule cannot be shared via the Orgs API
+- `not_sharable` (Boolean) The rule cannot be shared via the Orgs API.
 - `precedence` (Number) Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) docs on how to manage precedence via Terraform.
-- `read_only` (Boolean) The rule was shared via the Orgs API and cannot be edited by the current account
+- `read_only` (Boolean) The rule was shared via the Orgs API and cannot be edited by the current account.
 - `rule_settings` (Attributes) Additional settings that modify the rule's action. (see [below for nested schema](#nestedatt--rule_settings))
 - `schedule` (Attributes) The schedule for activating DNS policies. This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--schedule))
-- `source_account` (String) account tag of account that created the rule
+- `source_account` (String) account tag of account that created the rule.
 - `traffic` (String) The wirefilter expression used for traffic matching. The API automatically formats and sanitizes this expression. This returns a normalized version that may differ from your input and cause Terraform state drift.
 - `updated_at` (String)
-- `version` (Number) version number of the rule
+- `version` (Number) version number of the rule.
 - `warning_status` (String) Warning for a misconfigured rule, if any.
 
 <a id="nestedatt--expiration"></a>
@@ -97,13 +97,13 @@ Read-Only:
 - `insecure_disable_dnssec_validation` (Boolean) INSECURE - disable DNSSEC validation (for Allow actions).
 - `ip_categories` (Boolean) Set to true to enable IPs in DNS resolver category blocks. By default categories only block based on domain names.
 - `ip_indicator_feeds` (Boolean) Set to true to include IPs in DNS resolver indicator feed blocks. By default indicator feeds only block based on domain names.
-- `l4override` (Attributes) Send matching traffic to the supplied destination IP address and port. (see [below for nested schema](#nestedatt--rule_settings--l4override))
+- `l4override` (Attributes) Send matching traffic to the supplied destination IP address. and port. (see [below for nested schema](#nestedatt--rule_settings--l4override))
 - `notification_settings` (Attributes) Configure a notification to display on the user's device when this rule is matched. (see [below for nested schema](#nestedatt--rule_settings--notification_settings))
 - `override_host` (String) Override matching DNS queries with a hostname.
 - `override_ips` (List of String) Override matching DNS queries with an IP or set of IPs.
 - `payload_log` (Attributes) Configure DLP payload logging. (see [below for nested schema](#nestedatt--rule_settings--payload_log))
-- `quarantine` (Attributes) Settings that apply to quarantine rules (see [below for nested schema](#nestedatt--rule_settings--quarantine))
-- `redirect` (Attributes) Settings that apply to redirect rules (see [below for nested schema](#nestedatt--rule_settings--redirect))
+- `quarantine` (Attributes) Settings that apply to quarantine rules. (see [below for nested schema](#nestedatt--rule_settings--quarantine))
+- `redirect` (Attributes) Settings that apply to redirect rules. (see [below for nested schema](#nestedatt--rule_settings--redirect))
 - `resolve_dns_internally` (Attributes) Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action is set to 'resolve'. (see [below for nested schema](#nestedatt--rule_settings--resolve_dns_internally))
 - `resolve_dns_through_cloudflare` (Boolean) Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when 'dns_resolvers' are specified or 'resolve_dns_internally' is set. Only valid when a rule's action is set to 'resolve'.
 - `untrusted_cert` (Attributes) Configure behavior when an upstream cert is invalid or an SSL error occurs. (see [below for nested schema](#nestedatt--rule_settings--untrusted_cert))
@@ -147,8 +147,8 @@ Available values: "v1", "v2".
 
 Read-Only:
 
-- `include_context` (Boolean) If true, context information will be passed as query parameters
-- `target_uri` (String) URI to which the user will be redirected
+- `include_context` (Boolean) If true, context information will be passed as query parameters.
+- `target_uri` (String) URI to which the user will be redirected.
 
 
 <a id="nestedatt--rule_settings--check_session"></a>
@@ -215,8 +215,8 @@ Read-Only:
 
 Read-Only:
 
-- `enabled` (Boolean) Set notification on
-- `include_context` (Boolean) If true, context information will be passed as query parameters
+- `enabled` (Boolean) Set notification on.
+- `include_context` (Boolean) If true, context information will be passed as query parameters.
 - `msg` (String) Customize the message shown in the notification.
 - `support_url` (String) Optional URL to direct users to additional information. If not set, the notification will open a block page.
 
@@ -242,9 +242,9 @@ Read-Only:
 
 Read-Only:
 
-- `include_context` (Boolean) If true, context information will be passed as query parameters
-- `preserve_path_and_query` (Boolean) If true, the path and query parameters from the original request will be appended to target_uri
-- `target_uri` (String) URI to which the user will be redirected
+- `include_context` (Boolean) If true, context information will be passed as query parameters.
+- `preserve_path_and_query` (Boolean) If true, the path and query parameters from the original request will be appended to target_uri.
+- `target_uri` (String) URI to which the user will be redirected.
 
 
 <a id="nestedatt--rule_settings--resolve_dns_internally"></a>
