@@ -36,7 +36,6 @@ func transformStateFile(filename string) error {
 func transformStateJSON(data []byte) ([]byte, error) {
 	jsonStr := string(data)
 	result := jsonStr
-
 	// Process each resource
 	resources := gjson.Get(jsonStr, "resources")
 	if !resources.Exists() {
@@ -263,10 +262,11 @@ func transformStateJSON(data []byte) ([]byte, error) {
 	result = migrateListItemsInState(result)
 
 	// Pretty format with proper indentation
-	return pretty.PrettyOptions([]byte(result), &pretty.Options{
+	j := pretty.PrettyOptions([]byte(result), &pretty.Options{
 		Indent:   "  ",
 		SortKeys: false,
-	}), nil
+	})
+	return j, nil
 }
 
 // transformSnippetStateJSON handles v4 to v5 state migration for cloudflare_snippet
