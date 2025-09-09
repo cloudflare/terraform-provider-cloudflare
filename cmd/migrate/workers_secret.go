@@ -306,26 +306,99 @@ func addWorkersSecretForStateMigration(secret WorkersSecretStateInfo) {
 func migrateWorkersSecretsInState(jsonStr string) string {
 	result := jsonStr
 	
-	// Find all workers_script resources in state and add secret bindings
-	scriptsPath := "resources"
-	scriptsValue := gjson.Get(jsonStr, scriptsPath)
+	// Phase 1: Collect all workers_secret information
+	secretsToMigrate := collectWorkersSecretsFromState(jsonStr)
 	
-	if scriptsValue.Exists() && scriptsValue.IsArray() {
-		for i, resource := range scriptsValue.Array() {
-			resourceType := resource.Get("type").String()
-			if resourceType == "cloudflare_workers_script" || resourceType == "cloudflare_worker_script" {
-				// Find secrets that belong to this script
-				scriptPath := fmt.Sprintf("resources.%d", i)
-				result = addSecretsToScriptState(result, scriptPath, workersSecretsForStateMigration)
+	// Phase 2: Add secret bindings to workers_script resources
+	result = addSecretsToWorkersScripts(result, secretsToMigrate)
+	
+	// Phase 3: Remove workers_secret resources individually without array reconstruction
+	result = markWorkersSecretsForRemoval(result)
+	
+	return result
+}
+
+// collectWorkersSecretsFromState collects all workers_secret resources from state
+func collectWorkersSecretsFromState(jsonStr string) []WorkersSecretStateInfo {
+	var secrets []WorkersSecretStateInfo
+	
+	resources := gjson.Get(jsonStr, "resources")
+	if !resources.Exists() || !resources.IsArray() {
+		return secrets
+	}
+	
+	for i, resource := range resources.Array() {
+		resourceType := resource.Get("type").String()
+		if resourceType == "cloudflare_workers_secret" || resourceType == "cloudflare_worker_secret" {
+			// Extract secret information
+			path := fmt.Sprintf("resources.%d", i)
+			scriptName := resource.Get("instances.0.attributes.script_name")
+			secretName := resource.Get("instances.0.attributes.name")
+			secretText := resource.Get("instances.0.attributes.secret_text")
+			accountID := resource.Get("instances.0.attributes.account_id")
+			
+			if scriptName.Exists() && secretName.Exists() && secretText.Exists() && accountID.Exists() {
+				secrets = append(secrets, WorkersSecretStateInfo{
+					ScriptName: scriptName.String(),
+					SecretName: secretName.String(),
+					SecretText: secretText.String(),
+					AccountID:  accountID.String(),
+					StatePath:  path,
+				})
 			}
 		}
 	}
 	
-	// Remove all workers_secret resources from state
-	result = removeWorkersSecretResourcesFromState(result)
+	return secrets
+}
+
+// addSecretsToWorkersScripts adds secret bindings to all workers_script resources
+func addSecretsToWorkersScripts(jsonStr string, secrets []WorkersSecretStateInfo) string {
+	result := jsonStr
 	
-	// Clear the collection for next migration
-	workersSecretsForStateMigration = nil
+	if len(secrets) == 0 {
+		return result
+	}
+	
+	resources := gjson.Get(jsonStr, "resources")
+	if !resources.Exists() || !resources.IsArray() {
+		return result
+	}
+	
+	for i, resource := range resources.Array() {
+		resourceType := resource.Get("type").String()
+		if resourceType == "cloudflare_workers_script" || resourceType == "cloudflare_worker_script" {
+			scriptPath := fmt.Sprintf("resources.%d", i)
+			result = addSecretsToScriptState(result, scriptPath, secrets)
+		}
+	}
+	
+	return result
+}
+
+// markWorkersSecretsForRemoval removes workers_secret resources by iterating in reverse
+func markWorkersSecretsForRemoval(jsonStr string) string {
+	result := jsonStr
+	
+	resources := gjson.Get(jsonStr, "resources")
+	if !resources.Exists() || !resources.IsArray() {
+		return result
+	}
+	
+	// Collect indices to remove (in reverse order to avoid index shifting)
+	var indicesToRemove []int
+	for i, resource := range resources.Array() {
+		resourceType := resource.Get("type").String()
+		if resourceType == "cloudflare_workers_secret" || resourceType == "cloudflare_worker_secret" {
+			indicesToRemove = append(indicesToRemove, i)
+		}
+	}
+	
+	// Remove in reverse order to avoid index shifting issues
+	for i := len(indicesToRemove) - 1; i >= 0; i-- {
+		path := fmt.Sprintf("resources.%d", indicesToRemove[i])
+		result, _ = sjson.Delete(result, path)
+	}
 	
 	return result
 }
@@ -392,29 +465,3 @@ func addSecretsToScriptState(jsonStr string, scriptResourcePath string, secrets 
 	return result
 }
 
-// removeWorkersSecretResourcesFromState removes all workers_secret resources from state
-func removeWorkersSecretResourcesFromState(jsonStr string) string {
-	result := jsonStr
-	
-	// Get all resources
-	resourcesPath := "resources"
-	resourcesValue := gjson.Get(jsonStr, resourcesPath)
-	
-	if !resourcesValue.Exists() || !resourcesValue.IsArray() {
-		return result
-	}
-	
-	// Filter out workers_secret resources
-	var remainingResources []interface{}
-	for _, resource := range resourcesValue.Array() {
-		resourceType := resource.Get("type").String()
-		if resourceType != "cloudflare_workers_secret" && resourceType != "cloudflare_worker_secret" {
-			remainingResources = append(remainingResources, resource.Value())
-		}
-	}
-	
-	// Update state with filtered resources
-	result, _ = sjson.Set(result, resourcesPath, remainingResources)
-	
-	return result
-}
