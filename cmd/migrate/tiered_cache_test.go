@@ -98,7 +98,7 @@ resource "cloudflare_record" "example" {
   zone_id = cloudflare_zone.example.id
   value   = "on"
 }`,
-				`resource "cloudflare_record" "example"`,
+				`resource "cloudflare_dns_record" "example"`,
 			},
 		},
 		{
