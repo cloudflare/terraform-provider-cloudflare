@@ -16,5 +16,16 @@ func normalizeReadZeroTrustAccessMtlsCertificateAPIData(ctx context.Context, dat
 		data.Certificate = sourceData.Certificate
 	}
 
+	// Normalize associated_hostnames to handle empty list vs null differences between provider versions
+	// If the API returns nil but source had either nil or empty slice, preserve source to avoid drift
+	if data.AssociatedHostnames == nil {
+		// If source is nil, keep data as nil (don't apply default)
+		// If source is empty slice, preserve the empty slice
+		data.AssociatedHostnames = sourceData.AssociatedHostnames
+	} else if sourceData.AssociatedHostnames == nil && data.AssociatedHostnames != nil && len(*data.AssociatedHostnames) == 0 {
+		// If source was nil but data has empty slice from API, keep it as nil to match source
+		data.AssociatedHostnames = nil
+	}
+
 	return diags
 }

@@ -9,7 +9,7 @@ func TestDNSRecordCAATransformation(t *testing.T) {
 		{
 			Name: "CAA record with numeric flags in data block - content renamed to value",
 			Config: `
-resource "cloudflare_dns_record" "caa_test" {
+resource "cloudflare_record" "caa_test" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   name    = "test.example.com"
   type    = "CAA"
@@ -28,7 +28,7 @@ resource "cloudflare_dns_record" "caa_test" {
   type    = "CAA"
   ttl     = 3600
 
-  data {
+  data = {
     flags = 0
     tag   = "issue"
     value = "letsencrypt.org"
@@ -38,12 +38,12 @@ resource "cloudflare_dns_record" "caa_test" {
 		{
 			Name: "CAA record with numeric flags in data attribute map - content renamed to value",
 			Config: `
-resource "cloudflare_dns_record" "caa_test" {
+resource "cloudflare_record" "caa_test" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   name    = "test.example.com"
   type    = "CAA"
   ttl     = 3600
-  data    = {
+  data    {
     flags   = 0
     tag     = "issue"
     content = "letsencrypt.org"
@@ -65,7 +65,7 @@ resource "cloudflare_dns_record" "caa_test" {
 		{
 			Name: "CAA record with flags already as string - content still renamed to value",
 			Config: `
-resource "cloudflare_dns_record" "caa_test" {
+resource "cloudflare_record" "caa_test" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   name    = "test.example.com"
   type    = "CAA"
@@ -84,7 +84,7 @@ resource "cloudflare_dns_record" "caa_test" {
   type    = "CAA"
   ttl     = 3600
 
-  data {
+  data = {
     flags = "0"
     tag   = "issue"
     value = "letsencrypt.org"
@@ -94,7 +94,7 @@ resource "cloudflare_dns_record" "caa_test" {
 		{
 			Name: "Non-CAA record should not be modified",
 			Config: `
-resource "cloudflare_dns_record" "a_test" {
+resource "cloudflare_record" "a_test" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   name    = "test.example.com"
   type    = "A"
@@ -126,13 +126,13 @@ resource "cloudflare_record" "caa_legacy" {
   }
 }`,
 			Expected: []string{`
-resource "cloudflare_record" "caa_legacy" {
+resource "cloudflare_dns_record" "caa_legacy" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   name    = "test.example.com"
   type    = "CAA"
   ttl     = 3600
 
-  data {
+  data = {
     flags = 128
     tag   = "issuewild"
     value = "pki.goog"
@@ -140,9 +140,48 @@ resource "cloudflare_record" "caa_legacy" {
 }`},
 		},
 		{
-			Name: "Multiple CAA records in same file - content renamed to value",
+			Name: "DNS record without TTL - should add TTL with default value",
 			Config: `
-resource "cloudflare_dns_record" "caa_test1" {
+resource "cloudflare_record" "mx_test" {
+  zone_id  = "0da42c8d2132a9ddaf714f9e7c920711"
+  name     = "test.example.com"
+  type     = "MX"
+  content  = "mx.sendgrid.net"
+  priority = 10
+}`,
+			Expected: []string{`
+resource "cloudflare_dns_record" "mx_test" {
+  zone_id  = "0da42c8d2132a9ddaf714f9e7c920711"
+  name     = "test.example.com"
+  type     = "MX"
+  content  = "mx.sendgrid.net"
+  priority = 10
+  ttl      = 1
+}`},
+		},
+		{
+			Name: "DNS record with existing TTL - should keep existing value",
+			Config: `
+resource "cloudflare_record" "a_test_ttl" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  name    = "test.example.com"
+  type    = "A"
+  ttl     = 3600
+  content = "192.168.1.1"
+}`,
+			Expected: []string{`
+resource "cloudflare_dns_record" "a_test_ttl" {
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  name    = "test.example.com"
+  type    = "A"
+  ttl     = 3600
+  content = "192.168.1.1"
+}`},
+		},
+		{
+			Name: "Multiple CAA records in same file - content renamed to value and TTL added",
+			Config: `
+resource "cloudflare_record" "caa_test1" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   name    = "test1.example.com"
   type    = "CAA"
@@ -153,7 +192,7 @@ resource "cloudflare_dns_record" "caa_test1" {
   }
 }
 
-resource "cloudflare_dns_record" "caa_test2" {
+resource "cloudflare_record" "caa_test2" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   name    = "test2.example.com"
   type    = "CAA"
@@ -168,7 +207,8 @@ resource "cloudflare_dns_record" "caa_test1" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   name    = "test1.example.com"
   type    = "CAA"
-  data {
+  ttl     = 1
+  data = {
     flags = 0
     tag   = "issue"
     value = "letsencrypt.org"
@@ -179,7 +219,8 @@ resource "cloudflare_dns_record" "caa_test2" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   name    = "test2.example.com"
   type    = "CAA"
-  data {
+  ttl     = 1
+  data = {
     flags = 128
     tag   = "issuewild"
     value = "pki.goog"
@@ -227,7 +268,17 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "test.example.com",
 							"type": "CAA",
+							"ttl": 1,
 							"content": "0 issue letsencrypt.org",
+							"meta": "{}",
+							"settings": {
+								"flatten_cname": null,
+								"ipv4_only": null,
+								"ipv6_only": null
+							},
+							"proxiable": false,
+							"created_on": "2024-01-01T00:00:00Z",
+							"modified_on": "2024-01-01T00:00:00Z",
 							"data": {
 								"flags": {
 									"value": 0,
@@ -273,7 +324,17 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "test.example.com",
 							"type": "CAA",
+							"ttl": 1,
 							"content": "128 issuewild pki.goog",
+							"meta": "{}",
+							"settings": {
+								"flatten_cname": null,
+								"ipv4_only": null,
+								"ipv6_only": null
+							},
+							"proxiable": false,
+							"created_on": "2024-01-01T00:00:00Z",
+							"modified_on": "2024-01-01T00:00:00Z",
 							"data": {
 								"flags": {
 									"value": 128,
@@ -300,7 +361,10 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"name": "test.example.com",
 							"type": "CAA",
 							"data": {
-								"flags": 0,
+								"flags": {
+									"value": 0,
+									"type": "number"
+								},
 								"tag": "issue",
 								"value": "letsencrypt.org"
 							}
@@ -318,6 +382,16 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "test.example.com",
 							"type": "CAA",
+							"ttl": 1,
+							"meta": "{}",
+							"settings": {
+								"flatten_cname": null,
+								"ipv4_only": null,
+								"ipv6_only": null
+							},
+							"proxiable": false,
+							"created_on": "2024-01-01T00:00:00Z",
+							"modified_on": "2024-01-01T00:00:00Z",
 							"data": {
 								"flags": {
 									"value": 0,
@@ -359,8 +433,18 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "test.example.com",
 							"type": "A",
+							"ttl": 1,
 							"content": "192.168.1.1",
-							"data": null
+							"data": null,
+							"meta": "{}",
+							"settings": {
+								"flatten_cname": null,
+								"ipv4_only": null,
+								"ipv6_only": null
+							},
+							"proxiable": false,
+							"created_on": "2024-01-01T00:00:00Z",
+							"modified_on": "2024-01-01T00:00:00Z"
 						}
 					}]
 				}]
@@ -398,7 +482,17 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "test.example.com",
 							"type": "CAA",
+							"ttl": 1,
 							"content": "0 issue letsencrypt.org",
+							"meta": "{}",
+							"settings": {
+								"flatten_cname": null,
+								"ipv4_only": null,
+								"ipv6_only": null
+							},
+							"proxiable": false,
+							"created_on": "2024-01-01T00:00:00Z",
+							"modified_on": "2024-01-01T00:00:00Z",
 							"data": {
 								"flags": {
 									"value": 0,
@@ -444,6 +538,17 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "_sip._tcp.example.com",
 							"type": "SRV",
+							"priority": 10,
+							"ttl": 1,
+							"meta": "{}",
+							"settings": {
+								"flatten_cname": null,
+								"ipv4_only": null,
+								"ipv6_only": null
+							},
+							"proxiable": false,
+							"created_on": "2024-01-01T00:00:00Z",
+							"modified_on": "2024-01-01T00:00:00Z",
 							"data": {
 								"priority": 10,
 								"weight": 60,
@@ -484,8 +589,18 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 							"id": "test-id",
 							"name": "test.example.com",
 							"type": "A",
+							"ttl": 1,
 							"content": "192.168.1.1",
-							"data": null
+							"data": null,
+							"meta": "{}",
+							"settings": {
+								"flatten_cname": null,
+								"ipv4_only": null,
+								"ipv6_only": null
+							},
+							"proxiable": false,
+							"created_on": "2024-01-01T00:00:00Z",
+							"modified_on": "2024-01-01T00:00:00Z"
 						}
 					}]
 				}]

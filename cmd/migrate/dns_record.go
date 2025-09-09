@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 
@@ -17,7 +18,7 @@ func isDNSRecordResource(block *hclwrite.Block) bool {
 		(block.Labels()[0] == "cloudflare_dns_record" || block.Labels()[0] == "cloudflare_record")
 }
 
-// ProcessDNSRecordConfig processes cloudflare_dns_record configurations to fix CAA record issues
+// ProcessDNSRecordConfig processes cloudflare_dns_record configurations to fix CAA record issues and ensure TTL is present
 func ProcessDNSRecordConfig(file *hclwrite.File) error {
 	body := file.Body()
 
@@ -27,7 +28,7 @@ func ProcessDNSRecordConfig(file *hclwrite.File) error {
 		}
 
 		labels := block.Labels()
-		if len(labels) < 1 {
+		if len(labels) < 2 {
 			continue
 		}
 
@@ -36,13 +37,31 @@ func ProcessDNSRecordConfig(file *hclwrite.File) error {
 			continue
 		}
 
-		// Check if this is a CAA record
+		// Rename cloudflare_record to cloudflare_dns_record
+		if resourceType == "cloudflare_record" {
+			labels[0] = "cloudflare_dns_record"
+			block.SetLabels(labels)
+		}
+
+		// Ensure TTL is present for v5 (required field)
+		ttlAttr := block.Body().GetAttribute("ttl")
+		if ttlAttr == nil {
+			// TTL is missing - add it with default value of 1 (automatic)
+			// Create the TTL token with value 1
+			ttlToken := &hclwrite.Token{
+				Type:  hclsyntax.TokenNumberLit,
+				Bytes: []byte("1"),
+			}
+			block.Body().SetAttributeRaw("ttl", hclwrite.Tokens{ttlToken})
+		}
+
+		// Get the record type first
 		typeAttr := block.Body().GetAttribute("type")
 		if typeAttr == nil {
 			continue
 		}
 
-		// Get the type value
+		// Extract the record type value
 		typeTokens := typeAttr.Expr().BuildTokens(nil)
 		var recordType string
 		for _, token := range typeTokens {
@@ -52,30 +71,231 @@ func ProcessDNSRecordConfig(file *hclwrite.File) error {
 			}
 		}
 
-		if recordType != "CAA" {
+		// For simple record types, rename value to content
+		// Simple types don't have data blocks
+		simpleTypes := map[string]bool{
+			"A": true, "AAAA": true, "CNAME": true, "MX": true,
+			"NS": true, "PTR": true, "TXT": true, "OPENPGPKEY": true,
+		}
+		if simpleTypes[recordType] {
+			// Rename value to content for simple record types
+			valueAttr := block.Body().GetAttribute("value")
+			if valueAttr != nil {
+				// Get the value tokens
+				valueTokens := valueAttr.Expr().BuildTokens(nil)
+				// Set as content
+				block.Body().SetAttributeRaw("content", valueTokens)
+				// Remove value attribute
+				block.Body().RemoveAttribute("value")
+			}
+		}
+
+		// Remove deprecated attributes
+		// allow_overwrite was removed in v5
+		if allowOverwrite := block.Body().GetAttribute("allow_overwrite"); allowOverwrite != nil {
+			block.Body().RemoveAttribute("allow_overwrite")
+		}
+
+		// hostname was removed in v5
+		if hostname := block.Body().GetAttribute("hostname"); hostname != nil {
+			block.Body().RemoveAttribute("hostname")
+		}
+
+		// Check if this record has any data blocks to process
+		hasDataBlock := false
+		for _, b := range block.Body().Blocks() {
+			if b.Type() == "data" {
+				hasDataBlock = true
+				break
+			}
+		}
+
+		// Skip if no data blocks to process
+		if !hasDataBlock {
 			continue
 		}
 
-		// Process data block for CAA records
+		// For SRV, MX, and URI records, extract priority from data block if present
+		if recordType == "SRV" || recordType == "MX" || recordType == "URI" {
+			for _, dataBlock := range block.Body().Blocks() {
+				if dataBlock.Type() != "data" {
+					continue
+				}
+
+				// Check if priority exists in data block
+				if priorityAttr := dataBlock.Body().GetAttribute("priority"); priorityAttr != nil {
+					// Copy priority to root level if not already there
+					if block.Body().GetAttribute("priority") == nil {
+						// Copy the priority value to the root level (keep it in both places)
+						// Get the actual tokens representing the value
+						priorityTokens := priorityAttr.Expr().BuildTokens(nil)
+						block.Body().SetAttributeRaw("priority", priorityTokens)
+					}
+					// Keep priority in the data block as well
+				}
+			}
+		}
+
+		var dataBlocksToRemove []*hclwrite.Block
 		for _, dataBlock := range block.Body().Blocks() {
 			if dataBlock.Type() != "data" {
 				continue
 			}
 
-			// For CAA records, we only need to rename content to value
-			// We keep flags as numbers (not converting to strings)
-			contentAttr := dataBlock.Body().GetAttribute("content")
-			if contentAttr != nil {
-				// Get the content value and rename to value
-				expr := contentAttr.Expr()
-				dataBlock.Body().SetAttributeRaw("value", expr.BuildTokens(nil))
-				dataBlock.Body().RemoveAttribute("content")
+			// Convert data block to attribute format
+			// Build the object expression from the block's attributes
+			var objTokens hclwrite.Tokens
+			objTokens = append(objTokens, &hclwrite.Token{
+				Type:  hclsyntax.TokenOBrace,
+				Bytes: []byte("{"),
+			})
+			objTokens = append(objTokens, &hclwrite.Token{
+				Type:  hclsyntax.TokenNewline,
+				Bytes: []byte("\n"),
+			})
+
+			// Process attributes from the data block in a consistent order
+			// First collect all attributes
+			attrs := dataBlock.Body().Attributes()
+			processedAttrs := make(map[string]bool)
+
+			// Define the preferred order based on record type
+			var attrOrder []string
+			switch recordType {
+			case "CAA":
+				attrOrder = []string{"flags", "tag", "value"}
+			case "SRV":
+				// Priority is kept in both root level and data
+				attrOrder = []string{"priority", "weight", "port", "target", "service"}
+			case "URI":
+				attrOrder = []string{"weight", "target"}
+			default:
+				attrOrder = []string{}
 			}
+
+			// Process attributes in the defined order
+			for _, attrName := range attrOrder {
+				var attr *hclwrite.Attribute
+				var finalName string
+				var origName string
+
+				// Special handling for value/content renaming
+				if attrName == "value" {
+					// For CAA records, rename content to value
+					if contentAttr, exists := attrs["content"]; exists && recordType == "CAA" {
+						attr = contentAttr
+						finalName = "value"
+						origName = "content"
+					} else if valueAttr, exists := attrs["value"]; exists {
+						// Already has value attribute
+						attr = valueAttr
+						finalName = "value"
+						origName = "value"
+					}
+				} else {
+					// For other attributes, use as-is if they exist
+					if a, exists := attrs[attrName]; exists {
+						attr = a
+						finalName = attrName
+						origName = attrName
+					}
+				}
+
+				if attr == nil {
+					continue
+				}
+
+				// Mark as processed
+				processedAttrs[origName] = true
+
+				// Add indentation
+				objTokens = append(objTokens, &hclwrite.Token{
+					Type:  hclsyntax.TokenIdent,
+					Bytes: []byte("    "),
+				})
+
+				// Add attribute name
+				objTokens = append(objTokens, &hclwrite.Token{
+					Type:  hclsyntax.TokenIdent,
+					Bytes: []byte(finalName),
+				})
+
+				// Add equals sign
+				objTokens = append(objTokens, &hclwrite.Token{
+					Type:  hclsyntax.TokenEqual,
+					Bytes: []byte(" = "),
+				})
+
+				// Add the attribute value
+				objTokens = append(objTokens, attr.Expr().BuildTokens(nil)...)
+
+				// Add newline
+				objTokens = append(objTokens, &hclwrite.Token{
+					Type:  hclsyntax.TokenNewline,
+					Bytes: []byte("\n"),
+				})
+			}
+
+			// Process any remaining attributes not in the predefined order
+			for name, attr := range attrs {
+				// Skip if already processed
+				if processedAttrs[name] {
+					continue
+				}
+
+				// Add indentation
+				objTokens = append(objTokens, &hclwrite.Token{
+					Type:  hclsyntax.TokenIdent,
+					Bytes: []byte("    "),
+				})
+
+				// Add attribute name
+				objTokens = append(objTokens, &hclwrite.Token{
+					Type:  hclsyntax.TokenIdent,
+					Bytes: []byte(name),
+				})
+
+				// Add equals sign
+				objTokens = append(objTokens, &hclwrite.Token{
+					Type:  hclsyntax.TokenEqual,
+					Bytes: []byte(" = "),
+				})
+
+				// Add the attribute value
+				objTokens = append(objTokens, attr.Expr().BuildTokens(nil)...)
+
+				// Add newline
+				objTokens = append(objTokens, &hclwrite.Token{
+					Type:  hclsyntax.TokenNewline,
+					Bytes: []byte("\n"),
+				})
+			}
+
+			// Add indentation before closing brace
+			objTokens = append(objTokens, &hclwrite.Token{
+				Type:  hclsyntax.TokenIdent,
+				Bytes: []byte("  "),
+			})
+			objTokens = append(objTokens, &hclwrite.Token{
+				Type:  hclsyntax.TokenCBrace,
+				Bytes: []byte("}"),
+			})
+
+			// Set the data attribute with the object expression
+			block.Body().SetAttributeRaw("data", objTokens)
+
+			// Mark the block for removal
+			dataBlocksToRemove = append(dataBlocksToRemove, dataBlock)
+		}
+
+		// Remove the data blocks after converting to attributes
+		for _, dataBlock := range dataBlocksToRemove {
+			block.Body().RemoveBlock(dataBlock)
 		}
 
 		// Also handle data as an attribute (not a block)
 		dataAttr := block.Body().GetAttribute("data")
-		if dataAttr != nil {
+		if dataAttr != nil && recordType == "CAA" {
 			// This is more complex as we need to parse and modify the map
 			// For now, we'll use a simple approach
 			expr := dataAttr.Expr()
@@ -83,19 +303,59 @@ func ProcessDNSRecordConfig(file *hclwrite.File) error {
 
 			// Look for pattern to replace:
 			// content = -> value =
-			// NOTE: For CAA records, we keep flags as numbers (not strings)
+			// Process tokens to handle transformations
 			newTokens := make(hclwrite.Tokens, 0, len(tokens))
 			for i := 0; i < len(tokens); i++ {
 				token := tokens[i]
 
+				// Check if this is "flags" attribute with a quoted string value
+				if token.Type == hclsyntax.TokenIdent && string(token.Bytes) == "flags" {
+					// Look ahead for = and then a quoted string
+					if i+1 < len(tokens) && tokens[i+1].Type == hclsyntax.TokenEqual {
+						// Find the value token (skip whitespace)
+						valueIdx := i + 2
+						for valueIdx < len(tokens) && tokens[valueIdx].Type == hclsyntax.TokenNewline {
+							valueIdx++
+						}
+
+						if valueIdx < len(tokens) && tokens[valueIdx].Type == hclsyntax.TokenQuotedLit {
+							// This is flags = "number" - convert to flags = number
+							quotedValue := string(tokens[valueIdx].Bytes)
+							// Remove quotes and check if it's a number
+							unquoted := strings.Trim(quotedValue, `"`)
+							if _, err := strconv.Atoi(unquoted); err == nil {
+								// It's a number in quotes - add tokens without quotes
+								newTokens = append(newTokens, token)       // flags
+								newTokens = append(newTokens, tokens[i+1]) // =
+								// Add the number without quotes
+								numberToken := &hclwrite.Token{
+									Type:  hclsyntax.TokenNumberLit,
+									Bytes: []byte(unquoted),
+								}
+								newTokens = append(newTokens, numberToken)
+								// Skip to after the quoted value
+								i = valueIdx
+								continue
+							}
+						}
+					}
+				}
+
 				// Check if this is "content" identifier inside data - rename to "value"
 				if token.Type == hclsyntax.TokenIdent && string(token.Bytes) == "content" {
-					// Replace "content" with "value"
-					valueToken := &hclwrite.Token{
-						Type:  hclsyntax.TokenIdent,
-						Bytes: []byte("value"),
+					// Check if this is an attribute name (followed by =)
+					if i+1 < len(tokens) && (tokens[i+1].Type == hclsyntax.TokenEqual ||
+						(string(tokens[i+1].Bytes) == " " && i+2 < len(tokens) && tokens[i+2].Type == hclsyntax.TokenEqual)) {
+						// Replace "content" with "value"
+						valueToken := &hclwrite.Token{
+							Type:  hclsyntax.TokenIdent,
+							Bytes: []byte("value"),
+						}
+						newTokens = append(newTokens, valueToken)
+					} else {
+						// Not an attribute name, keep as is
+						newTokens = append(newTokens, token)
 					}
-					newTokens = append(newTokens, valueToken)
 				} else {
 					// Keep all other tokens as-is, including flags with numeric values
 					newTokens = append(newTokens, token)
@@ -110,54 +370,46 @@ func ProcessDNSRecordConfig(file *hclwrite.File) error {
 }
 
 // transformDNSRecordStateJSON transforms DNS record state entries from v4 to v5
+
 func transformDNSRecordStateJSON(result string, path string, instance gjson.Result) string {
-	// Determine if this is a full migration scenario (real v4 state) or minimal transformation
-	// Real v4 states typically have zone_id and other standard fields
-	// Minimal test cases often lack these fields
-	zoneID := instance.Get("attributes.zone_id")
-	isFullMigration := zoneID.Exists()
+	// Ensure meta field exists as a JSON string (not null)
+	meta := instance.Get("attributes.meta")
+	if !meta.Exists() || meta.Type == gjson.Null {
+		result, _ = sjson.Set(result, path+".attributes.meta", "{}")
+	}
 
-	// Only add computed fields if this appears to be a real v4 state migration
-	if isFullMigration {
-		// Ensure meta field exists as a JSON string (not null)
-		meta := instance.Get("attributes.meta")
-		if !meta.Exists() || meta.Type == gjson.Null {
-			result, _ = sjson.Set(result, path+".attributes.meta", "{}")
+	// Ensure settings field exists with proper structure
+	settings := instance.Get("attributes.settings")
+	if !settings.Exists() || settings.Type == gjson.Null {
+		settingsObj := map[string]interface{}{
+			"flatten_cname": nil,
+			"ipv4_only":     nil,
+			"ipv6_only":     nil,
 		}
+		result, _ = sjson.Set(result, path+".attributes.settings", settingsObj)
+	}
 
-		// Ensure settings field exists with proper structure
-		settings := instance.Get("attributes.settings")
-		if !settings.Exists() || settings.Type == gjson.Null {
-			settingsObj := map[string]interface{}{
-				"flatten_cname": nil,
-				"ipv4_only":     nil,
-				"ipv6_only":     nil,
-			}
-			result, _ = sjson.Set(result, path+".attributes.settings", settingsObj)
-		}
+	// Ensure proxiable field exists
+	proxiable := instance.Get("attributes.proxiable")
+	if !proxiable.Exists() {
+		result, _ = sjson.Set(result, path+".attributes.proxiable", false)
+	}
 
-		// Ensure proxiable field exists
-		proxiable := instance.Get("attributes.proxiable")
-		if !proxiable.Exists() {
-			result, _ = sjson.Set(result, path+".attributes.proxiable", false)
-		}
+	// Ensure timestamp fields exist with default values if missing
+	// These are computed fields that should always exist in v5
+	createdOn := instance.Get("attributes.created_on")
+	if !createdOn.Exists() {
+		// If created_on doesn't exist, set it to a default RFC3339 timestamp
+		result, _ = sjson.Set(result, path+".attributes.created_on", "2024-01-01T00:00:00Z")
+	}
 
-		// Ensure timestamp fields exist with default values if missing
-		// These are computed fields that should always exist in v5
-		createdOn := instance.Get("attributes.created_on")
-		if !createdOn.Exists() {
-			// If created_on doesn't exist, set it to a default RFC3339 timestamp
-			result, _ = sjson.Set(result, path+".attributes.created_on", "2024-01-01T00:00:00Z")
-		}
-
-		modifiedOn := instance.Get("attributes.modified_on")
-		if !modifiedOn.Exists() {
-			// If modified_on doesn't exist, use created_on or set a default
-			if createdOn.Exists() {
-				result, _ = sjson.Set(result, path+".attributes.modified_on", createdOn.String())
-			} else {
-				result, _ = sjson.Set(result, path+".attributes.modified_on", "2024-01-01T00:00:00Z")
-			}
+	modifiedOn := instance.Get("attributes.modified_on")
+	if !modifiedOn.Exists() {
+		// If modified_on doesn't exist, use created_on or set a default
+		if createdOn.Exists() {
+			result, _ = sjson.Set(result, path+".attributes.modified_on", createdOn.String())
+		} else {
+			result, _ = sjson.Set(result, path+".attributes.modified_on", "2024-01-01T00:00:00Z")
 		}
 	}
 
@@ -170,6 +422,13 @@ func transformDNSRecordStateJSON(result string, path string, instance gjson.Resu
 	} else if value.Exists() && content.Exists() {
 		// If both exist, remove value since content takes precedence in v5
 		result, _ = sjson.Delete(result, path+".attributes.value")
+	}
+
+	// Ensure TTL is present (required in v5)
+	ttl := instance.Get("attributes.ttl")
+	if !ttl.Exists() {
+		// TTL is missing - add default value of 1 (automatic)
+		result, _ = sjson.Set(result, path+".attributes.ttl", 1.0)
 	}
 
 	// Rename metadata -> meta and ensure it's a JSON string
@@ -193,23 +452,6 @@ func transformDNSRecordStateJSON(result string, path string, instance gjson.Resu
 	}
 	if instance.Get("attributes.timeouts").Exists() {
 		result, _ = sjson.Delete(result, path+".attributes.timeouts")
-	}
-
-	// Handle tags_modified_on field
-	// Only process this in full migration scenarios
-	if isFullMigration {
-		// If tags_modified_on already exists (from v4.49+), preserve it
-		// If tags exist but tags_modified_on doesn't, set to null to prevent drift
-		// If no tags exist, don't add tags_modified_on field
-		tags := instance.Get("attributes.tags")
-		tagsModifiedOn := instance.Get("attributes.tags_modified_on")
-		if !tagsModifiedOn.Exists() && tags.Exists() && len(tags.Array()) > 0 {
-			// Tags exist but tags_modified_on doesn't - set to null to prevent drift
-			result, _ = sjson.Set(result, path+".attributes.tags_modified_on", nil)
-		}
-		// Otherwise: 
-		// - If tags_modified_on exists, it's preserved automatically
-		// - If no tags exist, we don't add tags_modified_on
 	}
 
 	// Get record type to determine how to handle data field
@@ -239,25 +481,40 @@ func transformDNSRecordStateJSON(result string, path string, instance gjson.Resu
 	data := instance.Get("attributes.data")
 	if !data.Exists() {
 		// No data field - create empty object for complex types
-		result, _ = sjson.Set(result, path+".attributes.data", map[string]interface{}{})
+		dataObj := make(map[string]interface{})
+		// For CAA records, set flags to null
+		if recordType == "CAA" {
+			dataObj["flags"] = nil
+		}
+
+		result, _ = sjson.Set(result, path+".attributes.data", dataObj)
 		return result
 	}
 
 	// Transform data from array to object if needed
-	var dataObj map[string]interface{}
+	// Only include fields that were present in v4 state
+	dataObj := make(map[string]interface{})
 
 	if data.IsArray() {
-
 		// v4 format - data is an array, need to convert to object
 		dataArray := data.Array()
 		if len(dataArray) > 0 {
-			// Take the first element and convert to object
+			// Take the first element and copy only its existing fields
 			firstElem := dataArray[0]
-			dataObj = make(map[string]interface{})
 
 			// Copy all fields from the array element to the object
 			firstElem.ForEach(func(key, value gjson.Result) bool {
 				k := key.String()
+
+				// Skip 'name' field - it should not be in data
+				if k == "name" {
+					return true
+				}
+
+				// Skip 'proto' field - not supported in v5
+				if k == "proto" {
+					return true
+				}
 
 				// For CAA records, rename 'content' to 'value' in data
 				if recordType == "CAA" && k == "content" {
@@ -265,35 +522,33 @@ func transformDNSRecordStateJSON(result string, path string, instance gjson.Resu
 					return true
 				}
 
-				// Special handling for CAA record flags field - needs proper NormalizedDynamicType format
-				if recordType == "CAA" && k == "flags" {
-					// For NormalizedDynamicType in Terraform state, the value needs to be wrapped
-					// in an object with "value" and "type" fields
-					var flagValue interface{}
-					var flagType string
-
+				// Special handling for flags field - wrap in correct format
+				if k == "flags" {
 					switch value.Type {
 					case gjson.Number:
-						flagValue = value.Float()
-						flagType = "number"
-					case gjson.String:
-						// Try to parse as number first
-						if num, err := strconv.ParseFloat(value.String(), 64); err == nil {
-							flagValue = num
-							flagType = "number"
-						} else {
-							flagValue = value.String()
-							flagType = "string"
+						// Preserve as json.Number to maintain exact numeric type
+						dataObj[k] = map[string]interface{}{
+							"value": json.Number(value.Raw),
+							"type":  "number",
 						}
-					default:
-						flagValue = value.Value()
-						flagType = "string"
-					}
-
-					// Wrap in the NormalizedDynamicType format
-					dataObj[k] = map[string]interface{}{
-						"value": flagValue,
-						"type":  flagType,
+					case gjson.String:
+						// Convert string to number if possible
+						if _, err := strconv.ParseFloat(value.String(), 64); err == nil {
+							// It's a valid number, preserve as json.Number
+							dataObj[k] = map[string]interface{}{
+								"value": json.Number(value.String()),
+								"type":  "number",
+							}
+						} else if value.String() == "" {
+							dataObj[k] = nil
+						} else {
+							dataObj[k] = map[string]interface{}{
+								"value": value.String(),
+								"type":  "string",
+							}
+						}
+					case gjson.Null:
+						dataObj[k] = nil
 					}
 				} else if recordType == "CAA" && k == "value" {
 					// For CAA records, 'value' field stays in data
@@ -318,122 +573,118 @@ func transformDNSRecordStateJSON(result string, path string, instance gjson.Resu
 				}
 				return true
 			})
-		} else {
-			// Empty array - convert to empty object
-			dataObj = map[string]interface{}{}
 		}
 
-		// Set the data back as an object (not array)
+		// For CAA records, if flags field doesn't exist in dataObj, set it to null
+		if recordType == "CAA" {
+			if _, hasFlags := dataObj["flags"]; !hasFlags {
+				dataObj["flags"] = nil
+			}
+		}
+
+		// Set the data back as an object (not array) with all fields
 		result, _ = sjson.Set(result, path+".attributes.data", dataObj)
 	} else if data.IsObject() {
-		// Already an object - but we still need to ensure flags is wrapped properly
-		if recordType == "CAA" {
-			flags := data.Get("flags")
-			if flags.Exists() {
-				// Check if flags is already wrapped (has value and type fields)
-				if !flags.IsObject() || !flags.Get("value").Exists() {
-					// Need to wrap the flags value
-					var flagValue interface{}
-					var flagType string
+		// Already an object - only include existing fields
+		dataObj = make(map[string]interface{})
 
-					switch flags.Type {
+		// Copy existing values from the current data object
+		data.ForEach(func(key, value gjson.Result) bool {
+			k := key.String()
+
+			// Skip 'name' field - it should not be in data
+			if k == "name" {
+				return true
+			}
+
+			// Skip 'proto' field - not supported in v5
+			if k == "proto" {
+				return true
+			}
+
+			// Special handling for flags - ensure it's wrapped
+			if k == "flags" {
+				// Check if already wrapped
+				if value.IsObject() && value.Get("value").Exists() {
+					// Already wrapped, keep as is
+					dataObj[k] = value.Value()
+				} else {
+					// Need to wrap it
+					switch value.Type {
 					case gjson.Number:
-						flagValue = flags.Float()
-						flagType = "number"
-					case gjson.String:
-						// Try to parse as number first
-						if num, err := strconv.ParseFloat(flags.String(), 64); err == nil {
-							flagValue = num
-							flagType = "number"
-						} else {
-							flagValue = flags.String()
-							flagType = "string"
+						// Preserve as json.Number to maintain exact numeric type
+						dataObj[k] = map[string]interface{}{
+							"value": json.Number(value.Raw),
+							"type":  "number",
 						}
-					default:
-						flagValue = flags.Value()
-						flagType = "string"
-					}
+					case gjson.String:
+						// Convert string to number if possible
+						if _, err := strconv.ParseFloat(value.String(), 64); err == nil {
+							// It's a valid number, preserve as json.Number
+							dataObj[k] = map[string]interface{}{
+								"value": json.Number(value.String()),
+								"type":  "number",
+							}
+						} else if value.String() == "" {
+							dataObj[k] = nil
+						} else {
+							// Keep as string
+							dataObj[k] = map[string]interface{}{
+								"value": value.String(),
+								"type":  "string",
+							}
+						}
 
-					// Wrap in the NormalizedDynamicType format
-					wrappedFlags := map[string]interface{}{
-						"value": flagValue,
-						"type":  flagType,
+					case gjson.Null:
+						dataObj[k] = nil
 					}
-					result, _ = sjson.Set(result, path+".attributes.data.flags", wrappedFlags)
+				}
+			} else {
+				// Handle other fields normally
+				switch value.Type {
+				case gjson.Number:
+					dataObj[k] = value.Float()
+				case gjson.String:
+					dataObj[k] = value.String()
+				case gjson.True:
+					dataObj[k] = true
+				case gjson.False:
+					dataObj[k] = false
+				case gjson.Null:
+					dataObj[k] = nil
+				default:
+					dataObj[k] = value.Value()
 				}
 			}
+			return true
+		})
 
-			// Also check if we need to rename content to value
-			content := data.Get("content")
-			if content.Exists() {
-				result, _ = sjson.Set(result, path+".attributes.data.value", content.String())
-				result, _ = sjson.Delete(result, path+".attributes.data.content")
+		// For CAA records, also check if we need to rename content to value
+		if recordType == "CAA" {
+			if content := data.Get("content"); content.Exists() {
+				dataObj["value"] = content.String()
+				// Remove content from dataObj if it exists
+				delete(dataObj, "content")
 			}
+		}
+
+		if _, hasFlags := dataObj["flags"]; !hasFlags {
+			dataObj["flags"] = nil
+		}
+
+		// Set the data back with all fields
+		result, _ = sjson.Set(result, path+".attributes.data", dataObj)
+	}
+
+	// For SRV and URI records, ensure priority is at root level if it exists in data
+	// MX records have priority at root level in both v4 and v5
+	if recordType == "SRV" || recordType == "URI" {
+		// Check if priority exists in dataObj
+		if priority, ok := dataObj["priority"]; ok && priority != nil {
+			// Set priority at root level as well
+			result, _ = sjson.Set(result, path+".attributes.priority", priority)
 		}
 	}
 
 	return result
-}
-
-// ProcessDNSRecordState processes state file to ensure CAA record flags are strings
-func ProcessDNSRecordState(state map[string]interface{}) error {
-	resources, ok := state["resources"].([]interface{})
-	if !ok {
-		return nil
-	}
-
-	for _, resource := range resources {
-		res, ok := resource.(map[string]interface{})
-		if !ok {
-			continue
-		}
-
-		resType, ok := res["type"].(string)
-		if !ok || (resType != "cloudflare_dns_record" && resType != "cloudflare_record") {
-			continue
-		}
-
-		instances, ok := res["instances"].([]interface{})
-		if !ok {
-			continue
-		}
-
-		for _, instance := range instances {
-			inst, ok := instance.(map[string]interface{})
-			if !ok {
-				continue
-			}
-
-			attrs, ok := inst["attributes"].(map[string]interface{})
-			if !ok {
-				continue
-			}
-
-			// Check if it's a CAA record
-			recordType, ok := attrs["type"].(string)
-			if !ok || recordType != "CAA" {
-				continue
-			}
-
-			// Process the data field
-			data, ok := attrs["data"].(map[string]interface{})
-			if !ok {
-				continue
-			}
-
-			// Convert flags to string if it's a number
-			if flags, ok := data["flags"]; ok {
-				switch v := flags.(type) {
-				case float64:
-					data["flags"] = strconv.FormatFloat(v, 'f', -1, 64)
-				case int:
-					data["flags"] = strconv.Itoa(v)
-				case int64:
-					data["flags"] = strconv.FormatInt(v, 10)
-				}
-			}
-		}
-	}
-
-	return nil
 }
