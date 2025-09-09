@@ -48,6 +48,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_infrastructure_access_target"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_risk_behavior"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_risk_score_integration"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_connectivity_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/sdkv2provider"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -401,6 +402,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		content_scanning.NewResource,
 		content_scanning_expression.NewResource,
 		apishieldoperation.NewResource,
+		zero_trust_connectivity_settings.NewResource,
+                
 	}
 }
 
