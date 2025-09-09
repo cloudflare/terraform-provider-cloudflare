@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
@@ -76,6 +77,27 @@ func transformZoneInstanceStateJSON(state string, path string) string {
 	basePath := path + ".attributes"
 	var err error
 	result := state
+	
+	// Debug: Check what resource we're transforming
+	fmt.Printf("DEBUG: transformZoneInstanceStateJSON called for path=%s\n", path)
+	fmt.Printf("DEBUG: basePath=%s\n", basePath)
+	
+	// Check if we have the zone attribute that we expect to transform
+	hasZone := gjson.Get(state, basePath+".zone").Exists()
+	zoneName := gjson.Get(state, basePath+".zone").String()
+	fmt.Printf("DEBUG: hasZone=%t, zoneName=%s\n", hasZone, zoneName)
+	
+	// Let's see what attributes are actually available in this instance
+	attrs := gjson.Get(state, basePath)
+	if attrs.Exists() {
+		fmt.Printf("DEBUG: Available attributes in %s:\n", basePath)
+		attrs.ForEach(func(key, value gjson.Result) bool {
+			fmt.Printf("DEBUG:   %s = %s\n", key.String(), value.String())
+			return true
+		})
+	} else {
+		fmt.Printf("DEBUG: No attributes found at %s\n", basePath)
+	}
 	
 	// 1. zone → name
 	if gjson.Get(state, basePath+".zone").Exists() {
