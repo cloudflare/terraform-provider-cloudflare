@@ -43,14 +43,7 @@ pattern cloudflare_terraform_v5_attribute_renames_state() {
         }
     },
 
-    // cloudflare_load_balancer
-    `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {
-        $resource_type <: contains `cloudflare_load_balancer`,
-        $instances <: any {
-          contains `"fallback_pool_id": $fp` => `"fallback_pool": $fp`,
-          contains `"default_pool_ids": $dp` => `"default_pools": $dp`,
-        }
-    },
+    // cloudflare_load_balancer - handled in Go state.go instead
 
     // cloudflare_queue
     `{ $..., "mode": "managed", "type": "$resource_type", $..., "instances":[$instances] }` where {

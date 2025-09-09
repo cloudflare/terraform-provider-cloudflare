@@ -80,10 +80,11 @@ pattern cloudflare_terraform_v5_block_to_attribute_configuration() {
     inline_cloudflare_block_to_map(`overrides`) as $block where { $block <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
     inline_cloudflare_block_to_map(`session_affinity_attributes`) as $block where { $block <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
     inline_cloudflare_block_to_list(`header`) as $block where { $block <: within `resource "cloudflare_load_balancer_monitor" $_ { $_ }` },
+    // cloudflare_load_balancer_pool - state transformation handled entirely in Go state.go
+    // Configuration transformations still use Grit patterns below
     inline_cloudflare_block_to_map(`load_shedding`) as $block where { $block <: within `resource "cloudflare_load_balancer_pool" $_ { $_ }` },
     inline_cloudflare_block_to_map(`origin_steering`) as $block where { $block <: within `resource "cloudflare_load_balancer_pool" $_ { $_ }` },
     inline_cloudflare_block_to_list(`origins`) as $block where { $block <: within `resource "cloudflare_load_balancer_pool" $_ { $_ }` },
-    inline_cloudflare_block_to_map(`header`) as $block where { $block <: within `resource "cloudflare_load_balancer_pool" $_ { $_ }` },
     inline_cloudflare_block_to_map(`output_options`) as $block where { $block <: within `resource "cloudflare_logpush_job" $_ { $_ }` },
     inline_cloudflare_block_to_list(`managed_request_headers`) as $block where { $block <: within `resource "cloudflare_managed_headers" $_ { $_ }` },
     inline_cloudflare_block_to_list(`managed_response_headers`) as $block where { $block <: within `resource "cloudflare_managed_headers" $_ { $_ }` },
