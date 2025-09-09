@@ -4,14 +4,16 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/option"
-	"github.com/cloudflare/cloudflare-go/v5/workers"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -33,6 +35,31 @@ const (
 var (
 	compatibilityFlags = []string{"nodejs_compat", "web_socket_compression"}
 )
+
+// supportsTerraformWriteOnly checks if the current Terraform version supports WriteOnly attributes (1.11+)
+func supportsTerraformWriteOnly() bool {
+	cmd := exec.Command("terraform", "version")
+	output, err := cmd.Output()
+	if err != nil {
+		return false
+	}
+
+	versionStr := string(output)
+	re := regexp.MustCompile(`Terraform v(\d+)\.(\d+)`)
+	matches := re.FindStringSubmatch(versionStr)
+	if len(matches) < 3 {
+		return false
+	}
+
+	major, err1 := strconv.Atoi(matches[1])
+	minor, err2 := strconv.Atoi(matches[2])
+	if err1 != nil || err2 != nil {
+		return false
+	}
+
+	// WriteOnly attributes require Terraform 1.11+
+	return major > 1 || (major == 1 && minor >= 11)
+}
 
 func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 	t.Parallel()
@@ -342,6 +369,10 @@ func TestAccCloudflareWorkerScript_PythonWorker(t *testing.T) {
 func TestAccCloudflareWorkerScript_ModuleWithDurableObject(t *testing.T) {
 	t.Parallel()
 
+	if !supportsTerraformWriteOnly() {
+		t.Skip("Skipping test: WriteOnly attributes require Terraform 1.11+ (DurableObject migrations are required)")
+	}
+
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_workers_script." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -384,7 +415,8 @@ func testAccCheckCloudflareWorkerScriptConfigServiceWorkerUpdateBinding(rnd, acc
 }
 
 func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID string) string {
-	return acctest.LoadTestCase("module.tf", rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`))
+	// Use non-migration template to support Terraform < 1.11
+	return acctest.LoadTestCase("module_no_migrations.tf", rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`))
 }
 
 func testAccWorkersScriptConfigWithContentFile(rnd, accountID, contentFile string) string {

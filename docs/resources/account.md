@@ -27,12 +27,11 @@ resource "cloudflare_account" "example_account" {
 ### Required
 
 - `name` (String) Account name
-- `type` (String) the type of account being created. For self-serve customers, use standard. for enterprise customers, use enterprise.
-Available values: "standard", "enterprise".
 
 ### Optional
 
 - `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--settings))
+- `type` (String) Available values: "standard", "enterprise".
 - `unit` (Attributes) information related to the tenant unit, and optionally, an id of the unit to create the account on. see https://developers.cloudflare.com/tenant/how-to/manage-accounts/ (see [below for nested schema](#nestedatt--unit))
 
 ### Read-Only

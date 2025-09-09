@@ -18,6 +18,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+
 func init() {
 	resource.AddTestSweepers("cloudflare_spectrum_applications", &resource.Sweeper{
 		Name: "cloudflare_spectrum_applications",
@@ -120,6 +125,32 @@ func TestAccCloudflareSpectrumApplication_OriginDNS(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "protocol", "tcp/22"),
 					resource.TestCheckResourceAttr(name, "origin_dns.name", fmt.Sprintf("%s.origin.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "origin_port", "22"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareSpectrumApplication_PortRange(t *testing.T) {
+	var spectrumApp cloudflare.SpectrumApplication
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_spectrum_application." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareSpectrumApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigOriginPortRange(zoneID, domain, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "protocol", "tcp/8080-8081"),
+					resource.TestCheckResourceAttr(name, "origin_dns.name", fmt.Sprintf("%s.origin.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "origin_port", "8080-8081"),
 				),
 			},
 		},

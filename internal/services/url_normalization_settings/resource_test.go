@@ -8,10 +8,10 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v5/url_normalization"
+	"github.com/cloudflare/cloudflare-go/v6/url_normalization"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
-	cloudflare "github.com/cloudflare/cloudflare-go/v5"
+	cloudflare "github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -21,6 +21,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"github.com/pkg/errors"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
 
 func init() {
 	resource.AddTestSweepers("cloudflare_url_normalization_settings", &resource.Sweeper{

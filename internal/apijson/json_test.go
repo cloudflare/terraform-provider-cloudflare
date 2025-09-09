@@ -18,7 +18,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"github.com/tidwall/gjson"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
@@ -107,14 +106,6 @@ type UnknownStruct struct {
 	Unknown interface{} `json:"unknown"`
 }
 
-type UnionStruct struct {
-	Union Union `json:"union" format:"date"`
-}
-
-type Union interface {
-	union()
-}
-
 type Inline struct {
 	InlineField Primitives `json:"-,inline"`
 }
@@ -135,52 +126,6 @@ type EncodeStateForUnknownStruct struct {
 	ComputedRegular                 types.String `tfsdk:"computed_regular" json:"computed_regular,computed"`
 	ComputedOptionalRegular         types.String `tfsdk:"computed_optional_regular" json:"computed_optional_regular,computed_optional"`
 }
-
-func init() {
-	RegisterUnion(reflect.TypeOf((*Union)(nil)).Elem(), "type",
-		UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(UnionTime{}),
-		},
-		UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(UnionInteger(0)),
-		},
-		UnionVariant{
-			TypeFilter:         gjson.JSON,
-			DiscriminatorValue: "typeA",
-			Type:               reflect.TypeOf(UnionStructA{}),
-		},
-		UnionVariant{
-			TypeFilter:         gjson.JSON,
-			DiscriminatorValue: "typeB",
-			Type:               reflect.TypeOf(UnionStructB{}),
-		},
-	)
-}
-
-type UnionInteger int64
-
-func (UnionInteger) union() {}
-
-type UnionStructA struct {
-	Type string `json:"type"`
-	A    string `json:"a"`
-	B    string `json:"b"`
-}
-
-func (UnionStructA) union() {}
-
-type UnionStructB struct {
-	Type string `json:"type"`
-	A    string `json:"a"`
-}
-
-func (UnionStructB) union() {}
-
-type UnionTime time.Time
-
-func (UnionTime) union() {}
 
 type ResultEnvelope struct {
 	Result RecordsModel `json:"result"`
@@ -342,41 +287,6 @@ var tests = map[string]struct {
 			Unknown: map[string]interface{}{
 				"foo": "bar",
 			},
-		},
-	},
-
-	"union_integer": {
-		`{"union":12}`,
-		UnionStruct{
-			Union: UnionInteger(12),
-		},
-	},
-
-	"union_struct_discriminated_a": {
-		`{"union":{"a":"foo","b":"bar","type":"typeA"}}`,
-		UnionStruct{
-			Union: UnionStructA{
-				Type: "typeA",
-				A:    "foo",
-				B:    "bar",
-			},
-		},
-	},
-
-	"union_struct_discriminated_b": {
-		`{"union":{"a":"foo","type":"typeB"}}`,
-		UnionStruct{
-			Union: UnionStructB{
-				Type: "typeB",
-				A:    "foo",
-			},
-		},
-	},
-
-	"union_struct_time": {
-		`{"union":"2010-05-23"}`,
-		UnionStruct{
-			Union: UnionTime(time.Date(2010, 05, 23, 0, 0, 0, 0, time.UTC)),
 		},
 	},
 
@@ -881,6 +791,217 @@ var updateTests = map[string]struct {
 		TfsdkStructs{},
 		`{"bool_value":null,"data":null,"float_value":null,"optional_array":null,"string_value":null}`,
 		`{"bool_value":null,"data":null,"float_value":null,"optional_array":null,"string_value":null}`,
+	},
+
+	"nested object null to non-null": {
+		TfsdkStructs{
+			DataObject: customfield.NullObject[EmbeddedTfsdkStruct](ctx),
+		},
+		TfsdkStructs{
+			DataObject: customfield.NewObjectMust(ctx, &EmbeddedTfsdkStruct{
+				EmbeddedString: types.StringValue("new_value"),
+				EmbeddedInt:    types.Int64Value(42),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
+			}),
+		},
+		`{"data_object":{"embedded_int":42,"embedded_string":"new_value"}}`,
+		`{"data_object":{"embedded_int":42,"embedded_string":"new_value"}}`,
+	},
+
+	"nested object non-null to null": {
+		TfsdkStructs{
+			DataObject: customfield.NewObjectMust(ctx, &EmbeddedTfsdkStruct{
+				EmbeddedString: types.StringValue("old_value"),
+				EmbeddedInt:    types.Int64Value(10),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
+			}),
+		},
+		TfsdkStructs{
+			DataObject: customfield.NullObject[EmbeddedTfsdkStruct](ctx),
+		},
+		`{"data_object":null}`,
+		`{"data_object":null}`,
+	},
+
+	"nested object with null state preserves null": {
+		customfield.NullObject[TfsdkStructs](ctx),
+		customfield.NullObject[TfsdkStructs](ctx),
+		``,
+		``,
+	},
+
+	"nested object list null to non-null": {
+		customfield.NullObjectList[TfsdkStructs](ctx),
+		customfield.NewObjectListMust(ctx, []TfsdkStructs{
+			{
+				BoolValue:   types.BoolValue(true),
+				StringValue: types.StringValue("test"),
+			},
+		}),
+		`[{"bool_value":true,"string_value":"test"}]`,
+		`[{"bool_value":true,"string_value":"test"}]`,
+	},
+
+	"nested object list non-null to null": {
+		customfield.NewObjectListMust(ctx, []TfsdkStructs{
+			{
+				BoolValue:   types.BoolValue(true),
+				StringValue: types.StringValue("test"),
+			},
+		}),
+		customfield.NullObjectList[TfsdkStructs](ctx),
+		`null`,
+		`null`,
+	},
+
+	"nested object list with null state preserves null": {
+		customfield.NullObjectList[TfsdkStructs](ctx),
+		customfield.NullObjectList[TfsdkStructs](ctx),
+		``,
+		``,
+	},
+
+	"nested object map null to non-null": {
+		customfield.NullObjectMap[TfsdkStructs](ctx),
+		customfield.NewObjectMapMust(ctx, map[string]TfsdkStructs{
+			"key1": {
+				BoolValue:   types.BoolValue(true),
+				StringValue: types.StringValue("test"),
+			},
+		}),
+		`{"key1":{"bool_value":true,"string_value":"test"}}`,
+		`{"key1":{"bool_value":true,"string_value":"test"}}`,
+	},
+
+	"nested object map non-null to null": {
+		customfield.NewObjectMapMust(ctx, map[string]TfsdkStructs{
+			"key1": {
+				BoolValue:   types.BoolValue(true),
+				StringValue: types.StringValue("test"),
+			},
+		}),
+		customfield.NullObjectMap[TfsdkStructs](ctx),
+		`null`,
+		`null`,
+	},
+
+	"nested object map with null state preserves null": {
+		customfield.NullObjectMap[TfsdkStructs](ctx),
+		customfield.NullObjectMap[TfsdkStructs](ctx),
+		``,
+		``,
+	},
+
+	"nested object set null to non-null": {
+		customfield.NullObjectSet[TfsdkStructs](ctx),
+		customfield.NewObjectSetMust(ctx, []TfsdkStructs{
+			{
+				BoolValue:   types.BoolValue(true),
+				StringValue: types.StringValue("test"),
+			},
+		}),
+		`[{"bool_value":true,"string_value":"test"}]`,
+		`[{"bool_value":true,"string_value":"test"}]`,
+	},
+
+	"nested object set non-null to null": {
+		customfield.NewObjectSetMust(ctx, []TfsdkStructs{
+			{
+				BoolValue:   types.BoolValue(true),
+				StringValue: types.StringValue("test"),
+			},
+		}),
+		customfield.NullObjectSet[TfsdkStructs](ctx),
+		`null`,
+		`null`,
+	},
+
+	"nested object set with null state preserves null": {
+		customfield.NullObjectSet[TfsdkStructs](ctx),
+		customfield.NullObjectSet[TfsdkStructs](ctx),
+		``,
+		``,
+	},
+
+	"list null to non-null": {
+		customfield.NullList[types.String](ctx),
+		customfield.NewListMust[types.String](ctx, []attr.Value{
+			types.StringValue("test1"),
+			types.StringValue("test2"),
+		}),
+		`["test1","test2"]`,
+		`["test1","test2"]`,
+	},
+
+	"list non-null to null": {
+		customfield.NewListMust[types.String](ctx, []attr.Value{
+			types.StringValue("test1"),
+			types.StringValue("test2"),
+		}),
+		customfield.NullList[types.String](ctx),
+		`null`,
+		`null`,
+	},
+
+	"list with null state preserves null": {
+		customfield.NullList[types.String](ctx),
+		customfield.NullList[types.String](ctx),
+		``,
+		``,
+	},
+
+	"map null to non-null": {
+		customfield.NullMap[types.String](ctx),
+		customfield.NewMapMust[types.String](ctx, map[string]types.String{
+			"key1": types.StringValue("value1"),
+			"key2": types.StringValue("value2"),
+		}),
+		`{"key1":"value1","key2":"value2"}`,
+		`{"key1":"value1","key2":"value2"}`,
+	},
+
+	"map non-null to null": {
+		customfield.NewMapMust[types.String](ctx, map[string]types.String{
+			"key1": types.StringValue("value1"),
+			"key2": types.StringValue("value2"),
+		}),
+		customfield.NullMap[types.String](ctx),
+		`null`,
+		`null`,
+	},
+
+	"map with null state preserves null": {
+		customfield.NullMap[types.String](ctx),
+		customfield.NullMap[types.String](ctx),
+		``,
+		``,
+	},
+
+	"set null to non-null": {
+		customfield.NullSet[types.String](ctx),
+		customfield.NewSetMust[types.String](ctx, []attr.Value{
+			types.StringValue("test1"),
+			types.StringValue("test2"),
+		}),
+		`["test1","test2"]`,
+		`["test1","test2"]`,
+	},
+
+	"set non-null to null": {
+		customfield.NewSetMust[types.String](ctx, []attr.Value{
+			types.StringValue("test1"),
+			types.StringValue("test2"),
+		}),
+		customfield.NullSet[types.String](ctx),
+		`null`,
+		`null`,
+	},
+
+	"set with null state preserves null": {
+		customfield.NullSet[types.String](ctx),
+		customfield.NullSet[types.String](ctx),
+		``,
+		``,
 	},
 
 	"set empty array": {
@@ -1621,8 +1742,64 @@ type nestedMapStruct struct {
 	NestedMap map[string]types.Float64 `tfsdk:"nested_map" json:"nested_map,optional"`
 }
 
+type computedMapStruct struct {
+	ComputedMap map[string]types.Float64 `tfsdk:"computed_map" json:"computed_map,computed_optional"`
+}
+
 type primitiveListExample struct {
 	StrList customfield.List[types.String] `tfsdk:"str_list" json:"str_list,computed_optional"`
+}
+
+type primitiveSetExample struct {
+	StrSet customfield.Set[types.String] `tfsdk:"str_set" json:"str_set,computed_optional"`
+}
+
+type primitiveMapExample struct {
+	StrMap customfield.Map[types.String] `tfsdk:"str_map" json:"str_map,computed_optional"`
+}
+
+type nestedObjectExample struct {
+	NestedObj customfield.NestedObject[computedMapStruct] `tfsdk:"nested_obj" json:"nested_obj,computed_optional"`
+}
+
+type nestedObjectListExample struct {
+	ObjList customfield.NestedObjectList[computedMapStruct] `tfsdk:"obj_list" json:"obj_list,computed_optional"`
+}
+
+type nestedObjectSetExample struct {
+	ObjSet customfield.NestedObjectSet[computedMapStruct] `tfsdk:"obj_set" json:"obj_set,computed_optional"`
+}
+
+type listOfListsExample struct {
+	ListOfLists customfield.List[customfield.List[types.String]] `tfsdk:"list_of_lists" json:"list_of_lists,computed_optional"`
+}
+
+type setOfSetsExample struct {
+	SetOfSets customfield.Set[customfield.Set[types.Int64]] `tfsdk:"set_of_sets" json:"set_of_sets,computed_optional"`
+}
+
+type mapWithListExample struct {
+	MapWithList customfield.Map[customfield.List[types.String]] `tfsdk:"map_with_list" json:"map_with_list,computed_optional"`
+}
+
+type tupleExample struct {
+	TupleVal types.Tuple `tfsdk:"tuple_val" json:"tuple_val,computed_optional"`
+}
+
+// Test types for computed_optional collections bug reproduction
+type ComputedOptionalCollectionsExample struct {
+	Name        types.String                              `tfsdk:"name" json:"name,required"`
+	Tags        customfield.List[types.String]            `tfsdk:"tags" json:"tags,computed_optional"`
+	Metadata    customfield.Map[types.String]             `tfsdk:"metadata" json:"metadata,computed_optional"`
+	Ports       customfield.Set[types.Int64]              `tfsdk:"ports" json:"ports,computed_optional"`
+	Coordinates types.Tuple                               `tfsdk:"coordinates" json:"coordinates,computed_optional"`
+	Rules       customfield.NestedObjectList[RuleExample] `tfsdk:"rules" json:"rules,computed_optional"`
+	Status      types.String                              `tfsdk:"status" json:"status,computed_optional"`
+}
+
+type RuleExample struct {
+	Priority types.Int64  `tfsdk:"priority" json:"priority,required"`
+	Action   types.String `tfsdk:"action" json:"action,computed"`
 }
 
 var decode_computed_only_tests = map[string]struct {
@@ -1637,6 +1814,472 @@ var decode_computed_only_tests = map[string]struct {
 		},
 		primitiveListExample{
 			StrList: customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("a"), types.StringValue("b"), types.StringValue("c")}),
+		},
+	},
+	"computed_optional_list_from_null": {
+		`{"str_list":["hello","world","test"]}`,
+		primitiveListExample{
+			StrList: customfield.NullList[types.String](ctx),
+		},
+		primitiveListExample{
+			StrList: customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("hello"), types.StringValue("world"), types.StringValue("test")}),
+		},
+	},
+	"computed_optional_set_from_null": {
+		`{"str_set":["apple","banana","cherry"]}`,
+		primitiveSetExample{
+			StrSet: customfield.NullSet[types.String](ctx),
+		},
+		primitiveSetExample{
+			StrSet: customfield.NewSetMust[types.String](ctx, []attr.Value{types.StringValue("apple"), types.StringValue("banana"), types.StringValue("cherry")}),
+		},
+	},
+	"computed_optional_nested_object_from_null": {
+		`{"nested_obj":{"computed_map":{"key1":1.5,"key2":2.5}}}`,
+		nestedObjectExample{
+			NestedObj: customfield.NullObject[computedMapStruct](ctx),
+		},
+		nestedObjectExample{
+			NestedObj: customfield.NewObjectMust(ctx, &computedMapStruct{
+				ComputedMap: map[string]types.Float64{"key1": types.Float64Value(1.5), "key2": types.Float64Value(2.5)},
+			}),
+		},
+	},
+	"computed_optional_nested_object_list_from_null": {
+		`{"obj_list":[{"computed_map":{"a":1.0}},{"computed_map":{"b":2.0}}]}`,
+		nestedObjectListExample{
+			ObjList: customfield.NullObjectList[computedMapStruct](ctx),
+		},
+		nestedObjectListExample{
+			ObjList: customfield.NewObjectListMust(ctx, []computedMapStruct{
+				{ComputedMap: map[string]types.Float64{"a": types.Float64Value(1.0)}},
+				{ComputedMap: map[string]types.Float64{"b": types.Float64Value(2.0)}},
+			}),
+		},
+	},
+	"computed_optional_nested_object_set_from_null": {
+		`{"obj_set":[{"computed_map":{"x":10.0}},{"computed_map":{"y":20.0}}]}`,
+		nestedObjectSetExample{
+			ObjSet: customfield.NullObjectSet[computedMapStruct](ctx),
+		},
+		nestedObjectSetExample{
+			ObjSet: customfield.NewObjectSetMust(ctx, []computedMapStruct{
+				{ComputedMap: map[string]types.Float64{"x": types.Float64Value(10.0)}},
+				{ComputedMap: map[string]types.Float64{"y": types.Float64Value(20.0)}},
+			}),
+		},
+	},
+	"computed_optional_tuple_from_null": {
+		`{"tuple_val":[42,"hello",true]}`,
+		tupleExample{
+			TupleVal: types.TupleNull([]attr.Type{types.Int64Type, types.StringType, types.BoolType}),
+		},
+		tupleExample{
+			TupleVal: types.TupleValueMust(
+				[]attr.Type{types.Int64Type, types.StringType, types.BoolType},
+				[]attr.Value{types.Int64Value(42), types.StringValue("hello"), types.BoolValue(true)},
+			),
+		},
+	},
+	"computed_optional_list_preserves_existing": {
+		`{"str_list":["new1","new2"]}`,
+		primitiveListExample{
+			StrList: customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("existing1"), types.StringValue("existing2")}),
+		},
+		primitiveListExample{
+			StrList: customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("existing1"), types.StringValue("existing2")}),
+		},
+	},
+	"computed_optional_set_preserves_existing": {
+		`{"str_set":["new1","new2"]}`,
+		primitiveSetExample{
+			StrSet: customfield.NewSetMust[types.String](ctx, []attr.Value{types.StringValue("existing1"), types.StringValue("existing2")}),
+		},
+		primitiveSetExample{
+			StrSet: customfield.NewSetMust[types.String](ctx, []attr.Value{types.StringValue("existing1"), types.StringValue("existing2")}),
+		},
+	},
+	"computed_optional_nested_object_preserves_existing": {
+		`{"nested_obj":{"computed_map":{"new":999.0}}}`,
+		nestedObjectExample{
+			NestedObj: customfield.NewObjectMust(ctx, &computedMapStruct{
+				ComputedMap: map[string]types.Float64{"existing": types.Float64Value(123.0)},
+			}),
+		},
+		nestedObjectExample{
+			NestedObj: customfield.NewObjectMust(ctx, &computedMapStruct{
+				ComputedMap: map[string]types.Float64{"existing": types.Float64Value(123.0)},
+			}),
+		},
+	},
+	"computed_optional_nested_object_list_preserves_existing": {
+		`{"obj_list":[{"computed_map":{"new":999.0}}]}`,
+		nestedObjectListExample{
+			ObjList: customfield.NewObjectListMust(ctx, []computedMapStruct{
+				{ComputedMap: map[string]types.Float64{"existing": types.Float64Value(456.0)}},
+			}),
+		},
+		nestedObjectListExample{
+			ObjList: customfield.NewObjectListMust(ctx, []computedMapStruct{
+				{ComputedMap: map[string]types.Float64{"existing": types.Float64Value(456.0)}},
+			}),
+		},
+	},
+	"computed_optional_nested_object_set_preserves_existing": {
+		`{"obj_set":[{"computed_map":{"new":999.0}}]}`,
+		nestedObjectSetExample{
+			ObjSet: customfield.NewObjectSetMust(ctx, []computedMapStruct{
+				{ComputedMap: map[string]types.Float64{"existing": types.Float64Value(789.0)}},
+			}),
+		},
+		nestedObjectSetExample{
+			ObjSet: customfield.NewObjectSetMust(ctx, []computedMapStruct{
+				{ComputedMap: map[string]types.Float64{"existing": types.Float64Value(789.0)}},
+			}),
+		},
+	},
+	"computed_optional_tuple_preserves_existing": {
+		`{"tuple_val":[999,"new",false]}`,
+		tupleExample{
+			TupleVal: types.TupleValueMust(
+				[]attr.Type{types.Int64Type, types.StringType, types.BoolType},
+				[]attr.Value{types.Int64Value(123), types.StringValue("existing"), types.BoolValue(true)},
+			),
+		},
+		tupleExample{
+			TupleVal: types.TupleValueMust(
+				[]attr.Type{types.Int64Type, types.StringType, types.BoolType},
+				[]attr.Value{types.Int64Value(123), types.StringValue("existing"), types.BoolValue(true)},
+			),
+		},
+	},
+	// Tests for collections starting from unknown state
+	"computed_optional_list_from_unknown": {
+		`{"str_list":["alpha","beta","gamma"]}`,
+		primitiveListExample{
+			StrList: customfield.UnknownList[types.String](ctx),
+		},
+		primitiveListExample{
+			StrList: customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("alpha"), types.StringValue("beta"), types.StringValue("gamma")}),
+		},
+	},
+	"computed_optional_set_from_unknown": {
+		`{"str_set":["one","two","three"]}`,
+		primitiveSetExample{
+			StrSet: customfield.UnknownSet[types.String](ctx),
+		},
+		primitiveSetExample{
+			StrSet: customfield.NewSetMust[types.String](ctx, []attr.Value{types.StringValue("one"), types.StringValue("two"), types.StringValue("three")}),
+		},
+	},
+	"computed_optional_map_from_unknown": {
+		`{"str_map":{"key1":"value1","key2":"value2","key3":"value3"}}`,
+		primitiveMapExample{
+			StrMap: customfield.UnknownMap[types.String](ctx),
+		},
+		primitiveMapExample{
+			StrMap: customfield.NewMapMust[types.String](ctx, map[string]types.String{
+				"key1": types.StringValue("value1"),
+				"key2": types.StringValue("value2"),
+				"key3": types.StringValue("value3"),
+			}),
+		},
+	},
+	"computed_optional_nested_object_from_unknown": {
+		`{"nested_obj":{"computed_map":{"unknown1":3.5,"unknown2":4.5}}}`,
+		nestedObjectExample{
+			NestedObj: customfield.UnknownObject[computedMapStruct](ctx),
+		},
+		nestedObjectExample{
+			NestedObj: customfield.NewObjectMust(ctx, &computedMapStruct{
+				ComputedMap: map[string]types.Float64{"unknown1": types.Float64Value(3.5), "unknown2": types.Float64Value(4.5)},
+			}),
+		},
+	},
+	"computed_optional_nested_object_list_from_unknown": {
+		`{"obj_list":[{"computed_map":{"u1":5.0}},{"computed_map":{"u2":6.0}}]}`,
+		nestedObjectListExample{
+			ObjList: customfield.UnknownObjectList[computedMapStruct](ctx),
+		},
+		nestedObjectListExample{
+			ObjList: customfield.NewObjectListMust(ctx, []computedMapStruct{
+				{ComputedMap: map[string]types.Float64{"u1": types.Float64Value(5.0)}},
+				{ComputedMap: map[string]types.Float64{"u2": types.Float64Value(6.0)}},
+			}),
+		},
+	},
+	"computed_optional_nested_object_set_from_unknown": {
+		`{"obj_set":[{"computed_map":{"ux":30.0}},{"computed_map":{"uy":40.0}}]}`,
+		nestedObjectSetExample{
+			ObjSet: customfield.UnknownObjectSet[computedMapStruct](ctx),
+		},
+		nestedObjectSetExample{
+			ObjSet: customfield.NewObjectSetMust(ctx, []computedMapStruct{
+				{ComputedMap: map[string]types.Float64{"ux": types.Float64Value(30.0)}},
+				{ComputedMap: map[string]types.Float64{"uy": types.Float64Value(40.0)}},
+			}),
+		},
+	},
+	"computed_optional_tuple_from_unknown": {
+		`{"tuple_val":[99,"unknown",false]}`,
+		tupleExample{
+			TupleVal: types.TupleUnknown([]attr.Type{types.Int64Type, types.StringType, types.BoolType}),
+		},
+		tupleExample{
+			TupleVal: types.TupleValueMust(
+				[]attr.Type{types.Int64Type, types.StringType, types.BoolType},
+				[]attr.Value{types.Int64Value(99), types.StringValue("unknown"), types.BoolValue(false)},
+			),
+		},
+	},
+	// Nested collections from unknown
+	"computed_optional_list_of_lists_from_unknown": {
+		`{"list_of_lists":[["a","b"],["c","d","e"],["f"]]}`,
+		listOfListsExample{
+			ListOfLists: customfield.UnknownList[customfield.List[types.String]](ctx),
+		},
+		listOfListsExample{
+			ListOfLists: customfield.NewListMust[customfield.List[types.String]](ctx, []attr.Value{
+				customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("a"), types.StringValue("b")}),
+				customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("c"), types.StringValue("d"), types.StringValue("e")}),
+				customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("f")}),
+			}),
+		},
+	},
+	"computed_optional_set_of_sets_from_unknown": {
+		`{"set_of_sets":[[1,2],[3,4,5],[6]]}`,
+		setOfSetsExample{
+			SetOfSets: customfield.UnknownSet[customfield.Set[types.Int64]](ctx),
+		},
+		setOfSetsExample{
+			SetOfSets: customfield.NewSetMust[customfield.Set[types.Int64]](ctx, []attr.Value{
+				customfield.NewSetMust[types.Int64](ctx, []attr.Value{types.Int64Value(1), types.Int64Value(2)}),
+				customfield.NewSetMust[types.Int64](ctx, []attr.Value{types.Int64Value(3), types.Int64Value(4), types.Int64Value(5)}),
+				customfield.NewSetMust[types.Int64](ctx, []attr.Value{types.Int64Value(6)}),
+			}),
+		},
+	},
+	"computed_optional_map_with_list_from_unknown": {
+		`{"map_with_list":{"key1":["val1","val2"],"key2":["val3","val4","val5"],"key3":["val6"]}}`,
+		mapWithListExample{
+			MapWithList: customfield.UnknownMap[customfield.List[types.String]](ctx),
+		},
+		mapWithListExample{
+			MapWithList: customfield.NewMapMust[customfield.List[types.String]](ctx, map[string]customfield.List[types.String]{
+				"key1": customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("val1"), types.StringValue("val2")}),
+				"key2": customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("val3"), types.StringValue("val4"), types.StringValue("val5")}),
+				"key3": customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("val6")}),
+			}),
+		},
+	},
+	// Complex test: all collections starting from unknown
+	"computed_optional_all_collections_from_unknown": {
+		`{"name":"test-unknown","tags":["tag-u1","tag-u2","tag-u3"],"metadata":{"env":"prod","tier":"premium"},"ports":[3000,3001,3002],"coordinates":[51.5074,-0.1278],"rules":[{"priority":10,"action":"deny"},{"priority":20,"action":"allow"}],"status":"pending"}`,
+		ComputedOptionalCollectionsExample{
+			Name:        types.StringValue("test-unknown"),
+			Tags:        customfield.UnknownList[types.String](ctx),
+			Metadata:    customfield.UnknownMap[types.String](ctx),
+			Ports:       customfield.UnknownSet[types.Int64](ctx),
+			Coordinates: types.TupleUnknown([]attr.Type{types.Float64Type, types.Float64Type}),
+			Rules:       customfield.UnknownObjectList[RuleExample](ctx),
+			Status:      types.StringUnknown(),
+		},
+		ComputedOptionalCollectionsExample{
+			Name: types.StringValue("test-unknown"),
+			// BUG: These should be populated from the API response when starting from unknown
+			Tags:        customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("tag-u1"), types.StringValue("tag-u2"), types.StringValue("tag-u3")}),
+			Metadata:    customfield.NewMapMust[types.String](ctx, map[string]types.String{"env": types.StringValue("prod"), "tier": types.StringValue("premium")}),
+			Ports:       customfield.NewSetMust[types.Int64](ctx, []attr.Value{types.Int64Value(3000), types.Int64Value(3001), types.Int64Value(3002)}),
+			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{types.Float64Value(51.5074), types.Float64Value(-0.1278)}),
+			Rules: customfield.NewObjectListMust(ctx, []RuleExample{
+				{
+					Priority: types.Int64Value(10),
+					Action:   types.StringValue("deny"),
+				},
+				{
+					Priority: types.Int64Value(20),
+					Action:   types.StringValue("allow"),
+				},
+			}),
+			Status: types.StringValue("pending"), // Primitive computed_optional works correctly from unknown
+		},
+	},
+	// Mixed test: some fields unknown, some configured, some null
+	"computed_optional_mixed_unknown_configured_null": {
+		`{"name":"test-mixed","tags":["api-tag1","api-tag2"],"metadata":{"source":"api"},"ports":[9000,9001],"coordinates":[35.6762,139.6503],"rules":[{"priority":5,"action":"log"}],"status":"processing"}`,
+		ComputedOptionalCollectionsExample{
+			Name:        types.StringValue("test-mixed"),
+			Tags:        customfield.UnknownList[types.String](ctx),                                                                                          // Unknown - should be populated
+			Metadata:    customfield.NewMapMust[types.String](ctx, map[string]types.String{"user": types.StringValue("admin")}),                              // User configured - should be preserved
+			Ports:       customfield.UnknownSet[types.Int64](ctx),                                                                                            // Unknown - should be populated
+			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{types.Float64Value(0), types.Float64Value(0)}), // User configured - should be preserved
+			Rules:       customfield.NullObjectList[RuleExample](ctx),                                                                                        // Null - should be populated
+			Status:      types.StringUnknown(),                                                                                                               // Unknown - should be populated
+		},
+		ComputedOptionalCollectionsExample{
+			Name:        types.StringValue("test-mixed"),
+			Tags:        customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("api-tag1"), types.StringValue("api-tag2")}),              // Should populate from API
+			Metadata:    customfield.NewMapMust[types.String](ctx, map[string]types.String{"user": types.StringValue("admin")}),                              // Should preserve user value
+			Ports:       customfield.NewSetMust[types.Int64](ctx, []attr.Value{types.Int64Value(9000), types.Int64Value(9001)}),                              // Should populate from API
+			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{types.Float64Value(0), types.Float64Value(0)}), // Should preserve user value
+			Rules: customfield.NewObjectListMust(ctx, []RuleExample{ // Should populate from API
+				{
+					Priority: types.Int64Value(5),
+					Action:   types.StringValue("log"),
+				},
+			}),
+			Status: types.StringValue("processing"), // Should populate from API
+		},
+	},
+	// Bug reproduction: computed_optional collection fields should be populated from API when null
+	"computed_optional_collections_bug_list": {
+		`{"name":"test-instance","tags":["auto-tag1","auto-tag2"],"metadata":{"created_by":"system","version":"1.0"},"ports":[8080,8443],"coordinates":[40.7128,-74.006],"rules":[{"priority":1,"action":"allow"}],"status":"active"}`,
+		ComputedOptionalCollectionsExample{
+			Name:        types.StringValue("test-instance"),
+			Tags:        customfield.NullList[types.String](ctx),
+			Metadata:    customfield.NullMap[types.String](ctx),
+			Ports:       customfield.NullSet[types.Int64](ctx),
+			Coordinates: types.TupleNull([]attr.Type{types.Float64Type, types.Float64Type}),
+			Rules:       customfield.NullObjectList[RuleExample](ctx),
+			Status:      types.StringNull(),
+		},
+		ComputedOptionalCollectionsExample{
+			Name: types.StringValue("test-instance"),
+			// BUG: These should be populated from the API response
+			Tags:        customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("auto-tag1"), types.StringValue("auto-tag2")}),
+			Metadata:    customfield.NewMapMust[types.String](ctx, map[string]types.String{"created_by": types.StringValue("system"), "version": types.StringValue("1.0")}),
+			Ports:       customfield.NewSetMust[types.Int64](ctx, []attr.Value{types.Int64Value(8080), types.Int64Value(8443)}),
+			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{types.Float64Value(40.7128), types.Float64Value(-74.006)}),
+			Rules: customfield.NewObjectListMust(ctx, []RuleExample{
+				{
+					Priority: types.Int64Value(1),
+					Action:   types.StringValue("allow"),
+				},
+			}),
+			Status: types.StringValue("active"), // Primitive computed_optional works correctly
+		},
+	},
+	// Test with some fields configured by user, others should be computed
+	"computed_optional_collections_mixed": {
+		`{"name":"test-instance","tags":["user-tag"],"metadata":{"created_by":"system","version":"1.0"},"ports":[8080,8443],"coordinates":[40.7128,-74.006],"rules":[{"priority":1,"action":"allow"}],"status":"active"}`,
+		ComputedOptionalCollectionsExample{
+			Name:        types.StringValue("test-instance"),
+			Tags:        customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("user-tag")}), // User configured
+			Metadata:    customfield.NullMap[types.String](ctx),
+			Ports:       customfield.NullSet[types.Int64](ctx),
+			Coordinates: types.TupleNull([]attr.Type{types.Float64Type, types.Float64Type}),
+			Rules:       customfield.NullObjectList[RuleExample](ctx),
+			Status:      types.StringNull(),
+		},
+		ComputedOptionalCollectionsExample{
+			Name: types.StringValue("test-instance"),
+			Tags: customfield.NewListMust[types.String](ctx, []attr.Value{types.StringValue("user-tag")}), // Should preserve user value
+			// BUG: These unconfigured fields should be populated from API
+			Metadata:    customfield.NewMapMust[types.String](ctx, map[string]types.String{"created_by": types.StringValue("system"), "version": types.StringValue("1.0")}),
+			Ports:       customfield.NewSetMust[types.Int64](ctx, []attr.Value{types.Int64Value(8080), types.Int64Value(8443)}),
+			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{types.Float64Value(40.7128), types.Float64Value(-74.006)}),
+			Rules: customfield.NewObjectListMust(ctx, []RuleExample{
+				{
+					Priority: types.Int64Value(1),
+					Action:   types.StringValue("allow"),
+				},
+			}),
+			Status: types.StringValue("active"),
+		},
+	},
+	// Tests for empty collections (not null) - should NOT be overwritten by JSON
+	"computed_optional_empty_list_preserved": {
+		`{"str_list":["from","api","response"]}`,
+		primitiveListExample{
+			StrList: customfield.NewListMust[types.String](ctx, []attr.Value{}), // Empty list
+		},
+		primitiveListExample{
+			StrList: customfield.NewListMust[types.String](ctx, []attr.Value{}), // Should remain empty, not overwritten
+		},
+	},
+	"computed_optional_empty_set_preserved": {
+		`{"str_set":["api","values","here"]}`,
+		primitiveSetExample{
+			StrSet: customfield.NewSetMust[types.String](ctx, []attr.Value{}), // Empty set
+		},
+		primitiveSetExample{
+			StrSet: customfield.NewSetMust[types.String](ctx, []attr.Value{}), // Should remain empty, not overwritten
+		},
+	},
+	"computed_optional_empty_map_preserved": {
+		`{"str_map":{"api_key":"api_value","another":"value"}}`,
+		primitiveMapExample{
+			StrMap: customfield.NewMapMust[types.String](ctx, map[string]types.String{}), // Empty map
+		},
+		primitiveMapExample{
+			StrMap: customfield.NewMapMust[types.String](ctx, map[string]types.String{}), // Should remain empty, not overwritten
+		},
+	},
+	"computed_optional_empty_nested_object_list_preserved": {
+		`{"obj_list":[{"computed_map":{"from_api":1.0}},{"computed_map":{"also_api":2.0}}]}`,
+		nestedObjectListExample{
+			ObjList: customfield.NewObjectListMust(ctx, []computedMapStruct{}), // Empty object list
+		},
+		nestedObjectListExample{
+			ObjList: customfield.NewObjectListMust(ctx, []computedMapStruct{}), // Should remain empty, not overwritten
+		},
+	},
+	"computed_optional_empty_nested_object_set_preserved": {
+		`{"obj_set":[{"computed_map":{"api_x":10.0}},{"computed_map":{"api_y":20.0}}]}`,
+		nestedObjectSetExample{
+			ObjSet: customfield.NewObjectSetMust(ctx, []computedMapStruct{}), // Empty object set
+		},
+		nestedObjectSetExample{
+			ObjSet: customfield.NewObjectSetMust(ctx, []computedMapStruct{}), // Should remain empty, not overwritten
+		},
+	},
+	"computed_optional_empty_nested_list_of_lists_preserved": {
+		`{"list_of_lists":[["api1","api2"],["api3","api4","api5"],["api6"]]}`,
+		listOfListsExample{
+			ListOfLists: customfield.NewListMust[customfield.List[types.String]](ctx, []attr.Value{}), // Empty list of lists
+		},
+		listOfListsExample{
+			ListOfLists: customfield.NewListMust[customfield.List[types.String]](ctx, []attr.Value{}), // Should remain empty, not overwritten
+		},
+	},
+	"computed_optional_empty_nested_set_of_sets_preserved": {
+		`{"set_of_sets":[[10,20],[30,40,50],[60]]}`,
+		setOfSetsExample{
+			SetOfSets: customfield.NewSetMust[customfield.Set[types.Int64]](ctx, []attr.Value{}), // Empty set of sets
+		},
+		setOfSetsExample{
+			SetOfSets: customfield.NewSetMust[customfield.Set[types.Int64]](ctx, []attr.Value{}), // Should remain empty, not overwritten
+		},
+	},
+	"computed_optional_empty_map_with_list_preserved": {
+		`{"map_with_list":{"api_key1":["api_val1","api_val2"],"api_key2":["api_val3","api_val4","api_val5"]}}`,
+		mapWithListExample{
+			MapWithList: customfield.NewMapMust[customfield.List[types.String]](ctx, map[string]customfield.List[types.String]{}), // Empty map with lists
+		},
+		mapWithListExample{
+			MapWithList: customfield.NewMapMust[customfield.List[types.String]](ctx, map[string]customfield.List[types.String]{}), // Should remain empty, not overwritten
+		},
+	},
+	// Test with all collections empty (not null) - comprehensive test
+	"computed_optional_all_empty_collections_preserved": {
+		`{"name":"test-empty","tags":["api-tag1","api-tag2","api-tag3"],"metadata":{"api":"data","more":"stuff"},"ports":[4000,4001,4002],"coordinates":[12.34,56.78],"rules":[{"priority":100,"action":"block"},{"priority":200,"action":"permit"}],"status":"running"}`,
+		ComputedOptionalCollectionsExample{
+			Name:        types.StringValue("test-empty"),
+			Tags:        customfield.NewListMust[types.String](ctx, []attr.Value{}),                                                                          // Empty list
+			Metadata:    customfield.NewMapMust[types.String](ctx, map[string]types.String{}),                                                                // Empty map
+			Ports:       customfield.NewSetMust[types.Int64](ctx, []attr.Value{}),                                                                            // Empty set
+			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{types.Float64Value(0), types.Float64Value(0)}), // User configured tuple
+			Rules:       customfield.NewObjectListMust(ctx, []RuleExample{}),                                                                                 // Empty object list
+			Status:      types.StringValue("configured"),                                                                                                     // User configured
+		},
+		ComputedOptionalCollectionsExample{
+			Name:        types.StringValue("test-empty"),
+			Tags:        customfield.NewListMust[types.String](ctx, []attr.Value{}),                                                                          // Should remain empty
+			Metadata:    customfield.NewMapMust[types.String](ctx, map[string]types.String{}),                                                                // Should remain empty
+			Ports:       customfield.NewSetMust[types.Int64](ctx, []attr.Value{}),                                                                            // Should remain empty
+			Coordinates: types.TupleValueMust([]attr.Type{types.Float64Type, types.Float64Type}, []attr.Value{types.Float64Value(0), types.Float64Value(0)}), // Should remain as configured
+			Rules:       customfield.NewObjectListMust(ctx, []RuleExample{}),                                                                                 // Should remain empty
+			Status:      types.StringValue("configured"),                                                                                                     // Should remain as configured
 		},
 	},
 	"nested_map_unchanged": {

@@ -5,23 +5,23 @@ resource "cloudflare_snippet" "%[1]s" {
     {
       name    = "main.js"
       content = <<-EOT
-      export default {
-        async fetch(request) {
-          // Get the current timestamp
-          const timestamp = Date.now();
-          // Convert the timestamp to hexadecimal format
-          const hexTimestamp = timestamp.toString(16);
-          // Clone the request and add the custom header
-          const modifiedRequest = new Request(request, {
-              headers: new Headers(request.headers)
-          });
-          modifiedRequest.headers.set("X-Hex-Timestamp", hexTimestamp);
-          // Pass the modified request to the origin
-          const response = await fetch(modifiedRequest);
-          return response;
-        },
-      }
-      EOT
+export default {
+  async fetch(request) {
+    // Get the current timestamp
+    const timestamp = Date.now();
+    // Convert the timestamp to hexadecimal format
+    const hexTimestamp = timestamp.toString(16);
+    // Clone the request and add the custom header
+    const modifiedRequest = new Request(request, {
+        headers: new Headers(request.headers)
+    });
+    modifiedRequest.headers.set("X-Hex-Timestamp", hexTimestamp);
+    // Pass the modified request to the origin
+    const response = await fetch(modifiedRequest);
+    return response;
+  },
+}
+EOT
     }
   ]
   metadata = {

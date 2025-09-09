@@ -13,4 +13,4 @@ fi
 
 echo "==> Linking with local directory"
 go mod tidy -e
-go mod edit -replace github.com/cloudflare/cloudflare-go/v5="$LOCAL_GO"
+go mod edit -replace github.com/cloudflare/cloudflare-go/v6="$LOCAL_GO"

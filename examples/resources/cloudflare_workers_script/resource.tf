@@ -17,7 +17,6 @@ resource "cloudflare_workers_script" "example_workers_script" {
       html_handling = "auto-trailing-slash"
       not_found_handling = "none"
       run_worker_first = false
-      serve_directly = true
     }
     jwt = "jwt"
   }
@@ -31,7 +30,10 @@ resource "cloudflare_workers_script" "example_workers_script" {
   content_file = "worker.js"
   content_sha256 = filesha256("worker.js")
   keep_assets = false
-  keep_bindings = ["string"]
+  keep_bindings = ["kv_namespace"]
+  limits = {
+    cpu_ms = 50
+  }
   logpush = false
   main_module = "worker.js"
   migrations = {
@@ -62,11 +64,9 @@ resource "cloudflare_workers_script" "example_workers_script" {
   placement = {
     mode = "smart"
   }
-  tags = ["string"]
   tail_consumers = [{
     service = "my-log-consumer"
     environment = "production"
     namespace = "my-namespace"
   }]
-  usage_model = "standard"
 }

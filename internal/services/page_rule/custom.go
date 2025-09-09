@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cloudflare/cloudflare-go/v5/page_rules"
+	"github.com/cloudflare/cloudflare-go/v6/page_rules"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"

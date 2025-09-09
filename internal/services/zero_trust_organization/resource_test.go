@@ -93,12 +93,7 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", testAuthDomain()),
 					resource.TestCheckResourceAttr(name, "auth_domain", rnd+"-"+testAuthDomain()),
 					resource.TestCheckResourceAttr(name, "session_duration", "12h"),
-					// Verify that login_design is not present in the state
-					resource.TestCheckNoResourceAttr(name, "login_design.background_color"),
-					resource.TestCheckNoResourceAttr(name, "login_design.text_color"),
-					resource.TestCheckNoResourceAttr(name, "login_design.logo_path"),
-					resource.TestCheckNoResourceAttr(name, "login_design.header_text"),
-					resource.TestCheckNoResourceAttr(name, "login_design.footer_text"),
+					resource.TestCheckNoResourceAttr(name, "login_design"),
 				),
 			},
 			{
@@ -170,7 +165,7 @@ func accessOrgImportStateCheckEmpty(instanceStates []*terraform.InstanceState) e
 	stateChecks := []struct {
 		field         string
 		stateValue    string
-		expectedValue string
+		expectedValue interface{}
 	}{
 		{field: consts.AccountIDSchemaKey, stateValue: attrs[consts.AccountIDSchemaKey], expectedValue: accountID},
 		{field: "is_ui_read_only", stateValue: attrs["is_ui_read_only"], expectedValue: "false"},
@@ -184,19 +179,9 @@ func accessOrgImportStateCheckEmpty(instanceStates []*terraform.InstanceState) e
 		}
 	}
 
-	loginDesignAttrs := []string{
-		"login_design.background_color",
-		"login_design.text_color",
-		"login_design.logo_path",
-		"login_design.header_text",
-		"login_design.footer_text",
-	}
-
-	// Verify login_design attributes are not present
-	for _, attr := range loginDesignAttrs {
-		if _, exists := attrs[attr]; exists {
-			return fmt.Errorf("%s exists in state but should not be present", attr)
-		}
+	// Special check for login_design - it should not exist in the attributes map
+	if loginDesignValue, exists := attrs["login_design"]; exists && loginDesignValue != "" {
+		return fmt.Errorf("login_design should not exist or should be empty, but has value %q", loginDesignValue)
 	}
 
 	return nil

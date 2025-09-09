@@ -19,6 +19,7 @@ func TestAccCloudflareWorkersKVNamespace_Basic(t *testing.T) {
 	t.Parallel()
 	var namespace cloudflare.WorkersKVNamespace
 	rnd := utils.GenerateRandomResourceName()
+	newRnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_workers_kv_namespace." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -30,8 +31,23 @@ func TestAccCloudflareWorkersKVNamespace_Basic(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkersKVNamespace(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkersKVNamespaceExists(rnd, &namespace),
+					testAccCheckCloudflareWorkersKVNamespaceExists(rnd, rnd, &namespace),
 					resource.TestCheckResourceAttr(resourceName, "title", rnd),
+				),
+			},
+			{
+				ImportState:       true,
+				ImportStateVerify: true,
+				ResourceName:      resourceName,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("%s/%s", accountID, s.RootModule().Resources[resourceName].Primary.ID), nil
+				},
+			},
+			{
+				Config: testAccCheckCloudflareWorkersKVNamespaceRename(rnd, newRnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareWorkersKVNamespaceExists(rnd, newRnd, &namespace),
+					resource.TestCheckResourceAttr(resourceName, "title", newRnd),
 				),
 			},
 		},
@@ -70,16 +86,20 @@ func testAccCheckCloudflareWorkersKVNamespace(rName, accountID string) string {
 	return acctest.LoadTestCase("workerskvnamespace.tf", rName, accountID)
 }
 
-func testAccCheckCloudflareWorkersKVNamespaceExists(title string, namespace *cloudflare.WorkersKVNamespace) resource.TestCheckFunc {
+func testAccCheckCloudflareWorkersKVNamespaceRename(resourceName, newName, accountID string) string {
+	return acctest.LoadTestCase("workerskvnamespace_rename.tf", resourceName, newName, accountID)
+}
+
+func testAccCheckCloudflareWorkersKVNamespaceExists(resourceSuffix, title string, namespace *cloudflare.WorkersKVNamespace) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 		if clientErr != nil {
 			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 		}
 
-		rs, ok := s.RootModule().Resources["cloudflare_workers_kv_namespace."+title]
+		rs, ok := s.RootModule().Resources["cloudflare_workers_kv_namespace."+resourceSuffix]
 		if !ok {
-			return fmt.Errorf("not found: %s", title)
+			return fmt.Errorf("not found: %s", resourceSuffix)
 		}
 		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 

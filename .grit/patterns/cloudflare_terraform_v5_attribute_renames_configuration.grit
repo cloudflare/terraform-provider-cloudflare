@@ -140,13 +140,6 @@ pattern cloudflare_terraform_v5_attribute_renames_configuration() {
     `secret = $v` as $attribute => `tunnel_secret = $v` where { $attribute <: within `resource "zero_trust_tunnel_cloudflared" $_ { $_ }` },
     `cname = $v` as $attribute => . where { $attribute <: within `resource "zero_trust_tunnel_cloudflared" $_ { $_ }` },
 
-    // cloudflare_zone
-    `account_id = $id` => `account = {
-      id = $id
-    }` where { $id <: within `resource "cloudflare_zone" $_ { $_ }`},
-    `plan = $id` => . where { $id <: within `resource "cloudflare_zone" $_ { $_ }`},
-    `jump_start = $id` => . where { $id <: within `resource "cloudflare_zone" $_ { $_ }` },
-    `zone = $zone` => `name = $zone` where { $zone <: within `resource "cloudflare_zone" $_ { $_ }` },
 
     // cloudflare_logpull_retention
     `enabled = $v` as $attribute => `flag = $v` where { $attribute <: within `resource "cloudflare_logpull_retention" $_ { $_ }` },
@@ -176,12 +169,5 @@ pattern cloudflare_terraform_v5_attribute_renames_configuration() {
     `ruleset_id = $v` as $attribute => `ruleset = {
       id = $v
     }` where { $attribute <: within `resource "cloudflare_web_analytics_site" $_ { $_ }` },
-
-    // cloudflare_record
-    `allow_overwrite = $id` => . where { $id <: within `resource "cloudflare_record" $_ { $_ }` },
-    `flags = "$v"`as $flag => `flags = $v` where { $flag <: within `resource "cloudflare_record" $_ { $_ }` },
-    `data { $inner }` as $data => `data = {
-        $inner
-    } `where { $data <: within `resource "cloudflare_record" $_ { $_ }` },
   }
 }

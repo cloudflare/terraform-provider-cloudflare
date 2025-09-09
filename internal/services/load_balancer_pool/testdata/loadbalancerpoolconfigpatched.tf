@@ -8,14 +8,14 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
   minimum_origins = 2
   check_regions = ["WEU"]
   
-  load_shedding {
+  load_shedding = {
     default_percent = 25
     default_policy = "random"
     session_percent = 10
     session_policy = "hash"
   }
   
-  origin_steering {
+  origin_steering = {
     policy = "random"
   }
   

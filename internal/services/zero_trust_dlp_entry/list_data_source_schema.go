@@ -101,6 +101,29 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"variant": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustDLPEntriesVariantDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"topic_type": schema.StringAttribute{
+									Description: `Available values: "Intent", "Content".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("Intent", "Content"),
+									},
+								},
+								"type": schema.StringAttribute{
+									Description: `Available values: "PromptTopic".`,
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("PromptTopic"),
+									},
+								},
+								"description": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+						},
 						"case_sensitive": schema.BoolAttribute{
 							Description: "Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
 							Computed:    true,

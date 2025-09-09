@@ -712,11 +712,13 @@ func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, _ reflect.Va
 func (e *encoder) newMapEncoder(_ reflect.Type) encoderFunc {
 	patch := e.patch
 	return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
-		if state.IsNil() && plan.IsNil() {
+		stateNil := !state.IsValid() || state.IsNil()
+		planNil := !plan.IsValid() || plan.IsNil()
+		if stateNil && planNil {
 			return nil, nil
-		} else if plan.IsNil() {
+		} else if planNil {
 			return explicitJsonNull, nil
-		} else if patch && !state.IsNil() && reflect.DeepEqual(plan.Interface(), state.Interface()) {
+		} else if patch && !stateNil && reflect.DeepEqual(plan.Interface(), state.Interface()) {
 			return nil, nil
 		}
 

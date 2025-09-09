@@ -5,8 +5,8 @@ package workers_kv_namespace
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v5"
-	"github.com/cloudflare/cloudflare-go/v5/kv"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/kv"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -19,7 +19,6 @@ type WorkersKVNamespaceDataSourceModel struct {
 	ID                  types.String                                `tfsdk:"id" path:"namespace_id,computed"`
 	NamespaceID         types.String                                `tfsdk:"namespace_id" path:"namespace_id,optional"`
 	AccountID           types.String                                `tfsdk:"account_id" path:"account_id,required"`
-	Beta                types.Bool                                  `tfsdk:"beta" json:"beta,computed"`
 	SupportsURLEncoding types.Bool                                  `tfsdk:"supports_url_encoding" json:"supports_url_encoding,computed"`
 	Title               types.String                                `tfsdk:"title" json:"title,computed"`
 	Filter              *WorkersKVNamespaceFindOneByDataSourceModel `tfsdk:"filter"`

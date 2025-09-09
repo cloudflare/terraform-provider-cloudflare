@@ -22,7 +22,8 @@ func TestAccCloudflareLoadBalancerPools(t *testing.T) {
 			{
 				Config: testAccCloudflareLoadBalancerPoolsConfig(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "result.#", "2"),
+					resource.TestCheckResourceAttrSet(name, "result.0.name"),
+					resource.TestCheckResourceAttrSet(name, "result.1.name"),
 				),
 			},
 		},

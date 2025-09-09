@@ -25,12 +25,12 @@ resource "cloudflare_argo_tiered_caching" "example_argo_tiered_caching" {
 
 - `value` (String) Enables Tiered Caching.
 Available values: "on", "off".
-- `zone_id` (String) Identifier
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 
-- `editable` (Boolean) Whether the setting is editable
-- `id` (String) Identifier
+- `editable` (Boolean) Whether the setting is editable.
+- `id` (String) Identifier.
 - `modified_on` (String) Last time this setting was modified.
 
 ## Import
