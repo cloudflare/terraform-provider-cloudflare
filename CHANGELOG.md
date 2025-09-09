@@ -1,3 +1,9 @@
+## 4.52.4 (September 9th, 2025)
+
+BUG FIXES:
+
+* internal/sdkv2provider/schema_cloudflare_access_service_tokens.go: Remove ForceNew from client_id and client_secret
+
 ## 4.52.3 (September 8th, 2025)
 
 BUG FIXES:
