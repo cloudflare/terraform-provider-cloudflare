@@ -240,7 +240,7 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		}
 
 		if isLoadBalancerPoolResource(block) {
-			transformLoadBalancerPoolBlock(block)
+			transformLoadBalancerPoolBlock(block, diags)
 		}
 
 		if isAccessPolicyResource(block) {

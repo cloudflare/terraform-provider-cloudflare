@@ -591,3 +591,169 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
 }
 `, rnd, accountID)
 }
+
+func TestAccCloudflareLoadBalancerPool_Migration_DynamicOrigins_MultiVersion(t *testing.T) {
+	testCases := []struct {
+		name     string
+		version  string
+		configFn func(rnd, accountID, domain string) string
+	}{
+		{
+			name:     "from_v4_52_1",
+			version:  "4.52.1",
+			configFn: testAccCloudflareLoadBalancerPoolMigrationConfigV4DynamicOrigins,
+		},
+		{
+			name:     "from_v5_0_0",
+			version:  "5.0.0",
+			configFn: testAccCloudflareLoadBalancerPoolMigrationConfigV5DynamicOrigins,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			domain := os.Getenv("CLOUDFLARE_DOMAIN")
+			rnd := utils.GenerateRandomResourceName()
+			resourceName := fmt.Sprintf("cloudflare_load_balancer_pool.%s", rnd)
+			testConfig := tc.configFn(rnd, accountID, domain)
+			tmpDir := t.TempDir()
+
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_AccountID(t)
+					acctest.TestAccPreCheck_Domain(t)
+				},
+				WorkingDir: tmpDir,
+				Steps: []resource.TestStep{
+					{
+						// Step 1: Create pool with specific version using dynamic origins block
+						ExternalProviders: map[string]resource.ExternalProvider{
+							"cloudflare": {
+								Source:            "cloudflare/cloudflare",
+								VersionConstraint: tc.version,
+							},
+						},
+						Config: testConfig,
+						ConfigStateChecks: []statecheck.StateCheck{
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-dynamic-%s", rnd))),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+							// Check that origins exist (will be 3 based on our config)
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins"), knownvalue.ListSizeExact(3)),
+						},
+					},
+					// Step 2: Migrate to v5 provider
+					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("my-tf-pool-dynamic-%s", rnd))),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+						// Verify origins structure remains correct after migration
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins"), knownvalue.ListSizeExact(3)),
+						// Check that origins have the expected values
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("origin-0")),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(0).AtMapKey("address"), knownvalue.StringExact("192.0.2.1")),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(1).AtMapKey("name"), knownvalue.StringExact("origin-1")),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(1).AtMapKey("address"), knownvalue.StringExact("192.0.2.2")),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(2).AtMapKey("name"), knownvalue.StringExact("origin-2")),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(2).AtMapKey("address"), knownvalue.StringExact("192.0.2.3")),
+						// Check headers are preserved
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("origins").AtSliceIndex(0).AtMapKey("header").AtMapKey("host"), knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("test0." + domain)})),
+					}),
+					{
+						// Step 3: Import and verify
+						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+						ResourceName:             resourceName,
+						ImportState:              true,
+						ImportStateIdFunc: func(s *terraform.State) (string, error) {
+							rs, ok := s.RootModule().Resources[resourceName]
+							if !ok {
+								return "", fmt.Errorf("resource not found: %s", resourceName)
+							}
+							return fmt.Sprintf("%s/%s", accountID, rs.Primary.ID), nil
+						},
+						ImportStateVerify: true,
+					},
+				},
+			})
+		})
+	}
+}
+
+func testAccCloudflareLoadBalancerPoolMigrationConfigV4DynamicOrigins(rnd, accountID, domain string) string {
+	return fmt.Sprintf(`
+locals {
+  origin_configs = [
+    {
+      name    = "origin-0"
+      address = "192.0.2.1"
+      host    = "test0.%[3]s"
+    },
+    {
+      name    = "origin-1"
+      address = "192.0.2.2"
+      host    = "test1.%[3]s"
+    },
+    {
+      name    = "origin-2"
+      address = "192.0.2.3"
+      host    = "test2.%[3]s"
+    }
+  ]
+}
+
+resource "cloudflare_load_balancer_pool" "%[1]s" {
+  account_id = "%[2]s"
+  name = "my-tf-pool-dynamic-%[1]s"
+  
+  dynamic "origins" {
+    for_each = local.origin_configs
+    content {
+      name    = origins.value.name
+      address = origins.value.address
+      enabled = true
+      
+      header {
+        header = "Host"
+        values = [origins.value.host]
+      }
+    }
+  }
+}
+`, rnd, accountID, domain)
+}
+
+func testAccCloudflareLoadBalancerPoolMigrationConfigV5DynamicOrigins(rnd, accountID, domain string) string {
+	return fmt.Sprintf(`
+locals {
+  origin_configs = [
+    {
+      name    = "origin-0"
+      address = "192.0.2.1"
+      host    = "test0.%[3]s"
+    },
+    {
+      name    = "origin-1"
+      address = "192.0.2.2"
+      host    = "test1.%[3]s"
+    },
+    {
+      name    = "origin-2"
+      address = "192.0.2.3"
+      host    = "test2.%[3]s"
+    }
+  ]
+}
+
+resource "cloudflare_load_balancer_pool" "%[1]s" {
+  account_id = "%[2]s"
+  name = "my-tf-pool-dynamic-%[1]s"
+  
+  origins = [for value in local.origin_configs : {
+    address = value.address
+    enabled = true
+    header  = { host = [value.host] }
+    name    = value.name
+  }]
+}
+`, rnd, accountID, domain)
+}
