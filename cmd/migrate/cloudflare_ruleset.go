@@ -24,6 +24,24 @@ func transformCloudflareRulesetStateJSON(json string, instancePath string) strin
 	result, _ = sjson.Set(result, instancePath+".schema_version", 0)
 
 	// Handle rules transformation from indexed format to array
+	// First check if rules is already a JSON array
+	rulesValue := gjson.Get(json, attrPath+".rules")
+	if rulesValue.Exists() && rulesValue.IsArray() {
+		// Rules is already a JSON array, need to process action_parameters within it
+		var rules []map[string]interface{}
+		for _, ruleVal := range rulesValue.Array() {
+			if ruleMap, ok := ruleVal.Value().(map[string]interface{}); ok {
+				// Process the rule to convert arrays to objects where needed
+				ruleMap = convertArraysToObjects(ruleMap)
+				rules = append(rules, ruleMap)
+			}
+		}
+		// Set the processed rules back
+		result, _ = sjson.Set(result, attrPath+".rules", rules)
+		return result
+	}
+	
+	// Fall back to indexed format processing
 	rulesCount := gjson.Get(json, attrPath+`.rules\.#`)
 	if rulesCount.Exists() && rulesCount.Int() > 0 {
 		var rules []map[string]interface{}
@@ -52,11 +70,36 @@ func transformCloudflareRulesetStateJSON(json string, instancePath string) strin
 			}
 
 			// Handle action_parameters transformation
-			actionParamsCount := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.#`, attrPath, i))
-			if actionParamsCount.Exists() && actionParamsCount.Int() > 0 {
+			// Check for both indexed format and JSON array format
+			actionParamsPath := fmt.Sprintf(`%s.rules\.%d\.action_parameters`, attrPath, i)
+			actionParamsValue := gjson.Get(json, actionParamsPath)
+			
+			if actionParamsValue.Exists() {
+				var actionParams map[string]interface{}
+				
+				// Check if it's already a JSON array (from Grit migration)
+				if actionParamsValue.IsArray() {
+					// If it's an array, take the first element (v4 only allows max 1)
+					if actionParamsValue.Array()[0].Exists() {
+						// Convert the first array element to a map
+						actionParams = actionParamsValue.Array()[0].Value().(map[string]interface{})
+					} else {
+						// Empty array, create empty map
+						actionParams = make(map[string]interface{})
+					}
+					rule["action_parameters"] = actionParams
+					continue // Skip the indexed format processing
+				}
+				
+				// Fall back to indexed format processing
+				actionParamsCount := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.#`, attrPath, i))
+				if !actionParamsCount.Exists() || actionParamsCount.Int() == 0 {
+					continue // No action_parameters to process
+				}
+				
 				// v4 has action_parameters as an indexed list with max 1 item
 				// v5 expects it as a single nested object
-				actionParams := make(map[string]interface{})
+				actionParams = make(map[string]interface{})
 
 				// Copy all simple action parameter fields
 				simpleFields := []string{
@@ -542,6 +585,92 @@ func transformURI(json string, attrPath string, ruleIdx int64) map[string]interf
 	}
 	
 	return uri
+}
+
+// convertArraysToObjects converts single-element arrays to objects for SingleNestedAttribute fields
+func convertArraysToObjects(data map[string]interface{}) map[string]interface{} {
+	// Fields that should be objects (SingleNestedAttribute), not arrays
+	singleNestedFields := map[string]bool{
+		"action_parameters": true,
+		"response": true,
+		"matched_data": true,
+		"overrides": true,
+		"from_list": true,
+		"from_value": true,
+		"target_url": true,
+		"uri": true,
+		"path": true,
+		"query": true,
+		"origin": true,
+		"sni": true,
+		"autominify": true,
+		"browser_ttl": true,
+		"edge_ttl": true,
+		"cache_key": true,
+		"custom_key": true,
+		"cookie": true,
+		"header": true,
+		"host": true,
+		"query_string": true,
+		"user": true,
+		"serve_stale": true,
+		"cache_reserve": true,
+		"exposed_credential_check": true,
+		"logging": true,
+		"ratelimit": true,
+		"status_code_range": true,
+	}
+	
+	// Process each field in the data
+	for key, value := range data {
+		// Special handling for headers - convert from list to map
+		if key == "headers" {
+			if arr, isArray := value.([]interface{}); isArray {
+				headersMap := make(map[string]interface{})
+				for _, header := range arr {
+					if headerObj, isMap := header.(map[string]interface{}); isMap {
+						if name, hasName := headerObj["name"].(string); hasName {
+							// Remove name from the header object as it becomes the key
+							delete(headerObj, "name")
+							headersMap[name] = headerObj
+						}
+					}
+				}
+				if len(headersMap) > 0 {
+					data[key] = headersMap
+				} else {
+					delete(data, key)
+				}
+			}
+			continue
+		}
+		
+		// Check if this field should be converted from array to object
+		if singleNestedFields[key] {
+			if arr, isArray := value.([]interface{}); isArray {
+				// Convert array to object
+				if len(arr) > 0 {
+					if obj, isMap := arr[0].(map[string]interface{}); isMap {
+						// Recursively process nested objects
+						data[key] = convertArraysToObjects(obj)
+					} else {
+						data[key] = arr[0]
+					}
+				} else {
+					// Empty array, remove it
+					delete(data, key)
+				}
+			} else if obj, isMap := value.(map[string]interface{}); isMap {
+				// Recursively process nested objects
+				data[key] = convertArraysToObjects(obj)
+			}
+		} else if obj, isMap := value.(map[string]interface{}); isMap {
+			// Even if not in the list, recursively process nested objects
+			data[key] = convertArraysToObjects(obj)
+		}
+	}
+	
+	return data
 }
 
 // cleanupIndexedRulesKeys removes all indexed format keys for rules
