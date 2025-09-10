@@ -245,6 +245,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "test.example.com",
 							"type": "CAA",
 							"content": "0 issue letsencrypt.org",
@@ -266,17 +267,11 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "test.example.com",
 							"type": "CAA",
 							"ttl": 1,
 							"content": "0 issue letsencrypt.org",
-							"meta": "{}",
-							"settings": {
-								"flatten_cname": null,
-								"ipv4_only": null,
-								"ipv6_only": null
-							},
-							"proxiable": false,
 							"created_on": "2024-01-01T00:00:00Z",
 							"modified_on": "2024-01-01T00:00:00Z",
 							"data": {
@@ -302,6 +297,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "test.example.com",
 							"type": "CAA",
 							"content": "128 issuewild pki.goog",
@@ -322,17 +318,11 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "test.example.com",
 							"type": "CAA",
 							"ttl": 1,
 							"content": "128 issuewild pki.goog",
-							"meta": "{}",
-							"settings": {
-								"flatten_cname": null,
-								"ipv4_only": null,
-								"ipv6_only": null
-							},
-							"proxiable": false,
 							"created_on": "2024-01-01T00:00:00Z",
 							"modified_on": "2024-01-01T00:00:00Z",
 							"data": {
@@ -358,6 +348,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "test.example.com",
 							"type": "CAA",
 							"data": {
@@ -380,16 +371,10 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "test.example.com",
 							"type": "CAA",
 							"ttl": 1,
-							"meta": "{}",
-							"settings": {
-								"flatten_cname": null,
-								"ipv4_only": null,
-								"ipv6_only": null
-							},
-							"proxiable": false,
 							"created_on": "2024-01-01T00:00:00Z",
 							"modified_on": "2024-01-01T00:00:00Z",
 							"data": {
@@ -415,6 +400,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "test.example.com",
 							"type": "A",
 							"content": "192.168.1.1",
@@ -431,18 +417,11 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "test.example.com",
 							"type": "A",
 							"ttl": 1,
 							"content": "192.168.1.1",
-							"data": null,
-							"meta": "{}",
-							"settings": {
-								"flatten_cname": null,
-								"ipv4_only": null,
-								"ipv6_only": null
-							},
-							"proxiable": false,
 							"created_on": "2024-01-01T00:00:00Z",
 							"modified_on": "2024-01-01T00:00:00Z"
 						}
@@ -460,6 +439,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "test.example.com",
 							"type": "CAA",
 							"content": "0 issue letsencrypt.org",
@@ -480,17 +460,11 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "test.example.com",
 							"type": "CAA",
 							"ttl": 1,
 							"content": "0 issue letsencrypt.org",
-							"meta": "{}",
-							"settings": {
-								"flatten_cname": null,
-								"ipv4_only": null,
-								"ipv6_only": null
-							},
-							"proxiable": false,
 							"created_on": "2024-01-01T00:00:00Z",
 							"modified_on": "2024-01-01T00:00:00Z",
 							"data": {
@@ -516,6 +490,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "_sip._tcp.example.com",
 							"type": "SRV",
 							"data": [{
@@ -536,17 +511,11 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "_sip._tcp.example.com",
 							"type": "SRV",
 							"priority": 10,
 							"ttl": 1,
-							"meta": "{}",
-							"settings": {
-								"flatten_cname": null,
-								"ipv4_only": null,
-								"ipv6_only": null
-							},
-							"proxiable": false,
 							"created_on": "2024-01-01T00:00:00Z",
 							"modified_on": "2024-01-01T00:00:00Z",
 							"data": {
@@ -570,6 +539,7 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "test.example.com",
 							"type": "A",
 							"value": "192.168.1.1",
@@ -587,18 +557,11 @@ func TestDNSRecordStateTransformation(t *testing.T) {
 					"instances": [{
 						"attributes": {
 							"id": "test-id",
+							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"name": "test.example.com",
 							"type": "A",
 							"ttl": 1,
 							"content": "192.168.1.1",
-							"data": null,
-							"meta": "{}",
-							"settings": {
-								"flatten_cname": null,
-								"ipv4_only": null,
-								"ipv6_only": null
-							},
-							"proxiable": false,
 							"created_on": "2024-01-01T00:00:00Z",
 							"modified_on": "2024-01-01T00:00:00Z"
 						}
@@ -632,7 +595,6 @@ func TestDNSRecordStateTransformationWithComputedFields(t *testing.T) {
 							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"created_on": "2025-08-26T05:22:13.523335Z",
 							"modified_on": "2025-08-26T05:22:13.523335Z",
-							"proxiable": false,
 							"proxied": false,
 							"meta": "{}",
 							"tags": ["tf-applied"],
@@ -659,21 +621,13 @@ func TestDNSRecordStateTransformationWithComputedFields(t *testing.T) {
 							"name": "static.example.com.terraform.cfapi.net",
 							"type": "TXT",
 							"content": "v=spf1 include:_spf.mx.cloudflare.net ~all",
-							"data": null,
 							"ttl": 1,
 							"zone_id": "0da42c8d2132a9ddaf714f9e7c920711",
 							"created_on": "2025-08-26T05:22:13.523335Z",
 							"modified_on": "2025-08-26T05:22:13.523335Z",
-							"proxiable": false,
 							"proxied": false,
-							"meta": "{}",
 							"tags": ["tf-applied"],
-							"tags_modified_on": "2025-08-26T05:22:13Z",
-							"settings": {
-								"flatten_cname": null,
-								"ipv4_only": null,
-								"ipv6_only": null
-							}
+							"tags_modified_on": "2025-08-26T05:22:13Z"
 						}
 					}]
 				}]
@@ -711,16 +665,8 @@ func TestDNSRecordStateTransformationWithComputedFields(t *testing.T) {
 							"name": "test.example.com",
 							"type": "A",
 							"content": "192.168.1.1",
-							"data": null,
 							"ttl": 3600,
 							"zone_id": "test-zone",
-							"meta": "{}",
-							"settings": {
-								"flatten_cname": null,
-								"ipv4_only": null,
-								"ipv6_only": null
-							},
-							"proxiable": false,
 							"created_on": "2024-01-01T00:00:00Z",
 							"modified_on": "2024-01-01T00:00:00Z"
 						}
@@ -751,7 +697,6 @@ func TestDNSRecordStateTransformationWithComputedFields(t *testing.T) {
 							}],
 							"created_on": "2025-08-26T05:21:58Z",
 							"modified_on": "2025-08-26T05:21:58Z",
-							"proxiable": false,
 							"proxied": false,
 							"meta": "{}",
 							"comment": null,
@@ -791,18 +736,11 @@ func TestDNSRecordStateTransformationWithComputedFields(t *testing.T) {
 							},
 							"created_on": "2025-08-26T05:21:58Z",
 							"modified_on": "2025-08-26T05:21:58Z",
-							"proxiable": false,
 							"proxied": false,
-							"meta": "{}",
 							"comment": null,
 							"comment_modified_on": null,
 							"tags": ["tf-applied"],
-							"tags_modified_on": "2025-08-26T05:21:58Z",
-							"settings": {
-								"flatten_cname": null,
-								"ipv4_only": null,
-								"ipv6_only": null
-							}
+							"tags_modified_on": "2025-08-26T05:21:58Z"
 						}
 					}]
 				}]
