@@ -90,7 +90,13 @@ func TestAccAccountToken_Basic(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{
+					"value", // API token value is not returned by the API
+					"policies.0.%", // Dynamic type changes object count
+					"policies.0.id", // Dynamic policy ID from API response
+					"policies.0.permission_groups.0.%", // Dynamic type changes object count
+					"policies.0.permission_groups.0.name", // Dynamic permission group name from API response
+				},
 			},
 		},
 	})
@@ -132,7 +138,13 @@ func TestAccAccountToken_SetIndividualCondition(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{
+					"value", // API token value is not returned by the API
+					"policies.0.%", // Dynamic type changes object count
+					"policies.0.id", // Dynamic policy ID from API response
+					"policies.0.permission_groups.0.%", // Dynamic type changes object count
+					"policies.0.permission_groups.0.name", // Dynamic permission group name from API response
+				},
 			},
 		},
 	})
@@ -175,7 +187,13 @@ func TestAccAccountToken_SetAllCondition(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{
+					"value", // API token value is not returned by the API
+					"policies.0.%", // Dynamic type changes object count
+					"policies.0.id", // Dynamic policy ID from API response
+					"policies.0.permission_groups.0.%", // Dynamic type changes object count
+					"policies.0.permission_groups.0.name", // Dynamic permission group name from API response
+				},
 			},
 		},
 	})
@@ -239,7 +257,13 @@ func TestAccAccountToken_TokenTTL(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{
+					"value", // API token value is not returned by the API
+					"policies.0.%", // Dynamic type changes object count
+					"policies.0.id", // Dynamic policy ID from API response
+					"policies.0.permission_groups.0.%", // Dynamic type changes object count
+					"policies.0.permission_groups.0.name", // Dynamic permission group name from API response
+				},
 			},
 		},
 	})
