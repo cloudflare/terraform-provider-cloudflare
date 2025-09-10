@@ -40,16 +40,19 @@ func applyRenames(block *hclwrite.Block) {
 // renameResourceReferences renames resource type references in expressions
 // e.g., cloudflare_access_policy.foo.id -> cloudflare_zero_trust_access_policy.foo.id
 func renameResourceReferences(body *hclwrite.Body) {
-	// Map of old resource names to new ones
+	// Map of old resource names to new ones, and new names to themselves (for attribute renaming)
 	resourceTypeRenames := map[string]string{
 		"cloudflare_access_policy":      "cloudflare_zero_trust_access_policy",
 		"cloudflare_access_application": "cloudflare_zero_trust_access_application",
 		"cloudflare_access_group":       "cloudflare_zero_trust_access_group",
-		// Workers resource renames
+		// Workers resource renames - old to new
 		"cloudflare_worker_route":        "cloudflare_workers_route",
 		"cloudflare_worker_script":       "cloudflare_workers_script",
 		"cloudflare_worker_cron_trigger": "cloudflare_workers_cron_trigger",
 		"cloudflare_worker_domain":       "cloudflare_workers_custom_domain",
+		// Workers resource renames - new to new (for attribute renaming on already-migrated references)
+		"cloudflare_workers_script": "cloudflare_workers_script",
+		"cloudflare_workers_route":  "cloudflare_workers_route",
 		// Note: cloudflare_worker_secret is migrated to secret_text bindings, not renamed
 	}
 
@@ -133,8 +136,9 @@ func renameResourceReferencesInTokens(tokens hclwrite.Tokens, renames map[string
 
 // renameWorkerAttribute handles attribute renames for worker resource references
 func renameWorkerAttribute(oldResourceType, newResourceType, attrName string) string {
-	// Handle workers_script attribute renames
-	if oldResourceType == "cloudflare_worker_script" && newResourceType == "cloudflare_workers_script" {
+	// Handle workers_script attribute renames - both old->new and new->new (already migrated resource type)
+	if (oldResourceType == "cloudflare_worker_script" && newResourceType == "cloudflare_workers_script") ||
+		(oldResourceType == "cloudflare_workers_script" && newResourceType == "cloudflare_workers_script") {
 		if attrName == "name" {
 			return "script_name"
 		}
