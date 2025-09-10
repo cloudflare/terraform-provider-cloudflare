@@ -141,6 +141,11 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		}
 	}
 
+	if listItemID == "" {
+		resp.Diagnostics.AddError("failed to find list item", "list item pagination did not return a matching list item")
+		return
+	}
+
 	data.ID = types.StringValue(listItemID)
 
 	env := ListItemResultEnvelope{*data}

@@ -4,6 +4,8 @@ package list_item
 
 import (
 	"context"
+	"net/url"
+	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -89,6 +91,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"source_url": schema.StringAttribute{
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						Validators:    []validator.String{SourceUrlValidator{}},
 					},
 					"target_url": schema.StringAttribute{
 						Required:      true,
@@ -145,4 +148,30 @@ func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaReques
 
 func (r *ListItemResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
 	return []resource.ConfigValidator{}
+}
+
+type SourceUrlValidator struct{}
+
+func (v SourceUrlValidator) Description(ctx context.Context) string {
+	return "Validates that the URL path is not empty."
+}
+
+func (v SourceUrlValidator) MarkdownDescription(ctx context.Context) string {
+	return "Validates that the URL path is not empty."
+}
+
+func (v SourceUrlValidator) ValidateString(ctx context.Context, req validator.StringRequest, resp *validator.StringResponse) {
+	rawUrl := req.ConfigValue.ValueString()
+	if !strings.HasPrefix(rawUrl, "http://") && !strings.HasPrefix(rawUrl, "https://") {
+		rawUrl = "https://" + rawUrl
+	}
+	u, err := url.Parse(rawUrl)
+	if err != nil {
+		resp.Diagnostics.AddAttributeError(req.Path, "Invalid URL", err.Error())
+		return
+	}
+	if u.Path == "" {
+		resp.Diagnostics.AddAttributeError(req.Path, "source_url path must not be empty", "The source_url path must not be empty, append a '/' at the end of the URL.")
+		return
+	}
 }
