@@ -42,23 +42,13 @@ func transformStateJSON(data []byte) ([]byte, error) {
 		return data, nil
 	}
 
+	// This is deleting resources from state which changes the indices of remaining resources
+	// Delete them first and then process the remaining
 	resources.ForEach(func(ridx, resource gjson.Result) bool {
 		resourcePath := fmt.Sprintf("resources.%d", ridx.Int())
-		resourceModule := resource.Get("module").String()
-		resourceName := resource.Get("name").String()
-		
 		// CRITICAL FIX: Always read resource type from current JSON state, not from stale ForEach data
 		// The ForEach iteration data can be stale/cached and not match current JSON positions
 		resourceType := gjson.Get(result, resourcePath+".type").String()
-		
-		// Debug logging for the specific problematic resource
-		if resourceModule == "module.openai_com" && resourceName == "openai-com" {
-			fmt.Printf("DEBUG: INITIAL resource %s.%s, type=%s, index=%d, resourcePath=%s\n", resourceModule, resourceName, resourceType, ridx.Int(), resourcePath)
-			
-			// Let's also see what the current JSON looks like for this resource
-			currentResourceJSON := gjson.Get(result, resourcePath)
-			fmt.Printf("DEBUG: Current resource JSON type field: %s\n", currentResourceJSON.Get("type").String())
-		}
 
 		// Handle zone_settings_override -> zone_setting transformation
 		if resourceType == "cloudflare_zone_settings_override" {
@@ -66,21 +56,25 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			return true // Continue to next resource
 		}
 
+		return true
+	})
+
+	resources = gjson.Get(result, "resources")
+
+	resources.ForEach(func(ridx, resource gjson.Result) bool {
+		resourcePath := fmt.Sprintf("resources.%d", ridx.Int())
+		resourceModule := resource.Get("module").String()
+		resourceName := resource.Get("name").String()
+
+		// CRITICAL FIX: Always read resource type from current JSON state, not from stale ForEach data
+		// The ForEach iteration data can be stale/cached and not match current JSON positions
+		resourceType := gjson.Get(result, resourcePath+".type").String()
+
 		// Handle resource type renames
 		if resourceType == "cloudflare_record" {
-			if resourceModule == "module.openai_com" && resourceName == "openai-com" {
-				fmt.Printf("DEBUG: ABOUT TO RENAME %s.%s from cloudflare_record to cloudflare_dns_record\n", resourceModule, resourceName)
-				fmt.Printf("DEBUG: Before rename - resourcePath=%s, current type in JSON: %s\n", resourcePath, gjson.Get(result, resourcePath+".type").String())
-			}
-			
 			// Rename cloudflare_record to cloudflare_dns_record
 			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_dns_record")
 			resourceType = "cloudflare_dns_record"
-			
-			if resourceModule == "module.openai_com" && resourceName == "openai-com" {
-				fmt.Printf("DEBUG: RENAMED %s.%s from cloudflare_record to cloudflare_dns_record\n", resourceModule, resourceName)
-				fmt.Printf("DEBUG: After rename - current type in JSON: %s\n", gjson.Get(result, resourcePath+".type").String())
-			}
 		}
 
 		if resourceType == "cloudflare_access_policy" {
@@ -133,16 +127,8 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 		// Process each instance
 		instances := resource.Get("instances")
-		if resourceModule == "module.openai_com" && resourceName == "openai-com" {
-			fmt.Printf("DEBUG: About to process instances for %s.%s, current resourceType=%s\n", resourceModule, resourceName, resourceType)
-			fmt.Printf("DEBUG: Current type in JSON before instance processing: %s\n", gjson.Get(result, resourcePath+".type").String())
-		}
 		instances.ForEach(func(iidx, instance gjson.Result) bool {
 			path := fmt.Sprintf("resources.%d.instances.%d", ridx.Int(), iidx.Int())
-			if resourceModule == "module.openai_com" && resourceName == "openai-com" {
-				fmt.Printf("DEBUG: Processing instance %d for %s.%s, instancePath=%s\n", iidx.Int(), resourceModule, resourceName, path)
-				fmt.Printf("DEBUG: About to enter switch with resourceType=%s\n", resourceType)
-			}
 			switch resourceType {
 			case "cloudflare_load_balancer_pool":
 				result = transformLoadBalancerPoolStateJSON(result, path)
@@ -224,31 +210,6 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			return true
 		})
-
-		// Debug logging to see final resource type
-		if resourceModule == "module.openai_com" && resourceName == "openai-com" {
-			finalResourceType := gjson.Get(result, resourcePath+".type").String()
-			fmt.Printf("DEBUG: AFTER Processing resource %s.%s, final_type=%s, index=%d\n", resourceModule, resourceName, finalResourceType, ridx.Int())
-			
-			// Also check what transformZoneInstanceStateJSON actually did
-			if resourceType == "cloudflare_zone" {
-				fmt.Printf("DEBUG: Zone resource was processed but final_type=%s instead of cloudflare_zone\n", finalResourceType)
-			}
-			
-			// Show some sample attributes to see if we're looking at the right resource
-			sampleAttrs := gjson.Get(result, resourcePath+".instances.0.attributes")
-			if sampleAttrs.Exists() {
-				fmt.Printf("DEBUG: Sample attributes for this resource:\n")
-				count := 0
-				sampleAttrs.ForEach(func(key, value gjson.Result) bool {
-					if count < 5 {
-						fmt.Printf("DEBUG:   %s = %s\n", key.String(), value.String())
-						count++
-					}
-					return count < 5
-				})
-			}
-		}
 
 		return true
 	})

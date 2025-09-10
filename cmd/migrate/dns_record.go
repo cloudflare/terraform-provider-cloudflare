@@ -372,28 +372,51 @@ func ProcessDNSRecordConfig(file *hclwrite.File) error {
 // transformDNSRecordStateJSON transforms DNS record state entries from v4 to v5
 
 func transformDNSRecordStateJSON(result string, path string, instance gjson.Result) string {
-	// Ensure meta field exists as a JSON string (not null)
+	// First check if this instance actually exists and has basic required fields
+	if !instance.Exists() || !instance.Get("attributes").Exists() {
+		// This instance doesn't exist, don't create it
+		return result
+	}
+	
+	// Check if this instance has essential DNS record fields
+	// If it doesn't have name, type, or zone_id, it's likely an invalid/empty instance
+	attrs := instance.Get("attributes")
+	if !attrs.Get("name").Exists() || !attrs.Get("type").Exists() || !attrs.Get("zone_id").Exists() {
+		// This is an incomplete instance, skip it
+		return result
+	}
+	
+	// Clean up meta field - remove if empty or invalid
 	meta := instance.Get("attributes.meta")
-	if !meta.Exists() || meta.Type == gjson.Null {
-		result, _ = sjson.Set(result, path+".attributes.meta", "{}")
-	}
-
-	// Ensure settings field exists with proper structure
-	settings := instance.Get("attributes.settings")
-	if !settings.Exists() || settings.Type == gjson.Null {
-		settingsObj := map[string]interface{}{
-			"flatten_cname": nil,
-			"ipv4_only":     nil,
-			"ipv6_only":     nil,
+	if meta.Exists() {
+		// Remove meta if it's an empty string "{}" or empty object
+		if meta.String() == "{}" || (meta.IsObject() && len(meta.Map()) == 0) {
+			result, _ = sjson.Delete(result, path+".attributes.meta")
 		}
-		result, _ = sjson.Set(result, path+".attributes.settings", settingsObj)
 	}
+	// Don't add meta if it doesn't exist
 
-	// Ensure proxiable field exists
-	proxiable := instance.Get("attributes.proxiable")
-	if !proxiable.Exists() {
-		result, _ = sjson.Set(result, path+".attributes.proxiable", false)
+	// Clean up settings field - remove if all values are null
+	settings := instance.Get("attributes.settings")
+	if settings.Exists() {
+		// Check if all settings values are null
+		flattenCname := settings.Get("flatten_cname")
+		ipv4Only := settings.Get("ipv4_only") 
+		ipv6Only := settings.Get("ipv6_only")
+		
+		allNull := (!flattenCname.Exists() || flattenCname.Type == gjson.Null || flattenCname.Value() == nil) &&
+			(!ipv4Only.Exists() || ipv4Only.Type == gjson.Null || ipv4Only.Value() == nil) &&
+			(!ipv6Only.Exists() || ipv6Only.Type == gjson.Null || ipv6Only.Value() == nil)
+		
+		if allNull {
+			// Remove settings entirely if all values are null
+			result, _ = sjson.Delete(result, path+".attributes.settings")
+		}
 	}
+	// Don't add settings if it doesn't exist
+
+	// Don't add proxiable if it doesn't exist - it's a computed field
+	// The provider will set it based on the record type
 
 	// Ensure timestamp fields exist with default values if missing
 	// These are computed fields that should always exist in v5
@@ -436,11 +459,24 @@ func transformDNSRecordStateJSON(result string, path string, instance gjson.Resu
 	if metadata.Exists() {
 		// Convert metadata to JSON string if it's an object
 		if metadata.IsObject() {
-			result, _ = sjson.Set(result, path+".attributes.meta", "{}")
+			// Check if metadata object is empty
+			if len(metadata.Map()) == 0 {
+				// Empty metadata - just remove it, don't add meta
+				result, _ = sjson.Delete(result, path+".attributes.metadata")
+			} else {
+				// Non-empty metadata - convert to JSON string
+				metaJSON, _ := json.Marshal(metadata.Value())
+				result, _ = sjson.Set(result, path+".attributes.meta", string(metaJSON))
+				result, _ = sjson.Delete(result, path+".attributes.metadata")
+			}
+		} else if metadata.String() == "" || metadata.String() == "{}" {
+			// Empty string or empty JSON - just remove it
+			result, _ = sjson.Delete(result, path+".attributes.metadata")
 		} else {
+			// Non-empty string - keep it
 			result, _ = sjson.Set(result, path+".attributes.meta", metadata.String())
+			result, _ = sjson.Delete(result, path+".attributes.metadata")
 		}
-		result, _ = sjson.Delete(result, path+".attributes.metadata")
 	}
 
 	// Remove deprecated fields
@@ -463,10 +499,15 @@ func transformDNSRecordStateJSON(result string, path string, instance gjson.Resu
 		"NS": true, "PTR": true, "TXT": true, "OPENPGPKEY": true,
 	}
 
-	// If it's a simple record type, ensure data field is null
+	// If it's a simple record type, remove data field completely
 	if simpleTypes[recordType] {
-		// Set data field to null for simple types
-		result, _ = sjson.Set(result, path+".attributes.data", nil)
+		data := instance.Get("attributes.data")
+		if data.Exists() {
+			// Remove data field entirely for simple types
+			// In v4 it's an empty array [], after grit migration it might be {}
+			// In v5 simple types should not have a data field at all
+			result, _ = sjson.Delete(result, path+".attributes.data")
+		}
 		return result
 	}
 
@@ -498,6 +539,12 @@ func transformDNSRecordStateJSON(result string, path string, instance gjson.Resu
 	if data.IsArray() {
 		// v4 format - data is an array, need to convert to object
 		dataArray := data.Array()
+		if len(dataArray) == 0 {
+			// Empty array - remove the data field entirely
+			// Even complex types shouldn't have empty data
+			result, _ = sjson.Delete(result, path+".attributes.data")
+			return result
+		}
 		if len(dataArray) > 0 {
 			// Take the first element and copy only its existing fields
 			firstElem := dataArray[0]
@@ -582,6 +629,12 @@ func transformDNSRecordStateJSON(result string, path string, instance gjson.Resu
 			}
 		}
 
+		// Check if dataObj is empty after processing
+		if len(dataObj) == 0 {
+			// Empty object - remove the data field
+			result, _ = sjson.Delete(result, path+".attributes.data")
+			return result
+		}
 		// Set the data back as an object (not array) with all fields
 		result, _ = sjson.Set(result, path+".attributes.data", dataObj)
 	} else if data.IsObject() {
@@ -666,14 +719,20 @@ func transformDNSRecordStateJSON(result string, path string, instance gjson.Resu
 				// Remove content from dataObj if it exists
 				delete(dataObj, "content")
 			}
+			
+			if _, hasFlags := dataObj["flags"]; !hasFlags {
+				dataObj["flags"] = nil
+			}
 		}
 
-		if _, hasFlags := dataObj["flags"]; !hasFlags {
-			dataObj["flags"] = nil
+		// Check if dataObj is empty after processing
+		if len(dataObj) == 0 {
+			// Empty object - remove the data field
+			result, _ = sjson.Delete(result, path+".attributes.data")
+		} else {
+			// Set the data back with all fields
+			result, _ = sjson.Set(result, path+".attributes.data", dataObj)
 		}
-
-		// Set the data back with all fields
-		result, _ = sjson.Set(result, path+".attributes.data", dataObj)
 	}
 
 	// For SRV and URI records, ensure priority is at root level if it exists in data
