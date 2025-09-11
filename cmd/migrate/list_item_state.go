@@ -202,6 +202,7 @@ func mergeItemsIntoListState(jsonStr string, listResourcePath string, items []Li
 }
 
 // removeListItemResourcesFromState removes all cloudflare_list_item resources from state
+// This function avoids array reconstruction to prevent index corruption
 func removeListItemResourcesFromState(jsonStr string) string {
 	result := jsonStr
 
@@ -211,17 +212,21 @@ func removeListItemResourcesFromState(jsonStr string) string {
 		return result
 	}
 
-	// Build new resources array without list_item resources
-	var newResources []interface{}
-	for _, resource := range resources.Array() {
+	// Collect indices of cloudflare_list_item resources to remove
+	var indicesToRemove []int
+	for i, resource := range resources.Array() {
 		resourceType := resource.Get("type").String()
-		if resourceType != "cloudflare_list_item" {
-			newResources = append(newResources, resource.Value())
+		if resourceType == "cloudflare_list_item" {
+			indicesToRemove = append(indicesToRemove, i)
 		}
 	}
 
-	// Update state with filtered resources
-	result, _ = sjson.Set(result, "resources", newResources)
+	// Remove resources in reverse order to avoid index shifting issues
+	// This prevents corrupting the state by maintaining correct indices
+	for i := len(indicesToRemove) - 1; i >= 0; i-- {
+		path := fmt.Sprintf("resources.%d", indicesToRemove[i])
+		result, _ = sjson.Delete(result, path)
+	}
 
 	return result
 }

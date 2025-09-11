@@ -1,0 +1,430 @@
+# Cloudflare Terraform Provider v5 Block to Attribute Transformations
+version: "1.0"
+description: "Configuration for transforming HCL blocks to attributes for Cloudflare Terraform Provider v5"
+
+transformations:
+  # Access Application transformations
+  cloudflare_access_application:
+    to_map:
+      - cors_headers
+      - saas_app
+      - hybrid_and_implicit_options
+      - refresh_token_options
+      - scim_config
+      - authentication
+      - operations
+    to_list:
+      - footer_links
+      - landing_page_design
+      - custom_attribute
+      - source
+      - custom_claim
+      - mappings
+
+  # Access Group transformations
+  cloudflare_access_group:
+    to_map:
+      - azure
+      - external_evaluation
+      - gsuite
+      - okta
+      - saml
+    to_list:
+      - exclude
+      - auth_context
+      - github
+      - include
+      - require
+
+  # Access Identity Provider
+  cloudflare_access_identity_provider:
+    to_map:
+      - config
+      - scim_config
+
+  # Access Mutual TLS
+  cloudflare_access_mutual_tls_hostname_settings:
+    to_list:
+      - settings
+
+  # Access Organization
+  cloudflare_access_organization:
+    to_map:
+      - custom_pages
+      - login_design
+
+  # Access Policy
+  cloudflare_access_policy:
+    to_map:
+      - azure
+      - external_evaluation
+      - gsuite
+      - okta
+      - saml
+    to_list:
+      - approval_group
+      - exclude
+      - auth_context
+      - github
+      - include
+      - require
+
+  # Zero Trust Access Policy (v5 renamed version)
+  cloudflare_zero_trust_access_policy:
+    to_map:
+      - azure
+      - external_evaluation
+      - gsuite
+      - okta
+      - saml
+    to_list:
+      - approval_group
+      - exclude
+      - auth_context
+      - github
+      - include
+      - require
+
+  # Access Rule
+  cloudflare_access_rule:
+    to_map:
+      - configuration
+
+  # Address Map
+  cloudflare_address_map:
+    to_list:
+      - ips
+      - memberships
+
+  # API Shield
+  cloudflare_api_shield:
+    to_list:
+      - auth_id_characteristics
+
+  # API Token
+  cloudflare_api_token:
+    to_map:
+      - condition
+      - request_ip
+    to_list:
+      - policy
+
+  # Certificate Pack
+  cloudflare_certificate_pack:
+    to_list:
+      - validation_errors
+      - validation_records
+
+  # Custom Hostname
+  cloudflare_custom_hostname:
+    to_map:
+      - ssl
+      - settings
+
+  # Custom SSL
+  cloudflare_custom_ssl:
+    to_list:
+      - custom_ssl_options
+      - custom_ssl_priority
+
+  # Device DEX Test
+  cloudflare_device_dex_test:
+    to_map:
+      - data
+
+  # Device Managed Networks
+  cloudflare_device_managed_networks:
+    to_map:
+      - config
+
+  # Device Posture Integration
+  cloudflare_device_posture_integration:
+    to_map:
+      - config
+
+  # Device Posture Rule
+  cloudflare_device_posture_rule:
+    to_map:
+      - input
+    to_list:
+      - match
+
+  # DLP Profile
+  cloudflare_dlp_profile:
+    to_list:
+      - context_awareness
+      - skip
+      - entry
+      - pattern
+
+  # Email Routing
+  cloudflare_email_routing_catch_all:
+    to_list:
+      - action
+      - matcher
+
+  cloudflare_email_routing_rule:
+    to_list:
+      - action
+      - matcher
+
+  # Fallback Domain
+  cloudflare_fallback_domain:
+    to_list:
+      - domains
+
+  # Healthcheck
+  cloudflare_healthcheck:
+    to_list:
+      - header
+
+  # Load Balancer
+  cloudflare_load_balancer:
+    to_map:
+      - adaptive_routing
+      - location_strategy
+      - random_steering
+      - fixed_response
+      - overrides
+      - session_affinity_attributes
+    to_list:
+      - country_pools
+      - pop_pools
+      - region_pools
+      - rules
+
+  # Load Balancer Monitor
+  cloudflare_load_balancer_monitor:
+    to_list:
+      - header
+
+  # Load Balancer Pool
+  cloudflare_load_balancer_pool:
+    to_map:
+      - load_shedding
+      - origin_steering
+    to_list:
+      - origins
+    notes: "State transformation handled in Go state.go"
+
+  # Logpush Job
+  cloudflare_logpush_job:
+    to_map:
+      - output_options
+
+  # Managed Headers
+  cloudflare_managed_headers:
+    to_list:
+      - managed_request_headers
+      - managed_response_headers
+
+  # Notification Policy
+  cloudflare_notification_policy:
+    to_map:
+      - filters
+    to_list:
+      - email_integration
+      - pagerduty_integration
+      - webhooks_integration
+
+  # Page Rule
+  cloudflare_page_rule:
+    to_map:
+      - actions
+      - cache_key_fields
+      - cookie
+      - header
+      - host
+      - query_string
+      - user
+      - cache_ttl_by_status
+      - forwarding_url
+      - minify
+
+  # Pages Project
+  cloudflare_pages_project:
+    to_map:
+      - build_config
+      - deployment_configs
+      - preview
+      - placement
+      - production
+    to_list:
+      - service_binding
+      - source
+      - config
+
+  # Rate Limit
+  cloudflare_rate_limit:
+    to_list:
+      - action
+      - response
+      - correlate
+      - match
+      - request
+
+  # Risk Behavior
+  cloudflare_risk_behavior:
+    to_list:
+      - behavior
+
+  # Ruleset (complex - many nested transformations)
+  cloudflare_ruleset:
+    to_map:
+      - action_parameters
+      - from_value
+      - target_url
+      - overrides
+      - response
+      - logging
+      - ratelimit
+    to_list:
+      - rules
+      - algorithms
+      - autominify
+      - browser_ttl
+      - cache_key
+      - custom_key
+      - cookie
+      - header
+      - host
+      - query_string
+      - user
+      - edge_ttl
+      - status_code_ttl
+      - status_code_range
+      - from_list
+      - headers
+      - matched_data
+      - origin
+      - categories
+      - serve_stale
+      - sni
+      - uri
+      - path
+      - query
+      - exposed_credential_check
+
+  # Spectrum Application
+  cloudflare_spectrum_application:
+    to_map:
+      - dns
+      - edge_ips
+      - origin_dns
+
+  # Split Tunnel
+  cloudflare_split_tunnel:
+    to_list:
+      - tunnels
+
+  # Teams Account
+  cloudflare_teams_account:
+    to_list:
+      - antivirus
+      - notification_settings
+      - block_page
+      - body_scanning
+      - custom_certificate
+      - extended_email_matching
+      - fips
+      - logging
+      - settings_by_rule_type
+      - dns
+      - http
+      - l4
+      - payload_log
+      - proxy
+      - ssh_session_log
+
+  # Teams Location
+  cloudflare_teams_location:
+    to_list:
+      - networks
+
+  # Teams Rule
+  cloudflare_teams_rule:
+    to_map:
+      - rule_settings
+      - audit_ssh
+      - biso_admin_controls
+      - check_session
+      - dns_resolvers
+      - egress
+      - l4override
+      - notification_settings
+      - payload_log
+      - untrusted_cert
+    to_list:
+      - ipv4
+      - ipv6
+
+  # Tunnel Config
+  cloudflare_tunnel_config:
+    to_map:
+      - config
+      - warp_routing
+    to_list:
+      - ingress_rule
+      - origin_request
+      - access
+      - ip_rules
+    duplicate_handling:
+      origin_request: "context_dependent"
+      access: "context_dependent"
+
+  # User Agent Blocking Rule
+  cloudflare_user_agent_blocking_rule:
+    to_list:
+      - configuration
+
+  # Waiting Room
+  cloudflare_waiting_room:
+    to_list:
+      - additional_routes
+
+  # Waiting Room Rules
+  cloudflare_waiting_room_rules:
+    to_list:
+      - rules
+
+  # Zone Lockdown
+  cloudflare_zone_lockdown:
+    to_list:
+      - configurations
+
+  # Zero Trust resources (aliases for the new naming)
+  cloudflare_zero_trust_access_application:
+    to_map:
+      - cors_headers
+      - saas_app
+      - hybrid_and_implicit_options
+      - refresh_token_options
+      - scim_config
+      - authentication
+      - operations
+    to_list:
+      - footer_links
+      - landing_page_design
+      - custom_attribute
+      - source
+      - custom_claim
+      - mappings
+
+  cloudflare_zero_trust_access_group:
+    to_map:
+      - azure
+      - external_evaluation
+      - gsuite
+      - okta
+      - saml
+    to_list:
+      - exclude
+      - auth_context
+      - github
+      - include
+      - require
+
+  cloudflare_access_zero_trust_identity_provider:
+    to_map:
+      - config
+      - scim_config

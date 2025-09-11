@@ -8,10 +8,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclwrite"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
 )
 
 func main() {
@@ -20,6 +21,8 @@ func main() {
 	configDir := flag.String("config", "", "Directory containing Terraform files to migrate (defaults to current directory)")
 	stateFile := flag.String("state", "", "Terraform state file to migrate (defaults to first .tfstate file in current directory)")
 	useGrit := flag.Bool("grit", true, "Use grit for initial migrations (default: true)")
+	useTransformer := flag.Bool("transformer", true, "Use Go-based YAML transformations (default: true)")
+	transformerConfig := flag.String("transformer-dir", "", "Path to directory containing transformer YAML configs (defaults to embedded configs)")
 	patternsDir := flag.String("patterns-dir", "", "Local directory to get patterns from (otherwise they're pulled from github)")
 	flag.Parse()
 
@@ -78,6 +81,28 @@ func main() {
 			log.Fatalf("Error running grit migrations: %v", err)
 		}
 		fmt.Println("Grit migrations completed")
+		fmt.Println(strings.Repeat("-", 50))
+	}
+
+	// Run Go-based YAML transformations if enabled
+	if *useTransformer {
+		fmt.Println("Running Go-based YAML transformations...")
+
+		// Determine the transformer config directory
+		transformerDir := *transformerConfig
+		if transformerDir == "" {
+			// Use default embedded configs from GitHub
+			transformerDir = "https://github.com/cloudflare/terraform-provider-cloudflare/tree/grit-to-go-transformations/cmd/migrate/transformations/config"
+			fmt.Println("Using embedded transformer configs from GitHub")
+		} else {
+			fmt.Printf("Using local transformer configs from: %s\n", transformerDir)
+		}
+
+		// Run the YAML-based transformations
+		if err := runYAMLTransformations(*configDir, *stateFile, transformerDir, *dryRun); err != nil {
+			log.Fatalf("Error running YAML transformations: %v", err)
+		}
+		fmt.Println("YAML transformations completed")
 		fmt.Println(strings.Repeat("-", 50))
 	}
 
@@ -172,6 +197,8 @@ func processStateFile(stateFile string, dryRun bool) error {
 }
 
 func processFile(filename string, dryRun bool) error {
+	fmt.Printf("    DEBUG: Processing file %s\n", filename)
+	
 	// Read the file
 	originalBytes, err := os.ReadFile(filename)
 	if err != nil {
@@ -185,6 +212,7 @@ func processFile(filename string, dryRun bool) error {
 	}
 
 	if string(originalBytes) == string(transformedBytes) {
+		fmt.Printf("    DEBUG: No changes needed for %s\n", filename)
 		return nil
 	}
 
@@ -244,6 +272,7 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		if isLoadBalancerPoolResource(block) {
 			transformLoadBalancerPoolBlock(block, diags)
 		}
+
 
 		if isAccessPolicyResource(block) {
 			// TOOD eventually pass diags through to all resource transformers,
