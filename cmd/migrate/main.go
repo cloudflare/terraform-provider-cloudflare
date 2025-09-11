@@ -20,7 +20,10 @@ func main() {
 	dryRun := flag.Bool("dryrun", false, "Show what changes would be made without actually modifying files")
 	configDir := flag.String("config", "", "Directory containing Terraform files to migrate (defaults to current directory)")
 	stateFile := flag.String("state", "", "Terraform state file to migrate (defaults to first .tfstate file in current directory)")
+	useGrit := flag.Bool("grit", true, "Use grit for initial migrations (default: true)")
+	useTransformer := flag.Bool("transformer", true, "Use Go-based YAML transformations (default: true)")
 	transformerConfig := flag.String("transformer-dir", "", "Path to directory containing transformer YAML configs (defaults to embedded configs)")
+	patternsDir := flag.String("patterns-dir", "", "Local directory to get patterns from (otherwise they're pulled from github)")
 	flag.Parse()
 
 	// Default config directory to current working directory if not specified
@@ -57,25 +60,51 @@ func main() {
 		fmt.Println(strings.Repeat("=", 50))
 	}
 
+	// Run grit migrations if enabled
+	if *useGrit {
+		fmt.Println("Running grit migrations...")
+		if err := checkGritInstalled(); err != nil {
+			log.Fatalf("Error: %v", err)
+		}
+
+		// Pass empty strings to grit if explicitly disabled
+		gritConfigDir := *configDir
+		gritStateFile := *stateFile
+		if gritConfigDir == "false" {
+			gritConfigDir = ""
+		}
+		if gritStateFile == "false" {
+			gritStateFile = ""
+		}
+
+		if err := runGritMigrations(gritConfigDir, gritStateFile, *patternsDir, *dryRun); err != nil {
+			log.Fatalf("Error running grit migrations: %v", err)
+		}
+		fmt.Println("Grit migrations completed")
+		fmt.Println(strings.Repeat("-", 50))
+	}
+
 	// Run Go-based YAML transformations if enabled
-	fmt.Println("Running Go-based YAML transformations...")
+	if *useTransformer {
+		fmt.Println("Running Go-based YAML transformations...")
 
-	// Determine the transformer config directory
-	transformerDir := *transformerConfig
-	if transformerDir == "" {
-		// Use default - configs will be downloaded from GitHub
-		transformerDir = "https://github.com/cloudflare/terraform-provider-cloudflare"
-		fmt.Println("Downloading transformer configs from GitHub")
-	} else {
-		fmt.Printf("Using transformer configs from: %s\n", transformerDir)
-	}
+		// Determine the transformer config directory
+		transformerDir := *transformerConfig
+		if transformerDir == "" {
+			// Use default embedded configs from GitHub
+			transformerDir = "https://github.com/cloudflare/terraform-provider-cloudflare/tree/grit-to-go-transformations/cmd/migrate/transformations/config"
+			fmt.Println("Using embedded transformer configs from GitHub")
+		} else {
+			fmt.Printf("Using local transformer configs from: %s\n", transformerDir)
+		}
 
-	// Run the YAML-based transformations
-	if err := runYAMLTransformations(*configDir, *stateFile, transformerDir, *dryRun); err != nil {
-		log.Fatalf("Error running YAML transformations: %v", err)
+		// Run the YAML-based transformations
+		if err := runYAMLTransformations(*configDir, *stateFile, transformerDir, *dryRun); err != nil {
+			log.Fatalf("Error running YAML transformations: %v", err)
+		}
+		fmt.Println("YAML transformations completed")
+		fmt.Println(strings.Repeat("-", 50))
 	}
-	fmt.Println("YAML transformations completed")
-	fmt.Println(strings.Repeat("-", 50))
 
 	// Process config directory if specified and not explicitly disabled
 	if *configDir != "" && *configDir != "false" {
@@ -202,6 +231,7 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 	// Create new diagnostics collector for this file
 	diags := ast.NewDiagnostics()
 	// First, transform header blocks in load_balancer_pool resources at the string level
+	// This is needed because grit leaves header blocks inside origins lists, which causes parsing issues
 	contentStr := string(content)
 	contentStr = transformLoadBalancerPoolHeaders(contentStr)
 	// Also transform tiered_cache values at the string level

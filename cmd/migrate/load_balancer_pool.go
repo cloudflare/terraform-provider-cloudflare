@@ -228,7 +228,7 @@ func isLoadBalancerPoolResource(block *hclwrite.Block) bool {
 // This is done at the string level before HCL parsing to avoid syntax errors
 func transformLoadBalancerPoolHeaders(content string) string {
 	// Pattern to match header blocks inside origins
-	// This handles the case where origins have been converted to a list but header remains as a block
+	// This handles the case where grit has converted origins to a list but left header as a block
 	// The pattern needs to be flexible with whitespace and indentation
 	headerBlockPattern := regexp.MustCompile(`(?m)([ \t]*)header\s*\{\s*\n[ \t]*header\s*=\s*"Host"\s*\n[ \t]*values\s*=\s*(\[[^\]]+\])\s*\n[ \t]*\}`)
 

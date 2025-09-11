@@ -50,10 +50,11 @@ resource "cloudflare_your_resource" "example" {
 * [HCL Native Syntax Specification](https://github.com/hashicorp/hcl/blob/main/hclsyntax/spec.md) - Detailed language spec
 * [go-cty Type System](https://pkg.go.dev/github.com/zclconf/go-cty/cty) - Type system used with HCL
 
-### Pattern-based Transformation Engine
-* Pattern-based transformations for bulk code migrations
-* Configuration-driven transformation patterns
-* Support for HCL and Terraform-specific transformations
+### Grit Transformation Engine
+* [Grit Documentation](https://docs.grit.io/) - Main documentation site
+* [Grit Pattern Language](https://docs.grit.io/language/overview) - Writing transformation patterns
+* [Grit CLI Reference](https://docs.grit.io/cli/reference) - Command-line usage
+* [GritQL Tutorial](https://docs.grit.io/tutorials/gritql) - Pattern query language
 
 ### Terraform Provider Development
 * [Provider Framework](https://developer.hashicorp.com/terraform/plugin/framework) - Modern provider development

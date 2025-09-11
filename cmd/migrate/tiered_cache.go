@@ -102,14 +102,14 @@ func copyBlock(targetBody *hclwrite.Body, sourceBlock *hclwrite.Block) {
 // This handles both the attribute rename (cache_type -> value) and value transformation
 // NOTE: We don't transform "generic" values here - they're handled by HCL transformation
 func transformTieredCacheValues(content string) string {
-	// First, handle resources that already have "value" attribute (from transformations)
+	// First, handle resources that already have "value" attribute (from Grit)
 	// Pattern to match value = "smart" in tiered_cache resources
 	valueSmartPattern := regexp.MustCompile(`(resource\s+"cloudflare_tiered_cache"[^{]+\{[^}]*\n\s*value\s*=\s*)"smart"`)
 	content = valueSmartPattern.ReplaceAllString(content, `${1}"on"`)
 
 	// Don't transform "generic" - it will be handled by HCL transformation to create argo_tiered_caching
 
-	// Also handle cache_type in case transformations haven't run
+	// Also handle cache_type in case Grit hasn't run
 	cacheTypeSmartPattern := regexp.MustCompile(`(resource\s+"cloudflare_tiered_cache"[^{]+\{[^}]*\n\s*)cache_type(\s*=\s*)"smart"`)
 	content = cacheTypeSmartPattern.ReplaceAllString(content, `${1}value${2}"on"`)
 

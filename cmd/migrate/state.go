@@ -681,7 +681,7 @@ func transformLoadBalancerPoolStateJSON(json string, instancePath string) string
 					}
 				}
 			} else if header.IsObject() && !header.Get("host").Exists() {
-				// Handle intermediate format from transformations
+				// Handle intermediate format from Grit
 				if header.Get("header").String() == "Host" {
 					values := header.Get("values")
 					if values.Exists() {

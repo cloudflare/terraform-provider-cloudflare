@@ -1,0 +1,84 @@
+name: Run grit patterns test
+
+env:
+  GRIT_TELEMETRY_DISABLED: 'true'
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [nscloud-ubuntu-22.04-amd64-4x16, macos-latest]
+        node-version: [20.x]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: setup auth
+        run: ./ops/set_access_token.sh
+        env:
+          API_CLIENT_ID: ${{ secrets.API_CLIENT_ID }}
+          API_CLIENT_SECRET: ${{ secrets.API_CLIENT_SECRET }}
+
+      - name: Install prettier
+        run: |
+          curl -L https://github.com/prettier/prettier/releases/download/3.0.1/prettier -o prettier
+          chmod +x prettier
+          sudo mv prettier /usr/local/bin
+
+      - name: install-ruff
+        run: |
+          pip install ruff
+
+      - name: Setup Go environment
+        uses: actions/setup-go@v5.0.0
+        with:
+          go-version: '^1.22.0'
+
+      - name: Install Grit
+        run: npm install -g @getgrit/cli
+
+      - name: Run doctor
+        run: grit doctor
+
+      # grit check excludes all files under .grit, so we manually run this instead of using a check workflow
+      - name: Validate markdown names
+        run: |
+          cd .grit/patterns
+          output=$(grit apply grit_snake_case 2>&1)
+          echo "OUTPUT is:"
+          echo "$output"
+          if echo "$output" | grep -q 'found 0 matches'; then
+            echo "all file names valid"; else exit 1
+          fi
+
+      - name: Remove grit modules
+        run: rm -rf .grit/.gritmodules
+
+      - name: check formatting
+        run: |
+          grit format
+
+      - name: Run grit patterns test
+        run: |
+          if [ -n "${{ secrets.API_CLIENT_ID }}" ] && [ -n "${{ secrets.API_CLIENT_SECRET }}" ]; then
+              grit patterns test --exclude flaky
+          else
+              grit patterns test --exclude ai
+          fi

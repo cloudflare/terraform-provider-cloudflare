@@ -22,7 +22,7 @@ type PolicyReference struct {
 }
 
 // isAccessPolicyResource checks if a block is a cloudflare_zero_trust_access_policy resource
-// (already renamed from cloudflare_access_policy)
+// (grit has already renamed from cloudflare_access_policy)
 func isAccessPolicyResource(block *hclwrite.Block) bool {
 	return block.Type() == "resource" &&
 		len(block.Labels()) >= 2 &&
@@ -49,7 +49,7 @@ func transformAccessPolicyBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 	// STEP 2: Remove deprecated attributes that caused orphaned policies
 	removeDeprecatedPolicyAttributes(block)
 	
-	// STEP 3: Process include, exclude, and require attributes (already converted them to lists)
+	// STEP 3: Process include, exclude, and require attributes (grit has already converted them to lists)
 	transforms := map[string]ast.ExprTransformer{
 		"include": transformPolicyRuleListItem,
 		"exclude": transformPolicyRuleListItem,

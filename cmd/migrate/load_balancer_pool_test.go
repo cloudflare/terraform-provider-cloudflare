@@ -368,7 +368,7 @@ func TestLoadBalancerPoolStateTransformation(t *testing.T) {
 			}`,
 		},
 		{
-			Name: "transforms_intermediate_header_format_to_v5",
+			Name: "transforms_grit_intermediate_header_format_to_v5",
 			Input: `{
 				"id": "test-id",
 				"name": "test-pool",

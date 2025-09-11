@@ -13,7 +13,7 @@ import (
 )
 
 // isAccessApplicationResource checks if a block is a cloudflare_zero_trust_access_application resource
-// (already renamed from cloudflare_access_application)
+// (grit has already renamed from cloudflare_access_application)
 func isAccessApplicationResource(block *hclwrite.Block) bool {
 	return block.Type() == "resource" &&
 		len(block.Labels()) >= 2 &&
@@ -203,7 +203,7 @@ func transformSetToListAttribute(expr *hclsyntax.Expression, diags ast.Diagnosti
 	}
 
 	// If we can't identify the pattern, leave it unchanged
-	// (transformations should handle most cases)
+	// (grit should handle most cases)
 }
 
 // removeUnsupportedAttributes removes attributes that don't exist in v5 or are conditionally invalid
