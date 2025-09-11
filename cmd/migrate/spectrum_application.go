@@ -19,7 +19,7 @@ func isSpectrumApplicationResource(block *hclwrite.Block) bool {
 //
 // Example transformations:
 // 1. Remove optional id attribute from configuration (V4 → V5)
-// 2. Block to object syntax changes are handled by grit patterns
+// 2. Block to object syntax changes are handled by transformations
 // 3. Convert origin_port_range block to origin_port string format (V4 → V5)
 func transformSpectrumApplicationBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 	// Remove the id attribute if present (V4 allowed optional, V5 is computed-only)

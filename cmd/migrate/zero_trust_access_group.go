@@ -10,7 +10,7 @@ import (
 )
 
 // isAccessGroupResource checks if a block is a cloudflare_zero_trust_access_group resource
-// (grit has already renamed from cloudflare_access_group)
+// (already renamed from cloudflare_access_group)
 func isAccessGroupResource(block *hclwrite.Block) bool {
 	return block.Type() == "resource" &&
 		len(block.Labels()) >= 2 &&
@@ -229,7 +229,7 @@ func expandRuleObjectInAccessGroup(obj *hclsyntax.ObjectConsExpr, diags ast.Diag
 
 		case "azure":
 			// Handle azure blocks -> rename to azure_ad and expand ID arrays
-			// Can be either a single object or an array of objects after grit transformation
+			// Can be either a single object or an array of objects after transformation
 			var azureObjects []hclsyntax.Expression
 			
 			if azureBlocks, ok := item.ValueExpr.(*hclsyntax.TupleConsExpr); ok {

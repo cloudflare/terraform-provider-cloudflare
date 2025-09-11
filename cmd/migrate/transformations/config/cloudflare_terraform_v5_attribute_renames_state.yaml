@@ -116,7 +116,7 @@ state_special_transformations:
 notes:
   - "Schema version is reset to 0 for all cloudflare resources"
   - "Some resources have special handling for id duplication (queue, turnstile_widget)"
-  - "cloudflare_load_balancer is handled in Go state.go instead of Grit"
+  - "cloudflare_load_balancer is handled in Go state.go instead of pattern transformations"
   - "page_rule has complex transformations for normalizing empty values and unwrapping single-element arrays"
   - "Some attributes are removed entirely rather than renamed"
   - "cloudflare_tunnel and zero_trust_tunnel_cloudflared have overlapping removals"

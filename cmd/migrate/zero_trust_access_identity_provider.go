@@ -19,8 +19,8 @@ func isZeroTrustAccessIdentityProviderResource(block *hclwrite.Block) bool {
 // transformZeroTrustAccessIdentityProviderBlock transforms the identity provider configuration
 // Handles:
 // 1. Resource name: access_identity_provider -> zero_trust_access_identity_provider
-// 2. config block -> config object conversion (done by grit)
-// 3. scim_config block -> scim_config object conversion (done by grit)
+// 2. config block -> config object conversion (handled by transformations)
+// 3. scim_config block -> scim_config object conversion (handled by transformations)
 // 4. idp_public_cert -> idp_public_certs field rename and type conversion (string -> list)
 // 5. Remove deprecated fields: api_token, group_member_deprovision
 // 6. Remove invalid attributes based on provider type validation rules

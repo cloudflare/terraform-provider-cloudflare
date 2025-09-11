@@ -6,7 +6,7 @@ A Command-line tool for migrating Terraform configurations and state files for t
 
 The migration tool automates the transformation of Terraform configurations and state files to handle breaking changes between provider versions. It operates in two phases:
 
-1. **Grit transformations** - Applies predefined patterns for common migrations
+1. **YAML-based transformations** - Applies transformation rules defined in YAML configuration files
 2. **Go transformations** - Handles complex structural changes requiring AST manipulation
 
 ## Architecture
@@ -14,30 +14,32 @@ The migration tool automates the transformation of Terraform configurations and 
 ### Components
 
 - **main.go** - CLI entry point and orchestration
-- **grit.go** - Grit pattern application for bulk transformations
+- **transformations.go** - YAML-based transformation engine
 - **state.go** - Terraform state file JSON manipulation
 - **renames.go** - Attribute renaming logic
+- **transformations/config/** - YAML transformation configuration files
 - other resource-specific transformations
 
 ### Dependencies
 
 - `github.com/hashicorp/hcl/v2/hclwrite` - HCL AST manipulation
 - `github.com/zclconf/go-cty/cty` - Type system for HCL values
-- `grit` CLI tool - Pattern-based code transformations
+- `gopkg.in/yaml.v3` - YAML configuration parsing
 
 ## How It Works
 
-### Phase 1: Grit Transformations
+### Phase 1: YAML-based Transformations
 
-Applies Grit patterns in sequence:
-1. `cloudflare_terraform_v5` - Main configuration migrations
-2. `cloudflare_terraform_v5_attribute_renames_state` - State attribute renames
-3. `cloudflare_terraform_v5_resource_renames_configuration` - Resource type renames in config
-4. `cloudflare_terraform_v5_resource_renames_state` - Resource type renames in state
+Applies transformation rules from YAML configuration files:
+1. `cloudflare_terraform_v5_attribute_renames_configuration.yaml` - Configuration attribute renames
+2. `cloudflare_terraform_v5_attribute_renames_state.yaml` - State attribute renames
+3. `cloudflare_terraform_v5_resource_renames_configuration.yaml` - Resource type renames in config
+4. `cloudflare_terraform_v5_resource_renames_state.yaml` - Resource type renames in state
+5. `cloudflare_terraform_v5_block_to_attribute_configuration.yaml` - Block to attribute conversions
 
-Patterns are sourced from:
-- GitHub: `github.com/cloudflare/terraform-provider-cloudflare#<pattern_name>`
-- Local: Specified via `--patterns-dir` flag
+Transformations are loaded from:
+- Default: Embedded configs from GitHub repository
+- Custom: Local directory via `--transformer-dir` flag
 
 ### Phase 2: Go Transformations
 
@@ -64,8 +66,7 @@ migrate [options]
 |------|---------|-------------|
 | `--config <dir>` | Current directory | Directory containing .tf files to migrate |
 | `--state <file>` | First .tfstate in current dir | State file to migrate |
-| `--grit` | true | Enable Grit transformations |
-| `--patterns-dir <dir>` | (none) | Local directory containing Grit patterns |
+| `--transformer-dir <dir>` | Embedded configs | Path to directory containing transformer YAML configs |
 | `--dryrun` | false | Preview changes without modifying files |
 
 ### Special Values
@@ -84,11 +85,8 @@ migrate --dryrun
 # Migrate specific directory and state file
 migrate --config ./terraform --state ./terraform.tfstate
 
-# Use local Grit patterns (for development)
-migrate --patterns-dir ../grit-patterns
-
-# Skip Grit, only run Go transformations
-migrate --grit=false
+# Use local transformer configs (for development)
+migrate --transformer-dir ./transformations/config
 
 # Migrate only configuration files
 migrate --state false
@@ -107,11 +105,10 @@ Test files use `hclwrite` to verify transformations:
 
 Called automatically by `acctest.MigrationTestStep()` in provider acceptance tests with:
 - Working directory set to test directory
-- `--grit` flag enabled
-- Patterns fetched from GitHub repository
+- YAML transformations applied from embedded configs
+- Go transformations applied for complex structural changes
 
 ## Prerequisites
 
 - Go 1.21+
-- Grit CLI: `npm install -g @getgrit/cli`
 - Write permissions to target files

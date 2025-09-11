@@ -46,8 +46,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Install grit
-        run: npm install -g @getgrit/cli
       - name: Bootstrap
         run: ./scripts/bootstrap
       - name: Run Acceptance Tests
