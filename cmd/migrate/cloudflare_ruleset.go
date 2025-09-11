@@ -70,167 +70,144 @@ func transformCloudflareRulesetStateJSON(json string, instancePath string) strin
 			}
 
 			// Handle action_parameters transformation
-			// Check for both indexed format and JSON array format
-			actionParamsPath := fmt.Sprintf(`%s.rules\.%d\.action_parameters`, attrPath, i)
-			actionParamsValue := gjson.Get(json, actionParamsPath)
+			// First check if action_parameters exists in any format
+			actionParamsCount := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.#`, attrPath, i))
 			
-			if actionParamsValue.Exists() {
-				var actionParams map[string]interface{}
-				
-				// Check if it's already a JSON array (from Grit migration)
-				if actionParamsValue.IsArray() {
-					// If it's an array, take the first element (v4 only allows max 1)
-					if actionParamsValue.Array()[0].Exists() {
-						// Convert the first array element to a map
-						actionParams = actionParamsValue.Array()[0].Value().(map[string]interface{})
-					} else {
-						// Empty array, create empty map
-						actionParams = make(map[string]interface{})
-					}
-					rule["action_parameters"] = actionParams
-					continue // Skip the indexed format processing
-				}
-				
-				// Fall back to indexed format processing
-				actionParamsCount := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.#`, attrPath, i))
-				if !actionParamsCount.Exists() || actionParamsCount.Int() == 0 {
-					continue // No action_parameters to process
-				}
-				
+			if actionParamsCount.Exists() && actionParamsCount.Int() > 0 {
 				// v4 has action_parameters as an indexed list with max 1 item
 				// v5 expects it as a single nested object
-				actionParams = make(map[string]interface{})
+				actionParams := make(map[string]interface{})
 
 				// Copy all simple action parameter fields
 				simpleFields := []string{
-					"additional_cacheable_ports", "automatic_https_rewrites", "bic", "cache",
-					"content", "content_type", "disable_apps", "disable_railgun", "disable_zaraz",
-					"disable_rum", "fonts", "email_obfuscation", "host_header", "hotlink_protection",
-					"id", "increment", "mirage", "opportunistic_encryption", "origin_cache_control",
-					"polish", "products", "read_timeout", "respect_strong_etags",
-					"rocket_loader", "rules", "ruleset", "rulesets", "security_level",
-					"server_side_excludes", "ssl", "status_code", "sxg", "origin_error_page_passthru",
-				}
-
-				for _, field := range simpleFields {
-					path := fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s`, attrPath, i, field)
-					if val := gjson.Get(json, path); val.Exists() {
-						actionParams[field] = val.Value()
+						"additional_cacheable_ports", "automatic_https_rewrites", "bic", "cache",
+						"content", "content_type", "disable_apps", "disable_railgun", "disable_zaraz",
+						"disable_rum", "fonts", "email_obfuscation", "host_header", "hotlink_protection",
+						"id", "increment", "mirage", "opportunistic_encryption", "origin_cache_control",
+						"polish", "products", "read_timeout", "respect_strong_etags",
+						"rocket_loader", "rules", "ruleset", "rulesets", "security_level",
+						"server_side_excludes", "ssl", "status_code", "sxg", "origin_error_page_passthru",
 					}
-				}
+
+					for _, field := range simpleFields {
+						path := fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s`, attrPath, i, field)
+						if val := gjson.Get(json, path); val.Exists() {
+							actionParams[field] = val.Value()
+						}
+					}
 				
-				// Handle array fields that are simple string arrays
-				arrayFields := []string{"phases"}
-				for _, field := range arrayFields {
-					fieldCount := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s\.#`, attrPath, i, field))
-					if fieldCount.Exists() && fieldCount.Int() > 0 {
-						var arr []interface{}
-						for j := int64(0); j < fieldCount.Int(); j++ {
-							if val := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s\.%d`, attrPath, i, field, j)); val.Exists() {
-								arr = append(arr, val.String())
-							}
-						}
-						if len(arr) > 0 {
-							actionParams[field] = arr
-						}
-					}
-				}
-
-				// Handle headers transformation (from list to map)
-				headersCount := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.headers\.#`, attrPath, i))
-				if headersCount.Exists() && headersCount.Int() > 0 {
-					headers := make(map[string]interface{})
-					for j := int64(0); j < headersCount.Int(); j++ {
-						headerPath := fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.headers\.%d`, attrPath, i, j)
-						name := gjson.Get(json, headerPath+`\.name`).String()
-						if name != "" {
-							header := make(map[string]interface{})
-							if val := gjson.Get(json, headerPath+`\.operation`); val.Exists() {
-								header["operation"] = val.String()
-							}
-							if val := gjson.Get(json, headerPath+`\.value`); val.Exists() {
-								header["value"] = val.String()
-							}
-							if val := gjson.Get(json, headerPath+`\.expression`); val.Exists() {
-								header["expression"] = val.String()
-							}
-							headers[name] = header
-						}
-					}
-					if len(headers) > 0 {
-						actionParams["headers"] = headers
-					}
-				}
-
-				// Handle nested single blocks that need to be converted from indexed to object
-				singleBlocks := []struct {
-					name string
-					fields []string
-				}{
-					{"algorithms", []string{"name"}},
-					{"uri", []string{"origin"}},
-					{"matched_data", []string{"public_key"}},
-					{"response", []string{"status_code", "content_type", "content"}},
-					{"autominify", []string{"html", "css", "js"}},
-					{"edge_ttl", []string{"mode", "default"}},
-					{"browser_ttl", []string{"mode", "default"}},
-					{"serve_stale", []string{"disable_stale_while_updating"}},
-					{"cache_key", []string{"cache_by_device_type", "ignore_query_strings_order", "cache_deception_armor"}},
-					{"cache_reserve", []string{"eligible", "minimum_file_size"}},
-					{"from_list", []string{"name", "key"}},
-					{"from_value", []string{"preserve_query_string", "status_code"}},
-					{"origin", []string{"host", "port"}},
-					{"sni", []string{"value"}},
-					{"overrides", []string{"enabled", "action", "sensitivity_level"}},
-				}
-
-				for _, block := range singleBlocks {
-					blockCount := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s\.#`, attrPath, i, block.name))
-					if blockCount.Exists() && blockCount.Int() > 0 {
-						// Handle nested structures within blocks with special handling
-						if block.name == "cache_key" {
-							actionParams[block.name] = transformCacheKey(json, attrPath, i)
-						} else if block.name == "edge_ttl" || block.name == "browser_ttl" {
-							actionParams[block.name] = transformEdgeTTL(json, attrPath, i, block.name)
-						} else if block.name == "from_value" {
-							actionParams[block.name] = transformFromValue(json, attrPath, i)
-						} else if block.name == "overrides" {
-							actionParams[block.name] = transformOverrides(json, attrPath, i)
-						} else if block.name == "uri" {
-							actionParams[block.name] = transformURI(json, attrPath, i)
-						} else {
-							// Simple blocks with just the listed fields
-							blockObj := make(map[string]interface{})
-							for _, field := range block.fields {
-								fieldPath := fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s\.0\.%s`, attrPath, i, block.name, field)
-								if val := gjson.Get(json, fieldPath); val.Exists() {
-									blockObj[field] = val.Value()
+					// Handle array fields that are simple string arrays
+					arrayFields := []string{"phases"}
+					for _, field := range arrayFields {
+						fieldCount := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s\.#`, attrPath, i, field))
+						if fieldCount.Exists() && fieldCount.Int() > 0 {
+							var arr []interface{}
+							for j := int64(0); j < fieldCount.Int(); j++ {
+								if val := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s\.%d`, attrPath, i, field, j)); val.Exists() {
+									arr = append(arr, val.String())
 								}
 							}
-							if len(blockObj) > 0 {
-								actionParams[block.name] = blockObj
+							if len(arr) > 0 {
+								actionParams[field] = arr
 							}
 						}
 					}
-				}
 
-				// Handle cookie_fields, request_fields, response_fields transformation
-				// From SetAttribute[String] to ListNestedAttribute with name field
-				for _, field := range []string{"cookie_fields", "request_fields", "response_fields"} {
-					fieldCount := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s\.#`, attrPath, i, field))
-					if fieldCount.Exists() && fieldCount.Int() > 0 {
-						var fieldList []map[string]interface{}
-						for j := int64(0); j < fieldCount.Int(); j++ {
-							fieldVal := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s\.%d`, attrPath, i, field, j))
-							if fieldVal.Exists() {
-								fieldList = append(fieldList, map[string]interface{}{
-									"name": fieldVal.String(),
-								})
+					// Handle headers transformation (from list to map)
+					headersCount := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.headers\.#`, attrPath, i))
+					if headersCount.Exists() && headersCount.Int() > 0 {
+						headers := make(map[string]interface{})
+						for j := int64(0); j < headersCount.Int(); j++ {
+							headerPath := fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.headers\.%d`, attrPath, i, j)
+							name := gjson.Get(json, headerPath+`\.name`).String()
+							if name != "" {
+								header := make(map[string]interface{})
+								if val := gjson.Get(json, headerPath+`\.operation`); val.Exists() {
+									header["operation"] = val.String()
+								}
+								if val := gjson.Get(json, headerPath+`\.value`); val.Exists() {
+									header["value"] = val.String()
+								}
+								if val := gjson.Get(json, headerPath+`\.expression`); val.Exists() {
+									header["expression"] = val.String()
+								}
+								headers[name] = header
 							}
 						}
-						actionParams[field] = fieldList
+						if len(headers) > 0 {
+							actionParams["headers"] = headers
+						}
 					}
-				}
+
+					// Handle nested single blocks that need to be converted from indexed to object
+					singleBlocks := []struct {
+						name string
+						fields []string
+					}{
+						{"algorithms", []string{"name"}},
+						{"uri", []string{"origin"}},
+						{"matched_data", []string{"public_key"}},
+						{"response", []string{"status_code", "content_type", "content"}},
+						{"autominify", []string{"html", "css", "js"}},
+						{"edge_ttl", []string{"mode", "default"}},
+						{"browser_ttl", []string{"mode", "default"}},
+						{"serve_stale", []string{"disable_stale_while_updating"}},
+						{"cache_key", []string{"cache_by_device_type", "ignore_query_strings_order", "cache_deception_armor"}},
+						{"cache_reserve", []string{"eligible", "minimum_file_size"}},
+						{"from_list", []string{"name", "key"}},
+						{"from_value", []string{"preserve_query_string", "status_code"}},
+						{"origin", []string{"host", "port"}},
+						{"sni", []string{"value"}},
+						{"overrides", []string{"enabled", "action", "sensitivity_level"}},
+					}
+
+					for _, block := range singleBlocks {
+						blockCount := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s\.#`, attrPath, i, block.name))
+						if blockCount.Exists() && blockCount.Int() > 0 {
+							// Handle nested structures within blocks with special handling
+							if block.name == "cache_key" {
+								actionParams[block.name] = transformCacheKey(json, attrPath, i)
+							} else if block.name == "edge_ttl" || block.name == "browser_ttl" {
+								actionParams[block.name] = transformEdgeTTL(json, attrPath, i, block.name)
+							} else if block.name == "from_value" {
+								actionParams[block.name] = transformFromValue(json, attrPath, i)
+							} else if block.name == "overrides" {
+								actionParams[block.name] = transformOverrides(json, attrPath, i)
+							} else if block.name == "uri" {
+								actionParams[block.name] = transformURI(json, attrPath, i)
+							} else {
+								// Simple blocks with just the listed fields
+								blockObj := make(map[string]interface{})
+								for _, field := range block.fields {
+									fieldPath := fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s\.0\.%s`, attrPath, i, block.name, field)
+									if val := gjson.Get(json, fieldPath); val.Exists() {
+										blockObj[field] = val.Value()
+									}
+								}
+								if len(blockObj) > 0 {
+									actionParams[block.name] = blockObj
+								}
+							}
+						}
+					}
+
+					// Handle cookie_fields, request_fields, response_fields transformation
+					// From SetAttribute[String] to ListNestedAttribute with name field
+					for _, field := range []string{"cookie_fields", "request_fields", "response_fields"} {
+						fieldCount := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s\.#`, attrPath, i, field))
+						if fieldCount.Exists() && fieldCount.Int() > 0 {
+							var fieldList []map[string]interface{}
+							for j := int64(0); j < fieldCount.Int(); j++ {
+								fieldVal := gjson.Get(json, fmt.Sprintf(`%s.rules\.%d\.action_parameters\.0\.%s\.%d`, attrPath, i, field, j))
+								if fieldVal.Exists() {
+									fieldList = append(fieldList, map[string]interface{}{
+										"name": fieldVal.String(),
+									})
+								}
+							}
+							actionParams[field] = fieldList
+						}
+					}
 
 				rule["action_parameters"] = actionParams
 			}
@@ -307,7 +284,7 @@ func transformCloudflareRulesetStateJSON(json string, instancePath string) strin
 		result, _ = sjson.Set(result, attrPath+".rules", rules)
 
 		// Clean up all indexed keys
-		result = cleanupIndexedRulesKeys(result, attrPath, rulesCount.Int())
+		result = cleanupRulesetIndexedKeys(result, attrPath, rulesCount.Int())
 	}
 
 	return result
@@ -673,8 +650,8 @@ func convertArraysToObjects(data map[string]interface{}) map[string]interface{} 
 	return data
 }
 
-// cleanupIndexedRulesKeys removes all indexed format keys for rules
-func cleanupIndexedRulesKeys(json string, attrPath string, rulesCount int64) string {
+// cleanupRulesetIndexedKeys removes all indexed format keys for ruleset rules
+func cleanupRulesetIndexedKeys(json string, attrPath string, rulesCount int64) string {
 	result := json
 
 	// Get the current attributes object
