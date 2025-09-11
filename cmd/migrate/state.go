@@ -903,6 +903,8 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 				json, _ = sjson.Set(json, attrPath+"."+poolAttr.attrName, poolMap)
 			}
 		}
+		// If it's already a map with resolved IDs, leave it alone - it's already in correct V5 format
+		// This happens when V4 state already has resolved pool IDs in map format
 	}
 
 	return json
