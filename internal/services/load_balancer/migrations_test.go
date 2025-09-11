@@ -483,11 +483,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   name = "my-tf-pool-basic-%[4]s"
   latitude = 12.3
   longitude = 55
-  origins {
+  origins = [{
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
-  }
+  }]
 }
 
 resource "cloudflare_load_balancer" "%[4]s" {
@@ -495,8 +495,8 @@ resource "cloudflare_load_balancer" "%[4]s" {
   name             = "tf-testacc-lb-%[4]s.%[3]s"
   steering_policy  = "off"
   session_affinity = "none"
-  fallback_pool_id = cloudflare_load_balancer_pool.%[4]s.id
-  default_pool_ids = [
+  fallback_pool = cloudflare_load_balancer_pool.%[4]s.id
+  default_pools = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   ttl = 30
@@ -511,11 +511,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   name = "my-tf-pool-basic-%[4]s"
   latitude = 12.3
   longitude = 55
-  origins {
+  origins = [{
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
-  }
+  }]
 }
 
 resource "cloudflare_load_balancer" "%[4]s" {
@@ -527,26 +527,26 @@ resource "cloudflare_load_balancer" "%[4]s" {
   steering_policy      = "random"
   session_affinity     = "cookie"
   session_affinity_ttl = 1800
-  fallback_pool_id     = cloudflare_load_balancer_pool.%[4]s.id
-  default_pool_ids     = [
+  fallback_pool     = cloudflare_load_balancer_pool.%[4]s.id
+  default_pools     = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   
-  session_affinity_attributes {
+  session_affinity_attributes = {
     samesite = "Lax"
     secure = "Auto"
   }
   
-  adaptive_routing {
+  adaptive_routing = {
     failover_across_pools = false
   }
   
-  location_strategy {
+  location_strategy = {
     prefer_ecs = "proximity"
     mode = "pop"
   }
   
-  random_steering {
+  random_steering = {
     default_weight = 0.5
   }
 }
@@ -560,11 +560,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   name = "my-tf-pool-basic-%[4]s"
   latitude = 12.3
   longitude = 55
-  origins {
+  origins = [{
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
-  }
+  }]
 }
 
 resource "cloudflare_load_balancer_pool" "%[4]s-2" {
@@ -572,11 +572,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s-2" {
   name = "my-tf-pool-basic-%[4]s-2"
   latitude = 55.1
   longitude = -12.3
-  origins {
+  origins = [{
     name = "example-2"
     address = "192.0.2.2"
     enabled = true
-  }
+  }]
 }
 
 resource "cloudflare_load_balancer" "%[4]s" {
@@ -584,29 +584,19 @@ resource "cloudflare_load_balancer" "%[4]s" {
   name             = "tf-testacc-lb-%[4]s.%[3]s"
   steering_policy  = "geo"
   session_affinity = "none"
-  fallback_pool_id = cloudflare_load_balancer_pool.%[4]s.id
-  default_pool_ids = [
+  fallback_pool = cloudflare_load_balancer_pool.%[4]s.id
+  default_pools = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   
-  region_pools {
-    region = "WNAM"
-    pool_ids = [cloudflare_load_balancer_pool.%[4]s.id]
+  region_pools = {
+    "WNAM" = [cloudflare_load_balancer_pool.%[4]s.id]
+    "ENAM" = [cloudflare_load_balancer_pool.%[4]s-2.id]
   }
   
-  region_pools {
-    region = "ENAM"
-    pool_ids = [cloudflare_load_balancer_pool.%[4]s-2.id]
-  }
-  
-  country_pools {
-    country = "US"
-    pool_ids = [cloudflare_load_balancer_pool.%[4]s.id]
-  }
-  
-  country_pools {
-    country = "GB"
-    pool_ids = [cloudflare_load_balancer_pool.%[4]s-2.id]
+  country_pools = {
+    "US" = [cloudflare_load_balancer_pool.%[4]s.id]
+    "GB" = [cloudflare_load_balancer_pool.%[4]s-2.id]
   }
 }
 `, accountID, zoneID, zone, rnd)
@@ -619,11 +609,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   name = "my-tf-pool-basic-%[4]s"
   latitude = 12.3
   longitude = 55
-  origins {
+  origins = [{
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
-  }
+  }]
 }
 
 resource "cloudflare_load_balancer_pool" "%[4]s-2" {
@@ -631,11 +621,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s-2" {
   name = "my-tf-pool-basic-%[4]s-2"
   latitude = 55.1
   longitude = -12.3
-  origins {
+  origins = [{
     name = "example-2"
     address = "192.0.2.2"
     enabled = true
-  }
+  }]
 }
 
 resource "cloudflare_load_balancer" "%[4]s" {
@@ -643,23 +633,23 @@ resource "cloudflare_load_balancer" "%[4]s" {
   name             = "tf-testacc-lb-%[4]s.%[3]s"
   steering_policy  = "off"
   session_affinity = "none"
-  fallback_pool_id = cloudflare_load_balancer_pool.%[4]s.id
-  default_pool_ids = [
+  fallback_pool = cloudflare_load_balancer_pool.%[4]s.id
+  default_pools = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   
-  rules {
+  rules = [{
     name = "test rule"
     condition = "http.request.uri.path contains \"/api\""
     disabled = false
     priority = 1
     
-    overrides {
+    overrides = {
       fallback_pool = cloudflare_load_balancer_pool.%[4]s-2.id
       default_pools = [cloudflare_load_balancer_pool.%[4]s-2.id]
       session_affinity = "cookie"
     }
-  }
+  }]
 }
 `, accountID, zoneID, zone, rnd)
 }
@@ -671,11 +661,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   name = "my-tf-pool-basic-%[4]s"
   latitude = 12.3
   longitude = 55
-  origins {
+  origins = [{
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
-  }
+  }]
 }
 
 resource "cloudflare_load_balancer" "%[4]s" {
@@ -684,8 +674,8 @@ resource "cloudflare_load_balancer" "%[4]s" {
   steering_policy      = "off"
   session_affinity     = "ip_cookie"
   session_affinity_ttl = 10800
-  fallback_pool_id     = cloudflare_load_balancer_pool.%[4]s.id
-  default_pool_ids     = [
+  fallback_pool     = cloudflare_load_balancer_pool.%[4]s.id
+  default_pools     = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   ttl = 30
@@ -700,11 +690,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   name = "my-tf-pool-basic-%[4]s"
   latitude = 12.3
   longitude = 55
-  origins {
+  origins = [{
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
-  }
+  }]
 }
 
 resource "cloudflare_load_balancer" "%[4]s" {
@@ -712,8 +702,8 @@ resource "cloudflare_load_balancer" "%[4]s" {
   name             = "tf-testacc-lb-%[4]s.%[3]s"
   steering_policy  = "proximity"
   session_affinity = "none"
-  fallback_pool_id = cloudflare_load_balancer_pool.%[4]s.id
-  default_pool_ids = [
+  fallback_pool = cloudflare_load_balancer_pool.%[4]s.id
+  default_pools = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   ttl = 30
@@ -836,27 +826,15 @@ resource "cloudflare_load_balancer" "%[4]s" {
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   
-  region_pools = [
-    {
-      region = "WNAM"
-      pool_ids = [cloudflare_load_balancer_pool.%[4]s.id]
-    },
-    {
-      region = "ENAM"
-      pool_ids = [cloudflare_load_balancer_pool.%[4]s-2.id]
-    }
-  ]
+  region_pools = {
+    "WNAM" = [cloudflare_load_balancer_pool.%[4]s.id]
+    "ENAM" = [cloudflare_load_balancer_pool.%[4]s-2.id]
+  }
   
-  country_pools = [
-    {
-      country = "US"
-      pool_ids = [cloudflare_load_balancer_pool.%[4]s.id]
-    },
-    {
-      country = "GB"
-      pool_ids = [cloudflare_load_balancer_pool.%[4]s-2.id]
-    }
-  ]
+  country_pools = {
+    "US" = [cloudflare_load_balancer_pool.%[4]s.id]
+    "GB" = [cloudflare_load_balancer_pool.%[4]s-2.id]
+  }
 }
 `, accountID, zoneID, zone, rnd)
 }
