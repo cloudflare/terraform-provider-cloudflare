@@ -3,10 +3,12 @@ package dns_record_test
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 
@@ -615,6 +617,131 @@ resource "cloudflare_record" "%[1]s" {
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("type"), knownvalue.StringExact("PTR")),
 				statecheck.ExpectKnownValue("cloudflare_dns_record."+rnd, tfjsonpath.New("content"), knownvalue.StringExact("example.com")),
 			}),
+		},
+	})
+}
+
+// TestMigrateDNSRecord_Issue6076 tests for GitHub issue #6076
+func TestMigrateDNSRecord_Issue6076(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("tf-test-6076-%s", rnd)
+
+	// Config that reproduces the issue
+	config := fmt.Sprintf(`
+resource "cloudflare_dns_record" "%[1]s" {
+  zone_id = "%[2]s"
+  comment = "a comment"
+  name    = "%[3]s"
+  type    = "CNAME"
+  content = "kay.ns.cloudflare.com"
+  ttl     = 1
+  proxied = true
+}`, rnd, zoneID, name)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with v5.8.4 (last version before the rewrite)
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.8.4",
+					},
+				},
+				Config:             config,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				// Step 2: Create with v5.9.0, expect apply error
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.9.0",
+					},
+				},
+				Config:      config,
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("Error: Provider produced inconsistent result after apply")),
+			},
+			{
+				// Step 3: Apply with current provider
+				// This should work without the "inconsistent result" error
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "zone_id", zoneID),
+					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "name", name+".terraform.cfapi.net"),
+					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "type", "CNAME"),
+					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "content", "kay.ns.cloudflare.com"),
+					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "ttl", "1"),
+					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "proxied", "true"),
+					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "comment", "a comment"),
+					resource.TestCheckResourceAttrSet("cloudflare_dns_record."+rnd, "modified_on"),
+					resource.TestCheckResourceAttrSet("cloudflare_dns_record."+rnd, "created_on"),
+				),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(), // Should show no changes
+					},
+				},
+			},
+			{
+				// Step 4: Apply the same config again to verify no drift
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(), // Should show no changes
+					},
+				},
+			},
+			{
+				// Step 5: Update comment and tags
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config: fmt.Sprintf(`
+resource "cloudflare_dns_record" "%[1]s" {
+  zone_id = "%[2]s"
+  comment = "updated comment for testing"
+  name    = "%[3]s"
+  type    = "CNAME"
+  content = "kay.ns.cloudflare.com"
+  ttl     = 1
+  proxied = true
+  tags    = ["test", "migration"]
+}`, rnd, zoneID, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "comment", "updated comment for testing"),
+					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "tags.#", "2"),
+					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "tags.0", "migration"),
+					resource.TestCheckResourceAttr("cloudflare_dns_record."+rnd, "tags.1", "test"),
+					resource.TestCheckResourceAttrSet("cloudflare_dns_record."+rnd, "comment_modified_on"),
+					resource.TestCheckResourceAttrSet("cloudflare_dns_record."+rnd, "tags_modified_on"),
+				),
+			},
+			{
+				// Step 6: Apply the updated config again to verify no drift
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config: fmt.Sprintf(`
+resource "cloudflare_dns_record" "%[1]s" {
+  zone_id = "%[2]s"
+  comment = "updated comment for testing"
+  name    = "%[3]s"
+  type    = "CNAME"
+  content = "kay.ns.cloudflare.com"
+  ttl     = 1
+  proxied = true
+  tags    = ["test", "migration"]
+}`, rnd, zoneID, name),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(), // This should pass with our fix
+					},
+				},
+			},
 		},
 	})
 }
