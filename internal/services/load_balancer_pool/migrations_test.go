@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
-func TestAccCloudflareLoadBalancerPool_Migration_Basic_MultiVersion(t *testing.T) {
+func TestMigrateCloudflareLoadBalancerPool_Basic_MultiVersion(t *testing.T) {
 	// Based on breaking changes analysis:
 	// - All breaking changes happened between 4.x and 5.0.0
 	// - No breaking changes between v5 releases
@@ -102,7 +102,7 @@ func TestAccCloudflareLoadBalancerPool_Migration_Basic_MultiVersion(t *testing.T
 	}
 }
 
-func TestAccCloudflareLoadBalancerPool_Migration_AllOptionalAttributes_MultiVersion(t *testing.T) {
+func TestMigrateCloudflareLoadBalancerPool_AllOptionalAttributes_MultiVersion(t *testing.T) {
 	testCases := []struct {
 		name     string
 		version  string
@@ -205,7 +205,7 @@ func TestAccCloudflareLoadBalancerPool_Migration_AllOptionalAttributes_MultiVers
 	}
 }
 
-func TestAccCloudflareLoadBalancerPool_Migration_OriginSteering_MultiVersion(t *testing.T) {
+func TestMigrateCloudflareLoadBalancerPool_OriginSteering_MultiVersion(t *testing.T) {
 	testCases := []struct {
 		name     string
 		version  string
@@ -302,7 +302,7 @@ func TestAccCloudflareLoadBalancerPool_Migration_OriginSteering_MultiVersion(t *
 	}
 }
 
-func TestAccCloudflareLoadBalancerPool_Migration_CheckRegions_MultiVersion(t *testing.T) {
+func TestMigrateCloudflareLoadBalancerPool_CheckRegions_MultiVersion(t *testing.T) {
 	testCases := []struct {
 		name     string
 		version  string
@@ -571,7 +571,7 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     address = "192.0.2.1"
   }
   
-  check_regions = ["ENAM", "WEU", "WNAM"]
+  check_regions = ["WEU", "ENAM", "WNAM"]
 }
 `, rnd, accountID)
 }
@@ -587,12 +587,12 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     address = "192.0.2.1"
   }]
   
-  check_regions = ["ENAM", "WEU", "WNAM"]
+  check_regions = ["WEU", "ENAM", "WNAM"]
 }
 `, rnd, accountID)
 }
 
-func TestAccCloudflareLoadBalancerPool_Migration_DynamicOrigins_MultiVersion(t *testing.T) {
+func TestMigrateCloudflareLoadBalancerPool_DynamicOrigins_MultiVersion(t *testing.T) {
 	testCases := []struct {
 		name     string
 		version  string

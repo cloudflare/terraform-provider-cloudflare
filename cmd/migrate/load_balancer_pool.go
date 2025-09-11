@@ -176,8 +176,14 @@ func replaceIteratorReferences(tokens hclwrite.Tokens, iteratorName string) hclw
 	for i := 0; i < len(tokens); i++ {
 		token := tokens[i]
 		if token.Type == hclsyntax.TokenIdent && string(token.Bytes) == iteratorName {
-			// Check if it's followed by .value or another accessor
-			if i+1 < len(tokens) && tokens[i+1].Type == hclsyntax.TokenDot {
+			// Check if it's followed by .value to handle the special case
+			if i+1 < len(tokens) && tokens[i+1].Type == hclsyntax.TokenDot &&
+				i+2 < len(tokens) && tokens[i+2].Type == hclsyntax.TokenIdent && string(tokens[i+2].Bytes) == "value" {
+				// Replace "iterator.value" with just "value"
+				result = append(result, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("value")})
+				// Skip the next two tokens (.value)
+				i += 2
+			} else if i+1 < len(tokens) && tokens[i+1].Type == hclsyntax.TokenDot {
 				// Replace iterator.something with value.something
 				result = append(result, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("value")})
 				// Skip the iterator token, keep the dot

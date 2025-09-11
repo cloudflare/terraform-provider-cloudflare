@@ -102,7 +102,7 @@ resource "cloudflare_load_balancer_pool" "test" {
   name       = "test-pool"
 
   origins = [for value in local.origin_list : {
-    address = value.value
+    address = value
     enabled = true
     name    = "origin-${value.key}"
   }]
@@ -165,10 +165,10 @@ resource "cloudflare_load_balancer_pool" "test" {
   name       = "test-pool"
 
   origins = [for value in local.origin_configs : {
-    address = value.value.address
+    address = value.address
     enabled = true
-    header  = { host = [value.value.host] }
-    name    = value.value.name
+    header  = { host = [value.host] }
+    name    = value.name
   }]
 }`},
 		},
@@ -203,7 +203,7 @@ resource "cloudflare_load_balancer_pool" "test" {
   name       = "test-pool"
 
   origins = [for value in local.origins_data : {
-    address = value.value
+    address = value
     enabled = true
     name    = "origin-${value.key}"
   }]
