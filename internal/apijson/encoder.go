@@ -27,6 +27,12 @@ import (
 var explicitJsonNull = []byte("null")
 var encoders sync.Map // map[encoderEntry]encoderFunc
 
+// CustomMarshaler allows types to override their JSON encoding behavior while supporting
+// plan/state diffing for Terraform operations. This is checked before standard encoding.
+type CustomMarshaler interface {
+	MarshalJSONWithState(plan interface{}, state interface{}) ([]byte, error)
+}
+
 // Marshals the given data to a JSON string.
 // For null values, omits the property entirely.
 func Marshal(value interface{}) ([]byte, error) {
@@ -138,6 +144,22 @@ func (e *encoder) typeEncoder(t reflect.Type) encoderFunc {
 }
 
 func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
+	// Check if type implements CustomMarshaler interface
+	customMarshalerType := reflect.TypeOf((*CustomMarshaler)(nil)).Elem()
+	if t.Implements(customMarshalerType) {
+		return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
+			if !plan.IsValid() || (plan.Kind() == reflect.Ptr && plan.IsNil()) {
+				return nil, nil
+			}
+			marshaler := plan.Interface().(CustomMarshaler)
+			var stateVal interface{}
+			if state.IsValid() {
+				stateVal = state.Interface()
+			}
+			return marshaler.MarshalJSONWithState(plan.Interface(), stateVal)
+		}
+	}
+
 	if t.ConvertibleTo(reflect.TypeOf(time.Time{})) {
 		return e.newTimeTypeEncoder()
 	}
