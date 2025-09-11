@@ -69,6 +69,22 @@ transformations:
       - include
       - require
 
+  # Zero Trust Access Policy (v5 renamed version)
+  cloudflare_zero_trust_access_policy:
+    to_map:
+      - azure
+      - external_evaluation
+      - gsuite
+      - okta
+      - saml
+    to_list:
+      - approval_group
+      - exclude
+      - auth_context
+      - github
+      - include
+      - require
+
   # Access Rule
   cloudflare_access_rule:
     to_map:
