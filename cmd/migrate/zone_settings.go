@@ -69,25 +69,26 @@ func transformZoneSettingsBlock(oldBlock *hclwrite.Block) []*hclwrite.Block {
 				)
 				newBlocks = append(newBlocks, newBlock)
 
-				// Create import block for this resource
-				importBlock := createImportBlock(resourceFullName, mappedSettingName, zoneIDAttr)
-				newBlocks = append(newBlocks, importBlock)
+				// Skip import blocks - they cannot be in modules
+				// TODO: Only add import blocks when transforming root module files
+				// importBlock := createImportBlock(resourceFullName, mappedSettingName, zoneIDAttr)
+				// newBlocks = append(newBlocks, importBlock)
 			}
 
 			// Process nested blocks (security_header, nel)
 			for _, nestedBlock := range settingsBlock.Body().Blocks() {
 				if nestedBlock.Type() == "security_header" {
-					resourceFullName := resourceName + "_security_header"
+					// resourceFullName := resourceName + "_security_header"
 					newBlocks = append(newBlocks, transformSecurityHeaderBlock(resourceName, zoneIDAttr, nestedBlock))
-					// Create import block for security_header
-					importBlock := createImportBlock(resourceFullName, "security_header", zoneIDAttr)
-					newBlocks = append(newBlocks, importBlock)
+					// Skip import blocks - they cannot be in modules
+					// importBlock := createImportBlock(resourceFullName, "security_header", zoneIDAttr)
+					// newBlocks = append(newBlocks, importBlock)
 				} else if nestedBlock.Type() == "nel" {
-					resourceFullName := resourceName + "_nel"
+					// resourceFullName := resourceName + "_nel"
 					newBlocks = append(newBlocks, transformNELBlock(resourceName, zoneIDAttr, nestedBlock))
-					// Create import block for nel
-					importBlock := createImportBlock(resourceFullName, "nel", zoneIDAttr)
-					newBlocks = append(newBlocks, importBlock)
+					// Skip import blocks - they cannot be in modules
+					// importBlock := createImportBlock(resourceFullName, "nel", zoneIDAttr)
+					// newBlocks = append(newBlocks, importBlock)
 				}
 			}
 		}
