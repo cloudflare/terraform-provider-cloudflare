@@ -164,6 +164,13 @@ func (d *decoderBuilder) typeDecoder(t reflect.Type) decoderFunc {
 }
 
 func unmarshalerDecoder(n gjson.Result, v reflect.Value, state *decoderState) error {
+	// Check if we can get an addressable value that implements json.Unmarshaler
+	if v.CanAddr() {
+		if u, ok := v.Addr().Interface().(json.Unmarshaler); ok {
+			return u.UnmarshalJSON([]byte(n.Raw))
+		}
+	}
+	// Fallback to direct interface check
 	return v.Interface().(json.Unmarshaler).UnmarshalJSON([]byte(n.Raw))
 }
 
@@ -176,7 +183,8 @@ func (d *decoderBuilder) newTypeDecoder(t reflect.Type) decoderFunc {
 	if t != reflect.TypeOf(jsontypes.Normalized{}) && t.ConvertibleTo(reflect.TypeOf(timetypes.RFC3339{})) {
 		return d.newCustomTimeTypeDecoder(t)
 	}
-	if !d.root && t.Implements(reflect.TypeOf((*json.Unmarshaler)(nil)).Elem()) {
+	unmarshalerType := reflect.TypeOf((*json.Unmarshaler)(nil)).Elem()
+	if !d.root && (t.Implements(unmarshalerType) || reflect.PointerTo(t).Implements(unmarshalerType)) {
 		return unmarshalerDecoder
 	}
 	if t == reflect.TypeOf((*big.Float)(nil)).Elem() {

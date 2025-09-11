@@ -2742,3 +2742,185 @@ func formatJson(jsonString string, out *string) error {
 	*out = prettyJSON.String()
 	return nil
 }
+
+// Test types for CustomMarshaler interface
+type customMarshalerBasic struct {
+	Value string
+	State string
+}
+
+func (c customMarshalerBasic) MarshalJSONWithState(plan interface{}, state interface{}) ([]byte, error) {
+	// Transform the value based on whether state exists
+	planVal, ok := plan.(customMarshalerBasic)
+	if !ok {
+		if ptr, ok := plan.(*customMarshalerBasic); ok && ptr != nil {
+			planVal = *ptr
+		} else {
+			return json.Marshal(plan)
+		}
+	}
+
+	result := map[string]string{"value": planVal.Value}
+	if state != nil {
+		result["had_state"] = "true"
+	} else {
+		result["had_state"] = "false"
+	}
+	return json.Marshal(result)
+}
+
+// Test type with nested JSON transformation (similar to PolicyResources)
+type customMarshalerNested map[string]string
+
+func (c customMarshalerNested) MarshalJSONWithState(plan interface{}, state interface{}) ([]byte, error) {
+	planMap, ok := plan.(customMarshalerNested)
+	if !ok {
+		if ptr, ok := plan.(*customMarshalerNested); ok && ptr != nil {
+			planMap = *ptr
+		} else {
+			return json.Marshal(plan)
+		}
+	}
+
+	result := make(map[string]interface{})
+	for key, val := range planMap {
+		// Try to unmarshal as JSON object
+		var nestedObj map[string]string
+		if err := json.Unmarshal([]byte(val), &nestedObj); err == nil {
+			result[key] = nestedObj
+		} else {
+			result[key] = val
+		}
+	}
+	return json.Marshal(result)
+}
+
+// Test struct containing a CustomMarshaler field
+type structWithCustomField struct {
+	Name   string                 `json:"name"`
+	Custom customMarshalerBasic   `json:"custom"`
+	Nested *customMarshalerNested `json:"nested,omitempty"`
+}
+
+// TestCustomMarshaler tests the CustomMarshaler interface implementation
+func TestCustomMarshaler(t *testing.T) {
+	tests := []struct {
+		name     string
+		value    interface{}
+		expected string
+	}{
+		{
+			name:     "basic custom marshaler with MarshalRoot",
+			value:    customMarshalerBasic{Value: "test"},
+			expected: `{"value":"test","had_state":"true"}`, // MarshalRoot passes same value for plan and state
+		},
+		{
+			name:     "pointer to custom marshaler",
+			value:    &customMarshalerBasic{Value: "ptr_test"},
+			expected: `{"value":"ptr_test","had_state":"true"}`, // MarshalRoot passes same value for plan and state
+		},
+		{
+			name: "nested JSON transformation",
+			value: customMarshalerNested{
+				"flat":   "simple_value",
+				"nested": `{"inner_key":"inner_value"}`,
+			},
+			expected: `{"flat":"simple_value","nested":{"inner_key":"inner_value"}}`,
+		},
+		{
+			name: "struct with custom marshaler field",
+			value: structWithCustomField{
+				Name:   "test_struct",
+				Custom: customMarshalerBasic{Value: "embedded"},
+			},
+			expected: `{"name":"test_struct","custom":{"value":"embedded","had_state":"true"}}`,
+		},
+		{
+			name: "struct with nested custom marshaler",
+			value: structWithCustomField{
+				Name:   "test_nested",
+				Custom: customMarshalerBasic{Value: "embedded"},
+				Nested: &customMarshalerNested{
+					"key1": "value1",
+					"key2": `{"nested":"object"}`,
+				},
+			},
+			expected: `{"name":"test_nested","custom":{"value":"embedded","had_state":"true"},"nested":{"key1":"value1","key2":{"nested":"object"}}}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Test MarshalRoot (which passes same value for plan and state)
+			result, err := MarshalRoot(tt.value)
+			if err != nil {
+				t.Fatalf("MarshalRoot failed: %v", err)
+			}
+
+			// Compare JSON output (order-independent)
+			var expectedJSON, actualJSON interface{}
+			if err := json.Unmarshal([]byte(tt.expected), &expectedJSON); err != nil {
+				t.Fatalf("Failed to unmarshal expected JSON: %v", err)
+			}
+			if err := json.Unmarshal(result, &actualJSON); err != nil {
+				t.Fatalf("Failed to unmarshal actual JSON: %v", err)
+			}
+
+			// Re-marshal both to normalize order
+			expectedBytes, _ := json.MarshalIndent(expectedJSON, "", "  ")
+			actualBytes, _ := json.MarshalIndent(actualJSON, "", "  ")
+
+			if string(expectedBytes) != string(actualBytes) {
+				t.Errorf("Expected:\n%s\nGot:\n%s", string(expectedBytes), string(actualBytes))
+			}
+		})
+	}
+}
+
+// TestCustomMarshalerForUpdate tests CustomMarshaler with MarshalForUpdate
+func TestCustomMarshalerForUpdate(t *testing.T) {
+	tests := []struct {
+		name     string
+		plan     interface{}
+		state    interface{}
+		expected string
+	}{
+		{
+			name:     "custom marshaler gets state in ForUpdate",
+			plan:     customMarshalerBasic{Value: "new"},
+			state:    customMarshalerBasic{Value: "old"},
+			expected: `{"value":"new","had_state":"true"}`,
+		},
+		{
+			name:     "nil state passed correctly",
+			plan:     customMarshalerBasic{Value: "new"},
+			state:    customMarshalerBasic{},
+			expected: `{"value":"new","had_state":"true"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := MarshalForUpdate(tt.plan, tt.state)
+			if err != nil {
+				t.Fatalf("MarshalForUpdate failed: %v", err)
+			}
+
+			// Compare JSON output
+			var expectedJSON, actualJSON interface{}
+			if err := json.Unmarshal([]byte(tt.expected), &expectedJSON); err != nil {
+				t.Fatalf("Failed to unmarshal expected JSON: %v", err)
+			}
+			if err := json.Unmarshal(result, &actualJSON); err != nil {
+				t.Fatalf("Failed to unmarshal actual JSON: %v", err)
+			}
+
+			expectedBytes, _ := json.Marshal(expectedJSON)
+			actualBytes, _ := json.Marshal(actualJSON)
+
+			if string(expectedBytes) != string(actualBytes) {
+				t.Errorf("Expected: %s\nGot: %s", tt.expected, string(result))
+			}
+		})
+	}
+}
