@@ -197,6 +197,8 @@ func processStateFile(stateFile string, dryRun bool) error {
 }
 
 func processFile(filename string, dryRun bool) error {
+	fmt.Printf("    DEBUG: Processing file %s\n", filename)
+	
 	// Read the file
 	originalBytes, err := os.ReadFile(filename)
 	if err != nil {
@@ -210,6 +212,7 @@ func processFile(filename string, dryRun bool) error {
 	}
 
 	if string(originalBytes) == string(transformedBytes) {
+		fmt.Printf("    DEBUG: No changes needed for %s\n", filename)
 		return nil
 	}
 
@@ -269,6 +272,7 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		if isLoadBalancerPoolResource(block) {
 			transformLoadBalancerPoolBlock(block, diags)
 		}
+
 
 		if isAccessPolicyResource(block) {
 			// TOOD eventually pass diags through to all resource transformers,

@@ -145,7 +145,8 @@ func applyConfigTransformation(configDir, configPath, configFile string, dryRun 
 			fmt.Printf("    ✗ Would transform config files in %s\n", configDir)
 			return nil
 		}
-		return transformer.TransformDirectory(configDir, false)
+		fmt.Printf("    DEBUG: Calling TransformDirectory on %s (recursive=true)\n", configDir)
+		return transformer.TransformDirectory(configDir, true)
 
 	case strings.Contains(configFile, "attribute_renames_configuration"):
 		// Use HCL transformer for attribute renames
@@ -157,7 +158,8 @@ func applyConfigTransformation(configDir, configPath, configFile string, dryRun 
 			fmt.Printf("    ✗ Would transform config files in %s\n", configDir)
 			return nil
 		}
-		return transformer.TransformDirectory(configDir, false)
+		fmt.Printf("    DEBUG: Calling TransformDirectory on %s (recursive=true)\n", configDir)
+		return transformer.TransformDirectory(configDir, true)
 
 	case strings.Contains(configFile, "resource_renames_configuration"):
 		// Use resource rename transformer
@@ -169,7 +171,8 @@ func applyConfigTransformation(configDir, configPath, configFile string, dryRun 
 			fmt.Printf("    ✗ Would transform config files in %s\n", configDir)
 			return nil
 		}
-		return transformer.TransformDirectory(configDir, false)
+		fmt.Printf("    DEBUG: Calling TransformDirectory on %s (recursive=true)\n", configDir)
+		return transformer.TransformDirectory(configDir, true)
 
 	default:
 		return fmt.Errorf("unknown configuration transformation type: %s", configFile)
