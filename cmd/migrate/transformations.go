@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -27,25 +29,34 @@ func runYAMLTransformations(configDir, stateFile, transformerDir string, dryRun 
 		{"cloudflare_terraform_v5_resource_renames_state.yaml", "state", "State resource renames"},
 	}
 
-	// If transformerDir is a URL, we need to handle it differently
-	// For now, we'll use local files
-	if strings.HasPrefix(transformerDir, "http") {
-		// For embedded configs, use the local transformations/config directory
-		// This should be packaged with the binary or fetched from GitHub
-		execPath, err := os.Executable()
+	// If transformerDir is a URL, download the configs from GitHub
+	isRemote := strings.HasPrefix(transformerDir, "http")
+	
+	if isRemote {
+		// Create a temporary directory to store downloaded configs
+		var err error
+		tempDir, err := os.MkdirTemp("", "migrate-configs-*")
 		if err != nil {
-			return fmt.Errorf("failed to get executable path: %v", err)
+			return fmt.Errorf("failed to create temp directory: %v", err)
 		}
-		transformerDir = filepath.Join(filepath.Dir(execPath), "transformations", "config")
+		defer os.RemoveAll(tempDir) // Clean up temp dir when done
 
-		// Check if the directory exists
-		if _, err := os.Stat(transformerDir); os.IsNotExist(err) {
-			// Try relative to the current working directory
-			transformerDir = filepath.Join("transformations", "config")
-			if _, err := os.Stat(transformerDir); os.IsNotExist(err) {
-				return fmt.Errorf("transformer config directory not found. Please specify --transformer-dir")
+		// Download each config file from GitHub
+		baseURL := "https://raw.githubusercontent.com/cloudflare/terraform-provider-cloudflare/grit-to-go-transformations/cmd/migrate/transformations/config"
+		
+		for _, t := range transformationConfigs {
+			url := fmt.Sprintf("%s/%s", baseURL, t.configFile)
+			destPath := filepath.Join(tempDir, t.configFile)
+			
+			fmt.Printf("  Downloading %s...\n", t.configFile)
+			if err := downloadFile(url, destPath); err != nil {
+				fmt.Printf("    ⚠ Warning: Failed to download %s: %v\n", t.configFile, err)
+				// Continue with other files even if one fails
 			}
 		}
+		
+		// Use the temp directory as the transformer directory
+		transformerDir = tempDir
 	}
 
 	// Apply each transformation
@@ -85,6 +96,36 @@ func runYAMLTransformations(configDir, stateFile, transformerDir string, dryRun 
 				continue
 			}
 		}
+	}
+
+	return nil
+}
+
+// downloadFile downloads a file from a URL and saves it to the specified path
+func downloadFile(url, destPath string) error {
+	// Create the file
+	out, err := os.Create(destPath)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %v", err)
+	}
+	defer out.Close()
+
+	// Download the file
+	resp, err := http.Get(url)
+	if err != nil {
+		return fmt.Errorf("failed to download file: %v", err)
+	}
+	defer resp.Body.Close()
+
+	// Check for HTTP errors
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("bad status: %s", resp.Status)
+	}
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to write file: %v", err)
 	}
 
 	return nil

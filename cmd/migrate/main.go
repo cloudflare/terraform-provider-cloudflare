@@ -63,11 +63,11 @@ func main() {
 	// Determine the transformer config directory
 	transformerDir := *transformerConfig
 	if transformerDir == "" {
-		// Use default embedded configs from GitHub
-		transformerDir = "https://github.com/cloudflare/terraform-provider-cloudflare/tree/main/cmd/migrate/transformations/config"
-		fmt.Println("Using embedded transformer configs from GitHub")
+		// Use default - configs will be downloaded from GitHub
+		transformerDir = "https://github.com/cloudflare/terraform-provider-cloudflare"
+		fmt.Println("Downloading transformer configs from GitHub")
 	} else {
-		fmt.Printf("Using local transformer configs from: %s\n", transformerDir)
+		fmt.Printf("Using transformer configs from: %s\n", transformerDir)
 	}
 
 	// Run the YAML-based transformations

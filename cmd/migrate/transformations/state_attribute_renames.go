@@ -64,6 +64,7 @@ type TerraformStateInstance struct {
 	Private             string                 `json:"private,omitempty"`
 	Dependencies        []string               `json:"dependencies,omitempty"`
 	CreateBeforeDestroy bool                   `json:"create_before_destroy,omitempty"`
+	IndexKey            interface{}           `json:"index_key,omitempty"` // For for_each and count resources
 }
 
 // LoadStateConfig loads the state transformation configuration from a YAML file
