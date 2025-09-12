@@ -227,6 +227,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 func transformSnippetStateJSON(json string, instancePath string) string {
 	attrPath := instancePath + ".attributes"
 	result := json
+	
+	// Set schema_version to 0 for v5
+	result, _ = sjson.Set(result, instancePath+".schema_version", 0)
 
 	// Handle name transformation (v4: name, v5: snippet_name)
 	snippetName := gjson.Get(json, attrPath+".snippet_name")
@@ -511,7 +514,7 @@ func cleanupIndexedFileKeys(json string, attrPath string, fileCount int64) strin
 		for i := int64(0); i < fileCount+10; i++ { // Check a few extra indices to be safe
 			if keyStr == fmt.Sprintf("files.%d.name", i) ||
 				keyStr == fmt.Sprintf("files.%d.content", i) ||
-				keyStr == fmt.Sprintf("files.%d.%", i) ||
+				keyStr == fmt.Sprintf("files.%d.%%", i) ||
 				keyStr == fmt.Sprintf("files.%d.#", i) ||
 				keyStr == fmt.Sprintf("files.%d", i) {
 				return true // skip
