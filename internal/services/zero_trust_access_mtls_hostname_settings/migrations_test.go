@@ -2,6 +2,7 @@ package zero_trust_access_mtls_hostname_settings_test
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -16,6 +17,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
+
+const EnvTfAcc = "TF_ACC"
 
 // cleanupMTLSSettings clears all MTLS hostname settings and certificates to prevent test conflicts
 func cleanupMTLSSettings(t *testing.T) {
@@ -47,10 +50,10 @@ func cleanupMTLSSettings(t *testing.T) {
 				time.Sleep(5 * time.Second)
 			}
 		}
-		
+
 		// Wait before cleaning certificates
 		time.Sleep(2 * time.Second)
-		
+
 		// Clean account certificates
 		accountCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListAccessMutualTLSCertificatesParams{})
 		if err == nil {
@@ -67,7 +70,7 @@ func cleanupMTLSSettings(t *testing.T) {
 		}
 	}
 
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")  
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	if zoneID != "" {
 		// Retry clearing settings up to 3 times if we get a conflict error
 		for i := 0; i < 3; i++ {
@@ -82,10 +85,10 @@ func cleanupMTLSSettings(t *testing.T) {
 				time.Sleep(5 * time.Second)
 			}
 		}
-		
+
 		// Wait before cleaning certificates
 		time.Sleep(2 * time.Second)
-		
+
 		// Clean zone certificates
 		zoneCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.ListAccessMutualTLSCertificatesParams{})
 		if err == nil {
@@ -101,7 +104,7 @@ func cleanupMTLSSettings(t *testing.T) {
 			}
 		}
 	}
-	
+
 	// Add extra wait after cleanup to ensure API has processed the deletions
 	// Increase wait time for CI environment where API might be slower
 	time.Sleep(10 * time.Second)
@@ -116,16 +119,36 @@ func waitBetweenTests(t *testing.T) {
 	time.Sleep(15 * time.Second)
 }
 
-// TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic tests basic migration from v4 to v5
-func TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic(t *testing.T) {
+// setupMigrationTest performs common setup for all migration tests:
+// - Checks if acceptance tests are enabled
+// - Cleans up MTLS settings
+// - Waits between tests to prevent conflicts
+// - Unsets CLOUDFLARE_API_TOKEN if needed
+func setupMigrationTest(t *testing.T) {
+	t.Helper()
+	
+	// Skip if acceptance tests are not enabled
+	if os.Getenv(EnvTfAcc) == "" {
+		t.Skip(fmt.Sprintf("Acceptance tests skipped unless env '%s' set", EnvTfAcc))
+	}
+	
+	// Clean up any existing MTLS settings
 	cleanupMTLSSettings(t)
+	
+	// Wait to prevent API conflicts
 	waitBetweenTests(t)
+	
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
+}
+
+// TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic tests basic migration from v4 to v5
+func TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic(t *testing.T) {
+	setupMigrationTest(t)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -167,11 +190,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic(t *testing.T) {
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_Multiple tests migration with multiple hostnames
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_Multiple(t *testing.T) {
-	cleanupMTLSSettings(t)
-	waitBetweenTests(t)
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
+	setupMigrationTest(t)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -216,11 +235,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_Multiple(t *testing.T) {
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanDefaults tests migration when optional booleans are not specified
 // Note: Works around v4 provider issues by using ExpectError to handle the plan diff
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanDefaults(t *testing.T) {
-	cleanupMTLSSettings(t)
-	waitBetweenTests(t)
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
+	setupMigrationTest(t)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -265,11 +280,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanDefaults(t *testing.T
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations tests all combinations of boolean values
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations(t *testing.T) {
-	cleanupMTLSSettings(t)
-	waitBetweenTests(t)
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
+	setupMigrationTest(t)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -287,6 +298,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations(t *testi
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			// For subtests, we only need cleanup and wait, not the full setup
 			cleanupMTLSSettings(t)
 			waitBetweenTests(t)
 			rnd := utils.GenerateRandomResourceName()
@@ -327,11 +339,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations(t *testi
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_AccountScope tests account-scoped migration
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_AccountScope(t *testing.T) {
-	cleanupMTLSSettings(t)
-	waitBetweenTests(t)
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
+	setupMigrationTest(t)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -371,11 +379,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_AccountScope(t *testing.T) {
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_ZoneScope tests zone-scoped migration
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_ZoneScope(t *testing.T) {
-	cleanupMTLSSettings(t)
-	waitBetweenTests(t)
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
+	setupMigrationTest(t)
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
