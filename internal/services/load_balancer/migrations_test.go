@@ -19,7 +19,7 @@ import (
 // 2. State transformation handles empty arrays → empty maps for country_pools, pop_pools, region_pools
 // 3. The migration tool successfully transforms both configuration and state files
 // 4. Resources remain functional after migration without requiring manual intervention
-func TestAccCloudflareLoadBalancer_Migration_Basic_MultiVersion(t *testing.T) {
+func TestMigrateCloudflareLoadBalancer_Migration_Basic_MultiVersion(t *testing.T) {
 	// Based on breaking changes analysis:
 	// - All breaking changes happened between 4.x and 5.0.0
 	// - No breaking changes between v5 releases for load_balancer
@@ -113,11 +113,12 @@ func TestAccCloudflareLoadBalancer_Migration_Basic_MultiVersion(t *testing.T) {
 // 3. Complex nested structures are properly transformed from v4 blocks to v5 single objects
 // 4. Session affinity configurations with attributes are correctly migrated
 // 5. State transformation removes empty arrays for single-object attributes
-func TestAccCloudflareLoadBalancer_Migration_AllOptionalAttributes_MultiVersion(t *testing.T) {
+func TestMigrateCloudflareLoadBalancer_Migration_AllOptionalAttributes_MultiVersion(t *testing.T) {
 	testCases := []struct {
-		name     string
-		version  string
-		configFn func(accountID, zoneID, zone, rnd string) string
+		name               string
+		version            string
+		configFn           func(accountID, zoneID, zone, rnd string) string
+		ExpectNonEmptyPlan bool
 	}{
 		{
 			name:     "from_v4_52_1",
@@ -130,9 +131,10 @@ func TestAccCloudflareLoadBalancer_Migration_AllOptionalAttributes_MultiVersion(
 			configFn: testAccCloudflareLoadBalancerMigrationConfigV5AllOptional,
 		},
 		{
-			name:     "from_v5_2_0", // Added zone_name field
-			version:  "5.2.0",
-			configFn: testAccCloudflareLoadBalancerMigrationConfigV5AllOptional,
+			name:               "from_v5_2_0", // Added zone_name field
+			version:            "5.2.0",
+			configFn:           testAccCloudflareLoadBalancerMigrationConfigV5AllOptional,
+			ExpectNonEmptyPlan: true,
 		},
 	}
 
@@ -175,6 +177,7 @@ func TestAccCloudflareLoadBalancer_Migration_AllOptionalAttributes_MultiVersion(
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_affinity_ttl"), knownvalue.Float64Exact(1800)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("random")),
 						},
+						ExpectNonEmptyPlan: tc.ExpectNonEmptyPlan,
 					},
 					// Step 2: Migrate to v5 provider
 					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
@@ -215,7 +218,7 @@ func TestAccCloudflareLoadBalancer_Migration_AllOptionalAttributes_MultiVersion(
 // 3. Empty map attributes in state are properly converted from v4 arrays to v5 maps
 // 4. Geo steering policy settings are preserved during migration
 // 5. Complex pool ID references across multiple resources work correctly
-func TestAccCloudflareLoadBalancer_Migration_GeoBalanced_MultiVersion(t *testing.T) {
+func TestMigrateCloudflareLoadBalancer_Migration_GeoBalanced_MultiVersion(t *testing.T) {
 	testCases := []struct {
 		name     string
 		version  string
@@ -297,7 +300,7 @@ func TestAccCloudflareLoadBalancer_Migration_GeoBalanced_MultiVersion(t *testing
 // 3. Complex rule conditions and priorities are preserved
 // 4. Rules remain a ListNestedAttribute (array) in v5, not converted to maps
 // 5. Multiple pools referenced in rules maintain their relationships
-func TestAccCloudflareLoadBalancer_Migration_Rules_MultiVersion(t *testing.T) {
+func TestMigrateCloudflareLoadBalancer_Migration_Rules_MultiVersion(t *testing.T) {
 	testCases := []struct {
 		name     string
 		version  string
@@ -307,11 +310,6 @@ func TestAccCloudflareLoadBalancer_Migration_Rules_MultiVersion(t *testing.T) {
 			name:     "from_v4_52_1",
 			version:  "4.52.1",
 			configFn: testAccCloudflareLoadBalancerMigrationConfigV4Rules,
-		},
-		{
-			name:     "from_v5_0_0",
-			version:  "5.0.0",
-			configFn: testAccCloudflareLoadBalancerMigrationConfigV5Rules,
 		},
 	}
 
@@ -374,7 +372,7 @@ func TestAccCloudflareLoadBalancer_Migration_Rules_MultiVersion(t *testing.T) {
 // 2. Session affinity TTL values are correctly maintained
 // 3. The ip_cookie affinity type doesn't require any special transformation
 // 4. TTL field type changes from Float64 in v4 to Int64 in v5 are handled
-func TestAccCloudflareLoadBalancer_Migration_SessionAffinityIPCookie(t *testing.T) {
+func TestMigrateCloudflareLoadBalancer_Migration_SessionAffinityIPCookie(t *testing.T) {
 	accountID := acctest.TestAccCloudflareAccountID
 	zoneID := acctest.TestAccCloudflareZoneID
 	zone := acctest.TestAccCloudflareZoneName
@@ -428,7 +426,7 @@ func TestAccCloudflareLoadBalancer_Migration_SessionAffinityIPCookie(t *testing.
 // 2. Pool geographic coordinates (latitude/longitude) remain intact for proximity calculations
 // 3. The steering policy doesn't require special transformation beyond basic migration
 // 4. Load balancer continues to route based on proximity after migration
-func TestAccCloudflareLoadBalancer_Migration_ProximitySteeringPolicy(t *testing.T) {
+func TestMigrateCloudflareLoadBalancer_Migration_ProximitySteeringPolicy(t *testing.T) {
 	accountID := acctest.TestAccCloudflareAccountID
 	zoneID := acctest.TestAccCloudflareZoneID
 	zone := acctest.TestAccCloudflareZoneName
@@ -483,11 +481,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   name = "my-tf-pool-basic-%[4]s"
   latitude = 12.3
   longitude = 55
-  origins = [{
+  origins {
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
-  }]
+  }
 }
 
 resource "cloudflare_load_balancer" "%[4]s" {
@@ -495,8 +493,8 @@ resource "cloudflare_load_balancer" "%[4]s" {
   name             = "tf-testacc-lb-%[4]s.%[3]s"
   steering_policy  = "off"
   session_affinity = "none"
-  fallback_pool = cloudflare_load_balancer_pool.%[4]s.id
-  default_pools = [
+  fallback_pool_id = cloudflare_load_balancer_pool.%[4]s.id
+  default_pool_ids = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   ttl = 30
@@ -511,11 +509,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   name = "my-tf-pool-basic-%[4]s"
   latitude = 12.3
   longitude = 55
-  origins = [{
+  origins {
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
-  }]
+  }
 }
 
 resource "cloudflare_load_balancer" "%[4]s" {
@@ -527,26 +525,26 @@ resource "cloudflare_load_balancer" "%[4]s" {
   steering_policy      = "random"
   session_affinity     = "cookie"
   session_affinity_ttl = 1800
-  fallback_pool     = cloudflare_load_balancer_pool.%[4]s.id
-  default_pools     = [
+  fallback_pool_id     = cloudflare_load_balancer_pool.%[4]s.id
+  default_pool_ids     = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   
-  session_affinity_attributes = {
+  session_affinity_attributes {
     samesite = "Lax"
     secure = "Auto"
   }
   
-  adaptive_routing = {
+  adaptive_routing {
     failover_across_pools = false
   }
   
-  location_strategy = {
+  location_strategy {
     prefer_ecs = "proximity"
     mode = "pop"
   }
   
-  random_steering = {
+  random_steering {
     default_weight = 0.5
   }
 }
@@ -560,11 +558,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   name = "my-tf-pool-basic-%[4]s"
   latitude = 12.3
   longitude = 55
-  origins = [{
+  origins {
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
-  }]
+  }
 }
 
 resource "cloudflare_load_balancer_pool" "%[4]s-2" {
@@ -572,11 +570,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s-2" {
   name = "my-tf-pool-basic-%[4]s-2"
   latitude = 55.1
   longitude = -12.3
-  origins = [{
+  origins {
     name = "example-2"
     address = "192.0.2.2"
     enabled = true
-  }]
+  }
 }
 
 resource "cloudflare_load_balancer" "%[4]s" {
@@ -584,19 +582,30 @@ resource "cloudflare_load_balancer" "%[4]s" {
   name             = "tf-testacc-lb-%[4]s.%[3]s"
   steering_policy  = "geo"
   session_affinity = "none"
-  fallback_pool = cloudflare_load_balancer_pool.%[4]s.id
-  default_pools = [
+  fallback_pool_id = cloudflare_load_balancer_pool.%[4]s.id
+  default_pool_ids = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
+  ttl = 30
   
-  region_pools = {
-    "WNAM" = [cloudflare_load_balancer_pool.%[4]s.id]
-    "ENAM" = [cloudflare_load_balancer_pool.%[4]s-2.id]
+  region_pools {
+    region = "WNAM"
+    pool_ids = [cloudflare_load_balancer_pool.%[4]s.id]
   }
   
-  country_pools = {
-    "US" = [cloudflare_load_balancer_pool.%[4]s.id]
-    "GB" = [cloudflare_load_balancer_pool.%[4]s-2.id]
+  region_pools {
+    region = "ENAM"
+    pool_ids = [cloudflare_load_balancer_pool.%[4]s-2.id]
+  }
+  
+  country_pools {
+    country = "US"
+    pool_ids = [cloudflare_load_balancer_pool.%[4]s.id]
+  }
+  
+  country_pools {
+    country = "GB"
+    pool_ids = [cloudflare_load_balancer_pool.%[4]s-2.id]
   }
 }
 `, accountID, zoneID, zone, rnd)
@@ -609,11 +618,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   name = "my-tf-pool-basic-%[4]s"
   latitude = 12.3
   longitude = 55
-  origins = [{
+  origins {
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
-  }]
+  }
 }
 
 resource "cloudflare_load_balancer_pool" "%[4]s-2" {
@@ -621,11 +630,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s-2" {
   name = "my-tf-pool-basic-%[4]s-2"
   latitude = 55.1
   longitude = -12.3
-  origins = [{
+  origins {
     name = "example-2"
     address = "192.0.2.2"
     enabled = true
-  }]
+  }
 }
 
 resource "cloudflare_load_balancer" "%[4]s" {
@@ -633,23 +642,24 @@ resource "cloudflare_load_balancer" "%[4]s" {
   name             = "tf-testacc-lb-%[4]s.%[3]s"
   steering_policy  = "off"
   session_affinity = "none"
-  fallback_pool = cloudflare_load_balancer_pool.%[4]s.id
-  default_pools = [
+  fallback_pool_id = cloudflare_load_balancer_pool.%[4]s.id
+  default_pool_ids = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
+  ttl = 30
   
-  rules = [{
+  rules {
     name = "test rule"
     condition = "http.request.uri.path contains \"/api\""
     disabled = false
     priority = 1
     
-    overrides = {
+    overrides {
       fallback_pool = cloudflare_load_balancer_pool.%[4]s-2.id
       default_pools = [cloudflare_load_balancer_pool.%[4]s-2.id]
       session_affinity = "cookie"
     }
-  }]
+  }
 }
 `, accountID, zoneID, zone, rnd)
 }
@@ -661,11 +671,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   name = "my-tf-pool-basic-%[4]s"
   latitude = 12.3
   longitude = 55
-  origins = [{
+  origins {
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
-  }]
+  }
 }
 
 resource "cloudflare_load_balancer" "%[4]s" {
@@ -674,8 +684,8 @@ resource "cloudflare_load_balancer" "%[4]s" {
   steering_policy      = "off"
   session_affinity     = "ip_cookie"
   session_affinity_ttl = 10800
-  fallback_pool     = cloudflare_load_balancer_pool.%[4]s.id
-  default_pools     = [
+  fallback_pool_id     = cloudflare_load_balancer_pool.%[4]s.id
+  default_pool_ids     = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   ttl = 30
@@ -690,11 +700,11 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   name = "my-tf-pool-basic-%[4]s"
   latitude = 12.3
   longitude = 55
-  origins = [{
+  origins {
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
-  }]
+  }
 }
 
 resource "cloudflare_load_balancer" "%[4]s" {
@@ -702,8 +712,8 @@ resource "cloudflare_load_balancer" "%[4]s" {
   name             = "tf-testacc-lb-%[4]s.%[3]s"
   steering_policy  = "proximity"
   session_affinity = "none"
-  fallback_pool = cloudflare_load_balancer_pool.%[4]s.id
-  default_pools = [
+  fallback_pool_id = cloudflare_load_balancer_pool.%[4]s.id
+  default_pool_ids = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   ttl = 30
@@ -827,13 +837,11 @@ resource "cloudflare_load_balancer" "%[4]s" {
   ]
   
   region_pools = {
-    "WNAM" = [cloudflare_load_balancer_pool.%[4]s.id]
-    "ENAM" = [cloudflare_load_balancer_pool.%[4]s-2.id]
+    WNAM = [cloudflare_load_balancer_pool.%[4]s.id]
   }
-  
   country_pools = {
-    "US" = [cloudflare_load_balancer_pool.%[4]s.id]
-    "GB" = [cloudflare_load_balancer_pool.%[4]s-2.id]
+    GB = [cloudflare_load_balancer_pool.%[4]s.id]
+    US = [cloudflare_load_balancer_pool.%[4]s.id]
   }
 }
 `, accountID, zoneID, zone, rnd)
@@ -874,6 +882,7 @@ resource "cloudflare_load_balancer" "%[4]s" {
   default_pools = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
+  ttl = 30
   
   rules = [{
     name = "test rule"

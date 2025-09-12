@@ -747,24 +747,168 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 		json, _ = sjson.Delete(json, attrPath+".default_pool_ids")
 	}
 
-	// Remove empty arrays for single-object attributes
+	// Transform arrays to single objects for single-object attributes
+	// v4 stores these as arrays with 0 or 1 element, v5 expects them as objects or missing
 	singleObjectAttrs := []string{
 		"adaptive_routing", "location_strategy",
 		"random_steering", "session_affinity_attributes",
 	}
 	for _, attr := range singleObjectAttrs {
 		val := gjson.Get(json, attrPath+"."+attr)
-		if val.IsArray() && len(val.Array()) == 0 {
-			json, _ = sjson.Delete(json, attrPath+"."+attr)
+		if val.IsArray() {
+			if len(val.Array()) == 0 {
+				// Empty array - remove the attribute
+				json, _ = sjson.Delete(json, attrPath+"."+attr)
+			} else if len(val.Array()) == 1 {
+				// Array with one element - convert to object
+				json, _ = sjson.Set(json, attrPath+"."+attr, val.Array()[0].Value())
+			}
 		}
 	}
 
-	// Convert empty arrays to empty maps for map attributes
-	mapAttrs := []string{"country_pools", "pop_pools", "region_pools"}
-	for _, attr := range mapAttrs {
-		val := gjson.Get(json, attrPath+"."+attr)
-		if val.IsArray() && len(val.Array()) == 0 {
-			json, _ = sjson.Set(json, attrPath+"."+attr, map[string]interface{}{})
+	// Transform rules array - fixed_response and overrides need to be objects not arrays
+	rules := gjson.Get(json, attrPath+".rules")
+	if rules.IsArray() {
+		for i, rule := range rules.Array() {
+			rulePath := fmt.Sprintf("%s.rules.%d", attrPath, i)
+			
+			// Transform fixed_response from array to object
+			fixedResponse := rule.Get("fixed_response")
+			if fixedResponse.IsArray() {
+				if len(fixedResponse.Array()) == 0 {
+					json, _ = sjson.Delete(json, rulePath+".fixed_response")
+				} else if len(fixedResponse.Array()) == 1 {
+					json, _ = sjson.Set(json, rulePath+".fixed_response", fixedResponse.Array()[0].Value())
+				}
+			}
+			
+			// Remove terminates field if it's false (the default)
+			terminates := rule.Get("terminates")
+			if terminates.IsBool() && !terminates.Bool() {
+				json, _ = sjson.Delete(json, rulePath+".terminates")
+			}
+			
+			// Transform overrides from array to object
+			overrides := rule.Get("overrides")
+			if overrides.IsArray() {
+				if len(overrides.Array()) == 0 {
+					json, _ = sjson.Delete(json, rulePath+".overrides")
+				} else if len(overrides.Array()) == 1 {
+					// Set the object and update overrides to point to it for nested processing
+					json, _ = sjson.Set(json, rulePath+".overrides", overrides.Array()[0].Value())
+					overrides = overrides.Array()[0]
+				}
+			}
+			
+			// Transform nested single-object attributes within overrides
+			// This handles both the case where overrides was just transformed and where it was already an object
+			if overrides.IsObject() || overrides.Type == gjson.JSON {
+				nestedSingleObjectAttrs := []string{
+					"adaptive_routing", "location_strategy",
+					"random_steering", "session_affinity_attributes",
+				}
+				for _, attr := range nestedSingleObjectAttrs {
+					nestedPath := rulePath + ".overrides." + attr
+					nestedVal := gjson.Get(json, nestedPath)
+					if nestedVal.IsArray() {
+						if len(nestedVal.Array()) == 0 {
+							json, _ = sjson.Delete(json, nestedPath)
+						} else if len(nestedVal.Array()) == 1 {
+							json, _ = sjson.Set(json, nestedPath, nestedVal.Array()[0].Value())
+						}
+					}
+				}
+				
+				// Also transform pool attributes within overrides from arrays to maps
+				poolAttrs := []struct {
+					attrName string
+					keyField string
+				}{
+					{"country_pools", "country"},
+					{"region_pools", "region"},
+					{"pop_pools", "pop"},
+				}
+				
+				for _, poolAttr := range poolAttrs {
+					nestedPath := rulePath + ".overrides." + poolAttr.attrName
+					poolVal := gjson.Get(json, nestedPath)
+					if poolVal.IsArray() {
+						if len(poolVal.Array()) == 0 {
+							// Empty array - remove it entirely
+							json, _ = sjson.Delete(json, nestedPath)
+						} else {
+							// Array of objects - convert to map
+							poolMap := make(map[string]interface{})
+							for _, item := range poolVal.Array() {
+								key := item.Get(poolAttr.keyField).String()
+								poolIDs := item.Get("pool_ids").Value()
+								if key != "" && poolIDs != nil {
+									poolMap[key] = poolIDs
+								}
+							}
+							if len(poolMap) == 0 {
+								// If the map is empty after conversion, remove the attribute
+								json, _ = sjson.Delete(json, nestedPath)
+							} else {
+								json, _ = sjson.Set(json, nestedPath, poolMap)
+							}
+						}
+					} else if poolVal.Type == gjson.JSON {
+						// Check if it's an empty map and remove it
+						if poolVal.Raw == "{}" || poolVal.Raw == "[]" {
+							json, _ = sjson.Delete(json, nestedPath)
+						}
+					}
+				}
+				
+				// Clean up null/empty/default values in overrides
+				cleanupAttrs := []string{
+					"steering_policy", "ttl", "session_affinity_ttl",
+				}
+				for _, attr := range cleanupAttrs {
+					nestedPath := rulePath + ".overrides." + attr
+					val := gjson.Get(json, nestedPath)
+					// Remove empty strings, zeros, and null values
+					if val.Type == gjson.Null || val.String() == "" || 
+					   (attr == "ttl" && val.Int() == 0) || 
+					   (attr == "session_affinity_ttl" && val.Int() == 0) {
+						json, _ = sjson.Delete(json, nestedPath)
+					}
+				}
+			}
+		}
+	}
+
+	// Transform pool attributes from v4 array of objects to v5 map format
+	// v4: [{"country": "US", "pool_ids": ["id1"]}, {"country": "GB", "pool_ids": ["id2"]}]
+	// v5: {"US": ["id1"], "GB": ["id2"]}
+	poolAttrs := []struct {
+		attrName string
+		keyField string
+	}{
+		{"country_pools", "country"},
+		{"region_pools", "region"},
+		{"pop_pools", "pop"},
+	}
+	
+	for _, poolAttr := range poolAttrs {
+		val := gjson.Get(json, attrPath+"."+poolAttr.attrName)
+		if val.IsArray() {
+			if len(val.Array()) == 0 {
+				// Empty array - convert to empty map
+				json, _ = sjson.Set(json, attrPath+"."+poolAttr.attrName, map[string]interface{}{})
+			} else {
+				// Array of objects - convert to map
+				poolMap := make(map[string]interface{})
+				for _, item := range val.Array() {
+					key := item.Get(poolAttr.keyField).String()
+					poolIDs := item.Get("pool_ids").Value()
+					if key != "" && poolIDs != nil {
+						poolMap[key] = poolIDs
+					}
+				}
+				json, _ = sjson.Set(json, attrPath+"."+poolAttr.attrName, poolMap)
+			}
 		}
 	}
 
