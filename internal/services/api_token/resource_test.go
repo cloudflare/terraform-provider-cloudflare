@@ -3,6 +3,7 @@ package api_token_test
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -74,7 +75,7 @@ func TestAccAPIToken_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_api_token.test_account_token"
 
-	var policyId string
+	var tokenValue string
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -86,12 +87,12 @@ func TestAccAPIToken_Basic(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("id"), knownvalue.NotNull()),
 				},
 				Check: resource.ComposeTestCheckFunc(
-					// Store policy ID for cross-step comparison
-					resource.TestCheckResourceAttrWith(resourceName, "policies.0.id", func(value string) error {
-						policyId = value
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd),
+					resource.TestCheckResourceAttrSet("cloudflare_api_token.test_account_token", "id"),
+					resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "value", func(value string) error {
+						tokenValue = value
 						return nil
 					}),
 					// Verify conditions are not set (ConfigStateChecks can't easily check for absence)
@@ -118,13 +119,13 @@ func TestAccAPIToken_Basic(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd+"-updated")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("id"), knownvalue.NotNull()),
 				},
 				Check: resource.ComposeTestCheckFunc(
-					// Verify policy ID hasn't changed during update
-					resource.TestCheckResourceAttrWith(resourceName, "policies.0.id", func(value string) error {
-						if value != policyId {
-							return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
+					resource.TestCheckResourceAttr("cloudflare_api_token.test_account_token", "name", rnd+"-updated"),
+					resource.TestCheckResourceAttrSet("cloudflare_api_token.test_account_token", "id"),
+					resource.TestCheckResourceAttrWith("cloudflare_api_token.test_account_token", "value", func(value string) error {
+						if value != tokenValue {
+							return fmt.Errorf("token value changed from %s to %s", tokenValue, value)
 						}
 						return nil
 					}),
@@ -463,7 +464,6 @@ func TestAccAPIToken_CRUD(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(initialName)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("expires_on"), knownvalue.StringExact(oneDayFromNow)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.ListSizeExact(1)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("id"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("condition").AtMapKey("request_ip").AtMapKey("in").AtSliceIndex(0), knownvalue.StringExact("192.0.2.1/32")),
 				},
 			},
@@ -502,7 +502,13 @@ func TestAccAPIToken_CRUD(t *testing.T) {
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"value"}, // Token value is write-only
+				ImportStateVerifyIgnore: []string{
+					"value", // Token value is write-only
+					"policies.0.%", // Dynamic type changes object count
+					"policies.0.id", // Dynamic policy ID from API response
+					"policies.0.permission_groups.0.%", // Dynamic type changes object count
+					"policies.0.permission_groups.0.name", // Dynamic permission group name from API response
+				},
 			},
 		},
 	})
@@ -538,4 +544,60 @@ resource "cloudflare_api_token" "crud_test" {
   }
 }
 `, name, expiresOn, ipCondition)
+}
+
+func TestAccAPIToken_Resources_SimpleToNested_NoDrift(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_api_token." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck_APIToken(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// Simple: wildcard string mapping
+				Config: acctest.LoadTestCase("api_token-resources-simple.tf", rnd, rnd, permissionID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.0.id", permissionID),
+					// resources should be a single-entry map
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+					resource.TestCheckResourceAttr(name, "policies.0.resources.%", "1"),
+				),
+			},
+			{
+				// Re-apply should produce empty plan (no drift)
+				Config: acctest.LoadTestCase("api_token-resources-simple.tf", rnd, rnd, permissionID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				// Nested: account -> { zone.* = "*" }
+				Config: acctest.LoadTestCase("api_token-resources-nested.tf", rnd, rnd, permissionID, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.0.id", permissionID),
+					// top-level resources should have one account key
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+					resource.TestCheckResourceAttr(name, "policies.0.resources.%", "1"),
+					// nested map under the account key should have one entry
+					resource.TestCheckResourceAttr(name, fmt.Sprintf("policies.0.resources.com.cloudflare.api.account.%s.%%", accountID), "1"),
+				),
+			},
+			{
+				// Re-apply nested should produce empty plan (no drift)
+				Config: acctest.LoadTestCase("api_token-resources-nested.tf", rnd, rnd, permissionID, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
 }

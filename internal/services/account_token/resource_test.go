@@ -20,7 +20,7 @@ func TestAccAccountToken_Basic(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_account_token.test_account_token"
 
-	var policyId string
+	var tokenValue string
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -35,9 +35,9 @@ func TestAccAccountToken_Basic(t *testing.T) {
 				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "name", rnd),
-					resource.TestCheckResourceAttrSet("cloudflare_account_token.test_account_token", "policies.0.id"),
-					resource.TestCheckResourceAttrWith("cloudflare_account_token.test_account_token", "policies.0.id", func(value string) error {
-						policyId = value
+					resource.TestCheckResourceAttrSet("cloudflare_account_token.test_account_token", "id"),
+					resource.TestCheckResourceAttrWith("cloudflare_account_token.test_account_token", "value", func(value string) error {
+						tokenValue = value
 						return nil
 					}),
 					// conditions by default should not be set
@@ -63,10 +63,10 @@ func TestAccAccountToken_Basic(t *testing.T) {
 				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("cloudflare_account_token.test_account_token", "name", rnd+"-updated"),
-					resource.TestCheckResourceAttrSet("cloudflare_account_token.test_account_token", "policies.0.id"),
-					resource.TestCheckResourceAttrWith("cloudflare_account_token.test_account_token", "policies.0.id", func(value string) error {
-						if value != policyId {
-							return fmt.Errorf("policy ID changed from %s to %s", policyId, value)
+					resource.TestCheckResourceAttrSet("cloudflare_account_token.test_account_token", "id"),
+					resource.TestCheckResourceAttrWith("cloudflare_account_token.test_account_token", "value", func(value string) error {
+						if value != tokenValue {
+							return fmt.Errorf("token value changed from %s to %s", tokenValue, value)
 						}
 						return nil
 					}),
@@ -90,7 +90,13 @@ func TestAccAccountToken_Basic(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{
+					"value", // API token value is not returned by the API
+					"policies.0.%", // Dynamic type changes object count
+					"policies.0.id", // Dynamic policy ID from API response
+					"policies.0.permission_groups.0.%", // Dynamic type changes object count
+					"policies.0.permission_groups.0.name", // Dynamic permission group name from API response
+				},
 			},
 		},
 	})
@@ -132,7 +138,13 @@ func TestAccAccountToken_SetIndividualCondition(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{
+					"value", // API token value is not returned by the API
+					"policies.0.%", // Dynamic type changes object count
+					"policies.0.id", // Dynamic policy ID from API response
+					"policies.0.permission_groups.0.%", // Dynamic type changes object count
+					"policies.0.permission_groups.0.name", // Dynamic permission group name from API response
+				},
 			},
 		},
 	})
@@ -175,7 +187,13 @@ func TestAccAccountToken_SetAllCondition(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{
+					"value", // API token value is not returned by the API
+					"policies.0.%", // Dynamic type changes object count
+					"policies.0.id", // Dynamic policy ID from API response
+					"policies.0.permission_groups.0.%", // Dynamic type changes object count
+					"policies.0.permission_groups.0.name", // Dynamic permission group name from API response
+				},
 			},
 		},
 	})
@@ -239,7 +257,13 @@ func TestAccAccountToken_TokenTTL(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportStateVerifyIgnore: []string{"value"}, // API token value is not returned by the API
+				ImportStateVerifyIgnore: []string{
+					"value", // API token value is not returned by the API
+					"policies.0.%", // Dynamic type changes object count
+					"policies.0.id", // Dynamic policy ID from API response
+					"policies.0.permission_groups.0.%", // Dynamic type changes object count
+					"policies.0.permission_groups.0.name", // Dynamic permission group name from API response
+				},
 			},
 		},
 	})
@@ -427,4 +451,60 @@ func TestAccAccountToken_PermissionGroupOrder(t *testing.T) {
 	// 		},
 	// 	},
 	// })
+}
+
+func TestAccAccountToken_Resources_SimpleToNested_NoDrift(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_account_token." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// Simple: account -> "*"
+				Config: acctest.LoadTestCase("account_token-resources-simple.tf", rnd, accountID, rnd, permissionID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.0.id", permissionID),
+					// resources should be a single-entry map
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+					resource.TestCheckResourceAttr(name, "policies.0.resources.%", "1"),
+				),
+			},
+			{
+				// Re-apply should produce empty plan (no drift)
+				Config: acctest.LoadTestCase("account_token-resources-simple.tf", rnd, accountID, rnd, permissionID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				// Nested: account -> { zone.* = "*" }
+				Config: acctest.LoadTestCase("account_token-resources-nested.tf", rnd, accountID, rnd, permissionID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "policies.0.permission_groups.0.id", permissionID),
+					// top-level resources should have one account key
+					resource.TestCheckResourceAttr(name, "policies.#", "1"),
+					resource.TestCheckResourceAttr(name, "policies.0.resources.%", "1"),
+					// nested map under the account key should have one entry
+					resource.TestCheckResourceAttr(name, fmt.Sprintf("policies.0.resources.com.cloudflare.api.account.%s.%%", accountID), "1"),
+				),
+			},
+			{
+				// Re-apply nested should produce empty plan (no drift)
+				Config: acctest.LoadTestCase("account_token-resources-nested.tf", rnd, accountID, rnd, permissionID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
 }

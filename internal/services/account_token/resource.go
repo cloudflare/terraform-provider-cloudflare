@@ -142,6 +142,7 @@ func (r *AccountTokenResource) Update(ctx context.Context, req resource.UpdateRe
 	}
 	data = &env.Result
 	data.Value = tokenValue
+	
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -177,13 +178,14 @@ func (r *AccountTokenResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
 	data = &env.Result
 	data.Value = tokenValue
+	
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
