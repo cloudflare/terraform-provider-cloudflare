@@ -63,8 +63,8 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 	resources.ForEach(func(ridx, resource gjson.Result) bool {
 		resourcePath := fmt.Sprintf("resources.%d", ridx.Int())
-		resourceModule := resource.Get("module").String()
-		resourceName := resource.Get("name").String()
+		//resourceModule := resource.Get("module").String()
+		//resourceName := resource.Get("name").String()
 
 		// CRITICAL FIX: Always read resource type from current JSON state, not from stale ForEach data
 		// The ForEach iteration data can be stale/cached and not match current JSON positions
@@ -148,15 +148,15 @@ func transformStateJSON(data []byte) ([]byte, error) {
 				result = transformZeroTrustAccessPolicyStateJSON(result, path)
 
 			case "cloudflare_zone":
-				if resourceModule == "module.openai_com" && resourceName == "openai-com" {
-					fmt.Printf("DEBUG: Processing ZONE case with resourceType=%s\n", resourceType)
-					fmt.Printf("DEBUG: Before zone transformation - resource type in JSON: %s\n", gjson.Get(result, resourcePath+".type").String())
-					fmt.Printf("DEBUG: About to call transformZoneInstanceStateJSON for path: %s\n", path)
-				}
+				//if resourceModule == "module.openai_com" && resourceName == "openai-com" {
+				//	fmt.Printf("DEBUG: Processing ZONE case with resourceType=%s\n", resourceType)
+				//	fmt.Printf("DEBUG: Before zone transformation - resource type in JSON: %s\n", gjson.Get(result, resourcePath+".type").String())
+				//	fmt.Printf("DEBUG: About to call transformZoneInstanceStateJSON for path: %s\n", path)
+				//}
 				result = transformZoneInstanceStateJSON(result, path)
-				if resourceModule == "module.openai_com" && resourceName == "openai-com" {
-					fmt.Printf("DEBUG: After zone transformation - resource type in JSON: %s\n", gjson.Get(result, resourcePath+".type").String())
-				}
+				//if resourceModule == "module.openai_com" && resourceName == "openai-com" {
+				//	fmt.Printf("DEBUG: After zone transformation - resource type in JSON: %s\n", gjson.Get(result, resourcePath+".type").String())
+				//}
 
 			case "cloudflare_managed_transforms":
 				result = transformManagedTransformsStateJSON(result, path)
@@ -237,10 +237,6 @@ func transformStateJSON(data []byte) ([]byte, error) {
 func transformSnippetStateJSON(json string, instancePath string) string {
 	attrPath := instancePath + ".attributes"
 	result := json
-
-	// Set schema_version to 0 to trigger state upgrade in v5 provider
-	// The StateUpgrader will handle final processing but we do most transformation here
-	result, _ = sjson.Set(result, instancePath+".schema_version", 0)
 
 	// Handle name transformation (v4: name, v5: snippet_name)
 	snippetName := gjson.Get(json, attrPath+".snippet_name")
@@ -358,8 +354,8 @@ func transformSnippetRulesStateJSON(json string, instancePath string) string {
 	attrPath := instancePath + ".attributes"
 	result := json
 
-	// Set schema_version to 0 (v5 doesn't have explicit version, but we set to 0 for consistency)
-	result, _ = sjson.Set(result, instancePath+".schema_version", 0)
+	// Don't set schema_version since v5 provider's UpgradeState is disabled
+	// We handle all transformations here instead
 
 	// Handle rules transformation from blocks to list attribute
 	// In v4, rules are stored as indexed attributes like blocks
@@ -515,21 +511,24 @@ func cleanupIndexedFileKeys(json string, attrPath string, fileCount int64) strin
 	attrs.ForEach(func(key, value gjson.Result) bool {
 		keyStr := key.String()
 
-		// Skip indexed file keys
+		// Skip indexed file keys - these are the old v4 format that needs to be removed
 		if keyStr == "files.#" || keyStr == "files.%" {
 			return true // skip
 		}
 
 		// Skip individual file fields (files.0.name, files.0.content, etc.)
-		for i := int64(0); i < fileCount; i++ {
+		// Also check for any numeric index pattern to be thorough
+		for i := int64(0); i < fileCount+10; i++ { // Check a few extra indices to be safe
 			if keyStr == fmt.Sprintf("files.%d.name", i) ||
 				keyStr == fmt.Sprintf("files.%d.content", i) ||
+				keyStr == fmt.Sprintf("files.%d.%", i) ||
+				keyStr == fmt.Sprintf("files.%d.#", i) ||
 				keyStr == fmt.Sprintf("files.%d", i) {
 				return true // skip
 			}
 		}
 
-		// Keep everything else
+		// Keep everything else (including the new files array)
 		attrsMap[keyStr] = value.Value()
 		return true
 	})

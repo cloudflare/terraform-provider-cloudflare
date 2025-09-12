@@ -21,7 +21,7 @@ export default {
       "unicode": "emoji 🚀 and symbols ™ © ®",
       "regex": "/^test.*\\.js$/",
       "html": "<script>alert('xss')</script>",
-      "template": "${variable} and $${escaped}",
+      "template": "$${variable} and $$$${escaped}",
     };
     
     // Check if path matches any test pattern
