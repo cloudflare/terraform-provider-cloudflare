@@ -2,15 +2,17 @@ package load_balancer_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
 // TestAccCloudflareLoadBalancer_Migration_Basic_MultiVersion tests the most fundamental
@@ -47,6 +49,13 @@ func TestMigrateCloudflareLoadBalancer_Migration_Basic_MultiVersion(t *testing.T
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+			// service does not yet support the API tokens and it results in
+			// misleading state error messages.
+			if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+				t.Setenv("CLOUDFLARE_API_TOKEN", "")
+			}
+
 			accountID := acctest.TestAccCloudflareAccountID
 			zoneID := acctest.TestAccCloudflareZoneID
 			zone := acctest.TestAccCloudflareZoneName
@@ -140,6 +149,13 @@ func TestMigrateCloudflareLoadBalancer_Migration_AllOptionalAttributes_MultiVers
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+			// service does not yet support the API tokens and it results in
+			// misleading state error messages.
+			if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+				t.Setenv("CLOUDFLARE_API_TOKEN", "")
+			}
+
 			accountID := acctest.TestAccCloudflareAccountID
 			zoneID := acctest.TestAccCloudflareZoneID
 			zone := acctest.TestAccCloudflareZoneName
@@ -238,6 +254,13 @@ func TestMigrateCloudflareLoadBalancer_Migration_GeoBalanced_MultiVersion(t *tes
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+			// service does not yet support the API tokens and it results in
+			// misleading state error messages.
+			if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+				t.Setenv("CLOUDFLARE_API_TOKEN", "")
+			}
+
 			accountID := acctest.TestAccCloudflareAccountID
 			zoneID := acctest.TestAccCloudflareZoneID
 			zone := acctest.TestAccCloudflareZoneName
@@ -315,6 +338,13 @@ func TestMigrateCloudflareLoadBalancer_Migration_Rules_MultiVersion(t *testing.T
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+			// service does not yet support the API tokens and it results in
+			// misleading state error messages.
+			if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+				t.Setenv("CLOUDFLARE_API_TOKEN", "")
+			}
+
 			accountID := acctest.TestAccCloudflareAccountID
 			zoneID := acctest.TestAccCloudflareZoneID
 			zone := acctest.TestAccCloudflareZoneName
