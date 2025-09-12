@@ -27,17 +27,29 @@ func cleanupMTLSSettings(t *testing.T) {
 		t.Fatalf("Failed to create Cloudflare client: %v", clientErr)
 	}
 
-	// First clear hostname settings
+	// First clear hostname settings with retry logic
 	deletedSettings := cfv1.UpdateAccessMutualTLSHostnameSettingsParams{
 		Settings: []cfv1.AccessMutualTLSHostnameSettings{},
 	}
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	if accountID != "" {
-		_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.AccountIdentifier(accountID), deletedSettings)
-		if err != nil {
-			t.Logf("Warning: Failed to clear account MTLS hostname settings: %v", err)
+		// Retry clearing settings up to 3 times if we get a conflict error
+		for i := 0; i < 3; i++ {
+			_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.AccountIdentifier(accountID), deletedSettings)
+			if err == nil {
+				break
+			}
+			if i == 2 {
+				t.Logf("Warning: Failed to clear account MTLS hostname settings after 3 attempts: %v", err)
+			} else {
+				t.Logf("Retry %d: Failed to clear account MTLS hostname settings: %v, retrying...", i+1, err)
+				time.Sleep(5 * time.Second)
+			}
 		}
+		
+		// Wait before cleaning certificates
+		time.Sleep(2 * time.Second)
 		
 		// Clean account certificates
 		accountCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListAccessMutualTLSCertificatesParams{})
@@ -48,6 +60,8 @@ func cleanupMTLSSettings(t *testing.T) {
 					ID:                  cert.ID,
 					AssociatedHostnames: []string{},
 				})
+				// Small delay between operations
+				time.Sleep(500 * time.Millisecond)
 				client.DeleteAccessMutualTLSCertificate(ctx, cfv1.AccountIdentifier(accountID), cert.ID)
 			}
 		}
@@ -55,10 +69,22 @@ func cleanupMTLSSettings(t *testing.T) {
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")  
 	if zoneID != "" {
-		_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.ZoneIdentifier(zoneID), deletedSettings)
-		if err != nil {
-			t.Logf("Warning: Failed to clear zone MTLS hostname settings: %v", err)
+		// Retry clearing settings up to 3 times if we get a conflict error
+		for i := 0; i < 3; i++ {
+			_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.ZoneIdentifier(zoneID), deletedSettings)
+			if err == nil {
+				break
+			}
+			if i == 2 {
+				t.Logf("Warning: Failed to clear zone MTLS hostname settings after 3 attempts: %v", err)
+			} else {
+				t.Logf("Retry %d: Failed to clear zone MTLS hostname settings: %v, retrying...", i+1, err)
+				time.Sleep(5 * time.Second)
+			}
 		}
+		
+		// Wait before cleaning certificates
+		time.Sleep(2 * time.Second)
 		
 		// Clean zone certificates
 		zoneCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.ListAccessMutualTLSCertificatesParams{})
@@ -69,13 +95,16 @@ func cleanupMTLSSettings(t *testing.T) {
 					ID:                  cert.ID,
 					AssociatedHostnames: []string{},
 				})
+				// Small delay between operations
+				time.Sleep(500 * time.Millisecond)
 				client.DeleteAccessMutualTLSCertificate(ctx, cfv1.ZoneIdentifier(zoneID), cert.ID)
 			}
 		}
 	}
 	
 	// Add extra wait after cleanup to ensure API has processed the deletions
-	time.Sleep(5 * time.Second)
+	// Increase wait time for CI environment where API might be slower
+	time.Sleep(10 * time.Second)
 }
 
 // waitBetweenTests adds a delay to prevent API conflicts between tests
