@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
@@ -254,9 +255,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"assets": schema.SingleNestedAttribute{
 				Description: "Configuration for assets within a Worker.\n\n[`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and\n[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files should be\nincluded as modules named `_headers` and `_redirects` with content type `text/plain`.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[WorkerVersionAssetsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"config": schema.SingleNestedAttribute{
 						Description: "Configuration for assets within a Worker.",
@@ -304,6 +303,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Token provided upon successful upload of all files from a registered manifest.",
 						Optional:    true,
 						Sensitive:   true,
+					},
+					"directory": schema.StringAttribute{
+						Description: "Path to the directory containing asset files to upload.",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.ConflictsWith(path.MatchRoot("assets").AtName("jwt")),
+						},
+					},
+					"asset_manifest_sha256": schema.StringAttribute{
+						Description: "The SHA-256 hash of the asset manifest of files to upload.",
+						Computed:    true,
+						PlanModifiers: []planmodifier.String{
+							ComputeSHA256HashOfAssetManifest(),
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplaceIfConfigured()},

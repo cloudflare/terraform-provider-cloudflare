@@ -13,12 +13,10 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 )
@@ -68,7 +66,21 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	assets := data.Assets
+
+	var assets *WorkerVersionAssetsModel
+	if data.Assets != nil {
+		assets = &WorkerVersionAssetsModel{
+			Config:              data.Assets.Config,
+			JWT:                 data.Assets.JWT,
+			Directory:           data.Assets.Directory,
+			AssetManifestSHA256: data.Assets.AssetManifestSHA256,
+		}
+	}
+	err := handleAssets(ctx, r.client, data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to upload assets", err.Error())
+		return
+	}
 
 	modules := data.Modules
 	if modules != nil {
@@ -78,19 +90,6 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 				resp.Diagnostics.AddError("Error reading file", err.Error())
 			}
 			mod.ContentBase64 = types.StringValue(base64.StdEncoding.EncodeToString([]byte(content)))
-		}
-	}
-
-	if !assets.IsNull() {
-		// "assets.jwt" is write-only, get from config
-		var assetsValue WorkerVersionAssetsModel
-		resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("assets").AtName("jwt"), &assetsValue.JWT)...)
-		if !resp.Diagnostics.HasError() {
-			obj, diags := customfield.NewObject(ctx, &assetsValue)
-			resp.Diagnostics.Append(diags...)
-			if !resp.Diagnostics.HasError() {
-				data.Assets = obj
-			}
 		}
 	}
 
@@ -127,13 +126,12 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	}
 	data = &env.Result
 	data.Modules = modules
-	
-	// Set assets to null if it was unknown in the plan (API doesn't return assets)
-	if assets.IsUnknown() {
-		data.Assets = data.Assets.NullValue(ctx).(customfield.NestedObject[WorkerVersionAssetsModel])
-	} else {
-		data.Assets = assets
+
+	if assets != nil && data.Assets != nil {
+		assets.Config = data.Assets.Config
 	}
+
+	data.Assets = assets
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -151,8 +149,8 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	stateModules := data.Modules
 	assets := data.Assets // "assets" is not returned by the API, so preserve its state value
+	stateModules := data.Modules
 
 	res := new(http.Response)
 	env := WorkerVersionResultEnvelope{*data}
