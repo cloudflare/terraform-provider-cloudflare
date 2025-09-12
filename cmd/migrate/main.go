@@ -229,7 +229,9 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 	for _, block := range blocks {
 		applyRenames(block)
 
-		// TODO declare a map from resource types to transform functions instead of having all these if statement
+		// TODO declare a map from resource types to transform functions
+		// instead of having all these if statement
+
 		if isZoneSettingsOverrideResource(block) {
 			blocksToRemove = append(blocksToRemove, block)
 			newBlocks = append(newBlocks, transformZoneSettingsBlock(block)...)
@@ -240,16 +242,25 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		}
 
 		if isLoadBalancerPoolResource(block) {
-			transformLoadBalancerPoolBlock(block)
+			transformLoadBalancerPoolBlock(block, diags)
+		}
+
+		if isLoadBalancerResource(block) {
+			transformLoadBalancerBlock(block, diags)
 		}
 
 		if isAccessPolicyResource(block) {
-			// TOOD eventually pass diags through to all resource transformers, not just accessPolicyBlock
+			// TOOD eventually pass diags through to all resource transformers,
+			// not just accessPolicyBlock
 			transformAccessPolicyBlock(block, diags)
 		}
 
 		if isAccessApplicationResource(block) {
 			transformAccessApplicationBlock(block, diags)
+		}
+
+		if isZoneResource(block) {
+			transformZoneBlock(block, diags)
 		}
 
 		if isZeroTrustAccessIdentityProviderResource(block) {
@@ -291,7 +302,48 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			// Process DNS record to fix CAA flags
 			ProcessDNSRecordConfig(file)
 		}
+
+		if isSnippetResource(block) {
+			transformSnippetBlock(block, diags)
+		}
+
+		if isSnippetRulesResource(block) {
+			transformSnippetRulesBlock(block, diags)
+		}
+
+		if isSpectrumApplicationResource(block) {
+			transformSpectrumApplicationBlock(block, diags)
+		}
+
+		if isWorkersRouteResource(block) {
+			transformWorkersRouteBlock(block, diags)
+		}
+
+		if isWorkersScriptResource(block) {
+			transformWorkersScriptBlock(block, diags)
+		}
+
+		if isWorkersCronTriggerResource(block) {
+			transformWorkersCronTriggerBlock(block, diags)
+		}
+
+		if isWorkersDomainResource(block) {
+			transformWorkersDomainBlock(block, diags)
+		}
+
+		// Note: workers_secret resources are handled by cross-resource migration below
+
+		if isCloudflareListResource(block) {
+			// Transform cloudflare_list item blocks to items attribute
+			// Handles both static and dynamic blocks
+			transformCloudflareListBlock(block)
+		}
 	}
+
+	// Merge cloudflare_list_item resources into their parent lists
+	// This must happen after processing all blocks to ensure we've seen all list and list_item resources
+	listItemBlocksToRemove := mergeListItemResources(blocks)
+	blocksToRemove = append(blocksToRemove, listItemBlocksToRemove...)
 
 	// Remove old blocks
 	for _, block := range blocksToRemove {
@@ -302,6 +354,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 	for _, block := range newBlocks {
 		body.AppendBlock(block)
 	}
+
+	// Perform cross-resource migration for workers_secret -> workers_script secret_text bindings
+	// This must happen after all individual block transformations are complete
+	migrateWorkersSecretsToBindings(file, diags)
 
 	// Generate moved blocks for policy transitions if we have application-policy mappings
 	if len(applicationPolicyMapping) > 0 {

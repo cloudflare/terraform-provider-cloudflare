@@ -50,6 +50,14 @@ jobs:
         run: npm install -g @getgrit/cli
       - name: Bootstrap
         run: ./scripts/bootstrap
+      - name: Run Magic acceptance tests
+        id: magic_acceptance_tests
+        # tests need to be run one-by-one to avoid account lock contention
+        # TODO:: refactor to pass the resources into run-ci-tests
+        run: go test -parallel=1 -p=1 -count=1 ./internal/services/{magic_wan_ipsec_tunnel,magic_wan_gre_tunnel,magic_wan_static_route} -run "^TestAcc"
+        env:
+          TF_ACC: 1
+        continue-on-error: true
       - name: Run Acceptance Tests
         id: acceptance_tests
         # note: not all resources are covered here, only passing ones should be included here (for now).
@@ -57,15 +65,12 @@ jobs:
         env:
           TF_ACC: 1
         continue-on-error: true
-      # - name: Run Migration Tests
-      #   id: migration_tests
-      #   run: ./scripts/run-ci-tests migration
-      #   env:
-      #     TF_ACC: 1
-      #   continue-on-error: true
-      # - name: Check Test Status
-      #   if: ${{ steps.acceptance_tests.outcome == 'failure' || steps.migration_tests.outcome == 'failure' }}
-      #   run: exit 1
+      - name: Run Migration Tests
+        id: migration_tests
+        run: ./scripts/run-ci-tests migration
+        env:
+         TF_ACC: 1
+        continue-on-error: true
       - name: Check Test Status
-        if: ${{ steps.acceptance_tests.outcome == 'failure' }}
+        if: ${{ steps.acceptance_tests.outcome == 'failure' || steps.migration_tests.outcome == 'failure' || steps.magic_acceptance_tests.outcome == 'failure' }}
         run: exit 1

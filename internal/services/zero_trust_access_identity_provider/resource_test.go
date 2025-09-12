@@ -22,7 +22,6 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-
 func init() {
 	resource.AddTestSweepers("cloudflare_zero_trust_access_identity_provider", &resource.Sweeper{
 		Name: "cloudflare_zero_trust_access_identity_provider",
@@ -243,8 +242,6 @@ func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 }
 
 func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
-	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into automating Azure IDP.")
-
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -370,7 +367,6 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Config_Secret(t *testing.T) {
 }
 
 func TestAccCloudflareAccessIdentityProvider_SCIM_Secret_Enabled_After_Resource_Creation(t *testing.T) {
-	t.Skip("TODO: failing due to inconsistent apply caused by secret value")
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()

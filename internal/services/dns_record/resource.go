@@ -13,7 +13,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/dns"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -325,9 +324,6 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 
 	// Preserve computed fields from state during updates
 	if state != nil {
-		// Check if there are actual configuration changes
-		hasConfigChanges := false
-
 		// Check for changes in user-configurable fields
 		// For CAA and other records that use data field, content might be computed
 		// so we need to be careful about comparing it
@@ -377,19 +373,64 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 			}
 		}
 
-		if !plan.Name.Equal(state.Name) || !plan.Type.Equal(state.Type) ||
+		// Check if any user-configurable fields have actually changed
+		hasChanges := !plan.Name.Equal(state.Name) || !plan.Type.Equal(state.Type) ||
 			contentChanged || !plan.TTL.Equal(state.TTL) ||
 			!plan.Proxied.Equal(state.Proxied) || !plan.Priority.Equal(state.Priority) ||
-			!plan.Comment.Equal(state.Comment) || tagsChanged {
-			hasConfigChanges = true
-		}
+			!plan.Comment.Equal(state.Comment) || tagsChanged
 
-		// Check if data field has changes (for CAA records)
-		// This is complex because we'd need to compare all subfields
-		// For now, assume data hasn't changed if both plan and state have it
+		// For Data field (CAA, LOC, etc records), check if it actually changed
 		if (plan.Data == nil) != (state.Data == nil) {
-			// One is nil and the other is not
-			hasConfigChanges = true
+			// One has data, the other doesn't - this is a change
+			hasChanges = true
+		}
+		// Note: If both have data, the contentChanged check above already covers it
+		// since content is computed from data for these record types
+
+		// Check settings changes - treat empty object as equivalent to null
+		planSettingsEmpty := plan.Settings.IsNull() || plan.Settings.IsUnknown()
+		stateSettingsEmpty := state.Settings.IsNull() || state.Settings.IsUnknown()
+		
+		// Check if plan settings is an empty object {}
+		if !plan.Settings.IsNull() && !plan.Settings.IsUnknown() {
+			var planSettingsData DNSRecordSettingsModel
+			diags := plan.Settings.As(ctx, &planSettingsData, basetypes.ObjectAsOptions{})
+			if !diags.HasError() {
+				// If all fields are null/unknown, treat as empty
+				if (planSettingsData.IPV4Only.IsNull() || planSettingsData.IPV4Only.IsUnknown()) &&
+					(planSettingsData.IPV6Only.IsNull() || planSettingsData.IPV6Only.IsUnknown()) &&
+					(planSettingsData.FlattenCNAME.IsNull() || planSettingsData.FlattenCNAME.IsUnknown()) {
+					planSettingsEmpty = true
+				}
+			}
+		}
+		
+		// Only consider it a change if one is empty and the other is not, 
+		// or if both are non-empty and different
+		if !planSettingsEmpty && !stateSettingsEmpty {
+			hasChanges = hasChanges || !plan.Settings.Equal(state.Settings)
+		} else if planSettingsEmpty != stateSettingsEmpty {
+			// One is empty, other is not - but need to check if the non-empty one
+			// only has default/null values
+			if !stateSettingsEmpty {
+				var stateSettingsData DNSRecordSettingsModel
+				diags := state.Settings.As(ctx, &stateSettingsData, basetypes.ObjectAsOptions{})
+				if !diags.HasError() {
+					// Check if state settings only has false/null values (defaults)
+					hasActualSettings := false
+					if !stateSettingsData.IPV4Only.IsNull() && !stateSettingsData.IPV4Only.IsUnknown() && stateSettingsData.IPV4Only.ValueBool() {
+						hasActualSettings = true
+					}
+					if !stateSettingsData.IPV6Only.IsNull() && !stateSettingsData.IPV6Only.IsUnknown() && stateSettingsData.IPV6Only.ValueBool() {
+						hasActualSettings = true
+					}
+					if !stateSettingsData.FlattenCNAME.IsNull() && !stateSettingsData.FlattenCNAME.IsUnknown() && stateSettingsData.FlattenCNAME.ValueBool() {
+						hasActualSettings = true
+					}
+					// Only consider it a change if state has actual non-default settings
+					hasChanges = hasChanges || hasActualSettings
+				}
+			}
 		}
 
 		// Always preserve created_on since it never changes
@@ -397,9 +438,14 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 			plan.CreatedOn = state.CreatedOn
 		}
 
-		// Only preserve modified_on if there are no config changes
-		if plan.ModifiedOn.IsUnknown() && !hasConfigChanges {
-			plan.ModifiedOn = state.ModifiedOn
+		// Handle modified_on: preserve from state if no actual changes
+		// This prevents "inconsistent result after apply" errors when nothing changed
+		if plan.ModifiedOn.IsUnknown() {
+			if !hasChanges {
+				// No actual changes, preserve modified_on from state
+				plan.ModifiedOn = state.ModifiedOn
+			}
+			// Otherwise let it be unknown (will be updated by the API)
 		}
 
 		// Preserve proxiable flag
@@ -417,30 +463,44 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 			plan.Content = state.Content
 		}
 
-		// Handle settings: preserve from state if not explicitly set
+		// Handle settings: preserve from state if not explicitly set or if empty object
 		if plan.Settings.IsUnknown() || plan.Settings.IsNull() {
 			plan.Settings = state.Settings
-		} else if !plan.Settings.IsNull() {
-			// If settings is set in plan, ensure nested fields have defaults
-			var settingsData DNSRecordSettingsModel
-			resp.Diagnostics.Append(plan.Settings.As(ctx, &settingsData, basetypes.ObjectAsOptions{})...)
-			if !resp.Diagnostics.HasError() {
-				updated := false
-				// Set defaults for unset boolean fields to false
-				if settingsData.IPV4Only.IsUnknown() {
-					settingsData.IPV4Only = types.BoolValue(false)
-					updated = true
-				}
-				if settingsData.IPV6Only.IsUnknown() {
-					settingsData.IPV6Only = types.BoolValue(false)
-					updated = true
-				}
-				if settingsData.FlattenCNAME.IsUnknown() {
-					settingsData.FlattenCNAME = types.BoolValue(false)
-					updated = true
-				}
-				if updated {
-					plan.Settings = customfield.NewObjectMust(ctx, &settingsData)
+		} else if !plan.Settings.IsNull() && !plan.Settings.IsUnknown() {
+			// Check if user provided empty settings {}
+			var planSettingsData DNSRecordSettingsModel
+			diags := plan.Settings.As(ctx, &planSettingsData, basetypes.ObjectAsOptions{})
+			if !diags.HasError() {
+				// If all fields are null/unknown (empty object), preserve state
+				if (planSettingsData.IPV4Only.IsNull() || planSettingsData.IPV4Only.IsUnknown()) &&
+					(planSettingsData.IPV6Only.IsNull() || planSettingsData.IPV6Only.IsUnknown()) &&
+					(planSettingsData.FlattenCNAME.IsNull() || planSettingsData.FlattenCNAME.IsUnknown()) {
+					// User provided empty settings {}, preserve whatever is in state
+					if state.Settings.IsNull() || state.Settings.IsUnknown() {
+						// State has no settings, keep it that way
+						plan.Settings = state.Settings
+					} else {
+						// State has settings, check if they're just defaults
+						var stateSettingsData DNSRecordSettingsModel
+						diags := state.Settings.As(ctx, &stateSettingsData, basetypes.ObjectAsOptions{})
+						if !diags.HasError() {
+							// Check if state only has false values (defaults)
+							allDefaults := true
+							if !stateSettingsData.IPV4Only.IsNull() && !stateSettingsData.IPV4Only.IsUnknown() && stateSettingsData.IPV4Only.ValueBool() {
+								allDefaults = false
+							}
+							if !stateSettingsData.IPV6Only.IsNull() && !stateSettingsData.IPV6Only.IsUnknown() && stateSettingsData.IPV6Only.ValueBool() {
+								allDefaults = false
+							}
+							if !stateSettingsData.FlattenCNAME.IsNull() && !stateSettingsData.FlattenCNAME.IsUnknown() && stateSettingsData.FlattenCNAME.ValueBool() {
+								allDefaults = false
+							}
+							if allDefaults {
+								// State only has defaults, preserve it to avoid drift
+								plan.Settings = state.Settings
+							}
+						}
+					}
 				}
 			}
 		}
@@ -453,10 +513,18 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 		}
 	}
 
+	// Handle comment_modified_on drift: similar to tags_modified_on
 	commentIsEmpty := plan.Comment.IsNull() || (!plan.Comment.IsUnknown() && plan.Comment.ValueString() == "")
+
 	if commentIsEmpty && plan.CommentModifiedOn.IsUnknown() {
 		// Set comment_modified_on to null when comment is empty, preventing drift
 		plan.CommentModifiedOn = timetypes.NewRFC3339Null()
+	} else if !commentIsEmpty && plan.CommentModifiedOn.IsUnknown() && state != nil {
+		// If comment hasn't changed, preserve comment_modified_on from state
+		if plan.Comment.Equal(state.Comment) {
+			plan.CommentModifiedOn = state.CommentModifiedOn
+		}
+		// Otherwise let it be unknown (will be updated by the API)
 	}
 
 	// Handle tags_modified_on drift: if tags is empty/null, ensure tags_modified_on is null
