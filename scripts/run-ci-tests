@@ -308,19 +308,52 @@ run_sweeper() {
         test_cmd="$test_cmd -parallel $parallel_count"
     fi
     
-    if eval "$test_cmd" >> "$log_file" 2>&1; then
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        log "${GREEN}✓ Sweeper completed: $service (${duration}s total)${NC}" >> "$log_file"
-        log "✓ Sweeper completed: $service (${duration}s total)"
-        return 0
-    else
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        log "${RED}✗ Sweeper failed: $service (${duration}s total) - check $log_file${NC}" >> "$log_file"
-        log "✗ Sweeper failed: $service (${duration}s total) - check $log_file"
-        return 1
-    fi
+    # Retry logic for sweeper failures
+    local max_retries=3
+    local retry_delay=2
+    
+    for retry in $(seq 1 $max_retries); do
+        # Clear the log file for this attempt (but keep previous attempts)
+        if [ "$retry" -gt 1 ]; then
+            echo "" >> "$log_file"
+            echo "=== Retry attempt $retry of $max_retries ===" >> "$log_file"
+            log "${YELLOW}Retry attempt $retry of $max_retries for sweeper $service${NC}"
+        fi
+        
+        # Run the sweeper command
+        if eval "$test_cmd" >> "$log_file" 2>&1; then
+            local end_time=$(date +%s)
+            local duration=$((end_time - start_time))
+            if [ "$retry" -gt 1 ]; then
+                log "${GREEN}✓ Sweeper completed: $service after $retry attempts (${duration}s total)${NC}" >> "$log_file"
+                log "✓ Sweeper completed: $service after $retry attempts (${duration}s total)"
+            else
+                log "${GREEN}✓ Sweeper completed: $service (${duration}s total)${NC}" >> "$log_file"
+                log "✓ Sweeper completed: $service (${duration}s total)"
+            fi
+            return 0
+        else
+            # Sweeper failed - check if we should retry
+            if [ "$retry" -lt "$max_retries" ]; then
+                log "${YELLOW}⚠ Sweeper failed for $service, retrying in ${retry_delay}s...${NC}"
+                echo "⚠ Sweeper failed, retrying in ${retry_delay}s..." >> "$log_file"
+                sleep "$retry_delay"
+                # Exponential backoff for retry delay
+                retry_delay=$((retry_delay * 2))
+                continue
+            else
+                # Final failure after all retries
+                local end_time=$(date +%s)
+                local duration=$((end_time - start_time))
+                log "${RED}✗ Sweeper failed for $service after $max_retries attempts (${duration}s total) - check $log_file${NC}" >> "$log_file"
+                log "✗ Sweeper failed for $service after $max_retries attempts (${duration}s total) - check $log_file"
+                return 1
+            fi
+        fi
+    done
+    
+    # Should not reach here, but just in case
+    return 1
 }
 
 # Function to run tests for a service
@@ -360,19 +393,52 @@ run_tests() {
     
     test_cmd="$test_cmd \"$service\""
     
-    if eval "$test_cmd" >> "$log_file" 2>&1; then
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        log "${GREEN}✓ Tests completed successfully for $service (${duration}s)${NC}" >> "$log_file"
-        log "✓ Tests completed successfully for $service (${duration}s)"
-        return 0
-    else
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        log "${RED}✗ Tests failed for $service (${duration}s) - check $log_file${NC}" >> "$log_file"
-        log "✗ Tests failed for $service (${duration}s) - check $log_file"
-        return 1
-    fi
+    # Retry logic for test failures
+    local max_retries=3
+    local retry_delay=2
+    
+    for retry in $(seq 1 $max_retries); do
+        # Clear the log file for this attempt (but keep previous attempts)
+        if [ "$retry" -gt 1 ]; then
+            echo "" >> "$log_file"
+            echo "=== Retry attempt $retry of $max_retries ===" >> "$log_file"
+            log "${YELLOW}Retry attempt $retry of $max_retries for $service${NC}"
+        fi
+        
+        # Run the test command and capture output
+        if eval "$test_cmd" >> "$log_file" 2>&1; then
+            local end_time=$(date +%s)
+            local duration=$((end_time - start_time))
+            if [ "$retry" -gt 1 ]; then
+                log "${GREEN}✓ Tests completed successfully for $service after $retry attempts (${duration}s)${NC}" >> "$log_file"
+                log "✓ Tests completed successfully for $service after $retry attempts (${duration}s)"
+            else
+                log "${GREEN}✓ Tests completed successfully for $service (${duration}s)${NC}" >> "$log_file"
+                log "✓ Tests completed successfully for $service (${duration}s)"
+            fi
+            return 0
+        else
+            # Test failed - check if we should retry
+            if [ "$retry" -lt "$max_retries" ]; then
+                log "${YELLOW}⚠ Tests failed for $service, retrying in ${retry_delay}s...${NC}"
+                echo "⚠ Tests failed, retrying in ${retry_delay}s..." >> "$log_file"
+                sleep "$retry_delay"
+                # Exponential backoff for retry delay
+                retry_delay=$((retry_delay * 2))
+                continue
+            else
+                # Final failure after all retries
+                local end_time=$(date +%s)
+                local duration=$((end_time - start_time))
+                log "${RED}✗ Tests failed for $service after $max_retries attempts (${duration}s) - check $log_file${NC}" >> "$log_file"
+                log "✗ Tests failed for $service after $max_retries attempts (${duration}s) - check $log_file"
+                return 1
+            fi
+        fi
+    done
+    
+    # Should not reach here, but just in case
+    return 1
 }
 
 # Function to process a single service (sweeper + tests)
