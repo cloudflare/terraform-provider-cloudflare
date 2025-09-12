@@ -665,7 +665,7 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	debugLogf(t, "Migration output:\n%s", string(output))
 
 	if err != nil {
-		t.Fatalf("Migration command failed: %v", err)
+		t.Fatalf("Migration command failed: %v\nMigration output:\n%s", err, string(output))
 	}
 	newState, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
 	if err != nil {
