@@ -11,13 +11,13 @@ resource "cloudflare_snippet" "%[1]s" {
         const url = new URL(request.url);
         
         // Special characters: $, @, #, &, *, {}
-        const specialPath = "/api/v1/${resource}";
+        const specialPath = "/api/v1/$${resource}";
         
         // Multi-line string
         const message = `Request received:
-          Method: ${request.method}
-          Path: ${url.pathname}
-          Time: ${new Date().toISOString()}`;
+          Method: $${request.method}
+          Path: $${url.pathname}
+          Time: $${new Date().toISOString()}`;
         
         // Handle different routes
         if (url.pathname === '/') {

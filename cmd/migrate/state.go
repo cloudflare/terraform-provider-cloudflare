@@ -63,8 +63,6 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 	resources.ForEach(func(ridx, resource gjson.Result) bool {
 		resourcePath := fmt.Sprintf("resources.%d", ridx.Int())
-		resourceModule := resource.Get("module").String()
-		resourceName := resource.Get("name").String()
 
 		// CRITICAL FIX: Always read resource type from current JSON state, not from stale ForEach data
 		// The ForEach iteration data can be stale/cached and not match current JSON positions
@@ -148,15 +146,7 @@ func transformStateJSON(data []byte) ([]byte, error) {
 				result = transformZeroTrustAccessPolicyStateJSON(result, path)
 
 			case "cloudflare_zone":
-				if resourceModule == "module.openai_com" && resourceName == "openai-com" {
-					fmt.Printf("DEBUG: Processing ZONE case with resourceType=%s\n", resourceType)
-					fmt.Printf("DEBUG: Before zone transformation - resource type in JSON: %s\n", gjson.Get(result, resourcePath+".type").String())
-					fmt.Printf("DEBUG: About to call transformZoneInstanceStateJSON for path: %s\n", path)
-				}
 				result = transformZoneInstanceStateJSON(result, path)
-				if resourceModule == "module.openai_com" && resourceName == "openai-com" {
-					fmt.Printf("DEBUG: After zone transformation - resource type in JSON: %s\n", gjson.Get(result, resourcePath+".type").String())
-				}
 
 			case "cloudflare_managed_transforms":
 				result = transformManagedTransformsStateJSON(result, path)
@@ -237,9 +227,8 @@ func transformStateJSON(data []byte) ([]byte, error) {
 func transformSnippetStateJSON(json string, instancePath string) string {
 	attrPath := instancePath + ".attributes"
 	result := json
-
-	// Set schema_version to 0 to trigger state upgrade in v5 provider
-	// The StateUpgrader will handle final processing but we do most transformation here
+	
+	// Set schema_version to 0 for v5
 	result, _ = sjson.Set(result, instancePath+".schema_version", 0)
 
 	// Handle name transformation (v4: name, v5: snippet_name)
@@ -358,8 +347,8 @@ func transformSnippetRulesStateJSON(json string, instancePath string) string {
 	attrPath := instancePath + ".attributes"
 	result := json
 
-	// Set schema_version to 0 (v5 doesn't have explicit version, but we set to 0 for consistency)
-	result, _ = sjson.Set(result, instancePath+".schema_version", 0)
+	// Don't set schema_version since v5 provider's UpgradeState is disabled
+	// We handle all transformations here instead
 
 	// Handle rules transformation from blocks to list attribute
 	// In v4, rules are stored as indexed attributes like blocks
@@ -515,21 +504,24 @@ func cleanupIndexedFileKeys(json string, attrPath string, fileCount int64) strin
 	attrs.ForEach(func(key, value gjson.Result) bool {
 		keyStr := key.String()
 
-		// Skip indexed file keys
+		// Skip indexed file keys - these are the old v4 format that needs to be removed
 		if keyStr == "files.#" || keyStr == "files.%" {
 			return true // skip
 		}
 
 		// Skip individual file fields (files.0.name, files.0.content, etc.)
-		for i := int64(0); i < fileCount; i++ {
+		// Also check for any numeric index pattern to be thorough
+		for i := int64(0); i < fileCount+10; i++ { // Check a few extra indices to be safe
 			if keyStr == fmt.Sprintf("files.%d.name", i) ||
 				keyStr == fmt.Sprintf("files.%d.content", i) ||
+				keyStr == fmt.Sprintf("files.%d.%%", i) ||
+				keyStr == fmt.Sprintf("files.%d.#", i) ||
 				keyStr == fmt.Sprintf("files.%d", i) {
 				return true // skip
 			}
 		}
 
-		// Keep everything else
+		// Keep everything else (including the new files array)
 		attrsMap[keyStr] = value.Value()
 		return true
 	})
@@ -748,24 +740,168 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 		json, _ = sjson.Delete(json, attrPath+".default_pool_ids")
 	}
 
-	// Remove empty arrays for single-object attributes
+	// Transform arrays to single objects for single-object attributes
+	// v4 stores these as arrays with 0 or 1 element, v5 expects them as objects or missing
 	singleObjectAttrs := []string{
 		"adaptive_routing", "location_strategy",
 		"random_steering", "session_affinity_attributes",
 	}
 	for _, attr := range singleObjectAttrs {
 		val := gjson.Get(json, attrPath+"."+attr)
-		if val.IsArray() && len(val.Array()) == 0 {
-			json, _ = sjson.Delete(json, attrPath+"."+attr)
+		if val.IsArray() {
+			if len(val.Array()) == 0 {
+				// Empty array - remove the attribute
+				json, _ = sjson.Delete(json, attrPath+"."+attr)
+			} else if len(val.Array()) == 1 {
+				// Array with one element - convert to object
+				json, _ = sjson.Set(json, attrPath+"."+attr, val.Array()[0].Value())
+			}
 		}
 	}
 
-	// Convert empty arrays to empty maps for map attributes
-	mapAttrs := []string{"country_pools", "pop_pools", "region_pools"}
-	for _, attr := range mapAttrs {
-		val := gjson.Get(json, attrPath+"."+attr)
-		if val.IsArray() && len(val.Array()) == 0 {
-			json, _ = sjson.Set(json, attrPath+"."+attr, map[string]interface{}{})
+	// Transform rules array - fixed_response and overrides need to be objects not arrays
+	rules := gjson.Get(json, attrPath+".rules")
+	if rules.IsArray() {
+		for i, rule := range rules.Array() {
+			rulePath := fmt.Sprintf("%s.rules.%d", attrPath, i)
+
+			// Transform fixed_response from array to object
+			fixedResponse := rule.Get("fixed_response")
+			if fixedResponse.IsArray() {
+				if len(fixedResponse.Array()) == 0 {
+					json, _ = sjson.Delete(json, rulePath+".fixed_response")
+				} else if len(fixedResponse.Array()) == 1 {
+					json, _ = sjson.Set(json, rulePath+".fixed_response", fixedResponse.Array()[0].Value())
+				}
+			}
+
+			// Remove terminates field if it's false (the default)
+			terminates := rule.Get("terminates")
+			if terminates.IsBool() && !terminates.Bool() {
+				json, _ = sjson.Delete(json, rulePath+".terminates")
+			}
+
+			// Transform overrides from array to object
+			overrides := rule.Get("overrides")
+			if overrides.IsArray() {
+				if len(overrides.Array()) == 0 {
+					json, _ = sjson.Delete(json, rulePath+".overrides")
+				} else if len(overrides.Array()) == 1 {
+					// Set the object and update overrides to point to it for nested processing
+					json, _ = sjson.Set(json, rulePath+".overrides", overrides.Array()[0].Value())
+					overrides = overrides.Array()[0]
+				}
+			}
+
+			// Transform nested single-object attributes within overrides
+			// This handles both the case where overrides was just transformed and where it was already an object
+			if overrides.IsObject() || overrides.Type == gjson.JSON {
+				nestedSingleObjectAttrs := []string{
+					"adaptive_routing", "location_strategy",
+					"random_steering", "session_affinity_attributes",
+				}
+				for _, attr := range nestedSingleObjectAttrs {
+					nestedPath := rulePath + ".overrides." + attr
+					nestedVal := gjson.Get(json, nestedPath)
+					if nestedVal.IsArray() {
+						if len(nestedVal.Array()) == 0 {
+							json, _ = sjson.Delete(json, nestedPath)
+						} else if len(nestedVal.Array()) == 1 {
+							json, _ = sjson.Set(json, nestedPath, nestedVal.Array()[0].Value())
+						}
+					}
+				}
+
+				// Also transform pool attributes within overrides from arrays to maps
+				poolAttrs := []struct {
+					attrName string
+					keyField string
+				}{
+					{"country_pools", "country"},
+					{"region_pools", "region"},
+					{"pop_pools", "pop"},
+				}
+
+				for _, poolAttr := range poolAttrs {
+					nestedPath := rulePath + ".overrides." + poolAttr.attrName
+					poolVal := gjson.Get(json, nestedPath)
+					if poolVal.IsArray() {
+						if len(poolVal.Array()) == 0 {
+							// Empty array - remove it entirely
+							json, _ = sjson.Delete(json, nestedPath)
+						} else {
+							// Array of objects - convert to map
+							poolMap := make(map[string]interface{})
+							for _, item := range poolVal.Array() {
+								key := item.Get(poolAttr.keyField).String()
+								poolIDs := item.Get("pool_ids").Value()
+								if key != "" && poolIDs != nil {
+									poolMap[key] = poolIDs
+								}
+							}
+							if len(poolMap) == 0 {
+								// If the map is empty after conversion, remove the attribute
+								json, _ = sjson.Delete(json, nestedPath)
+							} else {
+								json, _ = sjson.Set(json, nestedPath, poolMap)
+							}
+						}
+					} else if poolVal.Type == gjson.JSON {
+						// Check if it's an empty map and remove it
+						if poolVal.Raw == "{}" || poolVal.Raw == "[]" {
+							json, _ = sjson.Delete(json, nestedPath)
+						}
+					}
+				}
+
+				// Clean up null/empty/default values in overrides
+				cleanupAttrs := []string{
+					"steering_policy", "ttl", "session_affinity_ttl",
+				}
+				for _, attr := range cleanupAttrs {
+					nestedPath := rulePath + ".overrides." + attr
+					val := gjson.Get(json, nestedPath)
+					// Remove empty strings, zeros, and null values
+					if val.Type == gjson.Null || val.String() == "" ||
+						(attr == "ttl" && val.Int() == 0) ||
+						(attr == "session_affinity_ttl" && val.Int() == 0) {
+						json, _ = sjson.Delete(json, nestedPath)
+					}
+				}
+			}
+		}
+	}
+
+	// Transform pool attributes from v4 array of objects to v5 map format
+	// v4: [{"country": "US", "pool_ids": ["id1"]}, {"country": "GB", "pool_ids": ["id2"]}]
+	// v5: {"US": ["id1"], "GB": ["id2"]}
+	poolAttrs := []struct {
+		attrName string
+		keyField string
+	}{
+		{"country_pools", "country"},
+		{"region_pools", "region"},
+		{"pop_pools", "pop"},
+	}
+
+	for _, poolAttr := range poolAttrs {
+		val := gjson.Get(json, attrPath+"."+poolAttr.attrName)
+		if val.IsArray() {
+			if len(val.Array()) == 0 {
+				// Empty array - convert to empty map
+				json, _ = sjson.Set(json, attrPath+"."+poolAttr.attrName, map[string]interface{}{})
+			} else {
+				// Array of objects - convert to map
+				poolMap := make(map[string]interface{})
+				for _, item := range val.Array() {
+					key := item.Get(poolAttr.keyField).String()
+					poolIDs := item.Get("pool_ids").Value()
+					if key != "" && poolIDs != nil {
+						poolMap[key] = poolIDs
+					}
+				}
+				json, _ = sjson.Set(json, attrPath+"."+poolAttr.attrName, poolMap)
+			}
 		}
 	}
 
