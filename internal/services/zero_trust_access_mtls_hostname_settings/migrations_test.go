@@ -1,10 +1,12 @@
 package zero_trust_access_mtls_hostname_settings_test
 
 import (
+	"context"
 	"os"
 	"testing"
 	"time"
 
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
@@ -14,6 +16,67 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
+
+// cleanupMTLSSettings clears all MTLS hostname settings and certificates to prevent test conflicts
+func cleanupMTLSSettings(t *testing.T) {
+	t.Helper()
+	ctx := context.Background()
+
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		t.Fatalf("Failed to create Cloudflare client: %v", clientErr)
+	}
+
+	// First clear hostname settings
+	deletedSettings := cfv1.UpdateAccessMutualTLSHostnameSettingsParams{
+		Settings: []cfv1.AccessMutualTLSHostnameSettings{},
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID != "" {
+		_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.AccountIdentifier(accountID), deletedSettings)
+		if err != nil {
+			t.Logf("Warning: Failed to clear account MTLS hostname settings: %v", err)
+		}
+		
+		// Clean account certificates
+		accountCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListAccessMutualTLSCertificatesParams{})
+		if err == nil {
+			for _, cert := range accountCerts {
+				// Clear hostnames first, then delete
+				client.UpdateAccessMutualTLSCertificate(ctx, cfv1.AccountIdentifier(accountID), cfv1.UpdateAccessMutualTLSCertificateParams{
+					ID:                  cert.ID,
+					AssociatedHostnames: []string{},
+				})
+				client.DeleteAccessMutualTLSCertificate(ctx, cfv1.AccountIdentifier(accountID), cert.ID)
+			}
+		}
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")  
+	if zoneID != "" {
+		_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.ZoneIdentifier(zoneID), deletedSettings)
+		if err != nil {
+			t.Logf("Warning: Failed to clear zone MTLS hostname settings: %v", err)
+		}
+		
+		// Clean zone certificates
+		zoneCerts, _, err := client.ListAccessMutualTLSCertificates(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.ListAccessMutualTLSCertificatesParams{})
+		if err == nil {
+			for _, cert := range zoneCerts {
+				// Clear hostnames first, then delete
+				client.UpdateAccessMutualTLSCertificate(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.UpdateAccessMutualTLSCertificateParams{
+					ID:                  cert.ID,
+					AssociatedHostnames: []string{},
+				})
+				client.DeleteAccessMutualTLSCertificate(ctx, cfv1.ZoneIdentifier(zoneID), cert.ID)
+			}
+		}
+	}
+	
+	// Add extra wait after cleanup to ensure API has processed the deletions
+	time.Sleep(5 * time.Second)
+}
 
 // waitBetweenTests adds a delay to prevent API conflicts between tests
 func waitBetweenTests(t *testing.T) {
@@ -26,6 +89,7 @@ func waitBetweenTests(t *testing.T) {
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic tests basic migration from v4 to v5
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic(t *testing.T) {
+	cleanupMTLSSettings(t)
 	waitBetweenTests(t)
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
@@ -55,13 +119,13 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
 			// Step 2: Run migration and verify state
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings"), knownvalue.ListSizeExact(1)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtSliceIndex(0).AtMapKey("hostname"), knownvalue.StringExact(domain)),
@@ -74,6 +138,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_Basic(t *testing.T) {
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_Multiple tests migration with multiple hostnames
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_Multiple(t *testing.T) {
+	cleanupMTLSSettings(t)
 	waitBetweenTests(t)
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -100,14 +165,14 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_Multiple(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
 				// Accept plan diff - v4 provider doesn't handle multiple hostname settings in state properly
 				ExpectNonEmptyPlan: true,
 			},
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				// API merges multiple hostnames, so we expect list with both
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings"), knownvalue.ListSizeExact(2)),
@@ -122,6 +187,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_Multiple(t *testing.T) {
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanDefaults tests migration when optional booleans are not specified
 // Note: Works around v4 provider issues by using ExpectError to handle the plan diff
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanDefaults(t *testing.T) {
+	cleanupMTLSSettings(t)
 	waitBetweenTests(t)
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -147,7 +213,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanDefaults(t *testing.T
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
@@ -156,7 +222,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanDefaults(t *testing.T
 			},
 			// Migration step - this tests that our migration logic handles the scenario correctly
 			// even if v4 provider has state management issues
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings"), knownvalue.ListSizeExact(1)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtSliceIndex(0).AtMapKey("hostname"), knownvalue.StringExact(domain)),
@@ -170,6 +236,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanDefaults(t *testing.T
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations tests all combinations of boolean values
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations(t *testing.T) {
+	cleanupMTLSSettings(t)
 	waitBetweenTests(t)
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -191,6 +258,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations(t *testi
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			cleanupMTLSSettings(t)
 			waitBetweenTests(t)
 			rnd := utils.GenerateRandomResourceName()
 			resourceName := "cloudflare_zero_trust_access_mtls_hostname_settings." + rnd
@@ -215,7 +283,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations(t *testi
 						},
 						Config: v4Config,
 					},
-					acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+					acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings"), knownvalue.ListSizeExact(1)),
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("settings").AtSliceIndex(0).AtMapKey("hostname"), knownvalue.StringExact(domain)),
@@ -230,6 +298,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_BooleanCombinations(t *testi
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_AccountScope tests account-scoped migration
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_AccountScope(t *testing.T) {
+	cleanupMTLSSettings(t)
 	waitBetweenTests(t)
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -255,12 +324,12 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_AccountScope(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 				// Verify zone_id is not set for account-scoped resource
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.Null()),
@@ -273,6 +342,7 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_AccountScope(t *testing.T) {
 
 // TestMigrateZeroTrustAccessMTLSHostnameSettings_ZoneScope tests zone-scoped migration
 func TestMigrateZeroTrustAccessMTLSHostnameSettings_ZoneScope(t *testing.T) {
+	cleanupMTLSSettings(t)
 	waitBetweenTests(t)
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
@@ -298,12 +368,12 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_ZoneScope(t *testing.T) {
 				ExternalProviders: map[string]resource.ExternalProvider{
 					"cloudflare": {
 						Source:            "cloudflare/cloudflare",
-						VersionConstraint: "~> 4.0",
+						VersionConstraint: "4.52.1",
 					},
 				},
 				Config: v4Config,
 			},
-			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.0", []statecheck.StateCheck{
+			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
 				// Verify account_id is not set for zone-scoped resource
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.Null()),
