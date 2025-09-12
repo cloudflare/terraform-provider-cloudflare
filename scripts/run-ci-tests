@@ -309,7 +309,7 @@ run_sweeper() {
     fi
     
     # Retry logic for sweeper failures
-    local max_retries=3
+    local max_retries=6
     local retry_delay=2
     
     for retry in $(seq 1 $max_retries); do
