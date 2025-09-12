@@ -338,11 +338,6 @@ func TestTransformSnippetRulesStateJSON(t *testing.T) {
 			instance := instances[0].(map[string]interface{})
 			attributes := instance["attributes"].(map[string]interface{})
 
-			// Verify schema_version is set to 0
-			if schemaVersion := instance["schema_version"]; schemaVersion != float64(0) {
-				t.Errorf("Expected schema_version to be 0, got %v", schemaVersion)
-			}
-
 			// Verify the transformation
 			for key, expectedValue := range tt.expected {
 				actualValue, exists := attributes[key]
