@@ -31,7 +31,7 @@ func runYAMLTransformations(configDir, stateFile, transformerDir string, dryRun 
 
 	// If transformerDir is a URL, download the configs from GitHub
 	isRemote := strings.HasPrefix(transformerDir, "http")
-	
+
 	if isRemote {
 		// Create a temporary directory to store downloaded configs
 		var err error
@@ -42,19 +42,19 @@ func runYAMLTransformations(configDir, stateFile, transformerDir string, dryRun 
 		defer os.RemoveAll(tempDir) // Clean up temp dir when done
 
 		// Download each config file from GitHub
-		baseURL := "https://raw.githubusercontent.com/cloudflare/terraform-provider-cloudflare/grit-to-go-transformations/cmd/migrate/transformations/config"
-		
+		baseURL := "https://raw.githubusercontent.com/cloudflare/terraform-provider-cloudflare/refs/heads/next/cmd/migrate/transformations/config"
+
 		for _, t := range transformationConfigs {
 			url := fmt.Sprintf("%s/%s", baseURL, t.configFile)
 			destPath := filepath.Join(tempDir, t.configFile)
-			
+
 			fmt.Printf("  Downloading %s...\n", t.configFile)
 			if err := downloadFile(url, destPath); err != nil {
 				fmt.Printf("    ⚠ Warning: Failed to download %s: %v\n", t.configFile, err)
 				// Continue with other files even if one fails
 			}
 		}
-		
+
 		// Use the temp directory as the transformer directory
 		transformerDir = tempDir
 	}
