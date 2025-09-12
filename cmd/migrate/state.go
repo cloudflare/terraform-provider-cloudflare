@@ -63,8 +63,6 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 	resources.ForEach(func(ridx, resource gjson.Result) bool {
 		resourcePath := fmt.Sprintf("resources.%d", ridx.Int())
-		//resourceModule := resource.Get("module").String()
-		//resourceName := resource.Get("name").String()
 
 		// CRITICAL FIX: Always read resource type from current JSON state, not from stale ForEach data
 		// The ForEach iteration data can be stale/cached and not match current JSON positions
@@ -148,15 +146,7 @@ func transformStateJSON(data []byte) ([]byte, error) {
 				result = transformZeroTrustAccessPolicyStateJSON(result, path)
 
 			case "cloudflare_zone":
-				//if resourceModule == "module.openai_com" && resourceName == "openai-com" {
-				//	fmt.Printf("DEBUG: Processing ZONE case with resourceType=%s\n", resourceType)
-				//	fmt.Printf("DEBUG: Before zone transformation - resource type in JSON: %s\n", gjson.Get(result, resourcePath+".type").String())
-				//	fmt.Printf("DEBUG: About to call transformZoneInstanceStateJSON for path: %s\n", path)
-				//}
 				result = transformZoneInstanceStateJSON(result, path)
-				//if resourceModule == "module.openai_com" && resourceName == "openai-com" {
-				//	fmt.Printf("DEBUG: After zone transformation - resource type in JSON: %s\n", gjson.Get(result, resourcePath+".type").String())
-				//}
 
 			case "cloudflare_managed_transforms":
 				result = transformManagedTransformsStateJSON(result, path)
@@ -771,7 +761,7 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 	if rules.IsArray() {
 		for i, rule := range rules.Array() {
 			rulePath := fmt.Sprintf("%s.rules.%d", attrPath, i)
-			
+
 			// Transform fixed_response from array to object
 			fixedResponse := rule.Get("fixed_response")
 			if fixedResponse.IsArray() {
@@ -781,13 +771,13 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 					json, _ = sjson.Set(json, rulePath+".fixed_response", fixedResponse.Array()[0].Value())
 				}
 			}
-			
+
 			// Remove terminates field if it's false (the default)
 			terminates := rule.Get("terminates")
 			if terminates.IsBool() && !terminates.Bool() {
 				json, _ = sjson.Delete(json, rulePath+".terminates")
 			}
-			
+
 			// Transform overrides from array to object
 			overrides := rule.Get("overrides")
 			if overrides.IsArray() {
@@ -799,7 +789,7 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 					overrides = overrides.Array()[0]
 				}
 			}
-			
+
 			// Transform nested single-object attributes within overrides
 			// This handles both the case where overrides was just transformed and where it was already an object
 			if overrides.IsObject() || overrides.Type == gjson.JSON {
@@ -818,7 +808,7 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 						}
 					}
 				}
-				
+
 				// Also transform pool attributes within overrides from arrays to maps
 				poolAttrs := []struct {
 					attrName string
@@ -828,7 +818,7 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 					{"region_pools", "region"},
 					{"pop_pools", "pop"},
 				}
-				
+
 				for _, poolAttr := range poolAttrs {
 					nestedPath := rulePath + ".overrides." + poolAttr.attrName
 					poolVal := gjson.Get(json, nestedPath)
@@ -860,7 +850,7 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 						}
 					}
 				}
-				
+
 				// Clean up null/empty/default values in overrides
 				cleanupAttrs := []string{
 					"steering_policy", "ttl", "session_affinity_ttl",
@@ -869,9 +859,9 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 					nestedPath := rulePath + ".overrides." + attr
 					val := gjson.Get(json, nestedPath)
 					// Remove empty strings, zeros, and null values
-					if val.Type == gjson.Null || val.String() == "" || 
-					   (attr == "ttl" && val.Int() == 0) || 
-					   (attr == "session_affinity_ttl" && val.Int() == 0) {
+					if val.Type == gjson.Null || val.String() == "" ||
+						(attr == "ttl" && val.Int() == 0) ||
+						(attr == "session_affinity_ttl" && val.Int() == 0) {
 						json, _ = sjson.Delete(json, nestedPath)
 					}
 				}
@@ -890,7 +880,7 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 		{"region_pools", "region"},
 		{"pop_pools", "pop"},
 	}
-	
+
 	for _, poolAttr := range poolAttrs {
 		val := gjson.Get(json, attrPath+"."+poolAttr.attrName)
 		if val.IsArray() {
