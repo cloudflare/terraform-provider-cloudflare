@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
@@ -92,8 +93,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"jwt": schema.StringAttribute{
 						Description: "Token provided upon successful upload of all files from a registered manifest.",
 						Optional:    true,
-						Sensitive:   true,
 						WriteOnly:   true,
+					},
+					"directory": schema.StringAttribute{
+						Description: "Path to the directory containing asset files to upload.",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.ConflictsWith(path.MatchRoot("assets").AtName("jwt")),
+						},
+					},
+					"asset_manifest_sha256": schema.StringAttribute{
+						Description: "The SHA-256 hash of the asset manifest of files to upload.",
+						Computed:    true,
+						PlanModifiers: []planmodifier.String{
+							ComputeSHA256HashOfAssetManifest(),
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},

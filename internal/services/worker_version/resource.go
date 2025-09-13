@@ -67,8 +67,7 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	assets := data.Assets
-	if assets != nil {
+	if data.Assets != nil {
 		resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("assets").AtName("jwt"), &data.Assets.JWT)...) // "assets.jwt" is write-only, get from config
 	}
 
@@ -76,6 +75,13 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	err := handleAssets(ctx, r.client, data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to upload assets", err.Error())
+		return
+	}
+
+	assets := data.Assets
 	modules := data.Modules
 	if modules != nil {
 		for _, mod := range *data.Modules {
@@ -134,8 +140,8 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	stateModules := data.Modules
 	assets := data.Assets // "assets" is not returned by the API, so preserve its state value
+	stateModules := data.Modules
 
 	res := new(http.Response)
 	env := WorkerVersionResultEnvelope{*data}

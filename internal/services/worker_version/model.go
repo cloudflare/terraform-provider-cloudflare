@@ -43,8 +43,10 @@ func (m WorkerVersionModel) MarshalJSONForUpdate(state WorkerVersionModel) (data
 }
 
 type WorkerVersionAssetsModel struct {
-	Config *WorkerVersionAssetsConfigModel `tfsdk:"config" json:"config,optional"`
-	JWT    types.String                    `tfsdk:"jwt" json:"jwt,optional"`
+	Config              *WorkerVersionAssetsConfigModel `tfsdk:"config" json:"config,optional"`
+	JWT                 types.String                    `tfsdk:"jwt" json:"jwt,optional"`
+	Directory           types.String                    `tfsdk:"directory" json:"-,optional"`
+	AssetManifestSHA256 types.String                    `tfsdk:"asset_manifest_sha256" json:"-,computed"`
 }
 
 type WorkerVersionAssetsConfigModel struct {

@@ -1,0 +1,158 @@
+version: "1.0"
+description: "Cloudflare Terraform Provider v5 Attribute Renames and Transformations"
+
+# Simple attribute renames (old_name -> new_name)
+attribute_renames:
+  cloudflare_api_token:
+    policy: policies
+  
+  cloudflare_account_member:
+    role_ids: roles
+    email_address: email
+  
+  cloudflare_byo_ip_prefix:
+    advertisement: advertised
+  
+  cloudflare_hostname_tls_setting:
+    setting: setting_id
+  
+  cloudflare_load_balancer:
+    fallback_pool_id: fallback_pool
+    default_pool_ids: default_pools
+  
+  cloudflare_queue:
+    name: queue_name
+  
+  cloudflare_r2_bucket:
+    location_hint: location
+  
+  cloudflare_workers_kv:
+    key: key_name
+  
+  cloudflare_zero_trust_tunnel_cloudflared:
+    secret: tunnel_secret
+  
+  cloudflare_tunnel:
+    secret: tunnel_secret
+  
+  cloudflare_logpull_retention:
+    enabled: flag
+  
+  cloudflare_logpush_ownership_challenge:
+    ownership_challenge_filename: filename
+  
+  cloudflare_zero_trust_access_short_lived_certificate:
+    application_id: app_id
+  
+  cloudflare_workers_secret:
+    secret_text: text
+  
+  cloudflare_tiered_cache:
+    cache_type: value
+
+# Attributes to remove
+attribute_removals:
+  cloudflare_origin_ca_certificate:
+    - min_days_for_renewal
+  
+  cloudflare_access_policy:
+    - application_id
+    - precedence
+  
+  cloudflare_zero_trust_access_group:
+    - application_id
+    - precedence
+  
+  cloudflare_access_service_token:
+    - min_days_for_renewal
+  
+  cloudflare_zero_trust_access_service_token:
+    - min_days_for_renewal
+  
+  cloudflare_zero_trust_tunnel_cloudflared:
+    - cname
+  
+  cloudflare_tunnel:
+    - cname
+  
+  cloudflare_dns_record:
+    - hostname
+
+# Complex transformations that need special handling
+complex_transformations:
+  provider_cloudflare:
+    # Version constraint update
+    version:
+      pattern: "version = *"
+      replacement: 'version = "~> 5"'
+  
+  cloudflare_account:
+    # Wrap enforce_twofactor in settings block
+    enforce_twofactor:
+      wrap_in: settings
+  
+  cloudflare_page_rule:
+    # Transform cache_key_fields.query_string
+    cache_key_fields:
+      query_string:
+        ignore_false: 'include = ["*"]'
+        ignore_true: 'exclude = ["*"]'
+  
+  cloudflare_notification_policy:
+    # Consolidate integration attributes into mechanisms block
+    consolidate:
+      from:
+        - webhooks_integration
+        - pagerduty_integration
+        - email_integration
+      to: mechanisms
+      mapping:
+        webhooks_integration: webhooks
+        pagerduty_integration: pagerduty
+        email_integration: email
+  
+  cloudflare_ruleset:
+    # Transform rules.action_parameters.rules from single value to array
+    rules:
+      action_parameters:
+        rules:
+          transform: to_array
+  
+  cloudflare_teams_list:
+    # Transform items from simple array to array of objects
+    items:
+      transform: wrap_values
+      wrapper: "{ value = $item }"
+  
+  cloudflare_zero_trust_list:
+    # Same as cloudflare_teams_list
+    items:
+      transform: wrap_values
+      wrapper: "{ value = $item }"
+  
+  cloudflare_zone_cache_reserve:
+    # Transform enabled boolean to string values
+    enabled:
+      rename_to: value
+      value_mapping:
+        "true": "on"
+        "false": "off"
+  
+  cloudflare_zone_cache_variants:
+    # Move all attributes into value block and preserve zone_id
+    transform: wrap_all_in_value
+    preserve_outside: [zone_id]
+  
+  cloudflare_web_analytics_site:
+    # Wrap ruleset_id in ruleset block
+    ruleset_id:
+      wrap_in: ruleset
+      as: id
+
+# Notes for implementation
+notes:
+  - "Provider version constraint should only be updated within provider blocks"
+  - "Some resources have duplicate rename rules that need deduplication"
+  - "Complex transformations may require AST manipulation beyond simple string replacement"
+  - "Items transformation for teams_list and zero_trust_list requires converting string array to object array"
+  - "Zone cache variants requires special handling to wrap entire body in value block while preserving zone_id"
