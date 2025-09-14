@@ -79,9 +79,10 @@ func transformCloudflareRulesetStateJSON(json string, instancePath string) strin
 				actionParams := make(map[string]interface{})
 
 				// Copy all simple action parameter fields
+				// Note: disable_railgun was removed in v5, so we exclude it
 				simpleFields := []string{
 						"additional_cacheable_ports", "automatic_https_rewrites", "bic", "cache",
-						"content", "content_type", "disable_apps", "disable_railgun", "disable_zaraz",
+						"content", "content_type", "disable_apps", "disable_zaraz",
 						"disable_rum", "fonts", "email_obfuscation", "host_header", "hotlink_protection",
 						"id", "increment", "mirage", "opportunistic_encryption", "origin_cache_control",
 						"polish", "products", "read_timeout", "respect_strong_etags",
@@ -315,7 +316,7 @@ func transformCacheKey(json string, attrPath string, ruleIdx int64) map[string]i
 			qs := make(map[string]interface{})
 			qsPath := ckCustomPath + `\.query_string\.0`
 			
-			// Handle include array
+			// Handle include array - transform to v5 structure
 			includeCount := gjson.Get(json, qsPath+`\.include\.#`)
 			if includeCount.Exists() && includeCount.Int() > 0 {
 				var includes []string
@@ -324,10 +325,17 @@ func transformCacheKey(json string, attrPath string, ruleIdx int64) map[string]i
 						includes = append(includes, val.String())
 					}
 				}
-				qs["include"] = includes
+				// Transform to v5 structure: { list = [...] } or { all = true }
+				if len(includes) == 1 && includes[0] == "*" {
+					// Special case: ["*"] becomes { all = true }
+					qs["include"] = map[string]interface{}{"all": true}
+				} else if len(includes) > 0 {
+					// Regular case: ["param1", "param2"] becomes { list = ["param1", "param2"] }
+					qs["include"] = map[string]interface{}{"list": includes}
+				}
 			}
 			
-			// Handle exclude array
+			// Handle exclude array - transform to v5 structure
 			excludeCount := gjson.Get(json, qsPath+`\.exclude\.#`)
 			if excludeCount.Exists() && excludeCount.Int() > 0 {
 				var excludes []string
@@ -336,7 +344,14 @@ func transformCacheKey(json string, attrPath string, ruleIdx int64) map[string]i
 						excludes = append(excludes, val.String())
 					}
 				}
-				qs["exclude"] = excludes
+				// Transform to v5 structure: { list = [...] } or { all = true }
+				if len(excludes) == 1 && excludes[0] == "*" {
+					// Special case: ["*"] becomes { all = true }
+					qs["exclude"] = map[string]interface{}{"all": true}
+				} else if len(excludes) > 0 {
+					// Regular case: ["param1", "param2"] becomes { list = ["param1", "param2"] }
+					qs["exclude"] = map[string]interface{}{"list": excludes}
+				}
 			}
 			
 			if len(qs) > 0 {
@@ -566,6 +581,13 @@ func transformURI(json string, attrPath string, ruleIdx int64) map[string]interf
 
 // convertArraysToObjects converts single-element arrays to objects for SingleNestedAttribute fields
 func convertArraysToObjects(data map[string]interface{}) map[string]interface{} {
+	// Remove deprecated disable_railgun attribute if present in action_parameters
+	if data["action"] != nil && data["action_parameters"] != nil {
+		if ap, ok := data["action_parameters"].(map[string]interface{}); ok {
+			delete(ap, "disable_railgun")
+		}
+	}
+
 	// Fields that should be objects (SingleNestedAttribute), not arrays
 	singleNestedFields := map[string]bool{
 		"action_parameters": true,
@@ -597,7 +619,7 @@ func convertArraysToObjects(data map[string]interface{}) map[string]interface{} 
 		"ratelimit": true,
 		"status_code_range": true,
 	}
-	
+
 	// Process each field in the data
 	for key, value := range data {
 		// Special handling for headers - convert from list to map
@@ -621,7 +643,63 @@ func convertArraysToObjects(data map[string]interface{}) map[string]interface{} 
 			}
 			continue
 		}
-		
+
+		// Special handling for query_string fields (include/exclude)
+		// These should be wrapped in {list: [...]} or {all: true}
+		if key == "query_string" {
+			if obj, isMap := value.(map[string]interface{}); isMap {
+				// Process include field
+				if includeVal, hasInclude := obj["include"]; hasInclude {
+					if arr, isArray := includeVal.([]interface{}); isArray {
+						// Transform array to v5 structure
+						if len(arr) == 1 && arr[0] == "*" {
+							obj["include"] = map[string]interface{}{"all": true}
+						} else if len(arr) > 0 {
+							obj["include"] = map[string]interface{}{"list": arr}
+						}
+					}
+				}
+				// Process exclude field
+				if excludeVal, hasExclude := obj["exclude"]; hasExclude {
+					if arr, isArray := excludeVal.([]interface{}); isArray {
+						// Transform array to v5 structure
+						if len(arr) == 1 && arr[0] == "*" {
+							obj["exclude"] = map[string]interface{}{"all": true}
+						} else if len(arr) > 0 {
+							obj["exclude"] = map[string]interface{}{"list": arr}
+						}
+					}
+				}
+				// Recursively process the rest of query_string
+				data[key] = convertArraysToObjects(obj)
+			} else if arr, isArray := value.([]interface{}); isArray && len(arr) > 0 {
+				// If query_string itself is an array, convert to object first
+				if obj, isMap := arr[0].(map[string]interface{}); isMap {
+					// Process include/exclude fields within
+					if includeVal, hasInclude := obj["include"]; hasInclude {
+						if includeArr, isArray := includeVal.([]interface{}); isArray {
+							if len(includeArr) == 1 && includeArr[0] == "*" {
+								obj["include"] = map[string]interface{}{"all": true}
+							} else if len(includeArr) > 0 {
+								obj["include"] = map[string]interface{}{"list": includeArr}
+							}
+						}
+					}
+					if excludeVal, hasExclude := obj["exclude"]; hasExclude {
+						if excludeArr, isArray := excludeVal.([]interface{}); isArray {
+							if len(excludeArr) == 1 && excludeArr[0] == "*" {
+								obj["exclude"] = map[string]interface{}{"all": true}
+							} else if len(excludeArr) > 0 {
+								obj["exclude"] = map[string]interface{}{"list": excludeArr}
+							}
+						}
+					}
+					data[key] = convertArraysToObjects(obj)
+				}
+			}
+			continue
+		}
+
 		// Check if this field should be converted from array to object
 		if singleNestedFields[key] {
 			if arr, isArray := value.([]interface{}); isArray {
@@ -646,7 +724,7 @@ func convertArraysToObjects(data map[string]interface{}) map[string]interface{} 
 			data[key] = convertArraysToObjects(obj)
 		}
 	}
-	
+
 	return data
 }
 
