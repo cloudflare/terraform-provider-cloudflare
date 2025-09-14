@@ -56,7 +56,7 @@ declare -a SERVICES=(
     "resource=./internal/services/logpull_retention parallel=0"
     "resource=./internal/services/logpush_job parallel=0"
     "resource=./internal/services/logpush_ownership_challenge parallel=0"
-    "resource=./internal/services/magic_transit_connector parallel=0"
+    "resource=./internal/services/magic_transit_connector parallel=1"
     "resource=./internal/services/managed_transforms parallel=1"
     "resource=./internal/services/notification_policy_webhooks parallel=0"
     "resource=./internal/services/observatory_scheduled_test parallel=0"
