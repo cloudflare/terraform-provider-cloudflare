@@ -28,6 +28,7 @@ func main() {
 	useTransformer := flag.Bool("transformer", false, "Use Go-based YAML transformations (default: false)")
 	transformerConfig := flag.String("transformer-dir", "", "Path to directory containing transformer YAML configs (defaults to embedded configs)")
 	patternsDir := flag.String("patterns-dir", "", "Local directory to get patterns from (otherwise they're pulled from github)")
+	zoneSettingsModules := flag.Bool("zone-settings-modules", false, "Handle zone_settings modules by expanding them at call sites")
 	flag.Parse()
 
 	// Default config directory to current working directory if not specified
@@ -115,6 +116,24 @@ func main() {
 		fmt.Println("Running Go transformations on configuration files...")
 		if err := processConfigDirectory(*configDir, *dryRun, *importsFile); err != nil {
 			log.Fatalf("Error processing config directory: %v", err)
+		}
+	}
+
+	// Handle zone-settings-modules if requested
+	if *zoneSettingsModules {
+		if *configDir != "" && *configDir != "false" {
+			fmt.Println("Handling zone settings modules...")
+			if err := handleZoneSettingsModules(*configDir, *dryRun); err != nil {
+				log.Fatalf("Error handling zone settings modules: %v", err)
+			}
+		}
+	} else {
+		// Process config directory if specified and not explicitly disabled
+		if *configDir != "" && *configDir != "false" {
+			fmt.Println("Running Go transformations on configuration files...")
+			if err := processConfigDirectory(*configDir, *dryRun, *importsFile); err != nil {
+				log.Fatalf("Error processing config directory: %v", err)
+			}
 		}
 	}
 
