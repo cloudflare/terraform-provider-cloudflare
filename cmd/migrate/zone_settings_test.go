@@ -168,5 +168,5 @@ import {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileWithoutImports)
 }

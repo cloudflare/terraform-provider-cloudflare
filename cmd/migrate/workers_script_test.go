@@ -221,5 +221,5 @@ func TestWorkersScriptTransformation(t *testing.T) {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileWithoutImports)
 }

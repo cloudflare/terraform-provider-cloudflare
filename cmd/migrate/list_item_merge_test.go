@@ -269,5 +269,5 @@ resource "cloudflare_list" "example" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileWithoutImports)
 }

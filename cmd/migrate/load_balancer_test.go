@@ -472,7 +472,7 @@ func TestLoadBalancerRulesTransformation(t *testing.T) {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileWithoutImports)
 }
 
 // Configuration transformation tests for pool blocks to maps
@@ -566,5 +566,5 @@ func TestLoadBalancerPoolBlockTransformation(t *testing.T) {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileWithoutImports)
 }

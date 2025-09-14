@@ -133,7 +133,7 @@ resource "cloudflare_zone" "secondary" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileWithoutImports)
 }
 
 func TestZoneStateTransformation(t *testing.T) {

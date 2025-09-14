@@ -170,7 +170,7 @@ resource "cloudflare_snippet" "test" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileWithoutImports)
 }
 
 func TestMigrateCloudflareSnippetState(t *testing.T) {

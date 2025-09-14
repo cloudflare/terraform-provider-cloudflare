@@ -188,7 +188,7 @@ func TestTransformZeroTrustAccessIdentityProvider(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			output, err := transformFile([]byte(test.input), "test.tf")
+			output, err := transformFileWithoutImports([]byte(test.input), "test.tf")
 			if err != nil {
 				t.Fatalf("transformFile failed: %v", err)
 			}

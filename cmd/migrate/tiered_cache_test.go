@@ -194,7 +194,7 @@ resource "cloudflare_tiered_cache" "example" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileWithoutImports)
 }
 
 // State transformation tests

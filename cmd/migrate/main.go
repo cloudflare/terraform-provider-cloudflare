@@ -15,11 +15,15 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
 )
 
+// Global collector for import blocks when using -imports-file flag
+var importBlocks []*hclwrite.Block
+
 func main() {
 	// Define flags
 	dryRun := flag.Bool("dryrun", false, "Show what changes would be made without actually modifying files")
 	configDir := flag.String("config", "", "Directory containing Terraform files to migrate (defaults to current directory)")
 	stateFile := flag.String("state", "", "Terraform state file to migrate (defaults to first .tfstate file in current directory)")
+	importsFile := flag.String("imports", "", "File to write import blocks to (instead of inline)")
 	useGrit := flag.Bool("grit", true, "Use grit for initial migrations (default: false)")
 	useTransformer := flag.Bool("transformer", false, "Use Go-based YAML transformations (default: false)")
 	transformerConfig := flag.String("transformer-dir", "", "Path to directory containing transformer YAML configs (defaults to embedded configs)")
@@ -109,7 +113,7 @@ func main() {
 	// Process config directory if specified and not explicitly disabled
 	if *configDir != "" && *configDir != "false" {
 		fmt.Println("Running Go transformations on configuration files...")
-		if err := processConfigDirectory(*configDir, *dryRun); err != nil {
+		if err := processConfigDirectory(*configDir, *dryRun, *importsFile); err != nil {
 			log.Fatalf("Error processing config directory: %v", err)
 		}
 	}
@@ -126,7 +130,7 @@ func main() {
 	}
 }
 
-func processConfigDirectory(directory string, dryRun bool) error {
+func processConfigDirectory(directory string, dryRun bool, importsFile string) error {
 	// Check if the directory exists
 	info, err := os.Stat(directory)
 	if err != nil {
@@ -139,7 +143,7 @@ func processConfigDirectory(directory string, dryRun bool) error {
 	fmt.Printf("Processing config directory: %s\n", directory)
 
 	// Walk through the directory recursively
-	return filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			log.Printf("Error accessing path %s: %v", path, err)
 			return err
@@ -156,13 +160,31 @@ func processConfigDirectory(directory string, dryRun bool) error {
 		}
 
 		// Process the file
-		if err := processFile(path, dryRun); err != nil {
+		if err := processFile(path, dryRun, importsFile); err != nil {
 			log.Printf("Error processing file %s: %v", path, err)
 			// return err
 		}
 
 		return nil
 	})
+
+	// After processing all files, write imports file if specified
+	if err == nil && importsFile != "" {
+		// Validate that imports file has .tf extension
+		if !strings.HasSuffix(strings.ToLower(importsFile), ".tf") {
+			return fmt.Errorf("imports file must have .tf extension, got: %s", importsFile)
+		}
+
+		if len(importBlocks) > 0 {
+			if err := writeImportsFile(importsFile, dryRun); err != nil {
+				return fmt.Errorf("failed to write imports file: %v", err)
+			}
+		} else {
+			fmt.Printf("  ! No import blocks collected for imports file %s\n", importsFile)
+		}
+	}
+
+	return err
 }
 
 func processStateFile(stateFile string, dryRun bool) error {
@@ -196,9 +218,7 @@ func processStateFile(stateFile string, dryRun bool) error {
 	return nil
 }
 
-func processFile(filename string, dryRun bool) error {
-	fmt.Printf("    DEBUG: Processing file %s\n", filename)
-
+func processFile(filename string, dryRun bool, importsFile string) error {
 	// Read the file
 	originalBytes, err := os.ReadFile(filename)
 	if err != nil {
@@ -206,7 +226,7 @@ func processFile(filename string, dryRun bool) error {
 	}
 
 	// Transform the file
-	transformedBytes, err := transformFile(originalBytes, filename)
+	transformedBytes, err := transformFile(originalBytes, filename, importsFile)
 	if err != nil {
 		return err
 	}
@@ -230,7 +250,7 @@ func processFile(filename string, dryRun bool) error {
 	return nil
 }
 
-func transformFile(content []byte, filename string) ([]byte, error) {
+func transformFile(content []byte, filename string, importsFile string) ([]byte, error) {
 	// Create new diagnostics collector for this file
 	diags := ast.NewDiagnostics()
 	// First, transform header blocks in load_balancer_pool resources at the string level
@@ -262,7 +282,7 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 
 		if isZoneSettingsOverrideResource(block) {
 			blocksToRemove = append(blocksToRemove, block)
-			newBlocks = append(newBlocks, transformZoneSettingsBlock(block)...)
+			newBlocks = append(newBlocks, transformZoneSettingsBlock(block, importsFile)...)
 		}
 
 		if isRegionalHostnameResource(block) {
@@ -411,4 +431,49 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 	}
 
 	return formatted, nil
+}
+
+// transformFileWithoutImports applies all transformations to a file without generating import statements
+func transformFileWithoutImports(content []byte, filename string) ([]byte, error) {
+	return transformFile(content, filename, "")
+}
+
+// writeImportsFile writes collected import blocks to the specified file
+func writeImportsFile(filename string, dryRun bool) error {
+	if len(importBlocks) == 0 {
+		return nil
+	}
+
+	// Create directory if it doesn't exist
+	dir := filepath.Dir(filename)
+	if dir != "." {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return fmt.Errorf("failed to create directory %s: %v", dir, err)
+		}
+	}
+
+	// Create a new HCL file for the imports
+	importsFileHCL := hclwrite.NewEmptyFile()
+	body := importsFileHCL.Body()
+
+	// Add all collected import blocks
+	for _, importBlock := range importBlocks {
+		body.AppendBlock(importBlock)
+	}
+
+	// Format the content
+	formatted := hclwrite.Format(importsFileHCL.Bytes())
+
+	if dryRun {
+		fmt.Printf("  ✗ Would create imports file %s with %d import blocks\n", filename, len(importBlocks))
+		fmt.Printf("    Preview of imports file content:\n%s\n", string(formatted))
+	} else {
+		// Write the imports file
+		if err := os.WriteFile(filename, formatted, 0644); err != nil {
+			return fmt.Errorf("failed to write imports file %s: %v", filename, err)
+		}
+		fmt.Printf("  ✓ Created imports file %s with %d import blocks\n", filename, len(importBlocks))
+	}
+
+	return nil
 }

@@ -70,5 +70,5 @@ resource "cloudflare_workers_route" "my_route" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileWithoutImports)
 }

@@ -229,7 +229,7 @@ resource "cloudflare_dns_record" "caa_test2" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileWithoutImports)
 }
 
 func TestDNSRecordStateTransformation(t *testing.T) {

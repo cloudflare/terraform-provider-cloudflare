@@ -352,7 +352,7 @@ func transformFileWithYAML(content []byte, filename string) ([]byte, error) {
 	}
 
 	// Then apply Go transformations
-	return transformFile(transformed, filename)
+	return transformFileWithoutImports(transformed, filename)
 }
 
 // applyYAMLTransformationsToFile applies all YAML transformations to a file
