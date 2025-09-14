@@ -22,7 +22,6 @@ import (
 )
 
 func TestAccCloudflareMagicTransitConnectorItWorks(t *testing.T) {
-	t.Skip("API 404: Probably the physical device is no longer present so the id has changed.")
 	resourceName := utils.GenerateRandomResourceName()
 	tfstateName := fmt.Sprintf("cloudflare_magic_transit_connector.%s", resourceName)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
