@@ -3,7 +3,6 @@ package load_balancer_monitor_test
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"testing"
