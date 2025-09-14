@@ -249,10 +249,6 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			transformLoadBalancerBlock(block, diags)
 		}
 
-		if isCloudflareRulesetResource(block) {
-			transformCloudflareRulesetBlock(block, diags)
-		}
-
 		if isAccessPolicyResource(block) {
 			// TOOD eventually pass diags through to all resource transformers,
 			// not just accessPolicyBlock
