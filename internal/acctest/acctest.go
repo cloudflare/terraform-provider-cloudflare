@@ -606,8 +606,6 @@ func WriteOutConfig(t *testing.T, v4Config string, tmpDir string) {
 func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	t.Helper()
 
-	fmt.Printf("AAAAAAAAAAAAAAAAAAAAAa\n\n")
-
 	// Get the current working directory to find the migration binary
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -668,8 +666,8 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 		cmd = exec.Command("go", "run", "-C", migratePath, ".",
 			"-config", tmpDir,
 			"-state", filepath.Join(stateDir, "terraform.tfstate"),
-			"-grit=false",       // Disable Grit transformations
-			"-transformer=true", // Enable YAML transformations
+			"-grit=false",                      // Disable Grit transformations
+			"-transformer=true",                // Enable YAML transformations
 			"-transformer-dir", transformerDir) // Use local YAML configs
 	} else {
 		// Use the traditional Grit-based transformations (default)
