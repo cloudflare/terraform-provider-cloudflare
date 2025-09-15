@@ -680,3 +680,64 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		},
 	})
 }
+
+// TestMigrateZeroTrustAccessApplication_CORSHeaders_Manual tests recovery from cors_headers 
+// array-to-object state corruption by manual state editing
+func TestMigrateZeroTrustAccessApplication_CORSHeaders_Manual(t *testing.T) {
+	t.Skip("Manual test: This test demonstrates the cors_headers state issue. " +
+		"If you encounter 'Failed to decode from state: missing expected { for cors_headers', " +
+		"you need to manually edit your terraform.tfstate file to change cors_headers from " +
+		"an array format like 'cors_headers': [{}] to object format 'cors_headers': {} " +
+		"or remove the cors_headers entirely from the state file and re-import the resource.")
+
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_zero_trust_access_application." + rnd
+
+	// Configuration that should work with both old and new schema
+	config := fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
+  account_id   = "%[2]s"
+  name         = "%[1]s"
+  domain       = "%[1]s.%[3]s"
+  type         = "self_hosted"
+  
+  cors_headers = {
+    allowed_methods = ["GET", "POST", "OPTIONS"]
+    allowed_origins = ["https://example.com"]
+    allow_credentials = true
+    max_age = 600
+  }
+}`, rnd, accountID, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact(fmt.Sprintf("%s.%s", rnd, domain))),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("self_hosted")),
+					// Verify cors_headers is now an object (not array) with expected structure
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cors_headers"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cors_headers").AtMapKey("allowed_methods"), knownvalue.ListSizeExact(3)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cors_headers").AtMapKey("allowed_origins"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cors_headers").AtMapKey("allow_credentials"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cors_headers").AtMapKey("max_age"), knownvalue.Float64Exact(600)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+				},
+			},
+		},
+	})
+}
