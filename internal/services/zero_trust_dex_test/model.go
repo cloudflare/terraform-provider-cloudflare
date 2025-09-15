@@ -20,8 +20,8 @@ type ZeroTrustDEXTestModel struct {
 	Name           types.String                            `tfsdk:"name" json:"name,required"`
 	Data           *ZeroTrustDEXTestDataModel              `tfsdk:"data" json:"data,required"`
 	Description    types.String                            `tfsdk:"description" json:"description,optional"`
-	Targeted       types.Bool                              `tfsdk:"targeted" json:"targeted,optional"`
-	TargetPolicies *[]*ZeroTrustDEXTestTargetPoliciesModel `tfsdk:"target_policies" json:"target_policies,optional"`
+	Targeted       types.Bool                              `tfsdk:"targeted" json:"targeted,computed"`
+	TargetPolicies *[]*ZeroTrustDEXTestTargetPoliciesModel `tfsdk:"target_policies" json:"target_policies,computed_optional"`
 }
 
 func (m ZeroTrustDEXTestModel) MarshalJSON() (data []byte, err error) {
@@ -33,13 +33,13 @@ func (m ZeroTrustDEXTestModel) MarshalJSONForUpdate(state ZeroTrustDEXTestModel)
 }
 
 type ZeroTrustDEXTestDataModel struct {
-	Host   types.String `tfsdk:"host" json:"host,optional"`
-	Kind   types.String `tfsdk:"kind" json:"kind,optional"`
+	Host   types.String `tfsdk:"host" json:"host,required"`
+	Kind   types.String `tfsdk:"kind" json:"kind,required"`
 	Method types.String `tfsdk:"method" json:"method,optional"`
 }
 
 type ZeroTrustDEXTestTargetPoliciesModel struct {
-	ID      types.String `tfsdk:"id" json:"id,optional"`
-	Default types.Bool   `tfsdk:"default" json:"default,optional"`
-	Name    types.String `tfsdk:"name" json:"name,optional"`
+	ID      types.String `tfsdk:"id" json:"id,required"`
+	Default types.Bool   `tfsdk:"default" json:"default,computed"`
+	Name    types.String `tfsdk:"name" json:"name,computed"`
 }
