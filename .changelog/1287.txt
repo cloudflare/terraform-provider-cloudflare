@@ -1,3 +1,0 @@
-```release-note:bug
-resource/cloudflare_list: list items are cleared when no nested item block defined
-```
