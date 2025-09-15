@@ -136,6 +136,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			case "cloudflare_load_balancer":
 				result = transformLoadBalancerStateJSON(result, path)
 
+			case "cloudflare_load_balancer_monitor":
+				result = transformLoadBalancerMonitorStateJSON(result, path)
+
 			case "cloudflare_tiered_cache":
 				result = transformTieredCacheStateJSON(result, path, resourcePath)
 
@@ -1033,6 +1036,51 @@ func transformLoadBalancerState(attributes map[string]interface{}) {
 			}
 		}
 	}
+}
+
+// transformLoadBalancerMonitorStateJSON handles v4 to v5 state migration for cloudflare_load_balancer_monitor
+// Transforms the header field from array format to map format
+func transformLoadBalancerMonitorStateJSON(json string, instancePath string) string {
+	// Handle both full path and relative path scenarios
+	attrPath := instancePath
+	if instancePath != "" {
+		attrPath = instancePath + ".attributes"
+	} else {
+		attrPath = "attributes"
+	}
+
+	// Transform header from array format to map format
+	// v4: header = [{"header": "Host", "values": ["example.com"]}]
+	// v5: header = {"Host": ["example.com"]}
+	header := gjson.Get(json, attrPath+".header")
+	if header.IsArray() {
+		headerMap := make(map[string]interface{})
+		for _, item := range header.Array() {
+			if item.IsObject() {
+				headerName := item.Get("header").String()
+				values := item.Get("values")
+				if headerName != "" && values.Exists() {
+					// Convert values to string array
+					var stringValues []string
+					if values.IsArray() {
+						for _, v := range values.Array() {
+							stringValues = append(stringValues, v.String())
+						}
+					}
+					headerMap[headerName] = stringValues
+				}
+			}
+		}
+		// Set the transformed header
+		if len(headerMap) > 0 {
+			json, _ = sjson.Set(json, attrPath+".header", headerMap)
+		} else {
+			// Empty array -> remove the attribute
+			json, _ = sjson.Delete(json, attrPath+".header")
+		}
+	}
+
+	return json
 }
 
 // transformZeroTrustAccessIdentityProviderStateJSON handles v4 to v5 state migration for cloudflare_zero_trust_access_identity_provider
