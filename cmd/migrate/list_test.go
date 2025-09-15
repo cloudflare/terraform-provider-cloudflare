@@ -249,5 +249,5 @@ resource "cloudflare_list" "mixed_list" {
 		},
 	}
 	
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }

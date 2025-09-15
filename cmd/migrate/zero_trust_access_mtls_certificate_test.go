@@ -42,5 +42,5 @@ resource "cloudflare_zero_trust_access_mtls_certificate" "example" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }

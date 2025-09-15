@@ -128,7 +128,7 @@ resource "cloudflare_zero_trust_access_mtls_hostname_settings" "test" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 func TestAccessMutualTLSHostnameSettingsTransformation(t *testing.T) {
@@ -211,5 +211,5 @@ resource "cloudflare_access_mutual_tls_hostname_settings" "example" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
