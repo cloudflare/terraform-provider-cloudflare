@@ -916,3 +916,410 @@ func TestCustomPagesStateTransformation(t *testing.T) {
 
 	RunFullStateTransformationTests(t, tests)
 }
+
+func TestTransformZeroTrustAccessApplicationStateJSON(t *testing.T) {
+	tests := []StateTestCase{
+		{
+			Name: "transforms_cors_headers_from_array_to_object",
+			Input: `{
+				"version": 4,
+				"terraform_version": "1.12.2",
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"identity_schema_version": 0,
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"type": "self_hosted",
+							"cors_headers": [{
+								"allowed_methods": ["GET", "POST", "OPTIONS"],
+								"allowed_origins": ["https://example.com"],
+								"allow_credentials": true,
+								"max_age": 600
+							}]
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"terraform_version": "1.12.2",
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application", 
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"type": "self_hosted",
+							"cors_headers": {
+								"allowed_methods": ["GET", "POST", "OPTIONS"],
+								"allowed_origins": ["https://example.com"],
+								"allow_credentials": true,
+								"max_age": 600
+							}
+						},
+						"identity_schema_version": 0
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "handles_empty_cors_headers_array",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"cors_headers": []
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123", 
+							"name": "Test App",
+							"cors_headers": null
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "preserves_cors_headers_when_already_object",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App", 
+							"cors_headers": {
+								"allowed_methods": ["GET", "POST"],
+								"allowed_origins": ["https://test.com"]
+							}
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app", 
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"cors_headers": {
+								"allowed_methods": ["GET", "POST"],
+								"allowed_origins": ["https://test.com"]
+							}
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "transforms_landing_page_design_from_array_to_object",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"landing_page_design": [{
+								"title": "Welcome",
+								"message": "Please sign in",
+								"image_url": "https://example.com/logo.png"
+							}]
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"landing_page_design": {
+								"title": "Welcome",
+								"message": "Please sign in",
+								"image_url": "https://example.com/logo.png"
+							}
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "handles_empty_landing_page_design_array",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"landing_page_design": []
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"landing_page_design": null
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "transforms_saas_app_from_array_to_object",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test SAAS App",
+							"type": "saas",
+							"saas_app": [{
+								"consumer_service_url": "https://example.com/sso/saml/consume",
+								"sp_entity_id": "example.com",
+								"name_id_format": "email",
+								"auth_type": "saml"
+							}]
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test SAAS App",
+							"type": "saas",
+							"saas_app": {
+								"consumer_service_url": "https://example.com/sso/saml/consume",
+								"sp_entity_id": "example.com",
+								"name_id_format": "email",
+								"auth_type": "saml"
+							}
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "handles_empty_saas_app_array",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"type": "saas",
+							"saas_app": []
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"type": "saas",
+							"saas_app": null
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "transforms_scim_config_from_array_to_object",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"type": "saas",
+							"scim_config": [{
+								"enabled": true,
+								"remote_uri": "https://example.com/scim/v2",
+								"deactivate_on_delete": true
+							}]
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"type": "saas",
+							"scim_config": {
+								"enabled": true,
+								"remote_uri": "https://example.com/scim/v2",
+								"deactivate_on_delete": true
+							}
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "handles_empty_scim_config_array",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"scim_config": []
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"scim_config": null
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "transforms_multiple_attributes_together",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"cors_headers": [{
+								"allowed_methods": ["GET", "POST"],
+								"allow_credentials": false
+							}],
+							"landing_page_design": [{
+								"title": "Welcome",
+								"message": "Please sign in"
+							}],
+							"saas_app": [{
+								"consumer_service_url": "https://example.com/callback",
+								"sp_entity_id": "example.com"
+							}],
+							"scim_config": [{
+								"enabled": true,
+								"remote_uri": "https://example.com/scim"
+							}],
+							"policies": ["policy-123"],
+							"allowed_idps": ["idp-1", "idp-2"],
+							"custom_pages": ["page-1"]
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_zero_trust_access_application",
+					"name": "app",
+					"instances": [{
+						"attributes": {
+							"id": "app-id-123",
+							"name": "Test App",
+							"cors_headers": {
+								"allowed_methods": ["GET", "POST"],
+								"allow_credentials": false
+							},
+							"landing_page_design": {
+								"title": "Welcome",
+								"message": "Please sign in"
+							},
+							"saas_app": {
+								"consumer_service_url": "https://example.com/callback",
+								"sp_entity_id": "example.com"
+							},
+							"scim_config": {
+								"enabled": true,
+								"remote_uri": "https://example.com/scim"
+							},
+							"policies": [{"id": "policy-123"}],
+							"allowed_idps": ["idp-1", "idp-2"],
+							"custom_pages": ["page-1"]
+						}
+					}]
+				}]
+			}`,
+		},
+	}
+
+	RunFullStateTransformationTests(t, tests)
+}
