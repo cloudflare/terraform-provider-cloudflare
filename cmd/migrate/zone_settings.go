@@ -36,7 +36,7 @@ func isZoneSettingsOverrideResource(block *hclwrite.Block) bool {
 }
 
 // transformZoneSettingsBlock transforms a zone settings override block into individual zone setting resources
-func transformZoneSettingsBlock(oldBlock *hclwrite.Block) []*hclwrite.Block {
+func transformZoneSettingsBlock(oldBlock *hclwrite.Block, skipImports bool) []*hclwrite.Block {
 	var newBlocks []*hclwrite.Block
 
 	// Get the resource name from the old block
@@ -69,9 +69,11 @@ func transformZoneSettingsBlock(oldBlock *hclwrite.Block) []*hclwrite.Block {
 				)
 				newBlocks = append(newBlocks, newBlock)
 
-				// Create import block for this resource
-				importBlock := createImportBlock(resourceFullName, mappedSettingName, zoneIDAttr)
-				newBlocks = append(newBlocks, importBlock)
+				// Create import block for this resource if not skipping imports
+				if !skipImports {
+					importBlock := createImportBlock(resourceFullName, mappedSettingName, zoneIDAttr)
+					newBlocks = append(newBlocks, importBlock)
+				}
 			}
 
 			// Process nested blocks (security_header, nel)
@@ -79,15 +81,19 @@ func transformZoneSettingsBlock(oldBlock *hclwrite.Block) []*hclwrite.Block {
 				if nestedBlock.Type() == "security_header" {
 					resourceFullName := resourceName + "_security_header"
 					newBlocks = append(newBlocks, transformSecurityHeaderBlock(resourceName, zoneIDAttr, nestedBlock))
-					// Create import block for security_header
-					importBlock := createImportBlock(resourceFullName, "security_header", zoneIDAttr)
-					newBlocks = append(newBlocks, importBlock)
+					// Create import block for security_header if not skipping imports
+					if !skipImports {
+						importBlock := createImportBlock(resourceFullName, "security_header", zoneIDAttr)
+						newBlocks = append(newBlocks, importBlock)
+					}
 				} else if nestedBlock.Type() == "nel" {
 					resourceFullName := resourceName + "_nel"
 					newBlocks = append(newBlocks, transformNELBlock(resourceName, zoneIDAttr, nestedBlock))
-					// Create import block for nel
-					importBlock := createImportBlock(resourceFullName, "nel", zoneIDAttr)
-					newBlocks = append(newBlocks, importBlock)
+					// Create import block for nel if not skipping imports
+					if !skipImports {
+						importBlock := createImportBlock(resourceFullName, "nel", zoneIDAttr)
+						newBlocks = append(newBlocks, importBlock)
+					}
 				}
 			}
 		}

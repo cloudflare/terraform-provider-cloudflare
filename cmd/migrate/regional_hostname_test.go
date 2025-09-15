@@ -123,7 +123,7 @@ resource "cloudflare_regional_hostname" "test" {
 // runTransformationTest is a helper function for testing HCL transformations
 func runTransformationTest(t *testing.T, input, expected string) {
 	// Transform the input
-	result, err := transformFile([]byte(input), "test.tf")
+	result, err := transformFileDefault([]byte(input), "test.tf")
 	assert.NoError(t, err)
 
 	resultStr := string(result)
@@ -141,7 +141,7 @@ func runTransformationTest(t *testing.T, input, expected string) {
 // runSpecialTransformationTest handles the case where we need to check both removal and preservation
 func runSpecialTransformationTest(t *testing.T, input, expected string) {
 	// Transform the input
-	result, err := transformFile([]byte(input), "test.tf")
+	result, err := transformFileDefault([]byte(input), "test.tf")
 	assert.NoError(t, err)
 
 	resultStr := string(result)

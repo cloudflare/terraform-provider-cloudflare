@@ -237,7 +237,7 @@ resource "cloudflare_load_balancer_pool" "test" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 // State transformation tests
@@ -505,5 +505,5 @@ resource "cloudflare_load_balancer_pool" "test" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
