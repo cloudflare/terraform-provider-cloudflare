@@ -117,8 +117,9 @@ func (r *ListResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 
 func (r *ListResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan ListModel
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	var state ListModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -132,18 +133,21 @@ func (r *ListResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
-	items := buildListItemsCreateRequest(plan.Items)
-	_, err = r.client.V1.ReplaceListItems(ctx, cloudflare.AccountIdentifier(plan.AccountID.ValueString()), cloudflare.ListReplaceItemsParams{
-		ID:    plan.ID.ValueString(),
-		Items: items,
-	})
+	//update items if they exist, or if they have been removed
+	if len(plan.Items) > 0 || len(state.Items) > 0 {
+		items := buildListItemsCreateRequest(plan.Items)
+		_, err = r.client.V1.ReplaceListItems(ctx, cloudflare.AccountIdentifier(plan.AccountID.ValueString()), cloudflare.ListReplaceItemsParams{
+			ID:    plan.ID.ValueString(),
+			Items: items,
+		})
 
-	if err != nil {
-		resp.Diagnostics.AddError("Error updating List Items", err.Error())
-		return
+		if err != nil {
+			resp.Diagnostics.AddError("Error updating List Items", err.Error())
+			return
+		}
 	}
 
-	diags = resp.State.Set(ctx, plan)
+	diags := resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 }
 

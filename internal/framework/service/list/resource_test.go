@@ -381,6 +381,58 @@ func TestAccCloudflareList_RemoveInlineConfig(t *testing.T) {
 	})
 }
 
+// Verify an update to a cloudflare_list (description) with no nested items does not affect individual cloudflare_list_items.
+func TestAccCloudflareList_WithSeparateListItem(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	listName := fmt.Sprintf("cloudflare_list.%s", rnd)
+	listItemName := fmt.Sprintf("cloudflare_list_item.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var list cfv1.List
+	var listItem cfv1.ListItem
+	var initialListItemID string
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareListWithSeparateListItem(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListExists(listName, &list),
+					testAccCheckCloudflareListItemExistsForList(listItemName, rnd, &listItem),
+					resource.TestCheckResourceAttr(listName, "name", rnd),
+					resource.TestCheckResourceAttr(listName, "description", rnd),
+					resource.TestCheckResourceAttr(listName, "kind", "ip"),
+					resource.TestCheckResourceAttr(listName, "item.#", "0"), // Verify nested items block is empty
+					resource.TestCheckResourceAttr(listItemName, "ip", "1.1.1.1"),
+				),
+			},
+			{
+				PreConfig: func() {
+					initialListItemID = listItem.ID
+				},
+				Config: testAccCheckCloudflareListWithSeparateListItem(rnd, rnd, rnd+"-updated", accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListExists(listName, &list),
+					testAccCheckCloudflareListItemExistsForList(listItemName, rnd, &listItem),
+					func(state *terraform.State) error {
+						if initialListItemID != listItem.ID {
+							return fmt.Errorf("list item was recreated during list update (id changed %q -> %q)", initialListItemID, listItem.ID)
+						}
+						return nil
+					},
+					resource.TestCheckResourceAttr(listName, "description", rnd+"-updated"),
+					resource.TestCheckResourceAttr(listName, "item.#", "0"),
+					resource.TestCheckResourceAttr(listItemName, "ip", "1.1.1.1"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareListIPListOrdered(ID, name, description, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_list" "%[1]s" {
@@ -469,13 +521,44 @@ func testAccCheckCloudflareListExists(n string, list *cfv1.List) resource.TestCh
 			return fmt.Errorf("No List ID is set")
 		}
 
-		client, _ := acctest.SharedV1Client()
+		client, err := acctest.SharedV1Client()
+		if err != nil {
+			return err
+		}
 		foundList, err := client.GetList(context.Background(), cfv1.AccountIdentifier(accountID), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
 
 		*list = foundList
+
+		return nil
+	}
+}
+func testAccCheckCloudflareListItemExistsForList(n string, listName string, listItem *cfv1.ListItem) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+		listRS := s.RootModule().Resources["cloudflare_list."+listName]
+
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("not found: %s", n)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("no List Item ID is set")
+		}
+
+		client, err := acctest.SharedV1Client()
+		if err != nil {
+			return err
+		}
+		foundListItem, err := client.GetListItem(context.Background(), cfv1.AccountIdentifier(accountID), listRS.Primary.ID, rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		*listItem = foundListItem
 
 		return nil
 	}
@@ -635,5 +718,22 @@ func testAccCheckCloudflareListHostnameUpdate(ID, name, description, accountID s
 	  }
       comment = "hostname two"
     }
+  }`, ID, name, description, accountID)
+}
+
+func testAccCheckCloudflareListWithSeparateListItem(ID, name, description, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[1]s" {
+    account_id = "%[4]s"
+    name = "%[2]s"
+    description = "%[3]s"
+    kind = "ip"
+  }
+
+  resource "cloudflare_list_item" "%[1]s" {
+    account_id = "%[4]s"
+    list_id    = cloudflare_list.%[1]s.id
+    ip         = "1.1.1.1"
+    comment    = "%[3]s"
   }`, ID, name, description, accountID)
 }
