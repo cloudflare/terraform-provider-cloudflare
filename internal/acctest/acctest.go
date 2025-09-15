@@ -619,7 +619,7 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	debugLogf(t, "Migrate path: %s", migratePath)
 
 	// Path to the patterns/transformations directories
-	patternsDir := filepath.Join(projectRoot, ".grit", "patterns")
+	patternsDir := filepath.Join(projectRoot, ".grit")
 	transformerDir := filepath.Join(projectRoot, "cmd", "migrate", "transformations", "config")
 
 	// Check if NO_GRIT environment variable is set
@@ -666,8 +666,8 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 		cmd = exec.Command("go", "run", "-C", migratePath, ".",
 			"-config", tmpDir,
 			"-state", filepath.Join(stateDir, "terraform.tfstate"),
-			"-grit=false",                      // Disable Grit transformations
-			"-transformer=true",                // Enable YAML transformations
+			"-grit=false",       // Disable Grit transformations
+			"-transformer=true", // Enable YAML transformations
 			"-transformer-dir", transformerDir) // Use local YAML configs
 	} else {
 		// Use the traditional Grit-based transformations (default)

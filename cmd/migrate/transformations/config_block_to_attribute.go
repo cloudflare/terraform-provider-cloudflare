@@ -80,12 +80,9 @@ func transformBlocksToMap(config *TransformationConfig, body *hclwrite.Body, blo
 
 	block := blocks[0]
 
-	// Use raw token approach to preserve complex expressions
-	if err := transformBlockToMapRaw(body, block, blockName); err != nil {
-		// Fallback to the cty.Value approach for simple cases
-		obj := blockToObject(block)
-		body.SetAttributeValue(blockName, obj)
-	}
+	// Always use raw token approach to preserve complex expressions
+	// This ensures resource references and other complex expressions are preserved correctly
+	transformBlockToMapRaw(body, block, blockName)
 
 	// Remove original block
 	body.RemoveBlock(block)
@@ -99,8 +96,12 @@ func transformBlockToMapRaw(body *hclwrite.Body, block *hclwrite.Block, blockNam
 	attrs := blockBody.Attributes()
 	
 	if len(attrs) == 0 {
-		// Empty block - use simple empty object
-		return fmt.Errorf("empty block")
+		// Empty block - create empty object using raw tokens
+		body.SetAttributeRaw(blockName, hclwrite.Tokens{
+			{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")},
+			{Type: hclsyntax.TokenCBrace, Bytes: []byte("}")},
+		})
+		return nil
 	}
 	
 	// Build the map manually using tokens to preserve complex expressions
@@ -220,7 +221,7 @@ func tokensToValue(tokens hclwrite.Tokens) cty.Value {
 	if num, err := strconv.ParseFloat(str, 64); err == nil {
 		return cty.NumberFloatVal(num)
 	}
-
+	
 	// Default to string
 	return cty.StringVal(str)
 }
