@@ -509,20 +509,17 @@ func transformDynamicRulesBlocksToAttribute(block *hclwrite.Block, diags ast.Dia
 			// Get the attribute value expression tokens
 			attrTokens := attr.Expr().BuildTokens(nil)
 			
-			// For rules, we use a simpler replacement since "rules" is used as the entire iterator
+			// For rules, we use a comprehensive replacement since "rules" is used as the entire iterator
 			// not "rules.key" and "rules.value" like in the origins case
-			// We just replace "rules.value" -> "rules" and "rules.key" -> "rules"
+			// We need to replace all instances of "rules.value" -> "rules" and "rules.key" -> "rules"
 			attrStr := string(attrTokens.Bytes())
-			// Only replace when preceded by a dot to avoid replacing other uses of "rules"
-			attrStr = strings.ReplaceAll(attrStr, ".rules.value", ".rules")
-			attrStr = strings.ReplaceAll(attrStr, ".rules.key", ".rules")
-			// Also handle at the start of expression
-			if strings.HasPrefix(attrStr, "rules.value") {
-				attrStr = "rules" + attrStr[11:] // len("rules.value") = 11
-			}
-			if strings.HasPrefix(attrStr, "rules.key") {
-				attrStr = "rules" + attrStr[9:] // len("rules.key") = 9
-			}
+			
+			// Use regex to replace rules.value and rules.key more comprehensively
+			// This handles cases like [rules.value], ${rules.value}, (rules.value), etc.
+			rulesValuePattern := regexp.MustCompile(`\brules\.value\b`)
+			rulesKeyPattern := regexp.MustCompile(`\brules\.key\b`)
+			attrStr = rulesValuePattern.ReplaceAllString(attrStr, "rules")
+			attrStr = rulesKeyPattern.ReplaceAllString(attrStr, "rules")
 			
 			// Parse the modified expression
 			tempConfig := fmt.Sprintf("temp = %s", attrStr)
