@@ -105,7 +105,7 @@ func TestAccessApplicationPoliciesTransformation(t *testing.T) {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 func TestAccessApplicationDomainTypeRemoval(t *testing.T) {
@@ -169,7 +169,7 @@ func TestAccessApplicationDomainTypeRemoval(t *testing.T) {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 func TestAccessApplicationDestinationsBlocksToAttribute(t *testing.T) {
@@ -299,7 +299,7 @@ func TestAccessApplicationDestinationsBlocksToAttribute(t *testing.T) {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 func TestAccessApplicationCombinedMigrations(t *testing.T) {
@@ -372,7 +372,7 @@ func TestAccessApplicationCombinedMigrations(t *testing.T) {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 
@@ -454,5 +454,5 @@ func TestAccessApplicationSkipAppLauncherLoginPageRemoval(t *testing.T) {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }

@@ -433,7 +433,7 @@ func TestLoadBalancerRulesTransformation(t *testing.T) {
 		//		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 // Configuration transformation tests for pool blocks to maps
@@ -554,7 +554,7 @@ func TestLoadBalancerPoolBlockTransformation(t *testing.T) {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 // Test the new region_pools consolidation from v4 to v5 format
@@ -606,10 +606,10 @@ func TestLoadBalancerRegionPoolsConsolidation(t *testing.T) {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
-// Test random_steering pool_weights migration issue  
+// Test random_steering pool_weights migration issue
 func TestLoadBalancerRandomSteeringPoolWeights(t *testing.T) {
 	tests := []TestCase{
 		{
@@ -727,5 +727,5 @@ func TestLoadBalancerDynamicRulesTransformation(t *testing.T) {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }

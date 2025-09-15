@@ -168,5 +168,41 @@ import {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
+}
+
+func TestZoneSettingsTransformationSkipImports(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "skip imports - simple attributes",
+			Config: `
+resource "cloudflare_zone_settings_override" "zone_settings" {
+  zone_id = var.zone_id
+
+  settings {
+    automatic_https_rewrites = var.automatic_https_rewrites
+    ssl                      = var.ssl
+  }
+}`,
+			Expected: []string{`
+resource "cloudflare_zone_setting" "zone_settings_automatic_https_rewrites" {
+  zone_id    = var.zone_id
+  setting_id = "automatic_https_rewrites"
+  value      = var.automatic_https_rewrites
+}`, `
+resource "cloudflare_zone_setting" "zone_settings_ssl" {
+  zone_id    = var.zone_id
+  setting_id = "ssl"
+  value      = var.ssl
+}`,
+			},
+		},
+	}
+
+	// Create a custom transform function that skips imports
+	transformFuncWithSkipImports := func(content []byte, filename string) ([]byte, error) {
+		return transformFile(content, filename, false, true) // skipImports = true
+	}
+
+	RunTransformationTests(t, tests, transformFuncWithSkipImports)
 }
