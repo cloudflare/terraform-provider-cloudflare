@@ -480,6 +480,155 @@ func TestAccCloudflareWorkerScript_ModuleWithDurableObject(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareWorkerScript_AssetsConfigRunWorkerFirst(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_workers_script." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	contentDir := t.TempDir()
+	contentFile := path.Join(contentDir, "index.js")
+	writeContentFile := func(t *testing.T) {
+		err := os.WriteFile(contentFile, []byte(`export default { fetch() { return new Response('Hello world'); } };`), 0644)
+		if err != nil {
+			t.Fatalf("Error creating temp file at path %s: %s", contentFile, err.Error())
+		}
+	}
+
+	assetsDir := t.TempDir()
+	assetFile := path.Join(assetsDir, "index.html")
+	writeAssetFile := func(t *testing.T) {
+		err := os.WriteFile(assetFile, []byte("Hello world"), 0644)
+		if err != nil {
+			t.Fatalf("Error creating temp file at path %s: %s", assetFile, err.Error())
+		}
+	}
+
+	cleanup := func(t *testing.T) {
+		for _, file := range []string{assetFile, contentFile} {
+			err := os.Remove(file)
+			if err != nil {
+				t.Logf("Error removing temp file at path %s: %s", file, err.Error())
+			}
+		}
+	}
+	defer cleanup(t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					writeContentFile(t)
+					writeAssetFile(t)
+				},
+				Config: testAccCheckCloudflareWorkerScriptConfigWithAssetsWithRunWorkerFirst(rnd, accountID, contentFile, assetsDir, `false`),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.Bool(false)),
+				},
+			},
+			{
+				Config: testAccCheckCloudflareWorkerScriptConfigWithAssetsWithRunWorkerFirst(rnd, accountID, contentFile, assetsDir, `["/api/*"]`),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("/api/*"),
+					})),
+				},
+			},
+			{
+				Config: testAccCheckCloudflareWorkerScriptConfigWithAssetsWithRunWorkerFirst(rnd, accountID, contentFile, assetsDir, `true`),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.Bool(true)),
+				},
+			},
+			{
+				Config: testAccCheckCloudflareWorkerScriptConfigWithAssetsWithRunWorkerFirst(rnd, accountID, contentFile, assetsDir, `["/api/*", "!/api/health"]`),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("/api/*"),
+						knownvalue.StringExact("!/api/health"),
+					})),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareWorkerScript_AssetsConfigRunWorkerFirstMigration(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_workers_script." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	contentDir := t.TempDir()
+	contentFile := path.Join(contentDir, "index.js")
+	writeContentFile := func(t *testing.T) {
+		err := os.WriteFile(contentFile, []byte(`export default { fetch() { return new Response('Hello world'); } };`), 0644)
+		if err != nil {
+			t.Fatalf("Error creating temp file at path %s: %s", contentFile, err.Error())
+		}
+	}
+
+	assetsDir := t.TempDir()
+	assetFile := path.Join(assetsDir, "index.html")
+	writeAssetFile := func(t *testing.T) {
+		err := os.WriteFile(assetFile, []byte("Hello world"), 0644)
+		if err != nil {
+			t.Fatalf("Error creating temp file at path %s: %s", assetFile, err.Error())
+		}
+	}
+
+	cleanup := func(t *testing.T) {
+		for _, file := range []string{assetFile, contentFile} {
+			err := os.Remove(file)
+			if err != nil {
+				t.Logf("Error removing temp file at path %s: %s", file, err.Error())
+			}
+		}
+	}
+	defer cleanup(t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					writeContentFile(t)
+					writeAssetFile(t)
+				},
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.10.1",
+					},
+				},
+				Config: testAccCheckCloudflareWorkerScriptConfigWithAssetsWithRunWorkerFirst(rnd, accountID, contentFile, assetsDir, `false`),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.Bool(false)),
+				},
+			},
+			{
+				Config:                   testAccCheckCloudflareWorkerScriptConfigWithAssetsWithRunWorkerFirst(rnd, accountID, contentFile, assetsDir, `["/api/*"]`),
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("assets").AtMapKey("config").AtMapKey("run_worker_first"), knownvalue.ListExact([]knownvalue.Check{
+						knownvalue.StringExact("/api/*"),
+					})),
+				},
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareWorkerScriptConfigServiceWorkerInitial(rnd, accountID string) string {
 	return acctest.LoadTestCase("service_worker_initial.tf", rnd, scriptContent1, accountID)
 }
@@ -507,4 +656,8 @@ func testAccWorkersScriptConfigWithInvalidContentSHA256(rnd, accountID, contentF
 
 func testAccWorkersScriptConfigWithAssets(rnd, accountID, assetsDir string) string {
 	return acctest.LoadTestCase("module_with_assets.tf", rnd, accountID, assetsDir)
+}
+
+func testAccCheckCloudflareWorkerScriptConfigWithAssetsWithRunWorkerFirst(rnd, accountID, contentFile, assetsDir, runWorkerFirst string) string {
+	return acctest.LoadTestCase("module_with_assets_with_run_worker_first.tf", rnd, accountID, contentFile, assetsDir, runWorkerFirst)
 }

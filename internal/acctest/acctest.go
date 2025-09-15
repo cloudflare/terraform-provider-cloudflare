@@ -58,7 +58,12 @@ func TestAccPreCheck_Credentials(t *testing.T) {
 	userServiceKey := os.Getenv(consts.APIUserServiceKeyEnvVarKey)
 
 	if apiToken == "" && apiKey == "" && userServiceKey == "" {
-		t.Fatal("valid credentials are required for this acceptance test.")
+		t.Fatalf(
+			"valid credentials are required for this acceptance test: one of %s, %s, or %s must be set",
+			consts.APIKeyEnvVarKey,
+			consts.APITokenEnvVarKey,
+			consts.APIUserServiceKeyEnvVarKey,
+		)
 	}
 }
 
@@ -918,8 +923,8 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	cmd = exec.Command("go", "run", "-C", migratePath, ".",
 		"-config", tmpDir,
 		"-state", filepath.Join(stateDir, "terraform.tfstate"),
-		"-grit=false",       // Disable Grit transformations
-		"-transformer=true", // Enable YAML transformations
+		"-grit=false",                      // Disable Grit transformations
+		"-transformer=true",                // Enable YAML transformations
 		"-transformer-dir", transformerDir) // Use local YAML configs
 	cmd.Dir = tmpDir
 	// Capture output for debugging
