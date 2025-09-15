@@ -216,10 +216,6 @@ func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceD
 		job.Filter = &jobFilter
 	}
 
-	if err != nil {
-		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
-	}
-
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Logpush job for %s from struct: %+v", identifier, job))
 
 	j, err := client.CreateLogpushJob(ctx, identifier, job)
@@ -289,14 +285,6 @@ func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceD
 		job.Filter = &jobFilter
 	}
 
-	if err != nil {
-		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
-	}
-
-	if err != nil {
-		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
-	}
-
 	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Logpush job for %s from struct: %+v", identifier, job))
 
 	err = client.UpdateLogpushJob(ctx, identifier, job)
@@ -334,7 +322,7 @@ func resourceCloudflareLogpushJobDelete(ctx context.Context, d *schema.ResourceD
 }
 
 func resourceCloudflareLogpushJobImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	// split the id so we can lookup
+	// split the id so we can look up
 	idAttr := strings.Split(d.Id(), "/")
 
 	if len(idAttr) != 3 || !contains([]string{"zone", "account"}, idAttr[0]) || idAttr[1] == "" || idAttr[2] == "" {

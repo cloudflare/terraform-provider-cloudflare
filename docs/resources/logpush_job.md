@@ -121,7 +121,7 @@ resource "cloudflare_logpush_job" "example_job" {
 - `filter` (String) Use filters to select the events to include and/or remove from your logs. For more information, refer to [Filters](https://developers.cloudflare.com/logs/reference/logpush-api-configuration/filters/).
 - `frequency` (String, Deprecated) A higher frequency will result in logs being pushed on faster with smaller files. `low` frequency will push logs less often with larger files. Available values: `high`, `low`. Defaults to `high`.
 - `kind` (String) The kind of logpush job to create. Available values: `edge`, `instant-logs`, `""`.
-- `logpull_options` (String) Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpush options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options).
+- `logpull_options` (String) Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpush options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options). For easier use, you should use "output_options".
 - `max_upload_bytes` (Number) The maximum uncompressed file size of a batch of logs. Value must be between 5MB and 1GB.
 - `max_upload_interval_seconds` (Number) The maximum interval in seconds for log batches. Value must be between 30 and 300.
 - `max_upload_records` (Number) The maximum number of log lines per batch. Value must be between 1000 and 1,000,000.

@@ -76,7 +76,8 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 		"logpull_options": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: `Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpush options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options).`,
+			Computed:    true,
+			Description: `Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpush options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options). For easier use, you should use "output_options".`,
 		},
 		"destination_conf": {
 			Type:        schema.TypeString,
@@ -123,6 +124,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			Type:        schema.TypeList,
 			MaxItems:    1,
 			Optional:    true,
+			Computed:    true,
 			Description: "Structured replacement for logpull_options. When including this field, the logpull_option field will be ignored",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
