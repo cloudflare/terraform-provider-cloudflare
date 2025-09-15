@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -147,18 +146,18 @@ func waitBetweenTests(t *testing.T) {
 // - Unsets CLOUDFLARE_API_TOKEN if needed
 func setupMigrationTest(t *testing.T) {
 	t.Helper()
-	
+
 	// Skip if acceptance tests are not enabled
 	if os.Getenv(EnvTfAcc) == "" {
 		t.Skip(fmt.Sprintf("Acceptance tests skipped unless env '%s' set", EnvTfAcc))
 	}
-	
+
 	// Clean up any existing MTLS settings
 	cleanupMTLSSettings(t)
-	
+
 	// Wait to prevent API conflicts
 	waitBetweenTests(t)
-	
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -425,8 +424,9 @@ func TestMigrateZeroTrustAccessMTLSHostnameSettings_ZoneScope(t *testing.T) {
 						VersionConstraint: "4.52.1",
 					},
 				},
-				Config:     v4Config,
-				ErrorCheck: checkForAPIConflictAndSkip(t),
+				Config: v4Config,
+				// TODO:: ErrorCheck does not exist. Not sure what the intent is here. Commenting for now
+				//ErrorCheck: checkForAPIConflictAndSkip(t),
 			},
 			acctest.MigrationTestStep(t, v4Config, tmpDir, "4.52.1", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
