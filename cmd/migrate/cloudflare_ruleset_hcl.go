@@ -2,6 +2,7 @@ package main
 
 import (
 	"sort"
+	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
@@ -24,6 +25,21 @@ func transformCloudflareRulesetBlock(block *hclwrite.Block, diags ast.Diagnostic
 
 	// Remove deprecated disable_railgun attribute (removed in v5)
 	removeDisableRailgun(block, diags)
+	
+	// Fix quoted resource references in action_parameters.id
+	fixQuotedResourceReferences(block, diags)
+	
+	// Fix overrides.rules from single object to list of objects
+	fixOverridesRulesObjectToList(block, diags)
+	
+	// Fix overrides.categories from single object to list of objects
+	fixOverridesCategoriesObjectToList(block, diags)
+	
+	// Fix status_code_ttl from single object to list of objects  
+	fixStatusCodeTtlObjectToList(block, diags)
+	
+	// Fix headers from flat object to map format
+	fixHeadersObjectToMap(block, diags)
 }
 
 // transformDynamicRulesBlocks converts dynamic "rules" blocks to for expressions
@@ -940,4 +956,456 @@ func transformQueryStringInclude(qsBlock *hclwrite.Block, diags ast.Diagnostics)
 		// Update the attribute
 		qsBlock.Body().SetAttributeRaw("include", newTokens)
 	}
+}
+
+// fixQuotedResourceReferences removes incorrect quotes from resource references in action_parameters.id
+func fixQuotedResourceReferences(block *hclwrite.Block, diags ast.Diagnostics) {
+	// Process rules attribute if it exists (v5 list format)
+	if rulesAttr := block.Body().GetAttribute("rules"); rulesAttr != nil {
+		tokens := rulesAttr.Expr().BuildTokens(nil)
+		fixedTokens := unquoteResourceReferencesInTokens(tokens)
+		block.Body().SetAttributeRaw("rules", fixedTokens)
+	}
+}
+
+// unquoteResourceReferencesInTokens removes quotes from resource references in action_parameters.id
+func unquoteResourceReferencesInTokens(tokens hclwrite.Tokens) hclwrite.Tokens {
+	result := make(hclwrite.Tokens, 0, len(tokens))
+	
+	i := 0
+	for i < len(tokens) {
+		token := tokens[i]
+		
+		// Look for action_parameters context
+		if token.Type == hclsyntax.TokenIdent && string(token.Bytes) == "action_parameters" {
+			result = append(result, token)
+			i++
+			
+			// Look for = {
+			if i+1 < len(tokens) && tokens[i].Type == hclsyntax.TokenEqual && tokens[i+1].Type == hclsyntax.TokenOBrace {
+				result = append(result, tokens[i])   // =
+				result = append(result, tokens[i+1]) // {
+				i += 2
+				
+				// Process inside action_parameters block
+				depth := 1
+				for i < len(tokens) && depth > 0 {
+					if tokens[i].Type == hclsyntax.TokenOBrace {
+						depth++
+						result = append(result, tokens[i])
+						i++
+					} else if tokens[i].Type == hclsyntax.TokenCBrace {
+						depth--
+						result = append(result, tokens[i])
+						i++
+						if depth == 0 {
+							break
+						}
+					} else if tokens[i].Type == hclsyntax.TokenIdent && string(tokens[i].Bytes) == "id" && depth == 1 {
+						// Found id attribute in action_parameters
+						result = append(result, tokens[i]) // id
+						i++
+						
+						// Look for = "cloudflare_ruleset..."
+						if i+2 < len(tokens) && tokens[i].Type == hclsyntax.TokenEqual && tokens[i+1].Type == hclsyntax.TokenOQuote {
+							result = append(result, tokens[i]) // =
+							i += 2 // Skip = and opening quote
+							
+							// Check if this looks like a resource reference
+							if i < len(tokens) && tokens[i].Type == hclsyntax.TokenQuotedLit {
+								refStr := string(tokens[i].Bytes)
+								if strings.HasPrefix(refStr, "cloudflare_") && strings.Contains(refStr, ".") && strings.HasSuffix(refStr, ".id") {
+									// This is a quoted resource reference - unquote it
+									result = append(result, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(refStr)})
+									i++
+									// Skip closing quote
+									if i < len(tokens) && tokens[i].Type == hclsyntax.TokenCQuote {
+										i++
+									}
+								} else {
+									// Keep as quoted string
+									result = append(result, &hclwrite.Token{Type: hclsyntax.TokenOQuote, Bytes: []byte("\"")})
+									result = append(result, tokens[i])
+									i++
+									if i < len(tokens) && tokens[i].Type == hclsyntax.TokenCQuote {
+										result = append(result, tokens[i])
+										i++
+									}
+								}
+							} else {
+								// Not what we expected, keep original
+								result = append(result, &hclwrite.Token{Type: hclsyntax.TokenOQuote, Bytes: []byte("\"")})
+								result = append(result, tokens[i])
+								i++
+							}
+						} else {
+							// Not the pattern we're looking for
+							result = append(result, tokens[i])
+							i++
+						}
+					} else {
+						result = append(result, tokens[i])
+						i++
+					}
+				}
+				continue
+			}
+		}
+		
+		result = append(result, token)
+		i++
+	}
+	
+	return result
+}
+// fixOverridesRulesObjectToList converts overrides.rules from single object to list of objects
+// V4/incorrect: overrides = { rules = { id = "...", action = "..." } }
+// V5/correct:   overrides = { rules = [{ id = "...", action = "..." }] }
+func fixOverridesRulesObjectToList(block *hclwrite.Block, diags ast.Diagnostics) {
+	// Process rules attribute if it exists (v5 list format)
+	if rulesAttr := block.Body().GetAttribute("rules"); rulesAttr != nil {
+		tokens := rulesAttr.Expr().BuildTokens(nil)
+		fixedTokens := convertOverridesRulesToList(tokens)
+		block.Body().SetAttributeRaw("rules", fixedTokens)
+	}
+}
+
+// convertOverridesRulesToList finds overrides.rules objects and converts them to lists
+func convertOverridesRulesToList(tokens hclwrite.Tokens) hclwrite.Tokens {
+	result := make(hclwrite.Tokens, 0, len(tokens))
+	
+	i := 0
+	for i < len(tokens) {
+		token := tokens[i]
+		
+		// Look for overrides context
+		if token.Type == hclsyntax.TokenIdent && string(token.Bytes) == "overrides" {
+			result = append(result, token)
+			i++
+			
+			// Look for = {
+			if i+1 < len(tokens) && tokens[i].Type == hclsyntax.TokenEqual && tokens[i+1].Type == hclsyntax.TokenOBrace {
+				result = append(result, tokens[i])   // =
+				result = append(result, tokens[i+1]) // {
+				i += 2
+				
+				// Process inside overrides block
+				depth := 1
+				for i < len(tokens) && depth > 0 {
+					if tokens[i].Type == hclsyntax.TokenOBrace {
+						depth++
+						result = append(result, tokens[i])
+						i++
+					} else if tokens[i].Type == hclsyntax.TokenCBrace {
+						depth--
+						result = append(result, tokens[i])
+						i++
+						if depth == 0 {
+							break
+						}
+					} else if tokens[i].Type == hclsyntax.TokenIdent && string(tokens[i].Bytes) == "rules" && depth == 1 {
+						// Found rules attribute in overrides
+						result = append(result, tokens[i]) // rules
+						i++
+						
+						// Look for = {
+						if i+1 < len(tokens) && tokens[i].Type == hclsyntax.TokenEqual && tokens[i+1].Type == hclsyntax.TokenOBrace {
+							result = append(result, tokens[i]) // =
+							result = append(result, &hclwrite.Token{Type: hclsyntax.TokenOBrack, Bytes: []byte("[")}) // Add [
+							result = append(result, tokens[i+1]) // {
+							i += 2
+							
+							// Process the object content and add closing bracket
+							objDepth := 1
+							for i < len(tokens) && objDepth > 0 {
+								if tokens[i].Type == hclsyntax.TokenOBrace {
+									objDepth++
+									result = append(result, tokens[i])
+									i++
+								} else if tokens[i].Type == hclsyntax.TokenCBrace {
+									objDepth--
+									result = append(result, tokens[i])
+									if objDepth == 0 {
+										// Add closing bracket after the object
+										result = append(result, &hclwrite.Token{Type: hclsyntax.TokenCBrack, Bytes: []byte("]")})
+									}
+									i++
+								} else {
+									result = append(result, tokens[i])
+									i++
+								}
+							}
+						} else {
+							// Not the pattern we're looking for
+							result = append(result, tokens[i])
+							i++
+						}
+					} else {
+						result = append(result, tokens[i])
+						i++
+					}
+				}
+				continue
+			}
+		}
+		
+		result = append(result, token)
+		i++
+	}
+	
+	return result
+}
+
+// fixOverridesCategoriesObjectToList converts overrides.categories from single object to list of objects
+func fixOverridesCategoriesObjectToList(block *hclwrite.Block, diags ast.Diagnostics) {
+	if rulesAttr := block.Body().GetAttribute("rules"); rulesAttr != nil {
+		tokens := rulesAttr.Expr().BuildTokens(nil)
+		fixedTokens := convertOverridesCategoriesToList(tokens)
+		block.Body().SetAttributeRaw("rules", fixedTokens)
+	}
+}
+
+// convertOverridesCategoriesToList finds overrides.categories objects and converts them to lists
+func convertOverridesCategoriesToList(tokens hclwrite.Tokens) hclwrite.Tokens {
+	result := make(hclwrite.Tokens, 0, len(tokens))
+	
+	i := 0
+	for i < len(tokens) {
+		token := tokens[i]
+		
+		// Look for "categories" within overrides context
+		if token.Type == hclsyntax.TokenIdent && string(token.Bytes) == "categories" {
+			// Look ahead to see if this is followed by = {
+			if i+2 < len(tokens) && tokens[i+1].Type == hclsyntax.TokenEqual && tokens[i+2].Type == hclsyntax.TokenOBrace {
+				result = append(result, token)       // categories
+				result = append(result, tokens[i+1]) // =
+				result = append(result, &hclwrite.Token{Type: hclsyntax.TokenOBrack, Bytes: []byte("[")}) // Add [
+				result = append(result, tokens[i+2]) // {
+				i += 3
+				
+				// Process the object content and add closing bracket
+				depth := 1
+				for i < len(tokens) && depth > 0 {
+					if tokens[i].Type == hclsyntax.TokenOBrace {
+						depth++
+						result = append(result, tokens[i])
+						i++
+					} else if tokens[i].Type == hclsyntax.TokenCBrace {
+						depth--
+						result = append(result, tokens[i])
+						if depth == 0 {
+							// Add closing bracket after the object
+							result = append(result, &hclwrite.Token{Type: hclsyntax.TokenCBrack, Bytes: []byte("]")})
+						}
+						i++
+					} else {
+						result = append(result, tokens[i])
+						i++
+					}
+				}
+				continue
+			}
+		}
+		
+		result = append(result, token)
+		i++
+	}
+	
+	return result
+}
+
+// fixStatusCodeTtlObjectToList converts status_code_ttl from single object to list of objects
+func fixStatusCodeTtlObjectToList(block *hclwrite.Block, diags ast.Diagnostics) {
+	if rulesAttr := block.Body().GetAttribute("rules"); rulesAttr != nil {
+		tokens := rulesAttr.Expr().BuildTokens(nil)
+		fixedTokens := convertStatusCodeTtlToList(tokens)
+		block.Body().SetAttributeRaw("rules", fixedTokens)
+	}
+}
+
+// convertStatusCodeTtlToList finds status_code_ttl objects and converts them to lists
+func convertStatusCodeTtlToList(tokens hclwrite.Tokens) hclwrite.Tokens {
+	result := make(hclwrite.Tokens, 0, len(tokens))
+	
+	i := 0
+	for i < len(tokens) {
+		token := tokens[i]
+		
+		// Look for "status_code_ttl"
+		if token.Type == hclsyntax.TokenIdent && string(token.Bytes) == "status_code_ttl" {
+			// Look ahead to see if this is followed by = {
+			if i+2 < len(tokens) && tokens[i+1].Type == hclsyntax.TokenEqual && tokens[i+2].Type == hclsyntax.TokenOBrace {
+				result = append(result, token)       // status_code_ttl
+				result = append(result, tokens[i+1]) // =
+				result = append(result, &hclwrite.Token{Type: hclsyntax.TokenOBrack, Bytes: []byte("[")}) // Add [
+				result = append(result, tokens[i+2]) // {
+				i += 3
+				
+				// Process the object content and add closing bracket
+				depth := 1
+				for i < len(tokens) && depth > 0 {
+					if tokens[i].Type == hclsyntax.TokenOBrace {
+						depth++
+						result = append(result, tokens[i])
+						i++
+					} else if tokens[i].Type == hclsyntax.TokenCBrace {
+						depth--
+						result = append(result, tokens[i])
+						if depth == 0 {
+							// Add closing bracket after the object
+							result = append(result, &hclwrite.Token{Type: hclsyntax.TokenCBrack, Bytes: []byte("]")})
+						}
+						i++
+					} else {
+						result = append(result, tokens[i])
+						i++
+					}
+				}
+				continue
+			}
+		}
+		
+		result = append(result, token)
+		i++
+	}
+	
+	return result
+}
+
+// fixHeadersObjectToMap converts flat headers object to map format
+// V4/incorrect: headers = { name = "Header-Name", operation = "set", value = "value" }
+// V5/correct:   headers = { "Header-Name" = { operation = "set", value = "value" } }
+func fixHeadersObjectToMap(block *hclwrite.Block, diags ast.Diagnostics) {
+	if rulesAttr := block.Body().GetAttribute("rules"); rulesAttr != nil {
+		tokens := rulesAttr.Expr().BuildTokens(nil)
+		fixedTokens := convertHeadersObjectToMap(tokens)
+		block.Body().SetAttributeRaw("rules", fixedTokens)
+	}
+}
+
+// convertHeadersObjectToMap finds headers objects and converts them to proper map format
+func convertHeadersObjectToMap(tokens hclwrite.Tokens) hclwrite.Tokens {
+	result := make(hclwrite.Tokens, 0, len(tokens))
+	
+	i := 0
+	for i < len(tokens) {
+		token := tokens[i]
+		
+		// Look for "headers = {"
+		if token.Type == hclsyntax.TokenIdent && string(token.Bytes) == "headers" {
+			if i+2 < len(tokens) && tokens[i+1].Type == hclsyntax.TokenEqual && tokens[i+2].Type == hclsyntax.TokenOBrace {
+				// Found headers = { pattern
+				result = append(result, token)       // headers
+				result = append(result, tokens[i+1]) // =
+				result = append(result, tokens[i+2]) // {
+				i += 3
+				
+				// Parse the content to extract name and other attributes
+				headerName := ""
+				otherAttrs := make(map[string]hclwrite.Tokens)
+				
+				depth := 1
+				for i < len(tokens) && depth > 0 {
+					if tokens[i].Type == hclsyntax.TokenOBrace {
+						depth++
+						i++
+					} else if tokens[i].Type == hclsyntax.TokenCBrace {
+						depth--
+						if depth == 0 {
+							break
+						}
+						i++
+					} else if tokens[i].Type == hclsyntax.TokenIdent && depth == 1 {
+						attrName := string(tokens[i].Bytes)
+						if attrName == "name" {
+							// Extract the name value
+							if i+2 < len(tokens) && tokens[i+1].Type == hclsyntax.TokenEqual {
+								i += 2 // Skip name =
+								nameTokens := hclwrite.Tokens{}
+								// Collect tokens until comma, newline, or closing brace
+								for i < len(tokens) && 
+									tokens[i].Type != hclsyntax.TokenComma &&
+									tokens[i].Type != hclsyntax.TokenNewline &&
+									tokens[i].Type != hclsyntax.TokenCBrace {
+									nameTokens = append(nameTokens, tokens[i])
+									i++
+								}
+								// Convert tokens to string and clean up
+								nameStr := string(nameTokens.Bytes())
+								nameStr = strings.TrimSpace(nameStr)
+								headerName = nameStr
+								// Skip comma if present
+								if i < len(tokens) && tokens[i].Type == hclsyntax.TokenComma {
+									i++
+								}
+							}
+						} else if attrName == "operation" || attrName == "value" || attrName == "expression" {
+							// Extract other attributes
+							if i+2 < len(tokens) && tokens[i+1].Type == hclsyntax.TokenEqual {
+								attrTokens := hclwrite.Tokens{tokens[i], tokens[i+1]} // attr =
+								i += 2
+								// Collect tokens until comma, newline, or closing brace
+								for i < len(tokens) && 
+									tokens[i].Type != hclsyntax.TokenComma &&
+									tokens[i].Type != hclsyntax.TokenNewline &&
+									tokens[i].Type != hclsyntax.TokenCBrace {
+									attrTokens = append(attrTokens, tokens[i])
+									i++
+								}
+								otherAttrs[attrName] = attrTokens
+								// Skip comma if present
+								if i < len(tokens) && tokens[i].Type == hclsyntax.TokenComma {
+									i++
+								}
+							}
+						} else {
+							i++
+						}
+					} else {
+						i++
+					}
+				}
+				
+				// Rebuild as map format
+				result = append(result, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+				result = append(result, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("        ")})
+				
+				// Add header name as key (preserve quotes if present)
+				if headerName != "" {
+					result = append(result, &hclwrite.Token{Type: hclsyntax.TokenOQuote, Bytes: []byte(headerName)})
+					result = append(result, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+					result = append(result, &hclwrite.Token{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")})
+					result = append(result, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+					
+					// Add other attributes
+					attrNames := make([]string, 0, len(otherAttrs))
+					for name := range otherAttrs {
+						attrNames = append(attrNames, name)
+					}
+					sort.Strings(attrNames)
+					
+					for j, attrName := range attrNames {
+						result = append(result, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("          ")})
+						result = append(result, otherAttrs[attrName]...)
+						if j < len(attrNames)-1 {
+							result = append(result, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(",")})
+						}
+						result = append(result, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+					}
+					
+					result = append(result, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("        }")})
+					result = append(result, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+					result = append(result, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("      }")})
+				}
+				
+				i++ // Skip the closing }
+				continue
+			}
+		}
+		
+		result = append(result, token)
+		i++
+	}
+	
+	return result
 }

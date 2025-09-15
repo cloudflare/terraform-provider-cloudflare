@@ -713,3 +713,130 @@ func TestTransformCloudflareRulesetStateJSON(t *testing.T) {
 	}
 }
 
+// Test configuration transformation for action_parameters.id with resource references
+func TestCloudflareRulesetConfigActionParametersResourceReference(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "action_parameters id should preserve resource reference not convert to string",
+			Config: `resource "cloudflare_ruleset" "global-custom-waf-rulesets" {
+  account_id = "test-account"
+  kind       = "root"
+  name       = "root"
+  phase      = "http_request_firewall_custom"
+  
+  rules {
+    action = "execute"
+    action_parameters {
+      id = cloudflare_ruleset.disallowed_countries_ruleset.id
+    }
+    description = "Disallowed Countries"
+    enabled     = true
+    expression  = "(cf.zone.plan eq \"ENT\")"
+  }
+}`,
+			Expected: []string{`id = cloudflare_ruleset.disallowed_countries_ruleset.id`},
+		},
+		{
+			Name: "overrides rules should be converted from object to list",
+			Config: `resource "cloudflare_ruleset" "ddos" {
+  account_id = "test-account"
+  kind       = "root"
+  name       = "root"
+  phase      = "http_request_ddos_l7"
+  rules = [{
+    action = "execute"
+    action_parameters = {
+      id = "4d21379b4f9f4bb088e0729962c8b3cf"
+      overrides = {
+        rules = {
+          action = "block"
+          id     = "603be41d114b4fc28c85de27c86adf25"
+        }
+      }
+    }
+    description = "Modify DDoS rules"
+    enabled     = true
+    expression  = "true"
+  }]
+}`,
+			Expected: []string{`rules = [{
+          action = "block"
+          id     = "603be41d114b4fc28c85de27c86adf25"
+        }]`},
+		},
+		{
+			Name: "overrides categories should be converted from object to list",
+			Config: `resource "cloudflare_ruleset" "test" {
+  account_id = "test-account"
+  rules = [{
+    action = "execute"
+    action_parameters = {
+      id = "4814384a9e5d4991b9815dcfc25d2f1f"
+      overrides = {
+        categories = {
+          category = "paranoia-level-4"
+          enabled  = false
+        }
+      }
+    }
+    enabled = false
+    expression = "true"
+  }]
+}`,
+			Expected: []string{`categories = [{
+          category = "paranoia-level-4"
+          enabled  = false
+        }]`},
+		},
+		{
+			Name: "status_code_ttl should be converted from object to list",
+			Config: `resource "cloudflare_ruleset" "test" {
+  zone_id = "test-zone"
+  rules = [{
+    action = "set_cache_settings"
+    action_parameters = {
+      edge_ttl = {
+        default = 31536000
+        mode = "override_origin"
+        status_code_ttl = {
+          status_code = 200
+          value = 31536000
+        }
+      }
+    }
+    enabled = true
+    expression = "true"
+  }]
+}`,
+			Expected: []string{`status_code_ttl = [{
+          status_code = 200
+          value       = 31536000
+        }]`},
+		},
+		{
+			Name: "headers flat object should be converted to map format",
+			Config: `resource "cloudflare_ruleset" "test" {
+  zone_id = "test-zone"
+  rules = [{
+    action = "rewrite"
+    action_parameters = {
+      headers = {
+        name = "Content-Type"
+        operation = "set"
+        value = "application/json"
+      }
+    }
+    enabled = true
+    expression = "true"
+  }]
+}`,
+			Expected: []string{`"Content-Type" = {
+          operation = "set",
+          value     = "application/json"
+        }`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFileWithYAML)
+}
+
