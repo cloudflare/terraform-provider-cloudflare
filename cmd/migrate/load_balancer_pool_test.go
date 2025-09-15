@@ -101,10 +101,10 @@ resource "cloudflare_load_balancer_pool" "test" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "test-pool"
 
-  origins = [for value in local.origin_list : {
+  origins = [for key, value in local.origin_list : {
     address = value
     enabled = true
-    name    = "origin-${value.key}"
+    name    = "origin-${key}"
   }]
 }`},
 		},
@@ -164,11 +164,14 @@ resource "cloudflare_load_balancer_pool" "test" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "test-pool"
 
-  origins = [for value in local.origin_configs : {
+  origins = [for key, value in local.origin_configs : {
     address = value.address
     enabled = true
-    header  = { host = [value.host] }
-    name    = value.name
+    header = {
+      header = "Host"
+      values = [value.host]
+    }
+    name = value.name
   }]
 }`},
 		},
@@ -202,10 +205,10 @@ resource "cloudflare_load_balancer_pool" "test" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "test-pool"
 
-  origins = [for value in local.origins_data : {
+  origins = [for key, value in local.origins_data : {
     address = value
     enabled = true
-    name    = "origin-${value.key}"
+    name    = "origin-${key}"
   }]
 }`},
 		},
@@ -421,4 +424,86 @@ func TestLoadBalancerPoolStateTransformation(t *testing.T) {
 	}
 
 	RunStateTransformationTests(t, tests, transformLoadBalancerPoolState)
+}
+
+func TestLoadBalancerPoolMapIteration(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "dynamic block with map iteration using key reference",
+			Config: `
+locals {
+  origins_map = {
+    "backup1" = { address = "1.1.1.1" }
+    "backup2" = { address = "2.2.2.2" }
+  }
+}
+
+resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name = "test-pool"
+  
+  dynamic "origins" {
+    for_each = local.origins_map
+    content {
+      address = origins.value.address
+      name = "prefix-${origins.key}"
+      header {
+        header = "Host"
+        values = [origins.value.address]
+      }
+    }
+  }
+}`,
+			Expected: []string{`resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name       = "test-pool"
+
+  origins = [for key, value in local.origins_map : {
+    address = value.address
+    header = {
+      header = "Host"
+      values = [value.address]
+    }
+    name = "prefix-${key}"
+  }]
+}`},
+		},
+		{
+			Name: "dynamic block with both key and value references",
+			Config: `
+resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name = "test-pool"
+  
+  dynamic "origins" {
+    for_each = local.transceiver_map
+    content {
+      address = origins.value.host
+      name = origins.key
+      weight = origins.value.weight
+      header {
+        header = "Host"
+        values = [origins.value.host]
+      }
+    }
+  }
+}`,
+			Expected: []string{`resource "cloudflare_load_balancer_pool" "test" {
+  account_id = "test"
+  name       = "test-pool"
+
+  origins = [for key, value in local.transceiver_map : {
+    address = value.host
+    header = {
+      header = "Host"
+      values = [value.host]
+    }
+    name   = key
+    weight = value.weight
+  }]
+}`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFile)
 }
