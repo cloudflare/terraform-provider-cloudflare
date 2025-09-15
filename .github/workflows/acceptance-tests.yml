@@ -38,39 +38,57 @@ jobs:
       CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME }}
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup go
         uses: actions/setup-go@v5
         with:
           go-version-file: ./go.mod
+
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 24
+
       - name: Install grit
         run: npm install -g @getgrit/cli
+
       - name: Bootstrap
         run: ./scripts/bootstrap
-      - name: Run Magic acceptance tests
+
+      ######## Magic Tests ########
+      - name: Run Magic Acceptance Tests
         id: magic_acceptance_tests
-        # tests need to be run one-by-one to avoid account lock contention
-        # TODO:: refactor to pass the resources into run-ci-tests
-        run: go test -parallel=1 -p=1 -count=1 ./internal/services/{magic_wan_ipsec_tunnel,magic_wan_gre_tunnel,magic_wan_static_route} -run "^TestAcc"
+        run: ./scripts/run-ci-tests magic acceptance
         env:
           TF_ACC: 1
         continue-on-error: true
-      - name: Run Acceptance Tests
-        id: acceptance_tests
-        # note: not all resources are covered here, only passing ones should be included here (for now).
-        run: ./scripts/run-ci-tests acceptance
+
+      - name: Run Magic Migration Tests
+        id: magic_migration_tests
+        run: ./scripts/run-ci-tests magic migration
         env:
           TF_ACC: 1
         continue-on-error: true
-      - name: Run Migration Tests
-        id: migration_tests
-        run: ./scripts/run-ci-tests migration
+
+      ######## Everything Else ########
+      - name: Run Default Acceptance Tests
+        id: default_acceptance_tests
+        run: ./scripts/run-ci-tests default acceptance
+        env:
+          TF_ACC: 1
+        continue-on-error: true
+
+      - name: Run Default Migration Tests
+        id: default_migration_tests
+        run: ./scripts/run-ci-tests default migration
         env:
          TF_ACC: 1
         continue-on-error: true
+
       - name: Check Test Status
-        if: ${{ steps.acceptance_tests.outcome == 'failure' || steps.migration_tests.outcome == 'failure' || steps.magic_acceptance_tests.outcome == 'failure' }}
+        if: ${{
+          steps.magic_acceptance_tests.outcome == 'failure' ||
+          steps.magic_migration_tests.outcome == 'failure' ||
+          steps.default_acceptance_tests.outcome == 'failure' ||
+          steps.default_migration_tests.outcome == 'failure'}}
         run: exit 1
