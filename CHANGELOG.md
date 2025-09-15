@@ -1,3 +1,9 @@
+## 4.52.5 (September 15th, 2025)
+
+BUG FIXES:
+
+* internal/framework/service/list/resource_test.go: list items are cleared when no nested item block defined
+
 ## 4.52.4 (September 9th, 2025)
 
 BUG FIXES:

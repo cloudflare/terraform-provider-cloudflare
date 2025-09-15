@@ -1,3 +1,3 @@
-```release-note:enhancement
-resource/cloudflare_custom_hostname: add `settings.early_hints` to ssl schema
+```release-note:bug
+internal/framework/service/list/resource_test.go: list items are cleared when no nested item block defined
 ```
