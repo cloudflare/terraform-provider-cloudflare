@@ -2,10 +2,12 @@ package transformations
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/hashicorp/hcl/v2/hclwrite"
+	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -78,15 +80,71 @@ func transformBlocksToMap(config *TransformationConfig, body *hclwrite.Body, blo
 
 	block := blocks[0]
 
-	// Convert block to object
-	obj := blockToObject(block)
-
-	// Set the attribute
-	body.SetAttributeValue(blockName, obj)
+	// Use raw token approach to preserve complex expressions
+	if err := transformBlockToMapRaw(body, block, blockName); err != nil {
+		// Fallback to the cty.Value approach for simple cases
+		obj := blockToObject(block)
+		body.SetAttributeValue(blockName, obj)
+	}
 
 	// Remove original block
 	body.RemoveBlock(block)
 
+	return nil
+}
+
+// transformBlockToMapRaw converts a block to a map attribute using raw tokens to preserve complex expressions
+func transformBlockToMapRaw(body *hclwrite.Body, block *hclwrite.Block, blockName string) error {
+	blockBody := block.Body()
+	attrs := blockBody.Attributes()
+	
+	if len(attrs) == 0 {
+		// Empty block - use simple empty object
+		return fmt.Errorf("empty block")
+	}
+	
+	// Build the map manually using tokens to preserve complex expressions
+	tokens := hclwrite.Tokens{
+		{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")},
+		{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+	}
+	
+	// Sort attribute names for consistent output
+	names := make([]string, 0, len(attrs))
+	for name := range attrs {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	
+	first := true
+	for _, name := range names {
+		attr := attrs[name]
+		if !first {
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+		}
+		first = false
+		
+		// Add indentation
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("    ")})
+		
+		// Add the attribute name
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(name)})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+		
+		// Add the attribute expression tokens (preserves complex expressions)
+		exprTokens := attr.Expr().BuildTokens(nil)
+		tokens = append(tokens, exprTokens...)
+	}
+	
+	tokens = append(tokens,
+		&hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+		&hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("  ")},
+		&hclwrite.Token{Type: hclsyntax.TokenCBrace, Bytes: []byte("}")},
+	)
+	
+	// Set the attribute using raw tokens
+	body.SetAttributeRaw(blockName, tokens)
+	
 	return nil
 }
 

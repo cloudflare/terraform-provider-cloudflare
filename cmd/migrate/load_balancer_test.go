@@ -608,3 +608,124 @@ func TestLoadBalancerRegionPoolsConsolidation(t *testing.T) {
 
 	RunTransformationTests(t, tests, transformFile)
 }
+
+// Test random_steering pool_weights migration issue  
+func TestLoadBalancerRandomSteeringPoolWeights(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "random_steering pool_weights with variable references",
+			Config: `resource "cloudflare_load_balancer" "help-lb-openai-com" {
+  enabled          = true
+  name             = "help-lb.openai.com"  
+  proxied          = true
+  session_affinity = "ip_cookie"
+  steering_policy  = "random"
+  zone_id          = cloudflare_zone.openai-com.id
+
+  random_steering {
+    default_weight = 1
+    pool_weights = {
+      (var.intercom_help_openai_com_lb_pool_id) = 1
+      (var.help_openai_com_lb_pool_id) = 0
+    }
+  }
+}`,
+			Expected: []string{`random_steering = {
+    default_weight = 1
+    pool_weights = {
+      (var.intercom_help_openai_com_lb_pool_id) = 1
+      (var.help_openai_com_lb_pool_id)          = 0
+    }
+  }`},
+		},
+		{
+			Name: "fix original migration issue - pool_weights should not be string",
+			Config: `resource "cloudflare_load_balancer" "help-lb-openai-com" {
+  enabled              = true
+  name                 = "help-lb.openai.com"
+  proxied              = true
+  session_affinity     = "ip_cookie"
+  session_affinity_ttl = 1800
+  steering_policy      = "random"
+  zone_id              = cloudflare_zone.openai-com.id
+  
+  adaptive_routing {
+    failover_across_pools = false
+  }
+  location_strategy {
+    mode       = "pop"
+    prefer_ecs = "proximity"
+  }
+  random_steering {
+    default_weight = 1
+    pool_weights   = {
+      (var.intercom_help_openai_com_lb_pool_id) = 1
+      (var.help_openai_com_lb_pool_id) = 0
+    }
+  }
+  fallback_pool = var.intercom_help_openai_com_lb_pool_id
+  default_pools = [var.help_openai_com_lb_pool_id, var.intercom_help_openai_com_lb_pool_id]
+}`,
+			Expected: []string{`pool_weights = {
+      (var.intercom_help_openai_com_lb_pool_id) = 1
+      (var.help_openai_com_lb_pool_id)          = 0
+    }`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFileWithYAML)
+}
+
+// Test dynamic rules transformation with rules.value references
+func TestLoadBalancerDynamicRulesTransformation(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "transform dynamic rules with rules.value references",
+			Config: `resource "cloudflare_load_balancer" "api-chatgpt-com" {
+  zone_id = cloudflare_zone.api-chatgpt-com.id
+  name = "api.chatgpt.com"
+  default_pool_ids = ["pool1"]
+
+  dynamic "rules" {
+    for_each = local.origin_keys_sorted_by_priority
+    content {
+      overrides = {
+        default_pools   = [cloudflare_load_balancer_pool.chatgptapi_origin_pools[rules.value].id]
+        fallback_pool   = cloudflare_load_balancer_pool.chatgptapi-origins-fallback-pool.id
+        steering_policy = "random"
+      }
+      name      = "Route to ${rules.value}"
+      disabled  = false
+      priority  = local.origins[rules.value].priority
+      condition = "(any(http.request.headers[\"x-openai-route-to-synthetics\"][*] eq \"${var.target_synthetics_header_value}-${rules.value}\"))"
+    }
+  }
+}`,
+			Expected: []string{`rules = [for rules in local.origin_keys_sorted_by_priority :`},
+		},
+		{
+			Name: "fix the exact user reported issue - rules.value in array index",
+			Config: `resource "cloudflare_load_balancer" "api-chatgpt-com" {
+  zone_id = cloudflare_zone.api-chatgpt-com.id
+  name = "api.chatgpt.com"
+  default_pool_ids = ["pool1"]
+
+  dynamic "rules" {
+    for_each = local.origin_keys_sorted_by_priority
+    content {
+      overrides = {
+        default_pools = [cloudflare_load_balancer_pool.chatgptapi_origin_pools[rules.value].id]
+      }
+      name = "Route to ${rules.value}"
+      priority = local.origins[rules.value].priority
+    }
+  }
+}`,
+			Expected: []string{
+				`default_pools = [cloudflare_load_balancer_pool.chatgptapi_origin_pools[rules].id]`,
+			},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFile)
+}
