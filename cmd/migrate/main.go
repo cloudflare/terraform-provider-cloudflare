@@ -281,6 +281,10 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 			transformCloudflareRulesetBlock(block, diags)
 		}
 
+		if isPageRuleResource(block) {
+			transformPageRuleBlock(block, diags)
+		}
+
 		if isAccessPolicyResource(block) {
 			// TOOD eventually pass diags through to all resource transformers,
 			// not just accessPolicyBlock

@@ -1319,6 +1319,208 @@ func TestTransformZeroTrustAccessApplicationStateJSON(t *testing.T) {
 				}]
 			}`,
 		},
+		{
+			Name: "fixes_page_rule_null_browser_cache_ttl",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_page_rule",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"browser_cache_ttl": null,
+								"edge_cache_ttl": null,
+								"cache_level": "aggressive",
+								"ssl": "flexible"
+							}
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_page_rule",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"cache_level": "aggressive",
+								"ssl": "flexible"
+							}
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "keeps_valid_page_rule_browser_cache_ttl",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_page_rule",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"browser_cache_ttl": 3600,
+								"edge_cache_ttl": 7200,
+								"cache_level": "aggressive"
+							}
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_page_rule",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"browser_cache_ttl": 3600,
+								"edge_cache_ttl": 7200,
+								"cache_level": "aggressive"
+							}
+						}
+					}]
+				}]
+			}`,
+		},
+	}
+
+	RunFullStateTransformationTests(t, tests)
+}
+
+func TestTransformPageRulesStateJSON(t *testing.T) {
+	tests := []StateTestCase{
+		{
+			Name: "fixes_page_rule_empty_string_browser_cache_ttl",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_page_rule",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"browser_cache_ttl": "",
+								"edge_cache_ttl": "",
+								"cache_level": "aggressive",
+								"ssl": "flexible"
+							}
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_page_rule",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"cache_level": "aggressive",
+								"ssl": "flexible"
+							}
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "fixes_page_rule_null_browser_cache_ttl",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_page_rule",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"browser_cache_ttl": null,
+								"edge_cache_ttl": null,
+								"cache_level": "aggressive",
+								"ssl": "flexible"
+							}
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_page_rule",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"cache_level": "aggressive",
+								"ssl": "flexible"
+							}
+						}
+					}]
+				}]
+			}`,
+		},
+		{
+			Name: "keeps_valid_page_rule_browser_cache_ttl",
+			Input: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_page_rule",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"browser_cache_ttl": 3600,
+								"edge_cache_ttl": 7200,
+								"cache_level": "aggressive"
+							}
+						}
+					}]
+				}]
+			}`,
+			Expected: `{
+				"version": 4,
+				"resources": [{
+					"type": "cloudflare_page_rule",
+					"name": "test",
+					"instances": [{
+						"attributes": {
+							"id": "rule-123",
+							"target": "example.com/*",
+							"actions": {
+								"browser_cache_ttl": 3600,
+								"edge_cache_ttl": 7200,
+								"cache_level": "aggressive"
+							}
+						}
+					}]
+				}]
+			}`,
+		},
 	}
 
 	RunFullStateTransformationTests(t, tests)

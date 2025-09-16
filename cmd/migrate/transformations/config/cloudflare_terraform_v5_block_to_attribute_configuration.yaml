@@ -228,18 +228,18 @@ transformations:
       - webhooks_integration
 
   # Page Rule
-  cloudflare_page_rule:
-    to_map:
-      - actions
-      - cache_key_fields
-      - cookie
-      - header
-      - host
-      - query_string
-      - user
-      - cache_ttl_by_status
-      - forwarding_url
-      - minify
+#  cloudflare_page_rule:
+#    to_map:
+#      - actions
+#      - cache_key_fields
+#      - cookie
+#      - header
+#      - host
+#      - query_string
+#      - user
+#      - cache_ttl_by_status
+#      - forwarding_url
+#      - minify
 
   # Pages Project
   cloudflare_pages_project:

@@ -91,12 +91,12 @@ complex_transformations:
     enforce_twofactor:
       wrap_in: settings
   
-  cloudflare_page_rule:
-    # Transform cache_key_fields.query_string
-    cache_key_fields:
-      query_string:
-        ignore_false: 'include = ["*"]'
-        ignore_true: 'exclude = ["*"]'
+#  cloudflare_page_rule:
+#    # Transform cache_key_fields.query_string
+#    cache_key_fields:
+#      query_string:
+#        ignore_false: 'include = ["*"]'
+#        ignore_true: 'exclude = ["*"]'
   
   cloudflare_notification_policy:
     # Consolidate integration attributes into mechanisms block

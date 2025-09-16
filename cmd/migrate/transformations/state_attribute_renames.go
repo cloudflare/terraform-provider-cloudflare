@@ -213,7 +213,13 @@ func applySpecialTransformations(instance *TerraformStateInstance, special Speci
 	// Handle empty to null transformations
 	for _, pattern := range special.EmptyToNull {
 		for key, val := range instance.Attributes {
-			if shouldConvertToNull(val, pattern) {
+			// Skip numeric fields that should not be null
+			if key == "actions" {
+				// For actions, we need to handle it specially since it's a nested object
+				if actionsMap, ok := val.(map[string]interface{}); ok {
+					instance.Attributes[key] = handleActionsEmptyToNull(actionsMap, pattern)
+				}
+			} else if shouldConvertToNull(val, pattern) {
 				instance.Attributes[key] = nil
 			}
 		}
@@ -231,6 +237,32 @@ func applySpecialTransformations(instance *TerraformStateInstance, special Speci
 			}
 		}
 	}
+}
+
+// handleActionsEmptyToNull handles empty-to-null conversion for the actions object
+// It skips numeric fields like browser_cache_ttl, edge_cache_ttl, etc.
+func handleActionsEmptyToNull(actions map[string]interface{}, pattern string) map[string]interface{} {
+	// List of numeric fields that should not be converted to null
+	numericFields := map[string]bool{
+		"browser_cache_ttl": true,
+		"edge_cache_ttl": true,
+		"origin_error_page_pass_thru": true,
+		"polish": true,
+		"sort_query_string_for_cache": true,
+	}
+
+	result := make(map[string]interface{})
+	for key, val := range actions {
+		// Copy all values to result
+		result[key] = val
+
+		// Only apply empty-to-null conversion to non-numeric fields
+		if !numericFields[key] && shouldConvertToNull(val, pattern) {
+			result[key] = nil
+		}
+	}
+
+	return result
 }
 
 // shouldConvertToNull checks if a value should be converted to null based on pattern

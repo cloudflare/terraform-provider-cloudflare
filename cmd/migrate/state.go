@@ -142,6 +142,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			case "cloudflare_tiered_cache":
 				result = transformTieredCacheStateJSON(result, path, resourcePath)
 
+			case "cloudflare_page_rule":
+				result = transformPageRuleStateJSON(result, path)
+
 			case "cloudflare_zero_trust_access_identity_provider", "cloudflare_access_identity_provider":
 				result = transformZeroTrustAccessIdentityProviderStateJSON(result, path)
 
@@ -724,6 +727,8 @@ func transformTieredCacheStateJSON(json string, instancePath string, resourcePat
 
 	return json
 }
+
+// Note: transformPageRuleStateJSON is now defined in page_rule.go with comprehensive transformations
 
 // transformLoadBalancerStateJSON handles v4 to v5 state migration for cloudflare_load_balancer
 func transformLoadBalancerStateJSON(json string, instancePath string) string {

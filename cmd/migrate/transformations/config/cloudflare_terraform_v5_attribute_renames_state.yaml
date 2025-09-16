@@ -86,31 +86,31 @@ state_attribute_removals:
     - min_days_for_renewal
 
 # Special transformations for specific resources
-state_special_transformations:
-  cloudflare_page_rule:
-    # Convert empty values to null
-    empty_to_null:
-      - '""'  # Empty strings
-      - '[]'  # Empty arrays
-      - 'false'  # False booleans
-      - '0'  # Zero values
-    
-    # Specific field transformations
-    field_transformations:
-      forwarding_url:
-        # Empty array becomes null
-        from: '[]'
-        to: 'null'
-      
-      forwarding_url_unwrap:
-        # Single-element array gets unwrapped to object
-        from: '[{"status_code": $status_code, "url": $url}]'
-        to: '{"status_code": $status_code, "url": $url}'
-      
-      actions:
-        # Single-element array gets unwrapped
-        from: '[$action]'
-        to: '$action'
+#state_special_transformations:
+#  cloudflare_page_rule:
+#    # Convert empty values to null
+#    empty_to_null:
+#      - '""'  # Empty strings
+#      - '[]'  # Empty arrays
+#      - 'false'  # False booleans
+#      - '0'  # Zero values
+#
+#    # Specific field transformations
+#    field_transformations:
+#      forwarding_url:
+#        # Empty array becomes null
+#        from: '[]'
+#        to: 'null'
+#
+#      forwarding_url_unwrap:
+#        # Single-element array gets unwrapped to object
+#        from: '[{"status_code": $status_code, "url": $url}]'
+#        to: '{"status_code": $status_code, "url": $url}'
+#
+#      actions:
+#        # Single-element array gets unwrapped
+#        from: '[$action]'
+#        to: '$action'
 
 # Notes about implementation
 notes:

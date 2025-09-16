@@ -313,6 +313,57 @@ state_special_transformations:
 			},
 		},
 		{
+			name: "page rule browser_cache_ttl not null",
+			input: TerraformState{
+				Version: 4,
+				Resources: []TerraformStateResource{
+					{
+						Mode: "managed",
+						Type: "cloudflare_page_rule",
+						Name: "test",
+						Instances: []TerraformStateInstance{
+							{
+								SchemaVersion: 1,
+								Attributes: map[string]interface{}{
+									"target": "example.com/*",
+									"actions": map[string]interface{}{
+										"browser_cache_ttl": "",
+										"edge_cache_ttl": 0,
+										"cache_level": "",
+										"ssl": false,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expected: TerraformState{
+				Version: 4,
+				Resources: []TerraformStateResource{
+					{
+						Mode: "managed",
+						Type: "cloudflare_page_rule",
+						Name: "test",
+						Instances: []TerraformStateInstance{
+							{
+								SchemaVersion: 0,
+								Attributes: map[string]interface{}{
+									"target": "example.com/*",
+									"actions": map[string]interface{}{
+										"browser_cache_ttl": "", // Should not be null as it's a numeric field
+										"edge_cache_ttl": 0,     // Should not be null as it's a numeric field
+										"cache_level": nil,      // Non-numeric field can be null
+										"ssl": nil,              // Non-numeric field can be null
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
 			name: "page rule unwrap single element",
 			input: TerraformState{
 				Version: 4,
