@@ -759,6 +759,19 @@ func convertArraysToObjects(data map[string]interface{}) map[string]interface{} 
 		} else if obj, isMap := value.(map[string]interface{}); isMap {
 			// Even if not in the list, recursively process nested objects
 			data[key] = convertArraysToObjects(obj)
+		} else if arr, isArray := value.([]interface{}); isArray {
+			// Process arrays that aren't in singleNestedFields
+			// This handles arrays of objects like status_code_ttl
+			var processedArr []interface{}
+			for _, item := range arr {
+				if itemMap, isMap := item.(map[string]interface{}); isMap {
+					// Recursively process objects within arrays
+					processedArr = append(processedArr, convertArraysToObjects(itemMap))
+				} else {
+					processedArr = append(processedArr, item)
+				}
+			}
+			data[key] = processedArr
 		}
 	}
 
