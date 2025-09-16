@@ -44,7 +44,14 @@ func (ht *HCLTransformer) TransformFile(inputPath, outputPath string) error {
 	}
 
 	// Parse the HCL file for writing
-	ht.file, _ = hclwrite.ParseConfig(src, inputPath, hcl.Pos{Line: 1, Column: 1})
+	var diags hcl.Diagnostics
+	ht.file, diags = hclwrite.ParseConfig(src, inputPath, hcl.Pos{Line: 1, Column: 1})
+	if diags.HasErrors() {
+		return fmt.Errorf("failed to parse HCL file: %w", diags)
+	}
+	if ht.file == nil {
+		return fmt.Errorf("failed to parse HCL file: parser returned nil")
+	}
 
 	// Process all resource blocks
 	for _, block := range ht.file.Body().Blocks() {
@@ -83,6 +90,12 @@ func (ht *HCLTransformer) TransformFile(inputPath, outputPath string) error {
 
 	if err := os.WriteFile(outputPath, output, 0644); err != nil {
 		return fmt.Errorf("failed to write output file: %w", err)
+	}
+
+	// Post-process to fix various issues
+	if err := postProcessFile(outputPath); err != nil {
+		fmt.Printf("Warning: Failed to post-process %s: %v\n", outputPath, err)
+		// Don't fail the whole transformation for this
 	}
 
 	return nil

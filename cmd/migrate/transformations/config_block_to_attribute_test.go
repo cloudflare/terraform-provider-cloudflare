@@ -136,13 +136,16 @@ transformations:
 			expected: `resource "cloudflare_access_application" "example" {
   name = "example-app"
 
-  footer_links = [{
-    name = "Link 1"
-    url  = "https://example.com/1"
-  }, {
-    name = "Link 2"
-    url  = "https://example.com/2"
-  }]
+  footer_links = [
+    {
+      name = "Link 1",
+      url  = "https://example.com/1"
+    },
+    {
+      name = "Link 2",
+      url  = "https://example.com/2"
+    }
+  ]
 }`,
 		},
 		{
