@@ -294,9 +294,7 @@ func transformCloudflareRulesetStateJSON(json string, instancePath string) strin
 		result = cleanupRulesetIndexedKeys(result, attrPath, rulesCount.Int())
 	}
 
-	fmt.Println("before")
 	result = removeDisableRailgunFromPath(result, instancePath)
-	fmt.Println("after")
 	return result
 }
 

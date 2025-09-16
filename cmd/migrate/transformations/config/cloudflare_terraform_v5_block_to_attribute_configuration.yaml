@@ -239,7 +239,6 @@ transformations:
       - user
       - cache_ttl_by_status
       - forwarding_url
-      - minify
 
   # Pages Project
   cloudflare_pages_project:

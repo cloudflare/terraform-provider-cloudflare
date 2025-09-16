@@ -40,6 +40,8 @@ state_attribute_removals:
   cloudflare_tunnel:
     - secret
     - cname
+  cloudflare_page_rule:
+    - disable_railgun
 state_special_transformations:
   cloudflare_page_rule:
     empty_to_null:
@@ -361,6 +363,159 @@ state_special_transformations:
 									},
 									"actions": map[string]interface{}{
 										"cache_level": "aggressive",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "page rule remove disable_railgun attribute",
+			input: TerraformState{
+				Version: 4,
+				Resources: []TerraformStateResource{
+					{
+						Mode: "managed",
+						Type: "cloudflare_page_rule",
+						Name: "test",
+						Instances: []TerraformStateInstance{
+							{
+								SchemaVersion: 1,
+								Attributes: map[string]interface{}{
+									"target": "example.com/*",
+									"disable_railgun": true,
+									"actions": map[string]interface{}{
+										"cache_level": "aggressive",
+										"disable_railgun": "on",
+										"ssl": "flexible",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expected: TerraformState{
+				Version: 4,
+				Resources: []TerraformStateResource{
+					{
+						Mode: "managed",
+						Type: "cloudflare_page_rule",
+						Name: "test",
+						Instances: []TerraformStateInstance{
+							{
+								SchemaVersion: 0,
+								Attributes: map[string]interface{}{
+									"target": "example.com/*",
+									"actions": map[string]interface{}{
+										"cache_level": "aggressive",
+										"ssl": "flexible",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "page rule forwarding_url unwrap in actions",
+			input: TerraformState{
+				Version: 4,
+				Resources: []TerraformStateResource{
+					{
+						Mode: "managed",
+						Type: "cloudflare_page_rule",
+						Name: "test",
+						Instances: []TerraformStateInstance{
+							{
+								SchemaVersion: 1,
+								Attributes: map[string]interface{}{
+									"target": "example.com/*",
+									"actions": map[string]interface{}{
+										"forwarding_url": []interface{}{
+											map[string]interface{}{
+												"status_code": 301,
+												"url": "https://new.example.com",
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expected: TerraformState{
+				Version: 4,
+				Resources: []TerraformStateResource{
+					{
+						Mode: "managed",
+						Type: "cloudflare_page_rule",
+						Name: "test",
+						Instances: []TerraformStateInstance{
+							{
+								SchemaVersion: 0,
+								Attributes: map[string]interface{}{
+									"target": "example.com/*",
+									"actions": map[string]interface{}{
+										"forwarding_url": map[string]interface{}{
+											"status_code": 301,
+											"url": "https://new.example.com",
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "page rule browser_cache_ttl empty string to null",
+			input: TerraformState{
+				Version: 4,
+				Resources: []TerraformStateResource{
+					{
+						Mode: "managed",
+						Type: "cloudflare_page_rule",
+						Name: "test",
+						Instances: []TerraformStateInstance{
+							{
+								SchemaVersion: 1,
+								Attributes: map[string]interface{}{
+									"target": "example.com/*",
+									"actions": map[string]interface{}{
+										"cache_level": "aggressive",
+										"browser_cache_ttl": "",
+										"edge_cache_ttl": "0",
+										"ssl": "flexible",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expected: TerraformState{
+				Version: 4,
+				Resources: []TerraformStateResource{
+					{
+						Mode: "managed",
+						Type: "cloudflare_page_rule",
+						Name: "test",
+						Instances: []TerraformStateInstance{
+							{
+								SchemaVersion: 0,
+								Attributes: map[string]interface{}{
+									"target": "example.com/*",
+									"actions": map[string]interface{}{
+										"cache_level": "aggressive",
+										"browser_cache_ttl": nil,
+										"edge_cache_ttl": nil,
+										"ssl": "flexible",
 									},
 								},
 							},

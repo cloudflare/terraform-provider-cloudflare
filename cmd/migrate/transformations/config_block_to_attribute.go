@@ -21,6 +21,12 @@ func TransformResourceBlock(config *TransformationConfig, resourceBlock *hclwrit
 
 	body := resourceBlock.Body()
 
+	// Special handling for cloudflare_page_rule to remove unsupported blocks
+	if resourceType == "cloudflare_page_rule" {
+		// Remove minify blocks from actions block as they're not supported in v5
+		removeUnsupportedPageRuleBlocks(body)
+	}
+
 	// Transform blocks to maps
 	for _, blockName := range transform.ToMap {
 		if err := transformBlocksToMap(config, body, blockName); err != nil {
@@ -94,8 +100,9 @@ func transformBlocksToMap(config *TransformationConfig, body *hclwrite.Body, blo
 func transformBlockToMapRaw(body *hclwrite.Body, block *hclwrite.Block, blockName string) error {
 	blockBody := block.Body()
 	attrs := blockBody.Attributes()
-	
-	if len(attrs) == 0 {
+	blocks := blockBody.Blocks()
+
+	if len(attrs) == 0 && len(blocks) == 0 {
 		// Empty block - create empty object using raw tokens
 		body.SetAttributeRaw(blockName, hclwrite.Tokens{
 			{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")},
@@ -103,20 +110,20 @@ func transformBlockToMapRaw(body *hclwrite.Body, block *hclwrite.Block, blockNam
 		})
 		return nil
 	}
-	
+
 	// Build the map manually using tokens to preserve complex expressions
 	tokens := hclwrite.Tokens{
 		{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")},
 		{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
 	}
-	
+
 	// Sort attribute names for consistent output
 	names := make([]string, 0, len(attrs))
 	for name := range attrs {
 		names = append(names, name)
 	}
 	sort.Strings(names)
-	
+
 	first := true
 	for _, name := range names {
 		attr := attrs[name]
@@ -124,29 +131,124 @@ func transformBlockToMapRaw(body *hclwrite.Body, block *hclwrite.Block, blockNam
 			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
 		}
 		first = false
-		
+
 		// Add indentation
 		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("    ")})
-		
+
 		// Add the attribute name
 		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(name)})
 		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
-		
+
 		// Add the attribute expression tokens (preserves complex expressions)
 		exprTokens := attr.Expr().BuildTokens(nil)
 		tokens = append(tokens, exprTokens...)
 	}
-	
+
+	// Process nested blocks (convert them to nested maps/objects)
+	for _, nestedBlock := range blocks {
+		if !first {
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+		}
+		first = false
+
+		// Add indentation
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("    ")})
+
+		// Add the nested block name
+		nestedName := nestedBlock.Type()
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(nestedName)})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+
+		// Recursively convert the nested block to tokens
+		nestedTokens := blockToTokens(nestedBlock)
+		tokens = append(tokens, nestedTokens...)
+	}
+
 	tokens = append(tokens,
 		&hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
 		&hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("  ")},
 		&hclwrite.Token{Type: hclsyntax.TokenCBrace, Bytes: []byte("}")},
 	)
-	
+
 	// Set the attribute using raw tokens
 	body.SetAttributeRaw(blockName, tokens)
-	
+
 	return nil
+}
+
+// blockToTokens converts a block to HCL tokens representing an object
+func blockToTokens(block *hclwrite.Block) hclwrite.Tokens {
+	blockBody := block.Body()
+	attrs := blockBody.Attributes()
+	blocks := blockBody.Blocks()
+
+	tokens := hclwrite.Tokens{
+		{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")},
+	}
+
+	if len(attrs) == 0 && len(blocks) == 0 {
+		// Empty block
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenCBrace, Bytes: []byte("}")})
+		return tokens
+	}
+
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+
+	// Sort attribute names for consistent output
+	names := make([]string, 0, len(attrs))
+	for name := range attrs {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+
+	first := true
+	// Process attributes
+	for _, name := range names {
+		attr := attrs[name]
+		if !first {
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+		}
+		first = false
+
+		// Add indentation (6 spaces for nested content)
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("      ")})
+
+		// Add the attribute name
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(name)})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+
+		// Add the attribute expression tokens
+		exprTokens := attr.Expr().BuildTokens(nil)
+		tokens = append(tokens, exprTokens...)
+	}
+
+	// Process nested blocks
+	for _, nestedBlock := range blocks {
+		if !first {
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+		}
+		first = false
+
+		// Add indentation (6 spaces for nested content)
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("      ")})
+
+		// Add the nested block name
+		nestedName := nestedBlock.Type()
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(nestedName)})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+
+		// Recursively convert the nested block
+		nestedTokens := blockToTokens(nestedBlock)
+		tokens = append(tokens, nestedTokens...)
+	}
+
+	tokens = append(tokens,
+		&hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+		&hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("    ")},
+		&hclwrite.Token{Type: hclsyntax.TokenCBrace, Bytes: []byte("}")},
+	)
+
+	return tokens
 }
 
 // blockToObject converts a block's content to a cty.Value object
@@ -235,6 +337,31 @@ func findBlocksByType(body *hclwrite.Body, blockType string) []*hclwrite.Block {
 		}
 	}
 	return result
+}
+
+// removeUnsupportedPageRuleBlocks removes blocks that are not supported in v5
+func removeUnsupportedPageRuleBlocks(body *hclwrite.Body) {
+	// Find all actions blocks
+	actionsBlocks := findBlocksByType(body, "actions")
+	for _, actionsBlock := range actionsBlocks {
+		actionsBody := actionsBlock.Body()
+
+		// Find and remove minify blocks
+		minifyBlocks := findBlocksByType(actionsBody, "minify")
+		for _, minifyBlock := range minifyBlocks {
+			actionsBody.RemoveBlock(minifyBlock)
+		}
+
+		// Also remove minify attribute if it exists
+		if actionsBody.GetAttribute("minify") != nil {
+			actionsBody.RemoveAttribute("minify")
+		}
+
+		// Remove disable_railgun attribute if it exists
+		if actionsBody.GetAttribute("disable_railgun") != nil {
+			actionsBody.RemoveAttribute("disable_railgun")
+		}
+	}
 }
 
 // GetTransformationType returns the transformation type for a given resource and block
