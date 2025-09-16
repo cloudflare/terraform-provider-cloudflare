@@ -3,6 +3,7 @@ package transformations
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -573,7 +574,8 @@ transformations:
 	}
 
 	// Check that ratelimit blocks are converted to maps within the list
-	if !strings.Contains(string(output), "ratelimit = {") {
+	// Use regex to handle potential spacing variations
+	if !regexp.MustCompile(`ratelimit\s*=\s*\{`).MatchString(string(output)) {
 		t.Errorf("Expected ratelimit blocks to be converted to map, but output doesn't contain 'ratelimit = {'")
 	} else {
 		t.Logf("✅ Ratelimit blocks correctly converted to map format within list items")
@@ -690,7 +692,8 @@ transformations:
 	}
 
 	// Check that ratelimit blocks are converted to maps within the list
-	if !strings.Contains(string(output), "ratelimit = {") {
+	// Use regex to handle potential spacing variations
+	if !regexp.MustCompile(`ratelimit\s*=\s*\{`).MatchString(string(output)) {
 		t.Errorf("Expected ratelimit blocks to be converted to map, but output doesn't contain 'ratelimit = {'")
 	} else {
 		t.Logf("✅ Ratelimit blocks correctly converted to map format within list items")
