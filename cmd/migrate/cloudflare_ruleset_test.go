@@ -759,10 +759,12 @@ func TestCloudflareRulesetConfigActionParametersResourceReference(t *testing.T) 
     expression  = "true"
   }]
 }`,
-			Expected: []string{`rules = [{
-          action = "block"
-          id     = "603be41d114b4fc28c85de27c86adf25"
-        }]`},
+			Expected: []string{`overrides = {
+                rules = [{
+                  action = "block",
+                  id     = "603be41d114b4fc28c85de27c86adf25"
+                }]
+              }`},
 		},
 		{
 			Name: "overrides categories should be converted from object to list",
@@ -783,10 +785,12 @@ func TestCloudflareRulesetConfigActionParametersResourceReference(t *testing.T) 
     expression = "true"
   }]
 }`,
-			Expected: []string{`categories = [{
-          category = "paranoia-level-4"
-          enabled  = false
-        }]`},
+			Expected: []string{`overrides = {
+                categories = [{
+                  category = "paranoia-level-4",
+                  enabled  = false
+                }]
+              }`},
 		},
 		{
 			Name: "status_code_ttl should be converted from object to list",
@@ -808,10 +812,14 @@ func TestCloudflareRulesetConfigActionParametersResourceReference(t *testing.T) 
     expression = "true"
   }]
 }`,
-			Expected: []string{`status_code_ttl = [{
-          status_code = 200
-          value       = 31536000
-        }]`},
+			Expected: []string{`edge_ttl = {
+                default = 31536000,
+                mode    = "override_origin",
+                status_code_ttl = [{
+                  status_code = 200,
+                  value       = 31536000
+                }]
+              }`},
 		},
 		{
 			Name: "headers flat object should be converted to map format",

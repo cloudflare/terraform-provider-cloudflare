@@ -87,6 +87,9 @@ func transformBlocksToListPreservingTokens(body *hclwrite.Body, blocks []*hclwri
 		}
 		sort.Strings(attrNames)
 
+		// Process nested blocks to determine if we need commas after attributes
+		nestedBlocks := block.Body().Blocks()
+		
 		for j, name := range attrNames {
 			attr := attrs[name]
 			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("    " + name)})
@@ -96,18 +99,17 @@ func transformBlocksToListPreservingTokens(body *hclwrite.Body, blocks []*hclwri
 			exprTokens := attr.Expr().BuildTokens(nil)
 			tokens = append(tokens, exprTokens...)
 
-			// Add comma after each attribute except the last one (when there are no nested blocks)
-			if j < len(attrNames)-1 {
+			// Add comma after each attribute except the last one, OR if there are nested blocks coming
+			if j < len(attrNames)-1 || len(nestedBlocks) > 0 {
 				tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(",")})
 			}
 			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
 		}
 
 		// Process nested blocks
-		nestedBlocks := block.Body().Blocks()
 		for k, nestedBlock := range nestedBlocks {
-			// Add comma+newline before this nested block (either after attributes or previous blocks)
-			if len(attrNames) > 0 || k > 0 {
+			// Add comma after previous nested block (but not before the first one)
+			if k > 0 {
 				tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(",")})
 				tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
 			}
@@ -573,8 +575,14 @@ func tokensToValue(tokens hclwrite.Tokens) cty.Value {
 		return cty.ListValEmpty(cty.String)
 	}
 	if strings.HasPrefix(str, "\"") && strings.HasSuffix(str, "\"") {
-		// String value - remove quotes
-		return cty.StringVal(strings.Trim(str, "\""))
+		// String value - remove only the outer quotes and unescape inner quotes
+		if len(str) >= 2 {
+			inner := str[1 : len(str)-1]
+			// Unescape quotes to prevent double-escaping when HCL formats them
+			inner = strings.ReplaceAll(inner, `\"`, `"`)
+			return cty.StringVal(inner)
+		}
+		return cty.StringVal("")
 	}
 	// Try as number
 	if num, err := strconv.ParseInt(str, 10, 64); err == nil {
@@ -582,6 +590,13 @@ func tokensToValue(tokens hclwrite.Tokens) cty.Value {
 	}
 	if num, err := strconv.ParseFloat(str, 64); err == nil {
 		return cty.NumberFloatVal(num)
+	}
+	
+	// Check if this is a resource reference (e.g., resource_type.name.attribute)
+	// Resource references should not be converted to strings as they need to remain as references
+	if isResourceReference(str) {
+		// Return as a dynamic value that will be preserved as-is
+		return cty.DynamicVal
 	}
 
 	// Default to string
@@ -644,4 +659,34 @@ func GetTransformationType(config *TransformationConfig, resourceType, blockName
 	}
 
 	return ""
+}
+// isResourceReference detects if a string represents a Terraform resource reference
+func isResourceReference(str string) bool {
+	// Resource references have the pattern: resource_type.resource_name.attribute
+	// or data.data_type.data_name.attribute
+	// They contain dots and don't start with quotes
+	if strings.HasPrefix(str, "\"") || strings.HasSuffix(str, "\"") {
+		return false // Quoted strings are not resource references
+	}
+	
+	// Must contain at least two dots (resource_type.name.attribute)
+	parts := strings.Split(str, ".")
+	if len(parts) < 3 {
+		return false
+	}
+	
+	// First part should be a resource type (starts with letter, contains only alphanumeric and underscores)
+	firstPart := parts[0]
+	if len(firstPart) == 0 {
+		return false
+	}
+	
+	// Check if it looks like a resource type or data source
+	if firstPart == "data" || 
+	   (firstPart[0] >= 'a' && firstPart[0] <= 'z' && 
+	    strings.Contains(firstPart, "_")) {
+		return true
+	}
+	
+	return false
 }
