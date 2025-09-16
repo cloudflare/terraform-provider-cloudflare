@@ -130,11 +130,13 @@ func expandSingleZoneSettingsModule(moduleBlock string, skipImports bool) string
 			resourceName := fmt.Sprintf("%s_%s", resourcePrefix, "nel")
 
 			resource := createZoneSettingResourceFromModule(resourceName, settingId, zoneIdAttr, attr.Attribute, true)
-			results = append(results, resource)
+			if resource != "" { // Only add if resource was created (not skipped for null values)
+				results = append(results, resource)
 
-			if !skipImports {
-				importBlock := createImportBlockFromModule(resourceName, settingId, zoneIdAttr)
-				results = append(results, importBlock)
+				if !skipImports {
+					importBlock := createImportBlockFromModule(resourceName, settingId, zoneIdAttr)
+					results = append(results, importBlock)
+				}
 			}
 			continue
 		}
@@ -144,11 +146,13 @@ func expandSingleZoneSettingsModule(moduleBlock string, skipImports bool) string
 			resourceName := fmt.Sprintf("%s_%s", resourcePrefix, attrName)
 
 			resource := createZoneSettingResourceFromModule(resourceName, settingId, zoneIdAttr, attr.Attribute, false)
-			results = append(results, resource)
+			if resource != "" { // Only add if resource was created (not skipped for null values)
+				results = append(results, resource)
 
-			if !skipImports {
-				importBlock := createImportBlockFromModule(resourceName, settingId, zoneIdAttr)
-				results = append(results, importBlock)
+				if !skipImports {
+					importBlock := createImportBlockFromModule(resourceName, settingId, zoneIdAttr)
+					results = append(results, importBlock)
+				}
 			}
 		}
 	}
@@ -188,6 +192,16 @@ func extractSecurityHeaderAttributes(body *hclwrite.Body) map[string]*hclwrite.A
 
 // createZoneSettingResourceFromModule creates a zone_setting resource from module attributes
 func createZoneSettingResourceFromModule(resourceName, settingId string, zoneIdAttr, valueAttr *hclwrite.Attribute, isNEL bool) string {
+	// Check if the value is null - if so, don't create the resource at all
+	if valueAttr != nil {
+		valueStr := tokensToString(valueAttr.Expr().BuildTokens(nil))
+		if strings.TrimSpace(valueStr) == "null" {
+			fmt.Printf("SKIPPED: cloudflare_zone_setting.%s (reason: value = null)\n", resourceName)
+			fmt.Printf("         (setting_id: %s has no meaningful value)\n", settingId)
+			return "" // Return empty string to indicate no resource should be created
+		}
+	}
+
 	var lines []string
 	lines = append(lines, fmt.Sprintf(`resource "cloudflare_zone_setting" "%s" {`, resourceName))
 
