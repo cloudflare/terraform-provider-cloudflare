@@ -54,8 +54,8 @@ attribute_removals:
 }`,
 			expected: `resource "cloudflare_load_balancer" "example" {
   name          = "example-lb"
-  fallback_pool = "pool-1"
   default_pools = ["pool-2", "pool-3"]
+  fallback_pool = "pool-1"
 }`,
 		},
 		{
@@ -352,3 +352,4 @@ attribute_removals:
 		}
 	}
 }
+
