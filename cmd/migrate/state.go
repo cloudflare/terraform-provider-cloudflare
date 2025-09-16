@@ -43,21 +43,17 @@ func transformStateJSON(data []byte) ([]byte, error) {
 	}
 
 	// This is deleting resources from state which changes the indices of remaining resources
-	// Delete them first and then process the remaining
-	resources.ForEach(func(ridx, resource gjson.Result) bool {
-		resourcePath := fmt.Sprintf("resources.%d", ridx.Int())
-		// CRITICAL FIX: Always read resource type from current JSON state, not from stale ForEach data
-		// The ForEach iteration data can be stale/cached and not match current JSON positions
+	// Iterate backwards to avoid index shifting issues when deleting
+	resourcesArray := resources.Array()
+	for i := len(resourcesArray) - 1; i >= 0; i-- {
+		resourcePath := fmt.Sprintf("resources.%d", i)
 		resourceType := gjson.Get(result, resourcePath+".type").String()
 
 		// Handle zone_settings_override -> zone_setting transformation
 		if resourceType == "cloudflare_zone_settings_override" {
 			result = transformZoneSettingsStateJSON(result, resourcePath)
-			return true // Continue to next resource
 		}
-
-		return true
-	})
+	}
 
 	resources = gjson.Get(result, "resources")
 

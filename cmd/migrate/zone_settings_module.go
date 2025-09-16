@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/hashicorp/hcl/v2"
@@ -235,8 +236,15 @@ func createSecurityHeaderResourceFromModule(resourceName, settingId string, zone
 	valueLines = append(valueLines, "  value = {")
 	valueLines = append(valueLines, "    strict_transport_security = {")
 
-	// Map the security header attributes
-	for fieldName, attr := range securityAttrs {
+	// Map the security header attributes in deterministic order
+	var fieldNames []string
+	for fieldName := range securityAttrs {
+		fieldNames = append(fieldNames, fieldName)
+	}
+	sort.Strings(fieldNames)
+
+	for _, fieldName := range fieldNames {
+		attr := securityAttrs[fieldName]
 		valueStr := tokensToString(attr.Expr().BuildTokens(nil))
 		valueLines = append(valueLines, fmt.Sprintf("      %s = %s", fieldName, valueStr))
 	}
