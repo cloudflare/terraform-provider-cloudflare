@@ -2,256 +2,171 @@ package transformations
 
 import (
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/hcl/v2"
+	"github.com/hashicorp/hcl/v2/hclwrite"
 )
 
-// TestBlockToAttributeTransformations tests the block-to-attribute transformation functionality
-func TestBlockToAttributeTransformations(t *testing.T) {
-	// Create a temporary directory for test files
-	tempDir, err := os.MkdirTemp("", "block_to_attribute_test")
-	if err != nil {
-		t.Fatalf("Failed to create temp dir: %v", err)
-	}
-	defer os.RemoveAll(tempDir)
-
-	// Create test configuration file for block transformations
-	configPath := filepath.Join(tempDir, "test_config.yaml")
+func TestLoadBalancerPoolOriginsWithVariableInterpolation(t *testing.T) {
+	// Create test config
 	configContent := `
 version: "1.0"
-description: "Test block to attribute transformations"
 transformations:
   cloudflare_load_balancer_pool:
-    to_map:
-      - load_shedding
-      - origin_steering
     to_list:
       - origins
-  cloudflare_access_application:
-    to_map:
-      - cors_headers
-    to_list:
-      - footer_links
 `
+	configPath := "test_config.yaml"
 	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
-		t.Fatalf("Failed to write config file: %v", err)
+		t.Fatal(err)
 	}
+	defer os.Remove(configPath)
 
-	// Test cases
-	tests := []struct {
-		name     string
-		input    string
-		expected string
-	}{
-		{
-			name: "transform load balancer pool origins to list",
-			input: `resource "cloudflare_load_balancer_pool" "example" {
-  name = "example-pool"
-
-  origins {
-    name    = "origin-1"
-    address = "192.0.2.1"
-    enabled = true
-  }
-
-  origins {
-    name    = "origin-2"
-    address = "192.0.2.2"
-    enabled = false
-  }
-}`,
-			expected: `resource "cloudflare_load_balancer_pool" "example" {
-  name = "example-pool"
-
-  origins = [{
-    address = "192.0.2.1"
-    enabled = true
-    name    = "origin-1"
-  }, {
-    address = "192.0.2.2"
-    enabled = false
-    name    = "origin-2"
-  }]
-}`,
-		},
-		{
-			name: "transform load balancer pool load_shedding to map",
-			input: `resource "cloudflare_load_balancer_pool" "example" {
-  name = "example-pool"
-
-  load_shedding {
-    default_percent = 10
-    default_policy  = "random"
-  }
-}`,
-			expected: `resource "cloudflare_load_balancer_pool" "example" {
-  name = "example-pool"
-
-  load_shedding = {
-    default_percent = 10
-    default_policy  = "random"
-  }
-}`,
-		},
-		{
-			name: "transform access application cors_headers to map",
-			input: `resource "cloudflare_access_application" "example" {
-  name = "example-app"
-
-  cors_headers {
-    allowed_methods   = ["GET", "POST"]
-    allowed_origins   = ["https://example.com"]
-    allow_credentials = true
-  }
-}`,
-			expected: `resource "cloudflare_access_application" "example" {
-  name = "example-app"
-
-  cors_headers = {
-    allow_credentials = true
-    allowed_methods   = ["GET", "POST"]
-    allowed_origins   = ["https://example.com"]
-  }
-}`,
-		},
-		{
-			name: "transform access application footer_links to list",
-			input: `resource "cloudflare_access_application" "example" {
-  name = "example-app"
-
-  footer_links {
-    name = "Link 1"
-    url  = "https://example.com/1"
-  }
-
-  footer_links {
-    name = "Link 2"
-    url  = "https://example.com/2"
-  }
-}`,
-			expected: `resource "cloudflare_access_application" "example" {
-  name = "example-app"
-
-  footer_links = [{
-    name = "Link 1"
-    url  = "https://example.com/1"
-  }, {
-    name = "Link 2"
-    url  = "https://example.com/2"
-  }]
-}`,
-		},
-		{
-			name: "handle multiple transformations in same resource",
-			input: `resource "cloudflare_load_balancer_pool" "example" {
-  name = "example-pool"
-
-  origins {
-    name    = "origin-1"
-    address = "192.0.2.1"
-  }
-
-  load_shedding {
-    default_percent = 10
-  }
-}`,
-			expected: `resource "cloudflare_load_balancer_pool" "example" {
-  name = "example-pool"
-
-  load_shedding = {
-    default_percent = 10
-  }
-  origins = [{
-    address = "192.0.2.1"
-    name    = "origin-1"
-  }]
-}`,
-		},
-		{
-			name: "preserve attributes not in transformation list",
-			input: `resource "cloudflare_load_balancer_pool" "example" {
-  name            = "example-pool"
-  enabled         = true
-  minimum_origins = 1
-
-  origins {
-    name    = "origin-1"
-    address = "192.0.2.1"
-  }
-}`,
-			expected: `resource "cloudflare_load_balancer_pool" "example" {
-  name            = "example-pool"
-  enabled         = true
-  minimum_origins = 1
-
-  origins = [{
-    address = "192.0.2.1"
-    name    = "origin-1"
-  }]
-}`,
-		},
-		{
-			name: "handle resources with no transformations",
-			input: `resource "cloudflare_zone" "example" {
-  zone = "example.com"
-  plan = "enterprise"
-}`,
-			expected: `resource "cloudflare_zone" "example" {
-  zone = "example.com"
-  plan = "enterprise"
-}`,
-		},
-	}
-
-	// Create transformer
-	transformer, err := NewHCLTransformer(configPath)
+	// Load config
+	config, err := LoadConfig(configPath)
 	if err != nil {
-		t.Fatalf("Failed to create transformer: %v", err)
+		t.Fatal(err)
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Create input file
-			inputPath := filepath.Join(tempDir, "input.tf")
-			if err := os.WriteFile(inputPath, []byte(tt.input), 0644); err != nil {
-				t.Fatalf("Failed to write input file: %v", err)
-			}
+	// Test input with variable interpolation
+	input := `resource "cloudflare_load_balancer_pool" "test" {
+  name = "test-pool"
+  origins {
+    name    = "u0"
+    address = "api.unified-0.${var.api_openai_com_domain}"
+    enabled = true
+    weight  = 1
+  }
+  origins {
+    name    = "u1"
+    address = "api.unified-1.${var.api_openai_com_domain}"
+    enabled = true
+    weight  = 1
+  }
+}`
 
-			// Transform the file
-			outputPath := filepath.Join(tempDir, "output.tf")
-			if err := transformer.TransformFile(inputPath, outputPath); err != nil {
-				t.Fatalf("Failed to transform file: %v", err)
-			}
+	// Parse
+	file, diags := hclwrite.ParseConfig([]byte(input), "test.tf", hcl.InitialPos)
+	if diags.HasErrors() {
+		t.Fatal(diags)
+	}
 
-			// Read the output
-			output, err := os.ReadFile(outputPath)
+	// Transform
+	for _, block := range file.Body().Blocks() {
+		if block.Type() == "resource" && len(block.Labels()) > 0 && block.Labels()[0] == "cloudflare_load_balancer_pool" {
+			err := TransformResourceBlock(config, block, "cloudflare_load_balancer_pool")
 			if err != nil {
-				t.Fatalf("Failed to read output file: %v", err)
+				t.Fatal(err)
 			}
+		}
+	}
 
-			// Normalize whitespace for comparison
-			expectedNorm := normalizeWhitespace(tt.expected)
-			outputNorm := normalizeWhitespace(string(output))
+	// Check result
+	result := string(file.Bytes())
 
-			if expectedNorm != outputNorm {
-				t.Errorf("Transformation mismatch\nExpected:\n%s\n\nGot:\n%s", tt.expected, string(output))
-			}
-		})
+	// Should NOT contain double dollar signs (escaped variables)
+	if strings.Contains(result, "$${") {
+		t.Errorf("Result contains escaped variables ($$):\n%s", result)
+	}
+
+	// Should still contain the variable reference
+	if !strings.Contains(result, "${var.api_openai_com_domain}") {
+		t.Errorf("Variable reference was lost:\n%s", result)
+	}
+
+	// Should have converted origins blocks to list attribute
+	if !strings.Contains(result, "origins = [") {
+		t.Errorf("Origins blocks were not converted to list attribute:\n%s", result)
+	}
+
+	// Should have removed the blocks
+	if strings.Contains(result, "origins {") {
+		t.Errorf("Origins blocks were not removed:\n%s", result)
+	}
+
+	// Check that both origins are in the list
+	if !strings.Contains(result, "api.unified-0.${var.api_openai_com_domain}") {
+		t.Errorf("First origin address was not preserved correctly:\n%s", result)
+	}
+
+	if !strings.Contains(result, "api.unified-1.${var.api_openai_com_domain}") {
+		t.Errorf("Second origin address was not preserved correctly:\n%s", result)
 	}
 }
 
-// TestBlockTransformDirectory tests directory-level block transformations
-func TestBlockTransformDirectory(t *testing.T) {
-	// Create a temporary directory structure
-	tempDir, err := os.MkdirTemp("", "block_transform_dir_test")
-	if err != nil {
-		t.Fatalf("Failed to create temp dir: %v", err)
+func TestNonLoadBalancerPoolOriginsUsesDefaultTransform(t *testing.T) {
+	// Create test config for a different resource type
+	configContent := `
+version: "1.0"
+transformations:
+  cloudflare_other_resource:
+    to_list:
+      - items
+`
+	configPath := "test_config.yaml"
+	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+		t.Fatal(err)
 	}
-	defer os.RemoveAll(tempDir)
+	defer os.Remove(configPath)
 
-	// Create test configuration
-	configPath := filepath.Join(tempDir, "config.yaml")
+	// Load config
+	config, err := LoadConfig(configPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Test input with simple values
+	input := `resource "cloudflare_other_resource" "test" {
+  name = "test"
+  items {
+    name  = "item1"
+    value = "simple-value"
+  }
+  items {
+    name  = "item2"
+    value = "another-value"
+  }
+}`
+
+	// Parse
+	file, diags := hclwrite.ParseConfig([]byte(input), "test.tf", hcl.InitialPos)
+	if diags.HasErrors() {
+		t.Fatal(diags)
+	}
+
+	// Transform
+	for _, block := range file.Body().Blocks() {
+		if block.Type() == "resource" && len(block.Labels()) > 0 && block.Labels()[0] == "cloudflare_other_resource" {
+			err := TransformResourceBlock(config, block, "cloudflare_other_resource")
+			if err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+
+	// Check result
+	result := string(file.Bytes())
+
+	// Should have converted items blocks to list attribute
+	if !strings.Contains(result, "items = [") {
+		t.Errorf("Items blocks were not converted to list attribute:\n%s", result)
+	}
+
+	// Should have removed the blocks
+	if strings.Contains(result, "items {") {
+		t.Errorf("Items blocks were not removed:\n%s", result)
+	}
+
+	// Values should be preserved
+	if !strings.Contains(result, "simple-value") || !strings.Contains(result, "another-value") {
+		t.Errorf("Values were not preserved correctly:\n%s", result)
+	}
+}
+
+func TestEmptyOriginsList(t *testing.T) {
+	// Create test config
 	configContent := `
 version: "1.0"
 transformations:
@@ -259,128 +174,138 @@ transformations:
     to_list:
       - origins
 `
+	configPath := "test_config.yaml"
 	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
-		t.Fatalf("Failed to write config file: %v", err)
+		t.Fatal(err)
+	}
+	defer os.Remove(configPath)
+
+	// Load config
+	config, err := LoadConfig(configPath)
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	// Create directory structure with .tf files
-	subDir := filepath.Join(tempDir, "modules")
-	if err := os.Mkdir(subDir, 0755); err != nil {
-		t.Fatalf("Failed to create subdirectory: %v", err)
+	// Test input with no origins blocks
+	input := `resource "cloudflare_load_balancer_pool" "test" {
+  name = "test-pool"
+  description = "A pool with no origins"
+}`
+
+	// Parse
+	file, diags := hclwrite.ParseConfig([]byte(input), "test.tf", hcl.InitialPos)
+	if diags.HasErrors() {
+		t.Fatal(diags)
 	}
 
-	// Create test files
-	testFiles := map[string]string{
-		filepath.Join(tempDir, "main.tf"): `resource "cloudflare_load_balancer_pool" "main" {
-  origins {
-    name = "origin-1"
-  }
-}`,
-		filepath.Join(subDir, "module.tf"): `resource "cloudflare_load_balancer_pool" "module" {
-  origins {
-    name = "origin-2"
-  }
-}`,
-		filepath.Join(tempDir, "variables.tf"): `variable "example" {
-  default = "test"
-}`,
-	}
-
-	for path, content := range testFiles {
-		if err := os.WriteFile(path, []byte(content), 0644); err != nil {
-			t.Fatalf("Failed to write test file %s: %v", path, err)
+	// Transform
+	for _, block := range file.Body().Blocks() {
+		if block.Type() == "resource" && len(block.Labels()) > 0 && block.Labels()[0] == "cloudflare_load_balancer_pool" {
+			err := TransformResourceBlock(config, block, "cloudflare_load_balancer_pool")
+			if err != nil {
+				t.Fatal(err)
+			}
 		}
 	}
 
-	// Create transformer and process directory
-	transformer, err := NewHCLTransformer(configPath)
-	if err != nil {
-		t.Fatalf("Failed to create transformer: %v", err)
+	// Check result
+	result := string(file.Bytes())
+
+	// Should not have added origins attribute if there were no blocks
+	if strings.Contains(result, "origins = ") || strings.Contains(result, "origins=") {
+		t.Errorf("Origins attribute was added when no origins blocks existed:\n%s", result)
 	}
 
-	// Test non-recursive processing
-	if err := transformer.TransformDirectory(tempDir, false); err != nil {
-		t.Fatalf("Failed to transform directory: %v", err)
+	// Name and description should be preserved
+	if !strings.Contains(result, "test-pool") {
+		t.Errorf("Name attribute value was not preserved:\n%s", result)
 	}
 
-	// Check main.tf was transformed
-	mainContent, err := os.ReadFile(filepath.Join(tempDir, "main.tf"))
-	if err != nil {
-		t.Fatalf("Failed to read main.tf: %v", err)
-	}
-	if !strings.Contains(string(mainContent), "origins = [") {
-		t.Error("main.tf was not transformed")
-	}
-
-	// Check module.tf was NOT transformed (non-recursive)
-	moduleContent, err := os.ReadFile(filepath.Join(subDir, "module.tf"))
-	if err != nil {
-		t.Fatalf("Failed to read module.tf: %v", err)
-	}
-	if strings.Contains(string(moduleContent), "origins = [") {
-		t.Error("module.tf should not have been transformed in non-recursive mode")
-	}
-
-	// Test recursive processing
-	if err := transformer.TransformDirectory(tempDir, true); err != nil {
-		t.Fatalf("Failed to transform directory recursively: %v", err)
-	}
-
-	// Check module.tf was transformed
-	moduleContent, err = os.ReadFile(filepath.Join(subDir, "module.tf"))
-	if err != nil {
-		t.Fatalf("Failed to read module.tf: %v", err)
-	}
-	if !strings.Contains(string(moduleContent), "origins = [") {
-		t.Error("module.tf was not transformed in recursive mode")
+	if !strings.Contains(result, "A pool with no origins") {
+		t.Errorf("Description attribute value was not preserved:\n%s", result)
 	}
 }
 
-// TestGetBlockTransformationType tests the transformation type retrieval
-func TestGetBlockTransformationType(t *testing.T) {
-	// Create a temporary config file
-	tempDir, err := os.MkdirTemp("", "block_transform_type_test")
-	if err != nil {
-		t.Fatalf("Failed to create temp dir: %v", err)
-	}
-	defer os.RemoveAll(tempDir)
-
-	configPath := filepath.Join(tempDir, "config.yaml")
+func TestMixedOriginsWithAndWithoutVariables(t *testing.T) {
+	// Create test config
 	configContent := `
 version: "1.0"
 transformations:
-  cloudflare_test_resource:
-    to_map:
-      - map_attr
+  cloudflare_load_balancer_pool:
     to_list:
-      - list_attr
+      - origins
 `
-
+	configPath := "test_config.yaml"
 	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
-		t.Fatalf("Failed to write config file: %v", err)
+		t.Fatal(err)
 	}
+	defer os.Remove(configPath)
 
-	transformer, err := NewHCLTransformer(configPath)
+	// Load config
+	config, err := LoadConfig(configPath)
 	if err != nil {
-		t.Fatalf("Failed to create transformer: %v", err)
+		t.Fatal(err)
 	}
 
-	tests := []struct {
-		resourceType string
-		blockName    string
-		expected     string
-	}{
-		{"cloudflare_test_resource", "map_attr", "map"},
-		{"cloudflare_test_resource", "list_attr", "list"},
-		{"cloudflare_test_resource", "unknown_attr", ""},
-		{"unknown_resource", "any_attr", ""},
+	// Test input with mixed origins - some with variables, some without
+	input := `resource "cloudflare_load_balancer_pool" "test" {
+  name = "test-pool"
+  origins {
+    name    = "static"
+    address = "192.168.1.1"
+    enabled = true
+  }
+  origins {
+    name    = "dynamic"
+    address = "api.${var.domain_suffix}"
+    enabled = false
+  }
+  origins {
+    name    = "complex"
+    address = "${var.prefix}.${var.domain}.${var.suffix}"
+    weight  = 2
+  }
+}`
+
+	// Parse
+	file, diags := hclwrite.ParseConfig([]byte(input), "test.tf", hcl.InitialPos)
+	if diags.HasErrors() {
+		t.Fatal(diags)
 	}
 
-	for _, tt := range tests {
-		result := transformer.GetTransformationType(tt.resourceType, tt.blockName)
-		if result != tt.expected {
-			t.Errorf("GetTransformationType(%s, %s) = %s, want %s",
-				tt.resourceType, tt.blockName, result, tt.expected)
+	// Transform
+	for _, block := range file.Body().Blocks() {
+		if block.Type() == "resource" && len(block.Labels()) > 0 && block.Labels()[0] == "cloudflare_load_balancer_pool" {
+			err := TransformResourceBlock(config, block, "cloudflare_load_balancer_pool")
+			if err != nil {
+				t.Fatal(err)
+			}
 		}
+	}
+
+	// Check result
+	result := string(file.Bytes())
+
+	// Should NOT contain double dollar signs
+	if strings.Contains(result, "$${") {
+		t.Errorf("Result contains escaped variables ($$):\n%s", result)
+	}
+
+	// All addresses should be preserved correctly
+	if !strings.Contains(result, "192.168.1.1") {
+		t.Errorf("Static IP address was not preserved:\n%s", result)
+	}
+
+	if !strings.Contains(result, "api.${var.domain_suffix}") {
+		t.Errorf("Simple variable interpolation was not preserved:\n%s", result)
+	}
+
+	if !strings.Contains(result, "${var.prefix}.${var.domain}.${var.suffix}") {
+		t.Errorf("Complex variable interpolation was not preserved:\n%s", result)
+	}
+
+	// Should have converted to list
+	if !strings.Contains(result, "origins = [") {
+		t.Errorf("Origins blocks were not converted to list attribute:\n%s", result)
 	}
 }

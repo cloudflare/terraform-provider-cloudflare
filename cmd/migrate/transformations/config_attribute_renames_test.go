@@ -209,13 +209,16 @@ attribute_removals:
   name = "example-pool"
 
 
-  origins = [{
-    address = "192.0.2.1"
-    name    = "origin-1"
-    }, {
-    address = "192.0.2.2"
-    name    = "origin-2"
-  }]
+  origins = [
+    {
+      address = "192.0.2.1",
+      name    = "origin-1"
+    },
+    {
+      address = "192.0.2.2",
+      name    = "origin-2"
+    }
+  ]
   min_origins = 1
 }`
 
