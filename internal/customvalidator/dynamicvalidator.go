@@ -13,20 +13,19 @@ import (
 
 var _ validator.Dynamic = subtypesValidator{}
 
-var compatTypes = map[attr.Type][]attr.Type{
-	basetypes.Int64Type{}:   {basetypes.Int32Type{}},
-	basetypes.Float64Type{}: {basetypes.Int32Type{}, basetypes.Int64Type{}, basetypes.Float32Type{}, basetypes.NumberType{}},
-	basetypes.NumberType{}:  {basetypes.Int32Type{}, basetypes.Int64Type{}, basetypes.Float32Type{}, basetypes.Float64Type{}},
-}
-
 type subtypesValidator struct {
 	allowedTypes []attr.Type
 }
 
 func compatibleTypes(ty attr.Type) (types []attr.Type) {
 	types = append(types, ty)
-	if tps, ok := compatTypes[ty]; ok {
-		types = append(types, tps...)
+	switch ty.(type) {
+	case basetypes.Int64Type:
+		types = append(types, basetypes.Int32Type{})
+	case basetypes.Float64Type:
+		types = append(types, basetypes.Int32Type{}, basetypes.Int64Type{}, basetypes.Float32Type{}, basetypes.NumberType{})
+	case basetypes.NumberType:
+		types = append(types, basetypes.Int32Type{}, basetypes.Int64Type{}, basetypes.Float32Type{}, basetypes.Float64Type{})
 	}
 	return
 }
