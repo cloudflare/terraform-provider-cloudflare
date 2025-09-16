@@ -85,6 +85,11 @@ state_attribute_removals:
   cloudflare_origin_ca_certificate:
     - min_days_for_renewal
 
+  cloudflare_page_rule:
+    - disable_railgun
+    - minify
+    - server_side_exclude
+
 # Special transformations for specific resources
 state_special_transformations:
   cloudflare_page_rule:
