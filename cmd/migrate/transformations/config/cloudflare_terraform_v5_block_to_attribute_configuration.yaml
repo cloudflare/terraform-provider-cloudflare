@@ -267,7 +267,7 @@ transformations:
     to_list:
       - behavior
 
-  # Ruleset (complex - many nested transformations)
+  # Ruleset (uses specialized rules handling to preserve expressions)
   cloudflare_ruleset:
     to_map:
       - action_parameters

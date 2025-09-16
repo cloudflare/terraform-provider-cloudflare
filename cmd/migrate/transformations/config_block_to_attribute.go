@@ -56,6 +56,13 @@ func transformBlocksToList(config *TransformationConfig, body *hclwrite.Body, bl
 		return transformOriginsBlocksToList(body, blocks)
 	}
 
+	// Special handling for rules blocks in cloudflare_ruleset which may contain heredoc expressions
+	// Use standard transformation with enhanced post-processing for now
+	// The token-based approach has indentation issues that need more work
+	// if resourceType == "cloudflare_ruleset" && blockName == "rules" {
+	//     return transformRulesBlocksToList(body, blocks)
+	// }
+
 	// Build list of objects from blocks
 	var objects []cty.Value
 	for _, block := range blocks {
@@ -128,6 +135,86 @@ func transformOriginsBlocksToList(body *hclwrite.Body, blocks []*hclwrite.Block)
 
 	// Set the attribute using raw tokens to preserve expressions
 	body.SetAttributeRaw("origins", tokens)
+
+	// Remove original blocks
+	for _, block := range blocks {
+		body.RemoveBlock(block)
+	}
+
+	return nil
+}
+
+// transformRulesBlocksToList handles rules blocks specifically to preserve heredoc expressions
+func transformRulesBlocksToList(body *hclwrite.Body, blocks []*hclwrite.Block) error {
+	// Build tokens for the list directly to preserve expressions
+	tokens := hclwrite.Tokens{
+		{Type: hclsyntax.TokenOBrack, Bytes: []byte("[")},
+	}
+
+	for i, block := range blocks {
+		if i > 0 {
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(",")})
+		}
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+
+		// Start object
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("  ")})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+
+		// Add attributes from block, preserving original expressions
+		attrs := block.Body().Attributes()
+		attrNames := make([]string, 0, len(attrs))
+		for name := range attrs {
+			attrNames = append(attrNames, name)
+		}
+		sort.Strings(attrNames)
+
+		for j, name := range attrNames {
+			attr := attrs[name]
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("    " + name)})
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+
+			// Preserve the original expression tokens to avoid double dollar signs
+			exprTokens := attr.Expr().BuildTokens(nil)
+			tokens = append(tokens, exprTokens...)
+
+			// Add comma if there are more attributes or nested blocks
+			nestedBlocks := block.Body().Blocks()
+			if j < len(attrNames)-1 || len(nestedBlocks) > 0 {
+				tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(",")})
+			}
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+		}
+
+		// Process nested blocks - convert them to attribute format
+		nestedBlocks := block.Body().Blocks()
+		for k, nestedBlock := range nestedBlocks {
+			blockType := nestedBlock.Type()
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("    " + blockType)})
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+
+			// Determine how to transform this nested block based on the configuration
+			// For now, convert blocks to objects using a simplified approach
+			nestedTokens := convertNestedBlockToTokens(nestedBlock)
+			tokens = append(tokens, nestedTokens...)
+
+			if k < len(nestedBlocks)-1 {
+				tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(",")})
+			}
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+		}
+
+		// Close object
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("  ")})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenCBrace, Bytes: []byte("}")})
+	}
+
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenCBrack, Bytes: []byte("]")})
+
+	// Set the attribute using raw tokens to preserve expressions
+	body.SetAttributeRaw("rules", tokens)
 
 	// Remove original blocks
 	for _, block := range blocks {
@@ -449,4 +536,151 @@ func GetTransformationType(config *TransformationConfig, resourceType, blockName
 	}
 
 	return ""
+}
+
+// blockToObjectTokens converts a block to object format using raw tokens to preserve expressions
+func blockToObjectTokens(block *hclwrite.Block) hclwrite.Tokens {
+	return blockToObjectTokensWithIndent(block, "      ")
+}
+
+// blockToObjectTokensWithIndent converts a block to object format with specified indentation
+func blockToObjectTokensWithIndent(block *hclwrite.Block, indent string) hclwrite.Tokens {
+	tokens := hclwrite.Tokens{
+		{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")},
+		{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+	}
+
+	// Get attributes and nested blocks
+	attrs := block.Body().Attributes()
+	nestedBlocks := block.Body().Blocks()
+	
+	// Process attributes first
+	attrNames := make([]string, 0, len(attrs))
+	for name := range attrs {
+		attrNames = append(attrNames, name)
+	}
+	sort.Strings(attrNames)
+
+	for j, name := range attrNames {
+		attr := attrs[name]
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(indent + name)})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+
+		// Preserve original expression tokens
+		exprTokens := attr.Expr().BuildTokens(nil)
+		tokens = append(tokens, exprTokens...)
+
+		// Add comma if not the last attribute, or if there are nested blocks
+		if j < len(attrNames)-1 || len(nestedBlocks) > 0 {
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(",")})
+		}
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+	}
+
+	// Process nested blocks recursively with increased indentation
+	for k, nestedBlock := range nestedBlocks {
+		blockType := nestedBlock.Type()
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(indent + blockType)})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+		
+		// Recursively convert nested block with increased indentation
+		nestedIndent := indent + "  "
+		nestedTokens := blockToObjectTokensWithIndent(nestedBlock, nestedIndent)
+		tokens = append(tokens, nestedTokens...)
+
+		// Add comma if not the last block
+		if k < len(nestedBlocks)-1 {
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(",")})
+		}
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+	}
+
+	// Close with proper indentation (one level less than content)
+	closeIndent := indent[:len(indent)-2] // Remove 2 spaces
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(closeIndent + "}")})
+	return tokens
+}
+// convertNestedBlockToTokens converts nested blocks to appropriate format (map or list) based on cloudflare_ruleset rules
+func convertNestedBlockToTokens(block *hclwrite.Block) hclwrite.Tokens {
+	blockType := block.Type()
+	
+	// Determine transformation type based on cloudflare_ruleset configuration
+	// Rules within overrides should be lists, most other blocks should be maps
+	if blockType == "rules" {
+		// This is a nested rules block (like in overrides.rules) - should be a list
+		return convertNestedBlockToListTokens(block)
+	}
+	
+	// Default: convert to map/object
+	return convertNestedBlockToMapTokens(block)
+}
+
+// convertNestedBlockToMapTokens converts a block to object format
+func convertNestedBlockToMapTokens(block *hclwrite.Block) hclwrite.Tokens {
+	tokens := hclwrite.Tokens{
+		{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")},
+		{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+	}
+
+	// Handle attributes only - keep it simple to avoid structural issues
+	attrs := block.Body().Attributes()
+	attrNames := make([]string, 0, len(attrs))
+	for name := range attrs {
+		attrNames = append(attrNames, name)
+	}
+	sort.Strings(attrNames)
+
+	for j, name := range attrNames {
+		attr := attrs[name]
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("      " + name)})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+
+		// Preserve original expression tokens
+		exprTokens := attr.Expr().BuildTokens(nil)
+		tokens = append(tokens, exprTokens...)
+
+		if j < len(attrNames)-1 {
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(",")})
+		}
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+	}
+
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("    }")})
+	return tokens
+}
+
+// convertNestedBlockToListTokens converts a block to list format (for cases like overrides.rules)
+func convertNestedBlockToListTokens(block *hclwrite.Block) hclwrite.Tokens {
+	tokens := hclwrite.Tokens{
+		{Type: hclsyntax.TokenOBrack, Bytes: []byte("[")},
+		{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")},
+		{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")},
+	}
+
+	// Handle attributes only for simplicity
+	attrs := block.Body().Attributes()
+	attrNames := make([]string, 0, len(attrs))
+	for name := range attrs {
+		attrNames = append(attrNames, name)
+	}
+	sort.Strings(attrNames)
+
+	for j, name := range attrNames {
+		attr := attrs[name]
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("        " + name)})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+
+		// Preserve original expression tokens
+		exprTokens := attr.Expr().BuildTokens(nil)
+		tokens = append(tokens, exprTokens...)
+
+		if j < len(attrNames)-1 {
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(",")})
+		}
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+	}
+
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("      }")})
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenCBrack, Bytes: []byte("]")})
+	return tokens
 }

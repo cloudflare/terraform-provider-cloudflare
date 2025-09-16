@@ -11,6 +11,9 @@ import (
 
 // transformCloudflareRulesetBlock handles HCL transformations for cloudflare_ruleset resources
 func transformCloudflareRulesetBlock(block *hclwrite.Block, diags ast.Diagnostics) {
+	// Convert static "rules" blocks to list format, preserving expressions
+	transformStaticRulesBlocksToList(block, diags)
+
 	// Handle dynamic "rules" blocks by converting them to for expressions
 	transformDynamicRulesBlocks(block, diags)
 
@@ -1408,4 +1411,78 @@ func convertHeadersObjectToMap(tokens hclwrite.Tokens) hclwrite.Tokens {
 	}
 	
 	return result
+}
+
+
+// transformStaticRulesBlocksToList converts static rules blocks to list format while preserving expressions
+// This function follows the same pattern as transformOriginsBlocksToList to ensure compatibility
+func transformStaticRulesBlocksToList(block *hclwrite.Block, diags ast.Diagnostics) {
+	body := block.Body()
+	rulesBlocks := []*hclwrite.Block{}
+
+	// Find all static rules blocks (not dynamic)
+	for _, childBlock := range body.Blocks() {
+		if childBlock.Type() == "rules" {
+			rulesBlocks = append(rulesBlocks, childBlock)
+		}
+	}
+
+	if len(rulesBlocks) == 0 {
+		return // No static rules blocks to transform
+	}
+
+	// Build tokens for the list directly to preserve template expressions
+	tokens := hclwrite.Tokens{
+		{Type: hclsyntax.TokenOBrack, Bytes: []byte("[")},
+	}
+
+	for i, rulesBlock := range rulesBlocks {
+		if i > 0 {
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(",")})
+		}
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+
+		// Start object
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("  ")})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenOBrace, Bytes: []byte("{")})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+
+		// Add attributes from block, preserving original expressions
+		attrs := rulesBlock.Body().Attributes()
+		attrNames := make([]string, 0, len(attrs))
+		for name := range attrs {
+			attrNames = append(attrNames, name)
+		}
+		sort.Strings(attrNames)
+
+		for j, name := range attrNames {
+			attr := attrs[name]
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("    " + name)})
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
+
+			// Preserve the original expression tokens
+			exprTokens := attr.Expr().BuildTokens(nil)
+			tokens = append(tokens, exprTokens...)
+
+			if j < len(attrNames)-1 {
+				tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(",")})
+			}
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+		}
+
+		// Close object
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte("  ")})
+		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenCBrace, Bytes: []byte("}")})
+	}
+
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenCBrack, Bytes: []byte("]")})
+
+	// Set the attribute using raw tokens to preserve expressions
+	body.SetAttributeRaw("rules", tokens)
+
+	// Remove original blocks
+	for _, rulesBlock := range rulesBlocks {
+		body.RemoveBlock(rulesBlock)
+	}
 }

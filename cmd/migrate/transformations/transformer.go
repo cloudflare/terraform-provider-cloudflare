@@ -3,7 +3,9 @@ package transformations
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/hashicorp/hcl/v2"
@@ -44,7 +46,14 @@ func (ht *HCLTransformer) TransformFile(inputPath, outputPath string) error {
 	}
 
 	// Parse the HCL file for writing
-	ht.file, _ = hclwrite.ParseConfig(src, inputPath, hcl.Pos{Line: 1, Column: 1})
+	var diags hcl.Diagnostics
+	ht.file, diags = hclwrite.ParseConfig(src, inputPath, hcl.Pos{Line: 1, Column: 1})
+	if diags.HasErrors() {
+		return fmt.Errorf("failed to parse HCL file %s: %s", inputPath, diags.Error())
+	}
+	if ht.file == nil {
+		return fmt.Errorf("failed to parse HCL file %s: file is nil", inputPath)
+	}
 
 	// Process all resource blocks
 	for _, block := range ht.file.Body().Blocks() {
@@ -77,6 +86,13 @@ func (ht *HCLTransformer) TransformFile(inputPath, outputPath string) error {
 
 	// Write the transformed content with formatting
 	output := hclwrite.Format(ht.file.Bytes())
+	
+	// Post-process to fix double dollar signs and heredoc issues in cloudflare_ruleset expressions
+	// Only apply if we're dealing with heredoc expressions that need it
+	if strings.Contains(string(output), "<<-EOF") || strings.Contains(string(output), "<<-EOT") {
+		output = fixCloudflareRulesetDoubleDollarSigns(output)
+	}
+	
 	if outputPath == "" || outputPath == inputPath {
 		outputPath = inputPath
 	}
@@ -84,6 +100,9 @@ func (ht *HCLTransformer) TransformFile(inputPath, outputPath string) error {
 	if err := os.WriteFile(outputPath, output, 0644); err != nil {
 		return fmt.Errorf("failed to write output file: %w", err)
 	}
+
+	// Skip terraform fmt during transformation to avoid working directory issues
+	// Run 'terraform fmt -recursive .' after migration to format all files
 
 	return nil
 }
@@ -141,4 +160,92 @@ func (ht *HCLTransformer) HasAttributeRename(resourceType, attrName string) (str
 // ShouldRemoveAttribute is a helper that delegates to the attribute_renames module
 func (ht *HCLTransformer) ShouldRemoveAttribute(resourceType, attrName string) bool {
 	return ShouldRemoveAttribute(ht.config, resourceType, attrName)
+}
+// fixCloudflareRulesetDoubleDollarSigns fixes double dollar sign escaping and heredoc issues ONLY within cloudflare_ruleset resources
+func fixCloudflareRulesetDoubleDollarSigns(content []byte) []byte {
+	result := string(content)
+	
+	// Only process content within cloudflare_ruleset resources to avoid affecting other resources
+	rulesetPattern := regexp.MustCompile(`(?s)(resource\s+"cloudflare_ruleset"\s+"[^"]+"\s*\{)(.*?)(\n\})`)
+	result = rulesetPattern.ReplaceAllStringFunc(result, func(match string) string {
+		// Extract the ruleset resource content
+		parts := rulesetPattern.FindStringSubmatch(match)
+		if len(parts) != 4 {
+			return match // Return original if parsing fails
+		}
+		
+		resourceStart := parts[1]
+		resourceContent := parts[2]
+		resourceEnd := parts[3]
+		
+		// Fix double dollar signs in variable references within this cloudflare_ruleset resource
+		// This handles cases like $${var.example} -> ${var.example}
+		resourceContent = regexp.MustCompile(`\$\$\{([^}]+)\}`).ReplaceAllString(resourceContent, `${$1}`)
+		
+		// Fix escaped heredoc expressions that were converted to string literals
+		// Only process expressions that are definitely escaped heredocs
+		// Must contain both <<- and literal \n to avoid corrupting simple expressions
+		heredocPattern := regexp.MustCompile(`expression\s*=\s*"(<<-[A-Z]+)\\n([^"]+)\\n\s*(EOF|EOT)"`)
+		resourceContent = heredocPattern.ReplaceAllStringFunc(resourceContent, func(match string) string {
+			// Only process if this contains both heredoc markers and escaped newlines
+			if !strings.Contains(match, "<<-") || !strings.Contains(match, "\\n") {
+				return match // Skip anything that's not clearly an escaped heredoc
+			}
+			
+			// Extract the heredoc marker and content using the same pattern
+			parts := heredocPattern.FindStringSubmatch(match)
+			if len(parts) < 4 {
+				return match // Return original if parsing fails
+			}
+			
+			startMarker := parts[1]
+			content := parts[2]
+			endMarker := parts[3]
+			
+			// Clean up the content: convert \n to actual newlines and unescape quotes
+			content = strings.ReplaceAll(content, "\\n", "\n")  // Convert literal \n to actual newlines
+			content = strings.ReplaceAll(content, `\"`, `"`)     // Unescape quotes
+			content = strings.TrimPrefix(content, "\n")          // Remove leading newline
+			content = strings.TrimSuffix(content, "\n")          // Remove trailing newline before end marker
+			
+			// Keep the original content structure - terraform fmt will handle proper indentation
+			// Just ensure we have the basic structure right
+			formattedContent := strings.TrimSpace(content)
+			
+			return fmt.Sprintf(`expression = %s
+%s
+    %s`, startMarker, formattedContent, endMarker)
+		})
+		
+		return resourceStart + resourceContent + resourceEnd
+	})
+	
+	return []byte(result)
+}
+
+// runTerraformFmt runs terraform fmt on the specified file to apply canonical formatting
+func (ht *HCLTransformer) runTerraformFmt(filePath string) error {
+	// Convert to absolute path to avoid working directory issues
+	absPath, err := filepath.Abs(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to get absolute path: %w", err)
+	}
+	
+	// Check if file exists before trying to format it
+	if _, err := os.Stat(absPath); os.IsNotExist(err) {
+		return fmt.Errorf("file does not exist: %s", absPath)
+	}
+	
+	cmd := exec.Command("terraform", "fmt", absPath)
+	
+	// Set working directory to the file's directory
+	cmd.Dir = filepath.Dir(absPath)
+	
+	// Run the command
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("terraform fmt failed: %w\nOutput: %s", err, string(output))
+	}
+	
+	return nil
 }
