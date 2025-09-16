@@ -150,11 +150,9 @@ attribute_removals:
 				t.Fatalf("Failed to read output file: %v", err)
 			}
 
-			// Normalize whitespace for comparison
-			expectedNorm := normalizeWhitespace(tt.expected)
-			outputNorm := normalizeWhitespace(string(output))
-
-			if expectedNorm != outputNorm {
+			// Use semantic comparison that ignores attribute order
+			if !compareHCLBlocks(t, tt.expected, string(output)) {
+				// If semantic comparison fails, show the actual vs expected for debugging
 				t.Errorf("Transformation mismatch\nExpected:\n%s\n\nGot:\n%s", tt.expected, string(output))
 			}
 		})
@@ -245,11 +243,9 @@ attribute_removals:
 		t.Fatalf("Failed to read output file: %v", err)
 	}
 
-	// Normalize whitespace for comparison
-	expectedNorm := normalizeWhitespace(expected)
-	outputNorm := normalizeWhitespace(string(output))
-
-	if expectedNorm != outputNorm {
+	// Use semantic comparison that ignores attribute order
+	if !compareHCLBlocks(t, expected, string(output)) {
+		// If semantic comparison fails, show the actual vs expected for debugging
 		t.Errorf("Transformation mismatch\nExpected:\n%s\n\nGot:\n%s", expected, string(output))
 	}
 }
