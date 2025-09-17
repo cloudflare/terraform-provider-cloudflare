@@ -262,6 +262,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Description: "R2 bucket to bind to.",
 										Computed:    true,
 									},
+									"jurisdiction": schema.StringAttribute{
+										Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\".",
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive("eu", "fedramp"),
+										},
+									},
 									"allowed_destination_addresses": schema.ListAttribute{
 										Description: "List of allowed destination addresses.",
 										Computed:    true,
