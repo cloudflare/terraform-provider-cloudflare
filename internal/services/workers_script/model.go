@@ -140,6 +140,7 @@ type WorkersScriptMetadataBindingsModel struct {
 	Pipeline                    types.String                                `tfsdk:"pipeline" json:"pipeline,optional"`
 	QueueName                   types.String                                `tfsdk:"queue_name" json:"queue_name,optional"`
 	BucketName                  types.String                                `tfsdk:"bucket_name" json:"bucket_name,optional"`
+	Jurisdiction                types.String                                `tfsdk:"jurisdiction" json:"jurisdiction,optional"`
 	IndexName                   types.String                                `tfsdk:"index_name" json:"index_name,optional"`
 	SecretName                  types.String                                `tfsdk:"secret_name" json:"secret_name,optional"`
 	StoreID                     types.String                                `tfsdk:"store_id" json:"store_id,optional"`

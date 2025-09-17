@@ -371,6 +371,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "Destination address for the email.",
 							Optional:    true,
 						},
+						"jurisdiction": schema.StringAttribute{
+							Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\".",
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("eu", "fedramp"),
+							},
+						},
 					},
 				},
 			},
