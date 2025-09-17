@@ -130,6 +130,7 @@ type WorkerVersionBindingsModel struct {
 	Pipeline                    types.String                        `tfsdk:"pipeline" json:"pipeline,optional"`
 	QueueName                   types.String                        `tfsdk:"queue_name" json:"queue_name,optional"`
 	BucketName                  types.String                        `tfsdk:"bucket_name" json:"bucket_name,optional"`
+	Jurisdiction                types.String                        `tfsdk:"jurisdiction" json:"jurisdiction,optional"`
 	AllowedDestinationAddresses *[]types.String                     `tfsdk:"allowed_destination_addresses" json:"allowed_destination_addresses,optional"`
 	AllowedSenderAddresses      *[]types.String                     `tfsdk:"allowed_sender_addresses" json:"allowed_sender_addresses,optional"`
 	DestinationAddress          types.String                        `tfsdk:"destination_address" json:"destination_address,optional"`

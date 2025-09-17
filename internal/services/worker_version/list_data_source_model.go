@@ -88,6 +88,7 @@ type WorkerVersionsBindingsDataSourceModel struct {
 	Pipeline                    types.String                                                            `tfsdk:"pipeline" json:"pipeline,computed"`
 	QueueName                   types.String                                                            `tfsdk:"queue_name" json:"queue_name,computed"`
 	BucketName                  types.String                                                            `tfsdk:"bucket_name" json:"bucket_name,computed"`
+	Jurisdiction                types.String                                                            `tfsdk:"jurisdiction" json:"jurisdiction,computed"`
 	AllowedDestinationAddresses customfield.List[types.String]                                          `tfsdk:"allowed_destination_addresses" json:"allowed_destination_addresses,computed"`
 	AllowedSenderAddresses      customfield.List[types.String]                                          `tfsdk:"allowed_sender_addresses" json:"allowed_sender_addresses,computed"`
 	DestinationAddress          types.String                                                            `tfsdk:"destination_address" json:"destination_address,computed"`
