@@ -154,12 +154,12 @@ func TestAccCloudflareR2Bucket_Basic(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
+				ResourceName: resourceName,
 				ImportStateIdFunc: func(*terraform.State) (string, error) {
 					return strings.Join([]string{accountID, rnd, "default"}, "/"), nil
 				},
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -187,12 +187,12 @@ func TestAccCloudflareR2Bucket_Minimum(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
+				ResourceName: resourceName,
 				ImportStateIdFunc: func(*terraform.State) (string, error) {
 					return strings.Join([]string{accountID, rnd, "default"}, "/"), nil
 				},
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -237,12 +237,12 @@ func TestAccCloudflareR2Bucket_AllLocations(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	locations := []string{"apac", "eeur", "enam", "weur", "wnam", "oc"}
-	
+
 	for _, location := range locations {
 		t.Run(location, func(t *testing.T) {
 			testRnd := rnd + location
 			testResourceName := "cloudflare_r2_bucket." + testRnd
-			
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -273,12 +273,12 @@ func TestAccCloudflareR2Bucket_AllJurisdictions(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	jurisdictions := []string{"default", "fedramp"}
-	
+
 	for _, jurisdiction := range jurisdictions {
 		t.Run(jurisdiction, func(t *testing.T) {
 			testRnd := rnd + jurisdiction
 			testResourceName := "cloudflare_r2_bucket." + testRnd
-			
+
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
@@ -409,6 +409,54 @@ func TestAccCloudflareR2Bucket_StorageClassUpdate(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareR2Bucket_LocationCaseInsensitive(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_r2_bucket." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "weur"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WEUR"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+			{
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WEUR"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WeUr"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareR2BucketMinimum(rnd, accountID string) string {
 	return acctest.LoadTestCase("r2bucketminimum.tf", rnd, accountID)
 }
@@ -465,4 +513,13 @@ func testAccCheckCloudflareR2BucketDestroy(s *terraform.State) error {
 	}
 
 	return nil
+}
+
+func testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, location string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_r2_bucket" "%[1]s" {
+  account_id = "%[2]s"
+  name       = "%[1]s"
+  location   = "%[3]s"
+}`, rnd, accountID, location)
 }
