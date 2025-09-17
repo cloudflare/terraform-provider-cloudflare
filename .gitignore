@@ -1,3 +1,7 @@
 .prism.log
 dist/
 terraform-provider-cloudflare
+go.work*
+.DS_Store
+.idea/
+bin/

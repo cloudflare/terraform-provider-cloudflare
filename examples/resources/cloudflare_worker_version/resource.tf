@@ -1,6 +1,6 @@
 resource "cloudflare_worker_version" "example_worker_version" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  worker_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  worker_id = "worker_id"
   annotations = {
     workers_message = "Fixed bug."
     workers_tag = "v1.0.1"
@@ -41,12 +41,11 @@ resource "cloudflare_worker_version" "example_worker_version" {
     }]
   }
   modules = [{
-    content_base64 = "ZXhwb3J0IGRlZmF1bHQgewogIGFzeW5jIGZldGNoKHJlcXVlc3QsIGVudiwgY3R4KSB7CiAgICByZXR1cm4gbmV3IFJlc3BvbnNlKCdIZWxsbyBXb3JsZCEnKQogIH0KfQ=="
+    content_file = "dist/index.js"
     content_type = "application/javascript+module"
     name = "index.js"
   }]
   placement = {
     mode = "smart"
   }
-  usage_model = "standard"
 }

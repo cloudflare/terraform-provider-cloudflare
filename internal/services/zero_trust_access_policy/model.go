@@ -5,7 +5,6 @@ package zero_trust_access_policy
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -27,10 +26,6 @@ type ZeroTrustAccessPolicyModel struct {
 	Exclude                      customfield.NestedObjectSet[ZeroTrustAccessPolicyExcludeModel] `tfsdk:"exclude" json:"exclude,computed_optional"`
 	Include                      customfield.NestedObjectSet[ZeroTrustAccessPolicyIncludeModel] `tfsdk:"include" json:"include,computed_optional"`
 	Require                      customfield.NestedObjectSet[ZeroTrustAccessPolicyRequireModel] `tfsdk:"require" json:"require,computed_optional"`
-	AppCount                     types.Int64                                                    `tfsdk:"app_count" json:"app_count,computed"`
-	CreatedAt                    timetypes.RFC3339                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Reusable                     types.Bool                                                     `tfsdk:"reusable" json:"reusable,computed"`
-	UpdatedAt                    timetypes.RFC3339                                              `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 func (m ZeroTrustAccessPolicyModel) MarshalJSON() (data []byte, err error) {

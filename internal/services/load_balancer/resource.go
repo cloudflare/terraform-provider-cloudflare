@@ -153,6 +153,11 @@ func (r *LoadBalancerResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
+	// These attributes are not RESTful, and are conditionally modified
+	// on the server-side based on other attribute values.
+	steeringPolicy := data.SteeringPolicy.ValueString()
+	rules := data.Rules
+
 	res := new(http.Response)
 	env := LoadBalancerResultEnvelope{*data}
 	_, err := r.client.LoadBalancers.Get(
@@ -180,6 +185,13 @@ func (r *LoadBalancerResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 	data = &env.Result
+
+	// Set the non-RESTful attributes back to state value
+	responseSteeringPolicy := data.SteeringPolicy.ValueString()
+	if steeringPolicy == "" && (responseSteeringPolicy == "geo" || responseSteeringPolicy == "off") {
+		data.SteeringPolicy = types.StringValue("")
+	}
+	data.Rules = rules
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

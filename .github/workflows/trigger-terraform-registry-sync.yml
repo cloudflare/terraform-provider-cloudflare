@@ -1,0 +1,13 @@
+name: Trigger Terraform Registry sync
+on:
+  workflow_dispatch:
+
+jobs:
+  trigger-terraform-registry-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run sync
+        run: ./scripts/trigger-terraform-registry-sync
+        env:
+          TERRAFORM_REGISTRY_COOKIE: ${{ secrets.TERRAFORM_REGISTRY_COOKIE }}

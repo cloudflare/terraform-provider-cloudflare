@@ -4,6 +4,7 @@ package worker_version
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
@@ -14,6 +15,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -64,6 +67,26 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	assets := data.Assets
+	if assets != nil {
+		resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("assets").AtName("jwt"), &data.Assets.JWT)...) // "assets.jwt" is write-only, get from config
+	}
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	modules := data.Modules
+	if modules != nil {
+		for _, mod := range *data.Modules {
+			content, err := readFile(mod.ContentFile.ValueString())
+			if err != nil {
+				resp.Diagnostics.AddError("Error reading file", err.Error())
+			}
+			mod.ContentBase64 = types.StringValue(base64.StdEncoding.EncodeToString([]byte(content)))
+		}
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -92,6 +115,8 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	data = &env.Result
+	data.Modules = modules
+	data.Assets = assets
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -109,14 +134,18 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
+	stateModules := data.Modules
+	assets := data.Assets // "assets" is not returned by the API, so preserve its state value
+
 	res := new(http.Response)
 	env := WorkerVersionResultEnvelope{*data}
 	_, err := r.client.Workers.Beta.Workers.Versions.Get(
 		ctx,
 		data.WorkerID.ValueString(),
-		workers.BetaWorkerVersionGetParamsVersionID(data.ID.ValueString()),
+		data.ID.ValueString(),
 		workers.BetaWorkerVersionGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			Include:   cloudflare.F(workers.BetaWorkerVersionGetParamsIncludeModules),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -137,6 +166,46 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 	data = &env.Result
+	data.Assets = assets
+
+	// Refresh content_sha256 on each module
+	moduleNameMap := make(map[string]*WorkerVersionModulesModel)
+	if stateModules != nil {
+		for _, mod := range *stateModules {
+			moduleNameMap[mod.Name.ValueString()] = mod
+		}
+	}
+	if data.Modules != nil {
+		for _, mod := range *data.Modules {
+			contentBase64 := mod.ContentBase64.ValueString()
+			content, err := base64.StdEncoding.DecodeString(contentBase64)
+			if err != nil {
+				resp.Diagnostics.AddError("Refresh Error", err.Error())
+				return
+			}
+			contentSHA256, err := calculateStringHash(string(content))
+			if err != nil {
+				resp.Diagnostics.AddError("Refresh Error", err.Error())
+				return
+			}
+
+			mod.ContentSHA256 = types.StringValue(contentSHA256)
+			if stateMod, ok := moduleNameMap[mod.Name.ValueString()]; ok {
+				mod.ContentFile = stateMod.ContentFile
+			}
+		}
+	}
+
+	// restore any secret_text `text` values from state since they aren't returned by the API
+	var state *WorkerVersionModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	var diags diag.Diagnostics
+	data.Bindings, diags = UpdateSecretTextsFromState(
+		ctx,
+		data.Bindings,
+		state.Bindings,
+	)
+	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -172,7 +241,7 @@ func (r *WorkerVersionResource) ImportState(ctx context.Context, req resource.Im
 	_, err := r.client.Workers.Beta.Workers.Versions.Get(
 		ctx,
 		path_worker_id,
-		workers.BetaWorkerVersionGetParamsVersionID(path_version_id),
+		path_version_id,
 		workers.BetaWorkerVersionGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},

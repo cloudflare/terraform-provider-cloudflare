@@ -112,6 +112,8 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Update(ctx context.Co
 		return
 	}
 
+	isDefault := state.IsDefault
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -140,6 +142,7 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Update(ctx context.Co
 		return
 	}
 	data = &env.Result
+	data.IsDefault = isDefault
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -152,6 +155,8 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Read(ctx context.Cont
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	isDefault := data.IsDefault
 
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredVirtualNetworkResultEnvelope{*data}
@@ -180,6 +185,7 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Read(ctx context.Cont
 		return
 	}
 	data = &env.Result
+	data.IsDefault = isDefault
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

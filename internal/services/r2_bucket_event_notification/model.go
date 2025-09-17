@@ -12,11 +12,12 @@ type R2BucketEventNotificationResultEnvelope struct {
 }
 
 type R2BucketEventNotificationModel struct {
-	AccountID  types.String                            `tfsdk:"account_id" path:"account_id,required"`
-	BucketName types.String                            `tfsdk:"bucket_name" path:"bucket_name,required"`
-	QueueID    types.String                            `tfsdk:"queue_id" path:"queue_id,required"`
-	Rules      *[]*R2BucketEventNotificationRulesModel `tfsdk:"rules" json:"rules,optional"`
-	QueueName  types.String                            `tfsdk:"queue_name" json:"queueName,computed"`
+	AccountID    types.String                            `tfsdk:"account_id" path:"account_id,required"`
+	BucketName   types.String                            `tfsdk:"bucket_name" path:"bucket_name,required"`
+	QueueID      types.String                            `tfsdk:"queue_id" path:"queue_id,required"`
+	Rules        *[]*R2BucketEventNotificationRulesModel `tfsdk:"rules" json:"rules,optional"`
+	QueueName    types.String                            `tfsdk:"queue_name" json:"queueName,computed"`
+	Jurisdiction types.String                            `tfsdk:"jurisdiction" json:"-,computed_optional,no_refresh"`
 }
 
 func (m R2BucketEventNotificationModel) MarshalJSON() (data []byte, err error) {

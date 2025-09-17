@@ -50,23 +50,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
 			},
-			"storage_class": schema.StringAttribute{
-				Description: "Storage class for newly uploaded objects, unless specified otherwise.\nAvailable values: \"Standard\", \"InfrequentAccess\".",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("Standard", "InfrequentAccess"),
-				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
-				Default:       stringdefault.StaticString("Standard"),
-			},
-			"creation_date": schema.StringAttribute{
-				Description: "Creation timestamp.",
-				Computed:    true,
-			},
 			"jurisdiction": schema.StringAttribute{
 				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\".",
+				Optional:    true,
 				Computed:    true,
+				Default:     stringdefault.StaticString("default"),
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"default",
@@ -74,7 +62,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"fedramp",
 					),
 				},
-				Default: stringdefault.StaticString("default"),
+			},
+			"storage_class": schema.StringAttribute{
+				Description: "Storage class for newly uploaded objects, unless specified otherwise.\nAvailable values: \"Standard\", \"InfrequentAccess\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("Standard", "InfrequentAccess"),
+				},
+				Default: stringdefault.StaticString("Standard"),
+			},
+			"creation_date": schema.StringAttribute{
+				Description: "Creation timestamp.",
+				Computed:    true,
 			},
 		},
 	}

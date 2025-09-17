@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -123,6 +124,9 @@ func (r *ZeroTrustAccessIdentityProviderResource) Update(ctx context.Context, re
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	res := new(http.Response)
 	env := ZeroTrustAccessIdentityProviderResultEnvelope{*data}
 	params := zero_trust.IdentityProviderUpdateParams{}
@@ -153,11 +157,21 @@ func (r *ZeroTrustAccessIdentityProviderResource) Update(ctx context.Context, re
 	}
 	data = &env.Result
 
+	var planValue ZeroTrustAccessIdentityProviderModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &planValue)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	normalizeReadZeroTrustIDPData(ctx, data, &planValue)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustAccessIdentityProviderResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data *ZeroTrustAccessIdentityProviderModel
+	secret := types.StringNull()
+	req.State.GetAttribute(ctx, path.Root("scim_config").AtName("secret"), &secret)
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -199,7 +213,16 @@ func (r *ZeroTrustAccessIdentityProviderResource) Read(ctx context.Context, req 
 	}
 	data = &env.Result
 
+	var stateValue ZeroTrustAccessIdentityProviderModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &stateValue)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	normalizeReadZeroTrustIDPData(ctx, data, &stateValue)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("scim_config").AtName("secret"), secret)...)
 }
 
 func (r *ZeroTrustAccessIdentityProviderResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -287,6 +310,6 @@ func (r *ZeroTrustAccessIdentityProviderResource) ImportState(ctx context.Contex
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustAccessIdentityProviderResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
+func (r *ZeroTrustAccessIdentityProviderResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resource.ModifyPlanResponse) {
+	modifyPlan(ctx, req, res)
 }

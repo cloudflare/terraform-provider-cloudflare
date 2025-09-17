@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+echo "==> Checking environment is correctly configured"
+if ! command -v goreleaser 2>&1 >/dev/null; then
+  echo "goreleaser is not installed."
+  exit 1
+fi
+
+if [ -z "${GPG_FINGERPRINT}" ]; then
+  echo "GPG_FINGERPRINT not defined. You must export it before continuing."
+  exit 1
+fi
+
+echo "==> Running GoReleaser"
+# only use half of the available CPU to not starve other apps.
+cpu=$(sysctl -n hw.ncpu)
+usable_cpu=$(($cpu / 2))
+goreleaser release --clean --timeout 2h --skip "announce,publish" -p $usable_cpu

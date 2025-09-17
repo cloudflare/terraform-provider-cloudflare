@@ -153,6 +153,10 @@ func (r *LoadBalancerMonitorResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
+	consecutiveUp := data.ConsecutiveUp
+	consecutiveDown := data.ConsecutiveDown
+	port := data.Port
+
 	res := new(http.Response)
 	env := LoadBalancerMonitorResultEnvelope{*data}
 	_, err := r.client.LoadBalancers.Monitors.Get(
@@ -180,6 +184,9 @@ func (r *LoadBalancerMonitorResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	data = &env.Result
+	data.ConsecutiveUp = consecutiveUp
+	data.ConsecutiveDown = consecutiveDown
+	data.Port = port
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

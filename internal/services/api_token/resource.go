@@ -110,6 +110,8 @@ func (r *APITokenResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
+	token := state.Value
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -136,6 +138,7 @@ func (r *APITokenResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 	data = &env.Result
+	data.Value = token
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -148,6 +151,8 @@ func (r *APITokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	token := data.Value
 
 	res := new(http.Response)
 	env := APITokenResultEnvelope{*data}
@@ -173,6 +178,7 @@ func (r *APITokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 	data = &env.Result
+	data.Value = token
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

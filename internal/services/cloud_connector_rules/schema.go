@@ -33,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Optional: true,
+							Computed: true,
 						},
 						"description": schema.StringAttribute{
 							Optional: true,

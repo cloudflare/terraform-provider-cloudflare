@@ -79,7 +79,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The port for upstream connections. A value of 0 means the default port for the protocol will be used.",
 							Computed:    true,
 							Optional:    true,
-							Default:     int64default.StaticInt64(0),
+							// Default:     int64default.StaticInt64(0),
 						},
 						"virtual_network_id": schema.StringAttribute{
 							Description: "The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.",
@@ -100,6 +100,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"description": schema.StringAttribute{
 				Description: "A human-readable description of the pool.",
 				Optional:    true,
+				Computed:    true,
 			},
 			"latitude": schema.Float64Attribute{
 				Description: "The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.",
@@ -116,6 +117,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"notification_email": schema.StringAttribute{
 				Description: "This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.",
 				Optional:    true,
+				Computed:    true,
 			},
 			"check_regions": schema.ListAttribute{
 				Description: "A list of regions from which to run health checks. Null means every Cloudflare data center.",
@@ -266,6 +268,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"created_on": schema.StringAttribute{
 				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"disabled_at": schema.StringAttribute{
 				Description: "This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.",

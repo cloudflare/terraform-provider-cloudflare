@@ -8,6 +8,9 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
@@ -19,6 +22,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustOrganizationResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ZeroTrustOrganizationResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustOrganizationResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustOrganizationResource{}
@@ -149,6 +153,13 @@ func (r *ZeroTrustOrganizationResource) Update(ctx context.Context, req resource
 	}
 	data = &env.Result
 
+	var planData *ZeroTrustOrganizationModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &planData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(normalizeReadZeroTrustOrganizationAPIData(ctx, data, planData)...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -194,11 +205,61 @@ func (r *ZeroTrustOrganizationResource) Read(ctx context.Context, req resource.R
 	}
 	data = &env.Result
 
+	var stateData *ZeroTrustOrganizationModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &stateData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(normalizeReadZeroTrustOrganizationAPIData(ctx, data, stateData)...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustOrganizationResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 
+}
+
+func (r *ZeroTrustOrganizationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var (
+		accID  string
+		data   = new(ZeroTrustOrganizationModel)
+		params zero_trust.OrganizationListParams
+	)
+
+	diags := importpath.ParseImportID(
+		req.ID,
+		"{account_id}",
+		&accID,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	params.AccountID = cloudflare.F(accID)
+	data.AccountID = types.StringValue(accID)
+
+	res := new(http.Response)
+	env := ZeroTrustOrganizationResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Organizations.List(
+		ctx,
+		params,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(normalizeImportZeroTrustOrganizationAPIData(ctx, data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustOrganizationResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {

@@ -6,7 +6,8 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -97,10 +98,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"exclude": schema.SetNestedAttribute{
 				Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
-				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyExcludeModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						customvalidator.ObjectSizeAtMost(1),
+					},
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -362,6 +365,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyIncludeModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						customvalidator.ObjectSizeAtMost(1),
+					},
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -619,10 +625,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"require": schema.SetNestedAttribute{
 				Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
-				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessPolicyRequireModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						customvalidator.ObjectSizeAtMost(1),
+					},
 					Attributes: map[string]schema.Attribute{
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -877,21 +885,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"app_count": schema.Int64Attribute{
-				Description: "Number of access applications currently using this policy.",
-				Computed:    true,
-			},
-			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"reusable": schema.BoolAttribute{
-				Computed: true,
-			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

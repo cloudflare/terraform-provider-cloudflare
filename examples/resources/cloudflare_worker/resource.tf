@@ -4,10 +4,10 @@ resource "cloudflare_worker" "example_worker" {
   logpush = true
   observability = {
     enabled = true
-    head_sampling_rate = 0
+    head_sampling_rate = 1
     logs = {
       enabled = true
-      head_sampling_rate = 0
+      head_sampling_rate = 1
       invocation_logs = true
     }
   }

@@ -7,11 +7,12 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/stream"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 type StreamsResultListDataSourceEnvelope struct {
@@ -67,9 +68,9 @@ func (m *StreamsDataSourceModel) toListParams(_ context.Context) (params stream.
 	if !m.Type.IsNull() {
 		params.Type = cloudflare.F(m.Type.ValueString())
 	}
-	if !m.VideoName.IsNull() {
-		params.VideoName = cloudflare.F(m.VideoName.ValueString())
-	}
+	//if !m.VideoName.IsNull() {
+	//	params.VideoName = cloudflare.F(m.VideoName.ValueString())
+	//}
 
 	return
 }

@@ -99,6 +99,9 @@ func (r *CustomPagesResource) Create(ctx context.Context, req resource.CreateReq
 	}
 	data = &env.Result
 	data.ID = data.Identifier
+	if env.Result.URL.IsNull() || env.Result.URL.ValueString() == "" || env.Result.URL.ValueString() == "null" {
+		data.URL = types.StringValue("")
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -155,6 +158,9 @@ func (r *CustomPagesResource) Update(ctx context.Context, req resource.UpdateReq
 	}
 	data = &env.Result
 	data.ID = data.Identifier
+	if env.Result.URL.IsNull() || env.Result.URL.ValueString() == "" || env.Result.URL.ValueString() == "null" {
+		data.URL = types.StringValue("")
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -202,6 +208,9 @@ func (r *CustomPagesResource) Read(ctx context.Context, req resource.ReadRequest
 	}
 	data = &env.Result
 	data.ID = data.Identifier
+	if env.Result.URL.IsNull() || env.Result.URL.ValueString() == "" || env.Result.URL.ValueString() == "null" {
+		data.URL = types.StringValue("")
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

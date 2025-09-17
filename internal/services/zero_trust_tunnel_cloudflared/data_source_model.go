@@ -46,11 +46,6 @@ func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toReadParams(_ context.Conte
 }
 
 func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelCloudflaredListParams, diags diag.Diagnostics) {
-	mFilterWasActiveAt, errs := m.Filter.WasActiveAt.ValueRFC3339Time()
-	diags.Append(errs...)
-	mFilterWasInactiveAt, errs := m.Filter.WasInactiveAt.ValueRFC3339Time()
-	diags.Append(errs...)
-
 	params = zero_trust.TunnelCloudflaredListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -77,10 +72,18 @@ func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Conte
 		params.UUID = cloudflare.F(m.Filter.UUID.ValueString())
 	}
 	if !m.Filter.WasActiveAt.IsNull() {
-		params.WasActiveAt = cloudflare.F(mFilterWasActiveAt)
+		mFilterWasActiveAt, errs := m.Filter.WasActiveAt.ValueRFC3339Time()
+		diags.Append(errs...)
+		if errs == nil {
+			params.WasActiveAt = cloudflare.F(mFilterWasActiveAt)
+		}
 	}
 	if !m.Filter.WasInactiveAt.IsNull() {
-		params.WasInactiveAt = cloudflare.F(mFilterWasInactiveAt)
+		mFilterWasInactiveAt, errs := m.Filter.WasInactiveAt.ValueRFC3339Time()
+		diags.Append(errs...)
+		if errs == nil {
+			params.WasInactiveAt = cloudflare.F(mFilterWasInactiveAt)
+		}
 	}
 
 	return

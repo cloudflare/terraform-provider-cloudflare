@@ -5,6 +5,7 @@ package hostname_tls_setting
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -41,7 +42,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"http2",
 					),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -50,12 +54,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hostname": schema.StringAttribute{
 				Description:   "The hostname for which the tls settings are set.",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"value": schema.Float64Attribute{
+			"value": schema.DynamicAttribute{
 				Description: "The tls setting value.",
 				Required:    true,
+				CustomType:  customfield.NormalizedDynamicType{},
+				PlanModifiers: []planmodifier.Dynamic{
+					customfield.NormalizeDynamicPlanModifier(),
+				},
 			},
 			"created_at": schema.StringAttribute{
 				Description: "This is the time the tls setting was originally created for this hostname.",

@@ -4,6 +4,7 @@ package account_token
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -43,9 +44,9 @@ type AccountTokenPoliciesModel struct {
 }
 
 type AccountTokenPoliciesPermissionGroupsModel struct {
-	ID   types.String                                   `tfsdk:"id" json:"id,required"`
-	Meta *AccountTokenPoliciesPermissionGroupsMetaModel `tfsdk:"meta" json:"meta,optional"`
-	Name types.String                                   `tfsdk:"name" json:"name,computed"`
+	ID   types.String                                                            `tfsdk:"id" json:"id,required"`
+	Meta customfield.NestedObject[AccountTokenPoliciesPermissionGroupsMetaModel] `tfsdk:"meta" json:"meta,computed_optional"`
+	Name types.String                                                            `tfsdk:"name" json:"name,computed"`
 }
 
 type AccountTokenPoliciesPermissionGroupsMetaModel struct {

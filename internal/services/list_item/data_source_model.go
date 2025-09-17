@@ -18,12 +18,12 @@ type ListItemResultDataSourceEnvelope struct {
 
 type ListItemDataSourceModel struct {
 	AccountID  types.String                                              `tfsdk:"account_id" path:"account_id,required"`
-	ItemID     types.String                                              `tfsdk:"item_id" path:"item_id,required"`
 	ListID     types.String                                              `tfsdk:"list_id" path:"list_id,required"`
+	ItemID     types.String                                              `tfsdk:"item_id" path:"item_id,required"`
+	ID         types.String                                              `tfsdk:"id" json:"id,computed" path:"item_id,computed"`
 	ASN        types.Int64                                               `tfsdk:"asn" json:"asn,computed"`
 	Comment    types.String                                              `tfsdk:"comment" json:"comment,computed"`
 	CreatedOn  types.String                                              `tfsdk:"created_on" json:"created_on,computed"`
-	ID         types.String                                              `tfsdk:"id" json:"id,computed"`
 	IP         types.String                                              `tfsdk:"ip" json:"ip,computed"`
 	ModifiedOn types.String                                              `tfsdk:"modified_on" json:"modified_on,computed"`
 	Hostname   customfield.NestedObject[ListItemHostnameDataSourceModel] `tfsdk:"hostname" json:"hostname,computed"`

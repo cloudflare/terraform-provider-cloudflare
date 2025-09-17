@@ -95,14 +95,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"max_upload_bytes": schema.Int64Attribute{
 				Description: "The maximum uncompressed file size of a batch of logs. This setting value must be between `5 MB` and `1 GB`, or `0` to disable it. Note that you cannot set a minimum file size; this means that log files may be much smaller than this batch size.",
 				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Any(
+						int64validator.OneOf(0),
+						int64validator.Between(5000000, 1000000000),
+					),
+				},
 			},
 			"max_upload_interval_seconds": schema.Int64Attribute{
 				Description: "The maximum interval in seconds for log batches. This setting must be between 30 and 300 seconds (5 minutes), or `0` to disable it. Note that you cannot specify a minimum interval for log batches; this means that log files may be sent in shorter intervals than this.",
 				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Any(
+						int64validator.OneOf(0),
+						int64validator.Between(30, 300),
+					),
+				},
 			},
 			"max_upload_records": schema.Int64Attribute{
 				Description: "The maximum number of log lines per batch. This setting must be between 1000 and 1,000,000 lines, or `0` to disable it. Note that you cannot specify a minimum number of log lines per batch; this means that log files may contain many fewer lines than this.",
 				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Any(
+						int64validator.OneOf(0),
+						int64validator.Between(1000, 1000000),
+					),
+				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Optional human readable job name. Not unique. Cloudflare suggests. that you set this to a meaningful string, like the domain name, to make it easier to identify your job.",

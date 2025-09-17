@@ -82,6 +82,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "A 127 bit IPV6 prefix from within the virtual_subnet6 prefix space with the address being the first IP of the subnet and not same as the address of virtual_subnet6. Eg if virtual_subnet6 is 2606:54c1:7:0:a9fe:12d2::/127 , interface_address6 could be 2606:54c1:7:0:a9fe:12d2:1:200/127",
 				Optional:    true,
 			},
+			"automatic_return_routing": schema.BoolAttribute{
+				Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"mtu": schema.Int64Attribute{
 				Description: "Maximum Transmission Unit (MTU) in bytes for the GRE tunnel. The minimum value is 576.",
 				Computed:    true,
@@ -235,6 +241,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"name": schema.StringAttribute{
 						Description: "The name of the tunnel. The name cannot contain spaces or special characters, must be 15 characters or less, and cannot share a name with another GRE tunnel.",
 						Computed:    true,
+					},
+					"automatic_return_routing": schema.BoolAttribute{
+						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"bgp": schema.SingleNestedAttribute{
 						Computed:   true,
@@ -412,6 +423,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The name of the tunnel. The name cannot contain spaces or special characters, must be 15 characters or less, and cannot share a name with another GRE tunnel.",
 						Computed:    true,
 					},
+					"automatic_return_routing": schema.BoolAttribute{
+						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+					},
 					"bgp": schema.SingleNestedAttribute{
 						Computed:   true,
 						CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelModifiedGRETunnelBGPModel](ctx),
@@ -569,7 +585,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 }
 
 func (r *MagicWANGRETunnelResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = ResourceSchema(ctx)
+	resp.Schema = customResourceSchema(ctx)
 }
 
 func (r *MagicWANGRETunnelResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

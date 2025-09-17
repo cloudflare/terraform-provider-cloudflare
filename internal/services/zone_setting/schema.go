@@ -5,11 +5,10 @@ package zone_setting
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -34,16 +33,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"value": schema.StringAttribute{
-				Description: "Value of the zone setting.",
-				Optional:    true,
-				CustomType:  jsontypes.NormalizedType{},
+			"value": schema.DynamicAttribute{
+				Description: "Current value of the zone setting.",
+				Required:    true,
+				CustomType:  customfield.NormalizedDynamicType{},
+				PlanModifiers: []planmodifier.Dynamic{
+					customfield.NormalizeDynamicPlanModifier(),
+				},
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "ssl-recommender enrollment setting.",
 				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 			"editable": schema.BoolAttribute{
 				Description: "Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).",

@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -84,6 +85,10 @@ func (r *ZeroTrustAccessPolicyResource) Create(ctx context.Context, req resource
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	if res == nil || res.Body == nil {
+		resp.Diagnostics.AddError("failed to read response", "Response or response body is nil")
+		return
+	}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -91,6 +96,16 @@ func (r *ZeroTrustAccessPolicyResource) Create(ctx context.Context, req resource
 		return
 	}
 	data = &env.Result
+
+	// Get the original plan to compare with API response
+	var planData *ZeroTrustAccessPolicyModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &planData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Apply normalization to handle API response vs plan differences
+	resp.Diagnostics.Append(normalizeReadZeroTrustAccessPolicyAPIData(ctx, data, planData)...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -133,6 +148,10 @@ func (r *ZeroTrustAccessPolicyResource) Update(ctx context.Context, req resource
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	if res == nil || res.Body == nil {
+		resp.Diagnostics.AddError("failed to read response", "Response or response body is nil")
+		return
+	}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -141,6 +160,13 @@ func (r *ZeroTrustAccessPolicyResource) Update(ctx context.Context, req resource
 	}
 	data = &env.Result
 
+	var planData *ZeroTrustAccessPolicyModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &planData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(normalizeReadZeroTrustAccessPolicyAPIData(ctx, data, planData)...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -173,6 +199,10 @@ func (r *ZeroTrustAccessPolicyResource) Read(ctx context.Context, req resource.R
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	if res == nil || res.Body == nil {
+		resp.Diagnostics.AddError("failed to read response", "Response or response body is nil")
+		return
+	}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
@@ -180,6 +210,14 @@ func (r *ZeroTrustAccessPolicyResource) Read(ctx context.Context, req resource.R
 		return
 	}
 	data = &env.Result
+
+	var stateData *ZeroTrustAccessPolicyModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &stateData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(normalizeReadZeroTrustAccessPolicyAPIData(ctx, data, stateData)...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -243,6 +281,10 @@ func (r *ZeroTrustAccessPolicyResource) ImportState(ctx context.Context, req res
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	if res == nil || res.Body == nil {
+		resp.Diagnostics.AddError("failed to read response", "Response or response body is nil")
+		return
+	}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
@@ -251,9 +293,40 @@ func (r *ZeroTrustAccessPolicyResource) ImportState(ctx context.Context, req res
 	}
 	data = &env.Result
 
+	// Apply import-specific normalizations to handle API omissions
+	resp.Diagnostics.Append(normalizeImportZeroTrustAccessPolicyAPIData(ctx, data)...)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustAccessPolicyResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *ZeroTrustAccessPolicyResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	// If this is a destroy operation, don't modify the plan
+	if req.Plan.Raw.IsNull() {
+		return
+	}
 
+	var plan *ZeroTrustAccessPolicyModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	var config *ZeroTrustAccessPolicyModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// If rule fields are not configured, ensure they stay null in the plan
+	if config.Include.IsNull() {
+		plan.Include = customfield.NullObjectSet[ZeroTrustAccessPolicyIncludeModel](ctx)
+	}
+	if config.Require.IsNull() {
+		plan.Require = customfield.NullObjectSet[ZeroTrustAccessPolicyRequireModel](ctx)
+	}
+	if config.Exclude.IsNull() {
+		plan.Exclude = customfield.NullObjectSet[ZeroTrustAccessPolicyExcludeModel](ctx)
+	}
+
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
 }

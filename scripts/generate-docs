@@ -4,10 +4,15 @@ set -e
 
 cd "$(dirname "$0")/.."
 
+# update list item docs to account for custom code
+cat << EOT >> examples/resources/cloudflare_list_item/import.sh
+$ terraform import cloudflare_list_item.example '<account_id>/<list_id>/<item_id>'
+EOT
+
 echo "==> Generating Terraform provider documentation"
 if ! command -v "tfplugindocs" &> /dev/null
 then
   go install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
 fi
 
-"$(go env GOPATH)/bin/tfplugindocs" generate -rendered-provider-name "Cloudflare" -provider-name="cloudflare"
+tfplugindocs generate -rendered-provider-name "Cloudflare" -provider-name="cloudflare"

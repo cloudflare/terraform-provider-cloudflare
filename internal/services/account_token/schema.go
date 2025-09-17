@@ -5,6 +5,7 @@ package account_token
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -42,6 +43,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "Policy identifier.",
 							Computed:    true,
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 						},
 						"effect": schema.StringAttribute{
 							Description: "Allow or deny operations against the resources.\nAvailable values: \"allow\", \"deny\".",
@@ -50,7 +54,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
 							},
 						},
-						"permission_groups": schema.ListNestedAttribute{
+						"permission_groups": schema.SetNestedAttribute{
 							Description: "A set of permission groups that are specified to the policy.",
 							Required:    true,
 							NestedObject: schema.NestedAttributeObject{
@@ -62,6 +66,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"meta": schema.SingleNestedAttribute{
 										Description: "Attributes associated to the permission group.",
 										Optional:    true,
+										Computed:    true,
+										CustomType:  customfield.NewNestedObjectType[AccountTokenPoliciesPermissionGroupsMetaModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"key": schema.StringAttribute{
 												Optional: true,
@@ -145,9 +151,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"value": schema.StringAttribute{
-				Description: "The token value.",
-				Computed:    true,
-				Sensitive:   true,
+				Description:   "The token value.",
+				Computed:      true,
+				Sensitive:     true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}

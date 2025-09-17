@@ -14,7 +14,7 @@ type AuthenticatedOriginPullsCertificateResultEnvelope struct {
 
 type AuthenticatedOriginPullsCertificateModel struct {
 	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id,required"`
-	CertificateID types.String      `tfsdk:"certificate_id" path:"certificate_id,optional"`
+	CertificateID types.String      `tfsdk:"certificate_id" path:"certificate_id,computed"`
 	Certificate   types.String      `tfsdk:"certificate" json:"certificate,required"`
 	PrivateKey    types.String      `tfsdk:"private_key" json:"private_key,required"`
 	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled,computed"`

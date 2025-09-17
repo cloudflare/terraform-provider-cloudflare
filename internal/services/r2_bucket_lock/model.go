@@ -13,9 +13,10 @@ type R2BucketLockResultEnvelope struct {
 }
 
 type R2BucketLockModel struct {
-	AccountID  types.String               `tfsdk:"account_id" path:"account_id,required"`
-	BucketName types.String               `tfsdk:"bucket_name" path:"bucket_name,required"`
-	Rules      *[]*R2BucketLockRulesModel `tfsdk:"rules" json:"rules,optional"`
+	AccountID    types.String               `tfsdk:"account_id" path:"account_id,required"`
+	BucketName   types.String               `tfsdk:"bucket_name" path:"bucket_name,required"`
+	Jurisdiction types.String               `tfsdk:"jurisdiction" json:"-,computed_optional,no_refresh"`
+	Rules        *[]*R2BucketLockRulesModel `tfsdk:"rules" json:"rules,optional"`
 }
 
 func (m R2BucketLockModel) MarshalJSON() (data []byte, err error) {

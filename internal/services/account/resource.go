@@ -64,13 +64,12 @@ func (r *AccountResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
+	dataBytes, err := data.marshalCustom()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
-	env := AccountResultEnvelope{*data}
 	_, err = r.client.Accounts.New(
 		ctx,
 		accounts.AccountNewParams{},
@@ -83,12 +82,11 @@ func (r *AccountResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	data, err = unmarshalCustom(bytes, data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -110,13 +108,12 @@ func (r *AccountResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+	dataBytes, err := data.marshalCustomForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
-	env := AccountResultEnvelope{*data}
 	_, err = r.client.Accounts.Update(
 		ctx,
 		accounts.AccountUpdateParams{
@@ -131,12 +128,11 @@ func (r *AccountResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	data, err = unmarshalCustom(bytes, data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -151,7 +147,6 @@ func (r *AccountResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 
 	res := new(http.Response)
-	env := AccountResultEnvelope{*data}
 	_, err := r.client.Accounts.Get(
 		ctx,
 		accounts.AccountGetParams{
@@ -170,12 +165,11 @@ func (r *AccountResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	data, err = unmarshalCustom(bytes, data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
