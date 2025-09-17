@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*SnippetResource)(nil)
@@ -27,11 +26,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "The unique ID of the zone.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"files": schema.ListAttribute{
-				Description: "The list of files belonging to the snippet.",
-				Required:    true,
-				ElementType: types.StringType,
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Description: "Metadata about the snippet.",

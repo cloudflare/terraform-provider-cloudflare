@@ -180,10 +180,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"created_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
-						},
 						"custom_deny_message": schema.StringAttribute{
 							Description: "The custom error message shown to a user when they are denied access to the application.",
 							Computed:    true,
@@ -1393,10 +1389,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewSetType[types.String](ctx),
 							ElementType: types.StringType,
 						},
-						"updated_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
-						},
 						"saas_app": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationsSaaSAppDataSourceModel](ctx),
@@ -1411,10 +1403,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"consumer_service_url": schema.StringAttribute{
 									Description: "The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.",
 									Computed:    true,
-								},
-								"created_at": schema.StringAttribute{
-									Computed:   true,
-									CustomType: timetypes.RFC3339Type{},
 								},
 								"custom_attributes": schema.ListNestedAttribute{
 									Computed:   true,
@@ -1508,10 +1496,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"sso_endpoint": schema.StringAttribute{
 									Description: "The endpoint where your SaaS application will send login requests.",
 									Computed:    true,
-								},
-								"updated_at": schema.StringAttribute{
-									Computed:   true,
-									CustomType: timetypes.RFC3339Type{},
 								},
 								"access_token_lifetime": schema.StringAttribute{
 									Description: "The lifetime of the OIDC Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",
