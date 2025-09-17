@@ -1,4 +1,4 @@
-package customvalidator
+package workers_script
 
 import (
 	"context"
@@ -14,12 +14,6 @@ var _ validator.Dynamic = runWorkerFirstValidator{}
 // - A boolean (true/false)
 // - A list/tuple of strings (for path rules)
 type runWorkerFirstValidator struct{}
-
-// RunWorkerFirst returns a validator that ensures the dynamic value is either
-// a boolean or a list/tuple containing only string elements.
-func RunWorkerFirst() validator.Dynamic {
-	return runWorkerFirstValidator{}
-}
 
 func (v runWorkerFirstValidator) Description(ctx context.Context) string {
 	return v.MarkdownDescription(ctx)
@@ -49,7 +43,7 @@ func (v runWorkerFirstValidator) ValidateDynamic(ctx context.Context, req valida
 		if _, isStringElement := listType.ElemType.(basetypes.StringType); isStringElement {
 			return // List of strings is valid
 		}
-		resp.Diagnostics.AddAttributeError(req.Path, "Invalid list element type", 
+		resp.Diagnostics.AddAttributeError(req.Path, "Invalid list element type",
 			"When using a list, all elements must be strings containing path rules")
 		return
 	}
@@ -59,7 +53,7 @@ func (v runWorkerFirstValidator) ValidateDynamic(ctx context.Context, req valida
 		// Verify all elements are strings
 		for i, elemType := range tupleType.ElemTypes {
 			if _, isString := elemType.(basetypes.StringType); !isString {
-				resp.Diagnostics.AddAttributeError(req.Path, "Invalid tuple element type", 
+				resp.Diagnostics.AddAttributeError(req.Path, "Invalid tuple element type",
 					fmt.Sprintf("Element at index %d must be a string, got %T", i, elemType))
 				return
 			}
@@ -68,6 +62,6 @@ func (v runWorkerFirstValidator) ValidateDynamic(ctx context.Context, req valida
 	}
 
 	// If we get here, the type is not supported
-	resp.Diagnostics.AddAttributeError(req.Path, "Invalid type for run_worker_first", 
+	resp.Diagnostics.AddAttributeError(req.Path, "Invalid type for run_worker_first",
 		fmt.Sprintf("Expected boolean or list/tuple of strings, got %T", valueType))
 }
