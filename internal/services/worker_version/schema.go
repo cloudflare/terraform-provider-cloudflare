@@ -37,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"worker_id": schema.StringAttribute{
-				Description:   "Identifier.",
+				Description:   "Identifier for the Worker, which can be ID or name.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -50,52 +50,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "The name of the main module in the `modules` array (e.g. the name of the module that exports a `fetch` handler).",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"assets": schema.SingleNestedAttribute{
-				Description: "Configuration for assets within a Worker.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"config": schema.SingleNestedAttribute{
-						Description: "Configuration for assets within a Worker.",
-						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"html_handling": schema.StringAttribute{
-								Description: "Determines the redirects and rewrites of requests for HTML content.\nAvailable values: \"auto-trailing-slash\", \"force-trailing-slash\", \"drop-trailing-slash\", \"none\".",
-								Optional:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"auto-trailing-slash",
-										"force-trailing-slash",
-										"drop-trailing-slash",
-										"none",
-									),
-								},
-							},
-							"not_found_handling": schema.StringAttribute{
-								Description: "Determines the response when a request does not match a static asset, and there is no Worker script.\nAvailable values: \"none\", \"404-page\", \"single-page-application\".",
-								Optional:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"none",
-										"404-page",
-										"single-page-application",
-									),
-								},
-							},
-							"run_worker_first": schema.ListAttribute{
-								Description: "Contains a list path rules to control routing to either the Worker or assets. Glob (*) and negative (!) rules are supported. Rules must start with either '/' or '!/'. At least one non-negative rule must be provided, and negative rules have higher precedence than non-negative rules.",
-								Optional:    true,
-								ElementType: types.StringType,
-							},
-						},
-					},
-					"jwt": schema.StringAttribute{
-						Description: "Token provided upon successful upload of all files from a registered manifest.",
-						Optional:    true,
-						Sensitive:   true,
-					},
-				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"migrations": schema.SingleNestedAttribute{
 				Description: "Migrations for Durable Objects associated with the version. Migrations are applied when the version is deployed.",
@@ -213,7 +167,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"modules": schema.SetNestedAttribute{
-				Description: "Code, sourcemaps, and other content used at runtime.",
+				Description: "Code, sourcemaps, and other content used at runtime.\n\nThis includes [`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and\n[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure \n[Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be \nincluded as modules named `_headers` and `_redirects` with content type `text/plain`.",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -291,6 +245,62 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplaceIfConfigured()},
 			},
+			"assets": schema.SingleNestedAttribute{
+				Description: "Configuration for assets within a Worker.\n\n[`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and\n[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files should be\nincluded as modules named `_headers` and `_redirects` with content type `text/plain`.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkerVersionAssetsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"config": schema.SingleNestedAttribute{
+						Description: "Configuration for assets within a Worker.",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[WorkerVersionAssetsConfigModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"html_handling": schema.StringAttribute{
+								Description: "Determines the redirects and rewrites of requests for HTML content.\nAvailable values: \"auto-trailing-slash\", \"force-trailing-slash\", \"drop-trailing-slash\", \"none\".",
+								Computed:    true,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"auto-trailing-slash",
+										"force-trailing-slash",
+										"drop-trailing-slash",
+										"none",
+									),
+								},
+								Default: stringdefault.StaticString("auto-trailing-slash"),
+							},
+							"not_found_handling": schema.StringAttribute{
+								Description: "Determines the response when a request does not match a static asset, and there is no Worker script.\nAvailable values: \"none\", \"404-page\", \"single-page-application\".",
+								Computed:    true,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"none",
+										"404-page",
+										"single-page-application",
+									),
+								},
+								Default: stringdefault.StaticString("none"),
+							},
+							"run_worker_first": schema.ListAttribute{
+								Description: "Contains a list path rules to control routing to either the Worker or assets. Glob (*) and negative (!) rules are supported. Rules must start with either '/' or '!/'. At least one non-negative rule must be provided, and negative rules have higher precedence than non-negative rules.",
+								Computed:    true,
+								Optional:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
+							},
+						},
+					},
+					"jwt": schema.StringAttribute{
+						Description: "Token provided upon successful upload of all files from a registered manifest.",
+						Optional:    true,
+						Sensitive:   true,
+					},
+				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplaceIfConfigured()},
+			},
 			"bindings": schema.ListNestedAttribute{
 				Description: "List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.",
 				Computed:    true,
@@ -303,7 +313,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"service\", \"tail_consumer\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"tail_consumer\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -312,9 +322,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"assets",
 									"browser",
 									"d1",
+									"data_blob",
 									"dispatch_namespace",
 									"durable_object_namespace",
 									"hyperdrive",
+									"inherit",
+									"images",
 									"json",
 									"kv_namespace",
 									"mtls_certificate",
@@ -323,13 +336,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"queue",
 									"r2_bucket",
 									"secret_text",
+									"send_email",
 									"service",
 									"tail_consumer",
+									"text_blob",
 									"vectorize",
 									"version_metadata",
 									"secrets_store_secret",
 									"secret_key",
 									"workflow",
+									"wasm_module",
 								),
 							},
 						},
@@ -339,6 +355,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"id": schema.StringAttribute{
 							Description: "Identifier of the D1 database to bind to.",
+							Optional:    true,
+						},
+						"part": schema.StringAttribute{
+							Description: "The name of the file containing the data content. Only accepted for `service worker syntax` Workers.",
 							Optional:    true,
 						},
 						"namespace": schema.StringAttribute{
@@ -389,6 +409,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							Optional:    true,
 						},
+						"old_name": schema.StringAttribute{
+							Description: "The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.",
+							Optional:    true,
+						},
+						"version_id": schema.StringAttribute{
+							Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
+							Computed:    true,
+							Optional:    true,
+							Default:     stringdefault.StaticString("latest"),
+						},
 						"json": schema.StringAttribute{
 							Description: "JSON data to use.",
 							Optional:    true,
@@ -412,6 +442,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"bucket_name": schema.StringAttribute{
 							Description: "R2 bucket to bind to.",
+							Optional:    true,
+						},
+						"allowed_destination_addresses": schema.ListAttribute{
+							Description: "List of allowed destination addresses.",
+							Optional:    true,
+							ElementType: types.StringType,
+						},
+						"allowed_sender_addresses": schema.ListAttribute{
+							Description: "List of allowed sender addresses.",
+							Optional:    true,
+							ElementType: types.StringType,
+						},
+						"destination_address": schema.StringAttribute{
+							Description: "Destination address for the email.",
 							Optional:    true,
 						},
 						"service": schema.StringAttribute{
