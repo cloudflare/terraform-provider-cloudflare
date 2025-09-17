@@ -37,16 +37,16 @@ type ZoneDNSSettingsInternalDNSModel struct {
 }
 
 type ZoneDNSSettingsNameserversModel struct {
-	Type  types.String `tfsdk:"type" json:"type,required"`
 	NSSet types.Int64  `tfsdk:"ns_set" json:"ns_set,optional"`
+	Type  types.String `tfsdk:"type" json:"type,optional"`
 }
 
 type ZoneDNSSettingsSOAModel struct {
-	Expire  types.Float64 `tfsdk:"expire" json:"expire,required"`
-	MinTTL  types.Float64 `tfsdk:"min_ttl" json:"min_ttl,required"`
-	MNAME   types.String  `tfsdk:"mname" json:"mname,required"`
-	Refresh types.Float64 `tfsdk:"refresh" json:"refresh,required"`
-	Retry   types.Float64 `tfsdk:"retry" json:"retry,required"`
-	RNAME   types.String  `tfsdk:"rname" json:"rname,required"`
-	TTL     types.Float64 `tfsdk:"ttl" json:"ttl,required"`
+	Expire  types.Float64 `tfsdk:"expire" json:"expire,optional"`
+	MinTTL  types.Float64 `tfsdk:"min_ttl" json:"min_ttl,optional"`
+	MNAME   types.String  `tfsdk:"mname" json:"mname,optional"`
+	Refresh types.Float64 `tfsdk:"refresh" json:"refresh,optional"`
+	Retry   types.Float64 `tfsdk:"retry" json:"retry,optional"`
+	RNAME   types.String  `tfsdk:"rname" json:"rname,optional"`
+	TTL     types.Float64 `tfsdk:"ttl" json:"ttl,optional"`
 }
