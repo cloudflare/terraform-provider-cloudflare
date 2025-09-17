@@ -83,7 +83,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/notification_policy_webhooks"
     "resource=./internal/services/observatory_scheduled_test"
     "resource=./internal/services/origin_ca_certificate"
-    "resource=./internal/services/page_rule"
+    "resource=./internal/services/page_rule parallel=1"
     "resource=./internal/services/pages_domain"
     "resource=./internal/services/pages_project"
     "resource=./internal/services/queue"
