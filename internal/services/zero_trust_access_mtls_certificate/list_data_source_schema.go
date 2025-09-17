@@ -52,10 +52,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
-						"created_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
-						},
 						"expires_on": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
@@ -67,10 +63,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "The name of the certificate.",
 							Computed:    true,
-						},
-						"updated_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
 						},
 					},
 				},

@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/option"
-	"github.com/cloudflare/cloudflare-go/v6/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -69,7 +68,7 @@ func (d *WorkerVersionDataSource) Read(ctx context.Context, req datasource.ReadR
 	_, err := d.client.Workers.Beta.Workers.Versions.Get(
 		ctx,
 		data.WorkerID.ValueString(),
-		workers.BetaWorkerVersionGetParamsVersionID(data.VersionID.ValueString()),
+		data.VersionID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
