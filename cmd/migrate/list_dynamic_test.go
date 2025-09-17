@@ -341,7 +341,7 @@ resource "cloudflare_list" "test" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 func TestCloudflareListEdgeCases(t *testing.T) {
@@ -425,5 +425,5 @@ resource "cloudflare_list" "test" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }

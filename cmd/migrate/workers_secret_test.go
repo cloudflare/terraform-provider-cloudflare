@@ -154,7 +154,7 @@ resource "cloudflare_worker_secret" "my_secret" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 func TestWorkersSecretStateMigration(t *testing.T) {

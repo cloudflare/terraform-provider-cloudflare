@@ -111,6 +111,62 @@ resource "cloudflare_snippet" "test" {
 			},
 		},
 		{
+			Name: "snippet with variable reference for main_module",
+			Config: `
+resource "cloudflare_snippet" "test" {
+  zone_id     = "abc123"
+  name        = "test_snippet"
+  main_module = local.access_handler
+  files {
+    name    = "preview_access_handler"
+    content = "export default {async fetch(request) {return fetch(request)}};"
+  }
+}`,
+			Expected: []string{`resource "cloudflare_snippet" "test" {
+  zone_id      = "abc123"
+  snippet_name = "test_snippet"
+  metadata = {
+    main_module = local.access_handler
+  }
+  files = [
+    {
+      name    = "preview_access_handler"
+      content = "export default {async fetch(request) {return fetch(request)}};"
+    }
+  ]
+}
+`,
+			},
+		},
+		{
+			Name: "snippet with variable reference and interpolation",
+			Config: `
+resource "cloudflare_snippet" "test" {
+  zone_id     = var.zone_id
+  name        = "test_${var.environment}"
+  main_module = "${var.handler_name}.js"
+  files {
+    name    = "${var.handler_name}.js"
+    content = file("${path.module}/handlers/${var.handler_name}.js")
+  }
+}`,
+			Expected: []string{`resource "cloudflare_snippet" "test" {
+  zone_id      = var.zone_id
+  snippet_name = "test_${var.environment}"
+  metadata = {
+    main_module = "${var.handler_name}.js"
+  }
+  files = [
+    {
+      name    = "${var.handler_name}.js"
+      content = file("${path.module}/handlers/${var.handler_name}.js")
+    }
+  ]
+}
+`,
+			},
+		},
+		{
 			Name: "multiple files with heredoc",
 			Config: `
 resource "cloudflare_snippet" "test" {
@@ -170,7 +226,7 @@ resource "cloudflare_snippet" "test" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 func TestMigrateCloudflareSnippetState(t *testing.T) {

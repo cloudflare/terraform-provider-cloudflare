@@ -9,125 +9,203 @@
 # have that support.
 # TODO: support tenant admin auth for acceptance tests
 
+# Product group definitions - services that need special handling
+# Using functions instead of associative arrays for broader bash compatibility
+get_product_group_services() {
+    local group="$1"
+    case "$group" in
+        magic)
+            echo "magic_wan_ipsec_tunnel magic_wan_gre_tunnel magic_wan_static_route magic_transit_connector"
+            ;;
+        *)
+            echo ""
+            ;;
+    esac
+}
+
+get_available_product_groups() {
+    echo "magic"
+}
+
 # List of services with their parallel test configuration
-# Each service is defined as: resource=<path> parallel=<number> [depends_on=<service1,service2>]
-# parallel=1 means sequential execution, parallel=0 means use default (GOMAXPROCS)
+# Each service is defined as: resource=<path> [parallel=<number>] [depends_on=<service1,service2>]
+# parallel=1 means sequential execution, parallel=0 (default) means use default (GOMAXPROCS)
+# Only specify parallel= if different from default (0)
 # depends_on is optional and specifies services that must complete before this one starts
 # Dependencies use service names (basename of path), comma-separated for multiple dependencies
-declare -a SERVICES=(
-    "resource=./internal/services/account parallel=0"
-    "resource=./internal/services/account_api_token_permission_groups parallel=0"
-    "resource=./internal/services/account_dns_settings parallel=0"
-    "resource=./internal/services/account_dns_settings_internal_view parallel=0"
-    "resource=./internal/services/account_member parallel=0"
-    "resource=./internal/services/account_permission_group parallel=0"
-    "resource=./internal/services/account_role parallel=0"
-    "resource=./internal/services/account_subscription parallel=0"
-    "resource=./internal/services/account_token parallel=0"
-    "resource=./internal/services/address_map parallel=0"
-    "resource=./internal/services/api_shield parallel=0"
-    "resource=./internal/services/api_token parallel=0"
-    "resource=./internal/services/argo_smart_routing parallel=0"
-    "resource=./internal/services/argo_tiered_caching parallel=0"
-    "resource=./internal/services/authenticated_origin_pulls parallel=0"
-    "resource=./internal/services/authenticated_origin_pulls_certificate parallel=0"
-    "resource=./internal/services/bot_management parallel=0"
-    "resource=./internal/services/byo_ip_prefix parallel=0"
-    "resource=./internal/services/certificate_pack parallel=0"
-    "resource=./internal/services/cloud_connector_rules parallel=0"
-    "resource=./internal/services/custom_pages parallel=0"
-    "resource=./internal/services/custom_ssl parallel=0"
-    "resource=./internal/services/dns_record parallel=0"
-    "resource=./internal/services/dns_settings_internal_view parallel=0"
-    "resource=./internal/services/dns_zone_transfers_acl parallel=0"
-    "resource=./internal/services/dns_zone_transfers_tsig parallel=0"
-    "resource=./internal/services/email_routing_catch_all parallel=0"
-    "resource=./internal/services/email_routing_dns parallel=0"
-    "resource=./internal/services/email_routing_rule parallel=0"
-    "resource=./internal/services/email_security_impersonation_registry parallel=0"
-    "resource=./internal/services/email_security_trusted_domains parallel=0"
-    "resource=./internal/services/healthcheck parallel=0"
-    "resource=./internal/services/ip_ranges parallel=0"
+declare -a ALL_SERVICES=(
+    "resource=./internal/services/account"
+    "resource=./internal/services/account_api_token_permission_groups"
+    "resource=./internal/services/account_dns_settings"
+    "resource=./internal/services/account_dns_settings_internal_view"
+    "resource=./internal/services/account_member"
+    "resource=./internal/services/account_permission_group"
+    "resource=./internal/services/account_role"
+    "resource=./internal/services/account_subscription"
+    "resource=./internal/services/account_token"
+    "resource=./internal/services/address_map"
+    "resource=./internal/services/api_shield"
+    "resource=./internal/services/api_token"
+    "resource=./internal/services/argo_smart_routing"
+    "resource=./internal/services/argo_tiered_caching"
+    "resource=./internal/services/authenticated_origin_pulls"
+    "resource=./internal/services/authenticated_origin_pulls_certificate"
+    "resource=./internal/services/bot_management"
+    "resource=./internal/services/byo_ip_prefix"
+    "resource=./internal/services/certificate_pack"
+    "resource=./internal/services/cloud_connector_rules"
+    "resource=./internal/services/custom_pages"
+    "resource=./internal/services/custom_ssl"
+    "resource=./internal/services/dns_record"
+    "resource=./internal/services/dns_settings_internal_view"
+    "resource=./internal/services/dns_zone_transfers_acl"
+    "resource=./internal/services/dns_zone_transfers_tsig"
+    "resource=./internal/services/email_routing_catch_all"
+    "resource=./internal/services/email_routing_dns"
+    "resource=./internal/services/email_routing_rule"
+    "resource=./internal/services/email_security_impersonation_registry"
+    "resource=./internal/services/email_security_trusted_domains"
+    "resource=./internal/services/healthcheck"
+    "resource=./internal/services/ip_ranges"
     "resource=./internal/services/list parallel=1"
     "resource=./internal/services/list_item parallel=1"
-    "resource=./internal/services/load_balancer parallel=0"
-    "resource=./internal/services/load_balancer_monitor parallel=0"
-    "resource=./internal/services/load_balancer_pool parallel=0"
-    "resource=./internal/services/logpull_retention parallel=0"
-    "resource=./internal/services/logpush_job parallel=0"
-    "resource=./internal/services/logpush_ownership_challenge parallel=0"
-    "resource=./internal/services/magic_transit_connector parallel=0"
+    "resource=./internal/services/load_balancer"
+    "resource=./internal/services/load_balancer_monitor"
+    "resource=./internal/services/load_balancer_pool"
+    "resource=./internal/services/logpull_retention"
+    "resource=./internal/services/logpush_job"
+    "resource=./internal/services/logpush_ownership_challenge"
+    "resource=./internal/services/magic_wan_ipsec_tunnel parallel=1"
+    "resource=./internal/services/magic_wan_gre_tunnel parallel=1 depends_on=magic_wan_ipsec_tunnel"
+    "resource=./internal/services/magic_wan_static_route parallel=1 depends_on=magic_wan_gre_tunnel"
+    "resource=./internal/services/magic_transit_connector parallel=1 depends_on=magic_wan_static_route"
     "resource=./internal/services/managed_transforms parallel=1"
-    "resource=./internal/services/notification_policy_webhooks parallel=0"
-    "resource=./internal/services/observatory_scheduled_test parallel=0"
-    "resource=./internal/services/origin_ca_certificate parallel=0"
-    "resource=./internal/services/page_rule parallel=0"
-    "resource=./internal/services/pages_domain parallel=0"
-    "resource=./internal/services/pages_project parallel=0"
-    "resource=./internal/services/queue parallel=0"
-    "resource=./internal/services/r2_bucket parallel=0"
-    "resource=./internal/services/regional_tiered_cache parallel=0"
-    "resource=./internal/services/ruleset parallel=0"
-    "resource=./internal/services/snippet parallel=0"
-    "resource=./internal/services/snippet_rules parallel=0 depends_on=snippet"
-    "resource=./internal/services/snippets parallel=0 depends_on=snippet_rules"
-    "resource=./internal/services/spectrum_application parallel=0"
-    "resource=./internal/services/tiered_cache parallel=0"
-    "resource=./internal/services/turnstile_widget parallel=0"
-    "resource=./internal/services/url_normalization_settings parallel=0"
-    "resource=./internal/services/waiting_room_settings parallel=0"
-    "resource=./internal/services/worker parallel=0"
-    "resource=./internal/services/worker_version parallel=0"
-    "resource=./internal/services/workers_cron_trigger parallel=0"
-    "resource=./internal/services/workers_custom_domain parallel=0"
-    "resource=./internal/services/workers_for_platforms_dispatch_namespace parallel=0"
-    "resource=./internal/services/workers_kv_namespace parallel=0"
-    "resource=./internal/services/workers_route parallel=0"
-    "resource=./internal/services/workers_script parallel=0"
-    "resource=./internal/services/zero_trust_access_application parallel=0"
-    "resource=./internal/services/zero_trust_access_custom_page parallel=0"
-    "resource=./internal/services/zero_trust_access_group parallel=0"
-    "resource=./internal/services/zero_trust_access_identity_provider parallel=0"
-    "resource=./internal/services/zero_trust_access_key_configuration parallel=0"
+    "resource=./internal/services/notification_policy_webhooks"
+    "resource=./internal/services/observatory_scheduled_test"
+    "resource=./internal/services/origin_ca_certificate"
+    "resource=./internal/services/page_rule parallel=1"
+    "resource=./internal/services/pages_domain"
+    "resource=./internal/services/pages_project"
+    "resource=./internal/services/queue"
+    "resource=./internal/services/r2_bucket"
+    "resource=./internal/services/regional_tiered_cache"
+    "resource=./internal/services/ruleset"
+    "resource=./internal/services/snippet"
+    "resource=./internal/services/snippet_rules depends_on=snippet"
+    "resource=./internal/services/snippets depends_on=snippet_rules"
+    "resource=./internal/services/spectrum_application"
+    "resource=./internal/services/tiered_cache"
+    "resource=./internal/services/turnstile_widget"
+    "resource=./internal/services/url_normalization_settings"
+    "resource=./internal/services/waiting_room_settings"
+    "resource=./internal/services/worker"
+    "resource=./internal/services/worker_version"
+    "resource=./internal/services/workers_cron_trigger"
+    "resource=./internal/services/workers_custom_domain"
+    "resource=./internal/services/workers_for_platforms_dispatch_namespace"
+    "resource=./internal/services/workers_kv_namespace"
+    "resource=./internal/services/workers_route"
+    "resource=./internal/services/workers_script"
+    "resource=./internal/services/zero_trust_access_application"
+    "resource=./internal/services/zero_trust_access_custom_page"
+    "resource=./internal/services/zero_trust_access_group"
+    "resource=./internal/services/zero_trust_access_identity_provider"
+    "resource=./internal/services/zero_trust_access_key_configuration"
     "resource=./internal/services/zero_trust_access_mtls_certificate parallel=1"
     "resource=./internal/services/zero_trust_access_mtls_hostname_settings parallel=1 depends_on=zero_trust_access_mtls_certificate"
-    "resource=./internal/services/zero_trust_access_policy parallel=0"
-    "resource=./internal/services/zero_trust_access_service_token parallel=0"
-    "resource=./internal/services/zero_trust_access_short_lived_certificate parallel=0 depends_on=zero_trust_access_mtls_hostname_settings"
-    "resource=./internal/services/zero_trust_access_tag parallel=0"
-    "resource=./internal/services/zero_trust_device_custom_profile parallel=0"
-    "resource=./internal/services/zero_trust_device_custom_profile_local_domain_fallback parallel=0"
-    "resource=./internal/services/zero_trust_device_default_profile_certificates parallel=0"
-    "resource=./internal/services/zero_trust_device_managed_networks parallel=0"
-    "resource=./internal/services/zero_trust_dlp_custom_profile parallel=0"
-    "resource=./internal/services/zero_trust_dlp_entry parallel=0"
-    "resource=./internal/services/zero_trust_gateway_proxy_endpoint parallel=0"
-    "resource=./internal/services/zero_trust_gateway_settings parallel=0"
-    "resource=./internal/services/zero_trust_list parallel=0"
-    "resource=./internal/services/zero_trust_organization parallel=0"
-    "resource=./internal/services/zero_trust_tunnel_cloudflared parallel=0"
-    "resource=./internal/services/zero_trust_tunnel_cloudflared_route parallel=0"
-    "resource=./internal/services/zero_trust_tunnel_cloudflared_token parallel=0"
-    "resource=./internal/services/zone parallel=0"
-    "resource=./internal/services/zone_cache_reserve parallel=0"
-    "resource=./internal/services/zone_cache_variants parallel=0"
-    "resource=./internal/services/zone_hold parallel=0"
-    "resource=./internal/services/zone_lockdown parallel=0"
-    "resource=./internal/services/zone_setting parallel=0"
-    "resource=./internal/services/zone_subscription parallel=0"
+    "resource=./internal/services/zero_trust_access_policy"
+    "resource=./internal/services/zero_trust_access_service_token"
+    "resource=./internal/services/zero_trust_access_short_lived_certificate depends_on=zero_trust_access_mtls_hostname_settings"
+    "resource=./internal/services/zero_trust_access_tag"
+    "resource=./internal/services/zero_trust_device_custom_profile"
+    "resource=./internal/services/zero_trust_device_custom_profile_local_domain_fallback"
+    "resource=./internal/services/zero_trust_device_default_profile_certificates"
+    "resource=./internal/services/zero_trust_device_managed_networks"
+    "resource=./internal/services/zero_trust_dlp_custom_profile"
+    "resource=./internal/services/zero_trust_dlp_entry"
+    "resource=./internal/services/zero_trust_gateway_proxy_endpoint"
+    "resource=./internal/services/zero_trust_gateway_settings"
+    "resource=./internal/services/zero_trust_list"
+    "resource=./internal/services/zero_trust_organization"
+    "resource=./internal/services/zero_trust_tunnel_cloudflared"
+    "resource=./internal/services/zero_trust_tunnel_cloudflared_route"
+    "resource=./internal/services/zero_trust_tunnel_cloudflared_token"
+    "resource=./internal/services/zone"
+    "resource=./internal/services/zone_cache_reserve"
+    "resource=./internal/services/zone_cache_variants"
+    "resource=./internal/services/zone_hold"
+    "resource=./internal/services/zone_lockdown"
+    "resource=./internal/services/zone_setting"
+    "resource=./internal/services/zone_subscription"
 )
+
+# Global variable to hold filtered services based on product group
+declare -a SERVICES=()
 
 # Helper function to parse service configuration
 parse_service_config() {
     local config="$1"
     local key="$2"
-    echo "$config" | grep -o "$key=[^ ]*" | cut -d= -f2-
+    local value=$(echo "$config" | grep -o "$key=[^ ]*" | cut -d= -f2-)
+    
+    # Set default for parallel if not specified
+    if [ "$key" = "parallel" ] && [ -z "$value" ]; then
+        echo "0"
+    else
+        echo "$value"
+    fi
 }
 
 # Function to get service name from path
 get_service_name() {
     local service_path="$1"
     basename "$service_path"
+}
+
+# Function to filter services by product group
+filter_services_by_group() {
+    local group="$1"
+    SERVICES=()
+    
+    if [ "$group" = "default" ]; then
+        # Default group: all services NOT in any product group
+        all_product_groups="$(get_available_product_groups)"
+        for service_config in "${ALL_SERVICES[@]}"; do
+            local service_path=$(parse_service_config "$service_config" "resource")
+            local service_name=$(get_service_name "$service_path")
+            local in_product_group=false
+            
+            # Check if this service is in any product group
+            for product_group in $all_product_groups; do
+                group_services="$(get_product_group_services "$product_group")"
+                if [[ " $group_services " =~ " $service_name " ]]; then
+                    in_product_group=true
+                    break
+                fi
+            done
+            
+            if [ "$in_product_group" = "false" ]; then
+                SERVICES+=("$service_config")
+            fi
+        done
+    else
+        # Specific product group: only services in that group
+        group_services="$(get_product_group_services "$group")"
+        if [ -z "$group_services" ]; then
+            echo "Error: Unknown product group '$group'"
+            echo "Available groups: default, $(get_available_product_groups)"
+            exit 1
+        fi
+        
+        for service_config in "${ALL_SERVICES[@]}"; do
+            local service_path=$(parse_service_config "$service_config" "resource")
+            local service_name=$(get_service_name "$service_path")
+            
+            if [[ " $group_services " =~ " $service_name " ]]; then
+                SERVICES+=("$service_config")
+            fi
+        done
+    fi
 }
 
 # Function to check if service has dependencies satisfied
@@ -309,7 +387,7 @@ run_sweeper() {
     fi
     
     # Retry logic for sweeper failures
-    local max_retries=6
+    local max_retries=3
     local retry_delay=2
     
     for retry in $(seq 1 $max_retries); do
@@ -521,6 +599,9 @@ main() {
     fi
     
     log "${GREEN}Starting parallel CI $test_name_display with $PARALLEL_JOBS jobs${NC}"
+    if [ "$TEST_TYPE" != "migration" ]; then
+        log "${WHITE}Product group: $PRODUCT_GROUP${NC}"
+    fi
     log "${WHITE}Total services to test: ${#SERVICES[@]}${NC}"
     log "${WHITE}Logs will be written to: $LOG_DIR${NC}"
     log "${WHITE}Sweeper timeout: $SWEEP_TIMEOUT, Test timeout: $TEST_TIMEOUT${NC}"
@@ -982,9 +1063,10 @@ trap cleanup EXIT
 
 # Usage information
 if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-    echo "Usage: $0 [test-type] [options]"
+    echo "Usage: $0 [product-group] [test-type] [options]"
     echo ""
     echo "Arguments:"
+    echo "  product-group      Product group to test: 'default', '$(get_available_product_groups)' (default: default)"
     echo "  test-type          Type of tests to run: 'acceptance' or 'migration' (default: acceptance)"
     echo ""
     echo "Options:"
@@ -997,6 +1079,12 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "Environment variables:"
     echo "  PARALLEL_JOBS      Override default parallel job count"
     echo ""
+    echo "Product Groups:"
+    for group in $(get_available_product_groups); do
+        echo "  $group: $(get_product_group_services "$group")"
+    done
+    echo "  default: all services not in any product group"
+    echo ""
     echo "Dependencies:"
     echo "  Services can specify dependencies using depends_on=service1,service2"
     echo "  Dependencies must complete successfully before dependent services start"
@@ -1004,41 +1092,76 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "  Circular dependencies are detected and will cause the script to exit with an error"
     echo ""
     echo "Examples:"
-    echo "  $0                                    # Run acceptance tests with default settings"
-    echo "  $0 migration                         # Run migration tests"
-    echo "  $0 acceptance --jobs 4               # Run acceptance tests with 4 parallel jobs"
-    echo "  $0 migration --test-timeout 20m      # Run migration tests with 20 minute timeout"
-    echo "  $0 acceptance --debug                # Run with debug logging enabled"
-    echo "  PARALLEL_JOBS=8 $0 acceptance        # Run with 8 parallel jobs"
-    echo "  DEBUG_LOGS=true $0 acceptance        # Run with debug logging via environment variable"
+    echo "  $0                                    # Run default group acceptance tests"
+    echo "  $0 default acceptance                # Run default group acceptance tests"
+    echo "  $0 magic acceptance                  # Run magic group acceptance tests"
+    echo "  $0 migration                         # Run migration tests (all groups)"
+    echo "  $0 default acceptance --jobs 4       # Run default group with 4 parallel jobs"
+    echo "  $0 magic acceptance --debug          # Run magic group with debug logging"
+    echo "  PARALLEL_JOBS=8 $0 default acceptance # Run with 8 parallel jobs"
     exit 0
 fi
 
-# Parse test type first
+# Initialize defaults
+PRODUCT_GROUP="default"
+TEST_TYPE="acceptance"
+LEGACY_SYNTAX=false
+
+# Parse product group and test type
 if [[ $# -gt 0 && ! "$1" =~ ^-- ]]; then
-    case $1 in
-        acceptance|migration)
-            TEST_TYPE="$1"
-            shift
-            ;;
-        --dry-run)
-            # Keep handling --dry-run as before, but will handle below
-            ;;
-        *)
-            echo "Unknown test type: $1"
-            echo "Valid test types: acceptance, migration"
-            echo "Use --help for usage information"
-            exit 1
-            ;;
-    esac
+    # Check if first argument is a product group
+    available_groups="$(get_available_product_groups)"
+    if [[ "$1" == "migration" ]] || [[ "$1" == "acceptance" ]]; then
+        # Legacy syntax: just test type specified
+        TEST_TYPE="$1"
+        LEGACY_SYNTAX=true
+        shift
+    elif [[ "$1" == "default" ]] || [[ " $available_groups " =~ " $1 " ]]; then
+        # New syntax: product group specified
+        PRODUCT_GROUP="$1"
+        shift
+        
+        # Check for test type as second argument
+        if [[ $# -gt 0 && ! "$1" =~ ^-- ]]; then
+            case $1 in
+                acceptance|migration)
+                    TEST_TYPE="$1"
+                    shift
+                    ;;
+                --dry-run)
+                    # Keep handling --dry-run as before
+                    ;;
+                *)
+                    echo "Unknown test type: $1"
+                    echo "Valid test types: acceptance, migration"
+                    echo "Use --help for usage information"
+                    exit 1
+                    ;;
+            esac
+        fi
+    else
+        echo "Unknown argument: $1"
+        echo "Valid product groups: default, $(get_available_product_groups)"
+        echo "Valid test types: acceptance, migration"
+        echo "Use --help for usage information"
+        exit 1
+    fi
 fi
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
         --dry-run)
-            echo "Would run ${#SERVICES[@]} services with $PARALLEL_JOBS parallel jobs ($TEST_TYPE tests)"
-            for service_config in "${SERVICES[@]}"; do
+            # Filter services first for dry run using same logic as main execution
+            if [ "$TEST_TYPE" = "migration" ] && [ "$LEGACY_SYNTAX" = "true" ]; then
+                dry_services=("${ALL_SERVICES[@]}")
+                echo "Would run ${#dry_services[@]} services with $PARALLEL_JOBS parallel jobs (all services, migration tests)"
+            else
+                filter_services_by_group "$PRODUCT_GROUP"
+                dry_services=("${SERVICES[@]}")
+                echo "Would run ${#dry_services[@]} services with $PARALLEL_JOBS parallel jobs ($PRODUCT_GROUP group, $TEST_TYPE tests)"
+            fi
+            for service_config in "${dry_services[@]}"; do
                 service=$(parse_service_config "$service_config" "resource")
                 parallel_count=$(parse_service_config "$service_config" "parallel")
                 echo "$service (parallel=$parallel_count)"
@@ -1073,6 +1196,16 @@ done
 if ! [[ "$PARALLEL_JOBS" =~ ^[0-9]+$ ]] || [ "$PARALLEL_JOBS" -lt 1 ]; then
     log "${RED}Error: PARALLEL_JOBS must be a positive integer${NC}"
     exit 1
+fi
+
+# Filter services by product group
+# Special case: legacy "migration" syntax should use all services for backward compatibility
+if [ "$TEST_TYPE" = "migration" ] && [ "$LEGACY_SYNTAX" = "true" ]; then
+    # Legacy syntax: "./scripts/run-ci-tests migration" should run all services
+    SERVICES=("${ALL_SERVICES[@]}")
+else
+    # Normal product group filtering (including explicit "default migration")
+    filter_services_by_group "$PRODUCT_GROUP"
 fi
 
 # Run main function

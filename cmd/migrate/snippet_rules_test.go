@@ -168,7 +168,7 @@ resource "cloudflare_snippet_rules" "test" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 func TestTransformSnippetRulesStateJSON(t *testing.T) {

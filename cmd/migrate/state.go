@@ -43,21 +43,17 @@ func transformStateJSON(data []byte) ([]byte, error) {
 	}
 
 	// This is deleting resources from state which changes the indices of remaining resources
-	// Delete them first and then process the remaining
-	resources.ForEach(func(ridx, resource gjson.Result) bool {
-		resourcePath := fmt.Sprintf("resources.%d", ridx.Int())
-		// CRITICAL FIX: Always read resource type from current JSON state, not from stale ForEach data
-		// The ForEach iteration data can be stale/cached and not match current JSON positions
+	// Iterate backwards to avoid index shifting issues when deleting
+	resourcesArray := resources.Array()
+	for i := len(resourcesArray) - 1; i >= 0; i-- {
+		resourcePath := fmt.Sprintf("resources.%d", i)
 		resourceType := gjson.Get(result, resourcePath+".type").String()
 
 		// Handle zone_settings_override -> zone_setting transformation
 		if resourceType == "cloudflare_zone_settings_override" {
 			result = transformZoneSettingsStateJSON(result, resourcePath)
-			return true // Continue to next resource
 		}
-
-		return true
-	})
+	}
 
 	resources = gjson.Get(result, "resources")
 
@@ -135,6 +131,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_load_balancer":
 				result = transformLoadBalancerStateJSON(result, path)
+
+			case "cloudflare_load_balancer_monitor":
+				result = transformLoadBalancerMonitorStateJSON(result, path)
 
 			case "cloudflare_tiered_cache":
 				result = transformTieredCacheStateJSON(result, path, resourcePath)
@@ -227,7 +226,7 @@ func transformStateJSON(data []byte) ([]byte, error) {
 func transformSnippetStateJSON(json string, instancePath string) string {
 	attrPath := instancePath + ".attributes"
 	result := json
-	
+
 	// Set schema_version to 0 for v5
 	result, _ = sjson.Set(result, instancePath+".schema_version", 0)
 
@@ -903,6 +902,8 @@ func transformLoadBalancerStateJSON(json string, instancePath string) string {
 				json, _ = sjson.Set(json, attrPath+"."+poolAttr.attrName, poolMap)
 			}
 		}
+		// If it's already a map with resolved IDs, leave it alone - it's already in correct V5 format
+		// This happens when V4 state already has resolved pool IDs in map format
 	}
 
 	return json
@@ -1031,6 +1032,51 @@ func transformLoadBalancerState(attributes map[string]interface{}) {
 			}
 		}
 	}
+}
+
+// transformLoadBalancerMonitorStateJSON handles v4 to v5 state migration for cloudflare_load_balancer_monitor
+// Transforms the header field from array format to map format
+func transformLoadBalancerMonitorStateJSON(json string, instancePath string) string {
+	// Handle both full path and relative path scenarios
+	attrPath := instancePath
+	if instancePath != "" {
+		attrPath = instancePath + ".attributes"
+	} else {
+		attrPath = "attributes"
+	}
+
+	// Transform header from array format to map format
+	// v4: header = [{"header": "Host", "values": ["example.com"]}]
+	// v5: header = {"Host": ["example.com"]}
+	header := gjson.Get(json, attrPath+".header")
+	if header.IsArray() {
+		headerMap := make(map[string]interface{})
+		for _, item := range header.Array() {
+			if item.IsObject() {
+				headerName := item.Get("header").String()
+				values := item.Get("values")
+				if headerName != "" && values.Exists() {
+					// Convert values to string array
+					var stringValues []string
+					if values.IsArray() {
+						for _, v := range values.Array() {
+							stringValues = append(stringValues, v.String())
+						}
+					}
+					headerMap[headerName] = stringValues
+				}
+			}
+		}
+		// Set the transformed header
+		if len(headerMap) > 0 {
+			json, _ = sjson.Set(json, attrPath+".header", headerMap)
+		} else {
+			// Empty array -> remove the attribute
+			json, _ = sjson.Delete(json, attrPath+".header")
+		}
+	}
+
+	return json
 }
 
 // transformZeroTrustAccessIdentityProviderStateJSON handles v4 to v5 state migration for cloudflare_zero_trust_access_identity_provider
@@ -1509,6 +1555,66 @@ func transformZeroTrustAccessApplicationStateJSON(json string, path string) stri
 	if customPages.Exists() {
 		// Keep the same values but ensure it's treated as a list in v5
 		json, _ = sjson.Set(json, attrPath+".custom_pages", customPages.Value())
+	}
+
+	// Transform cors_headers from array format to object format
+	// In v4, cors_headers was stored as an array: [{"allowed_methods": [...], ...}]
+	// In v5, it should be a single object: {"allowed_methods": [...], ...}
+	corsHeaders := gjson.Get(json, attrPath+".cors_headers")
+	if corsHeaders.Exists() && corsHeaders.IsArray() {
+		corsArray := corsHeaders.Array()
+		if len(corsArray) > 0 && corsArray[0].Exists() {
+			// Take the first element and make it the object
+			json, _ = sjson.Set(json, attrPath+".cors_headers", corsArray[0].Value())
+		} else {
+			// Empty array becomes null
+			json, _ = sjson.Set(json, attrPath+".cors_headers", nil)
+		}
+	}
+
+	// Transform landing_page_design from array format to object format
+	// In v4, landing_page_design was stored as an array: [{"title": "...", "message": "...", ...}]
+	// In v5, it should be a single object: {"title": "...", "message": "...", ...}
+	landingPageDesign := gjson.Get(json, attrPath+".landing_page_design")
+	if landingPageDesign.Exists() && landingPageDesign.IsArray() {
+		landingArray := landingPageDesign.Array()
+		if len(landingArray) > 0 && landingArray[0].Exists() {
+			// Take the first element and make it the object
+			json, _ = sjson.Set(json, attrPath+".landing_page_design", landingArray[0].Value())
+		} else {
+			// Empty array becomes null
+			json, _ = sjson.Set(json, attrPath+".landing_page_design", nil)
+		}
+	}
+
+	// Transform saas_app from array format to object format
+	// In v4, saas_app was stored as an array: [{"consumer_service_url": "...", "sp_entity_id": "...", ...}]
+	// In v5, it should be a single object: {"consumer_service_url": "...", "sp_entity_id": "...", ...}
+	saasApp := gjson.Get(json, attrPath+".saas_app")
+	if saasApp.Exists() && saasApp.IsArray() {
+		saasArray := saasApp.Array()
+		if len(saasArray) > 0 && saasArray[0].Exists() {
+			// Take the first element and make it the object
+			json, _ = sjson.Set(json, attrPath+".saas_app", saasArray[0].Value())
+		} else {
+			// Empty array becomes null
+			json, _ = sjson.Set(json, attrPath+".saas_app", nil)
+		}
+	}
+
+	// Transform scim_config from array format to object format
+	// In v4, scim_config was stored as an array: [{"enabled": true, "remote_uri": "...", ...}]
+	// In v5, it should be a single object: {"enabled": true, "remote_uri": "...", ...}
+	scimConfig := gjson.Get(json, attrPath+".scim_config")
+	if scimConfig.Exists() && scimConfig.IsArray() {
+		scimArray := scimConfig.Array()
+		if len(scimArray) > 0 && scimArray[0].Exists() {
+			// Take the first element and make it the object
+			json, _ = sjson.Set(json, attrPath+".scim_config", scimArray[0].Value())
+		} else {
+			// Empty array becomes null
+			json, _ = sjson.Set(json, attrPath+".scim_config", nil)
+		}
 	}
 
 	// Transform policies from simple string list to complex object list

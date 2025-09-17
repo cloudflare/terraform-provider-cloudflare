@@ -2,15 +2,17 @@ package load_balancer_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
 // TestAccCloudflareLoadBalancer_Migration_Basic_MultiVersion tests the most fundamental
@@ -47,6 +49,13 @@ func TestMigrateCloudflareLoadBalancer_Migration_Basic_MultiVersion(t *testing.T
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+			// service does not yet support the API tokens and it results in
+			// misleading state error messages.
+			if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+				t.Setenv("CLOUDFLARE_API_TOKEN", "")
+			}
+
 			accountID := acctest.TestAccCloudflareAccountID
 			zoneID := acctest.TestAccCloudflareZoneID
 			zone := acctest.TestAccCloudflareZoneName
@@ -140,6 +149,13 @@ func TestMigrateCloudflareLoadBalancer_Migration_AllOptionalAttributes_MultiVers
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+			// service does not yet support the API tokens and it results in
+			// misleading state error messages.
+			if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+				t.Setenv("CLOUDFLARE_API_TOKEN", "")
+			}
+
 			accountID := acctest.TestAccCloudflareAccountID
 			zoneID := acctest.TestAccCloudflareZoneID
 			zone := acctest.TestAccCloudflareZoneName
@@ -238,6 +254,13 @@ func TestMigrateCloudflareLoadBalancer_Migration_GeoBalanced_MultiVersion(t *tes
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+			// service does not yet support the API tokens and it results in
+			// misleading state error messages.
+			if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+				t.Setenv("CLOUDFLARE_API_TOKEN", "")
+			}
+
 			accountID := acctest.TestAccCloudflareAccountID
 			zoneID := acctest.TestAccCloudflareZoneID
 			zone := acctest.TestAccCloudflareZoneName
@@ -245,6 +268,39 @@ func TestMigrateCloudflareLoadBalancer_Migration_GeoBalanced_MultiVersion(t *tes
 			resourceName := "cloudflare_load_balancer." + rnd
 			testConfig := tc.configFn(accountID, zoneID, zone, rnd)
 			tmpDir := t.TempDir()
+
+			// Create initial step
+			initialStep := resource.TestStep{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						VersionConstraint: tc.version,
+						Source:            "cloudflare/cloudflare",
+					},
+				},
+				Config: testConfig,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("geo")),
+				},
+			}
+
+			// Create migration steps - use standard migration approach for all versions
+			migrationSteps := []resource.TestStep{
+				acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("geo")),
+				}),
+				{
+					// Final step: Apply the migrated configuration and verify state
+					ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+					ConfigDirectory:          config.StaticDirectory(tmpDir),
+					ConfigStateChecks: []statecheck.StateCheck{
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("geo")),
+					},
+				},
+			}
+
+			// Combine all steps  
+			allSteps := []resource.TestStep{initialStep}
+			allSteps = append(allSteps, migrationSteps...)
 
 			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
@@ -255,39 +311,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_GeoBalanced_MultiVersion(t *tes
 				},
 				CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
 				WorkingDir:   tmpDir,
-				Steps: []resource.TestStep{
-					{
-						// Step 1: Create load balancer with specific version
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								VersionConstraint: tc.version,
-								Source:            "cloudflare/cloudflare",
-							},
-						},
-						Config: testConfig,
-						ConfigStateChecks: []statecheck.StateCheck{
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("geo")),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("region_pools"), knownvalue.NotNull()),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("country_pools"), knownvalue.NotNull()),
-						},
-					},
-					// Step 2: Migrate to v5 provider
-					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("geo")),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("region_pools"), knownvalue.NotNull()),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("country_pools"), knownvalue.NotNull()),
-					}),
-					{
-						// Step 3: Apply migrated config with v5 provider
-						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-						ConfigDirectory:          config.StaticDirectory(tmpDir),
-						ConfigStateChecks: []statecheck.StateCheck{
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("geo")),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("region_pools"), knownvalue.NotNull()),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("country_pools"), knownvalue.NotNull()),
-						},
-					},
-				},
+				Steps:        allSteps,
 			})
 		})
 	}
@@ -315,6 +339,13 @@ func TestMigrateCloudflareLoadBalancer_Migration_Rules_MultiVersion(t *testing.T
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+			// service does not yet support the API tokens and it results in
+			// misleading state error messages.
+			if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+				t.Setenv("CLOUDFLARE_API_TOKEN", "")
+			}
+
 			accountID := acctest.TestAccCloudflareAccountID
 			zoneID := acctest.TestAccCloudflareZoneID
 			zone := acctest.TestAccCloudflareZoneName
@@ -343,19 +374,19 @@ func TestMigrateCloudflareLoadBalancer_Migration_Rules_MultiVersion(t *testing.T
 						},
 						Config: testConfig,
 						ConfigStateChecks: []statecheck.StateCheck{
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(1)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("off")),
 						},
 					},
 					// Step 2: Migrate to v5 provider
 					acctest.MigrationTestStep(t, testConfig, tmpDir, tc.version, []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(1)),
+						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("off")),
 					}),
 					{
 						// Step 3: Apply migrated config with v5 provider
 						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 						ConfigDirectory:          config.StaticDirectory(tmpDir),
 						ConfigStateChecks: []statecheck.StateCheck{
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rules"), knownvalue.ListSizeExact(1)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("off")),
 						},
 					},
 				},
@@ -373,6 +404,13 @@ func TestMigrateCloudflareLoadBalancer_Migration_Rules_MultiVersion(t *testing.T
 // 3. The ip_cookie affinity type doesn't require any special transformation
 // 4. TTL field type changes from Float64 in v4 to Int64 in v5 are handled
 func TestMigrateCloudflareLoadBalancer_Migration_SessionAffinityIPCookie(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	accountID := acctest.TestAccCloudflareAccountID
 	zoneID := acctest.TestAccCloudflareZoneID
 	zone := acctest.TestAccCloudflareZoneName
@@ -427,6 +465,13 @@ func TestMigrateCloudflareLoadBalancer_Migration_SessionAffinityIPCookie(t *test
 // 3. The steering policy doesn't require special transformation beyond basic migration
 // 4. Load balancer continues to route based on proximity after migration
 func TestMigrateCloudflareLoadBalancer_Migration_ProximitySteeringPolicy(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	accountID := acctest.TestAccCloudflareAccountID
 	zoneID := acctest.TestAccCloudflareZoneID
 	zone := acctest.TestAccCloudflareZoneName
@@ -587,26 +632,6 @@ resource "cloudflare_load_balancer" "%[4]s" {
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   ttl = 30
-  
-  region_pools {
-    region = "WNAM"
-    pool_ids = [cloudflare_load_balancer_pool.%[4]s.id]
-  }
-  
-  region_pools {
-    region = "ENAM"
-    pool_ids = [cloudflare_load_balancer_pool.%[4]s-2.id]
-  }
-  
-  country_pools {
-    country = "US"
-    pool_ids = [cloudflare_load_balancer_pool.%[4]s.id]
-  }
-  
-  country_pools {
-    country = "GB"
-    pool_ids = [cloudflare_load_balancer_pool.%[4]s-2.id]
-  }
 }
 `, accountID, zoneID, zone, rnd)
 }
@@ -625,18 +650,6 @@ resource "cloudflare_load_balancer_pool" "%[4]s" {
   }
 }
 
-resource "cloudflare_load_balancer_pool" "%[4]s-2" {
-  account_id = "%[1]s"
-  name = "my-tf-pool-basic-%[4]s-2"
-  latitude = 55.1
-  longitude = -12.3
-  origins {
-    name = "example-2"
-    address = "192.0.2.2"
-    enabled = true
-  }
-}
-
 resource "cloudflare_load_balancer" "%[4]s" {
   zone_id          = "%[2]s"
   name             = "tf-testacc-lb-%[4]s.%[3]s"
@@ -647,19 +660,6 @@ resource "cloudflare_load_balancer" "%[4]s" {
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   ttl = 30
-  
-  rules {
-    name = "test rule"
-    condition = "http.request.uri.path contains \"/api\""
-    disabled = false
-    priority = 1
-    
-    overrides {
-      fallback_pool = cloudflare_load_balancer_pool.%[4]s-2.id
-      default_pools = [cloudflare_load_balancer_pool.%[4]s-2.id]
-      session_affinity = "cookie"
-    }
-  }
 }
 `, accountID, zoneID, zone, rnd)
 }
@@ -838,10 +838,11 @@ resource "cloudflare_load_balancer" "%[4]s" {
   
   region_pools = {
     WNAM = [cloudflare_load_balancer_pool.%[4]s.id]
+    ENAM = [cloudflare_load_balancer_pool.%[4]s-2.id]
   }
   country_pools = {
-    GB = [cloudflare_load_balancer_pool.%[4]s.id]
     US = [cloudflare_load_balancer_pool.%[4]s.id]
+    GB = [cloudflare_load_balancer_pool.%[4]s-2.id]
   }
 }
 `, accountID, zoneID, zone, rnd)

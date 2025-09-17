@@ -1,6 +1,7 @@
 package logpush_job_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -8,10 +9,72 @@ import (
 	"strconv"
 	"testing"
 
+	cfold "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/pkg/errors"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_logpush_job", &resource.Sweeper{
+		Name: "cloudflare_logpush_job",
+		F:    testSweepCloudflareLogpushJob,
+	})
+}
+
+func testSweepCloudflareLogpushJob(r string) error {
+	ctx := context.Background()
+	client, clientErr := acctest.SharedV1Client()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		return clientErr
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
+	}
+
+	jobs, err := client.ListLogpushJobs(ctx, cfold.AccountIdentifier(accountID), cfold.ListLogpushJobsParams{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Logpush Jobs: %s", err))
+		return err
+	}
+
+	if len(jobs) == 0 {
+		tflog.Debug(ctx, "[DEBUG] No Cloudflare Logpush Jobs to sweep")
+		return nil
+	}
+
+	tflog.Debug(ctx, fmt.Sprintf("[DEBUG] Found %d Cloudflare Logpush Jobs to sweep", len(jobs)))
+
+	// Track deletion results
+	deleted := 0
+	failed := 0
+
+	for _, job := range jobs {
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Logpush Job ID: %d, Name: %s", job.ID, job.Name))
+
+		err := client.DeleteLogpushJob(ctx, cfold.AccountIdentifier(accountID), job.ID)
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Logpush Job %d (%s): %v", job.ID, job.Name, err))
+			failed++
+			// Continue with other jobs
+		} else {
+			tflog.Info(ctx, fmt.Sprintf("Successfully deleted Logpush Job %d (%s)", job.ID, job.Name))
+			deleted++
+		}
+	}
+
+	tflog.Debug(ctx, fmt.Sprintf("[DEBUG] Logpush Job sweep completed: %d deleted, %d failed", deleted, failed))
+	return nil
+}
 
 func jsonMarshal(v any) string {
 	b, _ := json.Marshal(v)

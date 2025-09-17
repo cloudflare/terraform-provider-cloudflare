@@ -29,7 +29,7 @@ resource "cloudflare_custom_pages" "example" {
 		},
 	}
 
-	RunTransformationTests(t, tests, transformFile)
+	RunTransformationTests(t, tests, transformFileDefault)
 }
 
 func TestResourceReferenceRename(t *testing.T) {

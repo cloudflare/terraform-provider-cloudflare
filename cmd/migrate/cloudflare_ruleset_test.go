@@ -8,6 +8,72 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+func TestDebugQueryStringTransform(t *testing.T) {
+	input := `{
+		"resources": [{
+			"type": "cloudflare_ruleset",
+			"instances": [{
+				"schema_version": 1,
+				"attributes": {
+					"id": "test123",
+					"rules": [{
+						"action": "set_cache_settings",
+						"action_parameters": {
+							"cache": true,
+							"cache_key": {
+								"custom_key": {
+									"query_string": {
+										"include": ["param1", "param2"]
+									}
+								}
+							}
+						}
+					}]
+				}
+			}]
+		}]
+	}`
+
+	result := transformCloudflareRulesetStateJSON(input, "resources.0.instances.0")
+
+	// Parse result and check structure
+	var resultMap map[string]interface{}
+	if err := json.Unmarshal([]byte(result), &resultMap); err != nil {
+		t.Fatalf("Failed to unmarshal result: %v", err)
+	}
+
+	// Pretty print for debugging
+	pretty, _ := json.MarshalIndent(resultMap, "", "  ")
+	t.Logf("Result:\n%s\n", string(pretty))
+
+	// Check the specific path
+	resources := resultMap["resources"].([]interface{})
+	resource := resources[0].(map[string]interface{})
+	instances := resource["instances"].([]interface{})
+	instance := instances[0].(map[string]interface{})
+	attrs := instance["attributes"].(map[string]interface{})
+	rules := attrs["rules"].([]interface{})
+	rule := rules[0].(map[string]interface{})
+	ap := rule["action_parameters"].(map[string]interface{})
+	ck := ap["cache_key"].(map[string]interface{})
+	customKey := ck["custom_key"].(map[string]interface{})
+	qs := customKey["query_string"].(map[string]interface{})
+	include := qs["include"]
+
+	t.Logf("Include value: %+v (type: %T)\n", include, include)
+
+	// Check if it's properly transformed
+	if includeMap, ok := include.(map[string]interface{}); ok {
+		if list, hasList := includeMap["list"]; hasList {
+			t.Logf("Successfully transformed to {list: %v}\n", list)
+		} else {
+			t.Errorf("Include is a map but doesn't have 'list' field: %+v", includeMap)
+		}
+	} else {
+		t.Errorf("Include is not a map, it's: %T", include)
+	}
+}
+
 func TestTransformCloudflareRulesetStateJSON(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -205,7 +271,7 @@ func TestTransformCloudflareRulesetStateJSON(t *testing.T) {
 									"cache_by_device_type": true,
 									"custom_key": map[string]interface{}{
 										"query_string": map[string]interface{}{
-											"include": []interface{}{"param1", "param2"},
+											"include": map[string]interface{}{"list": []interface{}{"param1", "param2"}},
 										},
 									},
 								},
@@ -645,5 +711,132 @@ func TestTransformCloudflareRulesetStateJSON(t *testing.T) {
 			})
 		})
 	}
+}
+
+// Test configuration transformation for action_parameters.id with resource references
+func TestCloudflareRulesetConfigActionParametersResourceReference(t *testing.T) {
+	tests := []TestCase{
+		{
+			Name: "action_parameters id should preserve resource reference not convert to string",
+			Config: `resource "cloudflare_ruleset" "global-custom-waf-rulesets" {
+  account_id = "test-account"
+  kind       = "root"
+  name       = "root"
+  phase      = "http_request_firewall_custom"
+  
+  rules {
+    action = "execute"
+    action_parameters {
+      id = cloudflare_ruleset.disallowed_countries_ruleset.id
+    }
+    description = "Disallowed Countries"
+    enabled     = true
+    expression  = "(cf.zone.plan eq \"ENT\")"
+  }
+}`,
+			Expected: []string{`id = cloudflare_ruleset.disallowed_countries_ruleset.id`},
+		},
+		{
+			Name: "overrides rules should be converted from object to list",
+			Config: `resource "cloudflare_ruleset" "ddos" {
+  account_id = "test-account"
+  kind       = "root"
+  name       = "root"
+  phase      = "http_request_ddos_l7"
+  rules = [{
+    action = "execute"
+    action_parameters = {
+      id = "4d21379b4f9f4bb088e0729962c8b3cf"
+      overrides = {
+        rules = {
+          action = "block"
+          id     = "603be41d114b4fc28c85de27c86adf25"
+        }
+      }
+    }
+    description = "Modify DDoS rules"
+    enabled     = true
+    expression  = "true"
+  }]
+}`,
+			Expected: []string{`rules = [{
+          action = "block"
+          id     = "603be41d114b4fc28c85de27c86adf25"
+        }]`},
+		},
+		{
+			Name: "overrides categories should be converted from object to list",
+			Config: `resource "cloudflare_ruleset" "test" {
+  account_id = "test-account"
+  rules = [{
+    action = "execute"
+    action_parameters = {
+      id = "4814384a9e5d4991b9815dcfc25d2f1f"
+      overrides = {
+        categories = {
+          category = "paranoia-level-4"
+          enabled  = false
+        }
+      }
+    }
+    enabled = false
+    expression = "true"
+  }]
+}`,
+			Expected: []string{`categories = [{
+          category = "paranoia-level-4"
+          enabled  = false
+        }]`},
+		},
+		{
+			Name: "status_code_ttl should be converted from object to list",
+			Config: `resource "cloudflare_ruleset" "test" {
+  zone_id = "test-zone"
+  rules = [{
+    action = "set_cache_settings"
+    action_parameters = {
+      edge_ttl = {
+        default = 31536000
+        mode = "override_origin"
+        status_code_ttl = {
+          status_code = 200
+          value = 31536000
+        }
+      }
+    }
+    enabled = true
+    expression = "true"
+  }]
+}`,
+			Expected: []string{`status_code_ttl = [{
+          status_code = 200
+          value       = 31536000
+        }]`},
+		},
+		{
+			Name: "headers flat object should be converted to map format",
+			Config: `resource "cloudflare_ruleset" "test" {
+  zone_id = "test-zone"
+  rules = [{
+    action = "rewrite"
+    action_parameters = {
+      headers = {
+        name = "Content-Type"
+        operation = "set"
+        value = "application/json"
+      }
+    }
+    enabled = true
+    expression = "true"
+  }]
+}`,
+			Expected: []string{`"Content-Type" = {
+          operation = "set",
+          value     = "application/json"
+        }`},
+		},
+	}
+
+	RunTransformationTests(t, tests, transformFileWithYAML)
 }
 
