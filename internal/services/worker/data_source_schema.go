@@ -18,11 +18,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier for the Worker, which can be ID or name.",
+				Description: "Identifier.",
 				Computed:    true,
 			},
 			"worker_id": schema.StringAttribute{
-				Description: "Identifier for the Worker, which can be ID or name.",
+				Description: "Identifier.",
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{

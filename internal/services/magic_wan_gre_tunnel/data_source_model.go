@@ -32,21 +32,20 @@ func (m *MagicWANGRETunnelDataSourceModel) toReadParams(_ context.Context) (para
 }
 
 type MagicWANGRETunnelGRETunnelDataSourceModel struct {
-	ID                     types.String                                                                   `tfsdk:"id" json:"id,computed"`
-	CloudflareGREEndpoint  types.String                                                                   `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,computed"`
-	CustomerGREEndpoint    types.String                                                                   `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,computed"`
-	InterfaceAddress       types.String                                                                   `tfsdk:"interface_address" json:"interface_address,computed"`
-	Name                   types.String                                                                   `tfsdk:"name" json:"name,computed"`
-	AutomaticReturnRouting types.Bool                                                                     `tfsdk:"automatic_return_routing" json:"automatic_return_routing,computed"`
-	BGP                    customfield.NestedObject[MagicWANGRETunnelGRETunnelBGPDataSourceModel]         `tfsdk:"bgp" json:"bgp,computed"`
-	BGPStatus              customfield.NestedObject[MagicWANGRETunnelGRETunnelBGPStatusDataSourceModel]   `tfsdk:"bgp_status" json:"bgp_status,computed"`
-	CreatedOn              timetypes.RFC3339                                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description            types.String                                                                   `tfsdk:"description" json:"description,computed"`
-	HealthCheck            customfield.NestedObject[MagicWANGRETunnelGRETunnelHealthCheckDataSourceModel] `tfsdk:"health_check" json:"health_check,computed"`
-	InterfaceAddress6      types.String                                                                   `tfsdk:"interface_address6" json:"interface_address6,computed"`
-	ModifiedOn             timetypes.RFC3339                                                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Mtu                    types.Int64                                                                    `tfsdk:"mtu" json:"mtu,computed"`
-	TTL                    types.Int64                                                                    `tfsdk:"ttl" json:"ttl,computed"`
+	ID                    types.String                                                                   `tfsdk:"id" json:"id,computed"`
+	CloudflareGREEndpoint types.String                                                                   `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,computed"`
+	CustomerGREEndpoint   types.String                                                                   `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,computed"`
+	InterfaceAddress      types.String                                                                   `tfsdk:"interface_address" json:"interface_address,computed"`
+	Name                  types.String                                                                   `tfsdk:"name" json:"name,computed"`
+	BGP                   customfield.NestedObject[MagicWANGRETunnelGRETunnelBGPDataSourceModel]         `tfsdk:"bgp" json:"bgp,computed"`
+	BGPStatus             customfield.NestedObject[MagicWANGRETunnelGRETunnelBGPStatusDataSourceModel]   `tfsdk:"bgp_status" json:"bgp_status,computed"`
+	CreatedOn             timetypes.RFC3339                                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description           types.String                                                                   `tfsdk:"description" json:"description,computed"`
+	HealthCheck           customfield.NestedObject[MagicWANGRETunnelGRETunnelHealthCheckDataSourceModel] `tfsdk:"health_check" json:"health_check,computed"`
+	InterfaceAddress6     types.String                                                                   `tfsdk:"interface_address6" json:"interface_address6,computed"`
+	ModifiedOn            timetypes.RFC3339                                                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Mtu                   types.Int64                                                                    `tfsdk:"mtu" json:"mtu,computed"`
+	TTL                   types.Int64                                                                    `tfsdk:"ttl" json:"ttl,computed"`
 }
 
 type MagicWANGRETunnelGRETunnelBGPDataSourceModel struct {

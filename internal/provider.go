@@ -76,6 +76,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image_variant"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ip_ranges"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/keyless_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer"
@@ -577,6 +579,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_priority.NewResource,
 		cloudforce_one_request_asset.NewResource,
 		cloud_connector_rules.NewResource,
+		leaked_credential_check.NewResource,
+		leaked_credential_check_rule.NewResource,
 		content_scanning_expression.NewResource,
 		custom_pages.NewResource,
 		schema_validation_schemas.NewResource,
@@ -905,6 +909,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		resource_group.NewResourceGroupsDataSource,
 		cloud_connector_rules.NewCloudConnectorRulesDataSource,
 		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
+		leaked_credential_check.NewLeakedCredentialCheckDataSource,
+		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
 		content_scanning_expression.NewContentScanningExpressionsDataSource,
 		custom_pages.NewCustomPagesDataSource,
 		custom_pages.NewCustomPagesListDataSource,

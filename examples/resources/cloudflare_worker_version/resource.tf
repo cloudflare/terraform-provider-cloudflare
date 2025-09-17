@@ -1,6 +1,6 @@
 resource "cloudflare_worker_version" "example_worker_version" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  worker_id = "worker_id"
+  worker_id = "023e105f4ecef8ad9ca31a8372d0c353"
   annotations = {
     workers_message = "Fixed bug."
     workers_tag = "v1.0.1"

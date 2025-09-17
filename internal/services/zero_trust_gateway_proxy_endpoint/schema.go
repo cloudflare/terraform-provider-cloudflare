@@ -27,11 +27,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "Specify the name of the proxy endpoint.",
+				Description: "The name of the proxy endpoint.",
 				Required:    true,
 			},
 			"ips": schema.ListAttribute{
-				Description: "Specify the list of CIDRs to restrict ingress connections.",
+				Description: "A list of CIDRs to restrict ingress connections.",
 				Required:    true,
 				ElementType: types.StringType,
 			},
@@ -40,7 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"subdomain": schema.StringAttribute{
-				Description: "Specify the subdomain to use as the destination in the proxy client.",
+				Description: "The subdomain to be used as the destination in the proxy client.",
 				Computed:    true,
 			},
 			"updated_at": schema.StringAttribute{

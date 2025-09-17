@@ -34,7 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description: "Domain of your zone.",
-				Optional:    true,
+				Required:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the settings have been created.",

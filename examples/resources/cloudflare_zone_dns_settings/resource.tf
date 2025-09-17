@@ -7,8 +7,8 @@ resource "cloudflare_zone_dns_settings" "example_zone_dns_settings" {
   }
   multi_provider = false
   nameservers = {
-    ns_set = 1
     type = "cloudflare.standard"
+    ns_set = 1
   }
   ns_ttl = 86400
   secondary_overrides = false

@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -37,6 +38,18 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "The name of the tag",
 							Computed:    true,
+						},
+						"app_count": schema.Int64Attribute{
+							Description: "The number of applications that have this tag",
+							Computed:    true,
+						},
+						"created_at": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
+						},
+						"updated_at": schema.StringAttribute{
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 					},
 				},

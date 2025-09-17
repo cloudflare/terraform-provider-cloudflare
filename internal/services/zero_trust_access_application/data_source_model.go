@@ -29,6 +29,7 @@ type ZeroTrustAccessApplicationDataSourceModel struct {
 	AUD                         types.String                                                                          `tfsdk:"aud" json:"aud,computed"`
 	AutoRedirectToIdentity      types.Bool                                                                            `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed"`
 	BgColor                     types.String                                                                          `tfsdk:"bg_color" json:"bg_color,computed"`
+	CreatedAt                   timetypes.RFC3339                                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CustomDenyMessage           types.String                                                                          `tfsdk:"custom_deny_message" json:"custom_deny_message,computed"`
 	CustomDenyURL               types.String                                                                          `tfsdk:"custom_deny_url" json:"custom_deny_url,computed"`
 	CustomNonIdentityDenyURL    types.String                                                                          `tfsdk:"custom_non_identity_deny_url" json:"custom_non_identity_deny_url,computed"`
@@ -47,6 +48,7 @@ type ZeroTrustAccessApplicationDataSourceModel struct {
 	SkipAppLauncherLoginPage    types.Bool                                                                            `tfsdk:"skip_app_launcher_login_page" json:"skip_app_launcher_login_page,computed"`
 	SkipInterstitial            types.Bool                                                                            `tfsdk:"skip_interstitial" json:"skip_interstitial,computed"`
 	Type                        types.String                                                                          `tfsdk:"type" json:"type,computed"`
+	UpdatedAt                   timetypes.RFC3339                                                                     `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	AllowedIdPs                 customfield.List[types.String]                                                        `tfsdk:"allowed_idps" json:"allowed_idps,computed"`
 	CustomPages                 customfield.List[types.String]                                                        `tfsdk:"custom_pages" json:"custom_pages,computed"`
 	SelfHostedDomains           customfield.List[types.String]                                                        `tfsdk:"self_hosted_domains" json:"self_hosted_domains,computed"`
@@ -569,6 +571,7 @@ type ZeroTrustAccessApplicationPoliciesConnectionRulesSSHDataSourceModel struct 
 type ZeroTrustAccessApplicationSaaSAppDataSourceModel struct {
 	AuthType                      types.String                                                                                       `tfsdk:"auth_type" json:"auth_type,computed"`
 	ConsumerServiceURL            types.String                                                                                       `tfsdk:"consumer_service_url" json:"consumer_service_url,computed"`
+	CreatedAt                     timetypes.RFC3339                                                                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CustomAttributes              customfield.NestedObjectList[ZeroTrustAccessApplicationSaaSAppCustomAttributesDataSourceModel]     `tfsdk:"custom_attributes" json:"custom_attributes,computed"`
 	DefaultRelayState             types.String                                                                                       `tfsdk:"default_relay_state" json:"default_relay_state,computed"`
 	IdPEntityID                   types.String                                                                                       `tfsdk:"idp_entity_id" json:"idp_entity_id,computed"`
@@ -578,6 +581,7 @@ type ZeroTrustAccessApplicationSaaSAppDataSourceModel struct {
 	SAMLAttributeTransformJsonata types.String                                                                                       `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata,computed"`
 	SPEntityID                    types.String                                                                                       `tfsdk:"sp_entity_id" json:"sp_entity_id,computed"`
 	SSOEndpoint                   types.String                                                                                       `tfsdk:"sso_endpoint" json:"sso_endpoint,computed"`
+	UpdatedAt                     timetypes.RFC3339                                                                                  `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	AccessTokenLifetime           types.String                                                                                       `tfsdk:"access_token_lifetime" json:"access_token_lifetime,computed"`
 	AllowPKCEWithoutClientSecret  types.Bool                                                                                         `tfsdk:"allow_pkce_without_client_secret" json:"allow_pkce_without_client_secret,computed"`
 	AppLauncherURL                types.String                                                                                       `tfsdk:"app_launcher_url" json:"app_launcher_url,computed"`

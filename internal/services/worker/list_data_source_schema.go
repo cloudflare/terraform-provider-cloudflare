@@ -37,7 +37,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "Immutable ID of the Worker.",
+							Description: "Identifier.",
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{
@@ -45,12 +45,17 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
-						"logpush": schema.BoolAttribute{
-							Description: "Whether logpush is enabled for the Worker.",
-							Computed:    true,
-						},
 						"name": schema.StringAttribute{
 							Description: "Name of the Worker.",
+							Computed:    true,
+						},
+						"updated_on": schema.StringAttribute{
+							Description: "When the Worker was most recently updated.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"logpush": schema.BoolAttribute{
+							Description: "Whether logpush is enabled for the Worker.",
 							Computed:    true,
 						},
 						"observability": schema.SingleNestedAttribute{
@@ -120,11 +125,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-						},
-						"updated_on": schema.StringAttribute{
-							Description: "When the Worker was most recently updated.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
 						},
 					},
 				},

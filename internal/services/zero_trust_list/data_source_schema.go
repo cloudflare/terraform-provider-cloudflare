@@ -21,11 +21,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identify the API resource with a UUID.",
+				Description: "API Resource UUID tag.",
 				Computed:    true,
 			},
 			"list_id": schema.StringAttribute{
-				Description: "Identify the API resource with a UUID.",
+				Description: "API Resource UUID tag.",
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
@@ -36,19 +36,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"description": schema.StringAttribute{
-				Description: "Provide the list description.",
+				Description: "The description of the list.",
 				Computed:    true,
 			},
 			"list_count": schema.Float64Attribute{
-				Description: "Indicate the number of items in the list.",
+				Description: "The number of items in the list.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "Specify the list name.",
+				Description: "The name of the list.",
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Specify the list type.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
+				Description: "The type of list.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -65,7 +65,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"items": schema.SetNestedAttribute{
-				Description: "Provide the list items.",
+				Description: "The items in the list.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustListItemsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
@@ -75,11 +75,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
-							Description: "Provide the list item description (optional).",
+							Description: "The description of the list item, if present.",
 							Computed:    true,
 						},
 						"value": schema.StringAttribute{
-							Description: "Specify the item value.",
+							Description: "The value of the item in a list.",
 							Computed:    true,
 						},
 					},
@@ -89,7 +89,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
-						Description: "Specify the list type.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
+						Description: "The type of list.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
