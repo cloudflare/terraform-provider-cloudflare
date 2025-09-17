@@ -420,6 +420,7 @@ func isSetNestedAttributeField(resourceAddress, fieldName string) bool {
 		"cloudflare_access_policy":            {"include", "exclude", "require", "approval_group"}, // v4 resource name
 		"cloudflare_ruleset":                  {"rules"},
 		"cloudflare_load_balancer_pool":       {"origins"},
+		"cloudflare_workers_script":           {"bindings"}, // v4->v5 migration transforms separate binding blocks to unified bindings list
 		// Add other resources with SetNestedAttribute fields as needed
 	}
 
