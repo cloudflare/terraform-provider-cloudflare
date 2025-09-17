@@ -545,14 +545,9 @@ process_service() {
     
     {
         log "${WHITE}Processing service: $service (parallel=$parallel_count)${NC}"
-        
-        # Only run sweepers for acceptance tests, not migration tests
-        if [ "$TEST_TYPE" != "migration" ]; then
-            if ! run_sweeper "$service" "$parallel_count"; then
-                log "${YELLOW}Sweeper issues for $service, continuing with tests...${NC}"
-            fi
-        else
-            log "${YELLOW}Skipping sweeper for migration tests: $service${NC}"
+
+        if ! run_sweeper "$service" "$parallel_count"; then
+          log "${YELLOW}Sweeper issues for $service, continuing with tests...${NC}"
         fi
         
         # Run tests
