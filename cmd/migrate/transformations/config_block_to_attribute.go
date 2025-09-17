@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
+	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -29,14 +29,14 @@ func TransformResourceBlock(config *TransformationConfig, resourceBlock *hclwrit
 
 	// Transform blocks to maps
 	for _, blockName := range transform.ToMap {
-		if err := transformBlocksToMap(config, body, blockName); err != nil {
+		if err := transformBlocksToMapWithResource(config, body, blockName, resourceType); err != nil {
 			return fmt.Errorf("failed to transform %s to map: %w", blockName, err)
 		}
 	}
 
 	// Transform blocks to lists
 	for _, blockName := range transform.ToList {
-		if err := transformBlocksToList(config, body, blockName); err != nil {
+		if err := transformBlocksToListWithResource(config, body, blockName, resourceType); err != nil {
 			return fmt.Errorf("failed to transform %s to list: %w", blockName, err)
 		}
 	}
@@ -46,23 +46,58 @@ func TransformResourceBlock(config *TransformationConfig, resourceBlock *hclwrit
 
 // transformBlocksToList transforms multiple blocks with the same name into a list attribute
 func transformBlocksToList(config *TransformationConfig, body *hclwrite.Body, blockName string) error {
+	return transformBlocksToListWithResource(config, body, blockName, "")
+}
+
+// transformBlocksToListWithResource transforms multiple blocks with resource context
+func transformBlocksToListWithResource(config *TransformationConfig, body *hclwrite.Body, blockName string, resourceType string) error {
 	blocks := findBlocksByType(body, blockName)
 	if len(blocks) == 0 {
 		return nil // No blocks to transform
 	}
 
-	// Build list of objects from blocks
-	var objects []cty.Value
-	for _, block := range blocks {
-		obj := blockToObject(block)
-		objects = append(objects, obj)
+	// Transform blocks to list using raw tokens to preserve complex expressions
+	tokens := hclwrite.Tokens{
+		{Type: hclsyntax.TokenOBrack, Bytes: []byte("[")},
 	}
 
-	// Create the list value
-	listVal := cty.TupleVal(objects)
+	for i, block := range blocks {
+		// Before converting block, transform nested blocks if needed
+		if resourceType != "" && config != nil {
+			// Apply transformations to nested blocks within this block
+			// For example, 'rules' block in 'cloudflare_load_balancer' has 'overrides' that needs to be a map
+			if transform, exists := config.Transformations[resourceType]; exists {
+				blockBody := block.Body()
 
-	// Set the attribute
-	body.SetAttributeValue(blockName, listVal)
+				// Transform nested blocks to maps
+				for _, nestedBlockName := range transform.ToMap {
+					if nestedBlocks := findBlocksByType(blockBody, nestedBlockName); len(nestedBlocks) > 0 {
+						transformBlocksToMapWithResource(config, blockBody, nestedBlockName, resourceType)
+					}
+				}
+
+				// Transform nested blocks to lists
+				for _, nestedBlockName := range transform.ToList {
+					if nestedBlocks := findBlocksByType(blockBody, nestedBlockName); len(nestedBlocks) > 0 {
+						transformBlocksToListWithResource(config, blockBody, nestedBlockName, resourceType)
+					}
+				}
+			}
+		}
+
+		if i > 0 {
+			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenComma, Bytes: []byte(", ")})
+		}
+
+		// Convert block to tokens (preserves the transformed attributes)
+		blockTokens := blockToTokensWithConfig(config, block, resourceType)
+		tokens = append(tokens, blockTokens...)
+	}
+
+	tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenCBrack, Bytes: []byte("]")})
+
+	// Set the attribute using raw tokens
+	body.SetAttributeRaw(blockName, tokens)
 
 	// Remove original blocks
 	for _, block := range blocks {
@@ -74,22 +109,28 @@ func transformBlocksToList(config *TransformationConfig, body *hclwrite.Body, bl
 
 // transformBlocksToMap transforms a single block into a map attribute
 func transformBlocksToMap(config *TransformationConfig, body *hclwrite.Body, blockName string) error {
+	return transformBlocksToMapWithResource(config, body, blockName, "")
+}
+
+// transformBlocksToMapWithResource transforms a single block into a map attribute with resource context
+func transformBlocksToMapWithResource(config *TransformationConfig, body *hclwrite.Body, blockName string, resourceType string) error {
 	blocks := findBlocksByType(body, blockName)
 	if len(blocks) == 0 {
 		return nil // No blocks to transform
 	}
-
 	if len(blocks) > 1 {
-		// Multiple blocks found, use first and warn
-		fmt.Printf("Warning: Multiple %s blocks found, using first one\n", blockName)
+		// Multiple blocks found, use first one
+		// Note: This is expected in some cases where duplicate blocks are intentional
 	}
 
 	block := blocks[0]
 
 	// Always use raw token approach to preserve complex expressions
 	// This ensures resource references and other complex expressions are preserved correctly
-	transformBlockToMapRaw(body, block, blockName)
-
+	err := transformBlockToMapRawWithConfig(config, body, block, blockName, resourceType)
+	if err != nil {
+		return err
+	}
 	// Remove original block
 	body.RemoveBlock(block)
 
@@ -98,6 +139,11 @@ func transformBlocksToMap(config *TransformationConfig, body *hclwrite.Body, blo
 
 // transformBlockToMapRaw converts a block to a map attribute using raw tokens to preserve complex expressions
 func transformBlockToMapRaw(body *hclwrite.Body, block *hclwrite.Block, blockName string) error {
+	return transformBlockToMapRawWithConfig(nil, body, block, blockName, "")
+}
+
+// transformBlockToMapRawWithConfig converts a block to a map attribute using raw tokens with config awareness
+func transformBlockToMapRawWithConfig(config *TransformationConfig, body *hclwrite.Body, block *hclwrite.Block, blockName string, parentResourceType string) error {
 	blockBody := block.Body()
 	attrs := blockBody.Attributes()
 	blocks := blockBody.Blocks()
@@ -144,7 +190,7 @@ func transformBlockToMapRaw(body *hclwrite.Body, block *hclwrite.Block, blockNam
 		tokens = append(tokens, exprTokens...)
 	}
 
-	// Process nested blocks (convert them to nested maps/objects)
+	// Process nested blocks without grouping - preserve all blocks including duplicates
 	for _, nestedBlock := range blocks {
 		if !first {
 			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
@@ -159,8 +205,8 @@ func transformBlockToMapRaw(body *hclwrite.Body, block *hclwrite.Block, blockNam
 		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(nestedName)})
 		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
 
-		// Recursively convert the nested block to tokens
-		nestedTokens := blockToTokens(nestedBlock)
+		// Convert the nested block to tokens
+		nestedTokens := blockToTokensWithConfig(config, nestedBlock, parentResourceType)
 		tokens = append(tokens, nestedTokens...)
 	}
 
@@ -178,6 +224,11 @@ func transformBlockToMapRaw(body *hclwrite.Body, block *hclwrite.Block, blockNam
 
 // blockToTokens converts a block to HCL tokens representing an object
 func blockToTokens(block *hclwrite.Block) hclwrite.Tokens {
+	return blockToTokensWithConfig(nil, block, "")
+}
+
+// blockToTokensWithConfig converts a block to HCL tokens with config awareness
+func blockToTokensWithConfig(config *TransformationConfig, block *hclwrite.Block, parentResourceType string) hclwrite.Tokens {
 	blockBody := block.Body()
 	attrs := blockBody.Attributes()
 	blocks := blockBody.Blocks()
@@ -222,7 +273,7 @@ func blockToTokens(block *hclwrite.Block) hclwrite.Tokens {
 		tokens = append(tokens, exprTokens...)
 	}
 
-	// Process nested blocks
+	// Process nested blocks without grouping - preserve all blocks including duplicates
 	for _, nestedBlock := range blocks {
 		if !first {
 			tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenNewline, Bytes: []byte("\n")})
@@ -237,8 +288,8 @@ func blockToTokens(block *hclwrite.Block) hclwrite.Tokens {
 		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenIdent, Bytes: []byte(nestedName)})
 		tokens = append(tokens, &hclwrite.Token{Type: hclsyntax.TokenEqual, Bytes: []byte(" = ")})
 
-		// Recursively convert the nested block
-		nestedTokens := blockToTokens(nestedBlock)
+		// Convert the nested block to tokens
+		nestedTokens := blockToTokensWithConfig(config, nestedBlock, parentResourceType)
 		tokens = append(tokens, nestedTokens...)
 	}
 
@@ -323,7 +374,7 @@ func tokensToValue(tokens hclwrite.Tokens) cty.Value {
 	if num, err := strconv.ParseFloat(str, 64); err == nil {
 		return cty.NumberFloatVal(num)
 	}
-	
+
 	// Default to string
 	return cty.StringVal(str)
 }
