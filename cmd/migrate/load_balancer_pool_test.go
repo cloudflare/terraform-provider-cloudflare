@@ -26,8 +26,7 @@ resource "cloudflare_load_balancer_pool" "test" {
     name    = "test"
     address = "192.0.2.1"
     header = {
-      header = "Host"
-      values = ["example.com"]
+      host = ["example.com"]
     }
   }]
 }`},
@@ -168,8 +167,7 @@ resource "cloudflare_load_balancer_pool" "test" {
     address = value.address
     enabled = true
     header = {
-      header = "Host"
-      values = [value.host]
+      host = [value.host]
     }
     name = value.name
   }]
@@ -461,8 +459,7 @@ resource "cloudflare_load_balancer_pool" "test" {
   origins = [for key, value in local.origins_map : {
     address = value.address
     header = {
-      header = "Host"
-      values = [value.address]
+      host = [value.address]
     }
     name = "prefix-${key}"
   }]
@@ -495,8 +492,7 @@ resource "cloudflare_load_balancer_pool" "test" {
   origins = [for key, value in local.transceiver_map : {
     address = value.host
     header = {
-      header = "Host"
-      values = [value.host]
+      host = [value.host]
     }
     name   = key
     weight = value.weight
