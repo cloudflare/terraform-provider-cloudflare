@@ -45,10 +45,10 @@ type ZeroTrustGatewayPoliciesResultDataSourceModel struct {
 	DevicePosture types.String                                                                  `tfsdk:"device_posture" json:"device_posture,computed"`
 	Expiration    customfield.NestedObject[ZeroTrustGatewayPoliciesExpirationDataSourceModel]   `tfsdk:"expiration" json:"expiration,computed"`
 	Identity      types.String                                                                  `tfsdk:"identity" json:"identity,computed"`
+	NotSharable   types.Bool                                                                    `tfsdk:"not_sharable" json:"not_sharable,computed"`
 	ReadOnly      types.Bool                                                                    `tfsdk:"read_only" json:"read_only,computed"`
 	RuleSettings  customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel] `tfsdk:"rule_settings" json:"rule_settings,computed"`
 	Schedule      customfield.NestedObject[ZeroTrustGatewayPoliciesScheduleDataSourceModel]     `tfsdk:"schedule" json:"schedule,computed"`
-	Sharable      types.Bool                                                                    `tfsdk:"sharable" json:"sharable,computed"`
 	SourceAccount types.String                                                                  `tfsdk:"source_account" json:"source_account,computed"`
 	UpdatedAt     timetypes.RFC3339                                                             `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Version       types.Int64                                                                   `tfsdk:"version" json:"version,computed"`

@@ -28,37 +28,37 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "Specify the location name.",
+				Description: "The name of the location.",
 				Required:    true,
 			},
 			"endpoints": schema.SingleNestedAttribute{
-				Description: "Configure the destination endpoints for this location.",
+				Description: "The destination endpoints configured for this location. When updating a location, if this field is absent or set with null, the endpoints configuration remains unchanged.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"doh": schema.SingleNestedAttribute{
 						Required: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Indicate whether the DOH endpoint is enabled for this location.",
+								Description: "True if the endpoint is enabled for this location.",
 								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
-								Description: "Specify the list of allowed source IP network ranges for this endpoint. When the list is empty, the endpoint allows all source IPs. The list takes effect only if the endpoint is enabled for this location.",
+								Description: "A list of allowed source IP network ranges for this endpoint. When empty, all source IPs are allowed. A non-empty list is only effective if the endpoint is enabled for this location.",
 								Computed:    true,
 								Optional:    true,
 								CustomType:  customfield.NewNestedObjectListType[ZeroTrustDNSLocationEndpointsDOHNetworksModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
-											Description: "Specify the IP address or IP CIDR.",
+											Description: "The IP address or IP CIDR.",
 											Required:    true,
 										},
 									},
 								},
 							},
 							"require_token": schema.BoolAttribute{
-								Description: "Specify whether the DOH endpoint requires user identity authentication.",
+								Description: "True if the endpoint requires [user identity](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/agentless/dns/dns-over-https/#filter-doh-requests-by-user) authentication.",
 								Computed:    true,
 								Optional:    true,
 							},
@@ -68,19 +68,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Indicate whether the DOT endpoint is enabled for this location.",
+								Description: "True if the endpoint is enabled for this location.",
 								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
-								Description: "Specify the list of allowed source IP network ranges for this endpoint. When the list is empty, the endpoint allows all source IPs. The list takes effect only if the endpoint is enabled for this location.",
+								Description: "A list of allowed source IP network ranges for this endpoint. When empty, all source IPs are allowed. A non-empty list is only effective if the endpoint is enabled for this location.",
 								Computed:    true,
 								Optional:    true,
 								CustomType:  customfield.NewNestedObjectListType[ZeroTrustDNSLocationEndpointsDOTNetworksModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
-											Description: "Specify the IP address or IP CIDR.",
+											Description: "The IP address or IP CIDR.",
 											Required:    true,
 										},
 									},
@@ -92,7 +92,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Indicate whether the IPv4 endpoint is enabled for this location.",
+								Description: "True if the endpoint is enabled for this location.",
 								Computed:    true,
 								Optional:    true,
 							},
@@ -102,19 +102,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Indicate whether the IPV6 endpoint is enabled for this location.",
+								Description: "True if the endpoint is enabled for this location.",
 								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
-								Description: "Specify the list of allowed source IPv6 network ranges for this endpoint. When the list is empty, the endpoint allows all source IPs. The list takes effect only if the endpoint is enabled for this location.",
+								Description: "A list of allowed source IPv6 network ranges for this endpoint. When empty, all source IPs are allowed. A non-empty list is only effective if the endpoint is enabled for this location.",
 								Computed:    true,
 								Optional:    true,
 								CustomType:  customfield.NewNestedObjectListType[ZeroTrustDNSLocationEndpointsIPV6NetworksModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
-											Description: "Specify the IPv6 address or IPv6 CIDR.",
+											Description: "The IPv6 address or IPv6 CIDR.",
 											Required:    true,
 										},
 									},
@@ -125,31 +125,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"client_default": schema.BoolAttribute{
-				Description: "Indicate whether this location is the default location.",
+				Description: "True if the location is the default location.",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
 			"dns_destination_ips_id": schema.StringAttribute{
-				Description: "Specify the identifier of the pair of IPv4 addresses assigned to this location. When creating a location, if this field is absent or set to null, the pair of shared IPv4 addresses (0e4a32c6-6fb8-4858-9296-98f51631e8e6) is auto-assigned. When updating a location, if this field is absent or set to null, the pre-assigned pair remains unchanged.",
+				Description: "The identifier of the pair of IPv4 addresses assigned to this location. When creating a location, if this field is absent or set with null, the pair of shared IPv4 addresses (0e4a32c6-6fb8-4858-9296-98f51631e8e6) is auto-assigned. When updating a location, if the field is absent or set with null, the pre-assigned pair remains unchanged.",
 				Computed:    true,
 				Optional:    true,
 			},
 			"ecs_support": schema.BoolAttribute{
-				Description: "Indicate whether the location must resolve EDNS queries.",
+				Description: "True if the location needs to resolve EDNS queries.",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
 			"networks": schema.ListNestedAttribute{
-				Description: "Specify the list of network ranges from which requests at this location originate. The list takes effect only if it is non-empty and the IPv4 endpoint is enabled for this location.",
+				Description: "A list of network ranges that requests from this location would originate from. A non-empty list is only effective if the ipv4 endpoint is enabled for this location.",
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDNSLocationNetworksModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"network": schema.StringAttribute{
-							Description: "Specify the IPv4 address or IPv4 CIDR. Limit IPv4 CIDRs to a maximum of /24.",
+							Description: "The IPv4 address or IPv4 CIDR. IPv4 CIDRs are limited to a maximum of /24.",
 							Required:    true,
 						},
 					},
@@ -160,23 +160,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"dns_destination_ipv6_block_id": schema.StringAttribute{
-				Description: "Specify the UUID of the IPv6 block brought to the gateway so that this location's IPv6 address is allocated from the Bring Your Own IPv6 (BYOIPv6) block rather than the standard Cloudflare IPv6 block.",
+				Description: "The uuid identifier of the IPv6 block brought to the gateway, so that this location's IPv6 address is allocated from the Bring Your Own Ipv6(BYOIPv6) block and not from the standard Cloudflare IPv6 block.",
 				Computed:    true,
 			},
 			"doh_subdomain": schema.StringAttribute{
-				Description: "Specify the DNS over HTTPS domain that receives DNS requests. Gateway automatically generates this value.",
+				Description: "The DNS over HTTPS domain to send DNS requests to. This field is auto-generated by Gateway.",
 				Computed:    true,
 			},
 			"ip": schema.StringAttribute{
-				Description: "Defines the automatically generated IPv6 destination IP assigned to this location. Gateway counts all DNS requests sent to this IP as requests under this location.",
+				Description: "IPV6 destination ip assigned to this location. DNS requests sent to this IP will counted as the request under this location. This field is auto-generated by Gateway.",
 				Computed:    true,
 			},
 			"ipv4_destination": schema.StringAttribute{
-				Description: "Show the primary destination IPv4 address from the pair identified dns_destination_ips_id. This field read-only.",
+				Description: "The primary destination IPv4 address from the pair identified by the dns_destination_ips_id. This field is read-only.",
 				Computed:    true,
 			},
 			"ipv4_destination_backup": schema.StringAttribute{
-				Description: "Show the backup destination IPv4 address from the pair identified dns_destination_ips_id. This field read-only.",
+				Description: "The backup destination IPv4 address from the pair identified by the dns_destination_ips_id. This field is read-only.",
 				Computed:    true,
 			},
 			"updated_at": schema.StringAttribute{

@@ -20,7 +20,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Identify the API resource with a UUID.",
+				Description:   "API Resource UUID tag.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
@@ -29,7 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
-				Description: "Specify the list type.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
+				Description: "The type of list.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -43,27 +43,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "Specify the list name.",
+				Description: "The name of the list.",
 				Required:    true,
 			},
 			"items": schema.SetNestedAttribute{
-				Description: "Add items to the list.",
+				Description: "items to add to the list.",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"description": schema.StringAttribute{
-							Description: "Provide the list item description (optional).",
+							Description: "The description of the list item, if present.",
 							Optional:    true,
 						},
 						"value": schema.StringAttribute{
-							Description: "Specify the item value.",
+							Description: "The value of the item in a list.",
 							Optional:    true,
 						},
 					},
 				},
 			},
 			"description": schema.StringAttribute{
-				Description: "Provide the list description.",
+				Description: "The description of the list.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -72,7 +72,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"list_count": schema.Float64Attribute{
-				Description: "Indicate the number of items in the list.",
+				Description: "The number of items in the list.",
 				Computed:    true,
 			},
 			"updated_at": schema.StringAttribute{
