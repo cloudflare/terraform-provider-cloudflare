@@ -41,7 +41,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"export": schema.StringAttribute{
-				Description: "Export the list of connections as a file, limited to 50000 entries.\nAvailable values: \"csv\".",
+				Description: "Export the list of connections as a file.\nAvailable values: \"csv\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("csv"),

@@ -34,13 +34,13 @@ func (m *WorkersDataSourceModel) toListParams(_ context.Context) (params workers
 type WorkersResultDataSourceModel struct {
 	ID            types.String                                                     `tfsdk:"id" json:"id,computed"`
 	CreatedOn     timetypes.RFC3339                                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Logpush       types.Bool                                                       `tfsdk:"logpush" json:"logpush,computed"`
 	Name          types.String                                                     `tfsdk:"name" json:"name,computed"`
+	UpdatedOn     timetypes.RFC3339                                                `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
+	Logpush       types.Bool                                                       `tfsdk:"logpush" json:"logpush,computed"`
 	Observability customfield.NestedObject[WorkersObservabilityDataSourceModel]    `tfsdk:"observability" json:"observability,computed"`
 	Subdomain     customfield.NestedObject[WorkersSubdomainDataSourceModel]        `tfsdk:"subdomain" json:"subdomain,computed"`
 	Tags          customfield.Set[types.String]                                    `tfsdk:"tags" json:"tags,computed"`
 	TailConsumers customfield.NestedObjectSet[WorkersTailConsumersDataSourceModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
-	UpdatedOn     timetypes.RFC3339                                                `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
 }
 
 type WorkersObservabilityDataSourceModel struct {

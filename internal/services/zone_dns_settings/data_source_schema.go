@@ -114,7 +114,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"mname": schema.StringAttribute{
-						Description: "The primary nameserver, which may be used for outbound zone transfers. If null, a Cloudflare-assigned value will be used.",
+						Description: "The primary nameserver, which may be used for outbound zone transfers.",
 						Computed:    true,
 					},
 					"refresh": schema.Float64Attribute{

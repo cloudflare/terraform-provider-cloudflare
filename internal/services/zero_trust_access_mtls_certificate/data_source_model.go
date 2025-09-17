@@ -22,9 +22,11 @@ type ZeroTrustAccessMTLSCertificateDataSourceModel struct {
 	CertificateID       types.String                   `tfsdk:"certificate_id" path:"certificate_id,optional"`
 	AccountID           types.String                   `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID              types.String                   `tfsdk:"zone_id" path:"zone_id,optional"`
+	CreatedAt           timetypes.RFC3339              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ExpiresOn           timetypes.RFC3339              `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Fingerprint         types.String                   `tfsdk:"fingerprint" json:"fingerprint,computed"`
 	Name                types.String                   `tfsdk:"name" json:"name,computed"`
+	UpdatedAt           timetypes.RFC3339              `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	AssociatedHostnames customfield.List[types.String] `tfsdk:"associated_hostnames" json:"associated_hostnames,computed"`
 }
 

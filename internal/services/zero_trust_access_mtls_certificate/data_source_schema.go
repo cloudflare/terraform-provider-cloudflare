@@ -35,6 +35,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
+			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 			"expires_on": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
@@ -46,6 +50,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"name": schema.StringAttribute{
 				Description: "The name of the certificate.",
 				Computed:    true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"associated_hostnames": schema.ListAttribute{
 				Description: "The hostnames of the applications that will use this certificate.",

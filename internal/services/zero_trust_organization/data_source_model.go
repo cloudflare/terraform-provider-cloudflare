@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,10 +23,12 @@ type ZeroTrustOrganizationDataSourceModel struct {
 	AllowAuthenticateViaWARP       types.Bool                                                                `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed"`
 	AuthDomain                     types.String                                                              `tfsdk:"auth_domain" json:"auth_domain,computed"`
 	AutoRedirectToIdentity         types.Bool                                                                `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed"`
+	CreatedAt                      timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsUIReadOnly                   types.Bool                                                                `tfsdk:"is_ui_read_only" json:"is_ui_read_only,computed"`
 	Name                           types.String                                                              `tfsdk:"name" json:"name,computed"`
 	SessionDuration                types.String                                                              `tfsdk:"session_duration" json:"session_duration,computed"`
 	UIReadOnlyToggleReason         types.String                                                              `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason,computed"`
+	UpdatedAt                      timetypes.RFC3339                                                         `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	UserSeatExpirationInactiveTime types.String                                                              `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time,computed"`
 	WARPAuthSessionDuration        types.String                                                              `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration,computed"`
 	CustomPages                    customfield.NestedObject[ZeroTrustOrganizationCustomPagesDataSourceModel] `tfsdk:"custom_pages" json:"custom_pages,computed"`

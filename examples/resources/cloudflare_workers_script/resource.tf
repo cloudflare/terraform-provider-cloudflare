@@ -59,9 +59,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
       logs = {
         enabled = true
         invocation_logs = true
-        destinations = ["cloudflare"]
         head_sampling_rate = 0.1
-        persist = true
       }
     }
     placement = {
