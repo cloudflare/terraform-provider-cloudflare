@@ -15,7 +15,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func TestMain(m *testing.M) {
@@ -104,11 +107,10 @@ func testSweepCloudflareR2Bucket(r string) error {
 	return nil
 }
 
-func TestAccCloudflareR2ManagedDomain_Basic(t *testing.T) { // plus an update step
+func TestAccCloudflareR2ManagedDomain_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	name := "cloudflare_r2_managed_domain." + rnd
-	bucketName := "cloudflare_r2_bucket." + rnd
+	resourceName := "cloudflare_r2_managed_domain." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -116,20 +118,27 @@ func TestAccCloudflareR2ManagedDomain_Basic(t *testing.T) { // plus an update st
 		Steps: []resource.TestStep{
 			{
 				Config: testAccR2ManagedDomainConfigEnable(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "enabled", "true"),
-					resource.TestCheckResourceAttrSet(name, "bucket_id"),
-					resource.TestCheckResourceAttrPair(name, "jurisdiction", bucketName, "jurisdiction"),
-					testCheckResourceDomainMatchesBucketID(name, "bucket_id", "domain"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bucket_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("default")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bucket_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.NotNull()),
+				},
+				Check: testCheckResourceDomainMatchesBucketID(resourceName, "bucket_id", "domain"),
 			},
 			{
 				Config: testAccR2ManagedDomainConfigUpdate(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "enabled", "false"),
-					resource.TestCheckResourceAttrSet(name, "bucket_id"),
-					testCheckResourceDomainMatchesBucketID(name, "bucket_id", "domain"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bucket_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("default")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bucket_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.NotNull()),
+				},
+				Check: testCheckResourceDomainMatchesBucketID(resourceName, "bucket_id", "domain"),
 			},
 		},
 	})
@@ -138,8 +147,7 @@ func TestAccCloudflareR2ManagedDomain_Basic(t *testing.T) { // plus an update st
 func TestAccCloudflareR2ManagedDomain_Jurisdiction(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	name := "cloudflare_r2_managed_domain." + rnd
-	bucketName := "cloudflare_r2_bucket." + rnd
+	resourceName := "cloudflare_r2_managed_domain." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -147,12 +155,40 @@ func TestAccCloudflareR2ManagedDomain_Jurisdiction(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccR2ManagedDomainConfigJurisdiction(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "enabled", "false"),
-					resource.TestCheckResourceAttrSet(name, "bucket_id"),
-					testCheckResourceDomainMatchesBucketID(name, "bucket_id", "domain"),
-					resource.TestCheckResourceAttrPair(name, "jurisdiction", bucketName, "jurisdiction"),
-				),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bucket_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("eu")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bucket_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.NotNull()),
+				},
+				Check: testCheckResourceDomainMatchesBucketID(resourceName, "bucket_id", "domain"),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareR2ManagedDomain_JurisdictionFedramp(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_r2_managed_domain." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccR2ManagedDomainConfigJurisdictionFedramp(rnd, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bucket_name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("fedramp")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("bucket_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.NotNull()),
+				},
+				Check: testCheckResourceDomainMatchesBucketID(resourceName, "bucket_id", "domain"),
 			},
 		},
 	})
@@ -202,6 +238,10 @@ func testAccR2ManagedDomainConfigJurisdiction(rnd string, accountID string) stri
 	return acctest.LoadTestCase("r2bucketdomainjurisdiction.tf", rnd, accountID)
 }
 
+func testAccR2ManagedDomainConfigJurisdictionFedramp(rnd string, accountID string) string {
+	return acctest.LoadTestCase("r2bucketdomainjurisdictionfedramp.tf", rnd, accountID)
+}
+
 func testAccR2ManagedDomainConfigUpdate(rnd, accountID string) string {
-	return acctest.LoadTestCase("r2disablebucketdomainupdate.tf", rnd, accountID)
+	return acctest.LoadTestCase("r2disablebucketdomain.tf", rnd, accountID)
 }
