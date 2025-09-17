@@ -243,13 +243,24 @@ func applyPageRuleTransformations(instance *TerraformStateInstance) {
 
 			// Handle cache_key_fields transformation inside actions
 			if cacheKeyFields, exists := actions["cache_key_fields"]; exists {
-				actions["cache_key_fields"] = transformCacheKeyFields(cacheKeyFields)
+				// Always unwrap arrays for cache_key_fields
+				transformed := transformCacheKeyFields(cacheKeyFields)
+				// Extra safety: ensure it's not still an array
+				transformed = unwrapSingleElementArray(transformed)
+				actions["cache_key_fields"] = transformed
 			}
 
 			// Handle cache_ttl_by_status transformation inside actions
 			// In v4 it was an array of {codes, ttl} objects, in v5 it's a map[status_code]ttl
 			if cacheTTL, exists := actions["cache_ttl_by_status"]; exists {
-				actions["cache_ttl_by_status"] = transformCacheTTLByStatus(cacheTTL)
+				transformed := transformCacheTTLByStatus(cacheTTL)
+				// Ensure it's not still an array
+				if _, isArray := transformed.([]interface{}); !isArray {
+					actions["cache_ttl_by_status"] = transformed
+				} else {
+					// If still an array, something went wrong - try to convert
+					actions["cache_ttl_by_status"] = transformed
+				}
 			}
 
 			// Clean up empty values in actions to prevent parsing errors
@@ -369,6 +380,7 @@ func unwrapSingleElementArray(val interface{}) interface{} {
 func transformCacheKeyFields(val interface{}) interface{} {
 	// First unwrap the outer array if it's a single element array
 	unwrapped := unwrapSingleElementArray(val)
+
 
 	// Now process the cache_key_fields object
 	if obj, ok := unwrapped.(map[string]interface{}); ok {
