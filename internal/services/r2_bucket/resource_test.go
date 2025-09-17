@@ -429,6 +429,7 @@ func TestAccCloudflareR2Bucket_LocationCaseInsensitive(t *testing.T) {
 				),
 			},
 			{
+
 				// Apply with uppercase - should be treated as no change (case-insensitive)
 				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WEUR"),
 				Check: resource.ComposeTestCheckFunc(
