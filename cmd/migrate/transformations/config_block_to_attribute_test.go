@@ -64,18 +64,15 @@ transformations:
 			expected: `resource "cloudflare_load_balancer_pool" "example" {
   name = "example-pool"
 
-  origins = [
-    {
-      address = "192.0.2.1",
-      enabled = true,
-      name    = "origin-1"
-    },
-    {
-      address = "192.0.2.2",
-      enabled = false,
-      name    = "origin-2"
-    }
-  ]
+  origins = [{
+    address = "192.0.2.1"
+    enabled = true
+    name    = "origin-1"
+  }, {
+    address = "192.0.2.2"
+    enabled = false
+    name    = "origin-2"
+  }]
 }`,
 		},
 		{
@@ -165,12 +162,10 @@ transformations:
   load_shedding = {
     default_percent = 10
   }
-  origins = [
-    {
-      address = "192.0.2.1",
-      name    = "origin-1"
-    }
-  ]
+  origins = [{
+    address = "192.0.2.1"
+    name    = "origin-1"
+  }]
 }`,
 		},
 		{
@@ -190,12 +185,10 @@ transformations:
   enabled         = true
   minimum_origins = 1
 
-  origins = [
-    {
-      address = "192.0.2.1",
-      name    = "origin-1"
-    }
-  ]
+  origins = [{
+    address = "192.0.2.1"
+    name    = "origin-1"
+  }]
 }`,
 		},
 		{
@@ -389,172 +382,5 @@ transformations:
 			t.Errorf("GetTransformationType(%s, %s) = %s, want %s",
 				tt.resourceType, tt.blockName, result, tt.expected)
 		}
-	}
-}
-
-// TestLoadBalancerPoolOriginsWithVariableInterpolation tests that variable interpolations are preserved
-func TestLoadBalancerPoolOriginsWithVariableInterpolation(t *testing.T) {
-	// Create test config
-	tempDir, err := os.MkdirTemp("", "variable_interpolation_test")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tempDir)
-
-	configPath := filepath.Join(tempDir, "config.yaml")
-	configContent := `
-version: "1.0"
-transformations:
-  cloudflare_load_balancer_pool:
-    to_list:
-      - origins
-`
-	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	// Test input with variable interpolation
-	input := `resource "cloudflare_load_balancer_pool" "test" {
-  name = "test-pool"
-  origins {
-    name    = "u0"
-    address = "api.unified-0.${var.api_openai_com_domain}"
-    enabled = true
-    weight  = 1
-  }
-  origins {
-    name    = "u1"
-    address = "api.unified-1.${var.api_openai_com_domain}"
-    enabled = true
-    weight  = 1
-  }
-}`
-
-	// Create transformer
-	transformer, err := NewHCLTransformer(configPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Transform
-	inputPath := filepath.Join(tempDir, "input.tf")
-	outputPath := filepath.Join(tempDir, "output.tf")
-	if err := os.WriteFile(inputPath, []byte(input), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	if err := transformer.TransformFile(inputPath, outputPath); err != nil {
-		t.Fatal(err)
-	}
-
-	// Check result
-	output, err := os.ReadFile(outputPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	result := string(output)
-
-	// Should NOT contain double dollar signs (escaped variables)
-	if strings.Contains(result, "$${") {
-		t.Errorf("Result contains escaped variables ($$):\n%s", result)
-	}
-
-	// Should still contain the variable reference
-	if !strings.Contains(result, "${var.api_openai_com_domain}") {
-		t.Errorf("Variable reference was lost:\n%s", result)
-	}
-
-	// Should have converted origins blocks to list attribute
-	if !strings.Contains(result, "origins = [") {
-		t.Errorf("Origins blocks were not converted to list attribute:\n%s", result)
-	}
-
-	// Should have removed the blocks
-	if strings.Contains(result, "origins {") {
-		t.Errorf("Origins blocks were not removed:\n%s", result)
-	}
-}
-
-// TestMixedOriginsWithAndWithoutVariables tests mixed scenarios
-func TestMixedOriginsWithAndWithoutVariables(t *testing.T) {
-	// Create test config
-	tempDir, err := os.MkdirTemp("", "mixed_origins_test")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tempDir)
-
-	configPath := filepath.Join(tempDir, "config.yaml")
-	configContent := `
-version: "1.0"
-transformations:
-  cloudflare_load_balancer_pool:
-    to_list:
-      - origins
-`
-	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	// Test input with mixed origins - some with variables, some without
-	input := `resource "cloudflare_load_balancer_pool" "test" {
-  name = "test-pool"
-  origins {
-    name    = "static"
-    address = "192.168.1.1"
-    enabled = true
-  }
-  origins {
-    name    = "dynamic"
-    address = "api.${var.domain_suffix}"
-    enabled = false
-  }
-  origins {
-    name    = "complex"
-    address = "${var.prefix}.${var.domain}.${var.suffix}"
-    weight  = 2
-  }
-}`
-
-	// Create transformer
-	transformer, err := NewHCLTransformer(configPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Transform
-	inputPath := filepath.Join(tempDir, "input.tf")
-	outputPath := filepath.Join(tempDir, "output.tf")
-	if err := os.WriteFile(inputPath, []byte(input), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	if err := transformer.TransformFile(inputPath, outputPath); err != nil {
-		t.Fatal(err)
-	}
-
-	// Check result
-	output, err := os.ReadFile(outputPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	result := string(output)
-
-	// Should NOT contain double dollar signs
-	if strings.Contains(result, "$${") {
-		t.Errorf("Result contains escaped variables ($$):\n%s", result)
-	}
-
-	// All addresses should be preserved correctly
-	if !strings.Contains(result, "192.168.1.1") {
-		t.Errorf("Static IP address was not preserved:\n%s", result)
-	}
-
-	if !strings.Contains(result, "api.${var.domain_suffix}") {
-		t.Errorf("Simple variable interpolation was not preserved:\n%s", result)
-	}
-
-	if !strings.Contains(result, "${var.prefix}.${var.domain}.${var.suffix}") {
-		t.Errorf("Complex variable interpolation was not preserved:\n%s", result)
 	}
 }

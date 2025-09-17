@@ -330,107 +330,107 @@ func TestLoadBalancerRulesTransformation(t *testing.T) {
   ]
 }`},
 		},
-		//		{
-		//			Name: "handle region_pools that already have region as list",
-		//			Config: `resource "cloudflare_load_balancer" "test" {
-		//  zone_id = "test_zone"
-		//  name = "test-lb"
-		//  default_pool_ids = ["pool1"]
-		//
-		//  rules = [
-		//    {
-		//      condition = "true"
-		//      disabled  = false
-		//      name      = "already migrated"
-		//      overrides = {
-		//        steering_policy = "geo"
-		//        region_pools = [
-		//          {
-		//            pool_ids = ["pool1"]
-		//            region   = ["WNAM", "ENAM"]
-		//          }
-		//        ]
-		//        default_pools = ["default_pool"]
-		//      }
-		//      priority   = 0
-		//      terminates = false
-		//    }
-		//  ]
-		//}`,
-		//			Expected: []string{`resource "cloudflare_load_balancer" "test" {
-		//  zone_id          = "test_zone"
-		//  name             = "test-lb"
-		//  default_pool_ids = ["pool1"]
-		//
-		//  rules = [
-		//    {
-		//      condition  = "true"
-		//      disabled   = false
-		//      name       = "already migrated"
-		//      overrides  = {
-		//        steering_policy = "geo"
-		//        region_pools = [
-		//          {
-		//            pool_ids = ["pool1"]
-		//            region   = ["WNAM", "ENAM"]
-		//          }
-		//        ]
-		//        default_pools = ["default_pool"]
-		//      }
-		//      priority   = 0
-		//      terminates = false
-		//    }
-		//  ]
-		//}`},
-		//		},
-		//		{
-		//			Name: "handle empty rules list",
-		//			Config: `resource "cloudflare_load_balancer" "test" {
-		//  zone_id = "test_zone"
-		//  name = "test-lb"
-		//  default_pool_ids = ["pool1"]
-		//  rules = []
-		//}`,
-		//			Expected: []string{`resource "cloudflare_load_balancer" "test" {
-		//  zone_id          = "test_zone"
-		//  name             = "test-lb"
-		//  default_pool_ids = ["pool1"]
-		//  rules            = []
-		//}`},
-		//		},
-		//		{
-		//			Name: "handle rules without overrides",
-		//			Config: `resource "cloudflare_load_balancer" "test" {
-		//  zone_id = "test_zone"
-		//  name = "test-lb"
-		//  default_pool_ids = ["pool1"]
-		//
-		//  rules = [
-		//    {
-		//      condition = "true"
-		//      disabled  = false
-		//      name      = "simple rule"
-		//      priority   = 0
-		//      terminates = true
-		//    }
-		//  ]
-		//}`,
-		//			Expected: []string{`resource "cloudflare_load_balancer" "test" {
-		//  zone_id          = "test_zone"
-		//  name             = "test-lb"
-		//  default_pool_ids = ["pool1"]
-		//
-		//  rules = [
-		//    {
-		//      condition  = "true"
-		//      disabled   = false
-		//      name       = "simple rule"
-		//      priority   = 0
-		//      terminates = true
-		//    }
-		//  ]
-		//}`},
-		//		},
+		{
+			Name: "handle region_pools that already have region as list",
+			Config: `resource "cloudflare_load_balancer" "test" {
+		 zone_id = "test_zone"
+		 name = "test-lb"
+		 default_pool_ids = ["pool1"]
+		
+		 rules = [
+		   {
+		     condition = "true"
+		     disabled  = false
+		     name      = "already migrated"
+		     overrides = {
+		       steering_policy = "geo"
+		       region_pools = [
+		         {
+		           pool_ids = ["pool1"]
+		           region   = ["WNAM", "ENAM"]
+		         }
+		       ]
+		       default_pools = ["default_pool"]
+		     }
+		     priority   = 0
+		     terminates = false
+		   }
+		 ]
+		}`,
+			Expected: []string{`resource "cloudflare_load_balancer" "test" {
+		 zone_id          = "test_zone"
+		 name             = "test-lb"
+		 default_pool_ids = ["pool1"]
+		
+		 rules = [
+		   {
+		     condition  = "true"
+		     disabled   = false
+		     name       = "already migrated"
+		     overrides  = {
+		       steering_policy = "geo"
+		       region_pools = [
+		         {
+		           pool_ids = ["pool1"]
+		           region   = ["WNAM", "ENAM"]
+		         }
+		       ]
+		       default_pools = ["default_pool"]
+		     }
+		     priority   = 0
+		     terminates = false
+		   }
+		 ]
+		}`},
+		},
+		{
+			Name: "handle empty rules list",
+			Config: `resource "cloudflare_load_balancer" "test" {
+		 zone_id = "test_zone"
+		 name = "test-lb"
+		 default_pool_ids = ["pool1"]
+		 rules = []
+		}`,
+			Expected: []string{`resource "cloudflare_load_balancer" "test" {
+		 zone_id          = "test_zone"
+		 name             = "test-lb"
+		 default_pool_ids = ["pool1"]
+		 rules            = []
+		}`},
+		},
+		{
+			Name: "handle rules without overrides",
+			Config: `resource "cloudflare_load_balancer" "test" {
+		 zone_id = "test_zone"
+		 name = "test-lb"
+		 default_pool_ids = ["pool1"]
+		
+		 rules = [
+		   {
+		     condition = "true"
+		     disabled  = false
+		     name      = "simple rule"
+		     priority   = 0
+		     terminates = true
+		   }
+		 ]
+		}`,
+			Expected: []string{`resource "cloudflare_load_balancer" "test" {
+		 zone_id          = "test_zone"
+		 name             = "test-lb"
+		 default_pool_ids = ["pool1"]
+		
+		 rules = [
+		   {
+		     condition  = "true"
+		     disabled   = false
+		     name       = "simple rule"
+		     priority   = 0
+		     terminates = true
+		   }
+		 ]
+		}`},
+		},
 	}
 
 	RunTransformationTests(t, tests, transformFileDefault)
