@@ -73,9 +73,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Settings determining the nameservers through which the zone should be available.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
+					"ns_set": schema.Int64Attribute{
+						Description: "Configured nameserver set to be used for this zone",
+						Optional:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(1, 5),
+						},
+					},
 					"type": schema.StringAttribute{
 						Description: "Nameserver type\nAvailable values: \"cloudflare.standard\", \"custom.account\", \"custom.tenant\", \"custom.zone\".",
-						Required:    true,
+						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"cloudflare.standard",
@@ -83,13 +90,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"custom.tenant",
 								"custom.zone",
 							),
-						},
-					},
-					"ns_set": schema.Int64Attribute{
-						Description: "Configured nameserver set to be used for this zone",
-						Optional:    true,
-						Validators: []validator.Int64{
-							int64validator.Between(1, 5),
 						},
 					},
 				},
@@ -100,43 +100,43 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"expire": schema.Float64Attribute{
 						Description: "Time in seconds of being unable to query the primary server after which secondary servers should stop serving the zone.",
-						Required:    true,
+						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(86400, 2419200),
 						},
 					},
 					"min_ttl": schema.Float64Attribute{
 						Description: "The time to live (TTL) for negative caching of records within the zone.",
-						Required:    true,
+						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(60, 86400),
 						},
 					},
 					"mname": schema.StringAttribute{
-						Description: "The primary nameserver, which may be used for outbound zone transfers.",
-						Required:    true,
+						Description: "The primary nameserver, which may be used for outbound zone transfers. If null, a Cloudflare-assigned value will be used.",
+						Optional:    true,
 					},
 					"refresh": schema.Float64Attribute{
 						Description: "Time in seconds after which secondary servers should re-check the SOA record to see if the zone has been updated.",
-						Required:    true,
+						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(600, 86400),
 						},
 					},
 					"retry": schema.Float64Attribute{
 						Description: "Time in seconds after which secondary servers should retry queries after the primary server was unresponsive.",
-						Required:    true,
+						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(600, 86400),
 						},
 					},
 					"rname": schema.StringAttribute{
 						Description: "The email address of the zone administrator, with the first label representing the local part of the email address.",
-						Required:    true,
+						Optional:    true,
 					},
 					"ttl": schema.Float64Attribute{
 						Description: "The time to live (TTL) of the SOA record itself.",
-						Required:    true,
+						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(300, 86400),
 						},

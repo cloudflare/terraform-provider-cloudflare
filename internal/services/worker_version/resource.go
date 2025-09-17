@@ -114,7 +114,7 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 	_, err := r.client.Workers.Beta.Workers.Versions.Get(
 		ctx,
 		data.WorkerID.ValueString(),
-		workers.BetaWorkerVersionGetParamsVersionID(data.ID.ValueString()),
+		data.ID.ValueString(),
 		workers.BetaWorkerVersionGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -172,7 +172,7 @@ func (r *WorkerVersionResource) ImportState(ctx context.Context, req resource.Im
 	_, err := r.client.Workers.Beta.Workers.Versions.Get(
 		ctx,
 		path_worker_id,
-		workers.BetaWorkerVersionGetParamsVersionID(path_version_id),
+		path_version_id,
 		workers.BetaWorkerVersionGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
