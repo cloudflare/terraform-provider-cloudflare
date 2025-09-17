@@ -24,6 +24,7 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
   longitude = 0
   minimum_origins = 0
   monitor = "monitor"
+  monitor_group = "monitor_group"
   notification_email = "someone@example.com,sometwo@example.com"
   notification_filter = {
     origin = {

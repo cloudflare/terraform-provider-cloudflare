@@ -22,6 +22,7 @@ type LoadBalancerPoolModel struct {
 	Latitude           types.Float64                                                     `tfsdk:"latitude" json:"latitude,optional"`
 	Longitude          types.Float64                                                     `tfsdk:"longitude" json:"longitude,optional"`
 	Monitor            types.String                                                      `tfsdk:"monitor" json:"monitor,optional"`
+	MonitorGroup       types.String                                                      `tfsdk:"monitor_group" json:"monitor_group,optional"`
 	NotificationEmail  types.String                                                      `tfsdk:"notification_email" json:"notification_email,optional"`
 	CheckRegions       *[]types.String                                                   `tfsdk:"check_regions" json:"check_regions,optional"`
 	Enabled            types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
