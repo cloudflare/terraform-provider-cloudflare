@@ -4,7 +4,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/cmd/migrate/ast"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
-	"github.com/zclconf/go-cty/cty"
 )
 
 // isSnippetResource checks if a block is a cloudflare_snippet resource
@@ -25,41 +24,52 @@ func transformSnippetBlock(block *hclwrite.Block, diags ast.Diagnostics) {
 
 	// Move "main_module" to nested "metadata" object
 	if mainModuleAttr := body.GetAttribute("main_module"); mainModuleAttr != nil {
-		// Try to get the actual string value
-		expr := ast.WriteExpr2Expr(mainModuleAttr.Expr(), diags)
-		mainModuleValue := ""
+		// Get the raw tokens from the original expression to preserve variable references
+		mainModuleTokens := mainModuleAttr.Expr().BuildTokens(nil)
 
-		if expr != nil {
-			if lit, ok := expr.(*hclsyntax.LiteralValueExpr); ok {
-				if lit.Val.Type() == cty.String {
-					mainModuleValue = lit.Val.AsString()
-				}
-			} else if tmpl, ok := expr.(*hclsyntax.TemplateExpr); ok && len(tmpl.Parts) == 1 {
-				if lit, ok := tmpl.Parts[0].(*hclsyntax.LiteralValueExpr); ok {
-					if lit.Val.Type() == cty.String {
-						mainModuleValue = lit.Val.AsString()
-					}
-				}
-			}
-		}
-
-		// Fallback to raw tokens if we couldn't parse
-		if mainModuleValue == "" {
-			mainModuleTokens := mainModuleAttr.Expr().BuildTokens(nil)
-			mainModuleValue = string(mainModuleTokens.Bytes())
-			// Remove quotes if present
-			if len(mainModuleValue) >= 2 && mainModuleValue[0] == '"' && mainModuleValue[len(mainModuleValue)-1] == '"' {
-				mainModuleValue = mainModuleValue[1 : len(mainModuleValue)-1]
-			}
-		}
-
-		// Create metadata object with main_module
-		metadataValue := cty.ObjectVal(map[string]cty.Value{
-			"main_module": cty.StringVal(mainModuleValue),
+		// Build the metadata object with raw tokens to preserve the original expression
+		var metadataTokens hclwrite.Tokens
+		metadataTokens = append(metadataTokens, &hclwrite.Token{
+			Type:  hclsyntax.TokenOBrace,
+			Bytes: []byte("{"),
+		})
+		metadataTokens = append(metadataTokens, &hclwrite.Token{
+			Type:  hclsyntax.TokenNewline,
+			Bytes: []byte("\n"),
+		})
+		metadataTokens = append(metadataTokens, &hclwrite.Token{
+			Type:  hclsyntax.TokenIdent,
+			Bytes: []byte("    main_module"),
+		})
+		metadataTokens = append(metadataTokens, &hclwrite.Token{
+			Type:  hclsyntax.TokenIdent,
+			Bytes: []byte(" "),
+		})
+		metadataTokens = append(metadataTokens, &hclwrite.Token{
+			Type:  hclsyntax.TokenEqual,
+			Bytes: []byte("="),
+		})
+		metadataTokens = append(metadataTokens, &hclwrite.Token{
+			Type:  hclsyntax.TokenIdent,
+			Bytes: []byte(" "),
+		})
+		// Append the original expression tokens (preserves variables, literals, etc.)
+		metadataTokens = append(metadataTokens, mainModuleTokens...)
+		metadataTokens = append(metadataTokens, &hclwrite.Token{
+			Type:  hclsyntax.TokenNewline,
+			Bytes: []byte("\n"),
+		})
+		metadataTokens = append(metadataTokens, &hclwrite.Token{
+			Type:  hclsyntax.TokenIdent,
+			Bytes: []byte("  "),
+		})
+		metadataTokens = append(metadataTokens, &hclwrite.Token{
+			Type:  hclsyntax.TokenCBrace,
+			Bytes: []byte("}"),
 		})
 
-		// Set metadata attribute
-		body.SetAttributeValue("metadata", metadataValue)
+		// Set metadata attribute using raw tokens
+		body.SetAttributeRaw("metadata", metadataTokens)
 		body.RemoveAttribute("main_module")
 	}
 
