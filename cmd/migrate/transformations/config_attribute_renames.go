@@ -17,18 +17,8 @@ func ApplyAttributeRenames(config *TransformationConfig, block *hclwrite.Block, 
 	// Apply renames if they exist
 	if exists {
 		for oldName, newName := range renames {
-			attr := body.GetAttribute(oldName)
-			if attr != nil {
-				// Get the expression tokens
-				expr := attr.Expr()
-				tokens := expr.BuildTokens(nil)
-
-				// Remove old attribute
-				body.RemoveAttribute(oldName)
-
-				// Set new attribute with same value
-				body.SetAttributeRaw(newName, tokens)
-			}
+			// Use RenameAttribute to preserve comments and formatting
+			body.RenameAttribute(oldName, newName)
 		}
 	}
 
