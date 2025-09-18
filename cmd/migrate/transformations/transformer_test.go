@@ -228,6 +228,186 @@ resource "cloudflare_page_rule" "rule2" {
 	}
 }
 
+// TestCommentPreservation tests that comments are preserved during transformations
+func TestCommentPreservation(t *testing.T) {
+	// Create a temporary directory for test files
+	tempDir, err := os.MkdirTemp("", "comment_preservation_test")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	// Create minimal test configuration
+	configPath := filepath.Join(tempDir, "test_config.yaml")
+	configContent := `
+version: "1.0"
+description: "Test comment preservation"
+attribute_renames:
+  cloudflare_page_rule:
+    old_name: new_name
+attribute_removals: {}
+`
+	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+		t.Fatalf("Failed to write config file: %v", err)
+	}
+
+	// Test cases with comments
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+		checkFor []string // Specific strings we expect to find in the output
+	}{
+		{
+			name: "single line comments should be preserved",
+			input: `# This is a top-level comment about the resource
+resource "cloudflare_page_rule" "example" {
+  # This is a comment about zone_id
+  zone_id = "12345"
+  # This is a comment about target
+  target  = "example.com/*"
+  # Comment about priority
+  priority = 1
+  # Comment about old_name that should be preserved
+  old_name = "value" # inline comment
+  status = "active"
+
+  # Comment about actions block
+  actions {
+    # Comment about cache_level
+    cache_level = "bypass"
+  }
+}`,
+			checkFor: []string{
+				"# This is a top-level comment about the resource",
+				"# This is a comment about zone_id",
+				"# This is a comment about target",
+				"# Comment about priority",
+				"# Comment about old_name that should be preserved", // or similar for new_name
+				"# inline comment",
+				"# Comment about actions block",
+				"# Comment about cache_level",
+			},
+		},
+		{
+			name: "multi-line comments should be preserved",
+			input: `/*
+ * This is a multi-line comment
+ * describing the resource in detail
+ */
+resource "cloudflare_page_rule" "example" {
+  zone_id = "12345"
+  target  = "example.com/*"
+  old_name = "value"
+
+  /* This is another
+     multi-line comment */
+  actions {
+    cache_level = "bypass"
+  }
+}`,
+			checkFor: []string{
+				"/*",
+				"* This is a multi-line comment",
+				"* describing the resource in detail",
+				"*/",
+				"/* This is another",
+				"multi-line comment */",
+			},
+		},
+		{
+			name: "mixed comments with transformations",
+			input: `# Top comment
+resource "cloudflare_page_rule" "example" {
+  # Zone comment
+  zone_id = "12345"
+
+  # This attribute will be renamed
+  old_name = "test_value" # but this comment should stay
+
+  # Priority comment
+  priority = 1
+
+  actions {
+    # Cache comment
+    cache_level = "bypass"
+  }
+}
+# Bottom comment`,
+			checkFor: []string{
+				"# Top comment",
+				"# Zone comment",
+				"# This attribute will be renamed",
+				"# but this comment should stay",
+				"# Priority comment",
+				"# Cache comment",
+				"# Bottom comment",
+			},
+		},
+	}
+
+	// Create a transformer
+	transformer, err := NewHCLTransformer(configPath)
+	if err != nil {
+		t.Fatalf("Failed to create transformer: %v", err)
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Write test input to file
+			testFile := filepath.Join(tempDir, "test.tf")
+			if err := os.WriteFile(testFile, []byte(tt.input), 0644); err != nil {
+				t.Fatalf("Failed to write test file: %v", err)
+			}
+
+			// Transform the file
+			if err := transformer.TransformFile(testFile, testFile); err != nil {
+				t.Fatalf("Failed to transform file: %v", err)
+			}
+
+			// Read the result
+			result, err := os.ReadFile(testFile)
+			if err != nil {
+				t.Fatalf("Failed to read result file: %v", err)
+			}
+
+			resultStr := string(result)
+
+			// Check that each expected comment is present
+			for _, expectedComment := range tt.checkFor {
+				if !strings.Contains(resultStr, expectedComment) {
+					t.Errorf("Expected comment not found in output: %q\nFull output:\n%s", expectedComment, resultStr)
+				}
+			}
+
+			// Also verify that the transformation happened (old_name -> new_name)
+			if strings.Contains(tt.input, "old_name") {
+				if !strings.Contains(resultStr, "new_name") {
+					t.Errorf("Expected attribute rename (old_name -> new_name) didn't happen")
+				}
+				// Check that old_name as an attribute (not in comment) was renamed
+				// We parse to check if the actual attribute was renamed
+				parsedFile, diags := hclwrite.ParseConfig([]byte(resultStr), "test.tf", hcl.InitialPos)
+				if !diags.HasErrors() {
+					for _, block := range parsedFile.Body().Blocks() {
+						if block.Type() == "resource" {
+							if block.Body().GetAttribute("old_name") != nil {
+								t.Errorf("Old attribute 'old_name' still exists, should have been renamed to 'new_name'")
+							}
+							if block.Body().GetAttribute("new_name") == nil {
+								t.Errorf("New attribute 'new_name' doesn't exist, rename failed")
+							}
+						}
+					}
+				}
+			}
+
+			// Log the output for debugging
+			t.Logf("Transformed output:\n%s", resultStr)
+		})
+	}
+}
+
 // TestPageRuleStatusWithRenames tests that status default works alongside other renames
 func TestPageRuleStatusWithRenames(t *testing.T) {
 	// Create a temporary directory for test files
