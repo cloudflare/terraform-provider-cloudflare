@@ -154,7 +154,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"service\", \"tail_consumer\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"tail_consumer\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -163,9 +163,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"assets",
 									"browser",
 									"d1",
+									"data_blob",
 									"dispatch_namespace",
 									"durable_object_namespace",
 									"hyperdrive",
+									"inherit",
+									"images",
 									"json",
 									"kv_namespace",
 									"mtls_certificate",
@@ -174,20 +177,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"queue",
 									"r2_bucket",
 									"secret_text",
+									"send_email",
 									"service",
 									"tail_consumer",
+									"text_blob",
 									"vectorize",
 									"version_metadata",
 									"secrets_store_secret",
 									"secret_key",
 									"workflow",
+									"wasm_module",
 								),
 							},
 						},
-								"dataset": schema.StringAttribute{
-						Description: "The name of the dataset to bind to.",
-						Optional:    true,
-					},
+						"dataset": schema.StringAttribute{
+							Description: "The name of the dataset to bind to.",
+							Optional:    true,
+						},
 						"id": schema.StringAttribute{
 							Description: "Identifier of the D1 database to bind to.",
 							Optional:    true,
@@ -348,7 +354,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"version_id": schema.StringAttribute{
 							Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
-							Computed:    true,
 							Optional:    true,
 							Default:     stringdefault.StaticString("latest"),
 						},

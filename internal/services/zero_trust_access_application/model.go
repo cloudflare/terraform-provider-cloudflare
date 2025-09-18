@@ -5,6 +5,7 @@ package zero_trust_access_application
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -211,7 +212,7 @@ type ZeroTrustAccessApplicationPoliciesModel struct {
 	Precedence      types.Int64                                                                 `tfsdk:"precedence" json:"precedence,computed_optional"`
 	Decision        types.String                                                                `tfsdk:"decision" json:"decision,optional"`
 	Include         customfield.NestedObjectSet[ZeroTrustAccessApplicationPoliciesIncludeModel] `tfsdk:"include" json:"include,optional"`
-	Name            types.String                                                                 `tfsdk:"name" json:"name,optional"`
+	Name            types.String                                                                `tfsdk:"name" json:"name,optional"`
 	ConnectionRules *ZeroTrustAccessApplicationPoliciesConnectionRulesModel                     `tfsdk:"connection_rules" json:"connection_rules,optional"`
 	Exclude         customfield.NestedObjectSet[ZeroTrustAccessApplicationPoliciesExcludeModel] `tfsdk:"exclude" json:"exclude,optional"`
 	Require         customfield.NestedObjectSet[ZeroTrustAccessApplicationPoliciesRequireModel] `tfsdk:"require" json:"require,optional"`
