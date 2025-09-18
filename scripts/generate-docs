@@ -2,12 +2,22 @@
 
 set -e
 
-cd "$(dirname "$0")/.."
+cd -- "$(dirname -- "$0")/.."
 
 echo "==> Generating Terraform provider documentation"
-if ! command -v "tfplugindocs" &> /dev/null
-then
+
+EXEC='tfplugindocs'
+if ! command -v -- "$EXEC" &> /dev/null; then
   go install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
+  EXEC="$(go env -- GOPATH)/bin/$EXEC"
 fi
 
-"$(go env GOPATH)/bin/tfplugindocs" generate -rendered-provider-name "Cloudflare" -provider-name="cloudflare"
+case "$OSTYPE" in
+linux*)
+  export -- TMPDIR=/var/tmp
+  ;;
+*) ;;
+esac
+
+go mod tidy
+exec -- "$EXEC" generate -rendered-provider-name "Cloudflare" -provider-name="cloudflare"
