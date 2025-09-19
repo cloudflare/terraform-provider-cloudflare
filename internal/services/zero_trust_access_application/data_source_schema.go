@@ -67,6 +67,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The background color of the App Launcher page.",
 				Computed:    true,
 			},
+			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 			"custom_deny_message": schema.StringAttribute{
 				Description: "The custom error message shown to a user when they are denied access to the application.",
 				Computed:    true,
@@ -153,6 +157,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"rdp",
 					),
 				},
+			},
+			"updated_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"allowed_idps": schema.ListAttribute{
 				Description: "The identity providers your users can select when connecting to this application. Defaults to all IdPs configured in your account.",
@@ -1305,6 +1313,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.",
 						Computed:    true,
 					},
+					"created_at": schema.StringAttribute{
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
+					},
 					"custom_attributes": schema.ListNestedAttribute{
 						Computed:   true,
 						CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationSaaSAppCustomAttributesDataSourceModel](ctx),
@@ -1397,6 +1409,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"sso_endpoint": schema.StringAttribute{
 						Description: "The endpoint where your SaaS application will send login requests.",
 						Computed:    true,
+					},
+					"updated_at": schema.StringAttribute{
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"access_token_lifetime": schema.StringAttribute{
 						Description: "The lifetime of the OIDC Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",

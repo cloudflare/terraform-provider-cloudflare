@@ -1,9 +1,11 @@
-
-
 package zero_trust_access_application
 
 import (
 	"context"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -19,8 +21,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessApplicationResource)(nil)
@@ -258,236 +258,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "the hyperlink in the footer link.",
 							Required:    true,
 						},
-					},
-				},
-			},
-			"saas_app": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"auth_type": schema.StringAttribute{
-						Description: "Optional identifier indicating the authentication protocol used for the saas app. Required for OIDC. Default if unset is \"saml\"\nAvailable values: \"saml\", \"oidc\".",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("saml", "oidc"),
-						},
-					},
-					"consumer_service_url": schema.StringAttribute{
-						Description: "The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.",
-						Optional:    true,
-					},
-					"custom_attributes": schema.ListNestedAttribute{
-						Optional: true,
-						NestedObject: schema.NestedAttributeObject{
-							Attributes: map[string]schema.Attribute{
-								"friendly_name": schema.StringAttribute{
-									Description: "The SAML FriendlyName of the attribute.",
-									Optional:    true,
-								},
-								"name": schema.StringAttribute{
-									Description: "The name of the attribute.",
-									Optional:    true,
-								},
-								"name_format": schema.StringAttribute{
-									Description: "A globally unique name for an identity or service provider.\nAvailable values: \"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified\", \"urn:oasis:names:tc:SAML:2.0:attrname-format:basic\", \"urn:oasis:names:tc:SAML:2.0:attrname-format:uri\".",
-									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
-											"urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
-											"urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
-										),
-									},
-								},
-								"required": schema.BoolAttribute{
-									Description: "If the attribute is required when building a SAML assertion.",
-									Optional:    true,
-								},
-								"source": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"name": schema.StringAttribute{
-											Description: "The name of the IdP attribute.",
-											Optional:    true,
-										},
-										"name_by_idp": schema.ListNestedAttribute{
-											Description: "A mapping from IdP ID to attribute name.",
-											Optional:    true,
-											NestedObject: schema.NestedAttributeObject{
-												Attributes: map[string]schema.Attribute{
-													"idp_id": schema.StringAttribute{
-														Description: "The UID of the IdP.",
-														Optional:    true,
-													},
-													"source_name": schema.StringAttribute{
-														Description: "The name of the IdP provided attribute.",
-														Optional:    true,
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-					"default_relay_state": schema.StringAttribute{
-						Description: "The URL that the user will be redirected to after a successful login for IDP initiated logins.",
-						Optional:    true,
-					},
-					"idp_entity_id": schema.StringAttribute{
-						Description: "The unique identifier for your SaaS application.",
-						Optional:    true,
-					},
-					"name_id_format": schema.StringAttribute{
-						Description: "The format of the name identifier sent to the SaaS application.\nAvailable values: \"id\", \"email\".",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("id", "email"),
-						},
-					},
-					"name_id_transform_jsonata": schema.StringAttribute{
-						Description: "A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.",
-						Optional:    true,
-					},
-					"public_key": schema.StringAttribute{
-						Description: "The Access public certificate that will be used to verify your identity.",
-						Optional:    true,
-					},
-					"saml_attribute_transform_jsonata": schema.StringAttribute{
-						Description: "A [JSONata] (https://jsonata.org/) expression that transforms an application's user identities into attribute assertions in the SAML response. The expression can transform id, email, name, and groups values. It can also transform fields listed in the saml_attributes or oidc_fields of the identity provider used to authenticate. The output of this expression must be a JSON object.",
-						Optional:    true,
-					},
-					"sp_entity_id": schema.StringAttribute{
-						Description: "A globally unique name for an identity or service provider.",
-						Optional:    true,
-					},
-					"sso_endpoint": schema.StringAttribute{
-						Description: "The endpoint where your SaaS application will send login requests.",
-						Optional:    true,
-					},
-					"access_token_lifetime": schema.StringAttribute{
-						Description: "The lifetime of the OIDC Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",
-						Optional:    true,
-					},
-					"allow_pkce_without_client_secret": schema.BoolAttribute{
-						Description: "If client secret should be required on the token endpoint when authorization_code_with_pkce grant is used.",
-						Optional:    true,
-					},
-					"app_launcher_url": schema.StringAttribute{
-						Description: "The URL where this applications tile redirects users",
-						Optional:    true,
-					},
-					"client_id": schema.StringAttribute{
-						Description: "The application client id",
-						Optional:    true,
-					},
-					"client_secret": schema.StringAttribute{
-						Description: "The application client secret, only returned on POST request.",
-						Optional:    true,
-						Sensitive:   true,
-					},
-					"custom_claims": schema.ListNestedAttribute{
-						Optional: true,
-						NestedObject: schema.NestedAttributeObject{
-							Attributes: map[string]schema.Attribute{
-								"name": schema.StringAttribute{
-									Description: "The name of the claim.",
-									Optional:    true,
-								},
-								"required": schema.BoolAttribute{
-									Description: "If the claim is required when building an OIDC token.",
-									Optional:    true,
-								},
-								"scope": schema.StringAttribute{
-									Description: "The scope of the claim.\nAvailable values: \"groups\", \"profile\", \"email\", \"openid\".",
-									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"groups",
-											"profile",
-											"email",
-											"openid",
-										),
-									},
-								},
-								"source": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"name": schema.StringAttribute{
-											Description: "The name of the IdP claim.",
-											Optional:    true,
-										},
-										"name_by_idp": schema.MapAttribute{
-											Description: "A mapping from IdP ID to claim name.",
-											Optional:    true,
-											ElementType: types.StringType,
-										},
-									},
-								},
-							},
-						},
-					},
-					"grant_types": schema.ListAttribute{
-						Description: "The OIDC flows supported by this application",
-						Optional:    true,
-						Validators: []validator.List{
-							listvalidator.ValueStringsAre(
-								stringvalidator.OneOfCaseInsensitive(
-									"authorization_code",
-									"authorization_code_with_pkce",
-									"refresh_tokens",
-									"hybrid",
-									"implicit",
-								),
-							),
-						},
-						ElementType: types.StringType,
-					},
-					"group_filter_regex": schema.StringAttribute{
-						Description: "A regex to filter Cloudflare groups returned in ID token and userinfo endpoint",
-						Optional:    true,
-					},
-					"hybrid_and_implicit_options": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"return_access_token_from_authorization_endpoint": schema.BoolAttribute{
-								Description: "If an Access Token should be returned from the OIDC Authorization endpoint",
-								Optional:    true,
-							},
-							"return_id_token_from_authorization_endpoint": schema.BoolAttribute{
-								Description: "If an ID Token should be returned from the OIDC Authorization endpoint",
-								Optional:    true,
-							},
-						},
-					},
-					"redirect_uris": schema.ListAttribute{
-						Description: "The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens",
-						Optional:    true,
-						ElementType: types.StringType,
-					},
-					"refresh_token_options": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"lifetime": schema.StringAttribute{
-								Description: "How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.",
-								Optional:    true,
-							},
-						},
-					},
-					"scopes": schema.ListAttribute{
-						Description: `Define the user information shared with access, "offline_access" scope will be automatically enabled if refresh tokens are enabled`,
-						Optional:    true,
-						Validators: []validator.List{
-							listvalidator.ValueStringsAre(
-								stringvalidator.OneOfCaseInsensitive(
-									"openid",
-									"groups",
-									"email",
-									"profile",
-								),
-							),
-						},
-						ElementType: types.StringType,
 					},
 				},
 			},
@@ -2000,11 +1770,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"aud": schema.StringAttribute{
-				Description: "Audience tag.",
-				Computed:    true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
+			Description: "Audience tag.",
+			Computed:    true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+			"created_at": schema.StringAttribute{
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
+			"updated_at": schema.StringAttribute{
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}

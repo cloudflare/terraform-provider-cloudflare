@@ -15,15 +15,16 @@ import (
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/r2"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 )
 
 func TestMain(m *testing.M) {
@@ -253,14 +254,13 @@ func TestAccCloudflareR2Bucket_AllLocations(t *testing.T) {
 				Steps: []resource.TestStep{
 					{
 						Config: testAccCheckCloudflareR2BucketLocation(testRnd, accountID, location),
-						ConfigStateChecks: []statecheck.StateCheck{
-							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("name"), knownvalue.StringExact(testRnd)),
-							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("location"), knownvalue.StringExact(location)),
-							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
-							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("default")),
-							statecheck.ExpectKnownValue(testResourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("Standard")),
-						},
-						ExpectNonEmptyPlan: true,
+						Check: resource.ComposeTestCheckFunc(
+							resource.TestCheckResourceAttr(testResourceName, "name", testRnd),
+							resource.TestCheckResourceAttr(testResourceName, "location", location),
+							resource.TestCheckResourceAttr(testResourceName, "account_id", accountID),
+							resource.TestCheckResourceAttr(testResourceName, "jurisdiction", "default"),
+							resource.TestCheckResourceAttr(testResourceName, "storage_class", "Standard"),
+						),
 					},
 				},
 			})
@@ -429,26 +429,50 @@ func TestAccCloudflareR2Bucket_LocationCaseInsensitive(t *testing.T) {
 				),
 			},
 			{
+
+				// Apply with uppercase - should be treated as no change (case-insensitive)
 				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WEUR"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+					resource.TestCheckResourceAttr(resourceName, "location", "WEUR"),
 				),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,
 			},
 			{
-				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WEUR"),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
-				),
-			},
-			{
+				// Apply with mixed case - should be treated as no change (case-insensitive)
 				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WeUr"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "location", "weur"),
+					resource.TestCheckResourceAttr(resourceName, "location", "WEUR"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+			{
+				// Now actually apply with uppercase to set it in state
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WEUR"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "WEUR"),
+				),
+			},
+			{
+				// Reapply same uppercase - should not cause a plan change
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "WEUR"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "WEUR"),
+				),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+			{
+				// Apply with different case - should be treated as no change (case-insensitive)
+				Config: testAccCheckCloudflareR2BucketLocationCase(rnd, accountID, "weur"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "WEUR"),
 				),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,

@@ -619,17 +619,10 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	migratePath := filepath.Join(projectRoot, "cmd", "migrate")
 	debugLogf(t, "Migrate path: %s", migratePath)
 
-	// Path to the patterns/transformations directories
-	patternsDir := filepath.Join(projectRoot, ".grit")
+	// Path to the transformations directories
 	transformerDir := filepath.Join(projectRoot, "cmd", "migrate", "transformations", "config")
 
-	// Check if NO_GRIT environment variable is set
-	useNoGrit := os.Getenv("NO_GRIT") == "true"
-	if useNoGrit {
-		debugLogf(t, "Using YAML transformations from: %s (NO_GRIT=true)", transformerDir)
-	} else {
-		debugLogf(t, "Using Grit patterns from: %s", patternsDir)
-	}
+	debugLogf(t, "Using YAML transformations from: %s", transformerDir)
 
 	// Find state file in tmpDir
 	entries, err := os.ReadDir(tmpDir)
@@ -659,25 +652,15 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	debugLogf(t, "Config is: %s", string(state))
 	debugLogf(t, "State is: %s", string(state))
 
-	// Build the migration command based on NO_GRIT environment variable
 	var cmd *exec.Cmd
-	if useNoGrit {
-		// Use the new Go-based YAML transformations
-		debugLogf(t, "Running migration with YAML transformations (NO_GRIT=true)")
-		cmd = exec.Command("go", "run", "-C", migratePath, ".",
-			"-config", tmpDir,
-			"-state", filepath.Join(stateDir, "terraform.tfstate"),
-			"-grit=false",       // Disable Grit transformations
-			"-transformer=true", // Enable YAML transformations
-			"-transformer-dir", transformerDir) // Use local YAML configs
-	} else {
-		// Use the traditional Grit-based transformations (default)
-		debugLogf(t, "Running migration with Grit patterns (default)")
-		cmd = exec.Command("go", "run", "-C", migratePath, ".",
-			"-config", tmpDir,
-			"-patterns-dir", patternsDir,
-			"-state", filepath.Join(stateDir, "terraform.tfstate"))
-	}
+	// Use the new Go-based YAML transformations
+	debugLogf(t, "Running migration with YAML transformations")
+	cmd = exec.Command("go", "run", "-C", migratePath, ".",
+		"-config", tmpDir,
+		"-state", filepath.Join(stateDir, "terraform.tfstate"),
+		"-grit=false",       // Disable Grit transformations
+		"-transformer=true", // Enable YAML transformations
+		"-transformer-dir", transformerDir) // Use local YAML configs
 	cmd.Dir = tmpDir
 	// Capture output for debugging
 	output, err := cmd.CombinedOutput()

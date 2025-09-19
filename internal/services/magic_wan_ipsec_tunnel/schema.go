@@ -83,12 +83,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"automatic_return_routing": schema.BoolAttribute{
-				Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
 			"replay_protection": schema.BoolAttribute{
 				Description: "If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.",
 				Computed:    true,
@@ -217,16 +211,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"custom_remote_identities": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelCustomRemoteIdentitiesModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"fqdn_id": schema.StringAttribute{
-						Description: "A custom IKE ID of type FQDN that may be used to identity the IPsec tunnel. The\ngenerated IKE IDs can still be used even if this custom value is specified.\n\nMust be of the form `<custom label>.<account ID>.custom.ipsec.cloudflare.com`.\n\nThis custom ID does not need to be unique. Two IPsec tunnels may have the same custom \nfqdn_id. However, if another IPsec tunnel has the same value then the two tunnels \ncannot have the same cloudflare_endpoint.",
-						Computed:    true,
-					},
-				},
-			},
 			"ipsec_tunnel": schema.SingleNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelModel](ctx),
@@ -250,11 +234,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"allow_null_cipher": schema.BoolAttribute{
 						Description: "When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).",
 						Computed:    true,
-					},
-					"automatic_return_routing": schema.BoolAttribute{
-						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
-						Computed:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"bgp": schema.SingleNestedAttribute{
 						Computed:   true,
@@ -328,16 +307,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The date and time the tunnel was created.",
 						Computed:    true,
 						CustomType:  timetypes.RFC3339Type{},
-					},
-					"custom_remote_identities": schema.SingleNestedAttribute{
-						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelCustomRemoteIdentitiesModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"fqdn_id": schema.StringAttribute{
-								Description: "A custom IKE ID of type FQDN that may be used to identity the IPsec tunnel. The\ngenerated IKE IDs can still be used even if this custom value is specified.\n\nMust be of the form `<custom label>.<account ID>.custom.ipsec.cloudflare.com`.\n\nThis custom ID does not need to be unique. Two IPsec tunnels may have the same custom \nfqdn_id. However, if another IPsec tunnel has the same value then the two tunnels \ncannot have the same cloudflare_endpoint.",
-								Computed:    true,
-							},
-						},
 					},
 					"customer_endpoint": schema.StringAttribute{
 						Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",
@@ -453,11 +422,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).",
 						Computed:    true,
 					},
-					"automatic_return_routing": schema.BoolAttribute{
-						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
-						Computed:    true,
-						Default:     booldefault.StaticBool(false),
-					},
 					"bgp": schema.SingleNestedAttribute{
 						Computed:   true,
 						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelModifiedIPSECTunnelBGPModel](ctx),
@@ -530,16 +494,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The date and time the tunnel was created.",
 						Computed:    true,
 						CustomType:  timetypes.RFC3339Type{},
-					},
-					"custom_remote_identities": schema.SingleNestedAttribute{
-						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelModifiedIPSECTunnelCustomRemoteIdentitiesModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"fqdn_id": schema.StringAttribute{
-								Description: "A custom IKE ID of type FQDN that may be used to identity the IPsec tunnel. The\ngenerated IKE IDs can still be used even if this custom value is specified.\n\nMust be of the form `<custom label>.<account ID>.custom.ipsec.cloudflare.com`.\n\nThis custom ID does not need to be unique. Two IPsec tunnels may have the same custom \nfqdn_id. However, if another IPsec tunnel has the same value then the two tunnels \ncannot have the same cloudflare_endpoint.",
-								Computed:    true,
-							},
-						},
 					},
 					"customer_endpoint": schema.StringAttribute{
 						Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",

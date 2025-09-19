@@ -154,7 +154,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"service\", \"tail_consumer\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"tail_consumer\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -163,9 +163,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"assets",
 									"browser",
 									"d1",
+									"data_blob",
 									"dispatch_namespace",
 									"durable_object_namespace",
 									"hyperdrive",
+									"inherit",
+									"images",
 									"json",
 									"kv_namespace",
 									"mtls_certificate",
@@ -174,20 +177,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"queue",
 									"r2_bucket",
 									"secret_text",
+									"send_email",
 									"service",
 									"tail_consumer",
+									"text_blob",
 									"vectorize",
 									"version_metadata",
 									"secrets_store_secret",
 									"secret_key",
 									"workflow",
+									"wasm_module",
 								),
 							},
 						},
-								"dataset": schema.StringAttribute{
-						Description: "The name of the dataset to bind to.",
-						Optional:    true,
-					},
+						"dataset": schema.StringAttribute{
+							Description: "The name of the dataset to bind to.",
+							Optional:    true,
+						},
 						"id": schema.StringAttribute{
 							Description: "Identifier of the D1 database to bind to.",
 							Optional:    true,
@@ -338,39 +344,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "Name of the Workflow to bind to.",
 							Optional:    true,
 						},
-						"part": schema.StringAttribute{
-							Description: "The name of the file containing the data content. Only accepted for `service worker syntax` Workers.",
-							Optional:    true,
-						},
-						"old_name": schema.StringAttribute{
-							Description: "The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.",
-							Optional:    true,
-						},
 						"version_id": schema.StringAttribute{
 							Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
+							Optional:    true,
 							Computed:    true,
-							Optional:    true,
 							Default:     stringdefault.StaticString("latest"),
-						},
-						"allowed_destination_addresses": schema.ListAttribute{
-							Description: "List of allowed destination addresses.",
-							Optional:    true,
-							ElementType: types.StringType,
-						},
-						"allowed_sender_addresses": schema.ListAttribute{
-							Description: "List of allowed sender addresses.",
-							Optional:    true,
-							ElementType: types.StringType,
-						},
-						"destination_address": schema.StringAttribute{
-							Description: "Destination address for the email.",
-							Optional:    true,
 						},
 					},
 				},
 			},
 			"body_part": schema.StringAttribute{
-				Description: "Name of the uploaded file that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
+				Description: "Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
 				Optional:    true,
 			},
 			"compatibility_date": schema.StringAttribute{
@@ -412,7 +396,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"main_module": schema.StringAttribute{
-				Description: "Name of the uploaded file that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
+				Description: "Name of the part in the multipart request that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
 				Optional:    true,
 			},
 			"migrations": schema.SingleNestedAttribute{
@@ -578,20 +562,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
 								Required:    true,
 							},
-							"destinations": schema.ListAttribute{
-								Description: "A list of destinations where logs will be exported to.",
-								Optional:    true,
-								ElementType: types.StringType,
-							},
 							"head_sampling_rate": schema.Float64Attribute{
 								Description: "The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
 								Optional:    true,
-							},
-							"persist": schema.BoolAttribute{
-								Description: "Whether log persistence is enabled for the Worker.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(true),
 							},
 						},
 					},

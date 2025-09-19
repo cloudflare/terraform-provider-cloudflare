@@ -18,18 +18,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identify the certificate with a UUID.",
+				Description: "Certificate UUID tag.",
 				Computed:    true,
 			},
 			"certificate_id": schema.StringAttribute{
-				Description: "Identify the certificate with a UUID.",
+				Description: "Certificate UUID tag.",
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Required: true,
 			},
 			"binding_status": schema.StringAttribute{
-				Description: "Indicate the read-only deployment status of the certificate on Cloudflare's edge. Gateway TLS interception can use certificates in the 'available' (previously called 'active') state.\nAvailable values: \"pending_deployment\", \"available\", \"pending_deletion\", \"inactive\".",
+				Description: "The read only deployment status of the certificate on Cloudflare's edge. Certificates in the 'available' (previously called 'active') state may be used for Gateway TLS interception.\nAvailable values: \"pending_deployment\", \"available\", \"pending_deletion\", \"inactive\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -41,7 +41,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"certificate": schema.StringAttribute{
-				Description: "Provide the CA certificate (read-only).",
+				Description: "The CA certificate(read only).",
 				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
@@ -53,23 +53,23 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"fingerprint": schema.StringAttribute{
-				Description: "Provide the SHA256 fingerprint of the certificate (read-only).",
+				Description: "The SHA256 fingerprint of the certificate(read only).",
 				Computed:    true,
 			},
 			"in_use": schema.BoolAttribute{
-				Description: "Indicate whether Gateway TLS interception uses this certificate (read-only). You cannot set this value directly. To configure interception, use the Gateway configuration setting named `certificate` (read-only).",
+				Description: "Read-only field that shows whether Gateway TLS interception is using this certificate. This value cannot be set directly. To configure the certificate for interception, use the Gateway configuration setting named certificate.",
 				Computed:    true,
 			},
 			"issuer_org": schema.StringAttribute{
-				Description: "Indicate the organization that issued the certificate (read-only).",
+				Description: "The organization that issued the certificate(read only).",
 				Computed:    true,
 			},
 			"issuer_raw": schema.StringAttribute{
-				Description: "Provide the entire issuer field of the certificate (read-only).",
+				Description: "The entire issuer field of the certificate(read only).",
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Indicate the read-only certificate type, BYO-PKI (custom) or Gateway-managed.\nAvailable values: \"custom\", \"gateway_managed\".",
+				Description: "The type of certificate, either BYO-PKI (custom) or Gateway-managed(read only).\nAvailable values: \"custom\", \"gateway_managed\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("custom", "gateway_managed"),

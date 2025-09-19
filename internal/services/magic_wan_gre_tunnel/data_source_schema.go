@@ -52,10 +52,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "The name of the tunnel. The name cannot contain spaces or special characters, must be 15 characters or less, and cannot share a name with another GRE tunnel.",
 						Computed:    true,
 					},
-					"automatic_return_routing": schema.BoolAttribute{
-						Description: "True if automatic stateful return routing should be enabled for a tunnel, false otherwise.",
-						Computed:    true,
-					},
 					"bgp": schema.SingleNestedAttribute{
 						Computed:   true,
 						CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelGRETunnelBGPDataSourceModel](ctx),

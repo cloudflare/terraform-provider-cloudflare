@@ -31,11 +31,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"name": schema.StringAttribute{
-				Description: "Specify the name of the proxy endpoint.",
+				Description: "The name of the proxy endpoint.",
 				Computed:    true,
 			},
 			"subdomain": schema.StringAttribute{
-				Description: "Specify the subdomain to use as the destination in the proxy client.",
+				Description: "The subdomain to be used as the destination in the proxy client.",
 				Computed:    true,
 			},
 			"updated_at": schema.StringAttribute{
@@ -43,7 +43,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"ips": schema.ListAttribute{
-				Description: "Specify the list of CIDRs to restrict ingress connections.",
+				Description: "A list of CIDRs to restrict ingress connections.",
 				Computed:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
