@@ -190,10 +190,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-								"dataset": schema.StringAttribute{
-						Description: "The name of the dataset to bind to.",
-						Optional:    true,
-					},
+						"dataset": schema.StringAttribute{
+							Description: "The name of the dataset to bind to.",
+							Optional:    true,
+						},
 						"id": schema.StringAttribute{
 							Description: "Identifier of the D1 database to bind to.",
 							Optional:    true,
@@ -347,6 +347,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"version_id": schema.StringAttribute{
 							Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
 							Optional:    true,
+							Computed:    true,
 							Default:     stringdefault.StaticString("latest"),
 						},
 					},

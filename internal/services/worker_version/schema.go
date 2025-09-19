@@ -304,7 +304,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Token provided upon successful upload of all files from a registered manifest.",
 						Optional:    true,
 						Sensitive:   true,
-						WriteOnly:   true,
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplaceIfConfigured()},
