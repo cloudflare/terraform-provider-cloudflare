@@ -39,8 +39,6 @@ func transformZeroTrustAccessIdentityProviderBlock(block *hclwrite.Block, diags 
 
 	// Get the provider type for validation rules
 	providerType := getProviderType(block)
-	// Debug: temporary logging to see what provider type is being detected
-	// fmt.Printf("DEBUG: transformZeroTrustAccessIdentityProviderBlock called with provider type: '%s'\n", providerType)
 
 	// Apply config-specific transformations
 	transforms := map[string]ast.ExprTransformer{
