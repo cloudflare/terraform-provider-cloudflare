@@ -622,7 +622,7 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 	// Path to the transformations directories
 	transformerDir := filepath.Join(projectRoot, "cmd", "migrate", "transformations", "config")
 
-	debugLogf(t, "Using YAML transformations from: %s (NO_GRIT=true)", transformerDir)
+	debugLogf(t, "Using YAML transformations from: %s", transformerDir)
 
 	// Find state file in tmpDir
 	entries, err := os.ReadDir(tmpDir)
@@ -654,12 +654,12 @@ func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
 
 	var cmd *exec.Cmd
 	// Use the new Go-based YAML transformations
-	debugLogf(t, "Running migration with YAML transformations (NO_GRIT=true)")
+	debugLogf(t, "Running migration with YAML transformations")
 	cmd = exec.Command("go", "run", "-C", migratePath, ".",
 		"-config", tmpDir,
 		"-state", filepath.Join(stateDir, "terraform.tfstate"),
-		"-grit=false",                      // Disable Grit transformations
-		"-transformer=true",                // Enable YAML transformations
+		"-grit=false",       // Disable Grit transformations
+		"-transformer=true", // Enable YAML transformations
 		"-transformer-dir", transformerDir) // Use local YAML configs
 	cmd.Dir = tmpDir
 	// Capture output for debugging
