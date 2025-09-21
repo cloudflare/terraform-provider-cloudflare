@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -52,10 +51,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "UUID.",
 							Computed:    true,
-						},
-						"created_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
 						},
 						"exclude": schema.ListNestedAttribute{
 							Description: "Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules.",
@@ -1196,10 +1191,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-						},
-						"updated_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
 						},
 					},
 				},
