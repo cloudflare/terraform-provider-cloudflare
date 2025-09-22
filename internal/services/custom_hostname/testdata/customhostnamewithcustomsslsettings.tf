@@ -14,5 +14,17 @@ resource "cloudflare_custom_hostname" "%[2]s" {
       ]
       early_hints = "off"
     }
+    certificate_authority = "google"
+  }
+  
+  lifecycle {
+    ignore_changes = [
+      created_at,
+      ownership_verification,
+      ownership_verification_http,
+      ssl.wildcard,
+      status,
+      verification_errors
+    ]
   }
 }
