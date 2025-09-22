@@ -19,6 +19,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -67,6 +71,26 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	assets := data.Assets
+
+	modules := data.Modules
+	if modules != nil {
+		for _, mod := range *data.Modules {
+			content, err := readFile(mod.ContentFile.ValueString())
+			if err != nil {
+				resp.Diagnostics.AddError("Error reading file", err.Error())
+			}
+			mod.ContentBase64 = types.StringValue(base64.StdEncoding.EncodeToString([]byte(content)))
+		}
+	}
+
+	assets := data.Assets
+	if assets != nil {
+		resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("assets").AtName("jwt"), &data.Assets.JWT)...) // "assets.jwt" is write-only, get from config
+	}
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	modules := data.Modules
 	if modules != nil {
