@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
@@ -77,11 +76,10 @@ func modifyPlanForDomains(ctx context.Context, planApp, stateApp *ZeroTrustAcces
 
 func modifySaasAppNestedObjectPlan(ctx context.Context, planApp *ZeroTrustAccessApplicationModel) diag.Diagnostics {
 	diags := diag.Diagnostics{}
-	if planApp.SaaSApp.IsNull() {
+	if planApp.SaaSApp == nil {
 		return diags
 	}
-	var planSaasApp ZeroTrustAccessApplicationSaaSAppModel
-	diags.Append(planApp.SaaSApp.As(ctx, &planSaasApp, basetypes.ObjectAsOptions{})...)
+	planSaasApp := *planApp.SaaSApp
 
 	oidcType, samlType, currentType := "oidc", "saml", planSaasApp.AuthType.ValueString()
 
@@ -98,7 +96,7 @@ func modifySaasAppNestedObjectPlan(ctx context.Context, planApp *ZeroTrustAccess
 	setDefaultAccordingToAppType(samlType, currentType, &planSaasApp.NameIDFormat, types.StringUnknown(), types.StringNull())
 	setDefaultAccordingToAppType(samlType, currentType, &planSaasApp.SSOEndpoint, types.StringUnknown(), types.StringNull())
 
-	planApp.SaaSApp, _ = customfield.NewObject[ZeroTrustAccessApplicationSaaSAppModel](ctx, &planSaasApp)
+	planApp.SaaSApp = &planSaasApp
 	return diags
 }
 
