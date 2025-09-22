@@ -43,7 +43,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_asset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_message"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_priority"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning_expression"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_pages"
@@ -74,6 +73,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/image_variant"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ip_ranges"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/keyless_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/leaked_credential_check_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer"
@@ -516,7 +517,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		cloudforce_one_request_asset.NewResource,
 		cloud_connector_rules.NewResource,
 		workflow.NewResource,
-		content_scanning_expression.NewResource,
+		leaked_credential_check.NewResource,
+		leaked_credential_check_rule.NewResource,
 		custom_pages.NewResource,
 		schema_validation_schemas.NewResource,
 		schema_validation_settings.NewResource,
@@ -842,7 +844,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		botnet_feed_config_asn.NewBotnetFeedConfigASNDataSource,
 		workflow.NewWorkflowDataSource,
 		workflow.NewWorkflowsDataSource,
-		content_scanning_expression.NewContentScanningExpressionsDataSource,
+		leaked_credential_check.NewLeakedCredentialCheckDataSource,
+		leaked_credential_check_rule.NewLeakedCredentialCheckRulesDataSource,
 		custom_pages.NewCustomPagesDataSource,
 		custom_pages.NewCustomPagesListDataSource,
 		schema_validation_schemas.NewSchemaValidationSchemasDataSource,
