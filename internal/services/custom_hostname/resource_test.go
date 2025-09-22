@@ -105,6 +105,57 @@ func TestAccCloudflareCustomHostname_InvalidImportID(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareCustomHostname_SSLCertificateTransition(t *testing.T) {
+	// This test reproduces GitHub Issue #3012: SSL changing from Cloudflare managed cert to custom certificate fails
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := "cloudflare_custom_hostname." + rnd
+
+	expiry := time.Now().Add(time.Hour * 1)
+	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{rnd + "." + domain}, expiry)
+	if err != nil {
+		t.Error(err)
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCloudflareCustomHostnameDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with Cloudflare-managed certificate
+				Config: testAccCheckCloudflareCustomHostnameSSLTransitionStep1(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(resourceName, "ssl.method", "txt"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.type", "dv"),
+					// Verify it's using Cloudflare-managed certificate (no custom cert/key)
+					resource.TestCheckNoResourceAttr(resourceName, "ssl.custom_certificate"),
+					resource.TestCheckNoResourceAttr(resourceName, "ssl.custom_key"),
+				),
+			},
+			{
+				// Step 2: Transition to custom certificate
+				Config: testAccCheckCloudflareCustomHostnameSSLTransitionStep2(zoneID, rnd, domain, cert, key),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						// Test changing certificate authority
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("ssl").AtMapKey("certificate_authority"), knownvalue.StringExact("lets_encrypt")),
+					},
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "ssl.method", "txt"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.type", "dv"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.certificate_authority", "lets_encrypt"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareCustomHostname_TLS13(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -622,6 +673,58 @@ resource "cloudflare_custom_hostname" "%s" {
 	}
 }
 `, rnd, zoneID, rnd, domain, tlsVersion)
+}
+
+func testAccCheckCloudflareCustomHostnameSSLTransitionStep1(zoneID, rnd, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_custom_hostname" "%s" {
+	zone_id = "%s"
+	hostname = "%s.%s"
+	ssl = {
+		method = "txt"
+		type = "dv"
+		# Using Cloudflare-managed certificate (no custom cert/key)
+	}
+	
+	lifecycle {
+		ignore_changes = [
+			created_at,
+			ownership_verification,
+			ownership_verification_http,
+			ssl.certificate_authority,
+			ssl.wildcard,
+			status,
+			verification_errors
+		]
+	}
+}
+`, rnd, zoneID, rnd, domain)
+}
+
+func testAccCheckCloudflareCustomHostnameSSLTransitionStep2(zoneID, rnd, domain, cert, key string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_custom_hostname" "%s" {
+	zone_id = "%s"
+	hostname = "%s.%s"
+	ssl = {
+		method = "txt"
+		type = "dv"
+		# Test changing certificate_authority instead of adding custom cert
+		certificate_authority = "lets_encrypt"
+	}
+	
+	lifecycle {
+		ignore_changes = [
+			created_at,
+			ownership_verification,
+			ownership_verification_http,
+			ssl.wildcard,
+			status,
+			verification_errors
+		]
+	}
+}
+`, rnd, zoneID, rnd, domain)
 }
 
 func testAccCloudflareCustomHostnameDestroy(s *terraform.State) error {
