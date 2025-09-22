@@ -5,7 +5,6 @@ package zero_trust_tunnel_cloudflared_config
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -38,9 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The tunnel configuration and ingress rules.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ingress": schema.ListNestedAttribute{
 						Description: "List of public hostname definitions. At least one ingress rule needs to be defined for the tunnel.",
@@ -211,16 +208,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"tls_timeout": schema.Int64Attribute{
 								Description: "Timeout for completing a TLS handshake to your origin server, if you have chosen to connect Tunnel to an HTTPS server.",
 								Optional:    true,
-							},
-						},
-					},
-					"warp_routing": schema.SingleNestedAttribute{
-						Description: "Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route.",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Computed: true,
 							},
 						},
 					},
