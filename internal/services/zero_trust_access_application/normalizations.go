@@ -4,12 +4,13 @@ import (
 	"context"
 	"slices"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 func normalizeEmptyAndNullString(data *basetypes.StringValue, stateData basetypes.StringValue) {
@@ -134,14 +135,14 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 				dataStrings[str.ValueString()] = true
 			}
 		}
-		
+
 		stateStrings := make(map[string]bool)
 		for _, elem := range stateData.Tags.Elements() {
 			if str, ok := elem.(types.String); ok && !str.IsNull() {
 				stateStrings[str.ValueString()] = true
 			}
 		}
-		
+
 		// If same elements, preserve state order
 		if len(dataStrings) == len(stateStrings) {
 			same := true
@@ -175,13 +176,9 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 		}
 	}
 
-	if !data.SaaSApp.IsNull() && !stateData.SaaSApp.IsNull() {
-		var dataSaasApp, stateDataSaasApp ZeroTrustAccessApplicationSaaSAppModel
-		diags.Append(data.SaaSApp.As(ctx, &dataSaasApp, basetypes.ObjectAsOptions{})...)
-		diags.Append(stateData.SaaSApp.As(ctx, &stateDataSaasApp, basetypes.ObjectAsOptions{})...)
-		if diags.HasError() {
-			return diags
-		}
+	if data.SaaSApp != nil && stateData.SaaSApp != nil {
+		dataSaasApp := *data.SaaSApp
+		stateDataSaasApp := *stateData.SaaSApp
 
 		switch dataSaasApp.AuthType.ValueString() {
 		case "saml":
@@ -190,12 +187,7 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 			normalizeReadZeroTrustApplicationOidcAppData(&dataSaasApp, stateDataSaasApp)
 		}
 
-		var saasDiags diag.Diagnostics
-		data.SaaSApp, saasDiags = customfield.NewObject[ZeroTrustAccessApplicationSaaSAppModel](ctx, &dataSaasApp)
-		diags.Append(saasDiags...)
-		if diags.HasError() {
-			return diags
-		}
+		data.SaaSApp = &dataSaasApp
 	}
 
 	if data.Policies != nil && stateData.Policies != nil {

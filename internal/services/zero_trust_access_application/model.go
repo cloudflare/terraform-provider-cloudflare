@@ -3,9 +3,11 @@
 package zero_trust_access_application
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustAccessApplicationResultEnvelope struct {
