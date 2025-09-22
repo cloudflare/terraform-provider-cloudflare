@@ -4,7 +4,6 @@ package zero_trust_tunnel_cloudflared_config
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,13 +13,13 @@ type ZeroTrustTunnelCloudflaredConfigResultEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredConfigModel struct {
-	ID        types.String                                                          `tfsdk:"id" json:"-,computed"`
-	TunnelID  types.String                                                          `tfsdk:"tunnel_id" path:"tunnel_id,required"`
-	AccountID types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
-	Config    customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigModel] `tfsdk:"config" json:"config,computed_optional"`
-	CreatedAt timetypes.RFC3339                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Source    types.String                                                          `tfsdk:"source" json:"source,computed_optional"`
-	Version   types.Int64                                                           `tfsdk:"version" json:"version,computed"`
+	ID        types.String                                 `tfsdk:"id" json:"-,computed"`
+	TunnelID  types.String                                 `tfsdk:"tunnel_id" path:"tunnel_id,required"`
+	AccountID types.String                                 `tfsdk:"account_id" path:"account_id,required"`
+	Config    *ZeroTrustTunnelCloudflaredConfigConfigModel `tfsdk:"config" json:"config,optional"`
+	CreatedAt timetypes.RFC3339                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Source    types.String                                 `tfsdk:"source" json:"source,computed_optional"`
+	Version   types.Int64                                  `tfsdk:"version" json:"version,computed"`
 }
 
 func (m ZeroTrustTunnelCloudflaredConfigModel) MarshalJSON() (data []byte, err error) {
@@ -88,8 +87,4 @@ type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestAccessModel struct {
 	AUDTag   *[]types.String `tfsdk:"aud_tag" json:"audTag,required"`
 	TeamName types.String    `tfsdk:"team_name" json:"teamName,required"`
 	Required types.Bool      `tfsdk:"required" json:"required,optional"`
-}
-
-type ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
