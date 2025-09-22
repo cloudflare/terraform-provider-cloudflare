@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package content_scanning_expression
+package leaked_credential_check_rule
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*ContentScanningExpressionsDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*LeakedCredentialCheckRulesDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -31,15 +31,19 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[ContentScanningExpressionsResultDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectListType[LeakedCredentialCheckRulesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "defines the unique ID for this custom scan expression.",
+							Description: "Defines the unique ID for this custom detection.",
 							Computed:    true,
 						},
-						"payload": schema.StringAttribute{
-							Description: "Defines the ruleset expression to use in matching content objects.",
+						"password": schema.StringAttribute{
+							Description: "Defines ehe ruleset expression to use in matching the password in a request.",
+							Computed:    true,
+						},
+						"username": schema.StringAttribute{
+							Description: "Defines the ruleset expression to use in matching the username in a request.",
 							Computed:    true,
 						},
 					},
@@ -49,10 +53,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *ContentScanningExpressionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *LeakedCredentialCheckRulesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = ListDataSourceSchema(ctx)
 }
 
-func (d *ContentScanningExpressionsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *LeakedCredentialCheckRulesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
 }
