@@ -89,6 +89,7 @@ func TestAccCloudflareWorkerVersion_Basic(t *testing.T) {
 					writeContentFile(t, `export default {fetch() {return new Response("Hello World!")}}`)
 				},
 				Config: testAccCloudflareWorkerVersionConfigUpdate(rnd, accountID, contentFile),
+				ExpectNonEmptyPlan: true,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionDestroyBeforeCreate),
